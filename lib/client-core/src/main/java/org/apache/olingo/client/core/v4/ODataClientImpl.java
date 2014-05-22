@@ -27,7 +27,6 @@ import org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFacto
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.v4.RetrieveRequestFactory;
-import org.apache.olingo.client.api.communication.request.streamed.StreamedRequestFactory;
 import org.apache.olingo.client.api.communication.request.v4.AsyncRequestFactory;
 import org.apache.olingo.commons.api.op.ODataSerializer;
 import org.apache.olingo.client.api.op.v4.ODataBinder;
@@ -42,7 +41,6 @@ import org.apache.olingo.client.core.communication.request.batch.v4.BatchRequest
 import org.apache.olingo.client.core.communication.request.cud.v4.CUDRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.invoke.v4.InvokeRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.v4.RetrieveRequestFactoryImpl;
-import org.apache.olingo.client.core.communication.request.streamed.StreamedRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.v4.AsyncRequestFactoryImpl;
 import org.apache.olingo.client.core.op.impl.v4.ODataBinderImpl;
 import org.apache.olingo.client.core.op.impl.v4.ODataDeserializerImpl;
@@ -80,8 +78,6 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
 
   private final CUDRequestFactory cudReqFact = new CUDRequestFactoryImpl(this);
 
-  private final StreamedRequestFactory streamedReqFact = new StreamedRequestFactoryImpl(this);
-
   private final InvokeRequestFactory invokeReqFact = new InvokeRequestFactoryImpl(this);
 
   private final BatchRequestFactory batchReqFact = new BatchRequestFactoryImpl(this);
@@ -92,7 +88,7 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   }
 
   @Override
-  public ODataHeaders getVersionHeaders() {
+  public ODataHeaders newVersionHeaders() {
     final ODataHeadersImpl odataHeaders = new ODataHeadersImpl();
     odataHeaders.setHeader(HeaderName.odataMaxVersion, ODataServiceVersion.V40.toString());
     odataHeaders.setHeader(HeaderName.odataVersion, ODataServiceVersion.V40.toString());
@@ -105,7 +101,7 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   }
 
   @Override
-  public URIBuilder getURIBuilder(final String serviceRoot) {
+  public URIBuilder newURIBuilder(final String serviceRoot) {
     return new URIBuilderImpl(getServiceVersion(), getConfiguration(), serviceRoot);
   }
 
@@ -158,11 +154,6 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   @Override
   public CUDRequestFactory getCUDRequestFactory() {
     return cudReqFact;
-  }
-
-  @Override
-  public StreamedRequestFactory getStreamedRequestFactory() {
-    return streamedReqFact;
   }
 
   @Override

@@ -51,7 +51,7 @@ public class V4OpenType extends V4Services {
 
   public V4OpenType() throws Exception {
     super(new Metadata(FSManager.instance(ODataServiceVersion.V40).
-            readFile("openType" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)),
+            readRes("openType" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)),
             Accept.XML), ODataServiceVersion.V40));
   }
 

@@ -19,19 +19,25 @@
 package org.apache.olingo.client.api.communication.request.batch;
 
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
+import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
+import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 
 /**
- * Retrieve request wrapper for the corresponding batch item.
+ * Batch request payload management.
  */
-public interface ODataRetrieve extends ODataBatchRequestItem {
+public interface BatchManager extends ODataPayloadManager<ODataBatchResponse> {
 
   /**
-   * Serialize and send the given request.
-   * <p>
-   * An IllegalArgumentException is thrown in case of no GET request.
+   * Gets a changeset batch item instance. A changeset can be submitted embedded into a batch request only.
    *
-   * @param request request to be serialized.
-   * @return current item instance.
+   * @return ODataChangeset instance.
    */
-  ODataRetrieve setRequest(final ODataBatchableRequest request);
+  ODataChangeset addChangeset();
+
+  /**
+   * Adds a retrieve batch item instance. A retrieve item can be submitted embedded into a batch request only.
+   *
+   * @param request retrieve request to batch.
+   */
+  void addRequest(final ODataBatchableRequest request);
 }

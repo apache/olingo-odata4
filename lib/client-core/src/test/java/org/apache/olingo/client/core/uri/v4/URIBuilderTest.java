@@ -41,7 +41,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void expandWithOptions() throws URISyntaxException {
-    final URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(5).
+    final URI uri = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(5).
             expandWithOptions("ProductDetails", new LinkedHashMap<QueryOption, Object>() {
               private static final long serialVersionUID = 3109256773218160485L;
 
@@ -57,7 +57,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void expandWithLevels() throws URISyntaxException {
-    final URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(1).
+    final URI uri = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(1).
             expandWithOptions("Customer", Collections.<QueryOption, Object>singletonMap(QueryOption.LEVELS, 4)).
             build();
 
@@ -67,11 +67,11 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void count() throws URISyntaxException {
-    URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").count().build();
+    URI uri = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").count().build();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products/$count").build(), uri);
 
-    uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").count(true).build();
+    uri = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").count(true).build();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products").
             addParameter("$count", "true").build(), uri);
@@ -79,7 +79,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void singleton() throws URISyntaxException {
-    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
             appendSingletonSegment("BestProductEverCreated");
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
@@ -88,7 +88,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void entityId() throws URISyntaxException {
-    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
             appendEntityIdSegment("Products(0)");
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
@@ -97,7 +97,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void boundAction() throws URISyntaxException {
-    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Categories").appendKeySegment(1).
             appendNavigationSegment("Products").appendNavigationSegment("Model").
             appendOperationCallSegment("AllOrders");
@@ -108,14 +108,14 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void ref() throws URISyntaxException {
-    URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Categories").appendKeySegment(1).
             appendNavigationSegment("Products").appendRefSegment();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
             SERVICE_ROOT + "/Categories(1)/Products/$ref").build(), uriBuilder.build());
 
-    uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Categories").appendKeySegment(1).
             appendNavigationSegment("Products").appendRefSegment().id("../../Products(0)");
 
@@ -126,7 +126,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void derived() throws URISyntaxException {
-    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Customers").appendDerivedEntityTypeSegment("Model.VipCustomer").appendKeySegment(1);
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
@@ -135,7 +135,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void crossjoin() throws URISyntaxException {
-    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
             appendCrossjoinSegment("Products", "Sales");
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
@@ -144,7 +144,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void all() throws URISyntaxException {
-    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).appendAllSegment();
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).appendAllSegment();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
             SERVICE_ROOT + "/$all").build(), uriBuilder.build());
@@ -152,7 +152,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void search() throws URISyntaxException {
-    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Products").search("blue OR green");
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(

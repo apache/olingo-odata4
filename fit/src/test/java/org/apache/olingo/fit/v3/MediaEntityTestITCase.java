@@ -47,10 +47,10 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void read() throws Exception {
-    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
+    final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Car").appendKeySegment(12);
 
-    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
     retrieveReq.setFormat(ODataMediaFormat.WILDCARD);
 
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
@@ -62,10 +62,10 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test(expected = ODataClientErrorException.class)
   public void readWithXmlError() throws Exception {
-    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
+    final URIBuilder builder =
+            client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").appendKeySegment(12);
 
-    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
     retrieveReq.setFormat(ODataMediaFormat.APPLICATION_XML);
 
     retrieveReq.execute();
@@ -73,31 +73,31 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test(expected = ODataClientErrorException.class)
   public void readWithJsonError() throws Exception {
-    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
+    final URIBuilder builder =
+            client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").appendKeySegment(12);
 
-    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
     retrieveReq.setFormat(ODataMediaFormat.APPLICATION_JSON);
 
     retrieveReq.execute();
   }
 
   private void updateMediaEntity(final ODataPubFormat format, final int id) throws Exception {
-    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Car").appendKeySegment(id).appendValueSegment();
+    final URIBuilder builder =
+            client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").appendKeySegment(id);
 
     final String TO_BE_UPDATED = "new buffered stream sample";
     final InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);
 
     final ODataMediaEntityUpdateRequest<ODataEntity> updateReq =
-            client.getStreamedRequestFactory().getMediaEntityUpdateRequest(builder.build(), input);
+            client.getCUDRequestFactory().getMediaEntityUpdateRequest(builder.build(), input);
     updateReq.setFormat(format);
 
-    final MediaEntityUpdateStreamManager<ODataEntity> streamManager = updateReq.execute();
+    final MediaEntityUpdateStreamManager<ODataEntity> streamManager = updateReq.payloadManager();
     final ODataMediaEntityUpdateResponse<ODataEntity> updateRes = streamManager.getResponse();
     assertEquals(204, updateRes.getStatusCode());
 
-    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
 
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
@@ -115,13 +115,13 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   }
 
   private void createMediaEntity(final ODataPubFormat format, final InputStream input) throws Exception {
-    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car");
+    final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car");
 
     final ODataMediaEntityCreateRequest<ODataEntity> createReq =
-            client.getStreamedRequestFactory().getMediaEntityCreateRequest(builder.build(), input);
+            client.getCUDRequestFactory().getMediaEntityCreateRequest(builder.build(), input);
     createReq.setFormat(format);
 
-    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.execute();
+    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.payloadManager();
     final ODataMediaEntityCreateResponse<ODataEntity> createRes = streamManager.getResponse();
     assertEquals(201, createRes.getStatusCode());
 
@@ -137,9 +137,9 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     }
     assertNotNull(id);
 
-    builder.appendKeySegment(id).appendValueSegment();
+    builder.appendKeySegment(id);
 
-    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
 
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
@@ -163,16 +163,16 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void updateNamedStream() throws Exception {
-    URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
+    URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(16).appendNavigationSegment("Photo");
 
     final String TO_BE_UPDATED = "buffered stream sample";
     final InputStream input = new ByteArrayInputStream(TO_BE_UPDATED.getBytes());
 
     final ODataStreamUpdateRequest updateReq =
-            client.getStreamedRequestFactory().getStreamUpdateRequest(builder.build(), input);
+            client.getCUDRequestFactory().getStreamUpdateRequest(builder.build(), input);
 
-    final StreamUpdateStreamManager streamManager = updateReq.execute();
+    final StreamUpdateStreamManager streamManager = updateReq.payloadManager();
     final ODataStreamUpdateResponse updateRes = streamManager.getResponse();
     updateRes.close();
     assertEquals(204, updateRes.getStatusCode());

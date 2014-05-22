@@ -16,27 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.batch;
+package org.apache.olingo.commons.api.domain.v4;
 
-import org.apache.olingo.client.api.communication.request.ODataStreamManager;
-import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
+import java.util.List;
 
-/**
- * Batch request payload management.
- */
-public interface BatchStreamManager extends ODataStreamManager<ODataBatchResponse> {
+public interface ODataAnnotatable {
 
-  /**
-   * Gets a changeset batch item instance. A changeset can be submitted embedded into a batch request only.
-   *
-   * @return ODataChangeset instance.
-   */
-  ODataChangeset addChangeset();
-
-  /**
-   * Gets a retrieve batch item instance. A retrieve item can be submitted embedded into a batch request only.
-   *
-   * @return ODataRetrieve instance.
-   */
-  ODataRetrieve addRetrieve();
+  List<ODataAnnotation> getAnnotations();
 }

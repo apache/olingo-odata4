@@ -45,6 +45,7 @@ class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implemen
   static ComplexFactoryInvocationHandler getInstance(
           final EntityInvocationHandler entityHandler,
           final AbstractStructuredInvocationHandler targetHandler) {
+    
     return new ComplexFactoryInvocationHandler(
             entityHandler == null ? null : entityHandler.containerHandler.client,
             targetHandler == null

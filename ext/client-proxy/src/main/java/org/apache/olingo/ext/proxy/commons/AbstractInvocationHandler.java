@@ -35,12 +35,17 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
+import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
+import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmOperation;
+import org.apache.olingo.commons.api.edm.EdmReturnType;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.OperationType;
@@ -156,6 +161,25 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
             handler);
   }
 
+  @SuppressWarnings("unchecked")
+  private <RES extends ODataInvokeResult> Class<RES> getResultReference(final EdmReturnType returnType) {
+    Class<RES> result;
+
+    if (returnType == null) {
+      result = (Class<RES>) ODataNoContent.class;
+    } else {
+      if (returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY) {
+        result = (Class<RES>) CommonODataEntitySet.class;
+      } else if (!returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY) {
+        result = (Class<RES>) CommonODataEntity.class;
+      } else {
+        result = (Class<RES>) CommonODataProperty.class;
+      }
+    }
+
+    return result;
+  }
+
   protected Object invokeOperation(
           final Operation annotation,
           final Method method,
@@ -193,7 +217,11 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
     // 3. invoke
     final ODataInvokeResult result = client.getInvokeRequestFactory().getInvokeRequest(
-            target, edmOperation, parameterValues).execute().getBody();
+            edmOperation instanceof EdmFunction ? HttpMethod.GET : HttpMethod.POST,
+            target,
+            getResultReference(edmOperation.getReturnType()),
+            parameterValues).
+            execute().getBody();
 
     // 4. process invoke result
     if (StringUtils.isBlank(annotation.returnType())) {

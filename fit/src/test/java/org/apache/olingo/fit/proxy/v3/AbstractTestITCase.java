@@ -63,8 +63,6 @@ public abstract class AbstractTestITCase {
 
   protected static String testLargeModelServiceRootURL;
 
-  protected static String testAuthServiceRootURL;
-
   protected final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
 
   protected static EntityContainerFactory<EdmEnabledODataClient> containerFactory;
@@ -79,7 +77,6 @@ public abstract class AbstractTestITCase {
     testActionOverloadingServiceRootURL = "http://localhost:9080/stub/StaticService/V30/ActionOverloading.svc";
     testOpenTypeServiceRootURL = "http://localhost:9080/stub/StaticService/V30/OpenType.svc";
     testLargeModelServiceRootURL = "http://localhost:9080/stub/StaticService/V30/Static.svc/large";
-    testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc";
 
     containerFactory = EntityContainerFactory.getV3(testStaticServiceRootURL);
     containerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);

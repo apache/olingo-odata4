@@ -18,9 +18,11 @@
  */
 package org.apache.olingo.client.api.communication.request.invoke;
 
+import java.net.URI;
 import java.util.Map;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
 
@@ -48,7 +50,7 @@ public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
   /**
    * Gets an invoke request instance for the action import with the given name.
    *
-   * @param <RES> OData domain object result, derived from return type defined in the function import
+   * @param <RES> OData domain object result, derived from return type defined in the action import
    * @param actionImportName operation to be invoked
    * @return new {@link ODataInvokeRequest} instance.
    */
@@ -58,11 +60,70 @@ public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
   /**
    * Gets an invoke request instance for the action import with the given name.
    *
-   * @param <RES> OData domain object result, derived from return type defined in the function import
+   * @param <RES> OData domain object result, derived from return type defined in the action import
    * @param actionImportName operation to be invoked
    * @param parameters parameters to pass to operation import invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
   <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getActionImportInvokeRequest(
           String actionImportName, Map<String, ODataValue> parameters);
+
+  /**
+   * Gets an invoke request instance for the function bound to given URI (no parameters).
+   *
+   * @param <RES> OData domain object result
+   * @param bindingParameterURI binding parameter URI
+   * @param functionName operation to be invoked
+   * @param bindingParameterTypeName binding parameter type full qualified name
+   * @param isBindingParameterCollection whether binding parameter is collection
+   * @return new {@link ODataInvokeRequest} instance.
+   */
+  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getBoundFunctionInvokeRequest(
+          URI bindingParameterURI, FullQualifiedName functionName, FullQualifiedName bindingParameterTypeName,
+          Boolean isBindingParameterCollection);
+
+  /**
+   * Gets an invoke request instance for the function bound to given URI (with parameters).
+   *
+   * @param <RES> OData domain object result
+   * @param bindingParameterURI binding parameter URI
+   * @param functionName operation to be invoked
+   * @param bindingParameterTypeName binding parameter type full qualified name
+   * @param isBindingParameterCollection whether binding parameter is collection
+   * @param parameters parameters to pass to function invocation
+   * @return new {@link ODataInvokeRequest} instance.
+   */
+  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getBoundFunctionInvokeRequest(
+          URI bindingParameterURI, FullQualifiedName functionName, FullQualifiedName bindingParameterTypeName,
+          Boolean isBindingParameterCollection, Map<String, ODataValue> parameters);
+
+  /**
+   * Gets an invoke request instance for the action bound to given URI (no parameters).
+   *
+   * @param <RES> OData domain object result
+   * @param bindingParameterURI binding parameter URI
+   * @param actionName operation to be invoked
+   * @param bindingParameterTypeName binding parameter type full qualified name
+   * @param isBindingParameterCollection whether binding parameter is collection
+   * @return new {@link ODataInvokeRequest} instance.
+   */
+  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getBoundActionInvokeRequest(
+          URI bindingParameterURI, FullQualifiedName actionName, FullQualifiedName bindingParameterTypeName,
+          Boolean isBindingParameterCollection);
+
+  /**
+   * Gets an invoke request instance for the action bound to given URI (with parameters).
+   *
+   * @param <RES> OData domain object result
+   * @param bindingParameterURI binding parameter URI
+   * @param actionName operation to be invoked
+   * @param bindingParameterTypeName binding parameter type full qualified name
+   * @param isBindingParameterCollection whether binding parameter is collection
+   * @param parameters parameters to pass to function invocation
+   * @return new {@link ODataInvokeRequest} instance.
+   */
+  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getBoundActionInvokeRequest(
+          URI bindingParameterURI, FullQualifiedName actionName, FullQualifiedName bindingParameterTypeName,
+          Boolean isBindingParameterCollection, Map<String, ODataValue> parameters);
+
 }

@@ -99,6 +99,15 @@ public interface CommonRetrieveRequestFactory extends Serializable {
    * @return new {@link ODataPropertyRequest} instance.
    */
   <T extends CommonODataProperty> ODataPropertyRequest<T> getPropertyRequest(URI uri);
+  
+  /**
+   * Gets a uri request returning a single OData entity property value.
+   *
+   * @param <T> concrete ODataProperty implementation.
+   * @param uri request URI.
+   * @return new {@link ODataValueRequest} instance.
+   */
+  ODataValueRequest getPropertyValueRequest(URI uri);
 
   /**
    * Gets a uri request returning a single OData entity property value.
@@ -115,6 +124,14 @@ public interface CommonRetrieveRequestFactory extends Serializable {
    * @return new {@link ODataMediaRequest} instance.
    */
   ODataMediaRequest getMediaRequest(URI uri);
+  
+  /**
+   * Gets a uri request returning a media entity.
+   *
+   * @param uri request URI.
+   * @return new {@link ODataMediaRequest} instance.
+   */
+  ODataMediaRequest getMediaEntityRequest(URI uri);
 
   /**
    * Implements a raw request request without specifying any return type.

@@ -47,7 +47,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    * Test <tt>$expand</tt>.
    */
   public void expand() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(1).expand("Orders");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -58,7 +58,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
   @Test
   public void expandWithFilter() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(1).
             expandWithOptions("Orders", Collections.<QueryOption, Object>singletonMap(
                             QueryOption.FILTER, getClient().getFilterFactory().gt("OrderID", 7).build()));
@@ -76,7 +76,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    */
   @Test
   public void filterOrderby() throws EdmPrimitiveTypeException {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").filter("(PersonID lt 3)");
 
     // 1. check that filtered entity set looks as expected
@@ -120,7 +120,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    */
   @Test
   public void format() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(1).format("json");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -136,7 +136,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    * Test <tt>$skip</tt>.
    */
   public void skip() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     // 1. check that filtered entity set looks as expected
     final ODataEntitySetRequest<ODataEntitySet> req =
@@ -150,7 +150,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    * Test <tt>$top</tt>.
    */
   public void top() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     // 1. check that filtered entity set looks as expected
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
@@ -165,7 +165,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    */
   @Test
   public void skiptoken() throws EdmPrimitiveTypeException {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("People").skipToken("5");
 
     final ODataEntitySetRequest<ODataEntitySet> req =
@@ -186,7 +186,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
   @Test
   public void count() {
     final URIBuilder uriBuilder =
-            client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").count(true);
+            client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").count(true);
 
     final ODataEntitySetRequest<ODataEntitySet> req =
             client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
@@ -201,7 +201,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    */
   @Test
   public void select() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(1).select("PersonID,Orders").expand("Orders");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -214,7 +214,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
   @Test
   public void issue253() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("relatedEntitySelect").appendEntitySetSegment("Customers").appendKeySegment(1).
             expandWithSelect("Orders", "OrderID", "OrderDetails");
 
@@ -226,7 +226,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
   @Test
   public void search() {
-    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").search(client.getSearchFactory().
                     or(client.getSearchFactory().literal("Bob"), client.getSearchFactory().literal("Jill")));
 

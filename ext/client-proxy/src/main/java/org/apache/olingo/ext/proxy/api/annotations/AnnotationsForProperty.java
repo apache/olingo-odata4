@@ -16,19 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.batch.v4;
+package org.apache.olingo.ext.proxy.api.annotations;
 
-/**
- * Batch request payload management.
- */
-public interface BatchStreamManager
-        extends org.apache.olingo.client.api.communication.request.batch.BatchStreamManager {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-  /**
-   * Gets an outside update batch item instance. An outside update item can be submitted embedded into a batch request
-   * only.
-   *
-   * @return ODataOutsideUpdate instance.
-   */
-  ODataOutsideUpdate addOutsideUpdate();
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface AnnotationsForProperty {
+
+  String name();
+
+  String type();
+
 }

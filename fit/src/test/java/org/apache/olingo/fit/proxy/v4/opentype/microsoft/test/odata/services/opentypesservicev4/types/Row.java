@@ -28,6 +28,7 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
@@ -58,7 +59,7 @@ import javax.xml.datatype.Duration;
         hasStream = false,
         isAbstract = false)
 public interface Row 
-  extends AbstractOpenType {
+  extends Annotatable,AbstractOpenType {
 
     
     @Key
@@ -82,7 +83,7 @@ public interface Row
                 fcKeepInContent = false)
     UUID getId();
 
-    void setId(final UUID _id);    
+    void setId(UUID _id);    
     
     
 

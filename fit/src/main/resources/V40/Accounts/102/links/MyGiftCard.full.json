@@ -1,0 +1,15 @@
+{
+  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Accounts(102)/MyGiftCard/$entity",
+  "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.GiftCard",
+  "@odata.id": "Accounts(102)/MyGiftCard",
+  "@odata.editLink": "Accounts(102)/MyGiftCard",
+  "GiftCardID": 301,
+  "GiftCardNO": "AAA123A",
+  "Amount": 19.9,
+  "ExperationDate@odata.type": "#DateTimeOffset",
+  "ExperationDate": "2013-12-30T00:00:00Z",
+  "#Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount": {
+    "title": "Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount",
+    "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(102)/MyGiftCard/Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount"
+  }
+}

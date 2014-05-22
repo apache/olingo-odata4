@@ -35,7 +35,7 @@ public class ErrorResponseTestITCase extends AbstractTestITCase {
 
   @Test
   public void jsonError() {
-    final URI readURI = getClient().getURIBuilder(testStaticServiceRootURL).
+    final URI readURI = getClient().newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(32).
             build();
 

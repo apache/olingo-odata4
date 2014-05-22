@@ -20,17 +20,17 @@ package org.apache.olingo.client.core.communication.request.batch;
 
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
-import org.apache.olingo.client.api.communication.request.batch.ODataRetrieve;
+import org.apache.olingo.client.api.communication.request.batch.ODataSingleRequest;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 
 /**
  * Retrieve request wrapper for the corresponding batch item.
  */
-public class ODataRetrieveImpl extends AbstractODataBatchRequestItem
-        implements ODataRetrieve {
+public class ODataSingleRequestImpl extends AbstractODataBatchRequestItem
+        implements ODataSingleRequest {
 
-  private final ODataRetrieveResponseItem expectedResItem;
+  private final ODataSingleResponseItem expectedResItem;
 
   /**
    * Constructor.
@@ -38,7 +38,7 @@ public class ODataRetrieveImpl extends AbstractODataBatchRequestItem
    * @param req batch request.
    * @param expectedResItem expected batch response item.
    */
-  ODataRetrieveImpl(final CommonODataBatchRequest req, final ODataRetrieveResponseItem expectedResItem) {
+  ODataSingleRequestImpl(final CommonODataBatchRequest req, final ODataSingleResponseItem expectedResItem) {
     super(req);
     this.expectedResItem = expectedResItem;
   }
@@ -55,26 +55,27 @@ public class ODataRetrieveImpl extends AbstractODataBatchRequestItem
    * {@inheritDoc }
    */
   @Override
-  public ODataRetrieve setRequest(final ODataBatchableRequest request) {
+  public ODataSingleRequest setRequest(final ODataBatchableRequest request) {
     if (!isOpen()) {
       throw new IllegalStateException("Current batch item is closed");
-    }
-
-    if (((AbstractODataRequest) request).getMethod() != HttpMethod.GET) {
-      throw new IllegalArgumentException("Invalid request. Only GET method is allowed");
     }
 
     hasStreamedSomething = true;
 
     // stream the request
-    streamRequestHeader(request);
+    if (request.getMethod() == HttpMethod.GET) {
+      streamRequestHeader(request);
+    } else {
+      streamRequestHeader(ODataSingleResponseItem.SINGLE_CONTENT_ID);
+      request.batch(req, ODataSingleResponseItem.SINGLE_CONTENT_ID);
+    }
 
     // close before in order to avoid any further setRequest calls.
     close();
 
     // add request to the list
     expectedResItem.addResponse(
-            ODataRetrieveResponseItem.RETRIEVE_CONTENT_ID, ((AbstractODataRequest) request).getResponseTemplate());
+            ODataSingleResponseItem.SINGLE_CONTENT_ID, ((AbstractODataRequest) request).getResponseTemplate());
 
     return this;
   }

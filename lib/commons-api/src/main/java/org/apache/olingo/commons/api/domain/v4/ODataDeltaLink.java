@@ -20,7 +20,7 @@ package org.apache.olingo.commons.api.domain.v4;
 
 import java.net.URI;
 
-public interface ODataDeltaLink extends ODataAnnotatatable {
+public interface ODataDeltaLink extends ODataAnnotatable {
 
   URI getSource();
 

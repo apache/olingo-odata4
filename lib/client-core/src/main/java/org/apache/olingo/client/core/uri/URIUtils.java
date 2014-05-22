@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -39,15 +40,16 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.http.HttpClientFactory;
+import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.client.core.http.ProxyWrapperHttpClientFactory;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -145,25 +147,6 @@ public final class URIUtils {
     return uri.normalize();
   }
 
-  /**
-   * Gets operation import URI segment.
-   *
-   * @param entityContainer entity container.
-   * @param operationImportName action / function import name.
-   * @return URI segment.
-   */
-  public static String operationImportURISegment(
-          final EdmEntityContainer entityContainer, final String operationImportName) {
-
-    final StringBuilder result = new StringBuilder();
-    if (!entityContainer.isDefault()) {
-      result.append(entityContainer.getName()).append('.');
-    }
-    result.append(operationImportName);
-
-    return result.toString();
-  }
-
   private static String prefix(final ODataServiceVersion version, final EdmPrimitiveTypeKind typeKind) {
     String result = StringUtils.EMPTY;
     if (version.compareTo(ODataServiceVersion.V40) < 0) {
@@ -230,12 +213,12 @@ public final class URIUtils {
     return version.compareTo(ODataServiceVersion.V40) < 0
             ? prefix(version, EdmPrimitiveTypeKind.DateTime)
             + URLEncoder.encode(EdmDateTime.getInstance().
-                    valueToString(timestamp, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-                    Constants.UTF8)
+            valueToString(timestamp, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
+            Constants.UTF8)
             + suffix(version, EdmPrimitiveTypeKind.DateTime)
             : URLEncoder.encode(EdmDateTimeOffset.getInstance().
-                    valueToString(timestamp, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-                    Constants.UTF8);
+            valueToString(timestamp, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
+            Constants.UTF8);
   }
 
   private static String calendar(final ODataServiceVersion version, final Calendar calendar)
@@ -246,8 +229,8 @@ public final class URIUtils {
       if (version.compareTo(ODataServiceVersion.V40) < 0) {
         result = prefix(version, EdmPrimitiveTypeKind.DateTime)
                 + URLEncoder.encode(EdmDateTime.getInstance().
-                        valueToString(calendar, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-                        Constants.UTF8)
+                valueToString(calendar, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
+                Constants.UTF8)
                 + suffix(version, EdmPrimitiveTypeKind.DateTime);
       } else {
         if (calendar.get(Calendar.YEAR) == 0 && calendar.get(Calendar.MONTH) == 0
@@ -265,8 +248,8 @@ public final class URIUtils {
     } else {
       result = prefix(version, EdmPrimitiveTypeKind.DateTimeOffset)
               + URLEncoder.encode(EdmDateTimeOffset.getInstance().
-                      valueToString(calendar, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-                      Constants.UTF8)
+              valueToString(calendar, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
+              Constants.UTF8)
               + suffix(version, EdmPrimitiveTypeKind.DateTimeOffset);
     }
 
@@ -278,11 +261,11 @@ public final class URIUtils {
 
     return version.compareTo(ODataServiceVersion.V40) < 0
             ? EdmTime.getInstance().toUriLiteral(URLEncoder.encode(EdmTime.getInstance().
-                            valueToString(duration, null, null,
-                                    Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null), Constants.UTF8))
+            valueToString(duration, null, null,
+            Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null), Constants.UTF8))
             : EdmDuration.getInstance().toUriLiteral(URLEncoder.encode(EdmDuration.getInstance().
-                            valueToString(duration, null, null,
-                                    Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null), Constants.UTF8));
+            valueToString(duration, null, null,
+            Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null), Constants.UTF8));
   }
 
   private static String quoteString(final String string, final boolean singleQuoteEscape)
@@ -360,24 +343,24 @@ public final class URIUtils {
                 ? duration(version, (Duration) obj)
                 : (obj instanceof BigDecimal)
                 ? EdmDecimal.getInstance().valueToString(obj, null, null,
-                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
+                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
                 + suffix(version, EdmPrimitiveTypeKind.Decimal)
                 : (obj instanceof Double)
                 ? EdmDouble.getInstance().valueToString(obj, null, null,
-                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
+                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
                 + suffix(version, EdmPrimitiveTypeKind.Double)
                 : (obj instanceof Float)
                 ? EdmSingle.getInstance().valueToString(obj, null, null,
-                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
+                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
                 + suffix(version, EdmPrimitiveTypeKind.Single)
                 : (obj instanceof Long)
                 ? EdmInt64.getInstance().valueToString(obj, null, null,
-                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
+                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
                 + suffix(version, EdmPrimitiveTypeKind.Int64)
                 : (obj instanceof Geospatial)
                 ? URLEncoder.encode(EdmPrimitiveTypeFactory.getInstance(((Geospatial) obj).getEdmPrimitiveTypeKind()).
-                        valueToString(obj, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-                        Constants.UTF8)
+                valueToString(obj, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
+                Constants.UTF8)
                 : (obj instanceof String)
                 ? quoteString((String) obj, singleQuoteEscape)
                 : obj.toString();
@@ -407,18 +390,18 @@ public final class URIUtils {
 
   public static HttpEntity buildInputStreamEntity(final CommonODataClient<?> client, final InputStream input) {
     HttpEntity entity;
-    
+
     // --------------------------
     // Check just required by batch requests since their ansynchronous entity specification mechanism
     // --------------------------
     boolean contentAvailable;
     try {
-      contentAvailable = input.available()>0;
+      contentAvailable = input.available() > 0;
     } catch (IOException ex) {
       contentAvailable = false;
     }
     // --------------------------
-    
+
     boolean repeatableRequired = shouldUseRepeatableHttpBodyEntry(client);
     if (!contentAvailable || !repeatableRequired) {
       entity = new InputStreamEntity(input, -1);
@@ -436,5 +419,20 @@ public final class URIUtils {
     // both entities can be sent in chunked way or not
     ((AbstractHttpEntity) entity).setChunked(client.getConfiguration().isUseChuncked());
     return entity;
+  }
+
+  public static URI addValueSegment(final URI uri) {
+    final URI res;
+    if (uri.getPath().endsWith(SegmentType.VALUE.getValue())) {
+      res = uri;
+    } else {
+      try {
+        res = new URIBuilder(uri).setPath(uri.getPath() + "/" + SegmentType.VALUE.getValue()).build();
+      } catch (URISyntaxException e) {
+        throw new IllegalArgumentException(e);
+      }
+    }
+
+    return res;
   }
 }

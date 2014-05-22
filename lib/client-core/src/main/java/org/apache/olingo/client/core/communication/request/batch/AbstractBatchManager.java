@@ -21,10 +21,11 @@ package org.apache.olingo.client.core.communication.request.batch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequestItem;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
-import org.apache.olingo.client.api.communication.request.batch.ODataRetrieve;
+import org.apache.olingo.client.api.communication.request.batch.ODataSingleRequest;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.request.Wrapper;
@@ -32,7 +33,7 @@ import org.apache.olingo.client.core.communication.request.Wrapper;
 /**
  * Batch request payload management.
  */
-public abstract class AbstractBatchStreamManager extends AbstractODataStreamManager<ODataBatchResponse> {
+public abstract class AbstractBatchManager extends AbstractODataStreamManager<ODataBatchResponse> {
 
   /**
    * Batch request current item.
@@ -49,7 +50,7 @@ public abstract class AbstractBatchStreamManager extends AbstractODataStreamMana
    *
    * @param req batch request reference.
    */
-  protected AbstractBatchStreamManager(
+  protected AbstractBatchManager(
           final CommonODataBatchRequest req, final Wrapper<Future<HttpResponse>> futureWrap) {
     super(futureWrap);
     this.req = req;
@@ -75,22 +76,24 @@ public abstract class AbstractBatchStreamManager extends AbstractODataStreamMana
   }
 
   /**
-   * Gets a retrieve batch item instance. A retrieve item can be submitted embedded into a batch request only.
+   * Adds a retrieve batch item instance. A retrieve item can be submitted embedded into a batch request only.
    *
-   * @return ODataRetrieve instance.
+   * @param request retrieve request to batch.
    */
-  public ODataRetrieve addRetrieve() {
+  public void addRequest(final ODataBatchableRequest request) {
+    validateSingleRequest(request);
+    
     closeCurrentItem();
 
     // stream dash boundary
     streamDashBoundary();
 
-    final ODataRetrieveResponseItem expectedResItem = new ODataRetrieveResponseItem();
-    currentItem = new ODataRetrieveImpl(req, expectedResItem);
+    final ODataSingleResponseItem expectedResItem = new ODataSingleResponseItem();
+    currentItem = new ODataSingleRequestImpl(req, expectedResItem);
 
     ((AbstractODataBatchRequest) req).addExpectedResItem(expectedResItem);
 
-    return (ODataRetrieve) currentItem;
+    ((ODataSingleRequest) currentItem).setRequest(request);
   }
 
   /**
@@ -135,4 +138,6 @@ public abstract class AbstractBatchStreamManager extends AbstractODataStreamMana
     newLine();
     stream(("--" + ((AbstractODataBatchRequest) req).boundary + "--").getBytes());
   }
+
+  protected abstract void validateSingleRequest(final ODataBatchableRequest request);
 }

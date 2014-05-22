@@ -44,7 +44,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveEntitySet() throws InterruptedException, ExecutionException {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product");
     final Future<ODataRetrieveResponse<ODataEntitySet>> futureRes =
             client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).asyncExecute();
@@ -62,7 +62,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   @Test
   public void updateEntity() throws InterruptedException, ExecutionException {
-    final URI uri = client.getURIBuilder(testStaticServiceRootURL).
+    final URI uri = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
 
     final ODataRetrieveResponse<ODataEntity> entityRes = client.getRetrieveRequestFactory().
@@ -93,15 +93,15 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   @Test
   public void createMediaEntity() throws Exception {
-    URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car");
+    URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car");
 
     final String TO_BE_UPDATED = "async buffered stream sample";
     final InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);
 
     final ODataMediaEntityCreateRequest<ODataEntity> createReq =
-            client.getStreamedRequestFactory().getMediaEntityCreateRequest(builder.build(), input);
+            client.getCUDRequestFactory().getMediaEntityCreateRequest(builder.build(), input);
 
-    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.execute();
+    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.payloadManager();
     final Future<ODataMediaEntityCreateResponse<ODataEntity>> futureCreateRes = streamManager.getAsyncResponse();
 
     while (!futureCreateRes.isDone()) {
@@ -119,10 +119,9 @@ public class AsyncTestITCase extends AbstractTestITCase {
             ? created.getProperties().get(0).getPrimitiveValue().toCastValue(Integer.class)
             : created.getProperties().get(1).getPrimitiveValue().toCastValue(Integer.class);
 
-    builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Car").appendKeySegment(id).appendValueSegment();
+    builder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").appendKeySegment(id);
 
-    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
 
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());

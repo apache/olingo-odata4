@@ -54,7 +54,7 @@ import org.junit.Test;
 public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   private void withInlineEntity(final ODataClient client, final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().
@@ -124,7 +124,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   private void withInlineEntitySet(final ODataClient client, final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(1).expand("Orders");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().
@@ -167,7 +167,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   private void rawRequest(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5);
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
@@ -199,7 +199,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     multiKey.put("ProductID", "6");
     multiKey.put("ProductDetailID", 1);
 
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("ProductDetails").appendKeySegment(multiKey);
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -224,7 +224,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   private void checkForETag(final ODataClient client, final ODataPubFormat format) {
     final URIBuilder uriBuilder =
-            client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders").appendKeySegment(8);
+            client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders").appendKeySegment(8);
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
@@ -261,7 +261,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test(expected = IllegalArgumentException.class)
   public void issue99() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(ODataPubFormat.JSON);
@@ -272,7 +272,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   private void reference(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Orders").appendKeySegment(8).appendNavigationSegment("CustomerForOrder").
             appendRefSegment();
 
@@ -287,7 +287,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     assertTrue(entity.getReference().endsWith("/StaticService/V40/Static.svc/Customers(PersonID=1)"));
 
     final URI referenceURI =
-            client.getURIBuilder(testStaticServiceRootURL).appendEntityIdSegment(entity.getReference()).build();
+            client.newURIBuilder(testStaticServiceRootURL).appendEntityIdSegment(entity.getReference()).build();
 
     req = client.getRetrieveRequestFactory().getEntityRequest(referenceURI);
     req.setFormat(format);
@@ -308,7 +308,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   private void contained(final ODataClient client, final ODataPubFormat format) throws EdmPrimitiveTypeException {
-    final URI uri = client.getURIBuilder(testStaticServiceRootURL).
+    final URI uri = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Accounts").appendKeySegment(101).
             appendNavigationSegment("MyPaymentInstruments").appendKeySegment(101902).build();
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uri);
@@ -338,7 +338,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   private void entitySetNavigationLink(final ODataClient client, final ODataPubFormat format) {
-    final URI uri = client.getURIBuilder(testStaticServiceRootURL).
+    final URI uri = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Accounts").appendKeySegment(101).build();
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uri);
     req.setFormat(format);

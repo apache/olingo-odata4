@@ -48,7 +48,7 @@ public class ODataStreamUpdateRequestImpl
    * @param targetURI target URI.
    * @param stream stream to be updated.
    */
-  ODataStreamUpdateRequestImpl(final CommonODataClient<?> odataClient,
+  public ODataStreamUpdateRequestImpl(final CommonODataClient<?> odataClient,
           final HttpMethod method, final URI targetURI, final InputStream stream) {
 
     super(odataClient, method, targetURI);
@@ -59,12 +59,12 @@ public class ODataStreamUpdateRequestImpl
    * {@inheritDoc }
    */
   @Override
-  protected StreamUpdateStreamManager getStreamManager() {
-    if (streamManager == null) {
-      streamManager = new StreamUpdateStreamManagerImpl(this.stream);
+  protected StreamUpdateStreamManager getPayloadManager() {
+    if (payloadManager == null) {
+      payloadManager = new StreamUpdateStreamManagerImpl(this.stream);
     }
 
-    return (StreamUpdateStreamManager) streamManager;
+    return (StreamUpdateStreamManager) payloadManager;
   }
 
   public class StreamUpdateStreamManagerImpl extends AbstractODataStreamManager<ODataStreamUpdateResponse>

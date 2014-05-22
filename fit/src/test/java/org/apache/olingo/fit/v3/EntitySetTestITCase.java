@@ -99,7 +99,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   private void readEntitySetWithNextLink(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer");
 
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
@@ -124,7 +124,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   private void readODataEntitySetIterator(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer");
 
     final ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> req =
@@ -147,7 +147,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   private void readWithInlineCount(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Product").inlineCount(URIBuilder.InlineCount.allpages);
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
@@ -161,7 +161,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   private void rawRequest(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Car");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());

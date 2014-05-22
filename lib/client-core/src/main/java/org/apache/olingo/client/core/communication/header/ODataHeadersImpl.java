@@ -24,12 +24,6 @@ import java.util.TreeMap;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
 
-/**
- * ODataHeaders wraps OData request/response headers.
- *
- * @see org.apache.olingo.client.core.communication.request.ODataRequest
- * @see org.apache.olingo.client.core.communication.response.ODataResponse
- */
 public class ODataHeadersImpl implements ODataHeaders {
 
   /**
@@ -37,73 +31,38 @@ public class ODataHeadersImpl implements ODataHeaders {
    */
   private final Map<String, String> headers = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 
-  /**
-   * Add the specified (custom) header (header name is case-insensitive).
-   *
-   * @param name header key.
-   * @param value header value.
-   * @return the current updated header instance.
-   */
+  @Override
   public ODataHeaders setHeader(final String name, final String value) {
     headers.put(name, value);
     return this;
   }
 
-  /**
-   * Add the specified header.
-   *
-   * @param name header key.
-   * @param value header value.
-   * @return the current updated header instance.
-   */
+  @Override
   public ODataHeaders setHeader(final HeaderName name, final String value) {
     headers.put(name.toString(), value);
     return this;
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public String getHeader(final HeaderName name) {
     return headers.get(name.toString());
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public String getHeader(final String name) {
     return headers.get(name);
   }
 
-  /**
-   * Removes the header identified by the given name.
-   * <br/>
-   * Please note that header name is case-insensitive.
-   *
-   * @param name name of the header to be retrieved.
-   * @return header name (if found).
-   */
+  @Override
   public String removeHeader(final HeaderName name) {
     return headers.remove(name.toString());
   }
 
-  /**
-   * Removes the header identified by the given name.
-   * <br/>
-   * Please note that header name is case-insensitive.
-   *
-   * @param name name of the header to be retrieved.
-   * @return header name (if found).
-   */
+  @Override
   public String removeHeader(final String name) {
     return headers.remove(name);
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public Collection<String> getHeaderNames() {
     return headers.keySet();

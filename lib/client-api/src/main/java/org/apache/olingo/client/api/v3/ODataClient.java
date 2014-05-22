@@ -45,7 +45,7 @@ public interface ODataClient extends CommonODataClient<UpdateType> {
   ODataBinder getBinder();
 
   @Override
-  URIBuilder getURIBuilder(String serviceRoot);
+  URIBuilder newURIBuilder(String serviceRoot);
 
   @Override
   FilterFactory getFilterFactory();

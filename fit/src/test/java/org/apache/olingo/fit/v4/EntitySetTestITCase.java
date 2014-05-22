@@ -45,7 +45,7 @@ import org.junit.Test;
 public class EntitySetTestITCase extends AbstractTestITCase {
 
   private void rawRequest(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
     req.setFormat(format.toString(client.getServiceVersion()));
@@ -69,7 +69,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   private void readWithInlineCount(final ODataClient client, final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").count(true);
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
@@ -101,7 +101,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   private void readODataEntitySetIterator(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     final ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> req =
             client.getRetrieveRequestFactory().getEntitySetIteratorRequest(uriBuilder.build());
@@ -143,7 +143,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   private void readWithNext(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
             getEntitySetRequest(uriBuilder.build());

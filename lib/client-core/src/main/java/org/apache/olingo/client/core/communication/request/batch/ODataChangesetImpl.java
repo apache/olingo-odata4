@@ -117,7 +117,7 @@ public class ODataChangesetImpl extends AbstractODataBatchRequestItem
     newLine();
 
     // stream the request
-    streamRequestHeader(request, String.valueOf(contentId));
+    streamRequestHeader(String.valueOf(contentId));
 
     request.batch(req, String.valueOf(contentId));
 

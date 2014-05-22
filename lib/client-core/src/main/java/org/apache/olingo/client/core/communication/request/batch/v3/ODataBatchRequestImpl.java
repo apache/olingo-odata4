@@ -24,15 +24,18 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
+import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
-import org.apache.olingo.client.api.communication.request.batch.v3.BatchStreamManager;
 import org.apache.olingo.client.api.communication.request.batch.v3.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
+import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.v3.ODataClient;
-import org.apache.olingo.client.core.communication.request.batch.AbstractBatchStreamManager;
+import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
+import org.apache.olingo.client.core.communication.request.batch.AbstractBatchManager;
 import org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchRequest;
-import org.apache.olingo.client.core.communication.request.batch.v3.ODataBatchRequestImpl.BatchStreamManagerImpl;
+import org.apache.olingo.client.core.communication.request.batch.v3.ODataBatchRequestImpl.BatchManagerImpl;
 import org.apache.olingo.client.core.communication.request.batch.v3.ODataBatchRequestImpl.ODataBatchResponseImpl;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.communication.response.batch.ODataBatchResponseManager;
@@ -41,8 +44,8 @@ import org.apache.olingo.client.core.communication.response.batch.ODataBatchResp
  * This class implements a batch request.
  */
 public class ODataBatchRequestImpl
-        extends AbstractODataBatchRequest<ODataBatchResponse, BatchStreamManager>
-        implements ODataBatchRequest, ODataStreamedRequest<ODataBatchResponse, BatchStreamManager> {
+        extends AbstractODataBatchRequest<ODataBatchResponse, BatchManager>
+        implements ODataBatchRequest, ODataStreamedRequest<ODataBatchResponse, BatchManager> {
 
   public ODataBatchRequestImpl(final ODataClient odataClient, final URI uri) {
     super(odataClient, uri);
@@ -50,11 +53,11 @@ public class ODataBatchRequestImpl
   }
 
   @Override
-  protected BatchStreamManager getStreamManager() {
-    if (streamManager == null) {
-      streamManager = new BatchStreamManagerImpl(this);
+  protected BatchManager getPayloadManager() {
+    if (payloadManager == null) {
+      payloadManager = new BatchManagerImpl(this);
     }
-    return (BatchStreamManager) streamManager;
+    return (BatchManager) payloadManager;
   }
 
   /**
@@ -62,7 +65,7 @@ public class ODataBatchRequestImpl
    */
   @Override
   public ODataBatchRequest rawAppend(final byte[] toBeStreamed) throws IOException {
-    getStreamManager().getBodyStreamWriter().write(toBeStreamed);
+    getPayloadManager().getBodyStreamWriter().write(toBeStreamed);
     return this;
   }
 
@@ -71,22 +74,29 @@ public class ODataBatchRequestImpl
    */
   @Override
   public ODataBatchRequest rawAppend(final byte[] toBeStreamed, int off, int len) throws IOException {
-    getStreamManager().getBodyStreamWriter().write(toBeStreamed, off, len);
+    getPayloadManager().getBodyStreamWriter().write(toBeStreamed, off, len);
     return this;
   }
 
   /**
    * Batch request payload management.
    */
-  public class BatchStreamManagerImpl extends AbstractBatchStreamManager implements BatchStreamManager {
+  public class BatchManagerImpl extends AbstractBatchManager implements BatchManager {
 
-    public BatchStreamManagerImpl(final ODataBatchRequest req) {
+    public BatchManagerImpl(final ODataBatchRequest req) {
       super(req, ODataBatchRequestImpl.this.futureWrapper);
     }
 
     @Override
     protected ODataBatchResponse getResponseInstance(final long timeout, final TimeUnit unit) {
       return new ODataBatchResponseImpl(httpClient, getHttpResponse(timeout, unit));
+    }
+
+    @Override
+    protected void validateSingleRequest(final ODataBatchableRequest request) {
+      if (((AbstractODataRequest) request).getMethod() != HttpMethod.GET) {
+        throw new IllegalArgumentException("Invalid request. Only GET method is allowed");
+      }
     }
   }
 

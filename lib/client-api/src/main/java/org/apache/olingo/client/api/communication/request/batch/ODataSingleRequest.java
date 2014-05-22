@@ -16,11 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain.v4;
+package org.apache.olingo.client.api.communication.request.batch;
 
-import java.util.List;
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 
-public interface ODataAnnotatatable {
+/**
+ * Retrieve request wrapper for the corresponding batch item.
+ */
+public interface ODataSingleRequest extends ODataBatchRequestItem {
 
-  List<ODataAnnotation> getAnnotations();
+  /**
+   * Serialize and send the given request.
+   * <p>
+   * An IllegalArgumentException is thrown in case of no GET request.
+   *
+   * @param request request to be serialized.
+   * @return current item instance.
+   */
+  ODataSingleRequest setRequest(final ODataBatchableRequest request);
 }

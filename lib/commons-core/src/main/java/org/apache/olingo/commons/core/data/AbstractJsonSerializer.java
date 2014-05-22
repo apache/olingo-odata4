@@ -121,7 +121,7 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
         if (StringUtils.isNotBlank(link.getHref())) {
           jgen.writeStringField(
                   link.getTitle() + StringUtils.prependIfMissing(
-                  version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK), "@"),
+                          version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK), "@"),
                   link.getHref());
         }
       }
@@ -136,6 +136,10 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
     }
 
     for (Link link : linked.getNavigationLinks()) {
+      for (Annotation annotation : link.getAnnotations()) {
+        valuable(jgen, annotation, link.getTitle() + "@" + annotation.getTerm());
+      }
+
       if (StringUtils.isNotBlank(link.getHref())) {
         jgen.writeStringField(
                 link.getTitle() + version.getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK),

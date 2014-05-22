@@ -52,7 +52,7 @@ public class V4Demo extends V4Services {
 
   public V4Demo() throws Exception {
     super(new Metadata(FSManager.instance(ODataServiceVersion.V40).
-            readFile("demo" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)),
+            readRes("demo" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)),
             Accept.XML), ODataServiceVersion.V40));
   }
 

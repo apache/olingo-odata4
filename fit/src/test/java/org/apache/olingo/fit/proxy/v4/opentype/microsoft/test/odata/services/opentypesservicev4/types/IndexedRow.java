@@ -28,6 +28,7 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
@@ -59,7 +60,7 @@ import javax.xml.datatype.Duration;
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.OpenTypesServiceV4.Row")
 public interface IndexedRow 
-  extends org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row {
+  extends Annotatable,org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row {
 
     
     @Key
@@ -83,7 +84,7 @@ public interface IndexedRow
                 fcKeepInContent = false)
     UUID getId();
 
-    void setId(final UUID _id);    
+    void setId(UUID _id);    
     
     
 

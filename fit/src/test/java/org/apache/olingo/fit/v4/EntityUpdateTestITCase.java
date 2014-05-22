@@ -50,7 +50,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
             getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000002S").build()));
 
-    final URI upsertURI = getClient().getURIBuilder(testStaticServiceRootURL).
+    final URI upsertURI = getClient().newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Orders").appendKeySegment(9).build();
     final ODataEntityUpdateRequest<ODataEntity> req = getClient().getCUDRequestFactory().
             getEntityUpdateRequest(upsertURI, updateType, order);
@@ -89,7 +89,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     changes.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("FriendlyName",
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildString(newName)));
 
-    final URI uri = getClient().getURIBuilder(testStaticServiceRootURL).
+    final URI uri = getClient().newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Accounts").appendKeySegment(101).
             appendNavigationSegment("MyPaymentInstruments").appendKeySegment(101901).build();
     final ODataEntityUpdateRequest<ODataEntity> req = getClient().getCUDRequestFactory().
@@ -118,11 +118,11 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     final ODataEntity changes = getClient().getObjectFactory().newEntity(
             new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
     final ODataLink parent = getClient().getObjectFactory().newEntityNavigationLink("Parent",
-            getClient().getURIBuilder(testStaticServiceRootURL).
+            getClient().newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(1).build());
     changes.getNavigationLinks().add(parent);
 
-    final URI uri = getClient().getURIBuilder(testStaticServiceRootURL).
+    final URI uri = getClient().newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).build();
     final ODataEntityUpdateRequest<ODataEntity> req = getClient().getCUDRequestFactory().
             getEntityUpdateRequest(uri, UpdateType.PATCH, changes);

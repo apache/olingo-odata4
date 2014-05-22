@@ -81,7 +81,7 @@ public abstract class AbstractODataBatchRequestItem extends AbstractODataStreame
    * @param request request to be batched.
    * @param contentId changeset item id.
    */
-  protected void streamRequestHeader(final ODataBatchableRequest request, final String contentId) {
+  protected void streamRequestHeader(final String contentId) {
     //stream batch content type
     stream(ODataBatchConstants.ITEM_CONTENT_TYPE_LINE.getBytes());
     newLine();

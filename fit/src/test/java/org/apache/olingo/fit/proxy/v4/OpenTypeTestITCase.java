@@ -33,6 +33,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.DefaultContainer;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.AccountInfo;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Color;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.ContactDetails;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row;
@@ -115,6 +116,12 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     rowIndex.addAdditionalProperty("aContact", contact);
     rowIndex.addAdditionalProperty("aColor", Color.Green);
 
+    final AccountInfo ai = otcontainer.complexFactory().newAccountInfo();
+    ai.setFirstName("Fabio");
+    ai.setLastName("Martelli");
+    ai.addAdditionalProperty("email", "fabio.martelli@tirasa.net");
+    rowIndex.addAdditionalProperty("info", ai);
+
     otcontainer.flush();
 
     rowIndex = otcontainer.getRowIndex().get(id);
@@ -127,6 +134,10 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertEquals(ContactDetails.class, rowIndex.getAdditionalProperty("aContact").getClass().getInterfaces()[0]);
     assertEquals(Color.class, rowIndex.getAdditionalProperty("aColor").getClass());
     assertEquals(Color.Green, rowIndex.getAdditionalProperty("aColor"));
+    assertEquals("Fabio", AccountInfo.class.cast(rowIndex.getAdditionalProperty("info")).getFirstName());
+    assertEquals("Martelli", AccountInfo.class.cast(rowIndex.getAdditionalProperty("info")).getLastName());
+    assertEquals("fabio.martelli@tirasa.net", AccountInfo.class.cast(rowIndex.getAdditionalProperty("info")).
+            getAdditionalProperty("email"));
 
     entityContext.detachAll();
 

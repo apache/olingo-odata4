@@ -43,6 +43,7 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotatable;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
@@ -312,7 +313,7 @@ public final class CoreUtils {
   public static void addAnnotations(
           final CommonEdmEnabledODataClient<?> client,
           final Map<Class<? extends AbstractTerm>, Object> annotations,
-          final ODataEntity entity) {
+          final ODataAnnotatable annotatable) {
 
     for (Map.Entry<Class<? extends AbstractTerm>, Object> entry : annotations.entrySet()) {
       final Namespace nsAnn = entry.getKey().getAnnotation(Namespace.class);
@@ -322,7 +323,7 @@ public final class CoreUtils {
       if (term == null) {
         LOG.error("Could not find term for class {}", entry.getKey().getName());
       } else {
-        entity.getAnnotations().add(getODataAnnotation(
+        annotatable.getAnnotations().add(getODataAnnotation(
                 client, term.getFullQualifiedName().toString(), term.getType(), entry.getValue()));
       }
     }

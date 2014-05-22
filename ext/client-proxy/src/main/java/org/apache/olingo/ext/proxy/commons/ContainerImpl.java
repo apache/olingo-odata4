@@ -34,7 +34,7 @@ import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
-import org.apache.olingo.client.api.communication.request.batch.BatchStreamManager;
+import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
@@ -90,7 +90,7 @@ class ContainerImpl implements Container {
     final CommonODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(client.getServiceRoot());
     ((ODataRequest) request).setAccept(client.getConfiguration().getDefaultBatchAcceptFormat());
 
-    final BatchStreamManager streamManager = (BatchStreamManager) ((ODataStreamedRequest) request).execute();
+    final BatchManager streamManager = (BatchManager) ((ODataStreamedRequest) request).payloadManager();
 
     final ODataChangeset changeset = streamManager.addChangeset();
 
@@ -113,8 +113,9 @@ class ContainerImpl implements Container {
 
     final ODataBatchResponse response = streamManager.getResponse();
 
-    if ((client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0 && response.getStatusCode() != 202)
-            || (client.getServiceVersion().compareTo(ODataServiceVersion.V30) > 0 && response.getStatusCode() != 200)) {
+    // This should be 202 for service version <= 3.0 and 200 for service version >= 4.0 but it seems that
+    // many service implementations are not fully compliant with this respect.
+    if (response.getStatusCode() != 202 && response.getStatusCode() != 200) {
       throw new IllegalStateException("Operation failed");
     }
 
@@ -200,7 +201,7 @@ class ContainerImpl implements Container {
     LOG.debug("Update media entity '{}'", uri);
 
     final ODataMediaEntityUpdateRequest<?> req =
-            client.getStreamedRequestFactory().getMediaEntityUpdateRequest(uri, input);
+            client.getCUDRequestFactory().getMediaEntityUpdateRequest(uri, input);
 
     req.setContentType(StringUtils.isBlank(handler.getEntity().getMediaContentType())
             ? ODataMediaFormat.WILDCARD.toString()
@@ -221,7 +222,7 @@ class ContainerImpl implements Container {
 
     LOG.debug("Update media entity '{}'", uri);
 
-    final ODataStreamUpdateRequest req = client.getStreamedRequestFactory().getStreamUpdateRequest(uri, input);
+    final ODataStreamUpdateRequest req = client.getCUDRequestFactory().getStreamUpdateRequest(uri, input);
 
     if (StringUtils.isNotBlank(handler.getETag())) {
       req.setIfMatch(handler.getETag());
@@ -321,6 +322,11 @@ class ContainerImpl implements Container {
       if (entity instanceof ODataEntity) {
         ((ODataEntity) entity).getAnnotations().clear();
         CoreUtils.addAnnotations(client, handler.getAnnotations(), (ODataEntity) entity);
+
+        for (Map.Entry<String, AnnotatableInvocationHandler> entry : handler.getPropAnnotatableHandlers().entrySet()) {
+          CoreUtils.addAnnotations(client,
+                  entry.getValue().getAnnotations(), ((ODataEntity) entity).getProperty(entry.getKey()));
+        }
       }
     }
 
@@ -373,6 +379,16 @@ class ContainerImpl implements Container {
 
       if (!toBeLinked.isEmpty()) {
         delayedUpdates.add(new EntityLinkDesc(property.getKey().name(), handler, toBeLinked, type));
+      }
+    }
+
+    if (entity instanceof ODataEntity) {
+      for (Map.Entry<String, AnnotatableInvocationHandler> entry
+              : handler.getNavPropAnnotatableHandlers().entrySet()) {
+
+        CoreUtils.addAnnotations(client,
+                entry.getValue().getAnnotations(),
+                (org.apache.olingo.commons.api.domain.v4.ODataLink) entity.getNavigationLink(entry.getKey()));
       }
     }
 

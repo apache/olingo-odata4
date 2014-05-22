@@ -26,13 +26,13 @@ import org.apache.olingo.client.api.communication.response.ODataResponse;
  * @param <V> OData response type corresponding to the request implementation.
  * @param <T> OData request payload type corresponding to the request implementation.
  */
-public interface ODataStreamedRequest<V extends ODataResponse, T extends ODataStreamManager<V>>
+public interface ODataStreamedRequest<V extends ODataResponse, T extends ODataPayloadManager<V>>
         extends ODataRequest {
 
     /**
-     * Streamed request execute.
+     * Streamed payload manager.
      *
      * @return OData request payload manager object.
      */
-    T execute();
+    T payloadManager();
 }

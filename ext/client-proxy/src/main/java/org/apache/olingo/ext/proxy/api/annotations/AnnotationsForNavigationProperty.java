@@ -16,19 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.ext.proxy.api;
+package org.apache.olingo.ext.proxy.api.annotations;
 
-import java.io.Serializable;
-import java.util.Collection;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface AbstractAnnotatable extends Serializable {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface AnnotationsForNavigationProperty {
 
-  void addAnnotation(Class<? extends AbstractTerm> term, Object value);
+  String name();
 
-  void removeAnnotation(Class<? extends AbstractTerm> term);
-
-  Object getAnnotation(Class<? extends AbstractTerm> term);
-
-  Collection<Class<? extends AbstractTerm>> getAnnotationTerms();
+  String type();
 
 }

@@ -34,7 +34,7 @@ public class DeltaTestITCase extends AbstractTestITCase {
 
   private void parse(final ODataPubFormat format) {
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
-            client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").build());
+            client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").build());
     req.setPrefer(client.newPreferences().trackChanges());
     
     final ODataEntitySet customers = req.execute().getBody();

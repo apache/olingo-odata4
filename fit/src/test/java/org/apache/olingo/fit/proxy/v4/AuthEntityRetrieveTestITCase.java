@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
-import static org.apache.olingo.fit.proxy.v4.AbstractTestITCase.testKeyAsSegmentServiceRootURL;
-
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
@@ -32,7 +30,7 @@ public class AuthEntityRetrieveTestITCase extends EntityRetrieveTestITCase {
   @Override
   protected InMemoryEntities getContainer() {
     final EntityContainerFactory<EdmEnabledODataClient> ecf =
-            EntityContainerFactory.getV4(testKeyAsSegmentServiceRootURL);
+            EntityContainerFactory.getV4(testAuthServiceRootURL);
     ecf.getClient().getConfiguration().setKeyAsSegment(true);
     ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     ecf.getClient().getConfiguration().

@@ -188,7 +188,7 @@ public abstract class AbstractServices {
 
   protected Response getMetadata(final String filename) {
     try {
-      return xml.createResponse(null, FSManager.instance(version).readFile(filename, Accept.XML), null, Accept.XML);
+      return xml.createResponse(null, FSManager.instance(version).readRes(filename, Accept.XML), null, Accept.XML);
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.XML.toString(version), e);
     }
@@ -1306,10 +1306,9 @@ public abstract class AbstractServices {
           @PathParam("entityId") String entityId) {
 
     try {
-      final String basePath =
-              entitySetName + File.separatorChar + Commons.getEntityKey(entityId) + File.separatorChar;
+      final String basePath = entitySetName + File.separatorChar + Commons.getEntityKey(entityId);
 
-      FSManager.instance(version).deleteFile(basePath + Constants.get(version, ConstantKey.ENTITY));
+      FSManager.instance(version).deleteEntity(basePath);
 
       return xml.createResponse(null, null, null, null, Response.Status.NO_CONTENT);
     } catch (Exception e) {

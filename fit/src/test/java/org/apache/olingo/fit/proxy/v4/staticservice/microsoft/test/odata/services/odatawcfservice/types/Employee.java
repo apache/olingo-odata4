@@ -19,6 +19,8 @@
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -27,7 +29,7 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.ext.proxy.api.AbstractAnnotatable;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
@@ -59,7 +61,7 @@ import javax.xml.datatype.Duration;
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.ODataWCFService.Person")
 public interface Employee 
-  extends AbstractAnnotatable,org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person {
+  extends Annotatable,org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person {
 
     
     @Key
@@ -330,5 +332,61 @@ public interface Employee
                    type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
          org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newHomeAddress();
 
+        }
+
+        @Override
+        Annotations annotations();
+
+    interface Annotations            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.Annotations{
+
+            @AnnotationsForProperty(name = "PersonID",
+                   type = "Edm.Int32")
+        Annotatable getPersonIDAnnotations();
+
+            @AnnotationsForProperty(name = "FirstName",
+                   type = "Edm.String")
+        Annotatable getFirstNameAnnotations();
+
+            @AnnotationsForProperty(name = "LastName",
+                   type = "Edm.String")
+        Annotatable getLastNameAnnotations();
+
+            @AnnotationsForProperty(name = "MiddleName",
+                   type = "Edm.String")
+        Annotatable getMiddleNameAnnotations();
+
+            @AnnotationsForProperty(name = "HomeAddress",
+                   type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
+        Annotatable getHomeAddressAnnotations();
+
+            @AnnotationsForProperty(name = "Home",
+                   type = "Edm.GeographyPoint")
+        Annotatable getHomeAnnotations();
+
+            @AnnotationsForProperty(name = "Numbers",
+                   type = "Edm.String")
+        Annotatable getNumbersAnnotations();
+
+            @AnnotationsForProperty(name = "Emails",
+                   type = "Edm.String")
+        Annotatable getEmailsAnnotations();
+
+            @AnnotationsForProperty(name = "DateHired",
+                   type = "Edm.DateTimeOffset")
+        Annotatable getDateHiredAnnotations();
+
+            @AnnotationsForProperty(name = "Office",
+                   type = "Edm.GeographyPoint")
+        Annotatable getOfficeAnnotations();
+
+    
+    
+        @AnnotationsForNavigationProperty(name = "Parent", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.Person")
+        Annotatable getParentAnnotations();
+    
+        @AnnotationsForNavigationProperty(name = "Company", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.Company")
+        Annotatable getCompanyAnnotations();
         }
 }

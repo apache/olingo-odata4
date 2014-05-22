@@ -16,11 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.batch.v3;
+package org.apache.olingo.ext.proxy.api;
 
-/**
- * Batch request payload management.
- */
-public interface BatchStreamManager
-        extends org.apache.olingo.client.api.communication.request.batch.BatchStreamManager {
+import java.io.Serializable;
+import java.util.Collection;
+
+public interface Annotatable extends Serializable {
+
+  void addAnnotation(Class<? extends AbstractTerm> term, Object value);
+
+  void removeAnnotation(Class<? extends AbstractTerm> term);
+
+  Object getAnnotation(Class<? extends AbstractTerm> term);
+
+  Collection<Class<? extends AbstractTerm>> getAnnotationTerms();
+
 }

@@ -47,7 +47,7 @@ public class FilterFactoryTestITCase extends AbstractTestITCase {
             getFilterArgFactory().property("Orders/OrderID"), getFilterArgFactory().property("Customers/Order"));
 
     final URIBuilder uriBuilder =
-            client.getURIBuilder(testStaticServiceRootURL).appendCrossjoinSegment("Customers", "Orders").filter(filter);
+            client.newURIBuilder(testStaticServiceRootURL).appendCrossjoinSegment("Customers", "Orders").filter(filter);
 
     final ODataEntitySetRequest<ODataEntitySet> req =
             client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());

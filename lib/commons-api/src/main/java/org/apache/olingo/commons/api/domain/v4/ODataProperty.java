@@ -20,5 +20,5 @@ package org.apache.olingo.commons.api.domain.v4;
 
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 
-public interface ODataProperty extends CommonODataProperty, ODataAnnotatatable, ODataValuable {
+public interface ODataProperty extends CommonODataProperty, ODataAnnotatable, ODataValuable {
 }
