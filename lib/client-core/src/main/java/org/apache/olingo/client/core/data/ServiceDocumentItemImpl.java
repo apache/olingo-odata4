@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.client.core.data;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -30,10 +28,7 @@ public class ServiceDocumentItemImpl implements ServiceDocumentItem {
 
   private String name;
 
-  private String title;
-
-  @JsonProperty("url")
-  private String href;
+  private String url;
 
   @Override
   public String getName() {
@@ -45,21 +40,12 @@ public class ServiceDocumentItemImpl implements ServiceDocumentItem {
   }
 
   @Override
-  public String getTitle() {
-    return title;
+  public String getUrl() {
+    return url;
   }
 
-  public void setTitle(final String title) {
-    this.title = title;
-  }
-
-  @Override
-  public String getHref() {
-    return href;
-  }
-
-  public void setHref(final String href) {
-    this.href = href;
+  public void setUrl(final String url) {
+    this.url = url;
   }
 
   @Override

@@ -43,7 +43,7 @@ public class SingletonInvocationHandler<
   private SingletonInvocationHandler(
           final Class<?> ref, final EntityContainerInvocationHandler containerHandler, final String singletonName) {
 
-    super(containerHandler.getClient(), containerHandler);
+    super(containerHandler);
     this.entitySetHandler = EntitySetInvocationHandler.getInstance(ref, containerHandler, singletonName);
   }
 

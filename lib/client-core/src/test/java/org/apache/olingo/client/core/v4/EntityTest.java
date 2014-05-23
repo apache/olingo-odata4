@@ -266,7 +266,7 @@ public class EntityTest extends AbstractTest {
             getClient().getDeserializer().toEntity(input, format));
     assertNotNull(entity);
 
-    assertNotNull(entity.getReference());
+    assertNotNull(entity.getId());
 
     final ODataEntity written = getClient().getBinder().getODataEntity(
             new ResWrap<Entity>((URI) null, null, getClient().getBinder().

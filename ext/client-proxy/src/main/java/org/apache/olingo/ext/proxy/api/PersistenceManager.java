@@ -16,19 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.cud.v4;
+package org.apache.olingo.ext.proxy.api;
 
-import java.net.URI;
-import org.apache.olingo.client.api.communication.request.cud.CommonCUDRequestFactory;
-import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
-import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
+import java.io.Serializable;
 
-public interface CUDRequestFactory extends CommonCUDRequestFactory<UpdateType> {
+/**
+ * Interface for container operations.
+ */
+public interface PersistenceManager extends Serializable {
 
-  ODataEntityUpdateRequest<ODataSingleton> getSingletonUpdateRequest(
-          URI targetURI, UpdateType type, ODataSingleton changes);
-
-  ODataEntityUpdateRequest<ODataSingleton> getSingletonUpdateRequest(
-          UpdateType type, ODataSingleton entity);
-
+  /**
+   * Flushes all pending changes to the OData service.
+   */
+  void flush();
 }

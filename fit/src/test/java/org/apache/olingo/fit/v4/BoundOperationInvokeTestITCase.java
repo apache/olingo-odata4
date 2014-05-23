@@ -38,7 +38,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.Singleton;
+import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -50,10 +50,10 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
   private void functions(final ODataPubFormat format) throws EdmPrimitiveTypeException {
     // GetEmployeesCount
     URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
-    final ODataEntityRequest<Singleton> singletonReq =
+    final ODataEntityRequest<ODataSingleton> singletonReq =
             client.getRetrieveRequestFactory().getSingletonRequest(builder.build());
     singletonReq.setFormat(format);
-    final Singleton company = singletonReq.execute().getBody();
+    final ODataSingleton company = singletonReq.execute().getBody();
     assertNotNull(company);
 
     ODataOperation boundOp = company.getOperation("Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount");

@@ -156,7 +156,7 @@ public class V3Services extends AbstractServices {
               addChangesetItemIntro(chbos, lastContebtID, cboundary);
 
               res = bodyPartRequest(new MimeBodyPart(part.getInputStream()), references);
-              if (res==null || res.getStatus() >= 400) {
+              if (res == null || res.getStatus() >= 400) {
                 throw new Exception("Failure processing changeset");
               }
 
@@ -222,10 +222,10 @@ public class V3Services extends AbstractServices {
           @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) String filter,
           @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) String orderby,
           @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) String skiptoken) {
-    
+
     return super.getEntitySet(uriInfo, accept, "Car", top, skip, format, count, filter, orderby, skiptoken);
-  }  
-  
+  }
+
   @GET
   @Path("/Login({entityId})")
   public Response getLogin(
@@ -256,6 +256,14 @@ public class V3Services extends AbstractServices {
     }
 
     return super.postNewEntity(uriInfo, accept, contentType, prefer, "Login", entity);
+  }
+
+  @DELETE
+  @Path("/Login({entityId})")
+  public Response removeLogin(
+          @PathParam("entityId") String entityId) {
+
+    return super.removeEntity("Login", StringUtils.remove(entityId, "'"));
   }
 
   /**

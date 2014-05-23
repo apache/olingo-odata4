@@ -52,7 +52,7 @@ public class ServiceDocumentTest extends AbstractTest {
     final ODataServiceDocument serviceDocument = getClient().getBinder().getODataServiceDocument(service.getPayload());
     assertNotNull(serviceDocument);
 
-    assertTrue(serviceDocument.getEntitySetTitles().contains("Order Details"));
+    assertTrue(serviceDocument.getEntitySetNames().contains("Order Details"));
     assertEquals(URI.create("http://host/service/TopProducts"),
             serviceDocument.getFunctionImportURI("TopProducts"));
     assertEquals(URI.create("http://host/HR/"),

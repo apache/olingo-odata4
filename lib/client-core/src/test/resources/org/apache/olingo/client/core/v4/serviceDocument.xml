@@ -34,7 +34,7 @@
       <atom:title type="text">Order Details</atom:title>
     </app:collection>
     <metadata:function-import href="TopProducts">
-      <atom:title>Best-Selling Products</atom:title>
+      <atom:title>TopProducts</atom:title>
     </metadata:function-import>
     <metadata:singleton href="Contoso">
       <atom:title>Contoso Ltd.</atom:title>

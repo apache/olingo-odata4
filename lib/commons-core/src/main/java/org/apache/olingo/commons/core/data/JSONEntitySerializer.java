@@ -76,7 +76,7 @@ public class JSONEntitySerializer extends AbstractJsonSerializer<JSONEntityImpl>
     }
 
     if (entity.getId() != null) {
-      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entity.getId());
+      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entity.getId().toASCIIString());
     }
 
     for (Annotation annotation : entity.getAnnotations()) {

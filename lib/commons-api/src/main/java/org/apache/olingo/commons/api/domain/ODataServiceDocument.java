@@ -38,11 +38,11 @@ public class ODataServiceDocument {
   }
 
   /**
-   * Gets entity set titles.
+   * Gets entity set names.
    *
-   * @return entity set titles.
+   * @return entity set names.
    */
-  public Collection<String> getEntitySetTitles() {
+  public Collection<String> getEntitySetNames() {
     return entitySets.keySet();
   }
 
@@ -58,11 +58,11 @@ public class ODataServiceDocument {
   /**
    * Gets URI about the given entity set.
    *
-   * @param title title.
+   * @param name name.
    * @return URI.
    */
-  public URI getEntitySetURI(final String title) {
-    return entitySets.get(title);
+  public URI getEntitySetURI(final String name) {
+    return entitySets.get(name);
   }
 
   public Map<String, URI> getFunctionImports() {
@@ -70,11 +70,11 @@ public class ODataServiceDocument {
   }
 
   /**
-   * Gets function import titles.
+   * Gets function import names.
    *
-   * @return function import titles.
+   * @return function import names.
    */
-  public Collection<String> getFunctionImportTitles() {
+  public Collection<String> getFunctionImportNames() {
     return functionImports.keySet();
   }
 
@@ -90,11 +90,11 @@ public class ODataServiceDocument {
   /**
    * Gets URI of the given function import.
    *
-   * @param title title.
+   * @param name name.
    * @return URI.
    */
-  public URI getFunctionImportURI(final String title) {
-    return functionImports.get(title);
+  public URI getFunctionImportURI(final String name) {
+    return functionImports.get(name);
   }
 
   public Map<String, URI> getSingletons() {
@@ -102,11 +102,11 @@ public class ODataServiceDocument {
   }
 
   /**
-   * Gets singleton titles.
+   * Gets singleton names.
    *
-   * @return singleton titles.
+   * @return singleton names.
    */
-  public Collection<String> getSingletonTitles() {
+  public Collection<String> getSingletonNames() {
     return singletons.keySet();
   }
 
@@ -122,11 +122,11 @@ public class ODataServiceDocument {
   /**
    * Gets URI of the given singleton.
    *
-   * @param title title.
+   * @param name name.
    * @return URI.
    */
-  public URI getSingletonURI(final String title) {
-    return singletons.get(title);
+  public URI getSingletonURI(final String name) {
+    return singletons.get(name);
   }
 
   public Map<String, URI> getRelatedServiceDocuments() {
@@ -134,11 +134,11 @@ public class ODataServiceDocument {
   }
 
   /**
-   * Gets related service documents titles.
+   * Gets related service documents names.
    *
-   * @return related service documents titles.
+   * @return related service documents names.
    */
-  public Collection<String> getRelatedServiceDocumentsTitles() {
+  public Collection<String> getRelatedServiceDocumentsNames() {
     return relatedServiceDocuments.keySet();
   }
 
@@ -154,10 +154,10 @@ public class ODataServiceDocument {
   /**
    * Gets URI of the given related service documents.
    *
-   * @param title title.
+   * @param name name.
    * @return URI.
    */
-  public URI getRelatedServiceDocumentURI(final String title) {
-    return relatedServiceDocuments.get(title);
+  public URI getRelatedServiceDocumentURI(final String name) {
+    return relatedServiceDocuments.get(name);
   }
 }

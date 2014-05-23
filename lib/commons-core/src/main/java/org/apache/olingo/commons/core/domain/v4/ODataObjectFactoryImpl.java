@@ -33,7 +33,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataLink;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
-import org.apache.olingo.commons.api.domain.v4.Singleton;
+import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.domain.AbstractODataObjectFactory;
@@ -67,7 +67,7 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
   }
 
   @Override
-  public Singleton newSingleton(final FullQualifiedName typeName) {
+  public ODataSingleton newSingleton(final FullQualifiedName typeName) {
     return new ODataEntityImpl(typeName);
   }
 

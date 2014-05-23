@@ -30,7 +30,6 @@ import java.util.TimeZone;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
-import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
@@ -61,8 +60,6 @@ public abstract class AbstractTestITCase {
 
   protected static String testAuthServiceRootURL;
 
-  protected final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
-
   protected static EntityContainerFactory<EdmEnabledODataClient> containerFactory;
 
   protected static InMemoryEntities container;
@@ -75,13 +72,13 @@ public abstract class AbstractTestITCase {
     testActionOverloadingServiceRootURL = "http://localhost:9080/stub/StaticService/V40/ActionOverloading.svc";
     testOpenTypeServiceRootURL = "http://localhost:9080/stub/StaticService/V40/OpenType.svc";
     testLargeModelServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Static.svc/large";
-    testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc";
+    testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc/V40/Static.svc";
 
     containerFactory = EntityContainerFactory.getV4(testStaticServiceRootURL);
     containerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     container = containerFactory.getEntityContainer(InMemoryEntities.class);
     assertNotNull(container);
-    EntityContainerFactory.getContext().detachAll();
+    containerFactory.getContext().detachAll();
   }
 
   protected Customer readCustomer(final InMemoryEntities container, int id) {
@@ -111,12 +108,12 @@ public abstract class AbstractTestITCase {
     assertEquals(orderDate.getTimeInMillis(), actual.getOrderDate().getTimeInMillis());
     assertEquals(BigDecimal.TEN, actual.getShelfLife());
     assertEquals(2, actual.getOrderShelfLifes().size());
-
+    
     container.getOrders().delete(105);
     actual = container.getOrders().get(105);
     assertNull(actual);
 
-    entityContext.detachAll();
+    containerFactory.getContext().detachAll();
     actual = container.getOrders().get(105);
     assertNotNull(actual);
 
@@ -126,7 +123,7 @@ public abstract class AbstractTestITCase {
 
     container.flush();
 
-    entityContext.detachAll();
+    containerFactory.getContext().detachAll();
     actual = container.getOrders().get(105);
     assertNull(actual);
   }

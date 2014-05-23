@@ -43,7 +43,7 @@ public class ServiceDocumentTest extends AbstractTest {
     final ODataServiceDocument serviceDocument = getClient().getReader().readServiceDocument(
             getClass().getResourceAsStream("serviceDocument." + getFileExtension(format)), format);
     assertNotNull(serviceDocument);
-    assertTrue(serviceDocument.getEntitySetTitles().contains("Persons"));
+    assertTrue(serviceDocument.getEntitySetNames().contains("Persons"));
   }
 
   @Test

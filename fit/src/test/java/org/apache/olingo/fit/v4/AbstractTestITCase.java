@@ -73,7 +73,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     testKeyAsSegmentServiceRootURL = "http://localhost:9080/stub/StaticService/V40/KeyAsSegment.svc";
     testOpenTypeServiceRootURL = "http://localhost:9080/stub/StaticService/V40/OpenType.svc";
     testLargeModelServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Static.svc/large";
-    testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc";
+    testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc/V40/Static.svc";
 
     edmClient = ODataClientFactory.getEdmEnabledV4(testStaticServiceRootURL);
     

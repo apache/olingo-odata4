@@ -87,16 +87,6 @@ public abstract class AbstractServiceDocument implements ServiceDocument {
     return result;
   }
 
-  protected ServiceDocumentItem getByTitle(final List<ServiceDocumentItem> elements, final String title) {
-    ServiceDocumentItem result = null;
-    for (ServiceDocumentItem element : elements) {
-      if (title.equals(element.getTitle())) {
-        result = element;
-      }
-    }
-    return result;
-  }
-
   @Override
   public List<ServiceDocumentItem> getEntitySets() {
     return entitySets;
@@ -105,11 +95,6 @@ public abstract class AbstractServiceDocument implements ServiceDocument {
   @Override
   public ServiceDocumentItem getEntitySetByName(final String name) {
     return getByName(getEntitySets(), name);
-  }
-
-  @Override
-  public ServiceDocumentItem getEntitySetByTitle(final String title) {
-    return getByTitle(getEntitySets(), title);
   }
 
   @Override
@@ -123,11 +108,6 @@ public abstract class AbstractServiceDocument implements ServiceDocument {
   }
 
   @Override
-  public ServiceDocumentItem getFunctionImportByTitle(final String title) {
-    return getByTitle(getFunctionImports(), title);
-  }
-
-  @Override
   public List<ServiceDocumentItem> getSingletons() {
     return Collections.<ServiceDocumentItem>emptyList();
   }
@@ -138,18 +118,8 @@ public abstract class AbstractServiceDocument implements ServiceDocument {
   }
 
   @Override
-  public ServiceDocumentItem getSingletonByTitle(final String title) {
-    return getByTitle(getSingletons(), title);
-  }
-
-  @Override
   public List<ServiceDocumentItem> getRelatedServiceDocuments() {
     return Collections.<ServiceDocumentItem>emptyList();
-  }
-
-  @Override
-  public ServiceDocumentItem getRelatedServiceDocumentByTitle(final String title) {
-    return getByTitle(getRelatedServiceDocuments(), title);
   }
 
   @Override

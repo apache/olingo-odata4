@@ -25,7 +25,7 @@ import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
-import org.apache.olingo.ext.proxy.api.Container;
+import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.api.OperationType;
 #foreach($ns in $namespaces)
 import ${basePackage}.${ns}.*;
@@ -52,7 +52,7 @@ import javax.xml.datatype.Duration;
 @EntityContainer(name = "$container.Name",
   namespace = "$namespace",
   isDefaultEntityContainer = $container.Default)
-public interface $utility.capitalize($container.Name) extends Container {
+public interface $utility.capitalize($container.Name) extends PersistenceManager {
 
 #foreach($entitySet in $container.EntitySets)
     $utility.capitalize($entitySet.Name) get$utility.capitalize($entitySet.Name)();

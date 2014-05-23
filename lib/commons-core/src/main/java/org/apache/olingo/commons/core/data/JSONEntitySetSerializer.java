@@ -64,7 +64,7 @@ public class JSONEntitySetSerializer extends AbstractJsonSerializer<JSONEntitySe
     }
 
     if (entitySet.getId() != null) {
-      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entitySet.getId());
+      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entitySet.getId().toASCIIString());
     }
     jgen.writeNumberField(version.getJSONMap().get(ODataServiceVersion.JSON_COUNT),
             entitySet.getCount() == null ? entitySet.getEntities().size() : entitySet.getCount());

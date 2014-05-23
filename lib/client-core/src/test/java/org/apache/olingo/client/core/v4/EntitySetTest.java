@@ -74,7 +74,7 @@ public class EntitySetTest extends AbstractTest {
     assertNotNull(entitySet);
 
     for (ODataEntity entity : entitySet.getEntities()) {
-      assertNotNull(entity.getReference());
+      assertNotNull(entity.getId());
     }
     entitySet.setCount(entitySet.getEntities().size());
 

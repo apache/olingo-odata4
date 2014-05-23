@@ -197,7 +197,7 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
     } else if (node.isArray()) {
       type = ODataPropertyType.COLLECTION;
     } else if (node.isObject()) {
-      if (node.has(Constants.ATTR_TYPE) && node.has(Constants.JSON_CRS)) {
+      if (node.has(Constants.ATTR_TYPE)) {
         type = ODataPropertyType.PRIMITIVE;
         typeInfo = new EdmTypeInfo.Builder().
                 setTypeExpression("Edm.Geography" + node.get(Constants.ATTR_TYPE).asText()).build();

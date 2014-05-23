@@ -180,7 +180,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     assertNull(entitySet);
 
     final ResWrap<ODataEntity> entity = res.getBodyAs(ODataEntity.class);
-    assertTrue(entity.getPayload().getReference().endsWith("/StaticService/V40/Static.svc/People(5)"));
+    assertTrue(entity.getPayload().getId().toASCIIString().endsWith("/StaticService/V40/Static.svc/People(5)"));
   }
 
   @Test
@@ -284,10 +284,10 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
     final ODataEntity entity = res.getBody();
     assertNotNull(entity);
-    assertTrue(entity.getReference().endsWith("/StaticService/V40/Static.svc/Customers(PersonID=1)"));
+    assertTrue(entity.getId().toASCIIString().endsWith("/StaticService/V40/Static.svc/Customers(PersonID=1)"));
 
-    final URI referenceURI =
-            client.newURIBuilder(testStaticServiceRootURL).appendEntityIdSegment(entity.getReference()).build();
+    final URI referenceURI = client.newURIBuilder(testStaticServiceRootURL).
+            appendEntityIdSegment(entity.getId().toASCIIString()).build();
 
     req = client.getRetrieveRequestFactory().getEntityRequest(referenceURI);
     req.setFormat(format);

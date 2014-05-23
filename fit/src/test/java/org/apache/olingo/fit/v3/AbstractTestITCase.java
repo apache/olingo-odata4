@@ -93,7 +93,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     testActionOverloadingServiceRootURL = "http://localhost:9080/stub/StaticService/V30/ActionOverloading.svc";
     testOpenTypeServiceRootURL = "http://localhost:9080/stub/StaticService/V30/OpenType.svc";
     testLargeModelServiceRootURL = "http://localhost:9080/stub/StaticService/V30/Static.svc/large";
-    testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc";
+    testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc/V30/Static.svc";
     
     client.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
   }

@@ -51,6 +51,8 @@ import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
+import org.apache.olingo.ext.proxy.context.Context;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
@@ -58,19 +60,24 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
   private static final long serialVersionUID = 358520026931462958L;
 
-  protected final CommonEdmEnabledODataClient<?> client;
+  protected EntityContainerFactory<?> factory;
 
   protected EntityContainerInvocationHandler containerHandler;
 
-  protected AbstractInvocationHandler(
-          final CommonEdmEnabledODataClient<?> client, final EntityContainerInvocationHandler containerHandler) {
+  protected AbstractInvocationHandler(final EntityContainerFactory<?> factory) {
+    this.factory = factory;
+  }
 
-    this.client = client;
+  protected AbstractInvocationHandler(final EntityContainerInvocationHandler containerHandler) {
     this.containerHandler = containerHandler;
   }
 
   protected CommonEdmEnabledODataClient<?> getClient() {
-    return client;
+    return factory == null ? containerHandler.getFactory().getClient() : factory.getClient();
+  }
+
+  protected Context getContext() {
+    return factory == null ? containerHandler.getFactory().getContext() : factory.getContext();
   }
 
   protected boolean isSelfMethod(final Method method, final Object[] args) {
@@ -104,7 +111,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
     for (CommonODataEntity entityFromSet : entitySet.getEntities()) {
       items.add(getEntityProxy(
-              entityFromSet.getEditLink(), entityFromSet, entityContainerName, null, typeRef, checkInTheContext));
+              entityFromSet.getEditLink(), entityFromSet, entityContainerName, null, typeRef, null, checkInTheContext));
     }
 
     return Proxy.newProxyInstance(
@@ -129,17 +136,6 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
           final String entityContainerName,
           final URI entitySetURI,
           final Class<?> type,
-          final boolean checkInTheContext) {
-
-    return getEntityProxy(entityURI, entity, entityContainerName, entitySetURI, type, null, checkInTheContext);
-  }
-
-  protected Object getEntityProxy(
-          final URI entityURI,
-          final CommonODataEntity entity,
-          final String entityContainerName,
-          final URI entitySetURI,
-          final Class<?> type,
           final String eTag,
           final boolean checkInTheContext) {
 
@@ -151,8 +147,10 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
       handler.setETag(eTag);
     }
 
-    if (checkInTheContext && EntityContainerFactory.getContext().entityContext().isAttached(handler)) {
-      handler = EntityContainerFactory.getContext().entityContext().getEntity(handler.getUUID());
+    if (checkInTheContext && getContext().entityContext().isAttached(handler)) {
+      handler = getContext().entityContext().getEntity(handler.getUUID());
+    } else {
+      handler.attach(AttachedEntityStatus.ATTACHED, false);
     }
 
     return Proxy.newProxyInstance(
@@ -200,11 +198,11 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
         }
 
         final EdmTypeInfo type = new EdmTypeInfo.Builder().
-                setEdm(client.getCachedEdm()).setTypeExpression(parameter.getKey().type()).build();
+                setEdm(getClient().getCachedEdm()).setTypeExpression(parameter.getKey().type()).build();
 
         final ODataValue paramValue = parameter.getValue() == null
                 ? null
-                : CoreUtils.getODataValue(client, type, parameter.getValue());
+                : CoreUtils.getODataValue(getClient(), type, parameter.getValue());
 
         parameterValues.put(parameter.getKey().name(), paramValue);
       }
@@ -212,11 +210,11 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
     // 2. IMPORTANT: flush any pending change *before* invoke if this operation is side effecting
     if (annotation.type() == OperationType.ACTION) {
-      new ContainerImpl(client, containerHandler.getFactory()).flush();
+      new PersistenceManagerImpl(containerHandler.getFactory()).flush();
     }
 
     // 3. invoke
-    final ODataInvokeResult result = client.getInvokeRequestFactory().getInvokeRequest(
+    final ODataInvokeResult result = getClient().getInvokeRequestFactory().getInvokeRequest(
             edmOperation instanceof EdmFunction ? HttpMethod.GET : HttpMethod.POST,
             target,
             getResultReference(edmOperation.getReturnType()),
@@ -229,7 +227,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     }
 
     final EdmTypeInfo edmType = new EdmTypeInfo.Builder().
-            setEdm(client.getCachedEdm()).setTypeExpression(annotation.returnType()).build();
+            setEdm(getClient().getCachedEdm()).setTypeExpression(annotation.returnType()).build();
 
     if (edmType.isEntityType()) {
       if (edmType.isCollection()) {
@@ -249,13 +247,15 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
                 null,
                 null,
                 method.getReturnType(),
+                null,
                 false);
       }
     } else {
       final CommonODataProperty property = (CommonODataProperty) result;
       return property == null || property.hasNullValue()
               ? null
-              : CoreUtils.getObjectFromODataValue(client, property.getValue(), method.getGenericReturnType(), null);
+              : CoreUtils.getObjectFromODataValue(
+                      getClient(), property.getValue(), method.getGenericReturnType(), null);
     }
   }
 

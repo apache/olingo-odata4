@@ -18,33 +18,35 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
-import static org.apache.olingo.fit.proxy.v4.AbstractTestITCase.containerFactory;
+
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 
 public class AuthEntityCreateTestITCase extends EntityCreateTestITCase {
 
-  @BeforeClass
-  public static void setupContaner() {
-    containerFactory = EntityContainerFactory.getV4(testAuthServiceRootURL);
-    containerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
-    containerFactory.getClient().getConfiguration().
-            setHttpClientFactory(new BasicAuthHttpClientFactory("odatajclient", "odatajclient"));
-    container = containerFactory.getEntityContainer(InMemoryEntities.class);
-    assertNotNull(container);
+  private EntityContainerFactory<EdmEnabledODataClient> ecf;
+
+  private InMemoryEntities ime;
+
+  @Override
+  public EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
+    if (ecf == null) {
+      ecf = EntityContainerFactory.getV4(testAuthServiceRootURL);
+      ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+      ecf.getClient().getConfiguration().
+              setHttpClientFactory(new BasicAuthHttpClientFactory("odatajclient", "odatajclient"));
+    }
+    return ecf;
   }
 
-  @AfterClass
-  public static void disableBasicAuth() {
-    containerFactory = EntityContainerFactory.getV4(testStaticServiceRootURL);
-    container = containerFactory.getEntityContainer(InMemoryEntities.class);
-    assertNotNull(container);
+  @Override
+  protected InMemoryEntities getContainer() {
+    if (ime == null) {
+      ime = getContainerFactory().getEntityContainer(InMemoryEntities.class);
+    }
+    return ime;
   }
 }

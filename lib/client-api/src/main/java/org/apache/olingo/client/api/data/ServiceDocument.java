@@ -53,35 +53,19 @@ public interface ServiceDocument {
   ServiceDocumentItem getEntitySetByName(String name);
 
   /**
-   * Gets top level entity set with given title.
-   *
-   * @param title entity set title
-   * @return entity set with given title if found, otherwise null
-   */
-  ServiceDocumentItem getEntitySetByTitle(String title);
-
-  /**
    * Gets top level function imports.
    *
    * @return top level function imports.
    */
   List<ServiceDocumentItem> getFunctionImports();
 
-  /**
+  /*
    * Gets top level function import set with given name.
    *
    * @param name function import name
    * @return function import with given name if found, otherwise null
    */
   ServiceDocumentItem getFunctionImportByName(String name);
-
-  /**
-   * Gets top level function import with given title.
-   *
-   * @param title function import title
-   * @return function import with given title if found, otherwise null
-   */
-  ServiceDocumentItem getFunctionImportByTitle(String title);
 
   /**
    * Gets top level singletons.
@@ -99,25 +83,9 @@ public interface ServiceDocument {
   ServiceDocumentItem getSingletonByName(String name);
 
   /**
-   * Gets top level singleton with given title.
-   *
-   * @param title singleton title
-   * @return singleton with given title if found, otherwise null
-   */
-  ServiceDocumentItem getSingletonByTitle(String title);
-
-  /**
    * Gets related service documents.
    *
    * @return related service documents.
    */
   List<ServiceDocumentItem> getRelatedServiceDocuments();
-
-  /**
-   * Gets related service document with given title.
-   *
-   * @param title related service document title
-   * @return related service document with given title if found, otherwise null
-   */
-  ServiceDocumentItem getRelatedServiceDocumentByTitle(String title);
 }
