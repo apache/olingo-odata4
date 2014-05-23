@@ -54,7 +54,9 @@ public class ODataClientErrorException extends RuntimeException {
    * @param error OData error to be wrapped.
    */
   public ODataClientErrorException(final StatusLine statusLine, final ODataError error) {
-    super((StringUtils.isBlank(error.getCode()) ? StringUtils.EMPTY : "(" + error.getCode() + ") ")
+    super(error == null
+            ? statusLine.toString()
+            : (StringUtils.isBlank(error.getCode()) ? StringUtils.EMPTY : "(" + error.getCode() + ") ")
             + error.getMessage() + " [" + statusLine.toString() + "]");
 
     this.statusLine = statusLine;

@@ -32,8 +32,6 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
 
   private static final long serialVersionUID = 7379006755693410764L;
 
-  private final EntityContainerFactory<?> factory;
-
   protected final String namespace;
 
   private final String name;
@@ -56,8 +54,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
       throw new IllegalArgumentException(
               ref.getName() + " is not annotated as @" + EntityContainer.class.getSimpleName());
     }
-
-    this.factory = factory;
+    
     this.name = ((EntityContainer) annotation).name();
     this.defaultEC = ((EntityContainer) annotation).isDefaultEntityContainer();
     this.namespace = ((EntityContainer) annotation).namespace();

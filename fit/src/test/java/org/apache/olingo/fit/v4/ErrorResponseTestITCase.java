@@ -39,16 +39,14 @@ public class ErrorResponseTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Customers").appendKeySegment(32).
             build();
 
-    final ODataEntityRequest<ODataEntity> req = getClient().getRetrieveRequestFactory().getEntityRequest(readURI);
     try {
-      final ODataEntity read = read(ODataPubFormat.JSON, readURI);
-
+      read(ODataPubFormat.JSON, readURI);
       fail("should have got exception");
     } catch (Exception ex) {
       final ODataError err = ((ODataClientErrorException) ex).getODataError();
 
       // verify details
-      final ODataErrorDetail detail = (ODataErrorDetail) err.getDetails().get(0);
+      final ODataErrorDetail detail = err.getDetails().get(0);
       assertEquals("Code should be correct", "301", detail.getCode());
       assertEquals("Target should be correct", "$search", detail.getTarget());
       assertEquals("Message should be correct", "$search query option not supported", detail.getMessage());

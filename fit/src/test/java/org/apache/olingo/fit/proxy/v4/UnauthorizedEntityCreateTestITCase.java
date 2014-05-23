@@ -18,29 +18,34 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import org.apache.olingo.client.api.http.HttpClientException;
+import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
+
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.junit.Test;
 
-public class KeyAsSegmentTestITCase extends AbstractTestITCase {
+public class UnauthorizedEntityCreateTestITCase extends AbstractTestITCase {
 
   private EntityContainerFactory<EdmEnabledODataClient> ecf;
 
   private InMemoryEntities ime;
 
-  protected EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
+  public EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
     if (ecf == null) {
-      ecf = EntityContainerFactory.getV4(testKeyAsSegmentServiceRootURL);
-      ecf.getClient().getConfiguration().setKeyAsSegment(true);
+      ecf = EntityContainerFactory.getV4(testAuthServiceRootURL);
       ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+      ecf.getClient().getConfiguration().
+              setHttpClientFactory(new BasicAuthHttpClientFactory("not_auth", "not_auth"));
     }
     return ecf;
+  }
+
+  @Test(expected = HttpClientException.class)
+  public void unauthorizedCreate() {
+    createAndDeleteOrder(getContainer(), getContainerFactory());
   }
 
   protected InMemoryEntities getContainer() {
@@ -48,26 +53,5 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
       ime = getContainerFactory().getEntityContainer(InMemoryEntities.class);
     }
     return ime;
-  }
-
-  @Test
-  public void read() {
-    assertNotNull(getContainer().getAccounts().get(101));
-  }
-
-  @Test
-  public void createAndDelete() {
-    createAndDeleteOrder(getContainer(), getContainerFactory());
-  }
-
-  @Test
-  public void update() {
-    Person person = getContainer().getPeople().get(5);
-    person.setMiddleName("middleN");
-
-    container.flush();
-
-    person = getContainer().getPeople().get(5);
-    assertEquals("middleN", person.getMiddleName());
   }
 }

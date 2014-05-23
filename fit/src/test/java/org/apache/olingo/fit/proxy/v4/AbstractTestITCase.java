@@ -89,7 +89,8 @@ public abstract class AbstractTestITCase {
     return customer;
   }
 
-  protected void createAndDeleteOrder(final InMemoryEntities container) {
+  protected void createAndDeleteOrder(
+          final InMemoryEntities container, final EntityContainerFactory<EdmEnabledODataClient> containerFactory) {
     final Order order = container.getOrders().newOrder();
     order.setOrderID(105);
 

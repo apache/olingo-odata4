@@ -68,7 +68,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void get() {
-    readCustomer(container, 1);
+    readCustomer(getContainer(), 1);
   }
 
   @Test
@@ -120,14 +120,14 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void withInlineEntry() {
-    final Customer customer = readCustomer(container, 1);
+    final Customer customer = readCustomer(getContainer(), 1);
     final Company company = customer.getCompany();
     assertEquals(0, company.getCompanyID(), 0);
   }
 
   @Test
   public void withInlineFeed() {
-    final Customer customer = readCustomer(container, 1);
+    final Customer customer = readCustomer(getContainer(), 1);
     final OrderCollection orders = customer.getOrders();
     assertEquals(1, orders.size());
     assertEquals(8, orders.iterator().next().getOrderID(), 0);
@@ -165,7 +165,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void contained() {
-    final PaymentInstrument instrument = container.getAccounts().get(101).getMyPaymentInstruments().get(101901);
+    final PaymentInstrument instrument = getContainer().getAccounts().get(101).getMyPaymentInstruments().get(101901);
     assertNotNull(instrument);
     assertEquals(101901, instrument.getPaymentInstrumentID(), 0);
     assertNotNull(instrument.getCreatedDate());

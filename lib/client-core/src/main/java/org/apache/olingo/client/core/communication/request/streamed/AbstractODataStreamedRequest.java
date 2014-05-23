@@ -91,15 +91,27 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
   public T payloadManager() {
     payloadManager = getPayloadManager();
 
-    ((HttpEntityEnclosingRequestBase) request).setEntity(
-            URIUtils.buildInputStreamEntity(odataClient, payloadManager.getBody()));
+    if (URIUtils.shouldUseRepeatableHttpBodyEntry(odataClient)) {
+      futureWrapper.setWrapped(odataClient.getConfiguration().getExecutor().submit(new Callable<HttpResponse>() {
+        @Override
+        public HttpResponse call() throws Exception {
+          ((HttpEntityEnclosingRequestBase) request).setEntity(
+                  URIUtils.buildInputStreamEntity(odataClient, payloadManager.getBody()));
 
-    futureWrapper.setWrapped(odataClient.getConfiguration().getExecutor().submit(new Callable<HttpResponse>() {
-      @Override
-      public HttpResponse call() throws Exception {
-        return doExecute();
-      }
-    }));
+          return doExecute();
+        }
+      }));
+    } else {
+      ((HttpEntityEnclosingRequestBase) request).setEntity(
+              URIUtils.buildInputStreamEntity(odataClient, payloadManager.getBody()));
+
+      futureWrapper.setWrapped(odataClient.getConfiguration().getExecutor().submit(new Callable<HttpResponse>() {
+        @Override
+        public HttpResponse call() throws Exception {
+          return doExecute();
+        }
+      }));
+    }
 
     // returns the stream manager object
     return (T) payloadManager;

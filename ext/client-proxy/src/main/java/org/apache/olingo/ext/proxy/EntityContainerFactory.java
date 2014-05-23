@@ -37,7 +37,7 @@ public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<
   private static final Map<String, EntityContainerFactory<?>> FACTORY_PER_SERVICEROOT =
           new ConcurrentHashMap<String, EntityContainerFactory<?>>();
 
-  private static final Map<Class<?>, Object> ENTITY_CONTAINERS = new ConcurrentHashMap<Class<?>, Object>();
+  private final Map<Class<?>, Object> ENTITY_CONTAINERS = new ConcurrentHashMap<Class<?>, Object>();
 
   @SuppressWarnings("unchecked")
   private static <C extends CommonEdmEnabledODataClient<?>> EntityContainerFactory<C> getInstance(final C client) {
