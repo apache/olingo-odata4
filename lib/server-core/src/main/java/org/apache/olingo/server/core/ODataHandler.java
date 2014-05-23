@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -32,8 +33,6 @@ import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class ODataHandler {
 
@@ -63,11 +62,16 @@ public class ODataHandler {
       switch (uriInfo.getKind()) {
       case metadata:
         MetadataProcessor mp = selectProcessor(MetadataProcessor.class);
-        mp.readMetadata(request, response, uriInfo, "application/xml");
+        mp.readMetadata(request, response, uriInfo, HttpContentType.APPLICATION_XML);
         break;
       case service:
-        ServiceDocumentProcessor sdp = selectProcessor(ServiceDocumentProcessor.class);
-        sdp.readServiceDocument(request, response, uriInfo, "application/json");
+        if ("".equals(request.getRawODataPath())) {
+          RedirectProcessor rdp = selectProcessor(RedirectProcessor.class);
+          rdp.redirect(request, response);
+        }else{
+          ServiceDocumentProcessor sdp = selectProcessor(ServiceDocumentProcessor.class);
+          sdp.readServiceDocument(request, response, uriInfo, HttpContentType.APPLICATION_JSON);
+        }
         break;
       default:
         throw new ODataRuntimeException("not implemented");
@@ -85,7 +89,7 @@ public class ODataHandler {
     T p = (T) processors.get(cls);
 
     if (p == null) {
-      throw new NotImplementedException();
+      throw new ODataRuntimeException("Not implemented");
     }
 
     return p;

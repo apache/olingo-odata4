@@ -25,12 +25,14 @@ import static org.mockito.Mockito.mock;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.http.HttpContentType;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
-import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Before;
@@ -53,40 +55,53 @@ public class ODataHandlerTest {
     ODataRequest request = new ODataRequest();
 
     request.setMethod(HttpMethod.GET);
-    request.setRawBaseUri("http://localhost/odata/");
-    request.setRawODataPath("");
+    request.setRawBaseUri("http://localhost/odata");
+    request.setRawODataPath("/");
 
     ServiceDocumentProcessor processor = mock(ServiceDocumentProcessor.class);
     handler.register(processor);
-    
+
     ODataResponse response = handler.process(request);
-    
+
     assertNotNull(response);
     assertEquals(0, response.getStatusCode());
   }
-  
+
   @Test
   public void testServiceDocumentDefault() throws Exception {
     ODataRequest request = new ODataRequest();
 
     request.setMethod(HttpMethod.GET);
-    request.setRawBaseUri("http://localhost/odata/");
-    request.setRawODataPath("");
+    request.setRawBaseUri("http://localhost/odata");
+    request.setRawODataPath("/");
 
-    Processor processor = mock(Processor.class);
-    handler.register(processor);
-    
     ODataResponse response = handler.process(request);
-    
+
     assertNotNull(response);
     assertEquals(200, response.getStatusCode());
-    assertEquals("application/json", response.getHeaders().get("Content-Type"));
+    assertEquals(HttpContentType.APPLICATION_JSON, response.getHeaders().get(HttpHeader.CONTENT_TYPE));
 
     assertNotNull(response.getContent());
     String doc = IOUtils.toString(response.getContent());
 
     assertTrue(doc.contains("\"@odata.context\" : \"http://localhost/odata/$metadata\""));
     assertTrue(doc.contains("\"value\" :"));
+  }
+
+  @Test
+  public void testServiceDocumentRedirect() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawBaseUri("http://localhost/odata");
+    request.setRawRequestUri("http://localhost/odata");
+    request.setRawODataPath("");
+
+    ODataResponse response = handler.process(request);
+
+    assertNotNull(response);
+    assertEquals(HttpStatusCode.TEMPORARY_REDIRECT.getStatusCode(), response.getStatusCode());
+    assertEquals("http://localhost/odata/", response.getHeaders().get(HttpHeader.LOCATION));
   }
 
   @Test
@@ -98,9 +113,9 @@ public class ODataHandlerTest {
 
     MetadataProcessor processor = mock(MetadataProcessor.class);
     handler.register(processor);
-    
+
     ODataResponse response = handler.process(request);
-    
+
     assertNotNull(response);
     assertEquals(0, response.getStatusCode());
   }
@@ -112,14 +127,11 @@ public class ODataHandlerTest {
     request.setMethod(HttpMethod.GET);
     request.setRawODataPath("$metadata");
 
-    Processor processor = mock(Processor.class);
-    handler.register(processor);
-
     ODataResponse response = handler.process(request);
 
     assertNotNull(response);
     assertEquals(200, response.getStatusCode());
-    assertEquals("application/xml", response.getHeaders().get("Content-Type"));
+    assertEquals(HttpContentType.APPLICATION_XML, response.getHeaders().get(HttpHeader.CONTENT_TYPE));
 
     assertNotNull(response.getContent());
     String doc = IOUtils.toString(response.getContent());

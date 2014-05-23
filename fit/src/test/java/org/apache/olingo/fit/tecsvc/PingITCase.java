@@ -23,11 +23,14 @@ import static org.junit.Assert.assertEquals;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.Test;
 
 public class PingITCase {
 
-  private static final String REF_SERVICE = "http://localhost:9080/tecsvc/odata.svc/";
+  private static final String REF_SERVICE_REDIRECT = "http://localhost:9080/tecsvc/odata.svc";
+  private static final String REF_SERVICE = REF_SERVICE_REDIRECT + "/";
 
   @Test
   public void ping() throws Exception {
@@ -41,4 +44,17 @@ public class PingITCase {
     assertEquals(200, code);
   }
 
+  @Test
+  public void redirect() throws Exception {
+    URL url = new URL(REF_SERVICE_REDIRECT);
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod("GET");
+    connection.connect();
+
+    int code = connection.getResponseCode();
+
+    assertEquals(HttpStatusCode.TEMPORARY_REDIRECT, code);
+    assertEquals("/", connection.getHeaderField(HttpHeader.LOCATION));
+  }
 }

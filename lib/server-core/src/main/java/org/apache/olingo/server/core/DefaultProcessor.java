@@ -21,6 +21,9 @@ package org.apache.olingo.server.core;
 import java.io.InputStream;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.http.HttpContentType;
+import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -30,8 +33,8 @@ import org.apache.olingo.server.api.serializer.ODataFormat;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.uri.UriInfo;
 
-public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProcessor {
-
+public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProcessor, RedirectProcessor {
+  
   private OData odata;
   private Edm edm;
 
@@ -50,7 +53,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
     responseEntity = serializer.serviceDocument(edm, request.getRawBaseUri());
 
     response.setStatusCode(200);
-    response.setHeader("Content-Type", "application/json");
+    response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.APPLICATION_JSON);
     response.setContent(responseEntity);
 
   }
@@ -63,8 +66,16 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
     serializer = odata.createSerializer(ODataFormat.XML);
     responseEntity = serializer.metadataDocument(edm);
     response.setStatusCode(200);
-    response.setHeader("Content-Type", "application/xml");
+    response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.APPLICATION_XML);
     response.setContent(responseEntity);
+  }
+
+  @Override
+  public void redirect(ODataRequest request, ODataResponse response) {
+    response.setStatusCode(HttpStatusCode.TEMPORARY_REDIRECT.getStatusCode());
+    
+    String location = request.getRawRequestUri() + "/";
+    response.setHeader(HttpHeader.LOCATION, location);
   }
 
 }

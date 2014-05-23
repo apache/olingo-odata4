@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
@@ -46,20 +47,16 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
   private static final Logger LOG = LoggerFactory.getLogger(ODataHttpHandlerImpl.class);
 
-//  private Edm edm;
-//  private OData server;
   private ODataHandler handler;
 
   public ODataHttpHandlerImpl(final OData server, final Edm edm) {
-//    this.edm = edm;
-//    this.server = server;
     handler = new ODataHandler(server, edm);
   }
 
   @Override
   public void process(final HttpServletRequest request, final HttpServletResponse response) {
     ODataRequest odRequest = createODataRequest(request, 0);
-    
+
     ODataResponse odResponse = handler.process(odRequest);
 
     convertToHttp(response, odResponse);
@@ -73,23 +70,25 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
 
     InputStream input = odResponse.getContent();
-    OutputStream output;
-    try {
-      output = response.getOutputStream();
-      byte[] buffer = new byte[1024];
-      int n = 0;
-      while (-1 != (n = input.read(buffer))) {
-        output.write(buffer, 0, n);
-      }
-    } catch (IOException e) {
-      LOG.error(e.getMessage(), e);
-      throw new ODataRuntimeException(e);
-    } finally {
-      if (input != null) {
-        try {
-          input.close();
-        } catch (IOException e) {
-          throw new ODataRuntimeException(e);
+    if (input != null) {
+      OutputStream output;
+      try {
+        output = response.getOutputStream();
+        byte[] buffer = new byte[1024];
+        int n = 0;
+        while (-1 != (n = input.read(buffer))) {
+          output.write(buffer, 0, n);
+        }
+      } catch (IOException e) {
+        LOG.error(e.getMessage(), e);
+        throw new ODataRuntimeException(e);
+      } finally {
+        if (input != null) {
+          try {
+            input.close();
+          } catch (IOException e) {
+            throw new ODataRuntimeException(e);
+          }
         }
       }
     }
@@ -116,8 +115,8 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       HttpMethod httpRequestMethod = HttpMethod.valueOf(httpRequest.getMethod());
 
       if (httpRequestMethod == HttpMethod.POST) {
-        String xHttpMethod = httpRequest.getHeader("X-HTTP-Method");
-        String xHttpMethodOverride = httpRequest.getHeader("X-HTTP-Method-Override");
+        String xHttpMethod = httpRequest.getHeader(HttpHeader.X_HTTP_METHOD); 
+        String xHttpMethodOverride = httpRequest.getHeader(HttpHeader.X_HTTP_METHOD_OVERRIDE);
 
         if (xHttpMethod == null && xHttpMethodOverride == null) {
           odRequest.setMethod(httpRequestMethod);

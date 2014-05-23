@@ -48,10 +48,7 @@ public class TechnicalServlet extends HttpServlet {
     ODataHttpHandler handler = odata.createHandler(edm);
     
     handler.register(new TechnicalProcessor());
-    
-//    handler.registerServiceDocumentProcessor(new TechnicalProcessor());
-//    handler.registerMetadataProcessor(new TechnicalProcessor());    
-    
+       
     handler.process(req, resp);
   }
 
