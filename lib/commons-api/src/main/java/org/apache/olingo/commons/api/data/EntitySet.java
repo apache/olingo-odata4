@@ -49,7 +49,7 @@ public interface EntitySet extends Annotatable {
    *
    * @return ID.
    */
-  String getId();
+  URI getId();
 
   /**
    * Gets entities.

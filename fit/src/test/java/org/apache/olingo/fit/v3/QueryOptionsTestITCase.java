@@ -30,13 +30,11 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.api.uri.v3.URIBuilder.InlineCount;
-import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.core.data.AtomEntityImpl;
 import org.junit.Test;
 
 /**
@@ -178,25 +176,5 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     assertEquals(1, customer.getProperties().size());
     assertEquals(1, customer.getNavigationLinks().size());
     assertTrue((customer.getNavigationLinks().get(0) instanceof ODataInlineEntitySet));
-  }
-
-  @Test
-  public void issue131() {
-    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Customer").appendKeySegment(-7).select("Name");
-
-    ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(ODataPubFormat.ATOM);
-
-    final ODataEntity customer = req.execute().getBody();
-    assertEquals(0, customer.getProperties().size());
-
-    req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(ODataPubFormat.ATOM);
-
-    final Entity atomEntry =
-            client.getDeserializer().toEntity(req.execute().getRawResponse(), ODataPubFormat.ATOM).getPayload();
-    assertEquals("remotingdestructorprinterswitcheschannelssatellitelanguageresolve",
-            ((AtomEntityImpl) atomEntry).getSummary());
   }
 }

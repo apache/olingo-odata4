@@ -35,7 +35,7 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<ResWrap<ServiceDocument>> {
 
-  private String getTitle(final JsonParser jp) throws IOException {
+  private String getName(final JsonParser jp) throws IOException {
     String title = jp.nextTextValue();
     if (title == null) {
       jp.nextToken();
@@ -56,11 +56,9 @@ public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<Res
       final JsonToken token = jp.getCurrentToken();
       if (token == JsonToken.FIELD_NAME) {
         if ("href".equals(jp.getCurrentName())) {
-          element.setHref(jp.nextTextValue());
-        } else if ("name".equals(jp.getCurrentName())) {
-          element.setName(jp.nextTextValue());
+          element.setUrl(jp.nextTextValue());
         } else if ("title".equals(jp.getCurrentName())) {
-          element.setTitle(getTitle(jp));
+          element.setName(getName(jp));
         }
       }
     }
@@ -95,7 +93,7 @@ public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<Res
           jp.nextToken();
           jp.nextToken();
           if ("title".equals(jp.getCurrentName())) {
-            sdoc.setTitle(getTitle(jp));
+            sdoc.setTitle(getName(jp));
           }
         } else if ("collection".equals(jp.getCurrentName())) {
           jp.nextToken();

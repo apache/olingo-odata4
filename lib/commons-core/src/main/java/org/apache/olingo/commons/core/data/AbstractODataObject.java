@@ -18,26 +18,18 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import java.net.URI;
 import java.text.ParseException;
-import java.util.Date;
 
 abstract class AbstractODataObject extends AbstractAnnotatedObject {
 
   private static final long serialVersionUID = -4391162864875546927L;
 
-  private static final ISO8601DateFormat ISO_DATEFORMAT = new ISO8601DateFormat();
-
   private URI baseURI;
 
-  private String id;
+  private URI id;
 
   private String title;
-
-  private String summary;
-
-  private Date updated;
 
   public URI getBaseURI() {
     return baseURI;
@@ -47,11 +39,11 @@ abstract class AbstractODataObject extends AbstractAnnotatedObject {
     this.baseURI = baseURI == null ? null : URI.create(baseURI);
   }
 
-  public String getId() {
+  public URI getId() {
     return id;
   }
 
-  public void setId(final String id) {
+  public void setId(final URI id) {
     this.id = id;
   }
 
@@ -59,23 +51,11 @@ abstract class AbstractODataObject extends AbstractAnnotatedObject {
     return title;
   }
 
-  public String getSummary() {
-    return summary;
-  }
-
-  public Date getUpdated() {
-    return updated;
-  }
-
   public void setCommonProperty(final String key, final String value) throws ParseException {
     if ("id".equals(key)) {
-      this.id = value;
+      this.id = URI.create(value);
     } else if ("title".equals(key)) {
       this.title = value;
-    } else if ("summary".equals(key)) {
-      this.summary = value;
-    } else if ("updated".equals(key)) {
-      this.updated = ISO_DATEFORMAT.parse(value);
     }
   }
 }

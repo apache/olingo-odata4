@@ -224,7 +224,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
     assertEquals("W/\"A1FF3E230954908F\"", entity.getMetadataETag());
     assertEquals("W/\"A1FF3E230954908G\"", entity.getPayload().getETag());
     assertEquals("Model.VipCustomer", entity.getPayload().getType());
-    assertEquals("http://host/service/Employees(PersonID=3)", entity.getPayload().getId());
+    assertEquals("http://host/service/Employees(PersonID=3)", entity.getPayload().getId().toASCIIString());
     assertEquals("People(976)", entity.getPayload().getEditLink().getHref());
     assertEquals("Employees(1)/$value", entity.getPayload().getMediaContentSource().toASCIIString());
     assertEquals("image/jpeg", entity.getPayload().getMediaContentType());

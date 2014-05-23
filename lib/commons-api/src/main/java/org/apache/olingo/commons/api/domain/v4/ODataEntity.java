@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.api.domain.v4;
 
+import java.net.URI;
 import java.util.List;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 
@@ -45,8 +46,8 @@ public interface ODataEntity extends CommonODataEntity, ODataAnnotatable {
    *
    * @return entity reference.
    */
-  String getReference();
+  URI getId();
 
-  void setReference(String reference);
+  void setId(URI id);
 
 }

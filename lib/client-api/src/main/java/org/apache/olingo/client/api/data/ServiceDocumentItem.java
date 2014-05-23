@@ -16,15 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.client.api.data;
 
 public interface ServiceDocumentItem {
 
-  String getHref();
-
   String getName();
 
-  String getTitle();
-    
+  String getUrl();
+
 }

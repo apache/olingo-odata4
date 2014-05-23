@@ -25,6 +25,7 @@
                 xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
                 version="1.0">
 
+  <xsl:template match="atom:summary"/>
   <xsl:template match="atom:updated"/>
   <xsl:template match="atom:author"/>
   <xsl:template match="atom:title">

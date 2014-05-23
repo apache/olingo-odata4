@@ -8,19 +8,16 @@
       "url": "Orders"
     },
     {
-      "name": "OrderItems",
-      "title": "Order Details",
+      "name": "Order Details",
       "url": "OrderItems"
     },
     {
       "name": "TopProducts",
-      "title": "Best-Selling Products",
       "kind": "FunctionImport",
       "url": "TopProducts"
     },
     {
       "name": "Contoso",
-      "title": "Contoso Ltd.",
       "kind": "Singleton",
       "url": "Contoso"
     },

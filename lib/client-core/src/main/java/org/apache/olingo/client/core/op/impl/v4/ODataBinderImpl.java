@@ -105,18 +105,18 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
     for (ServiceDocumentItem functionImport : resource.getFunctionImports()) {
       serviceDocument.getFunctionImports().put(
-              functionImport.getName() == null ? functionImport.getHref() : functionImport.getName(),
-              URIUtils.getURI(resource.getBaseURI(), functionImport.getHref()));
+              functionImport.getName() == null ? functionImport.getUrl() : functionImport.getName(),
+              URIUtils.getURI(resource.getBaseURI(), functionImport.getUrl()));
     }
     for (ServiceDocumentItem singleton : resource.getSingletons()) {
       serviceDocument.getSingletons().put(
-              singleton.getName() == null ? singleton.getHref() : singleton.getName(),
-              URIUtils.getURI(resource.getBaseURI(), singleton.getHref()));
+              singleton.getName() == null ? singleton.getUrl() : singleton.getName(),
+              URIUtils.getURI(resource.getBaseURI(), singleton.getUrl()));
     }
     for (ServiceDocumentItem sdoc : resource.getRelatedServiceDocuments()) {
       serviceDocument.getRelatedServiceDocuments().put(
-              sdoc.getName() == null ? sdoc.getHref() : sdoc.getName(),
-              URIUtils.getURI(resource.getBaseURI(), sdoc.getHref()));
+              sdoc.getName() == null ? sdoc.getUrl() : sdoc.getName(),
+              URIUtils.getURI(resource.getBaseURI(), sdoc.getUrl()));
     }
 
     return serviceDocument;
@@ -175,7 +175,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   @Override
   public Entity getEntity(final CommonODataEntity odataEntity, final Class<? extends Entity> reference) {
     final Entity entity = super.getEntity(odataEntity, reference);
-    entity.setId(((ODataEntity) odataEntity).getReference());
+    entity.setId(((ODataEntity) odataEntity).getId());
     annotations((ODataEntity) odataEntity, entity, reference);
     return entity;
   }
@@ -274,7 +274,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   public ODataEntity getODataEntity(final ResWrap<Entity> resource) {
     final ODataEntity entity = (ODataEntity) super.getODataEntity(resource);
 
-    entity.setReference(resource.getPayload().getId());
+    entity.setId(resource.getPayload().getId());
     odataAnnotations(resource.getPayload(), entity);
 
     return entity;

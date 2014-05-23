@@ -57,14 +57,14 @@ public interface Entity extends Linked, Annotatable {
    *
    * @return entity ID.
    */
-  String getId();
+  URI getId();
 
   /**
    * Sets entity ID.
    *
    * @param id entity ID.
    */
-  void setId(String id);
+  void setId(URI id);
 
   /**
    * Gets entity self link.

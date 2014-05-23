@@ -73,10 +73,7 @@ public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<Re
 
       final ServiceDocumentItemImpl item = new ServiceDocumentItemImpl();
       item.setName(node.get("name").asText());
-      if (node.has("title")) {
-        item.setTitle(node.get("title").asText());
-      }
-      item.setHref(node.get("url").asText());
+      item.setUrl(node.get("url").asText());
 
       final String kind = node.has("kind") ? node.get("kind").asText() : null;
       if (StringUtils.isBlank(kind) || "EntitySet".equals(kind)) {

@@ -176,12 +176,12 @@ public class PropertyTestITCase extends AbstractTestITCase {
   public void createAndDelete() {
     // 1. create
     final ODataEntity category = client.getObjectFactory().newEntity(null);
-    category.setReference(client.newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Categories").appendKeySegment(1).build().toASCIIString());
+    category.setId(client.newURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Categories").appendKeySegment(1).build());
 
     final URIBuilder createBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Products").appendKeySegment(0).appendNavigationSegment("Categories").
-            appendRefSegment();    
+            appendRefSegment();
     final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().
             getEntityCreateRequest(createBuilder.build(), category);
 

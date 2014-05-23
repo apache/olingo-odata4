@@ -205,13 +205,6 @@ public class AtomSerializer extends AbstractAtomDealer {
       writer.writeCharacters(object.getTitle());
       writer.writeEndElement();
     }
-
-    if (StringUtils.isNotBlank(object.getSummary())) {
-      writer.writeStartElement(Constants.ATOM_ELEM_SUMMARY);
-      writer.writeAttribute(Constants.ATTR_TYPE, "text");
-      writer.writeCharacters(object.getSummary());
-      writer.writeEndElement();
-    }
   }
 
   private void properties(final XMLStreamWriter writer, final List<Property> properties) throws XMLStreamException {
@@ -261,9 +254,9 @@ public class AtomSerializer extends AbstractAtomDealer {
               Constants.ATOM_ATTR_ETAG, entity.getETag());
     }
 
-    if (StringUtils.isNotBlank(entity.getId())) {
+    if (entity.getId() != null) {
       writer.writeStartElement(Constants.ATOM_ELEM_ID);
-      writer.writeCharacters(entity.getId());
+      writer.writeCharacters(entity.getId().toASCIIString());
       writer.writeEndElement();
     }
 
@@ -332,14 +325,14 @@ public class AtomSerializer extends AbstractAtomDealer {
   private void entityRef(final XMLStreamWriter writer, final Entity entity) throws XMLStreamException {
     writer.writeStartElement(Constants.ATOM_ELEM_ENTRY_REF);
     writer.writeNamespace(StringUtils.EMPTY, version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
-    writer.writeAttribute(Constants.ATOM_ATTR_ID, entity.getId());
+    writer.writeAttribute(Constants.ATOM_ATTR_ID, entity.getId().toASCIIString());
   }
 
   private void entityRef(final XMLStreamWriter writer, final ResWrap<Entity> container) throws XMLStreamException {
     writer.writeStartElement(Constants.ATOM_ELEM_ENTRY_REF);
     writer.writeNamespace(StringUtils.EMPTY, version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
     addContextInfo(writer, container);
-    writer.writeAttribute(Constants.ATOM_ATTR_ID, container.getPayload().getId());
+    writer.writeAttribute(Constants.ATOM_ATTR_ID, container.getPayload().getId().toASCIIString());
   }
 
   private void entity(final Writer outWriter, final Entity entity) throws XMLStreamException {
@@ -396,9 +389,9 @@ public class AtomSerializer extends AbstractAtomDealer {
       writer.writeEndElement();
     }
 
-    if (StringUtils.isNotBlank(entitySet.getId())) {
+    if (entitySet.getId() != null) {
       writer.writeStartElement(Constants.ATOM_ELEM_ID);
-      writer.writeCharacters(entitySet.getId());
+      writer.writeCharacters(entitySet.getId().toASCIIString());
       writer.writeEndElement();
     }
 

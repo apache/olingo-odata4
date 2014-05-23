@@ -18,5 +18,5 @@
  */
 package org.apache.olingo.commons.api.domain.v4;
 
-public interface Singleton extends ODataEntity {
+public interface ODataSingleton extends ODataEntity {
 }

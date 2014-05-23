@@ -27,7 +27,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataProperty
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.Singleton;
+import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
 
 @SuppressWarnings("unchecked")
 public interface RetrieveRequestFactory extends CommonRetrieveRequestFactory {
@@ -38,7 +38,7 @@ public interface RetrieveRequestFactory extends CommonRetrieveRequestFactory {
   @Override
   ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> getEntitySetIteratorRequest(URI uri);
 
-  ODataEntityRequest<Singleton> getSingletonRequest(URI uri);
+  ODataEntityRequest<ODataSingleton> getSingletonRequest(URI uri);
 
   @Override
   ODataEntityRequest<ODataEntity> getEntityRequest(URI uri);

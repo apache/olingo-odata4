@@ -98,10 +98,8 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     final ODataServiceDocument serviceDocument = new ODataServiceDocument();
 
     for (ServiceDocumentItem entitySet : resource.getEntitySets()) {
-      // handles V3 JSON format oddities, where title is not contained
-      serviceDocument.getEntitySets().put(StringUtils.isBlank(entitySet.getTitle())
-              ? entitySet.getName() : entitySet.getTitle(),
-              URIUtils.getURI(resource.getBaseURI(), entitySet.getHref()));
+      serviceDocument.getEntitySets().
+              put(entitySet.getName(), URIUtils.getURI(resource.getBaseURI(), entitySet.getUrl()));
     }
 
     return serviceDocument;

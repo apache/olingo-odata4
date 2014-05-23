@@ -18,23 +18,24 @@
  */
 package org.apache.olingo.commons.core.domain.v4;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.Singleton;
+import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.domain.AbstractODataEntity;
 
-public class ODataEntityImpl extends AbstractODataEntity implements ODataEntity, Singleton {
+public class ODataEntityImpl extends AbstractODataEntity implements ODataEntity, ODataSingleton {
 
   private static final long serialVersionUID = -3997704808753685990L;
 
   /**
-   * Entity reference.
+   * Entity id.
    */
-  private String reference;
+  private URI id;
 
   private final List<ODataProperty> properties = new ArrayList<ODataProperty>();
 
@@ -45,13 +46,13 @@ public class ODataEntityImpl extends AbstractODataEntity implements ODataEntity,
   }
 
   @Override
-  public String getReference() {
-    return reference;
+  public URI getId() {
+    return id;
   }
 
   @Override
-  public void setReference(final String reference) {
-    this.reference = reference;
+  public void setId(final URI id) {
+    this.id = id;
   }
 
   @Override

@@ -25,7 +25,6 @@ import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 import java.net.URI;
-
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
@@ -213,12 +212,12 @@ public class ConformanceTestITCase extends AbstractTestITCase {
             new FullQualifiedName("Microsoft.Test.OData.Services.OpenTypesServiceV4.RowIndex"));
     getClient().getBinder().add(rowIndex,
             getClient().getObjectFactory().newPrimitiveProperty("Id",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
+                    getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
 
     // add property not in metadata
     getClient().getBinder().add(rowIndex,
             getClient().getObjectFactory().newPrimitiveProperty("aString",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("string")));
+                    getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("string")));
 
     // add navigation property not in metadata
     rowIndex.addLink(client.getObjectFactory().newEntityNavigationLink(
@@ -226,14 +225,13 @@ public class ConformanceTestITCase extends AbstractTestITCase {
 
     final ODataEntityCreateRequest<ODataEntity> createReq = getClient().getCUDRequestFactory().
             getEntityCreateRequest(getClient().newURIBuilder(testOpenTypeServiceRootURL).
-            appendEntitySetSegment("RowIndex").build(), rowIndex);
+                    appendEntitySetSegment("RowIndex").build(), rowIndex);
 
     final ODataEntityCreateResponse<ODataEntity> createRes = createReq.execute();
     assertEquals(201, createRes.getStatusCode());
 
     final URIBuilder builder = getClient().newURIBuilder(testOpenTypeServiceRootURL).
             appendEntitySetSegment("RowIndex").appendKeySegment(id);
-
 
     rowIndex = read(ODataPubFormat.JSON_FULL_METADATA, builder.build());
     assertNotNull(rowIndex);
@@ -310,10 +308,10 @@ public class ConformanceTestITCase extends AbstractTestITCase {
 
     final ODataEntity entity = res.getBody();
     assertNotNull(entity);
-    assertTrue(entity.getReference().endsWith("/StaticService/V40/Static.svc/Customers(PersonID=1)"));
+    assertTrue(entity.getId().toASCIIString().endsWith("/StaticService/V40/Static.svc/Customers(PersonID=1)"));
 
-    final URI referenceURI =
-            client.newURIBuilder(testStaticServiceRootURL).appendEntityIdSegment(entity.getReference()).build();
+    final URI referenceURI = client.newURIBuilder(testStaticServiceRootURL).
+            appendEntityIdSegment(entity.getId().toASCIIString()).build();
 
     req = client.getRetrieveRequestFactory().getEntityRequest(referenceURI);
     req.setFormat(ODataPubFormat.JSON_FULL_METADATA);

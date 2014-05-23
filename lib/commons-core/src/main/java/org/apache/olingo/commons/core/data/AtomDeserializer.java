@@ -567,7 +567,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
 
     final Attribute entityRefId = start.getAttributeByName(Constants.QNAME_ATOM_ATTR_ID);
     if (entityRefId != null) {
-      entity.setId(entityRefId.getValue());
+      entity.setId(URI.create(entityRefId.getValue()));
     }
 
     return entity;

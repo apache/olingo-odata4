@@ -96,7 +96,7 @@ public class JSONEntityDeserializer extends AbstractJsonDeserializer<JSONEntityI
     }
 
     if (tree.hasNonNull(jsonId)) {
-      entity.setId(tree.get(jsonId).textValue());
+      entity.setId(URI.create(tree.get(jsonId).textValue()));
       tree.remove(jsonId);
     }
 

@@ -301,7 +301,7 @@ class EntitySetInvocationHandler<
     final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
 
     if (isSingleton) {
-      final ODataRetrieveResponse<org.apache.olingo.commons.api.domain.v4.Singleton> res =
+      final ODataRetrieveResponse<org.apache.olingo.commons.api.domain.v4.ODataSingleton> res =
               ((ODataClient) getClient()).getRetrieveRequestFactory().getSingletonRequest(uri).execute();
 
       entities.add(res.getBody());
