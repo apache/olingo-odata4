@@ -56,7 +56,7 @@ import org.junit.Test;
  */
 public class EntityCreateTestITCase extends AbstractTestITCase {
 
-  public EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
+  protected EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
     return containerFactory;
   }
 
@@ -66,7 +66,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void createAndDelete() {
-    createAndDeleteOrder(getContainer());
+    createAndDeleteOrder(getContainer(), getContainerFactory());
   }
 
   @Test
@@ -137,7 +137,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     getContainer().flush();
 
-    Customer actual = readCustomer(container, id);
+    Customer actual = readCustomer(getContainer(), id);
     assertEquals(homeAddress.getCity(), actual.getHomeAddress().getCity());
     assertEquals(1, actual.getOrders().size());
     assertEquals(8, actual.getOrders().iterator().next().getOrderID(), 0);
@@ -201,7 +201,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     assertEquals(id, order.getOrderID());
     assertEquals(id, customer.getPersonID());
 
-    Customer actual = readCustomer(container, id);
+    Customer actual = readCustomer(getContainer(), id);
     assertEquals(homeAddress.getCity(), actual.getHomeAddress().getCity());
     assertEquals(1, actual.getOrders().size());
     assertEquals(id, actual.getOrders().iterator().next().getOrderID());
@@ -216,7 +216,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     order = getContainer().getOrders().get(id);
     assertNull(order);
 
-    actual = readCustomer(container, id);
+    actual = readCustomer(getContainer(), id);
     assertTrue(actual.getOrders().isEmpty());
 
     getContainer().getCustomers().delete(actual.getPersonID());

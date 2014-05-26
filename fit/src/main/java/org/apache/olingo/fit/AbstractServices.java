@@ -199,6 +199,7 @@ public abstract class AbstractServices {
   @Consumes(ContentType.MULTIPART_MIXED)
   @Produces(ContentType.APPLICATION_OCTET_STREAM + ";boundary=" + BOUNDARY)
   public Response batch(
+          @HeaderParam("Authorization") @DefaultValue(StringUtils.EMPTY) String authorization,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           final @Multipart MultipartBody attachment) {
     try {
@@ -294,7 +295,7 @@ public abstract class AbstractServices {
     if (url == null) {
       res = null;
     } else {
-      final WebClient client = WebClient.create(url);
+      final WebClient client = WebClient.create(url, "odatajclient", "odatajclient", null);
       client.headers(headers);
 
       if ("DELETE".equals(method)) {

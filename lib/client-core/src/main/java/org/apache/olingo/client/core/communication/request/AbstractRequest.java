@@ -16,6 +16,8 @@
 package org.apache.olingo.client.core.communication.request;
 
 import java.io.IOException;
+import java.io.InputStream;
+import org.apache.http.Header;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,6 +26,7 @@ import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
+import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.core.data.JSONODataErrorImpl;
@@ -57,12 +60,12 @@ public abstract class AbstractRequest {
     // If using and Edm enabled client, checks that the cached service root matches the request URI
     if (odataClient instanceof CommonEdmEnabledODataClient
             && !request.getURI().toASCIIString().startsWith(
-                    ((CommonEdmEnabledODataClient) odataClient).getServiceRoot())) {
+            ((CommonEdmEnabledODataClient) odataClient).getServiceRoot())) {
 
       throw new IllegalArgumentException(
               String.format("The current request URI %s does not match the configured service root %s",
-                      request.getURI().toASCIIString(),
-                      ((CommonEdmEnabledODataClient) odataClient).getServiceRoot()));
+              request.getURI().toASCIIString(),
+              ((CommonEdmEnabledODataClient) odataClient).getServiceRoot()));
     }
   }
 
@@ -75,7 +78,18 @@ public abstract class AbstractRequest {
         if (httpEntity == null) {
           throw new ODataClientErrorException(response.getStatusLine());
         } else {
-          final boolean isXML = !accept.contains("json");
+          boolean isXML;
+          if (!accept.contains("json") && !accept.contains("xml")) {
+            isXML = true;
+            for (Header header : response.getHeaders(HeaderName.contentType.toString())) {
+              if (header.getValue() != null && header.getValue().contains("json")) {
+                isXML = false;
+              }
+            }
+          } else {
+            isXML = !accept.contains("json");
+          }
+
           ODataError error;
           try {
             error = odataClient.getReader().readError(httpEntity.getContent(), isXML);

@@ -23,6 +23,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import static org.apache.olingo.fit.proxy.v4.AbstractTestITCase.testAuthServiceRootURL;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 
 public class AuthEntityCreateTestITCase extends EntityCreateTestITCase {
@@ -32,7 +33,7 @@ public class AuthEntityCreateTestITCase extends EntityCreateTestITCase {
   private InMemoryEntities ime;
 
   @Override
-  public EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
+  protected EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
     if (ecf == null) {
       ecf = EntityContainerFactory.getV4(testAuthServiceRootURL);
       ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
@@ -49,4 +50,5 @@ public class AuthEntityCreateTestITCase extends EntityCreateTestITCase {
     }
     return ime;
   }
+  
 }

@@ -29,9 +29,7 @@ public class AuthEntityRetrieveTestITCase extends EntityRetrieveTestITCase {
 
   @Override
   protected InMemoryEntities getContainer() {
-    final EntityContainerFactory<EdmEnabledODataClient> ecf =
-            EntityContainerFactory.getV4(testAuthServiceRootURL);
-    ecf.getClient().getConfiguration().setKeyAsSegment(true);
+    final EntityContainerFactory<EdmEnabledODataClient> ecf = EntityContainerFactory.getV4(testAuthServiceRootURL);
     ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     ecf.getClient().getConfiguration().
             setHttpClientFactory(new BasicAuthHttpClientFactory("odatajclient", "odatajclient"));

@@ -373,7 +373,7 @@ public final class URIUtils {
     return value;
   }
 
-  private static boolean shouldUseRepeatableHttpBodyEntry(final CommonODataClient<?> client) {
+  public static boolean shouldUseRepeatableHttpBodyEntry(final CommonODataClient<?> client) {
     // returns true for authentication request in case of http401 which needs retry so requires being repeatable.
     HttpClientFactory httpclientFactory = client.getConfiguration().getHttpClientFactory();
     if (httpclientFactory instanceof BasicAuthHttpClientFactory) {
@@ -391,24 +391,13 @@ public final class URIUtils {
   public static HttpEntity buildInputStreamEntity(final CommonODataClient<?> client, final InputStream input) {
     HttpEntity entity;
 
-    // --------------------------
-    // Check just required by batch requests since their ansynchronous entity specification mechanism
-    // --------------------------
-    boolean contentAvailable;
-    try {
-      contentAvailable = input.available() > 0;
-    } catch (IOException ex) {
-      contentAvailable = false;
-    }
-    // --------------------------
-
-    boolean repeatableRequired = shouldUseRepeatableHttpBodyEntry(client);
-    if (!contentAvailable || !repeatableRequired) {
+    if (!shouldUseRepeatableHttpBodyEntry(client)) {
       entity = new InputStreamEntity(input, -1);
     } else {
       byte[] bytes = new byte[0];
       try {
         bytes = IOUtils.toByteArray(input);
+        IOUtils.closeQuietly(input);
       } catch (IOException e) {
         LOG.error("While reading input for not chunked encoding", e);
       }
