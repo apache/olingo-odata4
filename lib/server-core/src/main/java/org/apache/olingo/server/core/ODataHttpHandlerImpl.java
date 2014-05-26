@@ -49,8 +49,8 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
   private ODataHandler handler;
 
-  public ODataHttpHandlerImpl(final OData server, final Edm edm) {
-    handler = new ODataHandler(server, edm);
+  public ODataHttpHandlerImpl(final OData odata, final Edm edm) {
+    handler = new ODataHandler(odata, edm);
   }
 
   @Override

@@ -27,7 +27,6 @@ import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class BasicITCase {
@@ -50,7 +49,6 @@ public class BasicITCase {
   }
 
   @Test
-  @Ignore
   public void readMetadata() {
     EdmMetadataRequest request = odata.getRetrieveRequestFactory().getMetadataRequest(BASE_URI + "/$metadata");
     assertNotNull(request);
