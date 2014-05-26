@@ -53,11 +53,23 @@ public class EdmBinary extends SingletonPrimitiveType {
   }
 
   private static boolean validateMaxLength(final String value, final Integer maxLength) {
-    return maxLength == null ? true
-           : // Every three bytes are represented as four base-64 characters.
-            // Additionally, there could be up to two padding "=" characters
-            // if the number of bytes is not a multiple of three.
-            maxLength >= value.length() * 3 / 4 - (value.endsWith("==") ? 2 : value.endsWith("=") ? 1 : 0);
+    return maxLength == null ? true :
+        // Every three bytes are represented as four base-64 characters.
+        // Additionally, there could be up to two padding "=" characters
+        // if the number of bytes is not a multiple of three,
+        // and there could be line feeds, possibly with carriage returns.
+        maxLength >= (value.length() - lineEndingsLength(value)) * 3 / 4
+            - (value.endsWith("==") ? 2 : value.endsWith("=") ? 1 : 0);
+  }
+
+  private static int lineEndingsLength(final String value) {
+    int result = 0;
+    int index = 0;
+    while ((index = value.indexOf('\n', index)) >= 0) {
+      result += index > 0 && value.charAt(index - 1) == '\r' ? 2 : 1;
+      index++;
+    }
+    return result;
   }
 
   @Override
