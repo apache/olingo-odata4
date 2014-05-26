@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -32,6 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -45,17 +48,10 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityType(name = "PublicCompany",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "PublicCompany",
         openType = true,
         hasStream = false,
         isAbstract = false,
@@ -65,7 +61,7 @@ public interface PublicCompany
 
     
     @Key
-    @Property(name = "CompanyID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CompanyID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -83,12 +79,12 @@ public interface PublicCompany
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getCompanyID();
+    java.lang.Integer getCompanyID();
 
-    void setCompanyID(Integer _companyID);    
+    void setCompanyID(java.lang.Integer _companyID);    
     
     
-    @Property(name = "CompanyCategory", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CompanyCategory", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.CompanyCategory", 
                 nullable = true,
                 defaultValue = "",
@@ -111,7 +107,7 @@ public interface PublicCompany
     void setCompanyCategory(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory _companyCategory);    
     
     
-    @Property(name = "Revenue", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Revenue", 
                 type = "Edm.Int64", 
                 nullable = false,
                 defaultValue = "",
@@ -129,12 +125,12 @@ public interface PublicCompany
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Long getRevenue();
+    java.lang.Long getRevenue();
 
-    void setRevenue(Long _revenue);    
+    void setRevenue(java.lang.Long _revenue);    
     
     
-    @Property(name = "Name", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Name", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -152,12 +148,12 @@ public interface PublicCompany
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getName();
+    java.lang.String getName();
 
-    void setName(String _name);    
+    void setName(java.lang.String _name);    
     
     
-    @Property(name = "Address", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Address", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Address", 
                 nullable = true,
                 defaultValue = "",
@@ -180,7 +176,7 @@ public interface PublicCompany
     void setAddress(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _address);    
         
     
-    @Property(name = "StockExchange", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "StockExchange", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -198,13 +194,13 @@ public interface PublicCompany
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getStockExchange();
+    java.lang.String getStockExchange();
 
-    void setStockExchange(String _stockExchange);    
+    void setStockExchange(java.lang.String _stockExchange);    
     
     
 
-    @NavigationProperty(name = "Employees", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Employees", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Employee", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -214,7 +210,7 @@ public interface PublicCompany
 
     void setEmployees(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.EmployeeCollection _employees);
     
-    @NavigationProperty(name = "VipCustomer", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "VipCustomer", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Customer", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -224,7 +220,7 @@ public interface PublicCompany
 
     void setVipCustomer(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer _vipCustomer);
     
-    @NavigationProperty(name = "Departments", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Departments", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Department", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -234,7 +230,7 @@ public interface PublicCompany
 
     void setDepartments(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.DepartmentCollection _departments);
     
-    @NavigationProperty(name = "CoreDepartment", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "CoreDepartment", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Department", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -244,17 +240,8 @@ public interface PublicCompany
 
     void setCoreDepartment(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Department _coreDepartment);
     
-    @NavigationProperty(name = "Assets", 
-                type = "Microsoft.Test.OData.Services.ODataWCFService.Asset", 
-                targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
-                targetContainer = "", 
-                targetEntitySet = "",
-                containsTarget = true)
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.Assets getAssets();
-
-    void setAssets(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.Assets _assets);
-    
-    @NavigationProperty(name = "Club", 
+        
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Club", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Club", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "", 
@@ -264,7 +251,7 @@ public interface PublicCompany
 
     void setClub(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Club _club);
     
-    @NavigationProperty(name = "LabourUnion", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "LabourUnion", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.LabourUnion", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -282,73 +269,90 @@ public interface PublicCompany
     
         }
 
-        @Override
-        ComplexFactory factory();
+    ComplexFactory factory();
 
     interface ComplexFactory            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company.ComplexFactory{
-             @Property(name = "Address",
+         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Address",
                    type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
          org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newAddress();
 
-        }
+    }
 
-        @Override
-        Annotations annotations();
+    Annotations annotations();
 
     interface Annotations            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company.Annotations{
 
-            @AnnotationsForProperty(name = "CompanyID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "CompanyID",
                    type = "Edm.Int32")
         Annotatable getCompanyIDAnnotations();
 
-            @AnnotationsForProperty(name = "CompanyCategory",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "CompanyCategory",
                    type = "Microsoft.Test.OData.Services.ODataWCFService.CompanyCategory")
         Annotatable getCompanyCategoryAnnotations();
 
-            @AnnotationsForProperty(name = "Revenue",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Revenue",
                    type = "Edm.Int64")
         Annotatable getRevenueAnnotations();
 
-            @AnnotationsForProperty(name = "Name",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Name",
                    type = "Edm.String")
         Annotatable getNameAnnotations();
 
-            @AnnotationsForProperty(name = "Address",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Address",
                    type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
         Annotatable getAddressAnnotations();
 
-            @AnnotationsForProperty(name = "StockExchange",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "StockExchange",
                    type = "Edm.String")
         Annotatable getStockExchangeAnnotations();
 
-    
-    
-        @AnnotationsForNavigationProperty(name = "Employees", 
+
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Employees", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.Employee")
         Annotatable getEmployeesAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "VipCustomer", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "VipCustomer", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.Customer")
         Annotatable getVipCustomerAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "Departments", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Departments", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.Department")
         Annotatable getDepartmentsAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "CoreDepartment", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "CoreDepartment", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.Department")
         Annotatable getCoreDepartmentAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "Assets", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Assets", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.Asset")
         Annotatable getAssetsAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "Club", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Club", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.Club")
         Annotatable getClubAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "LabourUnion", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "LabourUnion", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.LabourUnion")
         Annotatable getLabourUnionAnnotations();
+    }
+
+      @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Assets", 
+                type = "Microsoft.Test.OData.Services.ODataWCFService.LabourUnion", 
+                targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
+                targetContainer = "InMemoryEntities", 
+                targetEntitySet = "LabourUnion",
+                containsTarget = true)
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PublicCompany.Assets getAssets();
+    void setAssets(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PublicCompany.Assets _assets);
+
+            
+    @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Assets", contained = true)
+    interface Assets 
+      extends AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Asset, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AssetCollection> {
+
+            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Asset newAsset();
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AssetCollection newAssetCollection();
         }
-}
+
+  }

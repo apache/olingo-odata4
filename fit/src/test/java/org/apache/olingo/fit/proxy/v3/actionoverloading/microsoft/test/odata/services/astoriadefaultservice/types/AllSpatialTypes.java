@@ -20,16 +20,21 @@
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
@@ -43,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@EntityType(name = "AllSpatialTypes",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "AllSpatialTypes",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface AllSpatialTypes 
-  extends Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "Id", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Id", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -80,12 +78,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getId();
+    java.lang.Integer getId();
 
-    void setId(final Integer _id);    
+    void setId(java.lang.Integer _id);    
     
     
-    @Property(name = "Geog", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Geog", 
                 type = "Edm.Geography", 
                 nullable = true,
                 defaultValue = "",
@@ -103,12 +101,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Geospatial getGeog();
+    org.apache.olingo.commons.api.edm.geo.Geospatial getGeog();
 
-    void setGeog(final Geospatial _geog);    
+    void setGeog(org.apache.olingo.commons.api.edm.geo.Geospatial _geog);    
     
     
-    @Property(name = "GeogPoint", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GeogPoint", 
                 type = "Edm.GeographyPoint", 
                 nullable = true,
                 defaultValue = "",
@@ -126,12 +124,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Point getGeogPoint();
+    org.apache.olingo.commons.api.edm.geo.Point getGeogPoint();
 
-    void setGeogPoint(final Point _geogPoint);    
+    void setGeogPoint(org.apache.olingo.commons.api.edm.geo.Point _geogPoint);    
     
     
-    @Property(name = "GeogLine", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GeogLine", 
                 type = "Edm.GeographyLineString", 
                 nullable = true,
                 defaultValue = "",
@@ -149,12 +147,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    LineString getGeogLine();
+    org.apache.olingo.commons.api.edm.geo.LineString getGeogLine();
 
-    void setGeogLine(final LineString _geogLine);    
+    void setGeogLine(org.apache.olingo.commons.api.edm.geo.LineString _geogLine);    
     
     
-    @Property(name = "GeogPolygon", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GeogPolygon", 
                 type = "Edm.GeographyPolygon", 
                 nullable = true,
                 defaultValue = "",
@@ -172,12 +170,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Polygon getGeogPolygon();
+    org.apache.olingo.commons.api.edm.geo.Polygon getGeogPolygon();
 
-    void setGeogPolygon(final Polygon _geogPolygon);    
+    void setGeogPolygon(org.apache.olingo.commons.api.edm.geo.Polygon _geogPolygon);    
     
     
-    @Property(name = "GeogCollection", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GeogCollection", 
                 type = "Edm.GeographyCollection", 
                 nullable = true,
                 defaultValue = "",
@@ -195,12 +193,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    GeospatialCollection getGeogCollection();
+    org.apache.olingo.commons.api.edm.geo.GeospatialCollection getGeogCollection();
 
-    void setGeogCollection(final GeospatialCollection _geogCollection);    
+    void setGeogCollection(org.apache.olingo.commons.api.edm.geo.GeospatialCollection _geogCollection);    
     
     
-    @Property(name = "GeogMultiPoint", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GeogMultiPoint", 
                 type = "Edm.GeographyMultiPoint", 
                 nullable = true,
                 defaultValue = "",
@@ -218,12 +216,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    MultiPoint getGeogMultiPoint();
+    org.apache.olingo.commons.api.edm.geo.MultiPoint getGeogMultiPoint();
 
-    void setGeogMultiPoint(final MultiPoint _geogMultiPoint);    
+    void setGeogMultiPoint(org.apache.olingo.commons.api.edm.geo.MultiPoint _geogMultiPoint);    
     
     
-    @Property(name = "GeogMultiLine", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GeogMultiLine", 
                 type = "Edm.GeographyMultiLineString", 
                 nullable = true,
                 defaultValue = "",
@@ -241,12 +239,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    MultiLineString getGeogMultiLine();
+    org.apache.olingo.commons.api.edm.geo.MultiLineString getGeogMultiLine();
 
-    void setGeogMultiLine(final MultiLineString _geogMultiLine);    
+    void setGeogMultiLine(org.apache.olingo.commons.api.edm.geo.MultiLineString _geogMultiLine);    
     
     
-    @Property(name = "GeogMultiPolygon", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GeogMultiPolygon", 
                 type = "Edm.GeographyMultiPolygon", 
                 nullable = true,
                 defaultValue = "",
@@ -264,12 +262,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    MultiPolygon getGeogMultiPolygon();
+    org.apache.olingo.commons.api.edm.geo.MultiPolygon getGeogMultiPolygon();
 
-    void setGeogMultiPolygon(final MultiPolygon _geogMultiPolygon);    
+    void setGeogMultiPolygon(org.apache.olingo.commons.api.edm.geo.MultiPolygon _geogMultiPolygon);    
     
     
-    @Property(name = "Geom", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Geom", 
                 type = "Edm.Geometry", 
                 nullable = true,
                 defaultValue = "",
@@ -287,12 +285,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Geospatial getGeom();
+    org.apache.olingo.commons.api.edm.geo.Geospatial getGeom();
 
-    void setGeom(final Geospatial _geom);    
+    void setGeom(org.apache.olingo.commons.api.edm.geo.Geospatial _geom);    
     
     
-    @Property(name = "GeomPoint", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GeomPoint", 
                 type = "Edm.GeometryPoint", 
                 nullable = true,
                 defaultValue = "",
@@ -310,12 +308,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Point getGeomPoint();
+    org.apache.olingo.commons.api.edm.geo.Point getGeomPoint();
 
-    void setGeomPoint(final Point _geomPoint);    
+    void setGeomPoint(org.apache.olingo.commons.api.edm.geo.Point _geomPoint);    
     
     
-    @Property(name = "GeomLine", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GeomLine", 
                 type = "Edm.GeometryLineString", 
                 nullable = true,
                 defaultValue = "",
@@ -333,12 +331,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    LineString getGeomLine();
+    org.apache.olingo.commons.api.edm.geo.LineString getGeomLine();
 
-    void setGeomLine(final LineString _geomLine);    
+    void setGeomLine(org.apache.olingo.commons.api.edm.geo.LineString _geomLine);    
     
     
-    @Property(name = "GeomPolygon", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GeomPolygon", 
                 type = "Edm.GeometryPolygon", 
                 nullable = true,
                 defaultValue = "",
@@ -356,12 +354,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Polygon getGeomPolygon();
+    org.apache.olingo.commons.api.edm.geo.Polygon getGeomPolygon();
 
-    void setGeomPolygon(final Polygon _geomPolygon);    
+    void setGeomPolygon(org.apache.olingo.commons.api.edm.geo.Polygon _geomPolygon);    
     
     
-    @Property(name = "GeomCollection", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GeomCollection", 
                 type = "Edm.GeometryCollection", 
                 nullable = true,
                 defaultValue = "",
@@ -379,12 +377,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    GeospatialCollection getGeomCollection();
+    org.apache.olingo.commons.api.edm.geo.GeospatialCollection getGeomCollection();
 
-    void setGeomCollection(final GeospatialCollection _geomCollection);    
+    void setGeomCollection(org.apache.olingo.commons.api.edm.geo.GeospatialCollection _geomCollection);    
     
     
-    @Property(name = "GeomMultiPoint", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GeomMultiPoint", 
                 type = "Edm.GeometryMultiPoint", 
                 nullable = true,
                 defaultValue = "",
@@ -402,12 +400,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    MultiPoint getGeomMultiPoint();
+    org.apache.olingo.commons.api.edm.geo.MultiPoint getGeomMultiPoint();
 
-    void setGeomMultiPoint(final MultiPoint _geomMultiPoint);    
+    void setGeomMultiPoint(org.apache.olingo.commons.api.edm.geo.MultiPoint _geomMultiPoint);    
     
     
-    @Property(name = "GeomMultiLine", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GeomMultiLine", 
                 type = "Edm.GeometryMultiLineString", 
                 nullable = true,
                 defaultValue = "",
@@ -425,12 +423,12 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    MultiLineString getGeomMultiLine();
+    org.apache.olingo.commons.api.edm.geo.MultiLineString getGeomMultiLine();
 
-    void setGeomMultiLine(final MultiLineString _geomMultiLine);    
+    void setGeomMultiLine(org.apache.olingo.commons.api.edm.geo.MultiLineString _geomMultiLine);    
     
     
-    @Property(name = "GeomMultiPolygon", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GeomMultiPolygon", 
                 type = "Edm.GeometryMultiPolygon", 
                 nullable = true,
                 defaultValue = "",
@@ -448,12 +446,92 @@ public interface AllSpatialTypes
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    MultiPolygon getGeomMultiPolygon();
+    org.apache.olingo.commons.api.edm.geo.MultiPolygon getGeomMultiPolygon();
 
-    void setGeomMultiPolygon(final MultiPolygon _geomMultiPolygon);    
+    void setGeomMultiPolygon(org.apache.olingo.commons.api.edm.geo.MultiPolygon _geomMultiPolygon);    
     
     
 
 
+
+    ComplexFactory factory();
+
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
+
+    interface Annotations {
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Id",
+                   type = "Edm.Int32")
+        Annotatable getIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Geog",
+                   type = "Edm.Geography")
+        Annotatable getGeogAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GeogPoint",
+                   type = "Edm.GeographyPoint")
+        Annotatable getGeogPointAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GeogLine",
+                   type = "Edm.GeographyLineString")
+        Annotatable getGeogLineAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GeogPolygon",
+                   type = "Edm.GeographyPolygon")
+        Annotatable getGeogPolygonAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GeogCollection",
+                   type = "Edm.GeographyCollection")
+        Annotatable getGeogCollectionAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GeogMultiPoint",
+                   type = "Edm.GeographyMultiPoint")
+        Annotatable getGeogMultiPointAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GeogMultiLine",
+                   type = "Edm.GeographyMultiLineString")
+        Annotatable getGeogMultiLineAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GeogMultiPolygon",
+                   type = "Edm.GeographyMultiPolygon")
+        Annotatable getGeogMultiPolygonAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Geom",
+                   type = "Edm.Geometry")
+        Annotatable getGeomAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GeomPoint",
+                   type = "Edm.GeometryPoint")
+        Annotatable getGeomPointAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GeomLine",
+                   type = "Edm.GeometryLineString")
+        Annotatable getGeomLineAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GeomPolygon",
+                   type = "Edm.GeometryPolygon")
+        Annotatable getGeomPolygonAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GeomCollection",
+                   type = "Edm.GeometryCollection")
+        Annotatable getGeomCollectionAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GeomMultiPoint",
+                   type = "Edm.GeometryMultiPoint")
+        Annotatable getGeomMultiPointAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GeomMultiLine",
+                   type = "Edm.GeometryMultiLineString")
+        Annotatable getGeomMultiLineAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GeomMultiPolygon",
+                   type = "Edm.GeometryMultiPolygon")
+        Annotatable getGeomMultiPolygonAnnotations();
+
+
+    }
 
 }

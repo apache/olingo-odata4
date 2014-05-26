@@ -20,8 +20,6 @@
 package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3;
 
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
@@ -46,16 +44,14 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-@Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV3")
-@EntityContainer(name = "DefaultContainer",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV3")
+@org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "DefaultContainer",
   namespace = "Microsoft.Test.OData.Services.OpenTypesServiceV3",
   isDefaultEntityContainer = true)
 public interface DefaultContainer extends PersistenceManager {
 
     Row getRow();
-
     RowIndex getRowIndex();
-
 
 
 
@@ -69,7 +65,7 @@ public interface DefaultContainer extends PersistenceManager {
       ComplexFactory complexFactory();
 
     interface ComplexFactory {
-          @Property(name = "ContactDetails",
+          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ContactDetails",
                 type = "Microsoft.Test.OData.Services.OpenTypesServiceV3.ContactDetails")
       org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.ContactDetails newContactDetails();
 

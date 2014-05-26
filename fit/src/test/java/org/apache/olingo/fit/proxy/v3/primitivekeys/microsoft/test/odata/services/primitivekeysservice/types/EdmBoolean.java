@@ -20,16 +20,21 @@
 package org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.*;
@@ -43,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.PrimitiveKeysService")
-@EntityType(name = "EdmBoolean",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.PrimitiveKeysService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "EdmBoolean",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface EdmBoolean 
-  extends Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "Id", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Id", 
                 type = "Edm.Boolean", 
                 nullable = false,
                 defaultValue = "",
@@ -80,12 +78,28 @@ public interface EdmBoolean
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Boolean getId();
+    java.lang.Boolean getId();
 
-    void setId(final Boolean _id);    
+    void setId(java.lang.Boolean _id);    
     
     
 
 
+
+    ComplexFactory factory();
+
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
+
+    interface Annotations {
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Id",
+                   type = "Edm.Boolean")
+        Annotatable getIdAnnotations();
+
+
+    }
 
 }

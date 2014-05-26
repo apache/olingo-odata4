@@ -20,16 +20,21 @@
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
@@ -43,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@EntityType(name = "Car",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "Car",
         openType = false,
         hasStream = true,
         isAbstract = false)
 public interface Car 
-  extends Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     
-    @Property(name = "Photo", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Photo", 
                 type = "Edm.Stream", 
                 nullable = false,
                 defaultValue = "",
@@ -82,10 +80,10 @@ public interface Car
                 fcKeepInContent = false)
     java.io.InputStream getPhoto();
 
-    void setPhoto(final java.io.InputStream _photo);    
+    void setPhoto(java.io.InputStream _photo);    
     
     
-    @Property(name = "Video", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Video", 
                 type = "Edm.Stream", 
                 nullable = false,
                 defaultValue = "",
@@ -105,10 +103,10 @@ public interface Car
                 fcKeepInContent = false)
     java.io.InputStream getVideo();
 
-    void setVideo(final java.io.InputStream _video);    
+    void setVideo(java.io.InputStream _video);    
     
     @Key
-    @Property(name = "VIN", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "VIN", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -126,12 +124,12 @@ public interface Car
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getVIN();
+    java.lang.Integer getVIN();
 
-    void setVIN(final Integer _vIN);    
+    void setVIN(java.lang.Integer _vIN);    
     
     
-    @Property(name = "Description", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Description", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -149,9 +147,9 @@ public interface Car
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getDescription();
+    java.lang.String getDescription();
 
-    void setDescription(final String _description);    
+    void setDescription(java.lang.String _description);    
     
     
 
@@ -159,5 +157,33 @@ public interface Car
 
     java.io.InputStream getStream();
 
+
+    ComplexFactory factory();
+
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
+
+    interface Annotations {
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Photo",
+                   type = "Edm.Stream")
+        Annotatable getPhotoAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Video",
+                   type = "Edm.Stream")
+        Annotatable getVideoAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "VIN",
+                   type = "Edm.Int32")
+        Annotatable getVINAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Description",
+                   type = "Edm.String")
+        Annotatable getDescriptionAnnotations();
+
+
+    }
 
 }

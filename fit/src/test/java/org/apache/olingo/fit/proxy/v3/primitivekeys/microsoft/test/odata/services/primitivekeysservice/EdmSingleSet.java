@@ -43,10 +43,9 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-
-@EntitySet(name = "EdmSingleSet")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "EdmSingleSet")
 public interface EdmSingleSet 
-  extends AbstractEntitySet<org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmSingle, Float, org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmSingleCollection> {
+  extends AbstractEntitySet<org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmSingle, java.lang.Float, org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmSingleCollection> {
 
     org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmSingle newEdmSingle();
     org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmSingleCollection newEdmSingleCollection();

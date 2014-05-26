@@ -43,9 +43,9 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-@EntitySet(name = "RowIndex")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "RowIndex")
 public interface RowIndex 
-  extends AbstractEntitySet<org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndex, Integer, org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndexCollection> {
+  extends AbstractEntitySet<org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndex, java.lang.Integer, org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndexCollection> {
 
     org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndex newRowIndex();
     org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndexCollection newRowIndexCollection();

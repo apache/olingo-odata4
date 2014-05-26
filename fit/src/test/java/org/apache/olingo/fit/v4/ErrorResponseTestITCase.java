@@ -24,10 +24,8 @@ import static org.junit.Assert.fail;
 import java.net.URI;
 import java.util.Map;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataErrorDetail;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.junit.Test;
 

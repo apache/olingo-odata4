@@ -20,16 +20,21 @@
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
@@ -43,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@EntityType(name = "Order",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "Order",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface Order 
-  extends Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "OrderId", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "OrderId", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -80,12 +78,12 @@ public interface Order
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getOrderId();
+    java.lang.Integer getOrderId();
 
-    void setOrderId(final Integer _orderId);    
+    void setOrderId(java.lang.Integer _orderId);    
     
     
-    @Property(name = "CustomerId", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CustomerId", 
                 type = "Edm.Int32", 
                 nullable = true,
                 defaultValue = "",
@@ -103,12 +101,12 @@ public interface Order
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getCustomerId();
+    java.lang.Integer getCustomerId();
 
-    void setCustomerId(final Integer _customerId);    
+    void setCustomerId(java.lang.Integer _customerId);    
     
     
-    @Property(name = "Concurrency", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Concurrency", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo", 
                 nullable = true,
                 defaultValue = "",
@@ -128,38 +126,66 @@ public interface Order
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo getConcurrency();
 
-    void setConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _concurrency);    
+    void setConcurrency(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _concurrency);    
         
     
 
-    @NavigationProperty(name = "Login", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Login", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Login", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Login")
+                targetEntitySet = "Login",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login getLogin();
 
-    void setLogin(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login _login);
-
-
-    @NavigationProperty(name = "Customer", 
+    void setLogin(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login _login);
+    
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Customer", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Customer", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Customer")
+                targetEntitySet = "Customer",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer getCustomer();
 
-    void setCustomer(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer _customer);
+    void setCustomer(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer _customer);
+    
 
 
-
-
-        ComplexFactory factory();
+    ComplexFactory factory();
 
     interface ComplexFactory {
-             @Property(name = "Concurrency",
+         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Concurrency",
                    type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo")
          org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newConcurrency();
 
-        }
+    }
+
+    Annotations annotations();
+
+    interface Annotations {
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "OrderId",
+                   type = "Edm.Int32")
+        Annotatable getOrderIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "CustomerId",
+                   type = "Edm.Int32")
+        Annotatable getCustomerIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Concurrency",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo")
+        Annotatable getConcurrencyAnnotations();
+
+
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Login", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Login")
+        Annotatable getLoginAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Customer", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Customer")
+        Annotatable getCustomerAnnotations();
+    }
+
 }

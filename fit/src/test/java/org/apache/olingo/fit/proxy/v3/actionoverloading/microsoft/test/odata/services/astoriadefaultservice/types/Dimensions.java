@@ -19,10 +19,16 @@
 
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
@@ -37,37 +43,40 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.UUID;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@ComplexType(name = "Dimensions")
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "Dimensions")
 public interface Dimensions 
-    extends Serializable {
+    extends java.io.Serializable {
 
 
-    @Property(name = "Width", type = "Edm.Decimal", nullable = false)
-    BigDecimal getWidth();
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Width", type = "Edm.Decimal", nullable = false)
+    java.math.BigDecimal getWidth();
 
-    void setWidth(final BigDecimal _width);
-
-    
-
-    @Property(name = "Height", type = "Edm.Decimal", nullable = false)
-    BigDecimal getHeight();
-
-    void setHeight(final BigDecimal _height);
+    void setWidth(java.math.BigDecimal _width);
 
     
 
-    @Property(name = "Depth", type = "Edm.Decimal", nullable = false)
-    BigDecimal getDepth();
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Height", type = "Edm.Decimal", nullable = false)
+    java.math.BigDecimal getHeight();
 
-    void setDepth(final BigDecimal _depth);
+    void setHeight(java.math.BigDecimal _height);
 
     
 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Depth", type = "Edm.Decimal", nullable = false)
+    java.math.BigDecimal getDepth();
+
+    void setDepth(java.math.BigDecimal _depth);
+
+    
+
+    ComplexFactory factory();
+
+    interface ComplexFactory {
+    }
 }

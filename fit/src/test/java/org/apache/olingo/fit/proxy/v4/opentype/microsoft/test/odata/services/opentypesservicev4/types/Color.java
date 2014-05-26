@@ -24,8 +24,8 @@ import org.apache.olingo.ext.proxy.api.annotations.EnumType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 
-@Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
-@EnumType(name = "Color",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
+@org.apache.olingo.ext.proxy.api.annotations.EnumType(name = "Color",
           underlyingType = EdmPrimitiveTypeKind.Int32,
           isFlags = false)
 public enum Color {
@@ -33,13 +33,13 @@ public enum Color {
     Green(2),
     Blue(4);
 
-    private Integer value;
+    private java.lang.Integer value;
     
-    public Integer getValue(){
+    public java.lang.Integer getValue(){
       return this.value;
     }
 
-    private Color(final Integer value){
+    private Color(final java.lang.Integer value){
       this.value=value;
     }
 }

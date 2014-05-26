@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -32,6 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -45,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityType(name = "PaymentInstrument",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "PaymentInstrument",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface PaymentInstrument 
-  extends Annotatable,Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "PaymentInstrumentID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PaymentInstrumentID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -82,12 +78,12 @@ public interface PaymentInstrument
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getPaymentInstrumentID();
+    java.lang.Integer getPaymentInstrumentID();
 
-    void setPaymentInstrumentID(Integer _paymentInstrumentID);    
+    void setPaymentInstrumentID(java.lang.Integer _paymentInstrumentID);    
     
     
-    @Property(name = "FriendlyName", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "FriendlyName", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -105,12 +101,12 @@ public interface PaymentInstrument
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getFriendlyName();
+    java.lang.String getFriendlyName();
 
-    void setFriendlyName(String _friendlyName);    
+    void setFriendlyName(java.lang.String _friendlyName);    
     
     
-    @Property(name = "CreatedDate", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CreatedDate", 
                 type = "Edm.DateTimeOffset", 
                 nullable = false,
                 defaultValue = "",
@@ -128,13 +124,13 @@ public interface PaymentInstrument
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Calendar getCreatedDate();
+    java.util.Calendar getCreatedDate();
 
-    void setCreatedDate(Calendar _createdDate);    
+    void setCreatedDate(java.util.Calendar _createdDate);    
     
     
 
-    @NavigationProperty(name = "TheStoredPI", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "TheStoredPI", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -144,17 +140,8 @@ public interface PaymentInstrument
 
     void setTheStoredPI(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI _theStoredPI);
     
-    @NavigationProperty(name = "BillingStatements", 
-                type = "Microsoft.Test.OData.Services.ODataWCFService.Statement", 
-                targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
-                targetContainer = "", 
-                targetEntitySet = "",
-                containsTarget = true)
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.BillingStatements getBillingStatements();
-
-    void setBillingStatements(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.BillingStatements _billingStatements);
-    
-    @NavigationProperty(name = "BackupStoredPI", 
+        
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "BackupStoredPI", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -166,35 +153,58 @@ public interface PaymentInstrument
     
 
 
+    ComplexFactory factory();
 
-        Annotations annotations();
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
 
     interface Annotations {
 
-            @AnnotationsForProperty(name = "PaymentInstrumentID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PaymentInstrumentID",
                    type = "Edm.Int32")
         Annotatable getPaymentInstrumentIDAnnotations();
 
-            @AnnotationsForProperty(name = "FriendlyName",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "FriendlyName",
                    type = "Edm.String")
         Annotatable getFriendlyNameAnnotations();
 
-            @AnnotationsForProperty(name = "CreatedDate",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "CreatedDate",
                    type = "Edm.DateTimeOffset")
         Annotatable getCreatedDateAnnotations();
 
-    
-    
-        @AnnotationsForNavigationProperty(name = "TheStoredPI", 
+
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "TheStoredPI", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI")
         Annotatable getTheStoredPIAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "BillingStatements", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "BillingStatements", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.Statement")
         Annotatable getBillingStatementsAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "BackupStoredPI", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "BackupStoredPI", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI")
         Annotatable getBackupStoredPIAnnotations();
+    }
+
+      @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "BillingStatements", 
+                type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI", 
+                targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
+                targetContainer = "InMemoryEntities", 
+                targetEntitySet = "StoredPIs",
+                containsTarget = true)
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument.BillingStatements getBillingStatements();
+    void setBillingStatements(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument.BillingStatements _billingStatements);
+
+            
+    @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "BillingStatements", contained = true)
+    interface BillingStatements 
+      extends AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Statement, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StatementCollection> {
+
+            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Statement newStatement();
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StatementCollection newStatementCollection();
         }
-}
+
+  }

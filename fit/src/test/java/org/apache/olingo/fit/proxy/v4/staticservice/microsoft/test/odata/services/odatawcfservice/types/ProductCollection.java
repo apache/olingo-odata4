@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -43,7 +44,7 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-public interface ProductCollection extends AbstractEntityCollection<Product> {
+public interface ProductCollection extends AbstractEntityCollection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product> {
     Operations operations();
 
     public interface Operations {
@@ -53,7 +54,7 @@ public interface ProductCollection extends AbstractEntityCollection<Product> {
                     type = OperationType.ACTION,
                     returnType = "Collection(Microsoft.Test.OData.Services.ODataWCFService.Product)")
       org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection discount(
-                @Parameter(name = "percentage", type = "Edm.Int32", nullable = false) Integer percentage
+                @Parameter(name = "percentage", type = "Edm.Int32", nullable = false) java.lang.Integer percentage
             );
 
         }

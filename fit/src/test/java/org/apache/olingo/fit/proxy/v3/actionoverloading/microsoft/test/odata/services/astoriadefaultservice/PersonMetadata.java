@@ -43,10 +43,9 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-
-@EntitySet(name = "PersonMetadata")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "PersonMetadata")
 public interface PersonMetadata 
-  extends AbstractEntitySet<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PersonMetadata, Integer, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PersonMetadataCollection> {
+  extends AbstractEntitySet<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PersonMetadata, java.lang.Integer, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PersonMetadataCollection> {
 
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PersonMetadata newPersonMetadata();
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PersonMetadataCollection newPersonMetadataCollection();

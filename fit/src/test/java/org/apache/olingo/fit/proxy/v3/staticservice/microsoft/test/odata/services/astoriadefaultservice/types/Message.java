@@ -20,16 +20,21 @@
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
@@ -43,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 @KeyRef(MessageKey.class)
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@EntityType(name = "Message",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "Message",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface Message 
-  extends Serializable {
+  extends Annotatable,java.io.Serializable {
 
         
     @Key
-    @Property(name = "MessageId", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "MessageId", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -80,12 +78,12 @@ public interface Message
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getMessageId();
+    java.lang.Integer getMessageId();
 
-    void setMessageId(final Integer _messageId);    
+    void setMessageId(java.lang.Integer _messageId);    
     
     @Key
-    @Property(name = "FromUsername", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "FromUsername", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -103,12 +101,12 @@ public interface Message
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getFromUsername();
+    java.lang.String getFromUsername();
 
-    void setFromUsername(final String _fromUsername);    
+    void setFromUsername(java.lang.String _fromUsername);    
     
     
-    @Property(name = "ToUsername", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ToUsername", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -126,12 +124,12 @@ public interface Message
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getToUsername();
+    java.lang.String getToUsername();
 
-    void setToUsername(final String _toUsername);    
+    void setToUsername(java.lang.String _toUsername);    
     
     
-    @Property(name = "Sent", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Sent", 
                 type = "Edm.DateTimeOffset", 
                 nullable = false,
                 defaultValue = "",
@@ -149,12 +147,12 @@ public interface Message
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Calendar getSent();
+    java.util.Calendar getSent();
 
-    void setSent(final Calendar _sent);    
+    void setSent(java.util.Calendar _sent);    
     
     
-    @Property(name = "Subject", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Subject", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -172,12 +170,12 @@ public interface Message
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getSubject();
+    java.lang.String getSubject();
 
-    void setSubject(final String _subject);    
+    void setSubject(java.lang.String _subject);    
     
     
-    @Property(name = "Body", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Body", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -195,12 +193,12 @@ public interface Message
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getBody();
+    java.lang.String getBody();
 
-    void setBody(final String _body);    
+    void setBody(java.lang.String _body);    
     
     
-    @Property(name = "IsRead", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "IsRead", 
                 type = "Edm.Boolean", 
                 nullable = false,
                 defaultValue = "",
@@ -218,42 +216,94 @@ public interface Message
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Boolean getIsRead();
+    java.lang.Boolean getIsRead();
 
-    void setIsRead(final Boolean _isRead);    
+    void setIsRead(java.lang.Boolean _isRead);    
     
     
 
-    @NavigationProperty(name = "Sender", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Sender", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Login", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Login")
+                targetEntitySet = "Login",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login getSender();
 
-    void setSender(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login _sender);
-
-
-    @NavigationProperty(name = "Recipient", 
+    void setSender(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login _sender);
+    
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Recipient", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Login", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Login")
+                targetEntitySet = "Login",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login getRecipient();
 
-    void setRecipient(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login _recipient);
-
-
-    @NavigationProperty(name = "Attachments", 
+    void setRecipient(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login _recipient);
+    
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Attachments", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.MessageAttachment", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "MessageAttachment")
+                targetEntitySet = "MessageAttachment",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachmentCollection getAttachments();
 
-    void setAttachments(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachmentCollection _attachments);
+    void setAttachments(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachmentCollection _attachments);
+    
+
+
+    ComplexFactory factory();
+
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
+
+    interface Annotations {
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "MessageId",
+                   type = "Edm.Int32")
+        Annotatable getMessageIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "FromUsername",
+                   type = "Edm.String")
+        Annotatable getFromUsernameAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ToUsername",
+                   type = "Edm.String")
+        Annotatable getToUsernameAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Sent",
+                   type = "Edm.DateTimeOffset")
+        Annotatable getSentAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Subject",
+                   type = "Edm.String")
+        Annotatable getSubjectAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Body",
+                   type = "Edm.String")
+        Annotatable getBodyAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "IsRead",
+                   type = "Edm.Boolean")
+        Annotatable getIsReadAnnotations();
 
 
 
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Sender", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Login")
+        Annotatable getSenderAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Recipient", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Login")
+        Annotatable getRecipientAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Attachments", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.MessageAttachment")
+        Annotatable getAttachmentsAnnotations();
+    }
 
 }

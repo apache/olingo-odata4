@@ -20,16 +20,21 @@
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
@@ -43,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 @KeyRef(ProductReviewKey.class)
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@EntityType(name = "ProductReview",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "ProductReview",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface ProductReview 
-  extends Serializable {
+  extends Annotatable,java.io.Serializable {
 
             
     @Key
-    @Property(name = "ProductId", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductId", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -80,12 +78,12 @@ public interface ProductReview
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getProductId();
+    java.lang.Integer getProductId();
 
-    void setProductId(final Integer _productId);    
+    void setProductId(java.lang.Integer _productId);    
     
     @Key
-    @Property(name = "ReviewId", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ReviewId", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -103,12 +101,12 @@ public interface ProductReview
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getReviewId();
+    java.lang.Integer getReviewId();
 
-    void setReviewId(final Integer _reviewId);    
+    void setReviewId(java.lang.Integer _reviewId);    
     
     
-    @Property(name = "Review", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Review", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -126,12 +124,12 @@ public interface ProductReview
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getReview();
+    java.lang.String getReview();
 
-    void setReview(final String _review);    
+    void setReview(java.lang.String _review);    
     
     @Key
-    @Property(name = "RevisionId", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "RevisionId", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -149,22 +147,54 @@ public interface ProductReview
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getRevisionId();
+    java.lang.String getRevisionId();
 
-    void setRevisionId(final String _revisionId);    
+    void setRevisionId(java.lang.String _revisionId);    
     
     
 
-    @NavigationProperty(name = "Product", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Product", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Product")
+                targetEntitySet = "Product",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Product getProduct();
 
-    void setProduct(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Product _product);
+    void setProduct(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Product _product);
+    
+
+
+    ComplexFactory factory();
+
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
+
+    interface Annotations {
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ProductId",
+                   type = "Edm.Int32")
+        Annotatable getProductIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ReviewId",
+                   type = "Edm.Int32")
+        Annotatable getReviewIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Review",
+                   type = "Edm.String")
+        Annotatable getReviewAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "RevisionId",
+                   type = "Edm.String")
+        Annotatable getRevisionIdAnnotations();
 
 
 
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Product", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product")
+        Annotatable getProductAnnotations();
+    }
 
 }

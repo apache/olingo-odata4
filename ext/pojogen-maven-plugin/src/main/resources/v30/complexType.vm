@@ -16,16 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  *#
-@Namespace("$namespace")
-@ComplexType(name = "$complexType.Name")
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("$namespace")
+@org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "$complexType.Name")
 public interface $utility.capitalize($complexType.Name) 
-    extends #if($complexType.getBaseType())$utility.getJavaType($complexType.getBaseType().getFullQualifiedName().toString())#{else}Serializable#end {
+    extends #if($complexType.getBaseType())$utility.getJavaType($complexType.getBaseType().getFullQualifiedName().toString())#{else}java.io.Serializable#end {
 
 #set( $complexProps = [] )
 #foreach($propertyName in $complexType.PropertyNames)
     #set($property = $complexType.getProperty($propertyName))
 
-    @Property(name = "$property.Name", type = "$property.Type.FullQualifiedName.toString()", nullable = $property.Nullable)
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "$property.Name", type = "$property.Type.FullQualifiedName.toString()", nullable = $property.Nullable)
     $utility.getJavaType($property.Type, $property.Collection) get$utility.capitalize($property.Name)();
 
     void set$utility.capitalize($property.Name)($utility.getJavaType($property.Type, $property.Collection) _$utility.uncapitalize($property.Name));
@@ -36,19 +36,14 @@ public interface $utility.capitalize($complexType.Name)
 
 #end
 
-#if( $complexProps.size() > 0 )
-    #if( $complexType.baseType )
-    @Override
-    #end
     ComplexFactory factory();
 
     interface ComplexFactory #if( $complexType.baseType )
            extends ${utility.getJavaType($complexType.getBaseType())}.ComplexFactory#end{
-    #foreach($property in $complexProps)
-         @Property(name = "$property.Name",
+#foreach($property in $complexProps)
+         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "$property.Name",
                    type = "$property.Type.FullQualifiedName.toString()")
          $utility.getJavaType($property.Type) new$utility.capitalize($property.Name)();
 
-    #end
+#end
     }
-#end  

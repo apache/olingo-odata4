@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -32,6 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -45,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityType(name = "Product",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "Product",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface Product 
-  extends Annotatable,Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "ProductID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -82,12 +78,12 @@ public interface Product
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getProductID();
+    java.lang.Integer getProductID();
 
-    void setProductID(Integer _productID);    
+    void setProductID(java.lang.Integer _productID);    
     
     
-    @Property(name = "Name", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Name", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -105,12 +101,12 @@ public interface Product
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getName();
+    java.lang.String getName();
 
-    void setName(String _name);    
+    void setName(java.lang.String _name);    
     
     
-    @Property(name = "QuantityPerUnit", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "QuantityPerUnit", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -128,12 +124,12 @@ public interface Product
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getQuantityPerUnit();
+    java.lang.String getQuantityPerUnit();
 
-    void setQuantityPerUnit(String _quantityPerUnit);    
+    void setQuantityPerUnit(java.lang.String _quantityPerUnit);    
     
     
-    @Property(name = "UnitPrice", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "UnitPrice", 
                 type = "Edm.Single", 
                 nullable = false,
                 defaultValue = "",
@@ -151,12 +147,12 @@ public interface Product
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Float getUnitPrice();
+    java.lang.Float getUnitPrice();
 
-    void setUnitPrice(Float _unitPrice);    
+    void setUnitPrice(java.lang.Float _unitPrice);    
     
     
-    @Property(name = "QuantityInStock", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "QuantityInStock", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -174,12 +170,12 @@ public interface Product
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getQuantityInStock();
+    java.lang.Integer getQuantityInStock();
 
-    void setQuantityInStock(Integer _quantityInStock);    
+    void setQuantityInStock(java.lang.Integer _quantityInStock);    
     
     
-    @Property(name = "Discontinued", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Discontinued", 
                 type = "Edm.Boolean", 
                 nullable = false,
                 defaultValue = "",
@@ -197,12 +193,12 @@ public interface Product
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Boolean getDiscontinued();
+    java.lang.Boolean getDiscontinued();
 
-    void setDiscontinued(Boolean _discontinued);    
+    void setDiscontinued(java.lang.Boolean _discontinued);    
     
     
-    @Property(name = "UserAccess", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "UserAccess", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", 
                 nullable = true,
                 defaultValue = "",
@@ -225,7 +221,7 @@ public interface Product
     void setUserAccess(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel _userAccess);    
     
     
-    @Property(name = "SkinColor", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "SkinColor", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Color", 
                 nullable = true,
                 defaultValue = "",
@@ -248,7 +244,7 @@ public interface Product
     void setSkinColor(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color _skinColor);    
     
     
-    @Property(name = "CoverColors", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CoverColors", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Color", 
                 nullable = false,
                 defaultValue = "",
@@ -266,13 +262,13 @@ public interface Product
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Collection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> getCoverColors();
+    java.util.Collection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> getCoverColors();
 
-    void setCoverColors(Collection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> _coverColors);    
+    void setCoverColors(java.util.Collection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> _coverColors);    
     
     
 
-    @NavigationProperty(name = "Details", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Details", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.ProductDetail", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -286,16 +282,16 @@ public interface Product
         Operations operations();
 
     interface Operations {
-          @Operation(name = "GetProductDetails",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetProductDetails",
                     type = OperationType.FUNCTION,
                     isComposable = true,
                     returnType = "Collection(Microsoft.Test.OData.Services.ODataWCFService.ProductDetail)")
       org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection getProductDetails(
-                @Parameter(name = "count", type = "Edm.Int32", nullable = true) Integer count
+                @Parameter(name = "count", type = "Edm.Int32", nullable = true) java.lang.Integer count
             );
 
     
-          @Operation(name = "AddAccessRight",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "AddAccessRight",
                     type = OperationType.ACTION,
                     returnType = "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel")
       org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel addAccessRight(
@@ -304,51 +300,56 @@ public interface Product
 
         }
 
+    ComplexFactory factory();
 
-        Annotations annotations();
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
 
     interface Annotations {
 
-            @AnnotationsForProperty(name = "ProductID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ProductID",
                    type = "Edm.Int32")
         Annotatable getProductIDAnnotations();
 
-            @AnnotationsForProperty(name = "Name",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Name",
                    type = "Edm.String")
         Annotatable getNameAnnotations();
 
-            @AnnotationsForProperty(name = "QuantityPerUnit",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "QuantityPerUnit",
                    type = "Edm.String")
         Annotatable getQuantityPerUnitAnnotations();
 
-            @AnnotationsForProperty(name = "UnitPrice",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "UnitPrice",
                    type = "Edm.Single")
         Annotatable getUnitPriceAnnotations();
 
-            @AnnotationsForProperty(name = "QuantityInStock",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "QuantityInStock",
                    type = "Edm.Int32")
         Annotatable getQuantityInStockAnnotations();
 
-            @AnnotationsForProperty(name = "Discontinued",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Discontinued",
                    type = "Edm.Boolean")
         Annotatable getDiscontinuedAnnotations();
 
-            @AnnotationsForProperty(name = "UserAccess",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "UserAccess",
                    type = "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel")
         Annotatable getUserAccessAnnotations();
 
-            @AnnotationsForProperty(name = "SkinColor",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "SkinColor",
                    type = "Microsoft.Test.OData.Services.ODataWCFService.Color")
         Annotatable getSkinColorAnnotations();
 
-            @AnnotationsForProperty(name = "CoverColors",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "CoverColors",
                    type = "Microsoft.Test.OData.Services.ODataWCFService.Color")
         Annotatable getCoverColorsAnnotations();
 
-    
-    
-        @AnnotationsForNavigationProperty(name = "Details", 
+
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Details", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.ProductDetail")
         Annotatable getDetailsAnnotations();
-        }
+    }
+
 }

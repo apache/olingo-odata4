@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice;
 
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
@@ -42,7 +43,7 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-@EntitySet(name = "OrderDetails")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "OrderDetails")
 public interface OrderDetails 
   extends AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetail, OrderDetailKey, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetailCollection> {
 

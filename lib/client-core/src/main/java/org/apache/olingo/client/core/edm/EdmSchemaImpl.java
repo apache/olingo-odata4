@@ -84,13 +84,17 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
 
       if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
         entityContainers = super.getEntityContainers();
-        entityContainerByName.put(getEntityContainer().getFullQualifiedName(), getEntityContainer());
+        if (getEntityContainer() != null) {
+          entityContainerByName.put(getEntityContainer().getFullQualifiedName(), getEntityContainer());
+        }
       } else {
         entityContainers = new ArrayList<EdmEntityContainer>(schema.getEntityContainers().size());
         for (EntityContainer entityContainer : schema.getEntityContainers()) {
           final EdmEntityContainer edmContainer = createEntityContainer(entityContainer.getName());
-          entityContainers.add(edmContainer);
-          entityContainerByName.put(edmContainer.getFullQualifiedName(), edmContainer);
+          if (edmContainer != null) {
+            entityContainers.add(edmContainer);
+            entityContainerByName.put(edmContainer.getFullQualifiedName(), edmContainer);
+          }
         }
       }
     }
@@ -291,5 +295,4 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
 
     return result;
   }
-
 }

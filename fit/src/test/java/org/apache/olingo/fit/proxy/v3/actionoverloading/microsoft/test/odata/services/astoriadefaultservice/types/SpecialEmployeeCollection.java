@@ -21,6 +21,7 @@ package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.se
 
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
@@ -43,7 +44,7 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-public interface SpecialEmployeeCollection extends AbstractEntityCollection<SpecialEmployee> {
+public interface SpecialEmployeeCollection extends AbstractEntityCollection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployee> {
     Operations operations();
 
     public interface Operations {
@@ -52,8 +53,12 @@ public interface SpecialEmployeeCollection extends AbstractEntityCollection<Spec
           @Operation(name = "IncreaseSalaries",
                     type = OperationType.ACTION)
       void increaseSalaries(
-                @Parameter(name = "n", type = "Edm.Int32", nullable = false) Integer n
+                @Parameter(name = "n", type = "Edm.Int32", nullable = false) java.lang.Integer n
             );
 
         }
+
+  Object getAnnotation(Class<? extends AbstractTerm> term);
+
+  Collection<Class<? extends AbstractTerm>> getAnnotationTerms();
 }

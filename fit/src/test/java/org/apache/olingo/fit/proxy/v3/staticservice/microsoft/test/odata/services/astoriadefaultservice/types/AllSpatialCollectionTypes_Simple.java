@@ -20,16 +20,21 @@
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
@@ -43,27 +48,20 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@EntityType(name = "AllSpatialCollectionTypes_Simple",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "AllSpatialCollectionTypes_Simple",
         openType = false,
         hasStream = false,
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialCollectionTypes")
 public interface AllSpatialCollectionTypes_Simple 
-  extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes {
+  extends Annotatable,org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes {
 
     
     @Key
-    @Property(name = "Id", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Id", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -81,12 +79,12 @@ public interface AllSpatialCollectionTypes_Simple
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getId();
+    java.lang.Integer getId();
 
-    void setId(final Integer _id);    
+    void setId(java.lang.Integer _id);    
     
     
-    @Property(name = "ManyGeogPoint", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ManyGeogPoint", 
                 type = "Edm.GeographyPoint", 
                 nullable = false,
                 defaultValue = "",
@@ -104,12 +102,12 @@ public interface AllSpatialCollectionTypes_Simple
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Collection<Point> getManyGeogPoint();
+    java.util.Collection<org.apache.olingo.commons.api.edm.geo.Point> getManyGeogPoint();
 
-    void setManyGeogPoint(final Collection<Point> _manyGeogPoint);    
+    void setManyGeogPoint(java.util.Collection<org.apache.olingo.commons.api.edm.geo.Point> _manyGeogPoint);    
     
     
-    @Property(name = "ManyGeogLine", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ManyGeogLine", 
                 type = "Edm.GeographyLineString", 
                 nullable = false,
                 defaultValue = "",
@@ -127,12 +125,12 @@ public interface AllSpatialCollectionTypes_Simple
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Collection<LineString> getManyGeogLine();
+    java.util.Collection<org.apache.olingo.commons.api.edm.geo.LineString> getManyGeogLine();
 
-    void setManyGeogLine(final Collection<LineString> _manyGeogLine);    
+    void setManyGeogLine(java.util.Collection<org.apache.olingo.commons.api.edm.geo.LineString> _manyGeogLine);    
     
     
-    @Property(name = "ManyGeogPolygon", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ManyGeogPolygon", 
                 type = "Edm.GeographyPolygon", 
                 nullable = false,
                 defaultValue = "",
@@ -150,12 +148,12 @@ public interface AllSpatialCollectionTypes_Simple
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Collection<Polygon> getManyGeogPolygon();
+    java.util.Collection<org.apache.olingo.commons.api.edm.geo.Polygon> getManyGeogPolygon();
 
-    void setManyGeogPolygon(final Collection<Polygon> _manyGeogPolygon);    
+    void setManyGeogPolygon(java.util.Collection<org.apache.olingo.commons.api.edm.geo.Polygon> _manyGeogPolygon);    
     
     
-    @Property(name = "ManyGeomPoint", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ManyGeomPoint", 
                 type = "Edm.GeometryPoint", 
                 nullable = false,
                 defaultValue = "",
@@ -173,12 +171,12 @@ public interface AllSpatialCollectionTypes_Simple
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Collection<Point> getManyGeomPoint();
+    java.util.Collection<org.apache.olingo.commons.api.edm.geo.Point> getManyGeomPoint();
 
-    void setManyGeomPoint(final Collection<Point> _manyGeomPoint);    
+    void setManyGeomPoint(java.util.Collection<org.apache.olingo.commons.api.edm.geo.Point> _manyGeomPoint);    
     
     
-    @Property(name = "ManyGeomLine", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ManyGeomLine", 
                 type = "Edm.GeometryLineString", 
                 nullable = false,
                 defaultValue = "",
@@ -196,12 +194,12 @@ public interface AllSpatialCollectionTypes_Simple
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Collection<LineString> getManyGeomLine();
+    java.util.Collection<org.apache.olingo.commons.api.edm.geo.LineString> getManyGeomLine();
 
-    void setManyGeomLine(final Collection<LineString> _manyGeomLine);    
+    void setManyGeomLine(java.util.Collection<org.apache.olingo.commons.api.edm.geo.LineString> _manyGeomLine);    
     
     
-    @Property(name = "ManyGeomPolygon", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ManyGeomPolygon", 
                 type = "Edm.GeometryPolygon", 
                 nullable = false,
                 defaultValue = "",
@@ -219,12 +217,52 @@ public interface AllSpatialCollectionTypes_Simple
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Collection<Polygon> getManyGeomPolygon();
+    java.util.Collection<org.apache.olingo.commons.api.edm.geo.Polygon> getManyGeomPolygon();
 
-    void setManyGeomPolygon(final Collection<Polygon> _manyGeomPolygon);    
+    void setManyGeomPolygon(java.util.Collection<org.apache.olingo.commons.api.edm.geo.Polygon> _manyGeomPolygon);    
     
     
 
 
+
+    ComplexFactory factory();
+
+    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes.ComplexFactory{
+    }
+
+    Annotations annotations();
+
+    interface Annotations            extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes.Annotations{
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Id",
+                   type = "Edm.Int32")
+        Annotatable getIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ManyGeogPoint",
+                   type = "Edm.GeographyPoint")
+        Annotatable getManyGeogPointAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ManyGeogLine",
+                   type = "Edm.GeographyLineString")
+        Annotatable getManyGeogLineAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ManyGeogPolygon",
+                   type = "Edm.GeographyPolygon")
+        Annotatable getManyGeogPolygonAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ManyGeomPoint",
+                   type = "Edm.GeometryPoint")
+        Annotatable getManyGeomPointAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ManyGeomLine",
+                   type = "Edm.GeometryLineString")
+        Annotatable getManyGeomLineAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ManyGeomPolygon",
+                   type = "Edm.GeometryPolygon")
+        Annotatable getManyGeomPolygonAnnotations();
+
+
+    }
 
 }

@@ -30,8 +30,8 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
     #set( $javatype = $utility.getJavaType("Edm.Int32") )
 #end
 
-@Namespace("$namespace")
-@EnumType(name = "$enumType.Name",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("$namespace")
+@org.apache.olingo.ext.proxy.api.annotations.EnumType(name = "$enumType.Name",
           #if( $enumType.UnderlyingType )underlyingType = EdmPrimitiveTypeKind.${utility.getEdmTypeInfo($enumType.UnderlyingType).PrimitiveTypeKind.name()},
           #{end}isFlags = $enumType.Flags)
 public enum $enumName {

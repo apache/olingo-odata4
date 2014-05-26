@@ -19,10 +19,16 @@
 
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
@@ -37,30 +43,33 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.UUID;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@ComplexType(name = "ConcurrencyInfo")
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "ConcurrencyInfo")
 public interface ConcurrencyInfo 
-    extends Serializable {
+    extends java.io.Serializable {
 
 
-    @Property(name = "Token", type = "Edm.String", nullable = true)
-    String getToken();
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Token", type = "Edm.String", nullable = true)
+    java.lang.String getToken();
 
-    void setToken(final String _token);
-
-    
-
-    @Property(name = "QueriedDateTime", type = "Edm.DateTime", nullable = true)
-    Calendar getQueriedDateTime();
-
-    void setQueriedDateTime(final Calendar _queriedDateTime);
+    void setToken(java.lang.String _token);
 
     
 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "QueriedDateTime", type = "Edm.DateTime", nullable = true)
+    java.util.Calendar getQueriedDateTime();
+
+    void setQueriedDateTime(java.util.Calendar _queriedDateTime);
+
+    
+
+    ComplexFactory factory();
+
+    interface ComplexFactory {
+    }
 }

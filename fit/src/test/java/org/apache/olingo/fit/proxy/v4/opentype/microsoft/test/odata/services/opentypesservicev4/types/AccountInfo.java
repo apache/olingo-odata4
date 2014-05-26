@@ -19,11 +19,16 @@
 
 package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types;
 
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.*;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.*;
 
@@ -38,21 +43,20 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.UUID;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
-@ComplexType(name = "AccountInfo",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
+@org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "AccountInfo",
         isOpenType = true,
         isAbstract = false)
 public interface AccountInfo 
-    extends AbstractOpenType,Serializable {
+    extends AbstractOpenType,java.io.Serializable {
 
 
-    @Property(name = "FirstName", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "FirstName", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -63,13 +67,13 @@ public interface AccountInfo
                 unicode = true,
                 collation = "",
                 srid = "")
-    String getFirstName();
+    java.lang.String getFirstName();
 
-    void setFirstName(String _firstName);
+    void setFirstName(java.lang.String _firstName);
 
     
 
-    @Property(name = "LastName", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "LastName", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -80,11 +84,32 @@ public interface AccountInfo
                 unicode = true,
                 collation = "",
                 srid = "")
-    String getLastName();
+    java.lang.String getLastName();
 
-    void setLastName(String _lastName);
+    void setLastName(java.lang.String _lastName);
 
     
+
+
+    ComplexFactory factory();
+
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
+
+    interface Annotations {
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "FirstName",
+                   type = "Edm.String")
+        Annotatable getFirstNameAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "LastName",
+                   type = "Edm.String")
+        Annotatable getLastNameAnnotations();
+
+
+    }
 
 
 }

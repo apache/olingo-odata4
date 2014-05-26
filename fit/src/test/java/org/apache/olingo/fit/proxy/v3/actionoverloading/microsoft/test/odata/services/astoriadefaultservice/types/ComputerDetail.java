@@ -20,16 +20,21 @@
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
@@ -43,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@EntityType(name = "ComputerDetail",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "ComputerDetail",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface ComputerDetail 
-  extends Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "ComputerDetailId", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ComputerDetailId", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -80,12 +78,12 @@ public interface ComputerDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getComputerDetailId();
+    java.lang.Integer getComputerDetailId();
 
-    void setComputerDetailId(final Integer _computerDetailId);    
+    void setComputerDetailId(java.lang.Integer _computerDetailId);    
     
     
-    @Property(name = "Manufacturer", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Manufacturer", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -103,12 +101,12 @@ public interface ComputerDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getManufacturer();
+    java.lang.String getManufacturer();
 
-    void setManufacturer(final String _manufacturer);    
+    void setManufacturer(java.lang.String _manufacturer);    
     
     
-    @Property(name = "Model", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Model", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -126,12 +124,12 @@ public interface ComputerDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getModel();
+    java.lang.String getModel();
 
-    void setModel(final String _model);    
+    void setModel(java.lang.String _model);    
     
     
-    @Property(name = "Serial", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Serial", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -149,12 +147,12 @@ public interface ComputerDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getSerial();
+    java.lang.String getSerial();
 
-    void setSerial(final String _serial);    
+    void setSerial(java.lang.String _serial);    
     
     
-    @Property(name = "SpecificationsBag", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "SpecificationsBag", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -172,12 +170,12 @@ public interface ComputerDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Collection<String> getSpecificationsBag();
+    java.util.Collection<java.lang.String> getSpecificationsBag();
 
-    void setSpecificationsBag(final Collection<String> _specificationsBag);    
+    void setSpecificationsBag(java.util.Collection<java.lang.String> _specificationsBag);    
     
     
-    @Property(name = "PurchaseDate", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PurchaseDate", 
                 type = "Edm.DateTime", 
                 nullable = false,
                 defaultValue = "",
@@ -195,12 +193,12 @@ public interface ComputerDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Calendar getPurchaseDate();
+    java.util.Calendar getPurchaseDate();
 
-    void setPurchaseDate(final Calendar _purchaseDate);    
+    void setPurchaseDate(java.util.Calendar _purchaseDate);    
     
     
-    @Property(name = "Dimensions", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Dimensions", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions", 
                 nullable = true,
                 defaultValue = "",
@@ -220,28 +218,68 @@ public interface ComputerDetail
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions getDimensions();
 
-    void setDimensions(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions _dimensions);    
+    void setDimensions(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions _dimensions);    
         
     
 
-    @NavigationProperty(name = "Computer", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Computer", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Computer", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Computer")
+                targetEntitySet = "Computer",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Computer getComputer();
 
-    void setComputer(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Computer _computer);
+    void setComputer(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Computer _computer);
+    
 
 
-
-
-        ComplexFactory factory();
+    ComplexFactory factory();
 
     interface ComplexFactory {
-             @Property(name = "Dimensions",
+         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Dimensions",
                    type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions")
          org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions newDimensions();
 
-        }
+    }
+
+    Annotations annotations();
+
+    interface Annotations {
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ComputerDetailId",
+                   type = "Edm.Int32")
+        Annotatable getComputerDetailIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Manufacturer",
+                   type = "Edm.String")
+        Annotatable getManufacturerAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Model",
+                   type = "Edm.String")
+        Annotatable getModelAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Serial",
+                   type = "Edm.String")
+        Annotatable getSerialAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "SpecificationsBag",
+                   type = "Edm.String")
+        Annotatable getSpecificationsBagAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PurchaseDate",
+                   type = "Edm.DateTime")
+        Annotatable getPurchaseDateAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Dimensions",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions")
+        Annotatable getDimensionsAnnotations();
+
+
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Computer", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Computer")
+        Annotatable getComputerAnnotations();
+    }
+
 }

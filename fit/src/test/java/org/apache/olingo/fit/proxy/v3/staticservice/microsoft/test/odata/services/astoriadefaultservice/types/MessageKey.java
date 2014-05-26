@@ -47,28 +47,28 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-@CompoundKey
+@org.apache.olingo.ext.proxy.api.annotations.CompoundKey
 public class MessageKey extends AbstractEntityKey {
 
-    private String _fromUsername;
+    private java.lang.String _fromUsername;
 
     @CompoundKeyElement(name = "FromUsername", position = 0)
-    public String getFromUsername() {
+    public java.lang.String getFromUsername() {
         return _fromUsername;
     }
 
-    public void setFromUsername(final String _fromUsername) {
+    public void setFromUsername(java.lang.String _fromUsername) {
         this._fromUsername = _fromUsername;
     }
 
-    private Integer _messageId;
+    private java.lang.Integer _messageId;
 
     @CompoundKeyElement(name = "MessageId", position = 1)
-    public Integer getMessageId() {
+    public java.lang.Integer getMessageId() {
         return _messageId;
     }
 
-    public void setMessageId(final Integer _messageId) {
+    public void setMessageId(java.lang.Integer _messageId) {
         this._messageId = _messageId;
     }
 }

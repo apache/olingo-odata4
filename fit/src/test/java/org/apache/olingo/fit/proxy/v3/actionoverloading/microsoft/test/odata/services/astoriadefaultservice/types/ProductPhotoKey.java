@@ -47,28 +47,28 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-@CompoundKey
+@org.apache.olingo.ext.proxy.api.annotations.CompoundKey
 public class ProductPhotoKey extends AbstractEntityKey {
 
-    private Integer _photoId;
+    private java.lang.Integer _photoId;
 
     @CompoundKeyElement(name = "PhotoId", position = 0)
-    public Integer getPhotoId() {
+    public java.lang.Integer getPhotoId() {
         return _photoId;
     }
 
-    public void setPhotoId(final Integer _photoId) {
+    public void setPhotoId(java.lang.Integer _photoId) {
         this._photoId = _photoId;
     }
 
-    private Integer _productId;
+    private java.lang.Integer _productId;
 
     @CompoundKeyElement(name = "ProductId", position = 1)
-    public Integer getProductId() {
+    public java.lang.Integer getProductId() {
         return _productId;
     }
 
-    public void setProductId(final Integer _productId) {
+    public void setProductId(java.lang.Integer _productId) {
         this._productId = _productId;
     }
 }

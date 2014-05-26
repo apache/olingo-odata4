@@ -20,16 +20,21 @@
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
@@ -43,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@EntityType(name = "PersonMetadata",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "PersonMetadata",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface PersonMetadata 
-  extends Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "PersonMetadataId", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PersonMetadataId", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -80,12 +78,12 @@ public interface PersonMetadata
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getPersonMetadataId();
+    java.lang.Integer getPersonMetadataId();
 
-    void setPersonMetadataId(final Integer _personMetadataId);    
+    void setPersonMetadataId(java.lang.Integer _personMetadataId);    
     
     
-    @Property(name = "PersonId", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PersonId", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -103,12 +101,12 @@ public interface PersonMetadata
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getPersonId();
+    java.lang.Integer getPersonId();
 
-    void setPersonId(final Integer _personId);    
+    void setPersonId(java.lang.Integer _personId);    
     
     
-    @Property(name = "PropertyName", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PropertyName", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -126,12 +124,12 @@ public interface PersonMetadata
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getPropertyName();
+    java.lang.String getPropertyName();
 
-    void setPropertyName(final String _propertyName);    
+    void setPropertyName(java.lang.String _propertyName);    
     
     
-    @Property(name = "PropertyValue", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PropertyValue", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -149,22 +147,54 @@ public interface PersonMetadata
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getPropertyValue();
+    java.lang.String getPropertyValue();
 
-    void setPropertyValue(final String _propertyValue);    
+    void setPropertyValue(java.lang.String _propertyValue);    
     
     
 
-    @NavigationProperty(name = "Person", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Person", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Person", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Person")
+                targetEntitySet = "Person",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Person getPerson();
 
-    void setPerson(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Person _person);
+    void setPerson(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Person _person);
+    
+
+
+    ComplexFactory factory();
+
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
+
+    interface Annotations {
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PersonMetadataId",
+                   type = "Edm.Int32")
+        Annotatable getPersonMetadataIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PersonId",
+                   type = "Edm.Int32")
+        Annotatable getPersonIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PropertyName",
+                   type = "Edm.String")
+        Annotatable getPropertyNameAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PropertyValue",
+                   type = "Edm.String")
+        Annotatable getPropertyValueAnnotations();
 
 
 
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Person", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Person")
+        Annotatable getPersonAnnotations();
+    }
 
 }

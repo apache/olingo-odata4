@@ -43,8 +43,7 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-
-@EntitySet(name = "Message")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Message")
 public interface Message 
   extends AbstractEntitySet<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Message, MessageKey, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageCollection> {
 

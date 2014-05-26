@@ -25,8 +25,8 @@ import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 #foreach($ns in $namespaces)
-import ${basePackage}.${ns}.*;
-import ${basePackage}.${ns}.types.*;
+import #if($basePackage)${basePackage}.#end${ns}.*;
+import #if($basePackage)${basePackage}.#end${ns}.types.*;
 #end
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -45,7 +45,7 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-public interface $utility.capitalize($entityType.Name)Collection extends AbstractEntityCollection<$utility.capitalize($entityType.Name)> {
+public interface $utility.capitalize($entityType.Name)Collection extends AbstractEntityCollection<$utility.getJavaType($entityType)> {
 #set( $functions = $utility.getFunctionsBoundTo($entityType.Name, true) )
 #set( $actions = $utility.getActionsBoundTo($entityType.Name, true) )
 #if( $functions.size() > 0 || $actions.size() > 0 )

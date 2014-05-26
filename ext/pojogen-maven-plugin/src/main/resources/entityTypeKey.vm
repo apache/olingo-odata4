@@ -28,8 +28,8 @@ import org.apache.olingo.ext.proxy.api.AbstractEntityKey;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 #foreach($ns in $namespaces)
-import ${basePackage}.${ns}.*;
-import ${basePackage}.${ns}.types.*;
+import #if($basePackage)${basePackage}.#end${ns}.*;
+import #if($basePackage)${basePackage}.#end${ns}.types.*;
 #end
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -48,7 +48,7 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-@CompoundKey
+@org.apache.olingo.ext.proxy.api.annotations.CompoundKey
 public class $keyRef extends AbstractEntityKey {
 #set ( $count = 0 )
 #foreach ($entry in $keys.entrySet())

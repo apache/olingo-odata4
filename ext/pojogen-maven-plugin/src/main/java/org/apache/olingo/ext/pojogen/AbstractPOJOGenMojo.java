@@ -44,7 +44,6 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
-import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmTerm;
@@ -78,7 +77,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
   /**
    * Base package.
    */
-  @Parameter(property = "basePackage", required = true)
+  @Parameter(property = "basePackage", required = false)
   protected String basePackage;
 
   protected final Set<String> namespaces = new HashSet<String>();
@@ -104,7 +103,9 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
   }
 
   protected File mkPkgDir(final String path) {
-    return mkdir(basePackage.replace('.', File.separatorChar) + File.separator + path);
+    return StringUtils.isBlank(basePackage)
+            ? mkdir(path)
+            : mkdir(basePackage.replace('.', File.separatorChar) + File.separator + path);
   }
 
   protected void writeFile(final String name, final File path, final VelocityContext ctx, final Template template,
@@ -242,7 +243,9 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
         // write package-info for the base package
         final String schemaPath = utility.getNamespace().toLowerCase().replace('.', File.separatorChar);
         final File base = mkPkgDir(schemaPath);
-        final String pkg = basePackage + "." + utility.getNamespace().toLowerCase();
+        final String pkg = StringUtils.isBlank(basePackage)
+                ? utility.getNamespace().toLowerCase()
+                : basePackage + "." + utility.getNamespace().toLowerCase();
         parseObj(base, pkg, "package-info", "package-info.java");
 
         // write package-info for types package
@@ -277,20 +280,6 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
           objs.clear();
           objs.put("complexType", complex);
           parseObj(typesBaseDir, typesPkg, "complexType", className + ".java", objs);
-
-          for (String navPropName : complex.getNavigationPropertyNames()) {
-            final EdmNavigationProperty navProp = complex.getNavigationProperty(navPropName);
-            if ((complex.getBaseType() == null
-                    || edm.getEntityType(complex.getBaseType().getFullQualifiedName()).
-                    getNavigationProperty(navPropName) == null)
-                    && navProp.containsTarget()) {
-
-              objs.clear();
-              objs.put("navProp", navProp);
-              parseObj(base, pkg, "containedEntitySet",
-                      utility.capitalize(navProp.getName()) + ".java", objs);
-            }
-          }
         }
 
         for (EdmEntityType entity : schema.getEntityTypes()) {
@@ -328,20 +317,6 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
                   utility.capitalize(entity.getName()) + ".java", objs);
           parseObj(typesBaseDir, typesPkg, "entityCollection",
                   utility.capitalize(entity.getName()) + "Collection.java", objs);
-
-          for (String navPropName : entity.getNavigationPropertyNames()) {
-            final EdmNavigationProperty navProp = entity.getNavigationProperty(navPropName);
-            if ((entity.getBaseType() == null
-                    || edm.getEntityType(entity.getBaseType().getFullQualifiedName()).
-                    getNavigationProperty(navPropName) == null)
-                    && navProp.containsTarget()) {
-
-              objs.clear();
-              objs.put("navProp", navProp);
-              parseObj(base, pkg, "containedEntitySet",
-                      utility.capitalize(navProp.getName()) + ".java", objs);
-            }
-          }
         }
 
         // write container and top entity sets into the base package

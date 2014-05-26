@@ -19,10 +19,16 @@
 
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
@@ -37,37 +43,40 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.UUID;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@ComplexType(name = "ComplexToCategory")
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "ComplexToCategory")
 public interface ComplexToCategory 
-    extends Serializable {
+    extends java.io.Serializable {
 
 
-    @Property(name = "Term", type = "Edm.String", nullable = true)
-    String getTerm();
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Term", type = "Edm.String", nullable = true)
+    java.lang.String getTerm();
 
-    void setTerm(final String _term);
-
-    
-
-    @Property(name = "Scheme", type = "Edm.String", nullable = true)
-    String getScheme();
-
-    void setScheme(final String _scheme);
+    void setTerm(java.lang.String _term);
 
     
 
-    @Property(name = "Label", type = "Edm.String", nullable = true)
-    String getLabel();
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Scheme", type = "Edm.String", nullable = true)
+    java.lang.String getScheme();
 
-    void setLabel(final String _label);
+    void setScheme(java.lang.String _scheme);
 
     
 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Label", type = "Edm.String", nullable = true)
+    java.lang.String getLabel();
+
+    void setLabel(java.lang.String _label);
+
+    
+
+    ComplexFactory factory();
+
+    interface ComplexFactory {
+    }
 }

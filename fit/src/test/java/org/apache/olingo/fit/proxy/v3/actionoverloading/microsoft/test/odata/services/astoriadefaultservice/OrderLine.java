@@ -43,8 +43,7 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-
-@EntitySet(name = "OrderLine")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "OrderLine")
 public interface OrderLine 
   extends AbstractEntitySet<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine, OrderLineKey, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderLineCollection> {
 

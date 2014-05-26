@@ -20,16 +20,21 @@
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
@@ -43,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@EntityType(name = "License",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "License",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface License 
-  extends Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "Name", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Name", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -80,12 +78,12 @@ public interface License
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getName();
+    java.lang.String getName();
 
-    void setName(final String _name);    
+    void setName(java.lang.String _name);    
     
     
-    @Property(name = "LicenseNumber", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "LicenseNumber", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -103,12 +101,12 @@ public interface License
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getLicenseNumber();
+    java.lang.String getLicenseNumber();
 
-    void setLicenseNumber(final String _licenseNumber);    
+    void setLicenseNumber(java.lang.String _licenseNumber);    
     
     
-    @Property(name = "LicenseClass", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "LicenseClass", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -126,12 +124,12 @@ public interface License
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getLicenseClass();
+    java.lang.String getLicenseClass();
 
-    void setLicenseClass(final String _licenseClass);    
+    void setLicenseClass(java.lang.String _licenseClass);    
     
     
-    @Property(name = "Restrictions", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Restrictions", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -149,12 +147,12 @@ public interface License
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getRestrictions();
+    java.lang.String getRestrictions();
 
-    void setRestrictions(final String _restrictions);    
+    void setRestrictions(java.lang.String _restrictions);    
     
     
-    @Property(name = "ExpirationDate", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ExpirationDate", 
                 type = "Edm.DateTime", 
                 nullable = false,
                 defaultValue = "",
@@ -172,22 +170,58 @@ public interface License
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Calendar getExpirationDate();
+    java.util.Calendar getExpirationDate();
 
-    void setExpirationDate(final Calendar _expirationDate);    
+    void setExpirationDate(java.util.Calendar _expirationDate);    
     
     
 
-    @NavigationProperty(name = "Driver", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Driver", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Driver", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Driver")
+                targetEntitySet = "Driver",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Driver getDriver();
 
-    void setDriver(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Driver _driver);
+    void setDriver(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Driver _driver);
+    
+
+
+    ComplexFactory factory();
+
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
+
+    interface Annotations {
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Name",
+                   type = "Edm.String")
+        Annotatable getNameAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "LicenseNumber",
+                   type = "Edm.String")
+        Annotatable getLicenseNumberAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "LicenseClass",
+                   type = "Edm.String")
+        Annotatable getLicenseClassAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Restrictions",
+                   type = "Edm.String")
+        Annotatable getRestrictionsAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ExpirationDate",
+                   type = "Edm.DateTime")
+        Annotatable getExpirationDateAnnotations();
 
 
 
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Driver", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Driver")
+        Annotatable getDriverAnnotations();
+    }
 
 }

@@ -21,6 +21,7 @@ package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.op
 
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
@@ -43,5 +44,9 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-public interface IndexedRowCollection extends AbstractEntityCollection<IndexedRow> {
+public interface IndexedRowCollection extends AbstractEntityCollection<org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.IndexedRow> {
+
+  Object getAnnotation(Class<? extends AbstractTerm> term);
+
+  Collection<Class<? extends AbstractTerm>> getAnnotationTerms();
 }

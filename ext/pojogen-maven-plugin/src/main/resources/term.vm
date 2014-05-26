@@ -22,12 +22,12 @@ import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.Term;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 #foreach($ns in $namespaces)
-import ${basePackage}.${ns}.*;
-import ${basePackage}.${ns}.types.*;
+import #if($basePackage)${basePackage}.#end${ns}.*;
+import #if($basePackage)${basePackage}.#end${ns}.types.*;
 #end
 
-@Namespace("$namespace")
-@Term(name = "$term.Name",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("$namespace")
+@org.apache.olingo.ext.proxy.api.annotations.Term(name = "$term.Name",
       type="$term.Type"#if($term.getBaseTerm()),
       baseTerm = "$term.getBaseTerm().getFullQualifiedName().toString()"#end)
 public interface $utility.capitalize($term.Name) extends AbstractTerm {

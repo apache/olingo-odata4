@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
@@ -46,50 +47,50 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-@CompoundKey
+@org.apache.olingo.ext.proxy.api.annotations.CompoundKey
 public class ProductReviewKey extends AbstractEntityKey {
 
-    private Integer _productID;
+    private java.lang.Integer _productID;
 
     @CompoundKeyElement(name = "ProductID", position = 0)
-    public Integer getProductID() {
+    public java.lang.Integer getProductID() {
         return _productID;
     }
 
-    public void setProductID(Integer _productID) {
+    public void setProductID(java.lang.Integer _productID) {
         this._productID = _productID;
     }
 
-    private Integer _productDetailID;
+    private java.lang.Integer _productDetailID;
 
     @CompoundKeyElement(name = "ProductDetailID", position = 1)
-    public Integer getProductDetailID() {
+    public java.lang.Integer getProductDetailID() {
         return _productDetailID;
     }
 
-    public void setProductDetailID(Integer _productDetailID) {
+    public void setProductDetailID(java.lang.Integer _productDetailID) {
         this._productDetailID = _productDetailID;
     }
 
-    private String _reviewTitle;
+    private java.lang.String _reviewTitle;
 
     @CompoundKeyElement(name = "ReviewTitle", position = 2)
-    public String getReviewTitle() {
+    public java.lang.String getReviewTitle() {
         return _reviewTitle;
     }
 
-    public void setReviewTitle(String _reviewTitle) {
+    public void setReviewTitle(java.lang.String _reviewTitle) {
         this._reviewTitle = _reviewTitle;
     }
 
-    private Integer _revisionID;
+    private java.lang.Integer _revisionID;
 
     @CompoundKeyElement(name = "RevisionID", position = 3)
-    public Integer getRevisionID() {
+    public java.lang.Integer getRevisionID() {
         return _revisionID;
     }
 
-    public void setRevisionID(Integer _revisionID) {
+    public void setRevisionID(java.lang.Integer _revisionID) {
         this._revisionID = _revisionID;
     }
 }

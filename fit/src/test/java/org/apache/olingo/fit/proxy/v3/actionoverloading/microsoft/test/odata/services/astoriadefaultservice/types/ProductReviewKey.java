@@ -47,39 +47,39 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-@CompoundKey
+@org.apache.olingo.ext.proxy.api.annotations.CompoundKey
 public class ProductReviewKey extends AbstractEntityKey {
 
-    private Integer _productId;
+    private java.lang.Integer _productId;
 
     @CompoundKeyElement(name = "ProductId", position = 0)
-    public Integer getProductId() {
+    public java.lang.Integer getProductId() {
         return _productId;
     }
 
-    public void setProductId(final Integer _productId) {
+    public void setProductId(java.lang.Integer _productId) {
         this._productId = _productId;
     }
 
-    private Integer _reviewId;
+    private java.lang.Integer _reviewId;
 
     @CompoundKeyElement(name = "ReviewId", position = 1)
-    public Integer getReviewId() {
+    public java.lang.Integer getReviewId() {
         return _reviewId;
     }
 
-    public void setReviewId(final Integer _reviewId) {
+    public void setReviewId(java.lang.Integer _reviewId) {
         this._reviewId = _reviewId;
     }
 
-    private String _revisionId;
+    private java.lang.String _revisionId;
 
     @CompoundKeyElement(name = "RevisionId", position = 2)
-    public String getRevisionId() {
+    public java.lang.String getRevisionId() {
         return _revisionId;
     }
 
-    public void setRevisionId(final String _revisionId) {
+    public void setRevisionId(java.lang.String _revisionId) {
         this._revisionId = _revisionId;
     }
 }

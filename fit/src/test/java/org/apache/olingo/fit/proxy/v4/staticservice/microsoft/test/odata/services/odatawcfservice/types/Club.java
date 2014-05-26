@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -32,6 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -45,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityType(name = "Club",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "Club",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface Club 
-  extends Annotatable,Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "ClubID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ClubID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -82,12 +78,12 @@ public interface Club
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getClubID();
+    java.lang.Integer getClubID();
 
-    void setClubID(Integer _clubID);    
+    void setClubID(java.lang.Integer _clubID);    
     
     
-    @Property(name = "Name", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Name", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -105,27 +101,32 @@ public interface Club
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getName();
+    java.lang.String getName();
 
-    void setName(String _name);    
+    void setName(java.lang.String _name);    
     
     
 
 
 
+    ComplexFactory factory();
 
-        Annotations annotations();
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
 
     interface Annotations {
 
-            @AnnotationsForProperty(name = "ClubID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ClubID",
                    type = "Edm.Int32")
         Annotatable getClubIDAnnotations();
 
-            @AnnotationsForProperty(name = "Name",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Name",
                    type = "Edm.String")
         Annotatable getNameAnnotations();
 
-    
-        }
+
+    }
+
 }

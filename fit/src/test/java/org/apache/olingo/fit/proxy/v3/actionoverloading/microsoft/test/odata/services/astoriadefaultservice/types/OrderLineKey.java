@@ -47,28 +47,28 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-@CompoundKey
+@org.apache.olingo.ext.proxy.api.annotations.CompoundKey
 public class OrderLineKey extends AbstractEntityKey {
 
-    private Integer _orderId;
+    private java.lang.Integer _orderId;
 
     @CompoundKeyElement(name = "OrderId", position = 0)
-    public Integer getOrderId() {
+    public java.lang.Integer getOrderId() {
         return _orderId;
     }
 
-    public void setOrderId(final Integer _orderId) {
+    public void setOrderId(java.lang.Integer _orderId) {
         this._orderId = _orderId;
     }
 
-    private Integer _productId;
+    private java.lang.Integer _productId;
 
     @CompoundKeyElement(name = "ProductId", position = 1)
-    public Integer getProductId() {
+    public java.lang.Integer getProductId() {
         return _productId;
     }
 
-    public void setProductId(final Integer _productId) {
+    public void setProductId(java.lang.Integer _productId) {
         this._productId = _productId;
     }
 }

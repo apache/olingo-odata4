@@ -16,15 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
@@ -40,22 +43,21 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.UUID;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@ComplexType(name = "HomeAddress",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "HomeAddress",
         isOpenType = false,
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.ODataWCFService.Address")
 public interface HomeAddress 
-    extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address,Serializable {
+    extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address,java.io.Serializable {
 
 
-    @Property(name = "Street", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Street", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -66,13 +68,13 @@ public interface HomeAddress
                 unicode = true,
                 collation = "",
                 srid = "")
-    String getStreet();
+    java.lang.String getStreet();
 
-    void setStreet(String _street);
+    void setStreet(java.lang.String _street);
 
     
 
-    @Property(name = "City", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "City", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -83,13 +85,13 @@ public interface HomeAddress
                 unicode = true,
                 collation = "",
                 srid = "")
-    String getCity();
+    java.lang.String getCity();
 
-    void setCity(String _city);
+    void setCity(java.lang.String _city);
 
     
 
-    @Property(name = "PostalCode", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PostalCode", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -100,13 +102,13 @@ public interface HomeAddress
                 unicode = true,
                 collation = "",
                 srid = "")
-    String getPostalCode();
+    java.lang.String getPostalCode();
 
-    void setPostalCode(String _postalCode);
+    void setPostalCode(java.lang.String _postalCode);
 
     
 
-    @Property(name = "FamilyName", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "FamilyName", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -117,35 +119,40 @@ public interface HomeAddress
                 unicode = true,
                 collation = "",
                 srid = "")
-    String getFamilyName();
+    java.lang.String getFamilyName();
 
-    void setFamilyName(String _familyName);
+    void setFamilyName(java.lang.String _familyName);
 
     
 
 
+    ComplexFactory factory();
 
-        @Override
-        Annotations annotations();
+    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address.ComplexFactory{
+    }
+
+    Annotations annotations();
 
     interface Annotations            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address.Annotations{
 
-            @AnnotationsForProperty(name = "Street",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Street",
                    type = "Edm.String")
         Annotatable getStreetAnnotations();
 
-            @AnnotationsForProperty(name = "City",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "City",
                    type = "Edm.String")
         Annotatable getCityAnnotations();
 
-            @AnnotationsForProperty(name = "PostalCode",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PostalCode",
                    type = "Edm.String")
         Annotatable getPostalCodeAnnotations();
 
-            @AnnotationsForProperty(name = "FamilyName",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "FamilyName",
                    type = "Edm.String")
         Annotatable getFamilyNameAnnotations();
 
-    
-        }
+
+    }
+
+
 }

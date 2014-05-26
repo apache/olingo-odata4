@@ -43,8 +43,7 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-
-@EntitySet(name = "ProductReview")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "ProductReview")
 public interface ProductReview 
   extends AbstractEntitySet<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductReview, ProductReviewKey, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductReviewCollection> {
 

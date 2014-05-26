@@ -20,16 +20,14 @@
 package ${package};
 
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.api.OperationType;
 #foreach($ns in $namespaces)
-import ${basePackage}.${ns}.*;
-import ${basePackage}.${ns}.types.*;
+import #if($basePackage)${basePackage}.#end${ns}.*;
+import #if($basePackage)${basePackage}.#end${ns}.types.*;
 #end
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -48,8 +46,8 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-@Namespace("$namespace")
-@EntityContainer(name = "$container.Name",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("$namespace")
+@org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "$container.Name",
   namespace = "$namespace",
   isDefaultEntityContainer = $container.Default)
 public interface $utility.capitalize($container.Name) extends PersistenceManager {
@@ -65,7 +63,7 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
   public interface Operations {
   #foreach($operation in $container.FunctionImports)
   #foreach($function in $operation.UnboundFunctions)
-    @Operation(name = "$function.Name",
+    @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "$function.Name",
                     type = OperationType.FUNCTION,
                     isComposable = $function.Composable#if($function.ReturnType),
                     returnType = "#if( $function.ReturnType.Collection )Collection(#end$function.ReturnType.Type.FullQualifiedName.toString()#if( $function.ReturnType.Collection ))#end"#end)
@@ -75,7 +73,7 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
       *##foreach($paramName in $function.ParameterNames)#*
         *##set( $count = $count - 1 )#*
         *##set( $param = $function.getParameter($paramName) )#*
-       *#    @Parameter(name = "$param.Name", type = "#if( $param.Collection )Collection(#end$param.Type.FullQualifiedName.toString()#if( $param.Collection ))#end", nullable = $param.Nullable) $utility.getJavaType($param.Type, $param.Collection) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
+       *#    @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "$param.Name", type = "#if( $param.Collection )Collection(#end$param.Type.FullQualifiedName.toString()#if( $param.Collection ))#end", nullable = $param.Nullable) $utility.getJavaType($param.Type, $param.Collection) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
 
     #end#*
     *##end);
@@ -86,7 +84,7 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
   #foreach($operation in $container.ActionImports)
   #set( $action = $operation.UnboundAction )
   #if($action)
-    @Operation(name = "$action.Name",
+    @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "$action.Name",
                     type = OperationType.ACTION#if($action.ReturnType),
                     returnType = "#if( $action.ReturnType.Collection )Collection(#end$action.ReturnType.Type.FullQualifiedName.toString()#if( $action.ReturnType.Collection ))#end"#end)
   #if($action.ReturnType)$utility.getJavaType($action.ReturnType.Type, $action.ReturnType.Collection)#{else}void#end $utility.uncapitalize($action.Name)(
@@ -95,7 +93,7 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
       *##foreach($paramName in $action.ParameterNames)#*
         *##set( $count = $count - 1 )#*
         *##set( $param = $action.getParameter($paramName) )#*
-       *#    @Parameter(name = "$param.Name", type = "#if( $param.Collection )Collection(#end$param.Type.FullQualifiedName.toString()#if( $param.Collection ))#end", nullable = $param.Nullable) $utility.getJavaType($param.Type, $param.Collection) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
+       *#    @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "$param.Name", type = "#if( $param.Collection )Collection(#end$param.Type.FullQualifiedName.toString()#if( $param.Collection ))#end", nullable = $param.Nullable) $utility.getJavaType($param.Type, $param.Collection) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
 
     #end#*
     *##end);
@@ -111,7 +109,7 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
     interface ComplexFactory {
     #foreach($complex in $complexes)
       #set( $type = "${namespace}.${complex.Name}" )
-      @Property(name = "$complex.Name",
+      @org.apache.olingo.ext.proxy.api.annotations.Property(name = "$complex.Name",
                 type = "$type")
       $utility.getJavaType($type) new$utility.capitalize($complex.Name)();
 

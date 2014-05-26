@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -32,6 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -45,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityType(name = "Order",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "Order",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface Order 
-  extends Annotatable,Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "OrderID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "OrderID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -82,12 +78,12 @@ public interface Order
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getOrderID();
+    java.lang.Integer getOrderID();
 
-    void setOrderID(Integer _orderID);    
+    void setOrderID(java.lang.Integer _orderID);    
     
     
-    @Property(name = "OrderDate", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "OrderDate", 
                 type = "Edm.DateTimeOffset", 
                 nullable = false,
                 defaultValue = "",
@@ -105,12 +101,12 @@ public interface Order
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Calendar getOrderDate();
+    java.util.Calendar getOrderDate();
 
-    void setOrderDate(Calendar _orderDate);    
+    void setOrderDate(java.util.Calendar _orderDate);    
     
     
-    @Property(name = "ShelfLife", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ShelfLife", 
                 type = "Edm.Duration", 
                 nullable = true,
                 defaultValue = "",
@@ -128,12 +124,12 @@ public interface Order
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    BigDecimal getShelfLife();
+    java.math.BigDecimal getShelfLife();
 
-    void setShelfLife(BigDecimal _shelfLife);    
+    void setShelfLife(java.math.BigDecimal _shelfLife);    
     
     
-    @Property(name = "OrderShelfLifes", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "OrderShelfLifes", 
                 type = "Edm.Duration", 
                 nullable = true,
                 defaultValue = "",
@@ -151,13 +147,13 @@ public interface Order
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Collection<BigDecimal> getOrderShelfLifes();
+    java.util.Collection<java.math.BigDecimal> getOrderShelfLifes();
 
-    void setOrderShelfLifes(Collection<BigDecimal> _orderShelfLifes);    
+    void setOrderShelfLifes(java.util.Collection<java.math.BigDecimal> _orderShelfLifes);    
     
     
 
-    @NavigationProperty(name = "LoggedInEmployee", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "LoggedInEmployee", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Employee", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -167,7 +163,7 @@ public interface Order
 
     void setLoggedInEmployee(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Employee _loggedInEmployee);
     
-    @NavigationProperty(name = "CustomerForOrder", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "CustomerForOrder", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Customer", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -177,7 +173,7 @@ public interface Order
 
     void setCustomerForOrder(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer _customerForOrder);
     
-    @NavigationProperty(name = "OrderDetails", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "OrderDetails", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.OrderDetail", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -189,39 +185,44 @@ public interface Order
     
 
 
+    ComplexFactory factory();
 
-        Annotations annotations();
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
 
     interface Annotations {
 
-            @AnnotationsForProperty(name = "OrderID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "OrderID",
                    type = "Edm.Int32")
         Annotatable getOrderIDAnnotations();
 
-            @AnnotationsForProperty(name = "OrderDate",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "OrderDate",
                    type = "Edm.DateTimeOffset")
         Annotatable getOrderDateAnnotations();
 
-            @AnnotationsForProperty(name = "ShelfLife",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ShelfLife",
                    type = "Edm.Duration")
         Annotatable getShelfLifeAnnotations();
 
-            @AnnotationsForProperty(name = "OrderShelfLifes",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "OrderShelfLifes",
                    type = "Edm.Duration")
         Annotatable getOrderShelfLifesAnnotations();
 
-    
-    
-        @AnnotationsForNavigationProperty(name = "LoggedInEmployee", 
+
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "LoggedInEmployee", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.Employee")
         Annotatable getLoggedInEmployeeAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "CustomerForOrder", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "CustomerForOrder", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.Customer")
         Annotatable getCustomerForOrderAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "OrderDetails", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "OrderDetails", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.OrderDetail")
         Annotatable getOrderDetailsAnnotations();
-        }
+    }
+
 }

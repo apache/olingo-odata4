@@ -167,8 +167,21 @@ public abstract class AbstractUtility {
     }
   }
 
+  public boolean isNavigationAlreadyDeclared(final EdmStructuredType type, final EdmNavigationProperty property) {
+    EdmStructuredType basetype = type.getBaseType();
+    while (basetype != null) {
+      if (basetype.getNavigationProperty(property.getName()) != null) {
+        return true;
+      } else {
+        basetype = basetype.getBaseType();
+      }
+    }
+    return false;
+  }
+
   public String getContainedEntitySet(final EdmNavigationProperty navProp) {
-    return new StringBuilder().append(basePackage).append('.').
+    return (StringUtils.isBlank(basePackage)
+            ? new StringBuilder() : new StringBuilder().append(basePackage).append('.')).
             append(navProp.getType().getFullQualifiedName().getNamespace().toLowerCase()). // namespace
             append('.').append(capitalize(navProp.getName())).toString();
   }
@@ -289,26 +302,32 @@ public abstract class AbstractUtility {
     final EdmTypeInfo edmType = getEdmTypeInfo(typeExpression);
 
     if ((forceCollection || edmType.isCollection()) && !edmType.isEntityType()) {
-      res.append("Collection<");
+      res.append("java.util.Collection<");
     }
+
+    final String basepkg = StringUtils.isBlank(basePackage) ? "" : basePackage + ".";
 
     if ("Edm.Stream".equals(typeExpression)) {
       res.append(InputStream.class.getName());
     } else if (edmType.isPrimitiveType()) {
       final Class<?> clazz = EdmPrimitiveTypeFactory.getInstance(edmType.getPrimitiveTypeKind()).getDefaultType();
-      res.append(clazz.getSimpleName());
+      if (clazz.isArray()) {
+        res.append(clazz.getComponentType().getName()).append("[]");
+      } else {
+        res.append(clazz.getName());
+      }
     } else if (edmType.isComplexType()) {
-      res.append(basePackage).append('.').
+      res.append(basepkg).
               append(edmType.getFullQualifiedName().getNamespace().toLowerCase()). // namespace
               append('.').append(TYPE_SUB_PKG).append('.').
               append(capitalize(edmType.getComplexType().getName())); // ComplexType capitalized name
     } else if (edmType.isEntityType()) {
-      res.append(basePackage).append('.').
+      res.append(basepkg).
               append(edmType.getFullQualifiedName().getNamespace().toLowerCase()). // namespace
               append('.').append(TYPE_SUB_PKG).append('.').
               append(capitalize(edmType.getEntityType().getName())); // EntityType capitalized name
     } else if (edmType.isEnumType()) {
-      res.append(basePackage).append('.').
+      res.append(basepkg).
               append(edmType.getFullQualifiedName().getNamespace().toLowerCase()). // namespace
               append('.').append(TYPE_SUB_PKG).append('.').
               append(capitalize(edmType.getEnumType().getName()));

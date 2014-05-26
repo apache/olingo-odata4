@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -32,6 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -45,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 @KeyRef(ProductDetailKey.class)
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityType(name = "ProductDetail",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "ProductDetail",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface ProductDetail 
-  extends Annotatable,Serializable {
+  extends Annotatable,java.io.Serializable {
 
         
     @Key
-    @Property(name = "ProductID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -82,12 +78,12 @@ public interface ProductDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getProductID();
+    java.lang.Integer getProductID();
 
-    void setProductID(Integer _productID);    
+    void setProductID(java.lang.Integer _productID);    
     
     @Key
-    @Property(name = "ProductDetailID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductDetailID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -105,12 +101,12 @@ public interface ProductDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getProductDetailID();
+    java.lang.Integer getProductDetailID();
 
-    void setProductDetailID(Integer _productDetailID);    
+    void setProductDetailID(java.lang.Integer _productDetailID);    
     
     
-    @Property(name = "ProductName", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductName", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -128,12 +124,12 @@ public interface ProductDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getProductName();
+    java.lang.String getProductName();
 
-    void setProductName(String _productName);    
+    void setProductName(java.lang.String _productName);    
     
     
-    @Property(name = "Description", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Description", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -151,13 +147,13 @@ public interface ProductDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getDescription();
+    java.lang.String getDescription();
 
-    void setDescription(String _description);    
+    void setDescription(java.lang.String _description);    
     
     
 
-    @NavigationProperty(name = "RelatedProduct", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "RelatedProduct", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Product", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -167,7 +163,7 @@ public interface ProductDetail
 
     void setRelatedProduct(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product _relatedProduct);
     
-    @NavigationProperty(name = "Reviews", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Reviews", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.ProductReview", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -181,7 +177,7 @@ public interface ProductDetail
         Operations operations();
 
     interface Operations {
-          @Operation(name = "GetRelatedProduct",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetRelatedProduct",
                     type = OperationType.FUNCTION,
                     isComposable = true,
                     returnType = "Microsoft.Test.OData.Services.ODataWCFService.Product")
@@ -191,35 +187,40 @@ public interface ProductDetail
     
         }
 
+    ComplexFactory factory();
 
-        Annotations annotations();
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
 
     interface Annotations {
 
-            @AnnotationsForProperty(name = "ProductID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ProductID",
                    type = "Edm.Int32")
         Annotatable getProductIDAnnotations();
 
-            @AnnotationsForProperty(name = "ProductDetailID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ProductDetailID",
                    type = "Edm.Int32")
         Annotatable getProductDetailIDAnnotations();
 
-            @AnnotationsForProperty(name = "ProductName",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ProductName",
                    type = "Edm.String")
         Annotatable getProductNameAnnotations();
 
-            @AnnotationsForProperty(name = "Description",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Description",
                    type = "Edm.String")
         Annotatable getDescriptionAnnotations();
 
-    
-    
-        @AnnotationsForNavigationProperty(name = "RelatedProduct", 
+
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "RelatedProduct", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.Product")
         Annotatable getRelatedProductAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "Reviews", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Reviews", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.ProductReview")
         Annotatable getReviewsAnnotations();
-        }
+    }
+
 }

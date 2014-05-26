@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -32,6 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -45,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 @KeyRef(ProductReviewKey.class)
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityType(name = "ProductReview",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "ProductReview",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface ProductReview 
-  extends Annotatable,Serializable {
+  extends Annotatable,java.io.Serializable {
 
                 
     @Key
-    @Property(name = "ProductID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -82,12 +78,12 @@ public interface ProductReview
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getProductID();
+    java.lang.Integer getProductID();
 
-    void setProductID(Integer _productID);    
+    void setProductID(java.lang.Integer _productID);    
     
     @Key
-    @Property(name = "ProductDetailID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductDetailID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -105,12 +101,12 @@ public interface ProductReview
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getProductDetailID();
+    java.lang.Integer getProductDetailID();
 
-    void setProductDetailID(Integer _productDetailID);    
+    void setProductDetailID(java.lang.Integer _productDetailID);    
     
     @Key
-    @Property(name = "ReviewTitle", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ReviewTitle", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -128,12 +124,12 @@ public interface ProductReview
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getReviewTitle();
+    java.lang.String getReviewTitle();
 
-    void setReviewTitle(String _reviewTitle);    
+    void setReviewTitle(java.lang.String _reviewTitle);    
     
     @Key
-    @Property(name = "RevisionID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "RevisionID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -151,12 +147,12 @@ public interface ProductReview
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getRevisionID();
+    java.lang.Integer getRevisionID();
 
-    void setRevisionID(Integer _revisionID);    
+    void setRevisionID(java.lang.Integer _revisionID);    
     
     
-    @Property(name = "Comment", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Comment", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -174,12 +170,12 @@ public interface ProductReview
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getComment();
+    java.lang.String getComment();
 
-    void setComment(String _comment);    
+    void setComment(java.lang.String _comment);    
     
     
-    @Property(name = "Author", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Author", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -197,43 +193,48 @@ public interface ProductReview
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getAuthor();
+    java.lang.String getAuthor();
 
-    void setAuthor(String _author);    
+    void setAuthor(java.lang.String _author);    
     
     
 
 
 
+    ComplexFactory factory();
 
-        Annotations annotations();
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
 
     interface Annotations {
 
-            @AnnotationsForProperty(name = "ProductID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ProductID",
                    type = "Edm.Int32")
         Annotatable getProductIDAnnotations();
 
-            @AnnotationsForProperty(name = "ProductDetailID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ProductDetailID",
                    type = "Edm.Int32")
         Annotatable getProductDetailIDAnnotations();
 
-            @AnnotationsForProperty(name = "ReviewTitle",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ReviewTitle",
                    type = "Edm.String")
         Annotatable getReviewTitleAnnotations();
 
-            @AnnotationsForProperty(name = "RevisionID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "RevisionID",
                    type = "Edm.Int32")
         Annotatable getRevisionIDAnnotations();
 
-            @AnnotationsForProperty(name = "Comment",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Comment",
                    type = "Edm.String")
         Annotatable getCommentAnnotations();
 
-            @AnnotationsForProperty(name = "Author",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Author",
                    type = "Edm.String")
         Annotatable getAuthorAnnotations();
 
-    
-        }
+
+    }
+
 }

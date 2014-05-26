@@ -16,19 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  *#
-@Namespace("$namespace")
-@ComplexType(name = "$complexType.Name",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("$namespace")
+@org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "$complexType.Name",
         isOpenType = $complexType.isOpenType(),
         isAbstract = $complexType.Abstract#if($complexType.getBaseType()),
         baseType = "$complexType.getBaseType().getFullQualifiedName().toString()"#end)
 public interface $utility.capitalize($complexType.Name) 
-    extends #if($complexType.getBaseType())$utility.getJavaType($complexType.getBaseType().getFullQualifiedName().toString()),#{end}#if( $complexType.isOpenType() )AbstractOpenType,#{end}Serializable {
+    extends #if($complexType.getBaseType())$utility.getJavaType($complexType.getBaseType().getFullQualifiedName().toString()),#{end}#if( $complexType.isOpenType() )AbstractOpenType,#{end}java.io.Serializable {
 
 #set( $complexProps = [] )
+#set( $contained = [] )
 #foreach($propertyName in $complexType.PropertyNames)
     #set($property = $complexType.getProperty($propertyName))
 
-    @Property(name = "$property.Name", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "$property.Name", 
                 type = "$property.Type", 
                 nullable = $property.Nullable,
                 defaultValue = "#if($property.getDefaultValue())$property.getDefaultValue()#end",
@@ -54,7 +55,10 @@ public interface $utility.capitalize($complexType.Name)
     #set( $type = $utility.getNavigationType($property) )
     #set( $binding = $utility.getNavigationBindingDetails($complexType, $property) )
 
-    @NavigationProperty(name = "$property.Name", 
+    #if($property.containsTarget() && $property.Collection)#*
+      *##set( $contains = $contained.add($property) )
+    #else#*
+      *#@org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "$property.Name", 
                 type = "$type", 
                 targetSchema = "$binding.Schema.Namespace", 
                 targetContainer = "#if($binding.Container)$binding.Container.Name#end", 
@@ -62,48 +66,77 @@ public interface $utility.capitalize($complexType.Name)
     $utility.getJavaType($type, $property.Collection) get$utility.capitalize($property.Name)();
 
     void set$utility.capitalize($property.Name)($utility.getJavaType($type, $property.Collection) _$utility.uncapitalize($property.Name));
-
+    #end
 #end
 
-#if( $complexProps.size() > 0 )
-    #if( $complexType.baseType )
-    @Override
-    #end
     ComplexFactory factory();
 
     interface ComplexFactory #if( $complexType.baseType )
            extends ${utility.getJavaType($complexType.getBaseType())}.ComplexFactory#end{
-    #foreach($property in $complexProps)
-         @Property(name = "$property.Name",
+#foreach($property in $complexProps)
+         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "$property.Name",
                    type = "$property.Type.FullQualifiedName.toString()")
          $utility.getJavaType($property.Type) new$utility.capitalize($property.Name)();
 
-    #end
-    }
 #end
+    }
 
-    #if( $complexType.baseType )
-    @Override
-    #end
     Annotations annotations();
 
     interface Annotations #if( $complexType.baseType )
            extends ${utility.getJavaType($complexType.getBaseType())}.Annotations#end{
 
-    #foreach($propertyName in $complexType.PropertyNames)
+#foreach($propertyName in $complexType.PropertyNames)
     #set($property = $complexType.getProperty($propertyName))
-        @AnnotationsForProperty(name = "$property.Name",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "$property.Name",
                    type = "$property.Type.FullQualifiedName.toString()")
         Annotatable get$utility.capitalize($property.Name)Annotations();
 
-    #end
+#end
 
-    #foreach($propertyName in $complexType.NavigationPropertyNames)
+#foreach($propertyName in $complexType.NavigationPropertyNames)
     #set($property = $complexType.getNavigationProperty($propertyName))
     #set($type = $utility.getNavigationType($property))
 
         @AnnotationsForNavigationProperty(name = "$property.Name", 
                   type = "$type")
         Annotatable get$utility.capitalize($property.Name)Annotations();
+#end
+    }
+
+#foreach($property in $contained)
+  #if( !$entityType.BaseType.getNavigationProperty($property.Name))
+    #set( $pkgname = "${package}.${utility.capitalize($entityType.Name)}.$utility.capitalize($property.Name)" )
+    @NavigationProperty(name = "$property.Name", 
+                type = "$type", 
+                targetSchema = "$binding.Schema.Namespace", 
+                targetContainer = "#if($binding.Container)$binding.Container.Name#end", 
+                targetEntitySet = "#if($binding.EntitySet)$binding.EntitySet.Name#end",
+                containsTarget = $property.containsTarget())
+    $pkgname get$utility.capitalize($property.Name)();
+    void set$utility.capitalize($property.Name)($pkgname _$utility.uncapitalize($property.Name));
+
+    #set( $keys = $utility.getEntityKeyType($property) )
+    #if( $keys.size() > 1 )
+      #set( $type = $utility.getEdmType($property).EntityType.Name + "Key" )
+    #elseif( $keys.size() == 1 )
+      #set( $type = $keys.values().iterator().next() )
+    #else
+      #set( $type = "" )
+    #end
+
+    @EntitySet(name = "$property.Name", contained = true)
+    interface $utility.capitalize($property.Name) 
+      extends AbstractEntitySet<$utility.getJavaType($property.Type), $type, $utility.getJavaType($property.Type)Collection> {
+
+    #foreach( $dos in $utility.getDescendantsOrSelf($utility.getEdmType($property)) )
+        #set( $djt = $utility.getJavaType($dos) )
+        #set( $sIdx = $djt.lastIndexOf('.') + 1 )
+        $djt new$djt.substring($sIdx)();
+        ${djt}Collection new$djt.substring($sIdx)Collection();
     #end
     }
+
+  #end
+#end
+

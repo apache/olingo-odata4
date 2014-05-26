@@ -167,7 +167,11 @@ public abstract class AbstractEdmSchema implements EdmSchema {
 
   @Override
   public List<EdmEntityContainer> getEntityContainers() {
-    return Collections.singletonList(getEntityContainer());
+    if (getEntityContainer() == null) {
+      return Collections.<EdmEntityContainer>emptyList();
+    } else {
+      return Collections.singletonList(getEntityContainer());
+    }
   }
 
   @Override

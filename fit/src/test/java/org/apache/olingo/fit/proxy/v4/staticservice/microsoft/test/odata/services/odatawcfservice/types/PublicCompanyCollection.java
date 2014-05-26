@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -43,7 +44,7 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-public interface PublicCompanyCollection extends AbstractEntityCollection<PublicCompany> {
+public interface PublicCompanyCollection extends AbstractEntityCollection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PublicCompany> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

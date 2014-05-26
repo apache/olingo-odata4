@@ -16,11 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice;
 
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
@@ -45,8 +44,8 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityContainer(name = "InMemoryEntities",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "InMemoryEntities",
   namespace = "Microsoft.Test.OData.Services.ODataWCFService",
   isDefaultEntityContainer = true)
 public interface InMemoryEntities extends PersistenceManager {
@@ -81,47 +80,47 @@ public interface InMemoryEntities extends PersistenceManager {
   Operations operations();
 
   public interface Operations {
-        @Operation(name = "GetBossEmails",
+        @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetBossEmails",
                     type = OperationType.FUNCTION,
                     isComposable = false,
                     returnType = "Collection(Edm.String)")
-  Collection<String> getBossEmails(
-        @Parameter(name = "start", type = "Edm.Int32", nullable = false) Integer start, 
-        @Parameter(name = "count", type = "Edm.Int32", nullable = false) Integer count
+  java.util.Collection<java.lang.String> getBossEmails(
+        @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "start", type = "Edm.Int32", nullable = false) java.lang.Integer start, 
+        @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "count", type = "Edm.Int32", nullable = false) java.lang.Integer count
     );
 
-          @Operation(name = "GetPerson2",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetPerson2",
                     type = OperationType.FUNCTION,
                     isComposable = true,
                     returnType = "Microsoft.Test.OData.Services.ODataWCFService.Person")
   org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person getPerson2(
-        @Parameter(name = "city", type = "Edm.String", nullable = false) String city
+        @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "city", type = "Edm.String", nullable = false) java.lang.String city
     );
 
-          @Operation(name = "GetDefaultColor",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetDefaultColor",
                     type = OperationType.FUNCTION,
                     isComposable = true,
                     returnType = "Microsoft.Test.OData.Services.ODataWCFService.Color")
   org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color getDefaultColor(
     );
 
-          @Operation(name = "GetPerson",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetPerson",
                     type = OperationType.FUNCTION,
                     isComposable = true,
                     returnType = "Microsoft.Test.OData.Services.ODataWCFService.Person")
   org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person getPerson(
-        @Parameter(name = "address", type = "Microsoft.Test.OData.Services.ODataWCFService.Address", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address address
+        @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "address", type = "Microsoft.Test.OData.Services.ODataWCFService.Address", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address address
     );
 
-          @Operation(name = "GetProductsByAccessLevel",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetProductsByAccessLevel",
                     type = OperationType.FUNCTION,
                     isComposable = false,
                     returnType = "Collection(Edm.String)")
-  Collection<String> getProductsByAccessLevel(
-        @Parameter(name = "accessLevel", type = "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel accessLevel
+  java.util.Collection<java.lang.String> getProductsByAccessLevel(
+        @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "accessLevel", type = "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel accessLevel
     );
 
-          @Operation(name = "GetAllProducts",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetAllProducts",
                     type = OperationType.FUNCTION,
                     isComposable = true,
                     returnType = "Collection(Microsoft.Test.OData.Services.ODataWCFService.Product)")
@@ -129,29 +128,29 @@ public interface InMemoryEntities extends PersistenceManager {
     );
 
     
-        @Operation(name = "ResetBossAddress",
+        @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetBossAddress",
                     type = OperationType.ACTION,
                     returnType = "Microsoft.Test.OData.Services.ODataWCFService.Address")
   org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address resetBossAddress(
-        @Parameter(name = "address", type = "Microsoft.Test.OData.Services.ODataWCFService.Address", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address address
+        @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "address", type = "Microsoft.Test.OData.Services.ODataWCFService.Address", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address address
     );
   
-          @Operation(name = "ResetDataSource",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetDataSource",
                     type = OperationType.ACTION)
   void resetDataSource(
     );
   
-          @Operation(name = "Discount",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "Discount",
                     type = OperationType.ACTION)
   void discount(
-        @Parameter(name = "percentage", type = "Edm.Int32", nullable = false) Integer percentage
+        @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "percentage", type = "Edm.Int32", nullable = false) java.lang.Integer percentage
     );
   
-          @Operation(name = "ResetBossEmail",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetBossEmail",
                     type = OperationType.ACTION,
                     returnType = "Collection(Edm.String)")
-  Collection<String> resetBossEmail(
-        @Parameter(name = "emails", type = "Collection(Edm.String)", nullable = false) Collection<String> emails
+  java.util.Collection<java.lang.String> resetBossEmail(
+        @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "emails", type = "Collection(Edm.String)", nullable = false) java.util.Collection<java.lang.String> emails
     );
   
       }
@@ -159,19 +158,19 @@ public interface InMemoryEntities extends PersistenceManager {
       ComplexFactory complexFactory();
 
     interface ComplexFactory {
-          @Property(name = "Address",
+          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Address",
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
       org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newAddress();
 
-          @Property(name = "HomeAddress",
+          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "HomeAddress",
                 type = "Microsoft.Test.OData.Services.ODataWCFService.HomeAddress")
       org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress newHomeAddress();
 
-          @Property(name = "CompanyAddress",
+          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CompanyAddress",
                 type = "Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress")
       org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyAddress newCompanyAddress();
 
-          @Property(name = "AccountInfo",
+          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "AccountInfo",
                 type = "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo")
       org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo newAccountInfo();
 

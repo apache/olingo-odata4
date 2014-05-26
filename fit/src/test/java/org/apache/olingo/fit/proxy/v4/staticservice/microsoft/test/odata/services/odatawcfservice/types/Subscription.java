@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -32,6 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -45,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityType(name = "Subscription",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "Subscription",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface Subscription 
-  extends Annotatable,Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "SubscriptionID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "SubscriptionID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -82,12 +78,12 @@ public interface Subscription
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getSubscriptionID();
+    java.lang.Integer getSubscriptionID();
 
-    void setSubscriptionID(Integer _subscriptionID);    
+    void setSubscriptionID(java.lang.Integer _subscriptionID);    
     
     
-    @Property(name = "TemplateGuid", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "TemplateGuid", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -105,12 +101,12 @@ public interface Subscription
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getTemplateGuid();
+    java.lang.String getTemplateGuid();
 
-    void setTemplateGuid(String _templateGuid);    
+    void setTemplateGuid(java.lang.String _templateGuid);    
     
     
-    @Property(name = "Title", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Title", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -128,12 +124,12 @@ public interface Subscription
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getTitle();
+    java.lang.String getTitle();
 
-    void setTitle(String _title);    
+    void setTitle(java.lang.String _title);    
     
     
-    @Property(name = "Category", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Category", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -151,12 +147,12 @@ public interface Subscription
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getCategory();
+    java.lang.String getCategory();
 
-    void setCategory(String _category);    
+    void setCategory(java.lang.String _category);    
     
     
-    @Property(name = "CreatedDate", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CreatedDate", 
                 type = "Edm.DateTimeOffset", 
                 nullable = false,
                 defaultValue = "",
@@ -174,39 +170,44 @@ public interface Subscription
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Calendar getCreatedDate();
+    java.util.Calendar getCreatedDate();
 
-    void setCreatedDate(Calendar _createdDate);    
+    void setCreatedDate(java.util.Calendar _createdDate);    
     
     
 
 
 
+    ComplexFactory factory();
 
-        Annotations annotations();
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
 
     interface Annotations {
 
-            @AnnotationsForProperty(name = "SubscriptionID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "SubscriptionID",
                    type = "Edm.Int32")
         Annotatable getSubscriptionIDAnnotations();
 
-            @AnnotationsForProperty(name = "TemplateGuid",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "TemplateGuid",
                    type = "Edm.String")
         Annotatable getTemplateGuidAnnotations();
 
-            @AnnotationsForProperty(name = "Title",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Title",
                    type = "Edm.String")
         Annotatable getTitleAnnotations();
 
-            @AnnotationsForProperty(name = "Category",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Category",
                    type = "Edm.String")
         Annotatable getCategoryAnnotations();
 
-            @AnnotationsForProperty(name = "CreatedDate",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "CreatedDate",
                    type = "Edm.DateTimeOffset")
         Annotatable getCreatedDateAnnotations();
 
-    
-        }
+
+    }
+
 }

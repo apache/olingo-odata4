@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -32,6 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -45,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityType(name = "CreditRecord",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "CreditRecord",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface CreditRecord 
-  extends Annotatable,Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "CreditRecordID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CreditRecordID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -82,12 +78,12 @@ public interface CreditRecord
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getCreditRecordID();
+    java.lang.Integer getCreditRecordID();
 
-    void setCreditRecordID(Integer _creditRecordID);    
+    void setCreditRecordID(java.lang.Integer _creditRecordID);    
     
     
-    @Property(name = "IsGood", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "IsGood", 
                 type = "Edm.Boolean", 
                 nullable = false,
                 defaultValue = "",
@@ -105,12 +101,12 @@ public interface CreditRecord
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Boolean getIsGood();
+    java.lang.Boolean getIsGood();
 
-    void setIsGood(Boolean _isGood);    
+    void setIsGood(java.lang.Boolean _isGood);    
     
     
-    @Property(name = "Reason", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Reason", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -128,12 +124,12 @@ public interface CreditRecord
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getReason();
+    java.lang.String getReason();
 
-    void setReason(String _reason);    
+    void setReason(java.lang.String _reason);    
     
     
-    @Property(name = "CreatedDate", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CreatedDate", 
                 type = "Edm.DateTimeOffset", 
                 nullable = false,
                 defaultValue = "",
@@ -151,35 +147,40 @@ public interface CreditRecord
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Calendar getCreatedDate();
+    java.util.Calendar getCreatedDate();
 
-    void setCreatedDate(Calendar _createdDate);    
+    void setCreatedDate(java.util.Calendar _createdDate);    
     
     
 
 
 
+    ComplexFactory factory();
 
-        Annotations annotations();
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
 
     interface Annotations {
 
-            @AnnotationsForProperty(name = "CreditRecordID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "CreditRecordID",
                    type = "Edm.Int32")
         Annotatable getCreditRecordIDAnnotations();
 
-            @AnnotationsForProperty(name = "IsGood",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "IsGood",
                    type = "Edm.Boolean")
         Annotatable getIsGoodAnnotations();
 
-            @AnnotationsForProperty(name = "Reason",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Reason",
                    type = "Edm.String")
         Annotatable getReasonAnnotations();
 
-            @AnnotationsForProperty(name = "CreatedDate",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "CreatedDate",
                    type = "Edm.DateTimeOffset")
         Annotatable getCreatedDateAnnotations();
 
-    
-        }
+
+    }
+
 }

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -32,6 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -45,17 +48,10 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityType(name = "CreditCardPI",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "CreditCardPI",
         openType = false,
         hasStream = false,
         isAbstract = false,
@@ -65,7 +61,7 @@ public interface CreditCardPI
 
     
     @Key
-    @Property(name = "PaymentInstrumentID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PaymentInstrumentID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -83,12 +79,12 @@ public interface CreditCardPI
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getPaymentInstrumentID();
+    java.lang.Integer getPaymentInstrumentID();
 
-    void setPaymentInstrumentID(Integer _paymentInstrumentID);    
+    void setPaymentInstrumentID(java.lang.Integer _paymentInstrumentID);    
     
     
-    @Property(name = "FriendlyName", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "FriendlyName", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -106,12 +102,12 @@ public interface CreditCardPI
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getFriendlyName();
+    java.lang.String getFriendlyName();
 
-    void setFriendlyName(String _friendlyName);    
+    void setFriendlyName(java.lang.String _friendlyName);    
     
     
-    @Property(name = "CreatedDate", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CreatedDate", 
                 type = "Edm.DateTimeOffset", 
                 nullable = false,
                 defaultValue = "",
@@ -129,12 +125,12 @@ public interface CreditCardPI
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Calendar getCreatedDate();
+    java.util.Calendar getCreatedDate();
 
-    void setCreatedDate(Calendar _createdDate);    
+    void setCreatedDate(java.util.Calendar _createdDate);    
     
     
-    @Property(name = "CardNumber", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CardNumber", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -152,12 +148,12 @@ public interface CreditCardPI
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getCardNumber();
+    java.lang.String getCardNumber();
 
-    void setCardNumber(String _cardNumber);    
+    void setCardNumber(java.lang.String _cardNumber);    
     
     
-    @Property(name = "CVV", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CVV", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -175,12 +171,12 @@ public interface CreditCardPI
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getCVV();
+    java.lang.String getCVV();
 
-    void setCVV(String _cVV);    
+    void setCVV(java.lang.String _cVV);    
     
     
-    @Property(name = "HolderName", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "HolderName", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -198,12 +194,12 @@ public interface CreditCardPI
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getHolderName();
+    java.lang.String getHolderName();
 
-    void setHolderName(String _holderName);    
+    void setHolderName(java.lang.String _holderName);    
     
     
-    @Property(name = "Balance", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Balance", 
                 type = "Edm.Double", 
                 nullable = false,
                 defaultValue = "",
@@ -221,12 +217,12 @@ public interface CreditCardPI
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Double getBalance();
+    java.lang.Double getBalance();
 
-    void setBalance(Double _balance);    
+    void setBalance(java.lang.Double _balance);    
     
     
-    @Property(name = "ExperationDate", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ExperationDate", 
                 type = "Edm.DateTimeOffset", 
                 nullable = false,
                 defaultValue = "",
@@ -244,13 +240,13 @@ public interface CreditCardPI
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Calendar getExperationDate();
+    java.util.Calendar getExperationDate();
 
-    void setExperationDate(Calendar _experationDate);    
+    void setExperationDate(java.util.Calendar _experationDate);    
     
     
 
-    @NavigationProperty(name = "TheStoredPI", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "TheStoredPI", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -260,17 +256,8 @@ public interface CreditCardPI
 
     void setTheStoredPI(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI _theStoredPI);
     
-    @NavigationProperty(name = "BillingStatements", 
-                type = "Microsoft.Test.OData.Services.ODataWCFService.Statement", 
-                targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
-                targetContainer = "", 
-                targetEntitySet = "",
-                containsTarget = true)
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.BillingStatements getBillingStatements();
-
-    void setBillingStatements(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.BillingStatements _billingStatements);
-    
-    @NavigationProperty(name = "BackupStoredPI", 
+        
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "BackupStoredPI", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -280,72 +267,85 @@ public interface CreditCardPI
 
     void setBackupStoredPI(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI _backupStoredPI);
     
-    @NavigationProperty(name = "CreditRecords", 
+        
+
+
+    ComplexFactory factory();
+
+    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument.ComplexFactory{
+    }
+
+    Annotations annotations();
+
+    interface Annotations            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument.Annotations{
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PaymentInstrumentID",
+                   type = "Edm.Int32")
+        Annotatable getPaymentInstrumentIDAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "FriendlyName",
+                   type = "Edm.String")
+        Annotatable getFriendlyNameAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "CreatedDate",
+                   type = "Edm.DateTimeOffset")
+        Annotatable getCreatedDateAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "CardNumber",
+                   type = "Edm.String")
+        Annotatable getCardNumberAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "CVV",
+                   type = "Edm.String")
+        Annotatable getCVVAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "HolderName",
+                   type = "Edm.String")
+        Annotatable getHolderNameAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Balance",
+                   type = "Edm.Double")
+        Annotatable getBalanceAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ExperationDate",
+                   type = "Edm.DateTimeOffset")
+        Annotatable getExperationDateAnnotations();
+
+
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "TheStoredPI", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI")
+        Annotatable getTheStoredPIAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "BillingStatements", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.Statement")
+        Annotatable getBillingStatementsAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "BackupStoredPI", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI")
+        Annotatable getBackupStoredPIAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "CreditRecords", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.CreditRecord")
+        Annotatable getCreditRecordsAnnotations();
+    }
+
+        @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "CreditRecords", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.CreditRecord", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "", 
                 targetEntitySet = "",
                 containsTarget = true)
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.CreditRecords getCreditRecords();
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditCardPI.CreditRecords getCreditRecords();
+    void setCreditRecords(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditCardPI.CreditRecords _creditRecords);
 
-    void setCreditRecords(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.CreditRecords _creditRecords);
-    
+            
+    @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "CreditRecords", contained = true)
+    interface CreditRecords 
+      extends AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditRecord, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditRecordCollection> {
 
-
-
-        @Override
-        Annotations annotations();
-
-    interface Annotations            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument.Annotations{
-
-            @AnnotationsForProperty(name = "PaymentInstrumentID",
-                   type = "Edm.Int32")
-        Annotatable getPaymentInstrumentIDAnnotations();
-
-            @AnnotationsForProperty(name = "FriendlyName",
-                   type = "Edm.String")
-        Annotatable getFriendlyNameAnnotations();
-
-            @AnnotationsForProperty(name = "CreatedDate",
-                   type = "Edm.DateTimeOffset")
-        Annotatable getCreatedDateAnnotations();
-
-            @AnnotationsForProperty(name = "CardNumber",
-                   type = "Edm.String")
-        Annotatable getCardNumberAnnotations();
-
-            @AnnotationsForProperty(name = "CVV",
-                   type = "Edm.String")
-        Annotatable getCVVAnnotations();
-
-            @AnnotationsForProperty(name = "HolderName",
-                   type = "Edm.String")
-        Annotatable getHolderNameAnnotations();
-
-            @AnnotationsForProperty(name = "Balance",
-                   type = "Edm.Double")
-        Annotatable getBalanceAnnotations();
-
-            @AnnotationsForProperty(name = "ExperationDate",
-                   type = "Edm.DateTimeOffset")
-        Annotatable getExperationDateAnnotations();
-
-    
-    
-        @AnnotationsForNavigationProperty(name = "TheStoredPI", 
-                  type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI")
-        Annotatable getTheStoredPIAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "BillingStatements", 
-                  type = "Microsoft.Test.OData.Services.ODataWCFService.Statement")
-        Annotatable getBillingStatementsAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "BackupStoredPI", 
-                  type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI")
-        Annotatable getBackupStoredPIAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "CreditRecords", 
-                  type = "Microsoft.Test.OData.Services.ODataWCFService.CreditRecord")
-        Annotatable getCreditRecordsAnnotations();
+            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditRecord newCreditRecord();
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditRecordCollection newCreditRecordCollection();
         }
-}
+
+  }

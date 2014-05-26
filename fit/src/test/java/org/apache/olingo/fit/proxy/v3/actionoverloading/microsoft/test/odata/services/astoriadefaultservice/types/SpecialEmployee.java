@@ -20,16 +20,21 @@
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
@@ -43,27 +48,20 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@EntityType(name = "SpecialEmployee",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "SpecialEmployee",
         openType = false,
         hasStream = false,
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.AstoriaDefaultService.Employee")
 public interface SpecialEmployee 
-  extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Employee {
+  extends Annotatable,org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Employee {
 
     
     @Key
-    @Property(name = "PersonId", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PersonId", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -81,12 +79,12 @@ public interface SpecialEmployee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getPersonId();
+    java.lang.Integer getPersonId();
 
-    void setPersonId(final Integer _personId);    
+    void setPersonId(java.lang.Integer _personId);    
     
     
-    @Property(name = "Name", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Name", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -104,12 +102,12 @@ public interface SpecialEmployee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getName();
+    java.lang.String getName();
 
-    void setName(final String _name);    
+    void setName(java.lang.String _name);    
     
     
-    @Property(name = "ManagersPersonId", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ManagersPersonId", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -127,12 +125,12 @@ public interface SpecialEmployee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getManagersPersonId();
+    java.lang.Integer getManagersPersonId();
 
-    void setManagersPersonId(final Integer _managersPersonId);    
+    void setManagersPersonId(java.lang.Integer _managersPersonId);    
     
     
-    @Property(name = "Salary", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Salary", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -150,12 +148,12 @@ public interface SpecialEmployee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getSalary();
+    java.lang.Integer getSalary();
 
-    void setSalary(final Integer _salary);    
+    void setSalary(java.lang.Integer _salary);    
     
     
-    @Property(name = "Title", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Title", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -173,12 +171,12 @@ public interface SpecialEmployee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getTitle();
+    java.lang.String getTitle();
 
-    void setTitle(final String _title);    
+    void setTitle(java.lang.String _title);    
     
     
-    @Property(name = "CarsVIN", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CarsVIN", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -196,12 +194,12 @@ public interface SpecialEmployee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getCarsVIN();
+    java.lang.Integer getCarsVIN();
 
-    void setCarsVIN(final Integer _carsVIN);    
+    void setCarsVIN(java.lang.Integer _carsVIN);    
     
     
-    @Property(name = "Bonus", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Bonus", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -219,12 +217,12 @@ public interface SpecialEmployee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getBonus();
+    java.lang.Integer getBonus();
 
-    void setBonus(final Integer _bonus);    
+    void setBonus(java.lang.Integer _bonus);    
     
     
-    @Property(name = "IsFullyVested", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "IsFullyVested", 
                 type = "Edm.Boolean", 
                 nullable = false,
                 defaultValue = "",
@@ -242,59 +240,115 @@ public interface SpecialEmployee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Boolean getIsFullyVested();
+    java.lang.Boolean getIsFullyVested();
 
-    void setIsFullyVested(final Boolean _isFullyVested);    
+    void setIsFullyVested(java.lang.Boolean _isFullyVested);    
     
     
 
-    @NavigationProperty(name = "PersonMetadata", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "PersonMetadata", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.PersonMetadata", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "PersonMetadata")
+                targetEntitySet = "PersonMetadata",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PersonMetadataCollection getPersonMetadata();
 
-    void setPersonMetadata(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PersonMetadataCollection _personMetadata);
-
-
-    @NavigationProperty(name = "Manager", 
+    void setPersonMetadata(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PersonMetadataCollection _personMetadata);
+    
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Manager", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Employee", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Person")
+                targetEntitySet = "Person",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Employee getManager();
 
-    void setManager(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Employee _manager);
-
-
-    @NavigationProperty(name = "Car", 
+    void setManager(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Employee _manager);
+    
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Car", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Car", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Car")
+                targetEntitySet = "Car",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Car getCar();
 
-    void setCar(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Car _car);
-
-
+    void setCar(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Car _car);
+    
 
         @Override
         Operations operations();
 
     interface Operations            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Employee.Operations{
     
-          @Operation(name = "UpdatePersonInfo",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "UpdatePersonInfo",
                     type = OperationType.ACTION)
       void updatePersonInfo(
             );
 
-          @Operation(name = "IncreaseEmployeeSalary",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "IncreaseEmployeeSalary",
                     type = OperationType.ACTION,
                     returnType = "Edm.Int32")
-      Integer increaseEmployeeSalary(
+      java.lang.Integer increaseEmployeeSalary(
             );
 
         }
+
+    ComplexFactory factory();
+
+    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Employee.ComplexFactory{
+    }
+
+    Annotations annotations();
+
+    interface Annotations            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Employee.Annotations{
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PersonId",
+                   type = "Edm.Int32")
+        Annotatable getPersonIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Name",
+                   type = "Edm.String")
+        Annotatable getNameAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ManagersPersonId",
+                   type = "Edm.Int32")
+        Annotatable getManagersPersonIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Salary",
+                   type = "Edm.Int32")
+        Annotatable getSalaryAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Title",
+                   type = "Edm.String")
+        Annotatable getTitleAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "CarsVIN",
+                   type = "Edm.Int32")
+        Annotatable getCarsVINAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Bonus",
+                   type = "Edm.Int32")
+        Annotatable getBonusAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "IsFullyVested",
+                   type = "Edm.Boolean")
+        Annotatable getIsFullyVestedAnnotations();
+
+
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "PersonMetadata", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.PersonMetadata")
+        Annotatable getPersonMetadataAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Manager", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Employee")
+        Annotatable getManagerAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Car", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Car")
+        Annotatable getCarAnnotations();
+    }
 
 }

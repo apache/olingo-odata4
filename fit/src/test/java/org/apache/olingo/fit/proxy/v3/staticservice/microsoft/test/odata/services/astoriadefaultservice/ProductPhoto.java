@@ -43,8 +43,7 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-
-@EntitySet(name = "ProductPhoto")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "ProductPhoto")
 public interface ProductPhoto 
   extends AbstractEntitySet<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductPhoto, ProductPhotoKey, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductPhotoCollection> {
 

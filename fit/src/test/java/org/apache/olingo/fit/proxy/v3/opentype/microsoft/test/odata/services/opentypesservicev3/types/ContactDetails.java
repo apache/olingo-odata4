@@ -19,10 +19,16 @@
 
 package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types;
 
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.*;
 import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.*;
 
@@ -37,100 +43,103 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.UUID;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV3")
-@ComplexType(name = "ContactDetails")
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV3")
+@org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "ContactDetails")
 public interface ContactDetails 
-    extends Serializable {
+    extends java.io.Serializable {
 
 
-    @Property(name = "FirstContacted", type = "Edm.Binary", nullable = true)
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "FirstContacted", type = "Edm.Binary", nullable = true)
     byte[] getFirstContacted();
 
-    void setFirstContacted(final byte[] _firstContacted);
+    void setFirstContacted(byte[] _firstContacted);
 
     
 
-    @Property(name = "LastContacted", type = "Edm.DateTimeOffset", nullable = false)
-    Calendar getLastContacted();
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "LastContacted", type = "Edm.DateTimeOffset", nullable = false)
+    java.util.Calendar getLastContacted();
 
-    void setLastContacted(final Calendar _lastContacted);
-
-    
-
-    @Property(name = "Contacted", type = "Edm.DateTime", nullable = false)
-    Calendar getContacted();
-
-    void setContacted(final Calendar _contacted);
+    void setLastContacted(java.util.Calendar _lastContacted);
 
     
 
-    @Property(name = "GUID", type = "Edm.Guid", nullable = false)
-    UUID getGUID();
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Contacted", type = "Edm.DateTime", nullable = false)
+    java.util.Calendar getContacted();
 
-    void setGUID(final UUID _gUID);
-
-    
-
-    @Property(name = "PreferedContactTime", type = "Edm.Time", nullable = false)
-    BigDecimal getPreferedContactTime();
-
-    void setPreferedContactTime(final BigDecimal _preferedContactTime);
+    void setContacted(java.util.Calendar _contacted);
 
     
 
-    @Property(name = "Byte", type = "Edm.Byte", nullable = false)
-    Short getByte();
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GUID", type = "Edm.Guid", nullable = false)
+    java.util.UUID getGUID();
 
-    void setByte(final Short _byte);
-
-    
-
-    @Property(name = "SignedByte", type = "Edm.SByte", nullable = false)
-    Byte getSignedByte();
-
-    void setSignedByte(final Byte _signedByte);
+    void setGUID(java.util.UUID _gUID);
 
     
 
-    @Property(name = "Double", type = "Edm.Double", nullable = false)
-    Double getDouble();
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PreferedContactTime", type = "Edm.Time", nullable = false)
+    java.math.BigDecimal getPreferedContactTime();
 
-    void setDouble(final Double _double);
-
-    
-
-    @Property(name = "Single", type = "Edm.Single", nullable = false)
-    Float getSingle();
-
-    void setSingle(final Float _single);
+    void setPreferedContactTime(java.math.BigDecimal _preferedContactTime);
 
     
 
-    @Property(name = "Short", type = "Edm.Int16", nullable = false)
-    Short getShort();
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Byte", type = "Edm.Byte", nullable = false)
+    java.lang.Short getByte();
 
-    void setShort(final Short _short);
-
-    
-
-    @Property(name = "Int", type = "Edm.Int32", nullable = false)
-    Integer getInt();
-
-    void setInt(final Integer _int);
+    void setByte(java.lang.Short _byte);
 
     
 
-    @Property(name = "Long", type = "Edm.Int64", nullable = false)
-    Long getLong();
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "SignedByte", type = "Edm.SByte", nullable = false)
+    java.lang.Byte getSignedByte();
 
-    void setLong(final Long _long);
+    void setSignedByte(java.lang.Byte _signedByte);
 
     
 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Double", type = "Edm.Double", nullable = false)
+    java.lang.Double getDouble();
+
+    void setDouble(java.lang.Double _double);
+
+    
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Single", type = "Edm.Single", nullable = false)
+    java.lang.Float getSingle();
+
+    void setSingle(java.lang.Float _single);
+
+    
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Short", type = "Edm.Int16", nullable = false)
+    java.lang.Short getShort();
+
+    void setShort(java.lang.Short _short);
+
+    
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Int", type = "Edm.Int32", nullable = false)
+    java.lang.Integer getInt();
+
+    void setInt(java.lang.Integer _int);
+
+    
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Long", type = "Edm.Int64", nullable = false)
+    java.lang.Long getLong();
+
+    void setLong(java.lang.Long _long);
+
+    
+
+    ComplexFactory factory();
+
+    interface ComplexFactory {
+    }
 }

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -24,8 +25,8 @@ import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@Term(name = "IsBoss",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.Term(name = "IsBoss",
       type="Edm.Boolean")
 public interface IsBoss extends AbstractTerm {
 }

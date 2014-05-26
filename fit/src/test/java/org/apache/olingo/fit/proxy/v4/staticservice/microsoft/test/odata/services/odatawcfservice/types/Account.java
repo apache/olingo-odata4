@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -32,6 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -45,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityType(name = "Account",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "Account",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface Account 
-  extends Annotatable,Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "AccountID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "AccountID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -82,12 +78,12 @@ public interface Account
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getAccountID();
+    java.lang.Integer getAccountID();
 
-    void setAccountID(Integer _accountID);    
+    void setAccountID(java.lang.Integer _accountID);    
     
     
-    @Property(name = "Country", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Country", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -105,12 +101,12 @@ public interface Account
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getCountry();
+    java.lang.String getCountry();
 
-    void setCountry(String _country);    
+    void setCountry(java.lang.String _country);    
     
     
-    @Property(name = "AccountInfo", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "AccountInfo", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo", 
                 nullable = true,
                 defaultValue = "",
@@ -134,7 +130,7 @@ public interface Account
         
     
 
-    @NavigationProperty(name = "MyGiftCard", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "MyGiftCard", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.GiftCard", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "", 
@@ -144,27 +140,9 @@ public interface Account
 
     void setMyGiftCard(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.GiftCard _myGiftCard);
     
-    @NavigationProperty(name = "MyPaymentInstruments", 
-                type = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument", 
-                targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
-                targetContainer = "", 
-                targetEntitySet = "",
-                containsTarget = true)
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.MyPaymentInstruments getMyPaymentInstruments();
-
-    void setMyPaymentInstruments(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.MyPaymentInstruments _myPaymentInstruments);
-    
-    @NavigationProperty(name = "ActiveSubscriptions", 
-                type = "Microsoft.Test.OData.Services.ODataWCFService.Subscription", 
-                targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
-                targetContainer = "", 
-                targetEntitySet = "",
-                containsTarget = true)
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.ActiveSubscriptions getActiveSubscriptions();
-
-    void setActiveSubscriptions(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.ActiveSubscriptions _activeSubscriptions);
-    
-    @NavigationProperty(name = "AvailableSubscriptionTemplatess", 
+        
+        
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "AvailableSubscriptionTemplatess", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Subscription", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -178,14 +156,14 @@ public interface Account
         Operations operations();
 
     interface Operations {
-          @Operation(name = "GetDefaultPI",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetDefaultPI",
                     type = OperationType.FUNCTION,
                     isComposable = false,
                     returnType = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument")
       org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument getDefaultPI(
             );
 
-          @Operation(name = "GetAccountInfo",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetAccountInfo",
                     type = OperationType.FUNCTION,
                     isComposable = true,
                     returnType = "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo")
@@ -193,56 +171,95 @@ public interface Account
             );
 
     
-          @Operation(name = "RefreshDefaultPI",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "RefreshDefaultPI",
                     type = OperationType.ACTION,
                     returnType = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument")
       org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument refreshDefaultPI(
-                @Parameter(name = "newDate", type = "Edm.DateTimeOffset", nullable = true) Calendar newDate
+                @Parameter(name = "newDate", type = "Edm.DateTimeOffset", nullable = true) java.util.Calendar newDate
             );
 
         }
 
-        ComplexFactory factory();
+    ComplexFactory factory();
 
     interface ComplexFactory {
-             @Property(name = "AccountInfo",
+         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "AccountInfo",
                    type = "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo")
          org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo newAccountInfo();
 
-        }
+    }
 
-        Annotations annotations();
+    Annotations annotations();
 
     interface Annotations {
 
-            @AnnotationsForProperty(name = "AccountID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "AccountID",
                    type = "Edm.Int32")
         Annotatable getAccountIDAnnotations();
 
-            @AnnotationsForProperty(name = "Country",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Country",
                    type = "Edm.String")
         Annotatable getCountryAnnotations();
 
-            @AnnotationsForProperty(name = "AccountInfo",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "AccountInfo",
                    type = "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo")
         Annotatable getAccountInfoAnnotations();
 
-    
-    
-        @AnnotationsForNavigationProperty(name = "MyGiftCard", 
+
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "MyGiftCard", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.GiftCard")
         Annotatable getMyGiftCardAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "MyPaymentInstruments", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "MyPaymentInstruments", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument")
         Annotatable getMyPaymentInstrumentsAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "ActiveSubscriptions", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "ActiveSubscriptions", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.Subscription")
         Annotatable getActiveSubscriptionsAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "AvailableSubscriptionTemplatess", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "AvailableSubscriptionTemplatess", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.Subscription")
         Annotatable getAvailableSubscriptionTemplatessAnnotations();
+    }
+
+      @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "MyPaymentInstruments", 
+                type = "Microsoft.Test.OData.Services.ODataWCFService.Subscription", 
+                targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
+                targetContainer = "InMemoryEntities", 
+                targetEntitySet = "SubscriptionTemplates",
+                containsTarget = true)
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Account.MyPaymentInstruments getMyPaymentInstruments();
+    void setMyPaymentInstruments(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Account.MyPaymentInstruments _myPaymentInstruments);
+
+            
+    @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "MyPaymentInstruments", contained = true)
+    interface MyPaymentInstruments 
+      extends AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection> {
+
+            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument newPaymentInstrument();
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection newPaymentInstrumentCollection();
+            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditCardPI newCreditCardPI();
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditCardPICollection newCreditCardPICollection();
         }
-}
+
+        @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "ActiveSubscriptions", 
+                type = "java.lang.Integer", 
+                targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
+                targetContainer = "InMemoryEntities", 
+                targetEntitySet = "SubscriptionTemplates",
+                containsTarget = true)
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Account.ActiveSubscriptions getActiveSubscriptions();
+    void setActiveSubscriptions(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Account.ActiveSubscriptions _activeSubscriptions);
+
+            
+    @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "ActiveSubscriptions", contained = true)
+    interface ActiveSubscriptions 
+      extends AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Subscription, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.SubscriptionCollection> {
+
+            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Subscription newSubscription();
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.SubscriptionCollection newSubscriptionCollection();
+        }
+
+  }

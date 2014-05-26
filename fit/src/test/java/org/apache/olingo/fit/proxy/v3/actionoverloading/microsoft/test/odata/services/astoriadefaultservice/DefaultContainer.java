@@ -20,8 +20,6 @@
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice;
 
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
@@ -46,60 +44,36 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@EntityContainer(name = "DefaultContainer",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "DefaultContainer",
   namespace = "Microsoft.Test.OData.Services.AstoriaDefaultService",
   isDefaultEntityContainer = true)
 public interface DefaultContainer extends PersistenceManager {
 
     Customer getCustomer();
-
     Login getLogin();
-
     OrderLine getOrderLine();
-
     ComputerDetail getComputerDetail();
-
     Product getProduct();
-
     Message getMessage();
-
     ProductDetail getProductDetail();
-
     ProductPhoto getProductPhoto();
-
     Order getOrder();
-
     Computer getComputer();
-
     MappedEntityType getMappedEntityType();
-
     PageView getPageView();
-
     Driver getDriver();
-
     AllGeoCollectionTypesSet getAllGeoCollectionTypesSet();
-
     Car getCar();
-
     CustomerInfo getCustomerInfo();
-
     License getLicense();
-
     ProductReview getProductReview();
-
     LastLogin getLastLogin();
-
     MessageAttachment getMessageAttachment();
-
     AllGeoTypesSet getAllGeoTypesSet();
-
     PersonMetadata getPersonMetadata();
-
     RSAToken getRSAToken();
-
     Person getPerson();
-
 
 
 
@@ -108,15 +82,15 @@ public interface DefaultContainer extends PersistenceManager {
 
   public interface Operations {
   
-        @Operation(name = "UpdatePersonInfo",
+        @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "UpdatePersonInfo",
                     type = OperationType.ACTION)
   void updatePersonInfo(
     );
   
-          @Operation(name = "RetrieveProduct",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "RetrieveProduct",
                     type = OperationType.ACTION,
                     returnType = "Edm.Int32")
-  Integer retrieveProduct(
+  java.lang.Integer retrieveProduct(
     );
   
       }
@@ -124,31 +98,31 @@ public interface DefaultContainer extends PersistenceManager {
       ComplexFactory complexFactory();
 
     interface ComplexFactory {
-          @Property(name = "ContactDetails",
+          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ContactDetails",
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails")
       org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newContactDetails();
 
-          @Property(name = "Aliases",
+          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Aliases",
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Aliases")
       org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Aliases newAliases();
 
-          @Property(name = "Phone",
+          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Phone",
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone")
       org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Phone newPhone();
 
-          @Property(name = "AuditInfo",
+          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "AuditInfo",
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo")
       org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo newAuditInfo();
 
-          @Property(name = "ConcurrencyInfo",
+          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ConcurrencyInfo",
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo")
       org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newConcurrencyInfo();
 
-          @Property(name = "Dimensions",
+          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Dimensions",
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions")
       org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions newDimensions();
 
-          @Property(name = "ComplexToCategory",
+          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ComplexToCategory",
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ComplexToCategory")
       org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory newComplexToCategory();
 

@@ -20,8 +20,6 @@
 package org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice;
 
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
@@ -46,42 +44,27 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-@Namespace("Microsoft.Test.OData.Services.PrimitiveKeysService")
-@EntityContainer(name = "TestContext",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.PrimitiveKeysService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "TestContext",
   namespace = "Microsoft.Test.OData.Services.PrimitiveKeysService",
   isDefaultEntityContainer = true)
 public interface TestContext extends PersistenceManager {
 
     EdmTimeSet getEdmTimeSet();
-
     EdmDoubleSet getEdmDoubleSet();
-
     EdmStringSet getEdmStringSet();
-
     EdmBooleanSet getEdmBooleanSet();
-
     EdmBinarySet getEdmBinarySet();
-
     EdmDecimalSet getEdmDecimalSet();
-
     EdmGuidSet getEdmGuidSet();
-
     EdmInt32Set getEdmInt32Set();
-
     EdmInt64Set getEdmInt64Set();
-
     EdmInt16Set getEdmInt16Set();
-
     EdmByteSet getEdmByteSet();
-
     EdmDateTimeSet getEdmDateTimeSet();
-
     Folders getFolders();
-
     EdmSingleSet getEdmSingleSet();
-
     EdmDateTimeOffsetSet getEdmDateTimeOffsetSet();
-
 
 
 

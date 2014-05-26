@@ -20,8 +20,6 @@
 package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4;
 
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
@@ -46,8 +44,8 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-@Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
-@EntityContainer(name = "DefaultContainer",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
+@org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "DefaultContainer",
   namespace = "Microsoft.Test.OData.Services.OpenTypesServiceV4",
   isDefaultEntityContainer = true)
 public interface DefaultContainer extends PersistenceManager {
@@ -66,11 +64,11 @@ public interface DefaultContainer extends PersistenceManager {
       ComplexFactory complexFactory();
 
     interface ComplexFactory {
-          @Property(name = "ContactDetails",
+          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ContactDetails",
                 type = "Microsoft.Test.OData.Services.OpenTypesServiceV4.ContactDetails")
       org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.ContactDetails newContactDetails();
 
-          @Property(name = "AccountInfo",
+          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "AccountInfo",
                 type = "Microsoft.Test.OData.Services.OpenTypesServiceV4.AccountInfo")
       org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.AccountInfo newAccountInfo();
 

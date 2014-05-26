@@ -43,8 +43,7 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-
-@EntitySet(name = "EdmBinarySet")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "EdmBinarySet")
 public interface EdmBinarySet 
   extends AbstractEntitySet<org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBinary, byte[], org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBinaryCollection> {
 

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -23,8 +24,8 @@ import org.apache.olingo.ext.proxy.api.annotations.EnumType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EnumType(name = "AccessLevel",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EnumType(name = "AccessLevel",
           underlyingType = EdmPrimitiveTypeKind.Int32,
           isFlags = true)
 public enum AccessLevel {
@@ -34,13 +35,13 @@ public enum AccessLevel {
     Execute(4),
     ReadWrite(3);
 
-    private Integer value;
+    private java.lang.Integer value;
     
-    public Integer getValue(){
+    public java.lang.Integer getValue(){
       return this.value;
     }
 
-    private AccessLevel(final Integer value){
+    private AccessLevel(final java.lang.Integer value){
       this.value=value;
     }
 }

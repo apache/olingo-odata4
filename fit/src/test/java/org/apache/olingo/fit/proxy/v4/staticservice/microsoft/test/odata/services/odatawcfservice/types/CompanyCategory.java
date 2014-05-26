@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -23,8 +24,8 @@ import org.apache.olingo.ext.proxy.api.annotations.EnumType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EnumType(name = "CompanyCategory",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EnumType(name = "CompanyCategory",
           underlyingType = EdmPrimitiveTypeKind.Int32,
           isFlags = false)
 public enum CompanyCategory {
@@ -33,13 +34,13 @@ public enum CompanyCategory {
     Electronics(2),
     Others(4);
 
-    private Integer value;
+    private java.lang.Integer value;
     
-    public Integer getValue(){
+    public java.lang.Integer getValue(){
       return this.value;
     }
 
-    private CompanyCategory(final Integer value){
+    private CompanyCategory(final java.lang.Integer value){
       this.value=value;
     }
 }

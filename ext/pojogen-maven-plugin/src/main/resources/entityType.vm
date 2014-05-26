@@ -24,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -33,11 +34,12 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 #foreach($ns in $namespaces)
-import ${basePackage}.${ns}.*;
-import ${basePackage}.${ns}.types.*;
+import #if($basePackage)${basePackage}.#end${ns}.*;
+import #if($basePackage)${basePackage}.#end${ns}.types.*;
 #end
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -48,24 +50,17 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 #if( $keyRef )@KeyRef(${keyRef}.class)#end
 
-@Namespace("$namespace")
-@EntityType(name = "$entityType.Name",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("$namespace")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "$entityType.Name",
         openType = $entityType.isOpenType(),
         hasStream = $entityType.hasStream(),
         isAbstract = $entityType.Abstract#if($entityType.getBaseType()),
         baseType = "$entityType.getBaseType().getFullQualifiedName().toString()"#end)
 public interface $utility.capitalize($entityType.Name) 
-  extends Annotatable,#if( $entityType.getBaseType() )$utility.getJavaType($entityType.getBaseType())#{elseif}( $entityType.isOpenType() )AbstractOpenType#{else}Serializable#end {
+  extends Annotatable,#if( $entityType.getBaseType() )$utility.getJavaType($entityType.getBaseType())#{elseif}( $entityType.isOpenType() )AbstractOpenType#{else}java.io.Serializable#end {
 
 #set( $keys = [] )
 #foreach($key in $entityType.KeyPropertyRefs)
@@ -73,12 +68,13 @@ public interface $utility.capitalize($entityType.Name)
 #end
 
 #set( $complexProps = [] )
+#set( $contained = [] )
 #foreach($propertyName in $entityType.PropertyNames)
     #set($property = $entityType.getProperty($propertyName))
     #set($fcprops = $utility.getFcProperties($property) )
     #if($keys.contains($property.Name))@Key#end
 
-    @Property(name = "$property.Name", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "$property.Name", 
                 type = "$property.Type.FullQualifiedName.toString()", 
                 nullable = $property.Nullable,
                 defaultValue = "#if($property.getDefaultValue())$property.getDefaultValue()#end",
@@ -110,18 +106,16 @@ public interface $utility.capitalize($entityType.Name)
     #set($type = $utility.getNavigationType($property))
     #set($binding = $utility.getNavigationBindingDetails($entityType, $property))
 
-    @NavigationProperty(name = "$property.Name", 
+    #if($property.containsTarget() && $property.Collection)#*
+      *##set( $contains = $contained.add($property) )
+    #else#*
+      *#@org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "$property.Name", 
                 type = "$type", 
                 targetSchema = "$binding.Schema.Namespace", 
                 targetContainer = "#if($binding.Container)$binding.Container.Name#end", 
                 targetEntitySet = "#if($binding.EntitySet)$binding.EntitySet.Name#end",
                 containsTarget = $property.containsTarget())
-    #if($property.containsTarget() && $property.Collection)#*
-      *#$utility.getContainedEntitySet($property) get$utility.capitalize($property.Name)();
-
-    void set$utility.capitalize($property.Name)($utility.getContainedEntitySet($property) _$utility.uncapitalize($property.Name));
-    #else#*
-      *#$utility.getJavaType($type, $property.Collection) get$utility.capitalize($property.Name)();
+    $utility.getJavaType($type, $property.Collection) get$utility.capitalize($property.Name)();
 
     void set$utility.capitalize($property.Name)($utility.getJavaType($type, $property.Collection) _$utility.uncapitalize($property.Name));
     #end
@@ -145,7 +139,7 @@ public interface $utility.capitalize($entityType.Name)
     interface Operations #if($inherited.size() > 0)
            extends ${utility.getJavaType($entityType.getBaseType())}.Operations#end{
     #foreach($operation in $functions)
-      @Operation(name = "$operation.Name",
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "$operation.Name",
                     type = OperationType.FUNCTION,
                     isComposable = $operation.Composable#if($operation.ReturnType),
                     returnType = "#if( $operation.ReturnType.Collection )Collection(#end$operation.ReturnType.Type.FullQualifiedName.toString()#if( $operation.ReturnType.Collection ))#end"#end)
@@ -165,7 +159,7 @@ public interface $utility.capitalize($entityType.Name)
     #end
 
     #foreach($operation in $actions)
-      @Operation(name = "$operation.Name",
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "$operation.Name",
                     type = OperationType.ACTION#if($operation.ReturnType),
                     returnType = "#if( $operation.ReturnType.Collection )Collection(#end$operation.ReturnType.Type.FullQualifiedName.toString()#if( $operation.ReturnType.Collection ))#end"#end)
       #if($operation.ReturnType)$utility.getJavaType($operation.ReturnType.Type, $operation.ReturnType.Collection)#{else}void#end $utility.uncapitalize($operation.Name)(
@@ -185,46 +179,74 @@ public interface $utility.capitalize($entityType.Name)
     }
 #end
 
-#if( $complexProps.size() > 0 )
-    #if( $entityType.baseType )
-    @Override
-    #end
     ComplexFactory factory();
 
     interface ComplexFactory #if( $entityType.baseType )
            extends ${utility.getJavaType($entityType.getBaseType())}.ComplexFactory#end{
-    #foreach($property in $complexProps)
-         @Property(name = "$property.Name",
+#foreach($property in $complexProps)
+         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "$property.Name",
                    type = "$property.Type.FullQualifiedName.toString()")
          $utility.getJavaType($property.Type) new$utility.capitalize($property.Name)();
 
-    #end
-    }
 #end
+    }
 
-    #if( $entityType.baseType )
-    @Override
-    #end
     Annotations annotations();
 
     interface Annotations #if( $entityType.baseType )
            extends ${utility.getJavaType($entityType.getBaseType())}.Annotations#end{
 
-    #foreach($propertyName in $entityType.PropertyNames)
+#foreach($propertyName in $entityType.PropertyNames)
     #set($property = $entityType.getProperty($propertyName))
-        @AnnotationsForProperty(name = "$property.Name",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "$property.Name",
                    type = "$property.Type.FullQualifiedName.toString()")
         Annotatable get$utility.capitalize($property.Name)Annotations();
 
-    #end
+#end
 
-    #foreach($propertyName in $entityType.NavigationPropertyNames)
+#foreach($propertyName in $entityType.NavigationPropertyNames)
     #set($property = $entityType.getNavigationProperty($propertyName))
     #set($type = $utility.getNavigationType($property))
 
-        @AnnotationsForNavigationProperty(name = "$property.Name", 
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "$property.Name", 
                   type = "$type")
         Annotatable get$utility.capitalize($property.Name)Annotations();
+#end
+    }
+
+#foreach($property in $contained)
+  #if( !$entityType.BaseType.getNavigationProperty($property.Name))
+    #set( $pkgname = "${package}.${utility.capitalize($entityType.Name)}.$utility.capitalize($property.Name)" )
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "$property.Name", 
+                type = "$type", 
+                targetSchema = "$binding.Schema.Namespace", 
+                targetContainer = "#if($binding.Container)$binding.Container.Name#end", 
+                targetEntitySet = "#if($binding.EntitySet)$binding.EntitySet.Name#end",
+                containsTarget = $property.containsTarget())
+    $pkgname get$utility.capitalize($property.Name)();
+    void set$utility.capitalize($property.Name)($pkgname _$utility.uncapitalize($property.Name));
+
+    #set( $keys = $utility.getEntityKeyType($property) )
+    #if( $keys.size() > 1 )
+      #set( $type = $utility.getEdmType($property).EntityType.Name + "Key" )
+    #elseif( $keys.size() == 1 )
+      #set( $type = $keys.values().iterator().next() )
+    #else
+      #set( $type = "" )
+    #end
+
+    @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "$property.Name", contained = true)
+    interface $utility.capitalize($property.Name) 
+      extends AbstractEntitySet<$utility.getJavaType($property.Type), $type, $utility.getJavaType($property.Type)Collection> {
+
+    #foreach( $dos in $utility.getDescendantsOrSelf($utility.getEdmType($property)) )
+        #set( $djt = $utility.getJavaType($dos) )
+        #set( $sIdx = $djt.lastIndexOf('.') + 1 )
+        $djt new$djt.substring($sIdx)();
+        ${djt}Collection new$djt.substring($sIdx)Collection();
     #end
     }
+
+  #end
+#end
 }

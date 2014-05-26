@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice;
 
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
@@ -43,6 +44,6 @@ import java.util.Calendar;
 
 
 
-@Singleton(name = "LabourUnion")
-public interface LabourUnion extends AbstractSingleton<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnion, Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnionCollection> {
+@org.apache.olingo.ext.proxy.api.annotations.Singleton(name = "LabourUnion")
+public interface LabourUnion extends AbstractSingleton<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnion, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnionCollection> {
 }

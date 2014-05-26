@@ -25,6 +25,6 @@
   #set( $type = "" )
 #end
 
-@Singleton(name = "$singleton.Name")
+@org.apache.olingo.ext.proxy.api.annotations.Singleton(name = "$singleton.Name")
 public interface $utility.capitalize($singleton.Name) extends AbstractSingleton<$utility.getJavaType($singleton.EntityType), $type, $utility.getJavaType($singleton.EntityType)Collection> {
 }

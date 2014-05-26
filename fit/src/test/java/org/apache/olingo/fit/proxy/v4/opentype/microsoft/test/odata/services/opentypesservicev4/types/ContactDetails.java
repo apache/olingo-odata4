@@ -19,11 +19,16 @@
 
 package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types;
 
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.*;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.*;
 
@@ -38,21 +43,20 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.UUID;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
-@ComplexType(name = "ContactDetails",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
+@org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "ContactDetails",
         isOpenType = false,
         isAbstract = false)
 public interface ContactDetails 
-    extends Serializable {
+    extends java.io.Serializable {
 
 
-    @Property(name = "FirstContacted", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "FirstContacted", 
                 type = "Edm.Binary", 
                 nullable = true,
                 defaultValue = "",
@@ -69,7 +73,7 @@ public interface ContactDetails
 
     
 
-    @Property(name = "LastContacted", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "LastContacted", 
                 type = "Edm.DateTimeOffset", 
                 nullable = false,
                 defaultValue = "",
@@ -80,13 +84,13 @@ public interface ContactDetails
                 unicode = true,
                 collation = "",
                 srid = "")
-    Calendar getLastContacted();
+    java.util.Calendar getLastContacted();
 
-    void setLastContacted(Calendar _lastContacted);
+    void setLastContacted(java.util.Calendar _lastContacted);
 
     
 
-    @Property(name = "Contacted", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Contacted", 
                 type = "Edm.Date", 
                 nullable = false,
                 defaultValue = "",
@@ -97,13 +101,13 @@ public interface ContactDetails
                 unicode = true,
                 collation = "",
                 srid = "")
-    Calendar getContacted();
+    java.util.Calendar getContacted();
 
-    void setContacted(Calendar _contacted);
+    void setContacted(java.util.Calendar _contacted);
 
     
 
-    @Property(name = "GUID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GUID", 
                 type = "Edm.Guid", 
                 nullable = false,
                 defaultValue = "",
@@ -114,13 +118,13 @@ public interface ContactDetails
                 unicode = true,
                 collation = "",
                 srid = "")
-    UUID getGUID();
+    java.util.UUID getGUID();
 
-    void setGUID(UUID _gUID);
+    void setGUID(java.util.UUID _gUID);
 
     
 
-    @Property(name = "PreferedContactTime", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PreferedContactTime", 
                 type = "Edm.TimeOfDay", 
                 nullable = false,
                 defaultValue = "",
@@ -131,13 +135,13 @@ public interface ContactDetails
                 unicode = true,
                 collation = "",
                 srid = "")
-    Calendar getPreferedContactTime();
+    java.util.Calendar getPreferedContactTime();
 
-    void setPreferedContactTime(Calendar _preferedContactTime);
+    void setPreferedContactTime(java.util.Calendar _preferedContactTime);
 
     
 
-    @Property(name = "Byte", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Byte", 
                 type = "Edm.Byte", 
                 nullable = false,
                 defaultValue = "",
@@ -148,13 +152,13 @@ public interface ContactDetails
                 unicode = true,
                 collation = "",
                 srid = "")
-    Short getByte();
+    java.lang.Short getByte();
 
-    void setByte(Short _byte);
+    void setByte(java.lang.Short _byte);
 
     
 
-    @Property(name = "SignedByte", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "SignedByte", 
                 type = "Edm.SByte", 
                 nullable = false,
                 defaultValue = "",
@@ -165,13 +169,13 @@ public interface ContactDetails
                 unicode = true,
                 collation = "",
                 srid = "")
-    Byte getSignedByte();
+    java.lang.Byte getSignedByte();
 
-    void setSignedByte(Byte _signedByte);
+    void setSignedByte(java.lang.Byte _signedByte);
 
     
 
-    @Property(name = "Double", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Double", 
                 type = "Edm.Double", 
                 nullable = false,
                 defaultValue = "",
@@ -182,13 +186,13 @@ public interface ContactDetails
                 unicode = true,
                 collation = "",
                 srid = "")
-    Double getDouble();
+    java.lang.Double getDouble();
 
-    void setDouble(Double _double);
+    void setDouble(java.lang.Double _double);
 
     
 
-    @Property(name = "Single", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Single", 
                 type = "Edm.Single", 
                 nullable = false,
                 defaultValue = "",
@@ -199,13 +203,13 @@ public interface ContactDetails
                 unicode = true,
                 collation = "",
                 srid = "")
-    Float getSingle();
+    java.lang.Float getSingle();
 
-    void setSingle(Float _single);
+    void setSingle(java.lang.Float _single);
 
     
 
-    @Property(name = "Short", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Short", 
                 type = "Edm.Int16", 
                 nullable = false,
                 defaultValue = "",
@@ -216,13 +220,13 @@ public interface ContactDetails
                 unicode = true,
                 collation = "",
                 srid = "")
-    Short getShort();
+    java.lang.Short getShort();
 
-    void setShort(Short _short);
+    void setShort(java.lang.Short _short);
 
     
 
-    @Property(name = "Int", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Int", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -233,13 +237,13 @@ public interface ContactDetails
                 unicode = true,
                 collation = "",
                 srid = "")
-    Integer getInt();
+    java.lang.Integer getInt();
 
-    void setInt(Integer _int);
+    void setInt(java.lang.Integer _int);
 
     
 
-    @Property(name = "Long", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Long", 
                 type = "Edm.Int64", 
                 nullable = false,
                 defaultValue = "",
@@ -250,11 +254,72 @@ public interface ContactDetails
                 unicode = true,
                 collation = "",
                 srid = "")
-    Long getLong();
+    java.lang.Long getLong();
 
-    void setLong(Long _long);
+    void setLong(java.lang.Long _long);
 
     
+
+
+    ComplexFactory factory();
+
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
+
+    interface Annotations {
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "FirstContacted",
+                   type = "Edm.Binary")
+        Annotatable getFirstContactedAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "LastContacted",
+                   type = "Edm.DateTimeOffset")
+        Annotatable getLastContactedAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Contacted",
+                   type = "Edm.Date")
+        Annotatable getContactedAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GUID",
+                   type = "Edm.Guid")
+        Annotatable getGUIDAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PreferedContactTime",
+                   type = "Edm.TimeOfDay")
+        Annotatable getPreferedContactTimeAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Byte",
+                   type = "Edm.Byte")
+        Annotatable getByteAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "SignedByte",
+                   type = "Edm.SByte")
+        Annotatable getSignedByteAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Double",
+                   type = "Edm.Double")
+        Annotatable getDoubleAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Single",
+                   type = "Edm.Single")
+        Annotatable getSingleAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Short",
+                   type = "Edm.Int16")
+        Annotatable getShortAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Int",
+                   type = "Edm.Int32")
+        Annotatable getIntAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Long",
+                   type = "Edm.Int64")
+        Annotatable getLongAnnotations();
+
+
+    }
 
 
 }

@@ -24,8 +24,8 @@ import org.apache.olingo.ext.proxy.api.annotations.Singleton;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
 #foreach($ns in $namespaces)
-import ${basePackage}.${ns}.*;
-import ${basePackage}.${ns}.types.*;
+import #if($basePackage)${basePackage}.#end${ns}.*;
+import #if($basePackage)${basePackage}.#end${ns}.types.*;
 #end
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;

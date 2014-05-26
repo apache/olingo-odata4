@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -32,6 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -45,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityType(name = "Statement",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "Statement",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface Statement 
-  extends Annotatable,Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "StatementID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "StatementID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -82,12 +78,12 @@ public interface Statement
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getStatementID();
+    java.lang.Integer getStatementID();
 
-    void setStatementID(Integer _statementID);    
+    void setStatementID(java.lang.Integer _statementID);    
     
     
-    @Property(name = "TransactionType", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "TransactionType", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -105,12 +101,12 @@ public interface Statement
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getTransactionType();
+    java.lang.String getTransactionType();
 
-    void setTransactionType(String _transactionType);    
+    void setTransactionType(java.lang.String _transactionType);    
     
     
-    @Property(name = "TransactionDescription", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "TransactionDescription", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -128,12 +124,12 @@ public interface Statement
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getTransactionDescription();
+    java.lang.String getTransactionDescription();
 
-    void setTransactionDescription(String _transactionDescription);    
+    void setTransactionDescription(java.lang.String _transactionDescription);    
     
     
-    @Property(name = "Amount", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Amount", 
                 type = "Edm.Double", 
                 nullable = false,
                 defaultValue = "",
@@ -151,35 +147,40 @@ public interface Statement
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Double getAmount();
+    java.lang.Double getAmount();
 
-    void setAmount(Double _amount);    
+    void setAmount(java.lang.Double _amount);    
     
     
 
 
 
+    ComplexFactory factory();
 
-        Annotations annotations();
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
 
     interface Annotations {
 
-            @AnnotationsForProperty(name = "StatementID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "StatementID",
                    type = "Edm.Int32")
         Annotatable getStatementIDAnnotations();
 
-            @AnnotationsForProperty(name = "TransactionType",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "TransactionType",
                    type = "Edm.String")
         Annotatable getTransactionTypeAnnotations();
 
-            @AnnotationsForProperty(name = "TransactionDescription",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "TransactionDescription",
                    type = "Edm.String")
         Annotatable getTransactionDescriptionAnnotations();
 
-            @AnnotationsForProperty(name = "Amount",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Amount",
                    type = "Edm.Double")
         Annotatable getAmountAnnotations();
 
-    
-        }
+
+    }
+
 }

@@ -20,16 +20,21 @@
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
@@ -43,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@EntityType(name = "Customer",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "Customer",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface Customer 
-  extends Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     
-    @Property(name = "Thumbnail", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Thumbnail", 
                 type = "Edm.Stream", 
                 nullable = false,
                 defaultValue = "",
@@ -82,10 +80,10 @@ public interface Customer
                 fcKeepInContent = false)
     java.io.InputStream getThumbnail();
 
-    void setThumbnail(final java.io.InputStream _thumbnail);    
+    void setThumbnail(java.io.InputStream _thumbnail);    
     
     
-    @Property(name = "Video", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Video", 
                 type = "Edm.Stream", 
                 nullable = false,
                 defaultValue = "",
@@ -105,10 +103,10 @@ public interface Customer
                 fcKeepInContent = false)
     java.io.InputStream getVideo();
 
-    void setVideo(final java.io.InputStream _video);    
+    void setVideo(java.io.InputStream _video);    
     
     @Key
-    @Property(name = "CustomerId", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CustomerId", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -126,12 +124,12 @@ public interface Customer
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getCustomerId();
+    java.lang.Integer getCustomerId();
 
-    void setCustomerId(final Integer _customerId);    
+    void setCustomerId(java.lang.Integer _customerId);    
     
     
-    @Property(name = "Name", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Name", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -149,12 +147,12 @@ public interface Customer
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getName();
+    java.lang.String getName();
 
-    void setName(final String _name);    
+    void setName(java.lang.String _name);    
     
     
-    @Property(name = "PrimaryContactInfo", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PrimaryContactInfo", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails", 
                 nullable = true,
                 defaultValue = "",
@@ -174,10 +172,10 @@ public interface Customer
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails getPrimaryContactInfo();
 
-    void setPrimaryContactInfo(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails _primaryContactInfo);    
+    void setPrimaryContactInfo(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails _primaryContactInfo);    
         
     
-    @Property(name = "BackupContactInfo", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BackupContactInfo", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails", 
                 nullable = false,
                 defaultValue = "",
@@ -195,12 +193,12 @@ public interface Customer
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Collection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails> getBackupContactInfo();
+    java.util.Collection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails> getBackupContactInfo();
 
-    void setBackupContactInfo(final Collection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails> _backupContactInfo);    
+    void setBackupContactInfo(java.util.Collection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails> _backupContactInfo);    
         
     
-    @Property(name = "Auditing", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Auditing", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo", 
                 nullable = true,
                 defaultValue = "",
@@ -220,76 +218,132 @@ public interface Customer
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo getAuditing();
 
-    void setAuditing(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo _auditing);    
+    void setAuditing(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo _auditing);    
         
     
 
-    @NavigationProperty(name = "Orders", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Orders", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Order", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Order")
+                targetEntitySet = "Order",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderCollection getOrders();
 
-    void setOrders(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderCollection _orders);
-
-
-    @NavigationProperty(name = "Logins", 
+    void setOrders(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderCollection _orders);
+    
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Logins", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Login", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Login")
+                targetEntitySet = "Login",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.LoginCollection getLogins();
 
-    void setLogins(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.LoginCollection _logins);
-
-
-    @NavigationProperty(name = "Husband", 
+    void setLogins(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.LoginCollection _logins);
+    
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Husband", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Customer", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Customer")
+                targetEntitySet = "Customer",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Customer getHusband();
 
-    void setHusband(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Customer _husband);
-
-
-    @NavigationProperty(name = "Wife", 
+    void setHusband(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Customer _husband);
+    
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Wife", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Customer", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Customer")
+                targetEntitySet = "Customer",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Customer getWife();
 
-    void setWife(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Customer _wife);
-
-
-    @NavigationProperty(name = "Info", 
+    void setWife(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Customer _wife);
+    
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Info", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "CustomerInfo")
+                targetEntitySet = "CustomerInfo",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfo getInfo();
 
-    void setInfo(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfo _info);
+    void setInfo(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfo _info);
+    
 
 
-
-
-        ComplexFactory factory();
+    ComplexFactory factory();
 
     interface ComplexFactory {
-             @Property(name = "PrimaryContactInfo",
+         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PrimaryContactInfo",
                    type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails")
          org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newPrimaryContactInfo();
 
-             @Property(name = "BackupContactInfo",
+         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BackupContactInfo",
                    type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails")
          org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newBackupContactInfo();
 
-             @Property(name = "Auditing",
+         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Auditing",
                    type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo")
          org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo newAuditing();
 
-        }
+    }
+
+    Annotations annotations();
+
+    interface Annotations {
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Thumbnail",
+                   type = "Edm.Stream")
+        Annotatable getThumbnailAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Video",
+                   type = "Edm.Stream")
+        Annotatable getVideoAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "CustomerId",
+                   type = "Edm.Int32")
+        Annotatable getCustomerIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Name",
+                   type = "Edm.String")
+        Annotatable getNameAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PrimaryContactInfo",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails")
+        Annotatable getPrimaryContactInfoAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "BackupContactInfo",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails")
+        Annotatable getBackupContactInfoAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Auditing",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo")
+        Annotatable getAuditingAnnotations();
+
+
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Orders", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Order")
+        Annotatable getOrdersAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Logins", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Login")
+        Annotatable getLoginsAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Husband", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Customer")
+        Annotatable getHusbandAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Wife", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Customer")
+        Annotatable getWifeAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Info", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo")
+        Annotatable getInfoAnnotations();
+    }
+
 }

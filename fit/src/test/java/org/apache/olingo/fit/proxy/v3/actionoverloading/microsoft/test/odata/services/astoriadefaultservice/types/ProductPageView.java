@@ -20,16 +20,21 @@
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
@@ -43,27 +48,20 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@EntityType(name = "ProductPageView",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "ProductPageView",
         openType = false,
         hasStream = false,
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.AstoriaDefaultService.PageView")
 public interface ProductPageView 
-  extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PageView {
+  extends Annotatable,org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PageView {
 
     
     @Key
-    @Property(name = "PageViewId", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PageViewId", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -81,12 +79,12 @@ public interface ProductPageView
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getPageViewId();
+    java.lang.Integer getPageViewId();
 
-    void setPageViewId(final Integer _pageViewId);    
+    void setPageViewId(java.lang.Integer _pageViewId);    
     
     
-    @Property(name = "Username", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Username", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -104,12 +102,12 @@ public interface ProductPageView
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getUsername();
+    java.lang.String getUsername();
 
-    void setUsername(final String _username);    
+    void setUsername(java.lang.String _username);    
     
     
-    @Property(name = "Viewed", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Viewed", 
                 type = "Edm.DateTimeOffset", 
                 nullable = false,
                 defaultValue = "",
@@ -127,12 +125,12 @@ public interface ProductPageView
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Calendar getViewed();
+    java.util.Calendar getViewed();
 
-    void setViewed(final Calendar _viewed);    
+    void setViewed(java.util.Calendar _viewed);    
     
     
-    @Property(name = "TimeSpentOnPage", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "TimeSpentOnPage", 
                 type = "Edm.Time", 
                 nullable = false,
                 defaultValue = "",
@@ -150,12 +148,12 @@ public interface ProductPageView
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    BigDecimal getTimeSpentOnPage();
+    java.math.BigDecimal getTimeSpentOnPage();
 
-    void setTimeSpentOnPage(final BigDecimal _timeSpentOnPage);    
+    void setTimeSpentOnPage(java.math.BigDecimal _timeSpentOnPage);    
     
     
-    @Property(name = "PageUrl", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PageUrl", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -173,12 +171,12 @@ public interface ProductPageView
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getPageUrl();
+    java.lang.String getPageUrl();
 
-    void setPageUrl(final String _pageUrl);    
+    void setPageUrl(java.lang.String _pageUrl);    
     
     
-    @Property(name = "ProductId", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductId", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -196,12 +194,12 @@ public interface ProductPageView
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getProductId();
+    java.lang.Integer getProductId();
 
-    void setProductId(final Integer _productId);    
+    void setProductId(java.lang.Integer _productId);    
     
     
-    @Property(name = "ConcurrencyToken", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ConcurrencyToken", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -219,22 +217,66 @@ public interface ProductPageView
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getConcurrencyToken();
+    java.lang.String getConcurrencyToken();
 
-    void setConcurrencyToken(final String _concurrencyToken);    
+    void setConcurrencyToken(java.lang.String _concurrencyToken);    
     
     
 
-    @NavigationProperty(name = "Login", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Login", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Login", 
                 targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Login")
+                targetEntitySet = "Login",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Login getLogin();
 
-    void setLogin(final org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Login _login);
+    void setLogin(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Login _login);
+    
+
+
+    ComplexFactory factory();
+
+    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PageView.ComplexFactory{
+    }
+
+    Annotations annotations();
+
+    interface Annotations            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PageView.Annotations{
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PageViewId",
+                   type = "Edm.Int32")
+        Annotatable getPageViewIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Username",
+                   type = "Edm.String")
+        Annotatable getUsernameAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Viewed",
+                   type = "Edm.DateTimeOffset")
+        Annotatable getViewedAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "TimeSpentOnPage",
+                   type = "Edm.Time")
+        Annotatable getTimeSpentOnPageAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PageUrl",
+                   type = "Edm.String")
+        Annotatable getPageUrlAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ProductId",
+                   type = "Edm.Int32")
+        Annotatable getProductIdAnnotations();
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ConcurrencyToken",
+                   type = "Edm.String")
+        Annotatable getConcurrencyTokenAnnotations();
 
 
 
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Login", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Login")
+        Annotatable getLoginAnnotations();
+    }
 
 }

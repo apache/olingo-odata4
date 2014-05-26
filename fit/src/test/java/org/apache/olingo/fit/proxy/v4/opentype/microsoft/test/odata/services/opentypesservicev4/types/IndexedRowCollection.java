@@ -44,7 +44,7 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-public interface IndexedRowCollection extends AbstractEntityCollection<IndexedRow> {
+public interface IndexedRowCollection extends AbstractEntityCollection<org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.IndexedRow> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -32,6 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -45,26 +48,19 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityType(name = "GiftCard",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "GiftCard",
         openType = false,
         hasStream = false,
         isAbstract = false)
 public interface GiftCard 
-  extends Annotatable,Serializable {
+  extends Annotatable,java.io.Serializable {
 
     
     @Key
-    @Property(name = "GiftCardID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GiftCardID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -82,12 +78,12 @@ public interface GiftCard
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getGiftCardID();
+    java.lang.Integer getGiftCardID();
 
-    void setGiftCardID(Integer _giftCardID);    
+    void setGiftCardID(java.lang.Integer _giftCardID);    
     
     
-    @Property(name = "GiftCardNO", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GiftCardNO", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -105,12 +101,12 @@ public interface GiftCard
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getGiftCardNO();
+    java.lang.String getGiftCardNO();
 
-    void setGiftCardNO(String _giftCardNO);    
+    void setGiftCardNO(java.lang.String _giftCardNO);    
     
     
-    @Property(name = "Amount", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Amount", 
                 type = "Edm.Double", 
                 nullable = false,
                 defaultValue = "",
@@ -128,12 +124,12 @@ public interface GiftCard
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Double getAmount();
+    java.lang.Double getAmount();
 
-    void setAmount(Double _amount);    
+    void setAmount(java.lang.Double _amount);    
     
     
-    @Property(name = "ExperationDate", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ExperationDate", 
                 type = "Edm.DateTimeOffset", 
                 nullable = false,
                 defaultValue = "",
@@ -151,12 +147,12 @@ public interface GiftCard
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Calendar getExperationDate();
+    java.util.Calendar getExperationDate();
 
-    void setExperationDate(Calendar _experationDate);    
+    void setExperationDate(java.util.Calendar _experationDate);    
     
     
-    @Property(name = "OwnerName", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "OwnerName", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -174,9 +170,9 @@ public interface GiftCard
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getOwnerName();
+    java.lang.String getOwnerName();
 
-    void setOwnerName(String _ownerName);    
+    void setOwnerName(java.lang.String _ownerName);    
     
     
 
@@ -184,42 +180,47 @@ public interface GiftCard
         Operations operations();
 
     interface Operations {
-          @Operation(name = "GetActualAmount",
+          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetActualAmount",
                     type = OperationType.FUNCTION,
                     isComposable = false,
                     returnType = "Edm.Double")
-      Double getActualAmount(
-                @Parameter(name = "bonusRate", type = "Edm.Double", nullable = true) Double bonusRate
+      java.lang.Double getActualAmount(
+                @Parameter(name = "bonusRate", type = "Edm.Double", nullable = true) java.lang.Double bonusRate
             );
 
     
         }
 
+    ComplexFactory factory();
 
-        Annotations annotations();
+    interface ComplexFactory {
+    }
+
+    Annotations annotations();
 
     interface Annotations {
 
-            @AnnotationsForProperty(name = "GiftCardID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GiftCardID",
                    type = "Edm.Int32")
         Annotatable getGiftCardIDAnnotations();
 
-            @AnnotationsForProperty(name = "GiftCardNO",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GiftCardNO",
                    type = "Edm.String")
         Annotatable getGiftCardNOAnnotations();
 
-            @AnnotationsForProperty(name = "Amount",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Amount",
                    type = "Edm.Double")
         Annotatable getAmountAnnotations();
 
-            @AnnotationsForProperty(name = "ExperationDate",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ExperationDate",
                    type = "Edm.DateTimeOffset")
         Annotatable getExperationDateAnnotations();
 
-            @AnnotationsForProperty(name = "OwnerName",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "OwnerName",
                    type = "Edm.String")
         Annotatable getOwnerNameAnnotations();
 
-    
-        }
+
+    }
+
 }

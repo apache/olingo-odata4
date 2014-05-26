@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -32,6 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -45,17 +48,10 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.UUID;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Calendar;
-import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.ODataWCFService")
-@EntityType(name = "Employee",
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "Employee",
         openType = false,
         hasStream = false,
         isAbstract = false,
@@ -65,7 +61,7 @@ public interface Employee
 
     
     @Key
-    @Property(name = "PersonID", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PersonID", 
                 type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
@@ -83,12 +79,12 @@ public interface Employee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Integer getPersonID();
+    java.lang.Integer getPersonID();
 
-    void setPersonID(Integer _personID);    
+    void setPersonID(java.lang.Integer _personID);    
     
     
-    @Property(name = "FirstName", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "FirstName", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -106,12 +102,12 @@ public interface Employee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getFirstName();
+    java.lang.String getFirstName();
 
-    void setFirstName(String _firstName);    
+    void setFirstName(java.lang.String _firstName);    
     
     
-    @Property(name = "LastName", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "LastName", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -129,12 +125,12 @@ public interface Employee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getLastName();
+    java.lang.String getLastName();
 
-    void setLastName(String _lastName);    
+    void setLastName(java.lang.String _lastName);    
     
     
-    @Property(name = "MiddleName", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "MiddleName", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -152,12 +148,12 @@ public interface Employee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    String getMiddleName();
+    java.lang.String getMiddleName();
 
-    void setMiddleName(String _middleName);    
+    void setMiddleName(java.lang.String _middleName);    
     
     
-    @Property(name = "HomeAddress", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "HomeAddress", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Address", 
                 nullable = true,
                 defaultValue = "",
@@ -180,7 +176,7 @@ public interface Employee
     void setHomeAddress(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _homeAddress);    
         
     
-    @Property(name = "Home", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Home", 
                 type = "Edm.GeographyPoint", 
                 nullable = true,
                 defaultValue = "",
@@ -198,12 +194,12 @@ public interface Employee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Point getHome();
+    org.apache.olingo.commons.api.edm.geo.Point getHome();
 
-    void setHome(Point _home);    
+    void setHome(org.apache.olingo.commons.api.edm.geo.Point _home);    
     
     
-    @Property(name = "Numbers", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Numbers", 
                 type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
@@ -221,12 +217,12 @@ public interface Employee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Collection<String> getNumbers();
+    java.util.Collection<java.lang.String> getNumbers();
 
-    void setNumbers(Collection<String> _numbers);    
+    void setNumbers(java.util.Collection<java.lang.String> _numbers);    
     
     
-    @Property(name = "Emails", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Emails", 
                 type = "Edm.String", 
                 nullable = true,
                 defaultValue = "",
@@ -244,12 +240,12 @@ public interface Employee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Collection<String> getEmails();
+    java.util.Collection<java.lang.String> getEmails();
 
-    void setEmails(Collection<String> _emails);    
+    void setEmails(java.util.Collection<java.lang.String> _emails);    
     
     
-    @Property(name = "DateHired", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "DateHired", 
                 type = "Edm.DateTimeOffset", 
                 nullable = false,
                 defaultValue = "",
@@ -267,12 +263,12 @@ public interface Employee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Calendar getDateHired();
+    java.util.Calendar getDateHired();
 
-    void setDateHired(Calendar _dateHired);    
+    void setDateHired(java.util.Calendar _dateHired);    
     
     
-    @Property(name = "Office", 
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Office", 
                 type = "Edm.GeographyPoint", 
                 nullable = true,
                 defaultValue = "",
@@ -290,13 +286,13 @@ public interface Employee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Point getOffice();
+    org.apache.olingo.commons.api.edm.geo.Point getOffice();
 
-    void setOffice(Point _office);    
+    void setOffice(org.apache.olingo.commons.api.edm.geo.Point _office);    
     
     
 
-    @NavigationProperty(name = "Parent", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Parent", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Person", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -306,7 +302,7 @@ public interface Employee
 
     void setParent(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person _parent);
     
-    @NavigationProperty(name = "Company", 
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Company", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Company", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
@@ -324,69 +320,68 @@ public interface Employee
     
         }
 
-        @Override
-        ComplexFactory factory();
+    ComplexFactory factory();
 
     interface ComplexFactory            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.ComplexFactory{
-             @Property(name = "HomeAddress",
+         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "HomeAddress",
                    type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
          org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newHomeAddress();
 
-        }
+    }
 
-        @Override
-        Annotations annotations();
+    Annotations annotations();
 
     interface Annotations            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.Annotations{
 
-            @AnnotationsForProperty(name = "PersonID",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PersonID",
                    type = "Edm.Int32")
         Annotatable getPersonIDAnnotations();
 
-            @AnnotationsForProperty(name = "FirstName",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "FirstName",
                    type = "Edm.String")
         Annotatable getFirstNameAnnotations();
 
-            @AnnotationsForProperty(name = "LastName",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "LastName",
                    type = "Edm.String")
         Annotatable getLastNameAnnotations();
 
-            @AnnotationsForProperty(name = "MiddleName",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "MiddleName",
                    type = "Edm.String")
         Annotatable getMiddleNameAnnotations();
 
-            @AnnotationsForProperty(name = "HomeAddress",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "HomeAddress",
                    type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
         Annotatable getHomeAddressAnnotations();
 
-            @AnnotationsForProperty(name = "Home",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Home",
                    type = "Edm.GeographyPoint")
         Annotatable getHomeAnnotations();
 
-            @AnnotationsForProperty(name = "Numbers",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Numbers",
                    type = "Edm.String")
         Annotatable getNumbersAnnotations();
 
-            @AnnotationsForProperty(name = "Emails",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Emails",
                    type = "Edm.String")
         Annotatable getEmailsAnnotations();
 
-            @AnnotationsForProperty(name = "DateHired",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "DateHired",
                    type = "Edm.DateTimeOffset")
         Annotatable getDateHiredAnnotations();
 
-            @AnnotationsForProperty(name = "Office",
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Office",
                    type = "Edm.GeographyPoint")
         Annotatable getOfficeAnnotations();
 
-    
-    
-        @AnnotationsForNavigationProperty(name = "Parent", 
+
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Parent", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.Person")
         Annotatable getParentAnnotations();
-    
-        @AnnotationsForNavigationProperty(name = "Company", 
+
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Company", 
                   type = "Microsoft.Test.OData.Services.ODataWCFService.Company")
         Annotatable getCompanyAnnotations();
-        }
+    }
+
 }

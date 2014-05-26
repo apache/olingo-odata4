@@ -19,10 +19,16 @@
 
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
@@ -37,45 +43,44 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.UUID;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
-@ComplexType(name = "AuditInfo")
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
+@org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "AuditInfo")
 public interface AuditInfo 
-    extends Serializable {
+    extends java.io.Serializable {
 
 
-    @Property(name = "ModifiedDate", type = "Edm.DateTime", nullable = false)
-    Calendar getModifiedDate();
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ModifiedDate", type = "Edm.DateTime", nullable = false)
+    java.util.Calendar getModifiedDate();
 
-    void setModifiedDate(final Calendar _modifiedDate);
-
-    
-
-    @Property(name = "ModifiedBy", type = "Edm.String", nullable = true)
-    String getModifiedBy();
-
-    void setModifiedBy(final String _modifiedBy);
+    void setModifiedDate(java.util.Calendar _modifiedDate);
 
     
 
-    @Property(name = "Concurrency", type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo", nullable = true)
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ModifiedBy", type = "Edm.String", nullable = true)
+    java.lang.String getModifiedBy();
+
+    void setModifiedBy(java.lang.String _modifiedBy);
+
+    
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Concurrency", type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo", nullable = true)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo getConcurrency();
 
-    void setConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _concurrency);
+    void setConcurrency(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _concurrency);
 
         
 
-        ComplexFactory factory();
+    ComplexFactory factory();
 
     interface ComplexFactory {
-             @Property(name = "Concurrency",
+         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Concurrency",
                    type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo")
          org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newConcurrency();
 
-        }
+    }
 }
