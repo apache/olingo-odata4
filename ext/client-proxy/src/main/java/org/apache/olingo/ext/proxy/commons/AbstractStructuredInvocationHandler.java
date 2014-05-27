@@ -268,7 +268,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
         final ODataRetrieveResponse<CommonODataEntity> res = req.execute();
 
         navPropValue = getEntityProxy(
-                uri,
+                null,
                 res.getBody(),
                 property.targetContainer(),
                 getClient().newURIBuilder().appendEntitySetSegment(property.targetEntitySet()).build(),

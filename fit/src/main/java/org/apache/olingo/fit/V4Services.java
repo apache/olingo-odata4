@@ -374,7 +374,7 @@ public class V4Services extends AbstractServices {
     return StringUtils.isBlank(filter) && StringUtils.isBlank(search)
             ? NumberUtils.isNumber(type)
             ? super.getEntityInternal(
-            uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null, true)
+                    uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null, true)
             : super.getEntitySet(accept, "People", type)
             : super.getEntitySet(uriInfo, accept, "People", top, skip, format, count, filter, orderby, skiptoken);
   }
@@ -385,6 +385,43 @@ public class V4Services extends AbstractServices {
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    return getEntityInternal(
+            uriInfo.getRequestUri().toASCIIString(), accept, "Boss", StringUtils.EMPTY, format, null, null, false);
+  }
+
+  @DELETE
+  @Path("/Orders({entityId})/CustomerForOrder")
+  public Response getCustomerForOrder(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("entityId") String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    try {
+      final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
+
+      if (utils.getKey() == Accept.XML || utils.getKey() == Accept.TEXT) {
+        throw new UnsupportedMediaTypeException("Unsupported media type");
+      }
+
+      final Map.Entry<String, InputStream> entityInfo =
+              utils.getValue().readEntity("Orders", entityId, Accept.ATOM);
+
+      final InputStream entity = entityInfo.getValue();
+
+      ResWrap<AtomEntityImpl> container = atomDeserializer.read(entity, AtomEntityImpl.class);
+      if (container.getContextURL() == null) {
+        container = new ResWrap<AtomEntityImpl>(URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
+                + "Orders" + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
+                container.getMetadataETag(), container.getPayload());
+      }
+      final Entity entry = container.getPayload();
+      
+      entry.getNavigationLink("CustomerForOrder");
+    } catch (Exception e) {
+
+    }
 
     return getEntityInternal(
             uriInfo.getRequestUri().toASCIIString(), accept, "Boss", StringUtils.EMPTY, format, null, null, false);
@@ -748,7 +785,7 @@ public class V4Services extends AbstractServices {
 
       return utils.getValue().createResponse(
               FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
-              + File.separatorChar + filename, utils.getKey()),
+                      + File.separatorChar + filename, utils.getKey()),
               null,
               utils.getKey());
     } catch (Exception e) {
@@ -770,7 +807,7 @@ public class V4Services extends AbstractServices {
 
     final Response response =
             getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-            accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
+                    accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
     return response.getStatus() >= 400
             ? postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
             : super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
@@ -868,8 +905,8 @@ public class V4Services extends AbstractServices {
       } else {
         final ResWrap<JSONEntityImpl> jcontainer =
                 mapper.readValue(IOUtils.toInputStream(entity, Constants.ENCODING),
-                new TypeReference<JSONEntityImpl>() {
-        });
+                        new TypeReference<JSONEntityImpl>() {
+                        });
 
         entry = dataBinder.toAtomEntity(jcontainer.getPayload());
 
@@ -967,7 +1004,7 @@ public class V4Services extends AbstractServices {
 
         final ResWrap<JSONEntityImpl> jsonContainer = mapper.readValue(
                 IOUtils.toInputStream(changes, Constants.ENCODING), new TypeReference<JSONEntityImpl>() {
-        });
+                });
         jsonContainer.getPayload().setType(typeInfo.getFullQualifiedName().toString());
         entryChanges = dataBinder.toAtomEntity(jsonContainer.getPayload());
       }
@@ -1001,7 +1038,7 @@ public class V4Services extends AbstractServices {
       // 1. Fetch the contained entity to be removed
       final InputStream entry = FSManager.instance(version).
               readFile(containedPath(entityId, containedEntitySetName).
-              append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
+                      append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
       final ResWrap<AtomEntityImpl> container = atomDeserializer.read(entry, AtomEntityImpl.class);
 
       // 2. Remove the contained entity
@@ -1247,8 +1284,8 @@ public class V4Services extends AbstractServices {
       } else {
         final ResWrap<JSONPropertyImpl> paramContainer =
                 mapper.readValue(IOUtils.toInputStream(param, Constants.ENCODING),
-                new TypeReference<JSONPropertyImpl>() {
-        });
+                        new TypeReference<JSONPropertyImpl>() {
+                        });
         property = paramContainer.getPayload();
       }
 
@@ -1288,7 +1325,7 @@ public class V4Services extends AbstractServices {
 
       final ResWrap<AtomPropertyImpl> result = new ResWrap<AtomPropertyImpl>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-              + "Microsoft.Test.OData.Services.ODataWCFService.Address"),
+                      + "Microsoft.Test.OData.Services.ODataWCFService.Address"),
               null,
               (AtomPropertyImpl) entity.getProperty("address"));
 

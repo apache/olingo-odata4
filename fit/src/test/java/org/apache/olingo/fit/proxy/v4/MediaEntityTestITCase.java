@@ -34,7 +34,6 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -42,22 +41,30 @@ import org.junit.Test;
  */
 public class MediaEntityTestITCase extends AbstractTestITCase {
 
-  private static DemoService dcontainer;
+  private EntityContainerFactory<EdmEnabledODataClient> ecf;
 
-  @BeforeClass
-  public static void initContainer() {
-    final EntityContainerFactory<EdmEnabledODataClient> otcontainerFactory =
-            EntityContainerFactory.getV4(testDemoServiceRootURL);
-    otcontainerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
-    dcontainer = otcontainerFactory.getEntityContainer(DemoService.class);
-    assertNotNull(dcontainer);
+  private DemoService ime;
+
+  protected EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
+    if (ecf == null) {
+      ecf = EntityContainerFactory.getV4(testDemoServiceRootURL);
+      ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    }
+    return ecf;
+  }
+
+  protected DemoService getContainer() {
+    if (ime == null) {
+      ime = getContainerFactory().getEntityContainer(DemoService.class);
+    }
+    return ime;
   }
 
   @Test
   public void read() throws IOException {
     final UUID uuid = UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7");
 
-    final Advertisement adv = dcontainer.getAdvertisements().get(uuid);
+    final Advertisement adv = getContainer().getAdvertisements().get(uuid);
     assertTrue(adv.getAirDate() instanceof Calendar);
 
     final InputStream is = adv.getStream();
@@ -69,38 +76,38 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   public void update() throws IOException {
     final UUID uuid = UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7");
 
-    final Advertisement adv = dcontainer.getAdvertisements().get(uuid);
+    final Advertisement adv = getContainer().getAdvertisements().get(uuid);
     assertNotNull(adv);
 
     final String random = RandomStringUtils.random(124, "abcdefghijklmnopqrstuvwxyz");
 
     adv.setStream(IOUtils.toInputStream(random));
 
-    dcontainer.flush();
+    getContainer().flush();
 
-    assertEquals(random, IOUtils.toString(dcontainer.getAdvertisements().get(uuid).getStream()));
+    assertEquals(random, IOUtils.toString(getContainer().getAdvertisements().get(uuid).getStream()));
   }
 
   @Test
   public void create() throws IOException {
     final String random = RandomStringUtils.random(124, "abcdefghijklmnopqrstuvwxyz");
 
-    final Advertisement adv = dcontainer.getAdvertisements().newAdvertisement();
+    final Advertisement adv = getContainer().getAdvertisements().newAdvertisement();
     adv.setStream(IOUtils.toInputStream(random));
     adv.setAirDate(Calendar.getInstance());
 
-    dcontainer.flush();
+    getContainer().flush();
 
     final UUID uuid = adv.getID();
-    containerFactory.getContext().detachAll();
-    
-    assertEquals(random, IOUtils.toString(dcontainer.getAdvertisements().get(uuid).getStream()));
+    getContainerFactory().getContext().detachAll();
 
-    containerFactory.getContext().detachAll();
+    assertEquals(random, IOUtils.toString(getContainer().getAdvertisements().get(uuid).getStream()));
 
-    dcontainer.getAdvertisements().delete(uuid);
-    dcontainer.flush();
+    getContainerFactory().getContext().detachAll();
 
-    assertNull(dcontainer.getAdvertisements().get(uuid));
+    getContainer().getAdvertisements().delete(uuid);
+    getContainer().flush();
+
+    assertNull(getContainer().getAdvertisements().get(uuid));
   }
 }

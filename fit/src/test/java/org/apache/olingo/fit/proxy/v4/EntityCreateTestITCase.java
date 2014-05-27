@@ -178,7 +178,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     customer.setLastName("Martelli");
     customer.setCity("Pescara");
     customer.setEmails(Collections.<String>singleton("fabio.martelli@tirasa.net"));
-    Address homeAddress = customer.factory().newHomeAddress();
+    final Address homeAddress = customer.factory().newHomeAddress();
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");

@@ -210,7 +210,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
     // 2. IMPORTANT: flush any pending change *before* invoke if this operation is side effecting
     if (annotation.type() == OperationType.ACTION) {
-      new PersistenceManagerImpl(containerHandler.getFactory()).flush();
+      containerHandler.getFactory().getPersistenceManager().flush();
     }
 
     // 3. invoke

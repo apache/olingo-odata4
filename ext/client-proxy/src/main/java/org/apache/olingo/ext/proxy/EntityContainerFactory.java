@@ -24,7 +24,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.commons.EntityContainerInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.NonTransactionalPersistenceManagerImpl;
+import org.apache.olingo.ext.proxy.commons.TransactionalPersistenceManagerImpl;
 import org.apache.olingo.ext.proxy.context.Context;
 
 /**
@@ -40,35 +43,80 @@ public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<
   private final Map<Class<?>, Object> ENTITY_CONTAINERS = new ConcurrentHashMap<Class<?>, Object>();
 
   @SuppressWarnings("unchecked")
-  private static <C extends CommonEdmEnabledODataClient<?>> EntityContainerFactory<C> getInstance(final C client) {
+  private static <C extends CommonEdmEnabledODataClient<?>> EntityContainerFactory<C> getInstance(
+          final C client, final boolean transactional) {
+
     if (!FACTORY_PER_SERVICEROOT.containsKey(client.getServiceRoot())) {
       client.getConfiguration().setDefaultPubFormat(ODataPubFormat.JSON_FULL_METADATA);
-      final EntityContainerFactory<C> instance = new EntityContainerFactory<C>(client);
+      final EntityContainerFactory<C> instance = new EntityContainerFactory<C>(client, transactional);
       FACTORY_PER_SERVICEROOT.put(client.getServiceRoot(), instance);
     }
 
     return (EntityContainerFactory<C>) FACTORY_PER_SERVICEROOT.get(client.getServiceRoot());
   }
 
+  /**
+   * Gives an OData 3.0 instance for given service root, operating in transactions (with batch requests).
+   *
+   * @param serviceRoot OData service root
+   * @return OData 3.0 instance for given service root, operating in transactions (with batch requests)
+   */
   public static EntityContainerFactory<org.apache.olingo.client.api.v3.EdmEnabledODataClient> getV3(
           final String serviceRoot) {
 
-    return getInstance(ODataClientFactory.getEdmEnabledV3(serviceRoot));
+    return getV3(serviceRoot, true);
   }
 
+  /**
+   * Gives an OData 3.0 instance for given service root.
+   *
+   * @param serviceRoot OData service root
+   * @param transactional whether operating in transactions (with batch requests) or not
+   * @return OData 3.0 instance for given service root
+   */
+  public static EntityContainerFactory<org.apache.olingo.client.api.v3.EdmEnabledODataClient> getV3(
+          final String serviceRoot, final boolean transactional) {
+
+    return getInstance(ODataClientFactory.getEdmEnabledV3(serviceRoot), transactional);
+  }
+
+  /**
+   * Gives an OData 4.0 instance for given service root, operating in transactions (with batch requests).
+   *
+   * @param serviceRoot OData service root
+   * @return OData 4.0 instance for given service root, operating in transactions (with batch requests)
+   */
   public static EntityContainerFactory<org.apache.olingo.client.api.v4.EdmEnabledODataClient> getV4(
           final String serviceRoot) {
 
-    return getInstance(ODataClientFactory.getEdmEnabledV4(serviceRoot));
+    return getV4(serviceRoot, true);
+  }
+
+  /**
+   * Gives an OData 4.0 instance for given service root.
+   *
+   * @param serviceRoot OData service root
+   * @param transactional whether operating in transactions (with batch requests) or not
+   * @return OData 4.0 instance for given service root
+   */
+  public static EntityContainerFactory<org.apache.olingo.client.api.v4.EdmEnabledODataClient> getV4(
+          final String serviceRoot, final boolean transactional) {
+
+    return getInstance(ODataClientFactory.getEdmEnabledV4(serviceRoot), transactional);
   }
 
   private final CommonEdmEnabledODataClient<?> client;
 
   private final Context context;
 
-  private EntityContainerFactory(final CommonEdmEnabledODataClient<?> client) {
+  private final boolean transactional;
+
+  private PersistenceManager persistenceManager;
+
+  private EntityContainerFactory(final CommonEdmEnabledODataClient<?> client, final boolean transactional) {
     this.client = client;
     this.context = new Context();
+    this.transactional = transactional;
   }
 
   @SuppressWarnings("unchecked")
@@ -78,6 +126,21 @@ public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<
 
   public Context getContext() {
     return context;
+  }
+
+  public boolean isTransactional() {
+    return transactional;
+  }
+
+  public PersistenceManager getPersistenceManager() {
+    synchronized (this) {
+      if (persistenceManager == null) {
+        persistenceManager = transactional
+                ? new TransactionalPersistenceManagerImpl(this)
+                : new NonTransactionalPersistenceManagerImpl(this);
+      }
+    }
+    return persistenceManager;
   }
 
   /**
