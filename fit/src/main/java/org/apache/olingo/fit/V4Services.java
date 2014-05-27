@@ -390,43 +390,6 @@ public class V4Services extends AbstractServices {
             uriInfo.getRequestUri().toASCIIString(), accept, "Boss", StringUtils.EMPTY, format, null, null, false);
   }
 
-  @DELETE
-  @Path("/Orders({entityId})/CustomerForOrder")
-  public Response getCustomerForOrder(
-          @Context UriInfo uriInfo,
-          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-          @PathParam("entityId") String entityId,
-          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
-
-    try {
-      final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
-
-      if (utils.getKey() == Accept.XML || utils.getKey() == Accept.TEXT) {
-        throw new UnsupportedMediaTypeException("Unsupported media type");
-      }
-
-      final Map.Entry<String, InputStream> entityInfo =
-              utils.getValue().readEntity("Orders", entityId, Accept.ATOM);
-
-      final InputStream entity = entityInfo.getValue();
-
-      ResWrap<AtomEntityImpl> container = atomDeserializer.read(entity, AtomEntityImpl.class);
-      if (container.getContextURL() == null) {
-        container = new ResWrap<AtomEntityImpl>(URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-                + "Orders" + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
-                container.getMetadataETag(), container.getPayload());
-      }
-      final Entity entry = container.getPayload();
-      
-      entry.getNavigationLink("CustomerForOrder");
-    } catch (Exception e) {
-
-    }
-
-    return getEntityInternal(
-            uriInfo.getRequestUri().toASCIIString(), accept, "Boss", StringUtils.EMPTY, format, null, null, false);
-  }
-
   @GET
   @Path("/Company")
   public Response getSingletonCompany(
