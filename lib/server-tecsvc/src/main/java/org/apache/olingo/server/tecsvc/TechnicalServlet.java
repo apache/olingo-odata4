@@ -46,6 +46,9 @@ public class TechnicalServlet extends HttpServlet {
     Edm edm = odata.createEdm(new EdmTechProvider());
 
     ODataHttpHandler handler = odata.createHandler(edm);
+    
+    handler.register(new TechnicalProcessor());
+       
     handler.process(req, resp);
   }
 

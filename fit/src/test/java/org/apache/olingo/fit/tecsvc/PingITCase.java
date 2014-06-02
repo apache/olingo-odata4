@@ -28,10 +28,24 @@ import org.junit.Test;
 public class PingITCase {
 
   private static final String REF_SERVICE = "http://localhost:9080/tecsvc/odata.svc/";
+  private static final String REDIRECT_URL = "http://localhost:9080/tecsvc/odata.svc";
 
   @Test
   public void ping() throws Exception {
     URL url = new URL(REF_SERVICE);
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod("GET");
+    connection.connect();
+
+    int code = connection.getResponseCode();
+    assertEquals(200, code);
+  }
+
+  @Test
+  public void redirect() throws Exception {
+
+    URL url = new URL(REDIRECT_URL);
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");

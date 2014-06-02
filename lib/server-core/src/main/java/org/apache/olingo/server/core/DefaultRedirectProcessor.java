@@ -16,17 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api;
+package org.apache.olingo.server.core;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataRequest;
+import org.apache.olingo.server.api.ODataResponse;
 
-import org.apache.olingo.server.api.processor.Processor;
+public class DefaultRedirectProcessor implements RedirectProcessor {
 
-public interface ODataHttpHandler {
+  @Override
+  public void init(OData odata, Edm edm) {}
 
-  void process(HttpServletRequest request, HttpServletResponse response);
+  @Override
+  public void redirect(ODataRequest request, ODataResponse response) {
+    response.setStatusCode(HttpStatusCode.TEMPORARY_REDIRECT.getStatusCode());
 
-  void register(Processor processor);
+    String location = request.getRawRequestUri() + "/";
+    response.setHeader(HttpHeader.LOCATION, location);
+  }
 
 }

@@ -24,6 +24,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.uri.parser.Parser;
@@ -269,32 +270,26 @@ public class UriValidatorTest {
   public void validateSelect() throws Exception {
     String[] uris = { "/ESAllPrim(1)?$select=PropertyString" };
     for (String uri : uris) {
-      parseAndValidate(uri, "GET");
+      parseAndValidate(uri, HttpMethod.GET);
     }
   }
 
-  @Test(expected = UriValidationException.class)
-  public void validateForHttpMethodsFail()  throws Exception {
-    String uri = URI_ENTITY;
-    parseAndValidate(uri, "xyz");
-  }
-  
   @Test
   public void validateForHttpMethods()  throws Exception {
     String uri = URI_ENTITY;
-    parseAndValidate(uri, "GET");
-    parseAndValidate(uri, "POST");
-    parseAndValidate(uri, "PUT");
-    parseAndValidate(uri, "DELETE");
-    parseAndValidate(uri, "PATCH");
-    parseAndValidate(uri, "MERGE");
+    parseAndValidate(uri, HttpMethod.GET);
+    parseAndValidate(uri, HttpMethod.POST);
+    parseAndValidate(uri, HttpMethod.PUT);
+    parseAndValidate(uri, HttpMethod.DELETE);
+    parseAndValidate(uri, HttpMethod.PATCH);
+    parseAndValidate(uri, HttpMethod.MERGE);
   }
   
   @Test
   public void validateOrderBy() throws Exception {
     String[] uris = { "/ESAllPrim?$orderby=PropertyString" };
     for (String uri : uris) {
-      parseAndValidate(uri, "GET");
+      parseAndValidate(uri, HttpMethod.GET);
     }
   }
 
@@ -302,25 +297,25 @@ public class UriValidatorTest {
   @Ignore("uri parser doen't support orderby yet")
   public void validateOrderByInvalid() throws Exception {
     String uri = "/ESAllPrim(1)?$orderBy=XXXX";
-    parseAndValidate(uri, "GET");
+    parseAndValidate(uri, HttpMethod.GET);
   }
 
   @Test(expected = UriValidationException.class)
   public void validateKeyPredicatesWrongKey() throws Exception {
     String uri = "ESTwoKeyNav(xxx=1, yyy='abc')";
-    parseAndValidate(uri, "GET");
+    parseAndValidate(uri, HttpMethod.GET);
   }
 
   @Test
   public void validateKeyPredicates() throws Exception {
     String uri = "ESTwoKeyNav(PropertyInt16=1, PropertyString='abc')";
-    parseAndValidate(uri, "GET");
+    parseAndValidate(uri, HttpMethod.GET);
   }
 
   @Test(expected = UriValidationException.class)
   public void validateKeyPredicatesWrongValueType() throws Exception {
     String uri = "ESTwoKeyNav(PropertyInt16='abc', PropertyString=1)";
-    parseAndValidate(uri, "GET");
+    parseAndValidate(uri, HttpMethod.GET);
   }
 
   @Test
@@ -329,7 +324,7 @@ public class UriValidatorTest {
 
     for (String uri : uris) {
       try {
-        parseAndValidate(uri, "GET");
+        parseAndValidate(uri, HttpMethod.GET);
       } catch (Exception e) {
         throw new Exception("Faild for uri: " + uri, e);
       }
@@ -342,7 +337,7 @@ public class UriValidatorTest {
 
     for (String uri : uris) {
       try {
-        parseAndValidate(uri, "GET");
+        parseAndValidate(uri, HttpMethod.GET);
         fail("Validation Exception not thrown: " + uri);
       } catch (UriValidationException e) {
         assertTrue(e instanceof UriValidationException);
@@ -368,7 +363,7 @@ public class UriValidatorTest {
     return uris.toArray(new String[0]);
   }
 
-  private void parseAndValidate(final String uri, String method) throws UriParserException, UriValidationException {
+  private void parseAndValidate(final String uri, HttpMethod method) throws UriParserException, UriValidationException {
     UriInfo uriInfo = parser.parseUri(uri.trim(), edm);
     UriValidator validator = new UriValidator();
 

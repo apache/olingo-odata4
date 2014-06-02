@@ -16,17 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api;
+package org.apache.olingo.server.tecsvc;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.processor.Processor;
 
-public interface ODataHttpHandler {
+public class TechnicalProcessor implements Processor {
 
-  void process(HttpServletRequest request, HttpServletResponse response);
+//  private OData odata;
+//  private Edm edm;
 
-  void register(Processor processor);
+
+  @Override
+  public void init(OData odata, Edm edm) {
+//    this.odata = odata;
+//    this.edm = edm;
+  }
+
+
 
 }

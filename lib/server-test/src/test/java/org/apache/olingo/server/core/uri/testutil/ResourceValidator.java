@@ -29,6 +29,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriParameter;
@@ -92,7 +93,7 @@ public class ResourceValidator implements TestValidator {
       uriInfoTmp = (UriInfoImpl) testParser.parseUri(uri, edm);
       
       UriValidator uriValidator = new UriValidator();
-      uriValidator.validate(uriInfoTmp, "GET");
+      uriValidator.validate(uriInfoTmp, HttpMethod.GET);
     } catch (Exception e) {
       fail("Exception occured while parsing the URI: " + uri + "\n"
           + " Message: " + e.getMessage());
