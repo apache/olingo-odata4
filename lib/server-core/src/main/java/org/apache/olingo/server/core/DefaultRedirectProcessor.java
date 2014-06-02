@@ -18,12 +18,24 @@
  */
 package org.apache.olingo.server.core;
 
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.processor.Processor;
 
-public interface RedirectProcessor extends Processor {
+public class DefaultRedirectProcessor implements RedirectProcessor {
 
-  void redirect(ODataRequest request, ODataResponse response);
+  @Override
+  public void init(OData odata, Edm edm) {}
+
+  @Override
+  public void redirect(ODataRequest request, ODataResponse response) {
+    response.setStatusCode(HttpStatusCode.TEMPORARY_REDIRECT.getStatusCode());
+
+    String location = request.getRawRequestUri() + "/";
+    response.setHeader(HttpHeader.LOCATION, location);
+  }
 
 }

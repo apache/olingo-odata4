@@ -24,14 +24,14 @@ import org.apache.olingo.server.api.processor.Processor;
 
 public class TechnicalProcessor implements Processor {
 
-  private OData odata;
-  private Edm edm;
+//  private OData odata;
+//  private Edm edm;
 
 
   @Override
   public void init(OData odata, Edm edm) {
-    this.odata = odata;
-    this.edm = edm;
+//    this.odata = odata;
+//    this.edm = edm;
   }
 
 

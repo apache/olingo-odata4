@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.processor.DefaultProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
@@ -45,6 +46,7 @@ public class ODataHandler {
     this.edm = edm;
 
     register(new DefaultProcessor());
+    register(new DefaultRedirectProcessor());
   }
 
   public ODataResponse process(final ODataRequest request) {
@@ -100,7 +102,7 @@ public class ODataHandler {
     processor.init(odata, edm);
 
     for (Class<?> cls : processor.getClass().getInterfaces()) {
-      if (Processor.class.isAssignableFrom(cls)) {
+      if (Processor.class.isAssignableFrom(cls) && cls != Processor.class) {
         @SuppressWarnings("unchecked")
         Class<? extends Processor> procClass = (Class<? extends Processor>) cls;
         processors.put(procClass, processor);
