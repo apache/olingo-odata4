@@ -19,7 +19,6 @@
 package org.apache.olingo.server.api;
 
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,14 +43,23 @@ public class ODataRequest {
     this.method = method;
   }
 
-  public Map<String, List<String>> getHeaders() {
-    return Collections.unmodifiableMap(headers);
+  /**
+   * Add header to request where name handled as case insensitive key.
+   * @param name case insensitive header name
+   * @param values
+   */
+  public void addHeader(String name, List<String> values) {
+    headers.put(name.toUpperCase(), values);
   }
-
-  public void setHeaders(final Map<String, List<String>> headers) {
-    this.headers = headers;
+  
+  /**
+   * Returns header value for name where name is a case insensitive key.
+   * @return the header value or null if not found
+   */
+  public List<String> getHeader(String name) {
+    return headers.get(name.toUpperCase());
   }
-
+  
   public InputStream getBody() {
     return body;
   }

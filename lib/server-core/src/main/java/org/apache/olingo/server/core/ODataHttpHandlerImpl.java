@@ -23,9 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -185,8 +183,6 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   }
 
   private void extractHeaders(ODataRequest odRequest, final HttpServletRequest req) {
-    Map<String, List<String>> requestHeaders = new HashMap<String, List<String>>();
-
     for (Enumeration<?> headerNames = req.getHeaderNames(); headerNames.hasMoreElements();) {
       String headerName = (String) headerNames.nextElement();
       List<String> headerValues = new ArrayList<String>();
@@ -194,13 +190,8 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
         String value = (String) headers.nextElement();
         headerValues.add(value);
       }
-      if (requestHeaders.containsKey(headerName)) {
-        requestHeaders.get(headerName).addAll(headerValues);
-      } else {
-        requestHeaders.put(headerName, headerValues);
-      }
+      odRequest.addHeader(headerName, headerValues);
     }
-    odRequest.setHeaders(requestHeaders);
   }
 
   @Override

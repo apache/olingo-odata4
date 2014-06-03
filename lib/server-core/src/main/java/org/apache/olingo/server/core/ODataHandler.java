@@ -19,12 +19,15 @@
 package org.apache.olingo.server.core;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -58,6 +61,8 @@ public class ODataHandler {
   public ODataResponse process(final ODataRequest request) {
     try {
       ODataResponse response = new ODataResponse();
+
+      validateODataVersion(request, response);
 
       Parser parser = new Parser();
       String odUri =
@@ -144,6 +149,18 @@ public class ODataHandler {
     default:
       throw new ODataRuntimeException("not implemented");
     }
+  }
+
+  private void validateODataVersion(ODataRequest request, ODataResponse response) {
+    List<String> maxVersionHeader = request.getHeader(HttpHeader.ODATA_MAX_VERSION);
+
+    if (maxVersionHeader != null && maxVersionHeader.size() > 0) {
+      if (ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersionHeader.get(0))) {
+        throw new ODataRuntimeException("400 Bad Request - ODataVersion not supported: " + maxVersionHeader.get(0));
+      }
+    }
+
+    response.setHeader(HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
   }
 
   private <T extends Processor> T selectProcessor(Class<T> cls) {

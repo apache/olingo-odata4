@@ -152,4 +152,14 @@ public interface HttpHeader {
    */
   public static final String X_HTTP_METHOD_OVERRIDE = "X-HTTP-Method-Override";
 
+  /**
+   * OData Custom Header
+   */
+  public static final String ODATA_VERSION = "OData-Version";
+  
+  /**
+   * OData Custom Header
+   */
+  public static final String ODATA_MAX_VERSION = "OData-MaxVersion";
+
 }
