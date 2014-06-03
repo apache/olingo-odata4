@@ -24,14 +24,20 @@ import java.util.Map;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpContentType;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.processor.DefaultProcessor;
+import org.apache.olingo.server.api.processor.EntityProcessor;
+import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceNavigation;
+import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 
@@ -61,6 +67,8 @@ public class ODataHandler {
       UriValidator validator = new UriValidator();
       validator.validate(uriInfo, request.getMethod());
 
+      String requestedContentType = doContentNegotiation();
+
       switch (uriInfo.getKind()) {
       case metadata:
         MetadataProcessor mp = selectProcessor(MetadataProcessor.class);
@@ -70,10 +78,13 @@ public class ODataHandler {
         if ("".equals(request.getRawODataPath())) {
           RedirectProcessor rdp = selectProcessor(RedirectProcessor.class);
           rdp.redirect(request, response);
-        }else{
+        } else {
           ServiceDocumentProcessor sdp = selectProcessor(ServiceDocumentProcessor.class);
-          sdp.readServiceDocument(request, response, uriInfo, HttpContentType.APPLICATION_JSON);
+          sdp.readServiceDocument(request, response, uriInfo, requestedContentType);
         }
+        break;
+      case resource:
+        handleResourceDispatching(request, response, uriInfo, requestedContentType);
         break;
       default:
         throw new ODataRuntimeException("not implemented");
@@ -83,6 +94,55 @@ public class ODataHandler {
     } catch (Exception e) {
       // TODO OData error message handling
       throw new RuntimeException(e);
+    }
+  }
+
+  private String doContentNegotiation() {
+    // TODO: Content Negotiation
+    return HttpContentType.APPLICATION_JSON;
+  }
+
+  private void handleResourceDispatching(final ODataRequest request, ODataResponse response, UriInfo uriInfo,
+      String requestedContentType) {
+    int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
+    UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
+    switch (lastPathSegment.getKind()) {
+    case entitySet:
+      if (((UriResourcePartTyped) lastPathSegment).isCollection()) {
+        if (request.getMethod().equals(HttpMethod.GET)) {
+          EntitySetProcessor esp = selectProcessor(EntitySetProcessor.class);
+          esp.readEntitySet(request, response, uriInfo, requestedContentType);
+        } else {
+          throw new ODataRuntimeException("not implemented");
+        }
+      } else {
+        if (request.getMethod().equals(HttpMethod.GET)) {
+          EntityProcessor ep = selectProcessor(EntityProcessor.class);
+          ep.readEntity(request, response, uriInfo, requestedContentType);
+        } else {
+          throw new ODataRuntimeException("not implemented");
+        }
+      }
+      break;
+    case navigationProperty:
+      if (((UriResourceNavigation) lastPathSegment).isCollection()) {
+        if (request.getMethod().equals(HttpMethod.GET)) {
+          EntitySetProcessor esp = selectProcessor(EntitySetProcessor.class);
+          esp.readEntitySet(request, response, uriInfo, requestedContentType);
+        } else {
+          throw new ODataRuntimeException("not implemented");
+        }
+      } else {
+        if (request.getMethod().equals(HttpMethod.GET)) {
+          EntityProcessor ep = selectProcessor(EntityProcessor.class);
+          ep.readEntity(request, response, uriInfo, requestedContentType);
+        } else {
+          throw new ODataRuntimeException("not implemented");
+        }
+      }
+      break;
+    default:
+      throw new ODataRuntimeException("not implemented");
     }
   }
 
