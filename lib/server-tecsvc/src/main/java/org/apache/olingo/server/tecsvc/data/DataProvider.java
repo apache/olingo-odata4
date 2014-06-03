@@ -16,24 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.tecsvc;
+package org.apache.olingo.server.tecsvc.data;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.processor.Processor;
+public class DataProvider {
 
-public class TechnicalProcessor implements Processor {
+  public void reset() {
+    // TODO Auto-generated method stub
 
-//  private OData odata;
-//  private Edm edm;
-
-
-  @Override
-  public void init(OData odata, Edm edm) {
-//    this.odata = odata;
-//    this.edm = edm;
   }
-
-
 
 }

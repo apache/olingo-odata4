@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.tecsvc.data.DataProvider;
+import org.apache.olingo.server.tecsvc.processor.TechnicalProcessor;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,17 +39,24 @@ public class TechnicalServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
   private static final Logger LOG = LoggerFactory.getLogger(TechnicalServlet.class);
+  private DataProvider dataProvider;
 
   @Override
   protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     LOG.debug("ReferenceServlet:service() called");
 
+    if(dataProvider == null){
+      dataProvider = new DataProvider();
+    }
+    
+    dataProvider.reset();
+    
     OData odata = OData.newInstance();
     Edm edm = odata.createEdm(new EdmTechProvider());
 
     ODataHttpHandler handler = odata.createHandler(edm);
     
-    handler.register(new TechnicalProcessor());
+    handler.register(new TechnicalProcessor(dataProvider));
        
     handler.process(req, resp);
   }
