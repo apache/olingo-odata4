@@ -30,7 +30,7 @@ public interface $utility.capitalize($complexType.Name)
     #set($property = $complexType.getProperty($propertyName))
 
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "$property.Name", 
-                type = "$property.Type", 
+                type = "$property.Type.getFullQualifiedName().toString()",
                 nullable = $property.Nullable,
                 defaultValue = "#if($property.getDefaultValue())$property.getDefaultValue()#end",
                 maxLenght = #if($property.getMaxLength() && !$property.getMaxLength().equalsIgnoreCase("max"))$property.getMaxLength()#{else}Integer.MAX_VALUE#end,
