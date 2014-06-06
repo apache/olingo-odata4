@@ -347,22 +347,23 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       if (contextURL.getDerivedEntity() == null) {
         for (EdmSchema schema : edm.getSchemas()) {
           final EdmEntityContainer container = schema.getEntityContainer();
-
-          EdmBindingTarget bindingTarget = container.getEntitySet(contextURL.getEntitySetOrSingletonOrType());
-          if (bindingTarget == null) {
-            bindingTarget = container.getSingleton(contextURL.getEntitySetOrSingletonOrType());
-          }
-          if (bindingTarget != null) {
-            if (contextURL.getNavOrPropertyPath() == null) {
-              type = bindingTarget.getEntityType();
-            } else {
-              final EdmNavigationProperty navProp = bindingTarget.getEntityType().
-                      getNavigationProperty(contextURL.getNavOrPropertyPath());
-
-              type = navProp == null
-                      ? bindingTarget.getEntityType()
-                      : navProp.getType();
-            }
+          if(container != null) {
+	          EdmBindingTarget bindingTarget = container.getEntitySet(contextURL.getEntitySetOrSingletonOrType());
+	          if (bindingTarget == null) {
+	            bindingTarget = container.getSingleton(contextURL.getEntitySetOrSingletonOrType());
+	          }
+	          if (bindingTarget != null) {
+	            if (contextURL.getNavOrPropertyPath() == null) {
+	              type = bindingTarget.getEntityType();
+	            } else {
+	              final EdmNavigationProperty navProp = bindingTarget.getEntityType().
+	                      getNavigationProperty(contextURL.getNavOrPropertyPath());
+	
+	              type = navProp == null
+	                      ? bindingTarget.getEntityType()
+	                      : navProp.getType();
+	            }
+	          }
           }
         }
         if (type == null) {
