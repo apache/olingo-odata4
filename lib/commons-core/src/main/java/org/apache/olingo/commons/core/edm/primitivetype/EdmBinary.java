@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.core.edm.primitivetype;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
 /**
@@ -124,6 +125,10 @@ public class EdmBinary extends SingletonPrimitiveType {
               "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
     }
 
-    return Base64.encodeBase64URLSafeString(byteArrayValue);
+    return base64EncodeToString(byteArrayValue);
+  }
+  
+  private static String base64EncodeToString(byte[] bytes){
+    return StringUtils.newStringUtf8(Base64.encodeBase64(bytes, false));
   }
 }
