@@ -30,8 +30,10 @@ import java.util.Map;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataOperation;
+import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.api.OperationExecutor;
@@ -158,6 +160,30 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
     ODataOperation boundOp = entity.getOperation(operation.name());
     if (boundOp == null) {
       boundOp = entity.getOperation(new FullQualifiedName(targetFQN.getNamespace(), operation.name()).toString());
+    }
+    if (boundOp == null) {
+    	// json minimal/none metadata doesn't return operations for entity, so here try creating it from Edm: 
+    	EdmAction action = this.getClient().getEdm(null).getBoundAction(
+          new FullQualifiedName(targetFQN.getNamespace(), operation.name()), targetFQN, false);
+    	if(action!=null){
+    		boundOp = new ODataOperation();
+    		boundOp.setMetadataAnchor(action.getFullQualifiedName().toString());
+    		boundOp.setTitle(boundOp.getMetadataAnchor());
+    		boundOp.setTarget(URI.create(entity.getEditLink().toString() + "/" 
+                  + action.getFullQualifiedName().toString()));
+    	}
+    }
+    if (boundOp == null) {
+    	// json minimal/none metadata doesn't return operations for entity, so here try creating it from Edm: 
+    	EdmFunction func = this.getClient().getEdm(null).getBoundFunction(
+          new FullQualifiedName(targetFQN.getNamespace(), operation.name()), targetFQN, false, parameterNames);
+    	if(func!=null){
+    		boundOp = new ODataOperation();
+    		boundOp.setMetadataAnchor(func.getFullQualifiedName().toString());
+    		boundOp.setTitle(boundOp.getMetadataAnchor());
+    		boundOp.setTarget(URI.create(entity.getEditLink().toString() + "/" 
+                  + func.getFullQualifiedName().toString()));
+    	}
     }
     if (boundOp == null) {
       throw new IllegalArgumentException(String.format("Could not find any matching operation '%s' bound to %s",
