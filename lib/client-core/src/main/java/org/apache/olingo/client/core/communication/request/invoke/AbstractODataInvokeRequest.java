@@ -204,16 +204,20 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
         try {
           if (ODataNoContent.class.isAssignableFrom(reference)) {
             invokeResult = reference.cast(new ODataNoContent());
-          } else if (CommonODataEntitySet.class.isAssignableFrom(reference)) {
-            invokeResult = reference.cast(odataClient.getReader().readEntitySet(res.getEntity().getContent(),
-                    ODataPubFormat.fromString(getContentType())));
-          } else if (CommonODataEntity.class.isAssignableFrom(reference)) {
-            invokeResult = reference.cast(odataClient.getReader().readEntity(res.getEntity().getContent(),
-                    ODataPubFormat.fromString(getContentType())));
-          } else if (CommonODataProperty.class.isAssignableFrom(reference)) {
-            invokeResult = reference.cast(odataClient.getReader().readProperty(res.getEntity().getContent(),
-                    ODataFormat.fromString(getContentType())));
-          }
+          } else {
+             // avoid getContent() twice:IllegalStateException: Content has been consumed
+             InputStream responseStream = this.payload == null ? res.getEntity().getContent() : this.payload;
+             if (CommonODataEntitySet.class.isAssignableFrom(reference)) {
+	        invokeResult = reference.cast(odataClient.getReader().readEntitySet(responseStream,
+	            ODataPubFormat.fromString(getContentType())));
+	      } else if (CommonODataEntity.class.isAssignableFrom(reference)) {
+	        invokeResult = reference.cast(odataClient.getReader().readEntity(responseStream,
+	            ODataPubFormat.fromString(getContentType())));
+	      } else if (CommonODataProperty.class.isAssignableFrom(reference)) {
+	        invokeResult = reference.cast(odataClient.getReader().readProperty(responseStream,
+	            ODataFormat.fromString(getContentType())));
+	      }
+           }
         } catch (IOException e) {
           throw new HttpClientException(e);
         } finally {
