@@ -19,15 +19,18 @@
 package org.apache.olingo.client.core.communication.request.retrieve;
 
 import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 
 /**
  * This class implements an OData EntitySet query request.
@@ -45,7 +48,7 @@ public class ODataEntitySetRequestImpl<ES extends CommonODataEntitySet>
    * @param odataClient client instance getting this request
    * @param query query to be executed.
    */
-  public ODataEntitySetRequestImpl(final CommonODataClient odataClient, final URI query) {
+  public ODataEntitySetRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
     super(odataClient, ODataPubFormat.class, query);
   }
 
@@ -90,10 +93,12 @@ public class ODataEntitySetRequestImpl<ES extends CommonODataEntitySet>
     public ES getBody() {
       if (entitySet == null) {
         try {
-          final ResWrap<EntitySet> resource = odataClient.getDeserializer().
-                  toEntitySet(getRawResponse(), ODataPubFormat.fromString(getContentType()));
+          final ResWrap<EntitySet> resource = odataClient.getDeserializer(ODataPubFormat.fromString(getContentType()))
+              .toEntitySet(getRawResponse());
 
           entitySet = (ES) odataClient.getBinder().getODataEntitySet(resource);
+        } catch (final ODataDeserializerException e) {
+          throw new HttpClientException(e);
         } finally {
           this.close();
         }

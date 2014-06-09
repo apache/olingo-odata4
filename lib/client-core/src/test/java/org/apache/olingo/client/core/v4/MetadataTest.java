@@ -62,6 +62,7 @@ import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.annotation.EdmUrlRef;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
@@ -137,7 +138,7 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void demo() {
-    final XMLMetadata metadata = getClient().getDeserializer().
+    final XMLMetadata metadata = getClient().getDeserializer(ODataFormat.XML).
             toMetadata(getClass().getResourceAsStream("demo-metadata.xml"));
     assertNotNull(metadata);
 
@@ -178,7 +179,7 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void multipleSchemas() {
-    final XMLMetadata metadata = getClient().getDeserializer().
+    final XMLMetadata metadata = getClient().getDeserializer(ODataFormat.XML).
             toMetadata(getClass().getResourceAsStream("northwind-metadata.xml"));
     assertNotNull(metadata);
 
@@ -199,7 +200,7 @@ public class MetadataTest extends AbstractTest {
    */
   @Test
   public void fromdoc1() {
-    final XMLMetadata metadata = getClient().getDeserializer().
+    final XMLMetadata metadata = getClient().getDeserializer(ODataFormat.XML).
             toMetadata(getClass().getResourceAsStream("fromdoc1-metadata.xml"));
     assertNotNull(metadata);
 
@@ -270,8 +271,8 @@ public class MetadataTest extends AbstractTest {
    */
   @Test
   public void fromdoc2() {
-    final XMLMetadata metadata = getClient().getDeserializer().
-            toMetadata(getClass().getResourceAsStream("fromdoc2-metadata.xml"));
+    final XMLMetadata metadata = getClient().getDeserializer(ODataFormat.XML)
+            .toMetadata(getClass().getResourceAsStream("fromdoc2-metadata.xml"));
     assertNotNull(metadata);
 
     // Check displayName
@@ -334,7 +335,7 @@ public class MetadataTest extends AbstractTest {
    */
   @Test
   public void fromdoc4() {
-    final XMLMetadata metadata = getClient().getDeserializer().
+    final XMLMetadata metadata = getClient().getDeserializer(ODataFormat.XML).
             toMetadata(getClass().getResourceAsStream("fromdoc4-metadata.xml"));
     assertNotNull(metadata);
 

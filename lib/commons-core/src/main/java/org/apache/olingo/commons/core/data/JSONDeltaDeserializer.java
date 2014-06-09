@@ -18,37 +18,40 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import org.apache.olingo.commons.core.data.v4.JSONDeltaImpl;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Iterator;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.core.data.v4.DeltaImpl;
 
-public class JSONDeltaDeserializer extends AbstractJsonDeserializer<JSONDeltaImpl> {
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-  @Override
-  protected ResWrap<JSONDeltaImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
-          throws IOException, JsonProcessingException {
+public class JSONDeltaDeserializer extends JsonDeserializer {
+
+  public JSONDeltaDeserializer(final ODataServiceVersion version, final boolean serverMode) {
+    super(version, serverMode);
+  }
+
+  protected ResWrap<Delta> doDeserialize(final JsonParser parser) throws IOException {
 
     final ObjectNode tree = parser.getCodec().readTree(parser);
 
-    final JSONDeltaImpl delta = new JSONDeltaImpl();
+    final DeltaImpl delta = new DeltaImpl();
 
-    final URI contextURL;
-    if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
-      contextURL = URI.create(tree.get(Constants.JSON_CONTEXT).textValue());
-    } else {
-      contextURL = null;
-    }
+    final URI contextURL = tree.hasNonNull(Constants.JSON_CONTEXT) ?
+        URI.create(tree.get(Constants.JSON_CONTEXT).textValue()) : null;
     if (contextURL != null) {
       delta.setBaseURI(StringUtils.substringBefore(contextURL.toASCIIString(), Constants.METADATA));
     }
@@ -64,17 +67,15 @@ public class JSONDeltaDeserializer extends AbstractJsonDeserializer<JSONDeltaImp
     }
 
     if (tree.hasNonNull(Constants.VALUE)) {
+      JSONEntityDeserializer entityDeserializer = new JSONEntityDeserializer(version, serverMode);
       for (final Iterator<JsonNode> itor = tree.get(Constants.VALUE).iterator(); itor.hasNext();) {
         final ObjectNode item = (ObjectNode) itor.next();
         final ContextURL itemContextURL = item.hasNonNull(Constants.JSON_CONTEXT)
-                ? ContextURL.getInstance(URI.create(item.get(Constants.JSON_CONTEXT).textValue())) : null;
+            ? ContextURL.getInstance(URI.create(item.get(Constants.JSON_CONTEXT).textValue())) : null;
         item.remove(Constants.JSON_CONTEXT);
 
         if (itemContextURL == null || itemContextURL.isEntity()) {
-          final ResWrap<JSONEntityImpl> entity = item.traverse(parser.getCodec()).
-                  readValueAs(new TypeReference<JSONEntityImpl>() {
-                  });
-          delta.getEntities().add(entity.getPayload());
+          delta.getEntities().add(entityDeserializer.doDeserialize(item.traverse(parser.getCodec())).getPayload());
         } else if (itemContextURL.isDeltaDeletedEntity()) {
           delta.getDeletedEntities().add(parser.getCodec().treeToValue(item, DeletedEntityImpl.class));
         } else if (itemContextURL.isDeltaLink()) {
@@ -85,7 +86,15 @@ public class JSONDeltaDeserializer extends AbstractJsonDeserializer<JSONDeltaImp
       }
     }
 
-    return new ResWrap<JSONDeltaImpl>(contextURL, null, delta);
+    return new ResWrap<Delta>(contextURL, null, delta);
   }
 
+  public ResWrap<Delta> toDelta(InputStream input) throws ODataDeserializerException {
+    try {
+      JsonParser parser = new JsonFactory(new ObjectMapper()).createParser(input);
+      return doDeserialize(parser);
+    } catch (final IOException e) {
+      throw new ODataDeserializerException(e);
+    }
+  }
 }

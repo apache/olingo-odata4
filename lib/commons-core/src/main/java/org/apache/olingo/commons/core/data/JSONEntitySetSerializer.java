@@ -18,48 +18,47 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-public class JSONEntitySetSerializer extends AbstractJsonSerializer<JSONEntitySetImpl> {
+import com.fasterxml.jackson.core.JsonGenerator;
 
-  @Override
-  protected void doSerialize(
-          final JSONEntitySetImpl entitySet, final JsonGenerator jgen, final SerializerProvider provider)
-          throws IOException, JsonProcessingException {
+public class JSONEntitySetSerializer extends JsonSerializer {
 
-    doContainerSerialize(new ResWrap<JSONEntitySetImpl>((URI) null, null, entitySet), jgen, provider);
+  public JSONEntitySetSerializer(final ODataServiceVersion version, final boolean serverMode) {
+    super(version, serverMode);
   }
 
-  @Override
-  protected void doContainerSerialize(
-          final ResWrap<JSONEntitySetImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
-          throws IOException, JsonProcessingException {
+  protected void doSerialize(final EntitySet entitySet, final JsonGenerator jgen) throws IOException {
+    doContainerSerialize(new ResWrap<EntitySet>((URI) null, null, entitySet), jgen);
+  }
 
-    final JSONEntitySetImpl entitySet = container.getPayload();
+  protected void doContainerSerialize(final ResWrap<EntitySet> container, final JsonGenerator jgen)
+      throws IOException {
+
+    final EntitySet entitySet = container.getPayload();
 
     jgen.writeStartObject();
 
     if (serverMode) {
       if (container.getContextURL() != null) {
         jgen.writeStringField(version.compareTo(ODataServiceVersion.V40) >= 0
-                ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
-                container.getContextURL().getURI().toASCIIString());
+            ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
+            container.getContextURL().getURI().toASCIIString());
       }
 
       if (version.compareTo(ODataServiceVersion.V40) >= 0 && StringUtils.isNotBlank(container.getMetadataETag())) {
         jgen.writeStringField(
-                Constants.JSON_METADATA_ETAG,
-                container.getMetadataETag());
+            Constants.JSON_METADATA_ETAG,
+            container.getMetadataETag());
       }
     }
 
@@ -67,15 +66,15 @@ public class JSONEntitySetSerializer extends AbstractJsonSerializer<JSONEntitySe
       jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entitySet.getId().toASCIIString());
     }
     jgen.writeNumberField(version.getJSONMap().get(ODataServiceVersion.JSON_COUNT),
-            entitySet.getCount() == null ? entitySet.getEntities().size() : entitySet.getCount());
+        entitySet.getCount() == null ? entitySet.getEntities().size() : entitySet.getCount());
     if (serverMode) {
       if (entitySet.getNext() != null) {
         jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_NEXT_LINK),
-                entitySet.getNext().toASCIIString());
+            entitySet.getNext().toASCIIString());
       }
       if (entitySet.getDeltaLink() != null) {
         jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_DELTA_LINK),
-                entitySet.getDeltaLink().toASCIIString());
+            entitySet.getDeltaLink().toASCIIString());
       }
     }
 
@@ -84,10 +83,12 @@ public class JSONEntitySetSerializer extends AbstractJsonSerializer<JSONEntitySe
     }
 
     jgen.writeArrayFieldStart(Constants.VALUE);
+    final JSONEntitySerializer entitySerializer = new JSONEntitySerializer(version, serverMode);
     for (Entity entity : entitySet.getEntities()) {
-      jgen.writeObject(entity);
+      entitySerializer.doSerialize(entity, jgen);
     }
-
     jgen.writeEndArray();
+
+    jgen.writeEndObject();
   }
 }

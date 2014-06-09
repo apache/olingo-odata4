@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.op.impl.v4;
 
 import java.io.InputStream;
+
 import org.apache.olingo.client.api.op.v4.ODataReader;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.op.AbstractODataReader;
@@ -27,27 +28,29 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 
 public class ODataReaderImpl extends AbstractODataReader implements ODataReader {
-
-  private static final long serialVersionUID = -2481293269536406956L;
 
   public ODataReaderImpl(final ODataClient client) {
     super(client);
   }
 
   @Override
-  public ODataEntitySet readEntitySet(final InputStream input, final ODataPubFormat format) {
-    return ((ODataClient) client).getBinder().getODataEntitySet(client.getDeserializer().toEntitySet(input, format));
+  public ODataEntitySet readEntitySet(final InputStream input, final ODataPubFormat format)
+      throws ODataDeserializerException {
+    return ((ODataClient) client).getBinder().getODataEntitySet(client.getDeserializer(format).toEntitySet(input));
   }
 
   @Override
-  public ODataEntity readEntity(final InputStream input, final ODataPubFormat format) {
-    return ((ODataClient) client).getBinder().getODataEntity(client.getDeserializer().toEntity(input, format));
+  public ODataEntity readEntity(final InputStream input, final ODataPubFormat format)
+      throws ODataDeserializerException {
+    return ((ODataClient) client).getBinder().getODataEntity(client.getDeserializer(format).toEntity(input));
   }
 
   @Override
-  public ODataProperty readProperty(final InputStream input, final ODataFormat format) {
-    return ((ODataClient) client).getBinder().getODataProperty(client.getDeserializer().toProperty(input, format));
+  public ODataProperty readProperty(final InputStream input, final ODataFormat format)
+      throws ODataDeserializerException {
+    return ((ODataClient) client).getBinder().getODataProperty(client.getDeserializer(format).toProperty(input));
   }
 }

@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.fit;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -41,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.mail.Header;
 import javax.mail.internet.MimeBodyPart;
 import javax.ws.rs.Consumes;
@@ -61,6 +59,7 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -69,43 +68,44 @@ import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.apache.olingo.commons.api.data.ComplexValue;
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.data.AtomEntitySetImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.data.AtomEntityImpl;
-import org.apache.olingo.commons.core.data.AtomPropertyImpl;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.op.ODataDeserializer;
+import org.apache.olingo.commons.api.op.ODataSerializer;
 import org.apache.olingo.commons.core.data.AtomSerializer;
-import org.apache.olingo.commons.core.data.JSONEntityImpl;
-import org.apache.olingo.commons.core.data.JSONPropertyImpl;
+import org.apache.olingo.commons.core.data.EntityImpl;
+import org.apache.olingo.commons.core.data.JsonDeserializer;
+import org.apache.olingo.commons.core.data.JsonSerializer;
+import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.NullValueImpl;
 import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
+import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.fit.metadata.EntityType;
+import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.metadata.NavigationProperty;
 import org.apache.olingo.fit.methods.MERGE;
 import org.apache.olingo.fit.methods.PATCH;
 import org.apache.olingo.fit.serializer.FITAtomDeserializer;
-import org.apache.olingo.fit.utils.Accept;
-import org.apache.olingo.fit.utils.FSManager;
-import org.apache.olingo.fit.utils.Commons;
-import org.apache.olingo.fit.utils.JSONUtilities;
 import org.apache.olingo.fit.utils.AbstractUtilities;
-import org.apache.olingo.fit.utils.XMLUtilities;
-import org.apache.olingo.fit.utils.LinkInfo;
-import org.apache.olingo.fit.metadata.Metadata;
-import org.apache.olingo.fit.serializer.JSONFeedContainer;
-import org.apache.olingo.fit.serializer.JSONEntryContainer;
+import org.apache.olingo.fit.utils.Accept;
+import org.apache.olingo.fit.utils.Commons;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
-import org.apache.olingo.fit.utils.DataBinder;
+import org.apache.olingo.fit.utils.FSManager;
+import org.apache.olingo.fit.utils.JSONUtilities;
+import org.apache.olingo.fit.utils.LinkInfo;
+import org.apache.olingo.fit.utils.XMLUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class AbstractServices {
 
@@ -123,28 +123,24 @@ public abstract class AbstractServices {
   protected static final String BOUNDARY = "batch_243234_25424_ef_892u748";
 
   protected final ODataServiceVersion version;
-
   protected final Metadata metadata;
 
-  protected final FITAtomDeserializer atomDeserializer;
-
-  protected final AtomSerializer atomSerializer;
-
-  protected final ObjectMapper mapper;
-
-  protected final DataBinder dataBinder;
+  protected final ODataDeserializer atomDeserializer;
+  protected final ODataDeserializer jsonDeserializer;
+  protected final ODataSerializer atomSerializer;
+  protected final ODataSerializer jsonSerializer;
 
   protected final XMLUtilities xml;
-
   protected final JSONUtilities json;
 
   public AbstractServices(final ODataServiceVersion version, final Metadata metadata) throws Exception {
     this.version = version;
     this.metadata = metadata;
-    this.atomDeserializer = Commons.getAtomDeserializer(version);
-    this.atomSerializer = Commons.getAtomSerializer(version);
-    this.mapper = Commons.getJSONMapper(version);
-    this.dataBinder = new DataBinder(version, metadata);
+
+    atomDeserializer = new FITAtomDeserializer(version);
+    jsonDeserializer = new JsonDeserializer(version, true);
+    atomSerializer = new AtomSerializer(version, true);
+    jsonSerializer = new JsonSerializer(version, true);
 
     this.xml = new XMLUtilities(version, metadata);
     this.json = new JSONUtilities(version, metadata);
@@ -223,9 +219,9 @@ public abstract class AbstractServices {
   @GET
   @Path("/StoredPIs(1000)")
   public Response getStoredPI(@Context UriInfo uriInfo) {
-    final JSONEntityImpl entity = new JSONEntityImpl();
+    final Entity entity = new EntityImpl();
     entity.setType("Microsoft.Test.OData.Services.ODataWCFService.StoredPI");
-    final Property id = new JSONPropertyImpl();
+    final Property id = new PropertyImpl();
     id.setType("Edm.Int32");
     id.setName("StoredPIID");
     id.setValue(new PrimitiveValueImpl("1000"));
@@ -239,7 +235,7 @@ public abstract class AbstractServices {
     final ByteArrayOutputStream content = new ByteArrayOutputStream();
     final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
     try {
-      mapper.writeValue(writer, new JSONEntryContainer(null, null, entity));
+      jsonSerializer.write(writer, new ResWrap<Entity>((URI) null, null, entity));
       return xml.createResponse(new ByteArrayInputStream(content.toByteArray()), null, Accept.JSON_FULLMETA);
     } catch (Exception e) {
       LOG.error("While creating StoredPI", e);
@@ -261,7 +257,7 @@ public abstract class AbstractServices {
 
   protected Response bodyPartRequest(final MimeBodyPart body, final Map<String, String> references) throws Exception {
     @SuppressWarnings("unchecked")
-    final Enumeration<Header> en = (Enumeration<Header>) body.getAllHeaders();
+    final Enumeration<Header> en = body.getAllHeaders();
 
     Header header = en.nextElement();
     final String request =
@@ -455,22 +451,19 @@ public abstract class AbstractServices {
 
       final Accept contentTypeValue = Accept.parse(contentType, version);
 
-      final AtomEntityImpl entryChanges;
+      final Entity entryChanges;
 
       if (contentTypeValue == Accept.XML || contentTypeValue == Accept.TEXT) {
         throw new UnsupportedMediaTypeException("Unsupported media type");
       } else if (contentTypeValue == Accept.ATOM) {
-        entryChanges = atomDeserializer.<AtomEntityImpl, AtomEntityImpl>read(
-                IOUtils.toInputStream(changes, Constants.ENCODING), AtomEntityImpl.class).getPayload();
+        entryChanges = atomDeserializer.toEntity(
+                IOUtils.toInputStream(changes, Constants.ENCODING)).getPayload();
       } else {
-        final ResWrap<JSONEntityImpl> jcont = mapper.readValue(IOUtils.toInputStream(changes, Constants.ENCODING),
-                new TypeReference<JSONEntityImpl>() {
-        });
-
-        entryChanges = dataBinder.toAtomEntity(jcont.getPayload());
+        final ResWrap<Entity> jcont = jsonDeserializer.toEntity(IOUtils.toInputStream(changes, Constants.ENCODING));
+        entryChanges = jcont.getPayload();
       }
 
-      final ResWrap<AtomEntityImpl> container = atomDeserializer.read(entityInfo.getValue(), AtomEntityImpl.class);
+      final ResWrap<Entity> container = atomDeserializer.toEntity(entityInfo.getValue());
 
       for (Property property : entryChanges.getProperties()) {
         final Property _property = container.getPayload().getProperty(property.getName());
@@ -494,13 +487,13 @@ public abstract class AbstractServices {
       final InputStream res = xml.addOrReplaceEntity(
               entityId, entitySetName, new ByteArrayInputStream(content.toByteArray()), container.getPayload());
 
-      final ResWrap<AtomEntityImpl> cres = atomDeserializer.read(res, AtomEntityImpl.class);
+      final ResWrap<Entity> cres = atomDeserializer.toEntity(res);
 
       normalizeAtomEntry(cres.getPayload(), entitySetName, entityId);
 
       final String path = Commons.getEntityBasePath(entitySetName, entityId);
       FSManager.instance(version).putInMemory(
-              cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY), dataBinder);
+              cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY));
 
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
@@ -551,19 +544,16 @@ public abstract class AbstractServices {
               IOUtils.toInputStream(entity, Constants.ENCODING),
               xml.readEntity(acceptType, IOUtils.toInputStream(entity, Constants.ENCODING)));
 
-      final ResWrap<AtomEntityImpl> cres;
+      final ResWrap<Entity> cres;
       if (acceptType == Accept.ATOM) {
-        cres = atomDeserializer.read(res, AtomEntityImpl.class);
+        cres = atomDeserializer.toEntity(res);
       } else {
-        final ResWrap<JSONEntityImpl> jcont = mapper.readValue(res, new TypeReference<JSONEntityImpl>() {
-        });
-        cres = new ResWrap<AtomEntityImpl>(jcont.getContextURL(), jcont.getMetadataETag(),
-                dataBinder.toAtomEntity(jcont.getPayload()));
+        cres = jsonDeserializer.toEntity(res);
       }
 
       final String path = Commons.getEntityBasePath(entitySetName, entityId);
       FSManager.instance(version).putInMemory(
-              cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY), dataBinder);
+              cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY));
 
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
@@ -611,14 +601,14 @@ public abstract class AbstractServices {
         throw new UnsupportedMediaTypeException("Unsupported media type");
       }
 
-      final ResWrap<AtomEntityImpl> container;
+      final ResWrap<Entity> container;
 
       final org.apache.olingo.fit.metadata.EntitySet entitySet = metadata.getEntitySet(entitySetName);
 
-      final AtomEntityImpl entry;
+      final Entity entry;
       final String entityKey;
       if (xml.isMediaContent(entitySetName)) {
-        entry = new AtomEntityImpl();
+        entry = new EntityImpl();
         entry.setMediaContentType(ContentType.WILDCARD);
         entry.setType(entitySet.getType());
 
@@ -628,7 +618,7 @@ public abstract class AbstractServices {
 
         final Pair<String, EdmPrimitiveTypeKind> id = Commons.getMediaContent().get(entitySetName);
         if (id != null) {
-          final AtomPropertyImpl prop = new AtomPropertyImpl();
+          final Property prop = new PropertyImpl();
           prop.setName(id.getKey());
           prop.setType(id.getValue().toString());
           prop.setValue(new PrimitiveValueImpl(entityKey));
@@ -643,21 +633,18 @@ public abstract class AbstractServices {
 
         entry.setMediaContentSource(URI.create(editLink.getHref() + "/$value"));
 
-        container = new ResWrap<AtomEntityImpl>((URI) null, null, entry);
+        container = new ResWrap<Entity>((URI) null, null, entry);
       } else {
         final Accept contentTypeValue = Accept.parse(contentType, version);
         if (Accept.ATOM == contentTypeValue) {
-          container = atomDeserializer.read(IOUtils.toInputStream(entity, Constants.ENCODING), AtomEntityImpl.class);
+          container = atomDeserializer.toEntity(IOUtils.toInputStream(entity, Constants.ENCODING));
           entry = container.getPayload();
         } else {
-          final ResWrap<JSONEntityImpl> jcontainer =
-                  mapper.readValue(IOUtils.toInputStream(entity, Constants.ENCODING),
-                  new TypeReference<JSONEntityImpl>() {
-          });
+          final ResWrap<Entity> jcontainer = jsonDeserializer.toEntity(
+              IOUtils.toInputStream(entity, Constants.ENCODING));
+          entry = jcontainer.getPayload();
 
-          entry = dataBinder.toAtomEntity(jcontainer.getPayload());
-
-          container = new ResWrap<AtomEntityImpl>(
+          container = new ResWrap<Entity>(
                   jcontainer.getContextURL(),
                   jcontainer.getMetadataETag(),
                   entry);
@@ -677,14 +664,14 @@ public abstract class AbstractServices {
       final InputStream serialization =
               xml.addOrReplaceEntity(entityKey, entitySetName, new ByteArrayInputStream(content.toByteArray()), entry);
 
-      ResWrap<AtomEntityImpl> result = atomDeserializer.read(serialization, AtomEntityImpl.class);
-      result = new ResWrap<AtomEntityImpl>(
+      ResWrap<Entity> result = atomDeserializer.toEntity(serialization);
+      result = new ResWrap<Entity>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
               + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
               null, result.getPayload());
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
-      FSManager.instance(version).putInMemory(result, path + Constants.get(version, ConstantKey.ENTITY), dataBinder);
+      FSManager.instance(version).putInMemory(result, path + Constants.get(version, ConstantKey.ENTITY));
 
       final String location = uriInfo.getRequestUri().toASCIIString() + "(" + entityKey + ")";
 
@@ -734,7 +721,7 @@ public abstract class AbstractServices {
       final Map.Entry<String, InputStream> entityInfo = xml.readEntity("Person", entityId, Accept.ATOM);
 
       final InputStream entity = entityInfo.getValue();
-      final ResWrap<AtomEntityImpl> container = atomDeserializer.read(entity, AtomEntityImpl.class);
+      final ResWrap<Entity> container = atomDeserializer.toEntity(entity);
 
       container.getPayload().getProperty("Salary").setValue(new PrimitiveValueImpl("0"));
       container.getPayload().getProperty("Title").setValue(new PrimitiveValueImpl("[Sacked]"));
@@ -826,7 +813,7 @@ public abstract class AbstractServices {
       final Map.Entry<String, InputStream> entityInfo = xml.readEntity("Product", entityId, Accept.ATOM);
 
       final InputStream entity = entityInfo.getValue();
-      final ResWrap<AtomEntityImpl> container = atomDeserializer.read(entity, AtomEntityImpl.class);
+      final ResWrap<Entity> container = atomDeserializer.toEntity(entity);
 
       final Entity param = xml.readEntity(utils.getKey(), IOUtils.toInputStream(argument, Constants.ENCODING));
 
@@ -861,7 +848,7 @@ public abstract class AbstractServices {
       final Map.Entry<String, InputStream> entityInfo = xml.readEntity("ComputerDetail", entityId, Accept.ATOM);
 
       final InputStream entity = entityInfo.getValue();
-      final ResWrap<AtomEntityImpl> container = atomDeserializer.read(entity, AtomEntityImpl.class);
+      final ResWrap<Entity> container = atomDeserializer.toEntity(entity);
 
       final Entity param = xml.readEntity(utils.getKey(), IOUtils.toInputStream(argument, Constants.ENCODING));
 
@@ -985,7 +972,7 @@ public abstract class AbstractServices {
 
         final InputStream feed = FSManager.instance(version).readFile(builder.toString(), Accept.ATOM);
 
-        final ResWrap<AtomEntitySetImpl> container = atomDeserializer.read(feed, AtomEntitySetImpl.class);
+        final ResWrap<EntitySet> container = atomDeserializer.toEntitySet(feed);
 
         setInlineCount(container.getPayload(), count);
 
@@ -1011,13 +998,11 @@ public abstract class AbstractServices {
 
         if (acceptType == Accept.ATOM) {
           atomSerializer.write(writer, container);
-          writer.flush();
-          writer.close();
         } else {
-          mapper.writeValue(
-                  writer, new JSONFeedContainer(container.getContextURL(), container.getMetadataETag(),
-                  dataBinder.toJSONEntitySet(container.getPayload())));
+          jsonSerializer.write(writer, container);
         }
+        writer.flush();
+        writer.close();
 
         return xml.createResponse(
                 location,
@@ -1185,9 +1170,9 @@ public abstract class AbstractServices {
 
       final InputStream entity = entityInfo.getValue();
 
-      ResWrap<AtomEntityImpl> container = atomDeserializer.read(entity, AtomEntityImpl.class);
+      ResWrap<Entity> container = atomDeserializer.toEntity(entity);
       if (container.getContextURL() == null) {
-        container = new ResWrap<AtomEntityImpl>(URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
+        container = new ResWrap<Entity>(URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
                 + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
                 container.getMetadataETag(), container.getPayload());
       }
@@ -1241,15 +1226,13 @@ public abstract class AbstractServices {
             rep.setType(link.getType());
             if (link.getType().equals(Constants.get(version, ConstantKey.ATOM_LINK_ENTRY))) {
               // inline entry
-              final Entity inline = atomDeserializer.<Entity, AtomEntityImpl>read(
-                      xml.expandEntity(entitySetName, entityId, link.getTitle()),
-                      AtomEntityImpl.class).getPayload();
+              final Entity inline = atomDeserializer.toEntity(
+                      xml.expandEntity(entitySetName, entityId, link.getTitle())).getPayload();
               rep.setInlineEntity(inline);
             } else if (link.getType().equals(Constants.get(version, ConstantKey.ATOM_LINK_FEED))) {
               // inline feed
-              final EntitySet inline = atomDeserializer.<EntitySet, AtomEntitySetImpl>read(
-                      xml.expandEntity(entitySetName, entityId, link.getTitle()),
-                      AtomEntitySetImpl.class).getPayload();
+              final EntitySet inline = atomDeserializer.toEntitySet(
+                      xml.expandEntity(entitySetName, entityId, link.getTitle())).getPayload();
               rep.setInlineEntitySet(inline);
             }
             replace.put(link, rep);
@@ -1336,10 +1319,10 @@ public abstract class AbstractServices {
       final FSManager fsManager = FSManager.instance(version);
 
       final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
-      final ResWrap<AtomEntityImpl> container = xml.readContainerEntity(Accept.ATOM,
+      final ResWrap<Entity> container = xml.readContainerEntity(Accept.ATOM,
               fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), Accept.ATOM));
 
-      final AtomEntityImpl entry = container.getPayload();
+      final Entity entry = container.getPayload();
 
       Property toBeReplaced = null;
       for (String element : path.split("/")) {
@@ -1363,7 +1346,7 @@ public abstract class AbstractServices {
         // just for primitive values
         toBeReplaced.setValue(new PrimitiveValueImpl(changes));
       } else {
-        final AtomPropertyImpl pchanges = xml.readProperty(
+        final Property pchanges = xml.readProperty(
                 Accept.parse(contentType, version),
                 IOUtils.toInputStream(changes, Constants.ENCODING),
                 entry.getType());
@@ -1639,7 +1622,6 @@ public abstract class AbstractServices {
    * @param entityId
    * @param path
    * @param format
-   * @param changes
    * @return
    */
   @DELETE
@@ -1729,34 +1711,24 @@ public abstract class AbstractServices {
           final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
 
           if (linkInfo.isFeed()) {
-            final ResWrap<EntitySet> container =
-                    atomDeserializer.<EntitySet, AtomEntitySetImpl>read(stream, AtomEntitySetImpl.class);
+            final ResWrap<EntitySet> container = atomDeserializer.toEntitySet(stream);
 
             if (acceptType == Accept.ATOM) {
               atomSerializer.write(writer, container);
-              writer.flush();
-              writer.close();
             } else {
-              mapper.writeValue(
-                      writer,
-                      new JSONFeedContainer(container.getContextURL(),
-                      container.getMetadataETag(),
-                      dataBinder.toJSONEntitySet((AtomEntitySetImpl) container.getPayload())));
+              jsonSerializer.write(writer, container);
             }
+            writer.flush();
+            writer.close();
           } else {
-            final ResWrap<Entity> container =
-                    atomDeserializer.<Entity, AtomEntityImpl>read(stream, AtomEntityImpl.class);
+            final ResWrap<Entity> container = atomDeserializer.toEntity(stream);
             if (acceptType == Accept.ATOM) {
               atomSerializer.write(writer, container);
-              writer.flush();
-              writer.close();
             } else {
-              mapper.writeValue(
-                      writer,
-                      new JSONEntryContainer(container.getContextURL(),
-                      container.getMetadataETag(),
-                      dataBinder.toJSONEntity((AtomEntityImpl) container.getPayload())));
+              jsonSerializer.write(writer, container);
             }
+            writer.flush();
+            writer.close();
           }
 
           final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
@@ -1804,18 +1776,18 @@ public abstract class AbstractServices {
 
     final InputStream entity = entityInfo.getValue();
 
-    final ResWrap<AtomEntityImpl> entryContainer = atomDeserializer.read(entity, AtomEntityImpl.class);
+    final ResWrap<Entity> entryContainer = atomDeserializer.toEntity(entity);
 
     final String[] pathElems = StringUtils.split(path, "/");
-    AtomPropertyImpl property = (AtomPropertyImpl) entryContainer.getPayload().getProperty(pathElems[0]);
+    Property property = entryContainer.getPayload().getProperty(pathElems[0]);
     if (pathElems.length > 1 && property.getValue().isComplex()) {
       for (Property sub : property.getValue().asComplex().get()) {
         if (pathElems[1].equals(sub.getName())) {
-          property = (AtomPropertyImpl) sub;
+          property = sub;
           if (pathElems.length > 2 && property.getValue().isComplex()) {
             for (Property subsub : property.getValue().asComplex().get()) {
               if (pathElems[2].equals(subsub.getName())) {
-                property = (AtomPropertyImpl) subsub;
+                property = subsub;
               }
             }
           }
@@ -1823,7 +1795,7 @@ public abstract class AbstractServices {
       }
     }
 
-    final ResWrap<AtomPropertyImpl> container = new ResWrap<AtomPropertyImpl>(
+    final ResWrap<Property> container = new ResWrap<Property>(
             URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
             + (version.compareTo(ODataServiceVersion.V40) >= 0
             ? entitySetName + "(" + entityId + ")/" + path
@@ -1899,13 +1871,13 @@ public abstract class AbstractServices {
     return utils;
   }
 
-  protected void normalizeAtomEntry(final AtomEntityImpl entry, final String entitySetName, final String entityKey) {
+  protected void normalizeAtomEntry(final Entity entry, final String entitySetName, final String entityKey) {
     final org.apache.olingo.fit.metadata.EntitySet entitySet = metadata.getEntitySet(entitySetName);
     final EntityType entityType = metadata.getEntityOrComplexType(entitySet.getType());
     for (Map.Entry<String, org.apache.olingo.fit.metadata.Property> property
             : entityType.getPropertyMap().entrySet()) {
       if (entry.getProperty(property.getKey()) == null && property.getValue().isNullable()) {
-        final AtomPropertyImpl prop = new AtomPropertyImpl();
+        final PropertyImpl prop = new PropertyImpl();
         prop.setName(property.getKey());
         prop.setValue(new NullValueImpl());
         entry.getProperties().add(prop);

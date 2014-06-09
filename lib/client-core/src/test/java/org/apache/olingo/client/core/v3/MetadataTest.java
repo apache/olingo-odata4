@@ -53,6 +53,7 @@ import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.junit.Test;
 
@@ -175,7 +176,7 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void parseWithXMLMetadata() {
-    final XMLMetadata metadata = getClient().getDeserializer().
+    final XMLMetadata metadata = getClient().getDeserializer(ODataFormat.XML).
             toMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(metadata);
 
@@ -212,7 +213,7 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void multipleSchemas() {
-    final XMLMetadata metadata = getClient().getDeserializer().
+    final XMLMetadata metadata = getClient().getDeserializer(ODataFormat.XML).
             toMetadata(getClass().getResourceAsStream("northwind-metadata.xml"));
     assertNotNull(metadata);
 

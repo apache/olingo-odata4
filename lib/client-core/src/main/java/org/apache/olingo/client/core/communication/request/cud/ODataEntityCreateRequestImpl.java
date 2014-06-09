@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.communication.request.cud;
 
 import java.io.InputStream;
 import java.net.URI;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -29,6 +30,9 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateR
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.op.ODataSerializerException;
+import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
@@ -67,7 +71,11 @@ public class ODataEntityCreateRequestImpl<E extends CommonODataEntity>
    */
   @Override
   protected InputStream getPayload() {
-    return odataClient.getWriter().writeEntity(entity, ODataPubFormat.fromString(getContentType()));
+    try {
+      return odataClient.getWriter().writeEntity(entity, ODataPubFormat.fromString(getContentType()));
+    } catch (final ODataSerializerException e) {
+      throw new HttpClientException(e);
+    }
   }
 
   /**
@@ -119,10 +127,12 @@ public class ODataEntityCreateRequestImpl<E extends CommonODataEntity>
     public E getBody() {
       if (entity == null) {
         try {
-          final ResWrap<Entity> resource = odataClient.getDeserializer().
-                  toEntity(getRawResponse(), ODataPubFormat.fromString(getAccept()));
+          final ResWrap<Entity> resource = odataClient.getDeserializer(ODataPubFormat.fromString(getAccept()))
+              .toEntity(getRawResponse());
           
           entity = (E) odataClient.getBinder().getODataEntity(resource);
+        } catch (final ODataDeserializerException e) {
+          throw new HttpClientException(e);
         } finally {
           this.close();
         }

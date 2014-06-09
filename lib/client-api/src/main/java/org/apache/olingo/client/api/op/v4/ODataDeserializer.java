@@ -24,7 +24,7 @@ import org.apache.olingo.client.api.edm.xml.v4.XMLMetadata;
 import org.apache.olingo.client.api.op.ClientODataDeserializer;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 
 public interface ODataDeserializer extends ClientODataDeserializer {
 
@@ -35,8 +35,8 @@ public interface ODataDeserializer extends ClientODataDeserializer {
    * Gets a delta object from the given InputStream.
    *
    * @param input stream to be de-serialized.
-   * @param format Atom or JSON
    * @return {@link Delta} instance.
+   * @throws ODataDeserializerException 
    */
-  ResWrap<Delta> toDelta(InputStream input, ODataPubFormat format);
+  ResWrap<Delta> toDelta(InputStream input) throws ODataDeserializerException;
 }

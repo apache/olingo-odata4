@@ -21,6 +21,7 @@ package org.apache.olingo.client.core.communication.request.retrieve.v3;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -30,6 +31,7 @@ import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.communication.request.retrieve.AbstractMetadataRequestImpl;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
 public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<String, Schema>>
         implements XMLMetadataRequest {
@@ -71,7 +73,8 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
       if (schemas == null) {
         schemas = new HashMap<String, Schema>();
         try {
-          final XMLMetadata metadata = odataClient.getDeserializer().toMetadata(getRawResponse());
+          final XMLMetadata metadata = odataClient.getDeserializer(ODataFormat.XML)
+              .toMetadata(getRawResponse());
           for (Schema schema : metadata.getSchemas()) {
             schemas.put(schema.getNamespace(), schema);
             if (StringUtils.isNotBlank(schema.getAlias())) {

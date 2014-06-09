@@ -18,20 +18,21 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.UUID;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.fit.proxy.v4.AbstractTestITCase;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement;
 import org.junit.Test;
@@ -65,7 +66,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final UUID uuid = UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7");
 
     final Advertisement adv = getContainer().getAdvertisements().get(uuid);
-    assertTrue(adv.getAirDate() instanceof Calendar);
+    assertNotNull(adv.getAirDate());
 
     final InputStream is = adv.getStream();
     assertNotNull(is);

@@ -20,28 +20,33 @@ package org.apache.olingo.client.core.op.impl.v4;
 
 import java.io.InputStream;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.v4.XMLMetadata;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.v4.ODataDeserializer;
-import org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl;
-import org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl;
+import org.apache.olingo.client.core.data.JSONServiceDocumentDeserializer;
+import org.apache.olingo.client.core.data.XMLServiceDocumentDeserializer;
 import org.apache.olingo.client.core.edm.xml.v4.EdmxImpl;
 import org.apache.olingo.client.core.edm.xml.v4.XMLMetadataImpl;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.core.op.AbstractODataDeserializer;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.Format;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.core.data.v4.AtomDeltaImpl;
-import org.apache.olingo.commons.core.data.v4.JSONDeltaImpl;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.core.data.AtomDeserializer;
+import org.apache.olingo.commons.core.data.JSONDeltaDeserializer;
+import org.apache.olingo.commons.core.op.AbstractODataDeserializer;
 
 public class ODataDeserializerImpl extends AbstractODataDeserializer implements ODataDeserializer {
 
-  private static final long serialVersionUID = 8593081342440470415L;
+  private final Format format;
 
-  public ODataDeserializerImpl(final ODataServiceVersion version) {
-    super(version);
+  public ODataDeserializerImpl(final ODataServiceVersion version, final Format format) {
+    super(version, format);
+    this.format = format;
   }
 
   @Override
@@ -54,18 +59,20 @@ public class ODataDeserializerImpl extends AbstractODataDeserializer implements 
   }
 
   @Override
-  public ResWrap<ServiceDocument> toServiceDocument(final InputStream input, final ODataFormat format) {
-    return format == ODataFormat.XML
-            ? this.<ServiceDocument, XMLServiceDocumentImpl>xml(input, XMLServiceDocumentImpl.class)
-            : this.<ServiceDocument, JSONServiceDocumentImpl>json(input, JSONServiceDocumentImpl.class);
-
+  public ResWrap<ServiceDocument> toServiceDocument(final InputStream input) throws ODataDeserializerException {
+    return format == ODataFormat.XML ?
+        new XMLServiceDocumentDeserializer(version, false).toServiceDocument(input) :
+        new JSONServiceDocumentDeserializer(version, false).toServiceDocument(input);
   }
 
   @Override
-  public ResWrap<Delta> toDelta(final InputStream input, final ODataPubFormat format) {
-    return format == ODataPubFormat.ATOM
-            ? this.<Delta, AtomDeltaImpl>atom(input, AtomDeltaImpl.class)
-            : this.<Delta, JSONDeltaImpl>json(input, JSONDeltaImpl.class);
+  public ResWrap<Delta> toDelta(final InputStream input) throws ODataDeserializerException {
+    try {
+      return format == ODataPubFormat.ATOM ?
+          new AtomDeserializer(version).delta(input) :
+          new JSONDeltaDeserializer(version, false).toDelta(input);
+    } catch (XMLStreamException e) {
+      throw new ODataDeserializerException(e);
+    }
   }
-
 }

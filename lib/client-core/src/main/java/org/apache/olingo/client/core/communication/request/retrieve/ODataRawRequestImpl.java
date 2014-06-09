@@ -21,6 +21,7 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -28,6 +29,8 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
@@ -45,7 +48,7 @@ public class ODataRawRequestImpl extends AbstractODataRequest<ODataPubFormat>
    * @param odataClient client instance getting this request
    * @param uri request URI.
    */
-  ODataRawRequestImpl(final CommonODataClient odataClient, final URI uri) {
+  ODataRawRequestImpl(final CommonODataClient<?> odataClient, final URI uri) {
     super(odataClient, ODataPubFormat.class, HttpMethod.GET, uri);
   }
 
@@ -94,8 +97,12 @@ public class ODataRawRequestImpl extends AbstractODataRequest<ODataPubFormat>
         }
       }
 
-      return odataClient.getReader().
-              read(new ByteArrayInputStream(obj), getContentType(), reference);
+      try {
+        return odataClient.getReader().
+                read(new ByteArrayInputStream(obj), getContentType(), reference);
+      } catch (final ODataDeserializerException e) {
+        throw new HttpClientException(e);
+      }
     }
   }
 }

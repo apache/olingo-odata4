@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.communication.request.retrieve.v3;
 
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.v3.ODataClient;
@@ -27,6 +28,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.v3.ODataLinkC
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.core.communication.request.retrieve.AbstractODataRetrieveRequest;
 
@@ -78,9 +80,6 @@ public class ODataLinkCollectionRequestImpl extends AbstractODataRetrieveRequest
       super(client, res);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public ODataLinkCollection getBody() {
       if (links == null) {
@@ -88,6 +87,8 @@ public class ODataLinkCollectionRequestImpl extends AbstractODataRetrieveRequest
           links = ((ODataClient) odataClient).getReader().readLinks(
                   res.getEntity().getContent(), ODataFormat.fromString(getContentType()));
         } catch (IOException e) {
+          throw new HttpClientException(e);
+        } catch (final ODataDeserializerException e) {
           throw new HttpClientException(e);
         } finally {
           this.close();

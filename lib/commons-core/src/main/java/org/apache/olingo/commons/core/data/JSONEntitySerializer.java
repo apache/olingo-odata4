@@ -18,11 +18,9 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
@@ -34,22 +32,23 @@ import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+
 /**
  * Writes out JSON string from an entity.
  */
-public class JSONEntitySerializer extends AbstractJsonSerializer<JSONEntityImpl> {
+public class JSONEntitySerializer extends JsonSerializer {
 
-  @Override
-  protected void doSerialize(final JSONEntityImpl entity, final JsonGenerator jgen, final SerializerProvider provider)
-          throws IOException, JsonProcessingException {
-
-    doContainerSerialize(new ResWrap<JSONEntityImpl>((URI) null, null, entity), jgen, provider);
+  public JSONEntitySerializer(final ODataServiceVersion version, final boolean serverMode) {
+    super(version, serverMode);
   }
 
-  @Override
-  protected void doContainerSerialize(
-          final ResWrap<JSONEntityImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
-          throws IOException, JsonProcessingException {
+  protected void doSerialize(final Entity entity, final JsonGenerator jgen) throws IOException {
+    doContainerSerialize(new ResWrap<Entity>((URI) null, null, entity), jgen);
+  }
+
+  protected void doContainerSerialize(final ResWrap<Entity> container, final JsonGenerator jgen)
+      throws IOException {
 
     final Entity entity = container.getPayload();
 
@@ -58,8 +57,8 @@ public class JSONEntitySerializer extends AbstractJsonSerializer<JSONEntityImpl>
     if (serverMode) {
       if (container.getContextURL() != null) {
         jgen.writeStringField(version.compareTo(ODataServiceVersion.V40) >= 0
-                ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
-                container.getContextURL().getURI().toASCIIString());
+            ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
+            container.getContextURL().getURI().toASCIIString());
       }
       if (version.compareTo(ODataServiceVersion.V40) >= 0 && StringUtils.isNotBlank(container.getMetadataETag())) {
         jgen.writeStringField(Constants.JSON_METADATA_ETAG, container.getMetadataETag());
@@ -72,7 +71,7 @@ public class JSONEntitySerializer extends AbstractJsonSerializer<JSONEntityImpl>
 
     if (StringUtils.isNotBlank(entity.getType())) {
       jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE),
-              new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external(version));
+          new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external(version));
     }
 
     if (entity.getId() != null) {
@@ -89,11 +88,11 @@ public class JSONEntitySerializer extends AbstractJsonSerializer<JSONEntityImpl>
 
     if (serverMode && entity.getEditLink() != null && StringUtils.isNotBlank(entity.getEditLink().getHref())) {
       jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK),
-              entity.getEditLink().getHref());
+          entity.getEditLink().getHref());
 
       if (entity.isMediaEntity()) {
         jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK),
-                entity.getEditLink().getHref() + "/$value");
+            entity.getEditLink().getHref() + "/$value");
       }
     }
 

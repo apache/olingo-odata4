@@ -18,22 +18,27 @@
  */
 package org.apache.olingo.client.core.data;
 
-import org.apache.olingo.commons.core.data.ODataJacksonDeserializer;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
-
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.core.data.JsonDeserializer;
 
-public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<ResWrap<ServiceDocument>> {
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
+import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
+
+public class XMLServiceDocumentDeserializer extends JsonDeserializer {
+
+  public XMLServiceDocumentDeserializer(final ODataServiceVersion version, final boolean serverMode) {
+    super(version, serverMode);
+  }
 
   private String getName(final JsonParser jp) throws IOException {
     String title = jp.nextTextValue();
@@ -47,11 +52,11 @@ public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<Res
   }
 
   private ServiceDocumentItemImpl deserializeElement(final JsonParser jp, final String elementName)
-          throws IOException {
+      throws IOException {
 
     final ServiceDocumentItemImpl element = new ServiceDocumentItemImpl();
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT
-            || !elementName.equals(((FromXmlParser) jp).getStaxReader().getLocalName()); jp.nextToken()) {
+        || !elementName.equals(((FromXmlParser) jp).getStaxReader().getLocalName()); jp.nextToken()) {
 
       final JsonToken token = jp.getCurrentToken();
       if (token == JsonToken.FIELD_NAME) {
@@ -66,20 +71,16 @@ public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<Res
     return element;
   }
 
-  @Override
-  protected ResWrap<ServiceDocument> doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
-          throws IOException, JsonProcessingException {
+  protected ResWrap<ServiceDocument> doDeserialize(final JsonParser jp) throws IOException {
 
-    final AbstractServiceDocument sdoc = ODataServiceVersion.V30 == version
-            ? new org.apache.olingo.client.core.data.v3.XMLServiceDocumentImpl()
-            : new org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl();
+    ServiceDocumentImpl sdoc = new ServiceDocumentImpl();
 
     URI contextURL = null;
     String metadataETag = null;
     String base = null;
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT
-            || !"service".equals(((FromXmlParser) jp).getStaxReader().getLocalName()); jp.nextToken()) {
+        || !"service".equals(((FromXmlParser) jp).getStaxReader().getLocalName()); jp.nextToken()) {
 
       final JsonToken token = jp.getCurrentToken();
       if (token == JsonToken.FIELD_NAME) {
@@ -112,11 +113,20 @@ public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<Res
     }
 
     sdoc.setMetadata((contextURL == null
-            ? URIUtils.getURI(base, "$metadata")
-            : URIUtils.getURI(base, contextURL.toASCIIString())).toASCIIString());
+        ? URIUtils.getURI(base, "$metadata")
+        : URIUtils.getURI(base, contextURL.toASCIIString())).toASCIIString());
 
     return new ResWrap<ServiceDocument>(
-            contextURL == null ? null : URIUtils.getURI(sdoc.getBaseURI(), contextURL),
-            metadataETag, sdoc);
+        contextURL == null ? null : URIUtils.getURI(sdoc.getBaseURI(), contextURL),
+        metadataETag, sdoc);
+  }
+
+  public ResWrap<ServiceDocument> toServiceDocument(InputStream input) throws ODataDeserializerException {
+    try {
+      JsonParser parser = new XmlFactory().createParser(input);
+      return doDeserialize(parser);
+    } catch (final IOException e) {
+      throw new ODataDeserializerException(e);
+    }
   }
 }

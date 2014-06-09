@@ -18,38 +18,46 @@
  */
 package org.apache.olingo.client.core.op;
 
-import org.apache.olingo.commons.core.op.ResourceFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Collections;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.op.ODataWriter;
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.op.ODataWriter;
+import org.apache.olingo.commons.api.op.ODataSerializerException;
 
 public class ODataWriterImpl implements ODataWriter {
 
-  private static final long serialVersionUID = 3265794768412314485L;
+  protected final CommonODataClient<?> client;
 
-  protected final CommonODataClient client;
-
-  public ODataWriterImpl(final CommonODataClient client) {
+  public ODataWriterImpl(final CommonODataClient<?> client) {
     this.client = client;
   }
 
   @Override
-  public InputStream writeEntities(final Collection<CommonODataEntity> entities, final ODataPubFormat format) {
-    final ByteArrayOutputStream output = new ByteArrayOutputStream();
+  public InputStream writeEntities(final Collection<CommonODataEntity> entities, final ODataPubFormat format)
+      throws ODataSerializerException {
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    OutputStreamWriter writer;
+    try {
+      writer = new OutputStreamWriter(output, Constants.UTF8);
+    } catch (final UnsupportedEncodingException e) {
+      writer = null;
+    }
     try {
       for (CommonODataEntity entity : entities) {
-        client.getSerializer().entity(client.getBinder().getEntity(
-                entity, ResourceFactory.entityClassForFormat(format == ODataPubFormat.ATOM)), output);
+        client.getSerializer(format).write(writer, client.getBinder().getEntity(entity));
       }
 
       return new ByteArrayInputStream(output.toByteArray());
@@ -59,16 +67,23 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeEntity(final CommonODataEntity entity, final ODataPubFormat format) {
+  public InputStream writeEntity(final CommonODataEntity entity, final ODataPubFormat format)
+      throws ODataSerializerException {
     return writeEntities(Collections.<CommonODataEntity>singleton(entity), format);
   }
 
   @Override
-  public InputStream writeProperty(final CommonODataProperty property, final ODataFormat format) {
+  public InputStream writeProperty(final CommonODataProperty property, final ODataFormat format)
+      throws ODataSerializerException {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
+    OutputStreamWriter writer;
     try {
-      client.getSerializer().property(client.getBinder().getProperty(
-              property, ResourceFactory.entityClassForFormat(format == ODataFormat.XML)), output);
+      writer = new OutputStreamWriter(output, Constants.UTF8);
+    } catch (final UnsupportedEncodingException e) {
+      writer = null;
+    }
+    try {
+      client.getSerializer(format).write(writer, client.getBinder().getProperty(property));
 
       return new ByteArrayInputStream(output.toByteArray());
     } finally {
@@ -77,10 +92,16 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeLink(final ODataLink link, final ODataFormat format) {
+  public InputStream writeLink(final ODataLink link, final ODataFormat format) throws ODataSerializerException {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
+    OutputStreamWriter writer;
     try {
-      client.getSerializer().link(client.getBinder().getLink(link, format == ODataFormat.XML), format, output);
+      writer = new OutputStreamWriter(output, Constants.UTF8);
+    } catch (final UnsupportedEncodingException e) {
+      writer = null;
+    }
+    try {
+      client.getSerializer(format).write(writer, client.getBinder().getLink(link));
 
       return new ByteArrayInputStream(output.toByteArray());
     } finally {

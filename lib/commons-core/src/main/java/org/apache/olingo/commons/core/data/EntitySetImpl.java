@@ -18,46 +18,57 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.data.Value;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
 
-public abstract class AbstractProperty extends AbstractAnnotatedObject implements Property {
+public class EntitySetImpl extends AbstractODataObject implements EntitySet {
 
-  private static final long serialVersionUID = -7175704800169997060L;
+  private static final long serialVersionUID = -9159884750819150969L;
 
-  private String name;
+  private Integer count;
 
-  private String type;
+  private final List<Entity> entities = new ArrayList<Entity>();
 
-  private Value value;
+  private URI next;
+
+  private URI deltaLink;
 
   @Override
-  public String getName() {
-    return name;
+  public void setCount(final Integer count) {
+    this.count = count;
   }
 
   @Override
-  public void setName(final String name) {
-    this.name = name;
+  public Integer getCount() {
+    return count;
   }
 
   @Override
-  public String getType() {
-    return type;
+  public List<Entity> getEntities() {
+    return entities;
   }
 
   @Override
-  public void setType(final String type) {
-    this.type = type;
+  public void setNext(final URI next) {
+    this.next = next;
   }
 
   @Override
-  public Value getValue() {
-    return value;
+  public URI getNext() {
+    return next;
   }
 
   @Override
-  public void setValue(final Value value) {
-    this.value = value;
+  public URI getDeltaLink() {
+    return deltaLink;
   }
+
+  @Override
+  public void setDeltaLink(final URI deltaLink) {
+    this.deltaLink = deltaLink;
+  }
+
 }

@@ -21,6 +21,7 @@ package org.apache.olingo.fit;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.commons.api.data.Entity;
@@ -28,8 +29,9 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.core.data.AtomEntityImpl;
-import org.apache.olingo.commons.core.data.JSONEntityImpl;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataSerializerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +48,9 @@ public abstract class AbstractBaseTestITCase {
   protected void debugEntity(final Entity entity, final String message) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
-      getClient().getSerializer().entity(entity, writer);
+      try {
+        getClient().getSerializer(ODataFormat.JSON).write(writer, entity);
+      } catch (final ODataSerializerException e) {}
       writer.flush();
       LOG.debug(message + "\n{}", writer.toString());
     }
@@ -55,7 +59,9 @@ public abstract class AbstractBaseTestITCase {
   protected void debugEntitySet(final EntitySet entitySet, final String message) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
-      getClient().getSerializer().entitySet(entitySet, writer);
+      try {
+        getClient().getSerializer(ODataFormat.JSON).write(writer, entitySet);
+      } catch (final ODataSerializerException e) {}
       writer.flush();
       LOG.debug(message + "\n{}", writer.toString());
     }
@@ -72,12 +78,16 @@ public abstract class AbstractBaseTestITCase {
   protected void debugODataEntity(final CommonODataEntity entity, final String message) {
     if (LOG.isDebugEnabled()) {
       StringWriter writer = new StringWriter();
-      getClient().getSerializer().entity(getClient().getBinder().getEntity(entity, AtomEntityImpl.class), writer);
+      try {
+        getClient().getSerializer(ODataPubFormat.ATOM).write(writer, getClient().getBinder().getEntity(entity));
+      } catch (final ODataSerializerException e) {}
       writer.flush();
       LOG.debug(message + " (Atom)\n{}", writer.toString());
 
       writer = new StringWriter();
-      getClient().getSerializer().entity(getClient().getBinder().getEntity(entity, JSONEntityImpl.class), writer);
+      try {
+        getClient().getSerializer(ODataPubFormat.JSON).write(writer, getClient().getBinder().getEntity(entity));
+      } catch (final ODataSerializerException e) {}
       writer.flush();
       LOG.debug(message + " (JSON)\n{}", writer.toString());
     }

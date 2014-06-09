@@ -20,7 +20,6 @@ package org.apache.olingo.client.core.data;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -31,11 +30,14 @@ import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.commons.api.Constants;
 
-public abstract class AbstractServiceDocument implements ServiceDocument {
+public class ServiceDocumentImpl implements ServiceDocument {
 
   private String title;
 
   private final List<ServiceDocumentItem> entitySets = new ArrayList<ServiceDocumentItem>();
+  private final List<ServiceDocumentItem> functionImports = new ArrayList<ServiceDocumentItem>();
+  private final List<ServiceDocumentItem> singletons = new ArrayList<ServiceDocumentItem>();
+  private final List<ServiceDocumentItem> relatedServiceDocuments = new ArrayList<ServiceDocumentItem>();
 
   private String metadata;
 
@@ -99,7 +101,7 @@ public abstract class AbstractServiceDocument implements ServiceDocument {
 
   @Override
   public List<ServiceDocumentItem> getFunctionImports() {
-    return Collections.<ServiceDocumentItem>emptyList();
+    return functionImports;
   }
 
   @Override
@@ -109,7 +111,7 @@ public abstract class AbstractServiceDocument implements ServiceDocument {
 
   @Override
   public List<ServiceDocumentItem> getSingletons() {
-    return Collections.<ServiceDocumentItem>emptyList();
+    return singletons;
   }
 
   @Override
@@ -119,7 +121,7 @@ public abstract class AbstractServiceDocument implements ServiceDocument {
 
   @Override
   public List<ServiceDocumentItem> getRelatedServiceDocuments() {
-    return Collections.<ServiceDocumentItem>emptyList();
+    return relatedServiceDocuments;
   }
 
   @Override

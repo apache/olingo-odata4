@@ -19,6 +19,7 @@
 package org.apache.olingo.client.api.op.v3;
 
 import java.io.InputStream;
+
 import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.CommonODataReader;
@@ -26,17 +27,18 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 
 public interface ODataReader extends CommonODataReader {
 
   @Override
-  ODataEntitySet readEntitySet(InputStream input, ODataPubFormat format);
+  ODataEntitySet readEntitySet(InputStream input, ODataPubFormat format) throws ODataDeserializerException;
 
   @Override
-  ODataEntity readEntity(InputStream input, ODataPubFormat format);
+  ODataEntity readEntity(InputStream input, ODataPubFormat format) throws ODataDeserializerException;
 
   @Override
-  ODataProperty readProperty(InputStream input, ODataFormat format);
+  ODataProperty readProperty(InputStream input, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a $links request response.
@@ -45,6 +47,5 @@ public interface ODataReader extends CommonODataReader {
    * @param format de-serialize as XML or JSON
    * @return List of URIs.
    */
-  ODataLinkCollection readLinks(InputStream input, ODataFormat format);
-
+  ODataLinkCollection readLinks(InputStream input, ODataFormat format) throws ODataDeserializerException;
 }

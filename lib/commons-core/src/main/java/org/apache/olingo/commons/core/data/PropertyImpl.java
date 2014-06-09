@@ -18,11 +18,46 @@
  */
 package org.apache.olingo.commons.core.data;
 
-/**
- * List of entries, represented via Atom.
- */
-public class AtomEntitySetImpl extends AbstractEntitySet {
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.Value;
 
-  private static final long serialVersionUID = 5466590540021319153L;
+public class PropertyImpl extends AbstractAnnotatedObject implements Property {
 
+  private static final long serialVersionUID = -7175704800169997060L;
+
+  private String name;
+
+  private String type;
+
+  private Value value;
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public void setName(final String name) {
+    this.name = name;
+  }
+
+  @Override
+  public String getType() {
+    return type;
+  }
+
+  @Override
+  public void setType(final String type) {
+    this.type = type;
+  }
+
+  @Override
+  public Value getValue() {
+    return value;
+  }
+
+  @Override
+  public void setValue(final Value value) {
+    this.value = value;
+  }
 }

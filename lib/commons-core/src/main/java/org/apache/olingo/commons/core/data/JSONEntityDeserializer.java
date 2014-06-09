@@ -18,12 +18,6 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -34,26 +28,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
-import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Reads JSON string into an entity.
  * <br/>
  * If metadata information is available, the corresponding entity fields and content will be populated.
  */
-public class JSONEntityDeserializer extends AbstractJsonDeserializer<JSONEntityImpl> {
+public class JSONEntityDeserializer extends JsonDeserializer {
 
-  @Override
-  protected ResWrap<JSONEntityImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
-          throws IOException, JsonProcessingException {
+  public JSONEntityDeserializer(final ODataServiceVersion version, final boolean serverMode) {
+    super(version, serverMode);
+  }
+
+  protected ResWrap<Entity> doDeserialize(final JsonParser parser) throws IOException {
 
     final ObjectNode tree = parser.getCodec().readTree(parser);
 
@@ -61,7 +64,7 @@ public class JSONEntityDeserializer extends AbstractJsonDeserializer<JSONEntityI
       throw new JsonParseException("Expected OData Entity, found EntitySet", parser.getCurrentLocation());
     }
 
-    final JSONEntityImpl entity = new JSONEntityImpl();
+    final EntityImpl entity = new EntityImpl();
 
     final URI contextURL;
     if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
@@ -212,6 +215,6 @@ public class JSONEntityDeserializer extends AbstractJsonDeserializer<JSONEntityI
 
     populate(entity, entity.getProperties(), tree, parser.getCodec());
 
-    return new ResWrap<JSONEntityImpl>(contextURL, metadataETag, entity);
+    return new ResWrap<Entity>(contextURL, metadataETag, entity);
   }
 }

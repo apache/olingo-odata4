@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.fit.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,7 +27,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.EnumMap;
 import java.util.Map;
+
 import javax.ws.rs.NotFoundException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSelectInfo;
@@ -37,11 +38,12 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.FileType;
 import org.apache.commons.vfs2.VFS;
+import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.data.AtomEntityImpl;
+import org.apache.olingo.commons.api.op.ODataSerializerException;
 import org.apache.olingo.commons.core.data.AtomSerializer;
-import org.apache.olingo.fit.serializer.JSONEntryContainer;
+import org.apache.olingo.commons.core.data.JsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +61,7 @@ public class FSManager {
   private final FileSystemManager fsManager;
 
   private static Map<ODataServiceVersion, FSManager> instance =
-          new EnumMap<ODataServiceVersion, FSManager>(ODataServiceVersion.class);
+      new EnumMap<ODataServiceVersion, FSManager>(ODataServiceVersion.class);
 
   private final ODataServiceVersion version;
 
@@ -79,8 +81,8 @@ public class FSManager {
 
     for (FileObject fo : find(basePath, null)) {
       if (fo.getType() == FileType.FILE
-              && !fo.getName().getBaseName().contains("Metadata")
-              && !fo.getName().getBaseName().contains("metadata")) {
+          && !fo.getName().getBaseName().contains("Metadata")
+          && !fo.getName().getBaseName().contains("metadata")) {
         final String path = fo.getURL().getPath().replace(absoluteBaseFolder, "//" + version.name());
         putInMemory(fo.getContent().getInputStream(), path);
       }
@@ -89,7 +91,7 @@ public class FSManager {
 
   public String getAbsolutePath(final String relativePath, final Accept accept) {
     return File.separatorChar + version.name() + File.separatorChar + relativePath
-            + (accept == null ? "" : accept.getExtension());
+        + (accept == null ? "" : accept.getExtension());
   }
 
   public final FileObject putInMemory(final InputStream is, final String path) throws IOException {
@@ -112,31 +114,21 @@ public class FSManager {
     return memObject;
   }
 
-  public void putInMemory(final ResWrap<AtomEntityImpl> container, final String relativePath,
-          final DataBinder dataBinder) throws IOException {
-    try {
-      final AtomSerializer atomSerializer = Commons.getAtomSerializer(version);
+  public void putInMemory(final ResWrap<Entity> container, final String relativePath)
+      throws IOException, ODataSerializerException {
+    ByteArrayOutputStream content = new ByteArrayOutputStream();
+    OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
 
-      final ByteArrayOutputStream content = new ByteArrayOutputStream();
-      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
+    new AtomSerializer(version, true).write(writer, container);
+    writer.flush();
 
-      atomSerializer.write(writer, container);
-      writer.flush();
+    putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.ATOM));
+    content.reset();
 
-      putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.ATOM));
-      content.reset();
+    new JsonSerializer(version, true).write(writer, container);
+    writer.flush();
 
-      final ObjectMapper mapper = Commons.getJSONMapper(version);
-      mapper.writeValue(
-              writer, new JSONEntryContainer(
-                      container.getContextURL(),
-                      container.getMetadataETag(),
-                      dataBinder.toJSONEntity(container.getPayload())));
-
-      putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.JSON_FULLMETA));
-    } catch (Exception e) {
-      throw new IOException(e);
-    }
+    putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.JSON_FULLMETA));
   }
 
   public InputStream readRes(final String relativePath, final Accept accept) {

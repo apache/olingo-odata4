@@ -18,10 +18,9 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
-
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
 
 public class NonTransactionalMediaEntityTestITCase extends MediaEntityTestITCase {

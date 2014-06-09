@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.op.impl.v4;
 
 import java.net.URI;
+
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.client.api.op.v4.ODataBinder;
@@ -69,16 +70,14 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
 import org.apache.olingo.commons.core.data.EnumValueImpl;
 import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
+import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataAnnotationImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataDeletedEntityImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataDeltaLinkImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataPropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-import org.apache.olingo.commons.core.op.ResourceFactory;
 
 public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder {
-
-  private static final long serialVersionUID = -6371110655960799393L;
 
   public ODataBinderImpl(final ODataClient client) {
     super(client);
@@ -86,7 +85,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
   @Override
   public void add(final ODataComplexValue<CommonODataProperty> complex, final CommonODataProperty property) {
-    complex.add((ODataProperty) property);
+    complex.add(property);
   }
 
   @Override
@@ -122,10 +121,9 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     return serviceDocument;
   }
 
-  private void updateValuable(final Valuable propertyResource, final ODataValuable odataValuable,
-          final Class<? extends Entity> reference) {
+  private void updateValuable(final Valuable propertyResource, final ODataValuable odataValuable) {
 
-    propertyResource.setValue(getValue(odataValuable.getValue(), reference));
+    propertyResource.setValue(getValue(odataValuable.getValue()));
 
     if (odataValuable.hasPrimitiveValue()) {
       propertyResource.setType(odataValuable.getPrimitiveValue().getTypeName());
@@ -138,62 +136,61 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     }
   }
 
-  private void annotations(final ODataAnnotatable odataAnnotatable, final Annotatable annotatable,
-          final Class<? extends Entity> reference) {
+  private void annotations(final ODataAnnotatable odataAnnotatable, final Annotatable annotatable) {
 
     for (ODataAnnotation odataAnnotation : odataAnnotatable.getAnnotations()) {
       final Annotation annotation = new AnnotationImpl();
 
       annotation.setTerm(odataAnnotation.getTerm());
       annotation.setType(odataAnnotation.getValue().getTypeName());
-      updateValuable(annotation, odataAnnotation, reference);
+      updateValuable(annotation, odataAnnotation);
 
       annotatable.getAnnotations().add(annotation);
     }
   }
 
   @Override
-  public EntitySet getEntitySet(final CommonODataEntitySet odataEntitySet, final Class<? extends EntitySet> reference) {
-    final EntitySet entitySet = super.getEntitySet(odataEntitySet, reference);
+  public EntitySet getEntitySet(final CommonODataEntitySet odataEntitySet) {
+    final EntitySet entitySet = super.getEntitySet(odataEntitySet);
     entitySet.setDeltaLink(((ODataEntitySet) odataEntitySet).getDeltaLink());
-    annotations((ODataEntitySet) odataEntitySet, entitySet, ResourceFactory.entityClassForEntitySet(reference));
+    annotations((ODataEntitySet) odataEntitySet, entitySet);
     return entitySet;
   }
 
   @Override
-  protected void links(final ODataLinked odataLinked, final Linked linked, Class<? extends Entity> reference) {
-    super.links(odataLinked, linked, reference);
+  protected void links(final ODataLinked odataLinked, final Linked linked) {
+    super.links(odataLinked, linked);
 
     for (Link link : linked.getNavigationLinks()) {
       final org.apache.olingo.commons.api.domain.ODataLink odataLink = odataLinked.getNavigationLink(link.getTitle());
       if (!(odataLink instanceof ODataInlineEntity) && !(odataLink instanceof ODataInlineEntitySet)) {
-        annotations((ODataLink) odataLink, link, reference);
+        annotations((ODataLink) odataLink, link);
       }
     }
   }
 
   @Override
-  public Entity getEntity(final CommonODataEntity odataEntity, final Class<? extends Entity> reference) {
-    final Entity entity = super.getEntity(odataEntity, reference);
+  public Entity getEntity(final CommonODataEntity odataEntity) {
+    final Entity entity = super.getEntity(odataEntity);
     entity.setId(((ODataEntity) odataEntity).getId());
-    annotations((ODataEntity) odataEntity, entity, reference);
+    annotations((ODataEntity) odataEntity, entity);
     return entity;
   }
 
   @Override
-  public Property getProperty(final CommonODataProperty property, final Class<? extends Entity> reference) {
+  public Property getProperty(final CommonODataProperty property) {
     final ODataProperty _property = (ODataProperty) property;
 
-    final Property propertyResource = ResourceFactory.newProperty(reference);
+    final Property propertyResource = new PropertyImpl();
     propertyResource.setName(_property.getName());
-    updateValuable(propertyResource, _property, reference);
-    annotations(_property, propertyResource, reference);
+    updateValuable(propertyResource, _property);
+    annotations(_property, propertyResource);
 
     return propertyResource;
   }
 
   @Override
-  protected Value getValue(final ODataValue value, final Class<? extends Entity> reference) {
+  protected Value getValue(final ODataValue value) {
     Value valueResource;
     if (value instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
             && ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).isEnum()) {
@@ -201,7 +198,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
       valueResource = new EnumValueImpl(
               ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).asEnum().getValue());
     } else {
-      valueResource = super.getValue(value, reference);
+      valueResource = super.getValue(value);
 
       if (value instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
               && ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).isLinkedComplex()) {
@@ -211,8 +208,8 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
         final ODataLinkedComplexValue linked =
                 ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).asLinkedComplex();
-        annotations(linked, lcValueResource, reference);
-        links(linked, lcValueResource, reference);
+        annotations(linked, lcValueResource);
+        links(linked, lcValueResource);
 
         valueResource = lcValueResource;
       }

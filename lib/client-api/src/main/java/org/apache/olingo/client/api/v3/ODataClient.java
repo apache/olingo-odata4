@@ -29,6 +29,7 @@ import org.apache.olingo.client.api.op.v3.ODataReader;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.api.uri.v3.FilterFactory;
 import org.apache.olingo.commons.api.domain.v3.ODataObjectFactory;
+import org.apache.olingo.commons.api.format.Format;
 
 public interface ODataClient extends CommonODataClient<UpdateType> {
 
@@ -36,7 +37,7 @@ public interface ODataClient extends CommonODataClient<UpdateType> {
   Configuration getConfiguration();
 
   @Override
-  ODataDeserializer getDeserializer();
+  ODataDeserializer getDeserializer(Format format);
 
   @Override
   ODataReader getReader();

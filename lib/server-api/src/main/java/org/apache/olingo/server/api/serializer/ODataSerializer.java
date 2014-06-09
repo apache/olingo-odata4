@@ -20,7 +20,12 @@ package org.apache.olingo.server.api.serializer;
 
 import java.io.InputStream;
 
+import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
 
 public interface ODataSerializer {
 
@@ -30,4 +35,7 @@ public interface ODataSerializer {
 
   InputStream metadataDocument(Edm edm);
 
+  InputStream entity(EdmEntityType edmEntityType, Entity entity, ContextURL contextURL);
+
+  InputStream entitySet(EdmEntitySet edmEntitySet, EntitySet entitySet, ContextURL contextURL);
 }

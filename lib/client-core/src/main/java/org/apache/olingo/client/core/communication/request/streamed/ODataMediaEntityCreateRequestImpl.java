@@ -21,6 +21,7 @@ package org.apache.olingo.client.core.communication.request.streamed;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -28,11 +29,13 @@ import org.apache.olingo.client.api.communication.request.streamed.MediaEntityCr
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreateResponse;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 
 /**
  * This class implements an OData Media Entity create request. Get instance by using ODataStreamedRequestFactory.
@@ -115,17 +118,17 @@ public class ODataMediaEntityCreateRequestImpl<E extends CommonODataEntity>
       super(client, res);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     @SuppressWarnings("unchecked")
     public E getBody() {
       if (entity == null) {
         try {
-          final ResWrap<Entity> resource = odataClient.getDeserializer().toEntity(getRawResponse(), getFormat());
+          final ResWrap<Entity> resource = odataClient.getDeserializer(getFormat())
+              .toEntity(getRawResponse());
 
           entity = (E) odataClient.getBinder().getODataEntity(resource);
+        } catch (final ODataDeserializerException e) {
+          throw new HttpClientException(e);
         } finally {
           this.close();
         }

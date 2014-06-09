@@ -2,6 +2,7 @@
 .project
 .classpath
 .settings
+.idea
 target
 bin
 *.bak

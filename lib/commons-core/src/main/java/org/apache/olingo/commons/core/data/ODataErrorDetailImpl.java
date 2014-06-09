@@ -16,21 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.serializer;
+package org.apache.olingo.commons.core.data;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.apache.olingo.commons.api.data.ContextURL;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.core.data.JSONEntityDeserializer;
-import org.apache.olingo.commons.core.data.JSONEntityImpl;
-import org.apache.olingo.commons.core.data.JSONEntitySerializer;
+import org.apache.olingo.commons.api.domain.ODataErrorDetail;
 
-@JsonDeserialize(using = JSONEntityDeserializer.class)
-@JsonSerialize(using = JSONEntitySerializer.class)
-public class JSONEntryContainer extends ResWrap<JSONEntityImpl> {
+public class ODataErrorDetailImpl implements ODataErrorDetail {
 
-  public JSONEntryContainer(final ContextURL contextURL, final String metadataETag, final JSONEntityImpl object) {
-    super(contextURL, metadataETag, object);
+  private String code;
+
+  private String message;
+
+  private String target;
+
+  @Override
+  public String getCode() {
+    return code;
+  }
+
+  public void setCode(final String code) {
+    this.code = code;
+  }
+
+  @Override
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(final String message) {
+    this.message = message;
+  }
+
+  @Override
+  public String getTarget() {
+    return target;
+  }
+
+  public void setTarget(final String target) {
+    this.target = target;
   }
 }

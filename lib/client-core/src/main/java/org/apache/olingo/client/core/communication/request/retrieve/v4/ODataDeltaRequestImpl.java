@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.communication.request.retrieve.v4;
 
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -32,9 +33,10 @@ import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.v4.ODataDelta;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 
 public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ODataDelta, ODataPubFormat>
-        implements ODataDeltaRequest {
+    implements ODataDeltaRequest {
 
   public ODataDeltaRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
     super(odataClient, ODataPubFormat.class, query);
@@ -64,11 +66,14 @@ public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ODataDel
     public ODataDelta getBody() {
       if (delta == null) {
         try {
-          final ResWrap<Delta> resource = ((ODataClient) odataClient).getDeserializer().toDelta(
-                  res.getEntity().getContent(), ODataPubFormat.fromString(getContentType()));
+          final ResWrap<Delta> resource = ((ODataClient) odataClient)
+              .getDeserializer(ODataPubFormat.fromString(getContentType()))
+                  .toDelta(res.getEntity().getContent());
 
           delta = ((ODataClient) odataClient).getBinder().getODataDelta(resource);
         } catch (IOException e) {
+          throw new HttpClientException(e);
+        } catch (final ODataDeserializerException e) {
           throw new HttpClientException(e);
         } finally {
           this.close();

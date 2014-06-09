@@ -16,34 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.data.v4;
+package org.apache.olingo.commons.core.data.v4;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.commons.api.data.DeletedEntity;
+import org.apache.olingo.commons.api.data.Delta;
+import org.apache.olingo.commons.api.data.DeltaLink;
+import org.apache.olingo.commons.core.data.EntitySetImpl;
 
-import org.apache.olingo.client.api.data.ServiceDocumentItem;
+public class DeltaImpl extends EntitySetImpl implements Delta {
 
-public abstract class AbstractServiceDocument
-        extends org.apache.olingo.client.core.data.AbstractServiceDocument {
+  private static final long serialVersionUID = 4576771708961553195L;
 
-  private List<ServiceDocumentItem> functionImports = new ArrayList<ServiceDocumentItem>();
+  private final List<DeletedEntity> deletedEntities = new ArrayList<DeletedEntity>();
 
-  private List<ServiceDocumentItem> singletons = new ArrayList<ServiceDocumentItem>();
+  private final List<DeltaLink> addedLinks = new ArrayList<DeltaLink>();
 
-  private List<ServiceDocumentItem> relatedServiceDocuments = new ArrayList<ServiceDocumentItem>();
+  private final List<DeltaLink> deletedLinks = new ArrayList<DeltaLink>();
 
   @Override
-  public List<ServiceDocumentItem> getFunctionImports() {
-    return functionImports;
+  public List<DeletedEntity> getDeletedEntities() {
+    return deletedEntities;
   }
 
   @Override
-  public List<ServiceDocumentItem> getSingletons() {
-    return singletons;
+  public List<DeltaLink> getAddedLinks() {
+    return addedLinks;
   }
 
   @Override
-  public List<ServiceDocumentItem> getRelatedServiceDocuments() {
-    return relatedServiceDocuments;
+  public List<DeltaLink> getDeletedLinks() {
+    return deletedLinks;
   }
 }

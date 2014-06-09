@@ -18,15 +18,6 @@
  */
 package org.apache.olingo.fit.utils;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.InjectableValues;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -42,18 +33,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.data.AtomSerializer;
-import org.apache.olingo.commons.core.op.InjectableSerializerProvider;
 import org.apache.olingo.fit.metadata.Metadata;
-import org.apache.olingo.fit.serializer.FITAtomDeserializer;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public abstract class Commons {
 
@@ -61,15 +58,6 @@ public abstract class Commons {
    * Logger.
    */
   protected static final Logger LOG = LoggerFactory.getLogger(Commons.class);
-
-  private static final Map<ODataServiceVersion, FITAtomDeserializer> ATOM_DESERIALIZER =
-          new EnumMap<ODataServiceVersion, FITAtomDeserializer>(ODataServiceVersion.class);
-
-  private static final Map<ODataServiceVersion, AtomSerializer> ATOM_SERIALIZER =
-          new EnumMap<ODataServiceVersion, AtomSerializer>(ODataServiceVersion.class);
-
-  private static final Map<ODataServiceVersion, ObjectMapper> JSON_MAPPER =
-          new EnumMap<ODataServiceVersion, ObjectMapper>(ODataServiceVersion.class);
 
   private static final EnumMap<ODataServiceVersion, Metadata> METADATA =
           new EnumMap<ODataServiceVersion, Metadata>(ODataServiceVersion.class);
@@ -107,41 +95,6 @@ public abstract class Commons {
     MEDIA_CONTENT.put("Car/Photo", null);
     MEDIA_CONTENT.put("Advertisements",
             new ImmutablePair<String, EdmPrimitiveTypeKind>("ID", EdmPrimitiveTypeKind.Guid));
-  }
-
-  public static FITAtomDeserializer getAtomDeserializer(final ODataServiceVersion version) {
-    if (!ATOM_DESERIALIZER.containsKey(version)) {
-      ATOM_DESERIALIZER.put(version, new FITAtomDeserializer(version));
-    }
-    return ATOM_DESERIALIZER.get(version);
-  }
-
-  public static AtomSerializer getAtomSerializer(final ODataServiceVersion version) {
-    if (!ATOM_SERIALIZER.containsKey(version)) {
-      ATOM_SERIALIZER.put(version, new AtomSerializer(version, true));
-    }
-
-    return ATOM_SERIALIZER.get(version);
-  }
-
-  public static ObjectMapper getJSONMapper(final ODataServiceVersion version) {
-    if (!JSON_MAPPER.containsKey(version)) {
-      final ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-      mapper.setInjectableValues(new InjectableValues.Std()
-              .addValue(Boolean.class, Boolean.TRUE)
-              .addValue(ODataServiceVersion.class, version));
-
-      mapper.setSerializerProvider(new InjectableSerializerProvider(mapper.getSerializerProvider(),
-              mapper.getSerializationConfig()
-              .withAttribute(ODataServiceVersion.class, version)
-              .withAttribute(Boolean.class, Boolean.TRUE),
-              mapper.getSerializerFactory()));
-
-      JSON_MAPPER.put(version, mapper);
-    }
-
-    return JSON_MAPPER.get(version);
   }
 
   public static Metadata getMetadata(final ODataServiceVersion version) {

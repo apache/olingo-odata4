@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.communication.request.cud;
 
 import java.io.InputStream;
 import java.net.URI;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -29,6 +30,9 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateR
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.op.ODataSerializerException;
+import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
@@ -42,8 +46,8 @@ import org.apache.olingo.commons.api.data.Entity;
  * @param <E> concrete ODataEntity implementation
  */
 public class ODataEntityUpdateRequestImpl<E extends CommonODataEntity>
-        extends AbstractODataBasicRequest<ODataEntityUpdateResponse<E>, ODataPubFormat>
-        implements ODataEntityUpdateRequest<E> {
+    extends AbstractODataBasicRequest<ODataEntityUpdateResponse<E>, ODataPubFormat>
+    implements ODataEntityUpdateRequest<E> {
 
   /**
    * Changes to be applied.
@@ -59,7 +63,7 @@ public class ODataEntityUpdateRequestImpl<E extends CommonODataEntity>
    * @param changes changes to be applied.
    */
   public ODataEntityUpdateRequestImpl(final CommonODataClient<?> odataClient,
-          final HttpMethod method, final URI uri, final E changes) {
+      final HttpMethod method, final URI uri, final E changes) {
 
     super(odataClient, ODataPubFormat.class, method, uri);
     this.changes = changes;
@@ -80,12 +84,13 @@ public class ODataEntityUpdateRequestImpl<E extends CommonODataEntity>
     }
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   protected InputStream getPayload() {
-    return odataClient.getWriter().writeEntity(changes, ODataPubFormat.fromString(getContentType()));
+    try {
+      return odataClient.getWriter().writeEntity(changes, ODataPubFormat.fromString(getContentType()));
+    } catch (final ODataSerializerException e) {
+      throw new HttpClientException(e);
+    }
   }
 
   /**
@@ -103,8 +108,7 @@ public class ODataEntityUpdateRequestImpl<E extends CommonODataEntity>
      * <p>
      * Just to create response templates to be initialized from batch.
      */
-    private ODataEntityUpdateResponseImpl() {
-    }
+    private ODataEntityUpdateResponseImpl() {}
 
     /**
      * Constructor.
@@ -116,18 +120,17 @@ public class ODataEntityUpdateRequestImpl<E extends CommonODataEntity>
       super(client, res);
     }
 
-    /**
-     * {@inheritDoc ]
-     */
     @Override
     @SuppressWarnings("unchecked")
     public E getBody() {
       if (entity == null) {
         try {
-          final ResWrap<Entity> resource = odataClient.getDeserializer().
-                  toEntity(getRawResponse(), ODataPubFormat.fromString(getAccept()));
+          final ResWrap<Entity> resource = odataClient.getDeserializer(ODataPubFormat.fromString(getAccept()))
+              .toEntity(getRawResponse());
 
           entity = (E) odataClient.getBinder().getODataEntity(resource);
+        } catch (final ODataDeserializerException e) {
+          throw new HttpClientException(e);
         } finally {
           this.close();
         }

@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.net.URI;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -116,7 +117,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
    * .
    */
   @Test
-  public void item3() throws EdmPrimitiveTypeException {
+  public void item3() throws Exception {
     final String fromSection71 = "{"
             + "\"NullValue\": null,"
             + "\"TrueValue\": true,"
@@ -202,7 +203,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
    * MUST interpret all odata annotations defined according to the OData-Version header of the payload (section 4.5).
    */
   @Test
-  public void item4() {
+  public void item4() throws Exception {
     final String fromSection45_1 = "{"
             + "\"@odata.context\": \"http://host/service/$metadata#Customers/$entity\","
             + "\"@odata.metadataEtag\": \"W/\\\"A1FF3E230954908F\\\"\","
@@ -218,7 +219,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
             + "}";
 
     final ResWrap<Entity> entity =
-            client.getDeserializer().toEntity(IOUtils.toInputStream(fromSection45_1), ODataPubFormat.JSON);
+            client.getDeserializer(ODataPubFormat.JSON).toEntity(IOUtils.toInputStream(fromSection45_1));
 
     assertEquals("http://host/service/$metadata#Customers/$entity", entity.getContextURL().getURI().toASCIIString());
     assertEquals("W/\"A1FF3E230954908F\"", entity.getMetadataETag());
@@ -240,7 +241,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
             + "}";
 
     final ResWrap<EntitySet> entitySet =
-            client.getDeserializer().toEntitySet(IOUtils.toInputStream(fromSection45_2), ODataPubFormat.JSON);
+            client.getDeserializer(ODataPubFormat.JSON).toEntitySet(IOUtils.toInputStream(fromSection45_2));
 
     assertEquals(5, entitySet.getPayload().getCount(), 0);
     assertEquals("Customers?$expand=Orders&$skipToken=5", entitySet.getPayload().getNext().toASCIIString());
@@ -249,10 +250,10 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
 
   /**
    * MUST be prepared to receive any annotations, including custom annotations and <tt>odata</tt> annotations not
-   * defined in the <tt>OData-Version</tt> header of the payload (section 20).
+   * defined in the <tt>OData-Version</tt> header of the payload (section 20). 
    */
   @Test
-  public void item5() throws EdmPrimitiveTypeException {
+  public void item5() throws Exception {
     final String sample = "{"
             + "  \"@odata.context\": \"http://host/service/$metadata#Customers\","
             + "  \"@odata.notdefined\": 11,"

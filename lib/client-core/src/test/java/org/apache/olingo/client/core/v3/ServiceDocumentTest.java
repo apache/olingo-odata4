@@ -21,6 +21,7 @@ package org.apache.olingo.client.core.v3;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 import org.apache.olingo.client.core.AbstractTest;
 
 import static org.junit.Assert.assertNotNull;
@@ -39,7 +40,7 @@ public class ServiceDocumentTest extends AbstractTest {
     return format == ODataFormat.XML ? "xml" : "json";
   }
 
-  private void parse(final ODataFormat format) {
+  private void parse(final ODataFormat format) throws ODataDeserializerException {
     final ODataServiceDocument serviceDocument = getClient().getReader().readServiceDocument(
             getClass().getResourceAsStream("serviceDocument." + getFileExtension(format)), format);
     assertNotNull(serviceDocument);
@@ -47,12 +48,12 @@ public class ServiceDocumentTest extends AbstractTest {
   }
 
   @Test
-  public void json() {
+  public void json() throws Exception {
     parse(ODataFormat.JSON);
   }
 
   @Test
-  public void xml() {
+  public void xml() throws Exception {
     parse(ODataFormat.XML);
   }
 }

@@ -18,37 +18,34 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+
 /**
- * Writes out JSON string from <tt>JSONPropertyImpl</tt>.
- *
- * @see JSONPropertyImpl
+ * Writes out JSON string from <tt>PropertyImpl</tt>.
  */
-public class JSONPropertySerializer extends AbstractJsonSerializer<JSONPropertyImpl> {
+public class JSONPropertySerializer extends JsonSerializer {
 
-  @Override
-  protected void doSerialize(final JSONPropertyImpl property, final JsonGenerator jgen,
-          final SerializerProvider provider) throws IOException, JsonProcessingException {
-
-    doContainerSerialize(new ResWrap<JSONPropertyImpl>((URI) null, null, property), jgen, provider);
+  public JSONPropertySerializer(final ODataServiceVersion version, final boolean serverMode) {
+    super(version, serverMode);
   }
 
-  @Override
-  protected void doContainerSerialize(
-          final ResWrap<JSONPropertyImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
-          throws IOException, JsonProcessingException {
+  protected void doSerialize(final Property property, final JsonGenerator jgen) throws IOException {
+    doContainerSerialize(new ResWrap<Property>((URI) null, null, property), jgen);
+  }
+
+  protected void doContainerSerialize(final ResWrap<Property> container, final JsonGenerator jgen)
+          throws IOException {
 
     final Property property = container.getPayload();
 

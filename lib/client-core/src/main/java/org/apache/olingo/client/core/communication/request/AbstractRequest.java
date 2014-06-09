@@ -16,8 +16,6 @@
 package org.apache.olingo.client.core.communication.request;
 
 import java.io.IOException;
-import java.io.InputStream;
-import org.apache.http.Header;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -26,11 +24,11 @@ import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.core.data.JSONODataErrorImpl;
-import org.apache.olingo.commons.core.data.XMLODataErrorImpl;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.core.data.ODataErrorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,36 +39,28 @@ public abstract class AbstractRequest {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractRequest.class);
 
-  private ODataError getGenericError(final int code, final String errorMsg, final boolean isXML) {
-    final ODataError error;
-    if (isXML) {
-      error = new XMLODataErrorImpl();
-      ((XMLODataErrorImpl) error).setCode(String.valueOf(code));
-      ((XMLODataErrorImpl) error).setMessage(errorMsg);
-    } else {
-      error = new JSONODataErrorImpl();
-      ((JSONODataErrorImpl) error).setCode(String.valueOf(code));
-      ((JSONODataErrorImpl) error).setMessage(errorMsg);
-    }
-
+  private ODataError getGenericError(final int code, final String errorMsg) {
+    final ODataErrorImpl error = new ODataErrorImpl();
+    error.setCode(String.valueOf(code));
+    error.setMessage(errorMsg);
     return error;
   }
 
   protected void checkRequest(final CommonODataClient<?> odataClient, final HttpUriRequest request) {
     // If using and Edm enabled client, checks that the cached service root matches the request URI
     if (odataClient instanceof CommonEdmEnabledODataClient
-            && !request.getURI().toASCIIString().startsWith(
+        && !request.getURI().toASCIIString().startsWith(
             ((CommonEdmEnabledODataClient) odataClient).getServiceRoot())) {
 
       throw new IllegalArgumentException(
-              String.format("The current request URI %s does not match the configured service root %s",
+          String.format("The current request URI %s does not match the configured service root %s",
               request.getURI().toASCIIString(),
               ((CommonEdmEnabledODataClient) odataClient).getServiceRoot()));
     }
   }
 
   protected void checkResponse(
-          final CommonODataClient<?> odataClient, final HttpResponse response, final String accept) {
+      final CommonODataClient<?> odataClient, final HttpResponse response, final String accept) {
 
     if (response.getStatusLine().getStatusCode() >= 400) {
       try {
@@ -78,27 +68,21 @@ public abstract class AbstractRequest {
         if (httpEntity == null) {
           throw new ODataClientErrorException(response.getStatusLine());
         } else {
-          boolean isXML;
-          if (!accept.contains("json") && !accept.contains("xml")) {
-            isXML = true;
-            for (Header header : response.getHeaders(HeaderName.contentType.toString())) {
-              if (header.getValue() != null && header.getValue().contains("json")) {
-                isXML = false;
-              }
-            }
-          } else {
-            isXML = !accept.contains("json");
-          }
+          ODataFormat format = accept.contains("xml") ? ODataFormat.XML : ODataFormat.JSON;
 
           ODataError error;
           try {
-            error = odataClient.getReader().readError(httpEntity.getContent(), isXML);
-          } catch (IllegalArgumentException e) {
+            error = odataClient.getReader().readError(httpEntity.getContent(), format);
+          } catch (final RuntimeException e) {
             LOG.warn("Error deserializing error response", e);
             error = getGenericError(
-                    response.getStatusLine().getStatusCode(),
-                    response.getStatusLine().getReasonPhrase(),
-                    isXML);
+                response.getStatusLine().getStatusCode(),
+                response.getStatusLine().getReasonPhrase());
+          } catch (final ODataDeserializerException e) {
+            LOG.warn("Error deserializing error response", e);
+            error = getGenericError(
+                response.getStatusLine().getStatusCode(),
+                response.getStatusLine().getReasonPhrase());
           }
 
           if (response.getStatusLine().getStatusCode() >= 500) {
@@ -109,7 +93,7 @@ public abstract class AbstractRequest {
         }
       } catch (IOException e) {
         throw new HttpClientException(
-                "Received '" + response.getStatusLine() + "' but could not extract error body", e);
+            "Received '" + response.getStatusLine() + "' but could not extract error body", e);
       }
     }
   }

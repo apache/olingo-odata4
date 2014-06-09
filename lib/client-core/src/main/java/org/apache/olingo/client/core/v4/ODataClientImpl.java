@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.client.core.v4;
 
-import org.apache.olingo.client.api.v4.ODataClient;
-import org.apache.olingo.client.api.v4.Configuration;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
 import org.apache.olingo.client.api.communication.request.batch.v4.BatchRequestFactory;
@@ -28,13 +26,14 @@ import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.v4.RetrieveRequestFactory;
 import org.apache.olingo.client.api.communication.request.v4.AsyncRequestFactory;
-import org.apache.olingo.commons.api.op.ODataSerializer;
 import org.apache.olingo.client.api.op.v4.ODataBinder;
 import org.apache.olingo.client.api.op.v4.ODataDeserializer;
 import org.apache.olingo.client.api.op.v4.ODataReader;
-import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.api.uri.v4.FilterFactory;
 import org.apache.olingo.client.api.uri.v4.SearchFactory;
+import org.apache.olingo.client.api.uri.v4.URIBuilder;
+import org.apache.olingo.client.api.v4.Configuration;
+import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.AbstractODataClient;
 import org.apache.olingo.client.core.communication.header.ODataHeadersImpl;
 import org.apache.olingo.client.core.communication.request.batch.v4.BatchRequestFactoryImpl;
@@ -45,26 +44,25 @@ import org.apache.olingo.client.core.communication.request.v4.AsyncRequestFactor
 import org.apache.olingo.client.core.op.impl.v4.ODataBinderImpl;
 import org.apache.olingo.client.core.op.impl.v4.ODataDeserializerImpl;
 import org.apache.olingo.client.core.op.impl.v4.ODataReaderImpl;
-import org.apache.olingo.client.core.op.impl.v4.ODataSerializerImpl;
-import org.apache.olingo.client.core.uri.v4.URIBuilderImpl;
 import org.apache.olingo.client.core.uri.v4.FilterFactoryImpl;
+import org.apache.olingo.client.core.uri.v4.URIBuilderImpl;
 import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.Format;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataSerializer;
+import org.apache.olingo.commons.core.data.AtomSerializer;
+import org.apache.olingo.commons.core.data.JsonSerializer;
 import org.apache.olingo.commons.core.domain.v4.ODataObjectFactoryImpl;
 
 public class ODataClientImpl extends AbstractODataClient<UpdateType> implements ODataClient {
-
-  private static final long serialVersionUID = -6653176125573631964L;
 
   protected final Configuration configuration = new ConfigurationImpl();
 
   private final FilterFactory filterFactory = new FilterFactoryImpl(getServiceVersion());
 
   private final SearchFactory searchFactory = new SearchFactoryImpl();
-
-  private final ODataDeserializer deserializer = new ODataDeserializerImpl(getServiceVersion());
-
-  private final ODataSerializer serializer = new ODataSerializerImpl(getServiceVersion());
 
   private final ODataReader reader = new ODataReaderImpl(this);
 
@@ -116,13 +114,15 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   }
 
   @Override
-  public ODataDeserializer getDeserializer() {
-    return deserializer;
+  public ODataDeserializer getDeserializer(final Format format) {
+    return new ODataDeserializerImpl(getServiceVersion(), format);
   }
 
   @Override
-  public ODataSerializer getSerializer() {
-    return serializer;
+  public ODataSerializer getSerializer(final Format format) {
+    return format instanceof ODataPubFormat && format == ODataPubFormat.ATOM
+        || format instanceof ODataFormat && format == ODataFormat.XML ?
+        new AtomSerializer(getServiceVersion()) : new JsonSerializer(getServiceVersion(), false);
   }
 
   @Override
@@ -150,7 +150,6 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
     return retrieveReqFact;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public CUDRequestFactory getCUDRequestFactory() {
     return cudReqFact;

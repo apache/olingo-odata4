@@ -18,12 +18,8 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,28 +28,83 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotatable;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.ComplexValue;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.Value;
+import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataPropertyType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.op.ODataDeserializer;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
-abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResWrap<T>> {
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+public class JsonDeserializer implements ODataDeserializer {
 
   protected final Pattern CUSTOM_ANNOTATION = Pattern.compile("(.+)@(.+)\\.(.+)");
+  protected final ODataServiceVersion version;
+  protected final boolean serverMode;
+
+  protected String jsonType;
+  protected String jsonId;
+  protected String jsonETag;
+  protected String jsonReadLink;
+  protected String jsonEditLink;
+  protected String jsonMediaEditLink;
+  protected String jsonMediaReadLink;
+  protected String jsonMediaContentType;
+  protected String jsonMediaETag;
+  protected String jsonAssociationLink;
+  protected String jsonNavigationLink;
+  protected String jsonCount;
+  protected String jsonNextLink;
+  protected String jsonDeltaLink;
+  protected String jsonError;
 
   private JSONGeoValueDeserializer geoDeserializer;
+
+  private JsonParser parser;
+
+  public JsonDeserializer(final ODataServiceVersion version, final boolean serverMode) {
+    this.version = version;
+    this.serverMode = serverMode;
+
+    jsonType = version.getJSONMap().get(ODataServiceVersion.JSON_TYPE);
+    jsonId = version.getJSONMap().get(ODataServiceVersion.JSON_ID);
+    jsonETag = version.getJSONMap().get(ODataServiceVersion.JSON_ETAG);
+    jsonReadLink = version.getJSONMap().get(ODataServiceVersion.JSON_READ_LINK);
+    jsonEditLink = version.getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK);
+    jsonMediaReadLink = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK);
+    jsonMediaEditLink = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK);
+    jsonMediaContentType = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE);
+    jsonMediaETag = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIA_ETAG);
+    jsonAssociationLink = version.getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK);
+    jsonNavigationLink = version.getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK);
+    jsonCount = version.getJSONMap().get(ODataServiceVersion.JSON_COUNT);
+    jsonNextLink = version.getJSONMap().get(ODataServiceVersion.JSON_NEXT_LINK);
+    jsonDeltaLink = version.getJSONMap().get(ODataServiceVersion.JSON_DELTA_LINK);
+    jsonError = version.getJSONMap().get(ODataServiceVersion.JSON_ERROR);
+}
 
   private JSONGeoValueDeserializer getGeoDeserializer() {
     if (geoDeserializer == null) {
@@ -62,34 +113,34 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
     return geoDeserializer;
   }
 
+  protected String getJSONAnnotation(final String string) {
+    return StringUtils.prependIfMissing(string, "@");
+  }
+
   protected String getTitle(final Map.Entry<String, JsonNode> entry) {
     return entry.getKey().substring(0, entry.getKey().indexOf('@'));
   }
 
   protected String setInline(final String name, final String suffix, final JsonNode tree,
-          final ObjectCodec codec, final LinkImpl link) throws IOException {
+      final ObjectCodec codec, final LinkImpl link) throws IOException {
 
     final String entityNamePrefix = name.substring(0, name.indexOf(suffix));
     if (tree.has(entityNamePrefix)) {
       final JsonNode inline = tree.path(entityNamePrefix);
+      JSONEntityDeserializer entityDeserializer = new JSONEntityDeserializer(version, serverMode);
 
       if (inline instanceof ObjectNode) {
         link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
+        link.setInlineEntity(entityDeserializer.doDeserialize(inline.traverse(codec)).getPayload());
 
-        link.setInlineEntity(inline.traverse(codec).<ResWrap<JSONEntityImpl>>readValueAs(
-                new TypeReference<JSONEntityImpl>() {
-                }).getPayload());
-      }
-
-      if (inline instanceof ArrayNode) {
+      } else if (inline instanceof ArrayNode) {
         link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
 
-        final JSONEntitySetImpl entitySet = new JSONEntitySetImpl();
-        final Iterator<JsonNode> entries = ((ArrayNode) inline).elements();
+        EntitySet entitySet = new EntitySetImpl();
+        Iterator<JsonNode> entries = ((ArrayNode) inline).elements();
         while (entries.hasNext()) {
-          entitySet.getEntities().add(entries.next().traverse(codec).<ResWrap<JSONEntityImpl>>readValuesAs(
-                  new TypeReference<JSONEntityImpl>() {
-                  }).next().getPayload());
+          entitySet.getEntities().add(
+              entityDeserializer.doDeserialize(entries.next().traverse(codec)).getPayload());
         }
 
         link.setInlineEntitySet(entitySet);
@@ -99,7 +150,7 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
   }
 
   protected void links(final Map.Entry<String, JsonNode> field, final Linked linked, final Set<String> toRemove,
-          final JsonNode tree, final ObjectCodec codec) throws IOException {
+      final JsonNode tree, final ObjectCodec codec) throws IOException {
     if (serverMode) {
       serverLinks(field, linked, toRemove, tree, codec);
     } else {
@@ -108,7 +159,7 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
   }
 
   private void clientLinks(final Map.Entry<String, JsonNode> field, final Linked linked, final Set<String> toRemove,
-          final JsonNode tree, final ObjectCodec codec) throws IOException {
+      final JsonNode tree, final ObjectCodec codec) throws IOException {
 
     if (field.getKey().endsWith(jsonNavigationLink)) {
       final LinkImpl link = new LinkImpl();
@@ -137,10 +188,10 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
   }
 
   private void serverLinks(final Map.Entry<String, JsonNode> field, final Linked linked, final Set<String> toRemove,
-          final JsonNode tree, final ObjectCodec codec) throws IOException {
+      final JsonNode tree, final ObjectCodec codec) throws IOException {
 
     if (field.getKey().endsWith(Constants.JSON_BIND_LINK_SUFFIX)
-            || field.getKey().endsWith(jsonNavigationLink)) {
+        || field.getKey().endsWith(jsonNavigationLink)) {
 
       if (field.getValue().isValueNode()) {
         final String suffix = field.getKey().replaceAll("^.*@", "@");
@@ -200,7 +251,7 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
       if (node.has(Constants.ATTR_TYPE)) {
         type = ODataPropertyType.PRIMITIVE;
         typeInfo = new EdmTypeInfo.Builder().
-                setTypeExpression("Edm.Geography" + node.get(Constants.ATTR_TYPE).asText()).build();
+            setTypeExpression("Edm.Geography" + node.get(Constants.ATTR_TYPE).asText()).build();
       } else {
         type = ODataPropertyType.COMPLEX;
       }
@@ -212,7 +263,7 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
   }
 
   protected void populate(final Annotatable annotatable, final List<Property> properties,
-          final ObjectNode tree, final ObjectCodec codec) throws IOException {
+      final ObjectNode tree, final ObjectCodec codec) throws IOException {
 
     String type = null;
     Annotation annotation = null;
@@ -235,11 +286,11 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
         annotation.setTerm(customAnnotation.group(2) + "." + customAnnotation.group(3));
         value(annotation, field.getValue(), codec);
       } else {
-        final JSONPropertyImpl property = new JSONPropertyImpl();
+        final PropertyImpl property = new PropertyImpl();
         property.setName(field.getKey());
         property.setType(type == null
-                ? null
-                : new EdmTypeInfo.Builder().setTypeExpression(type).build().internal());
+            ? null
+            : new EdmTypeInfo.Builder().setTypeExpression(type).build().internal());
         type = null;
 
         value(property, field.getValue(), codec);
@@ -271,8 +322,8 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
 
   private ComplexValue fromComplex(final ObjectNode node, final ObjectCodec codec) throws IOException {
     final ComplexValue value = version.compareTo(ODataServiceVersion.V40) < 0
-            ? new ComplexValueImpl()
-            : new LinkedComplexValueImpl();
+        ? new ComplexValueImpl()
+        : new LinkedComplexValueImpl();
 
     if (value.isLinkedComplex()) {
       final Set<String> toRemove = new HashSet<String>();
@@ -290,13 +341,13 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
   }
 
   private CollectionValue fromCollection(final Iterator<JsonNode> nodeItor, final EdmTypeInfo typeInfo,
-          final ObjectCodec codec) throws IOException {
+      final ObjectCodec codec) throws IOException {
 
     final CollectionValueImpl value = new CollectionValueImpl();
 
     final EdmTypeInfo type = typeInfo == null
-            ? null
-            : new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
+        ? null
+        : new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
 
     while (nodeItor.hasNext()) {
       final JsonNode child = nodeItor.next();
@@ -319,11 +370,11 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
   }
 
   protected void value(final Valuable valuable, final JsonNode node, final ObjectCodec codec)
-          throws IOException {
+      throws IOException {
 
     EdmTypeInfo typeInfo = StringUtils.isBlank(valuable.getType())
-            ? null
-            : new EdmTypeInfo.Builder().setTypeExpression(valuable.getType()).build();
+        ? null
+        : new EdmTypeInfo.Builder().setTypeExpression(valuable.getType()).build();
 
     final Map.Entry<ODataPropertyType, EdmTypeInfo> guessed = guessPropertyType(node);
     if (typeInfo == null) {
@@ -331,42 +382,82 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
     }
 
     final ODataPropertyType propType = typeInfo == null
-            ? guessed.getKey()
-            : typeInfo.isCollection()
+        ? guessed.getKey()
+        : typeInfo.isCollection()
             ? ODataPropertyType.COLLECTION
             : typeInfo.isPrimitiveType()
-            ? ODataPropertyType.PRIMITIVE
-            : node.isValueNode()
-            ? ODataPropertyType.ENUM
-            : ODataPropertyType.COMPLEX;
+                ? ODataPropertyType.PRIMITIVE
+                : node.isValueNode()
+                    ? ODataPropertyType.ENUM
+                    : ODataPropertyType.COMPLEX;
 
     switch (propType) {
-      case COLLECTION:
-        valuable.setValue(fromCollection(node.elements(), typeInfo, codec));
-        break;
+    case COLLECTION:
+      valuable.setValue(fromCollection(node.elements(), typeInfo, codec));
+      break;
 
-      case COMPLEX:
-        if (node.has(jsonType)) {
-          valuable.setType(node.get(jsonType).asText());
-          ((ObjectNode) node).remove(jsonType);
-        }
-        valuable.setValue(fromComplex((ObjectNode) node, codec));
-        break;
+    case COMPLEX:
+      if (node.has(jsonType)) {
+        valuable.setType(node.get(jsonType).asText());
+        ((ObjectNode) node).remove(jsonType);
+      }
+      valuable.setValue(fromComplex((ObjectNode) node, codec));
+      break;
 
-      case ENUM:
-        valuable.setValue(new EnumValueImpl(node.asText()));
-        break;
+    case ENUM:
+      valuable.setValue(new EnumValueImpl(node.asText()));
+      break;
 
-      case PRIMITIVE:
-        if (valuable.getType() == null && typeInfo != null) {
-          valuable.setType(typeInfo.getFullQualifiedName().toString());
-        }
-        valuable.setValue(fromPrimitive(node, typeInfo));
-        break;
+    case PRIMITIVE:
+      if (valuable.getType() == null && typeInfo != null) {
+        valuable.setType(typeInfo.getFullQualifiedName().toString());
+      }
+      valuable.setValue(fromPrimitive(node, typeInfo));
+      break;
 
-      case EMPTY:
-      default:
-        valuable.setValue(new PrimitiveValueImpl(StringUtils.EMPTY));
+    case EMPTY:
+    default:
+      valuable.setValue(new PrimitiveValueImpl(StringUtils.EMPTY));
+    }
+  }
+
+  @Override
+  public ResWrap<EntitySet> toEntitySet(InputStream input) throws ODataDeserializerException {
+    try {
+      parser = new JsonFactory(new ObjectMapper()).createParser(input);
+      return new JSONEntitySetDeserializer(version, serverMode).doDeserialize(parser);
+    } catch (final IOException e) {
+      throw new ODataDeserializerException(e);
+    }
+  }
+
+  @Override
+  public ResWrap<Entity> toEntity(InputStream input) throws ODataDeserializerException {
+    try {
+      parser = new JsonFactory(new ObjectMapper()).createParser(input);
+      return new JSONEntityDeserializer(version, serverMode).doDeserialize(parser);
+    } catch (final IOException e) {
+      throw new ODataDeserializerException(e);
+    }
+  }
+
+  @Override
+  public ResWrap<Property> toProperty(InputStream input) throws ODataDeserializerException {
+    try {
+      parser = new JsonFactory(new ObjectMapper()).createParser(input);
+      return new JSONPropertyDeserializer(version, serverMode).doDeserialize(parser);
+    } catch (final IOException e) {
+      throw new ODataDeserializerException(e);
+    }
+  }
+
+  @Override
+  public ODataError toError(InputStream input) throws ODataDeserializerException {
+    try {
+      parser = new JsonFactory(new ObjectMapper()).createParser(input);
+      return new JSONODataErrorDeserializer(version, serverMode).doDeserialize(parser);
+    } catch (final IOException e) {
+      throw new ODataDeserializerException(e);
     }
   }
 }

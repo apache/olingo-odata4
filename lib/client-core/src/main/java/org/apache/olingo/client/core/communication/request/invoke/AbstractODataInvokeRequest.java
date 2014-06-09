@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -40,6 +41,8 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.op.ODataSerializerException;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.v4.ODataClient;
@@ -137,7 +140,11 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
         }
       }
 
-      return odataClient.getWriter().writeEntity(tmp, getPOSTParameterFormat());
+      try {
+        return odataClient.getWriter().writeEntity(tmp, getPOSTParameterFormat());
+      } catch (final ODataSerializerException e) {
+        throw new HttpClientException(e);
+      }
     }
 
     return null;
@@ -219,6 +226,8 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
 	      }
            }
         } catch (IOException e) {
+          throw new HttpClientException(e);
+        } catch (final ODataDeserializerException e) {
           throw new HttpClientException(e);
         } finally {
           this.close();

@@ -69,10 +69,10 @@ public class AtomTest extends AbstractTest {
 
   protected void entitySet(final String filename, final ODataPubFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
-    getClient().getSerializer().entitySet(getClient().getDeserializer().toEntitySet(
-            getClass().getResourceAsStream("Customer." + getSuffix(format)), format).getPayload(), writer);
+    getClient().getSerializer(format).write(writer, getClient().getDeserializer(format).toEntitySet(
+        getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
 
-    assertSimilar("Customer." + getSuffix(format), writer.toString());
+    assertSimilar(filename + "." + getSuffix(format), writer.toString());
   }
 
   @Test
@@ -82,8 +82,8 @@ public class AtomTest extends AbstractTest {
 
   protected void entity(final String filename, final ODataPubFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
-    getClient().getSerializer().entity(getClient().getDeserializer().toEntity(
-            getClass().getResourceAsStream(filename + "." + getSuffix(format)), format).getPayload(), writer);
+    getClient().getSerializer(format).write(writer, getClient().getDeserializer(format).toEntity(
+        getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
 
     assertSimilar(filename + "." + getSuffix(format), writer.toString());
   }
@@ -102,9 +102,8 @@ public class AtomTest extends AbstractTest {
 
   protected void property(final String filename, final ODataFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
-    getClient().getSerializer().property(getClient().getDeserializer().
-            toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(format)), format).getPayload(),
-            writer);
+    getClient().getSerializer(format).write(writer, getClient().getDeserializer(format).toProperty(
+        getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
 
     assertSimilar(filename + "." + getSuffix(format), writer.toString());
   }

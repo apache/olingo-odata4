@@ -19,21 +19,24 @@
 package org.apache.olingo.client.core.communication.request.retrieve;
 
 import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.data.ServiceDocument;
+import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 
 /**
  * This class implements an OData service document request.
  */
 public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveRequest<ODataServiceDocument, ODataFormat>
-        implements ODataServiceDocumentRequest {
+    implements ODataServiceDocumentRequest {
 
   /**
    * Constructor.
@@ -41,7 +44,7 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
    * @param odataClient client instance getting this request
    * @param uri request URI.
    */
-  ODataServiceDocumentRequestImpl(final CommonODataClient odataClient, final URI uri) {
+  ODataServiceDocumentRequestImpl(final CommonODataClient<?> odataClient, final URI uri) {
     super(odataClient, ODataFormat.class, uri);
   }
 
@@ -66,8 +69,7 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
      * <p>
      * Just to create response templates to be initialized from batch.
      */
-    private ODataServiceResponseImpl() {
-    }
+    private ODataServiceResponseImpl() {}
 
     /**
      * Constructor.
@@ -83,10 +85,13 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
     public ODataServiceDocument getBody() {
       if (serviceDocument == null) {
         try {
-          final ResWrap<ServiceDocument> resource = odataClient.getDeserializer().
-                  toServiceDocument(getRawResponse(), ODataFormat.fromString(getContentType()));
+          final ResWrap<ServiceDocument> resource =
+              odataClient.getDeserializer(ODataFormat.fromString(getContentType()))
+                  .toServiceDocument(getRawResponse());
 
           serviceDocument = odataClient.getBinder().getODataServiceDocument(resource.getPayload());
+        } catch (final ODataDeserializerException e) {
+          throw new HttpClientException(e);
         } finally {
           this.close();
         }

@@ -27,9 +27,9 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 
 /**
- * Abstract base for classes implementing an OData entity in Atom and JSON.
+ * Class implementing an OData entity.
  */
-public abstract class AbstractEntity extends AbstractODataObject implements Entity {
+public class EntityImpl extends AbstractODataObject implements Entity {
 
   private static final long serialVersionUID = 2127764552600969783L;
 

@@ -18,28 +18,29 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataErrorDetail;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-public class JSONODataErrorDeserializer extends AbstractJsonDeserializer<JSONODataErrorImpl> {
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-  @Override
-  protected ResWrap<JSONODataErrorImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
-          throws IOException, JsonProcessingException {
+public class JSONODataErrorDeserializer extends JsonDeserializer {
 
-    final JSONODataErrorImpl error = new JSONODataErrorImpl();
+  public JSONODataErrorDeserializer(final ODataServiceVersion version, final boolean serverMode) {
+    super(version, serverMode);
+  }
+
+  protected ODataError doDeserialize(final JsonParser parser) throws IOException {
+
+    final ODataErrorImpl error = new ODataErrorImpl();
 
     final ObjectNode tree = parser.getCodec().readTree(parser);
     if (tree.has(jsonError)) {
@@ -60,11 +61,12 @@ public class JSONODataErrorDeserializer extends AbstractJsonDeserializer<JSONODa
         error.setTarget(errorNode.get(Constants.ERROR_TARGET).textValue());
       }
       if (errorNode.hasNonNull(Constants.ERROR_DETAILS)) {
-        final List<ODataErrorDetail> details = new ArrayList<ODataErrorDetail>();
-        for (final Iterator<JsonNode> itor = errorNode.get(Constants.ERROR_DETAILS).iterator(); itor.hasNext();) {
-          details.add(itor.next().traverse(parser.getCodec()).<ResWrap<JSONODataErrorDetailImpl>>readValueAs(
-                  new TypeReference<JSONODataErrorDetailImpl>() {
-                  }).getPayload());
+        List<ODataErrorDetail> details = new ArrayList<ODataErrorDetail>();
+        JSONODataErrorDetailDeserializer detailDeserializer =
+            new JSONODataErrorDetailDeserializer(version, serverMode);
+        for (Iterator<JsonNode> itor = errorNode.get(Constants.ERROR_DETAILS).iterator(); itor.hasNext();) {
+          details.add(detailDeserializer.doDeserialize(itor.next().traverse(parser.getCodec()))
+              .getPayload());
         }
 
         error.setDetails(details);
@@ -79,6 +81,6 @@ public class JSONODataErrorDeserializer extends AbstractJsonDeserializer<JSONODa
       }
     }
 
-    return new ResWrap<JSONODataErrorImpl>((URI) null, null, error);
+    return error;
   }
 }

@@ -18,23 +18,26 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.domain.ODataErrorDetail;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-public class JSONODataErrorDetailDeserializer extends AbstractJsonDeserializer<JSONODataErrorDetailImpl> {
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
 
-  @Override
-  protected ResWrap<JSONODataErrorDetailImpl> doDeserialize(
-          final JsonParser parser, final DeserializationContext ctxt)
-          throws IOException, JsonProcessingException {
+public class JSONODataErrorDetailDeserializer extends JsonDeserializer {
 
-    final JSONODataErrorDetailImpl error = new JSONODataErrorDetailImpl();
+  public JSONODataErrorDetailDeserializer(final ODataServiceVersion version, final boolean serverMode) {
+    super(version, serverMode);
+  }
+
+  protected ResWrap<ODataErrorDetail> doDeserialize(final JsonParser parser) throws IOException {
+
+    final ODataErrorDetailImpl error = new ODataErrorDetailImpl();
     final JsonNode errorNode = parser.getCodec().readTree(parser);
     if (errorNode.has(Constants.ERROR_CODE)) {
       error.setCode(errorNode.get(Constants.ERROR_CODE).textValue());
@@ -51,6 +54,6 @@ public class JSONODataErrorDetailDeserializer extends AbstractJsonDeserializer<J
       error.setTarget(errorNode.get(Constants.ERROR_TARGET).textValue());
     }
 
-    return new ResWrap<JSONODataErrorDetailImpl>((URI) null, null, error);
+    return new ResWrap<ODataErrorDetail>((URI) null, null, error);
   }
 }

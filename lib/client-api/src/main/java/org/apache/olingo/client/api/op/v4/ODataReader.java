@@ -19,21 +19,23 @@
 package org.apache.olingo.client.api.op.v4;
 
 import java.io.InputStream;
+
 import org.apache.olingo.client.api.op.CommonODataReader;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 
 public interface ODataReader extends CommonODataReader {
 
   @Override
-  ODataEntitySet readEntitySet(InputStream input, ODataPubFormat format);
+  ODataEntitySet readEntitySet(InputStream input, ODataPubFormat format) throws ODataDeserializerException;
 
   @Override
-  ODataEntity readEntity(InputStream input, ODataPubFormat format);
+  ODataEntity readEntity(InputStream input, ODataPubFormat format) throws ODataDeserializerException;
 
   @Override
-  ODataProperty readProperty(InputStream input, ODataFormat format);
+  ODataProperty readProperty(InputStream input, ODataFormat format) throws ODataDeserializerException;
 }

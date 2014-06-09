@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.communication.request.cud;
 
 import java.io.InputStream;
 import java.net.URI;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -27,14 +28,17 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
-import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.op.ODataSerializerException;
 
 /**
  * This class implements an OData update entity property request.
@@ -77,7 +81,11 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
 
   @Override
   protected InputStream getPayload() {
-    return odataClient.getWriter().writeProperty(property, ODataFormat.fromString(getContentType()));
+    try {
+      return odataClient.getWriter().writeProperty(property, ODataFormat.fromString(getContentType()));
+    } catch (final ODataSerializerException e) {
+      throw new HttpClientException(e);
+    }
   }
 
   /**
@@ -105,17 +113,16 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
       super(client, res);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public CommonODataProperty getBody() {
       if (property == null) {
         try {
-          final ResWrap<Property> resource = odataClient.getDeserializer().
-                  toProperty(getRawResponse(), ODataFormat.fromString(getAccept()));
+          final ResWrap<Property> resource = odataClient.getDeserializer(ODataFormat.fromString(getAccept()))
+                  .toProperty(getRawResponse());
 
           property = odataClient.getBinder().getODataProperty(resource);
+        } catch (final ODataDeserializerException e) {
+          throw new HttpClientException(e);
         } finally {
           this.close();
         }

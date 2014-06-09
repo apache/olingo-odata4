@@ -19,53 +19,47 @@
 package org.apache.olingo.commons.api.op;
 
 import java.io.InputStream;
-import java.io.Serializable;
-import org.apache.olingo.commons.api.data.ResWrap;
+
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.domain.ODataError;
 
 /**
  * Interface for de-serialization.
  */
-public interface CommonODataDeserializer extends Serializable {
+public interface ODataDeserializer {
 
   /**
    * Gets an entity set object from the given InputStream.
    *
    * @param input stream to be de-serialized.
-   * @param format Atom or JSON
    * @return {@link EntitySet} instance.
    */
-  ResWrap<EntitySet> toEntitySet(InputStream input, ODataPubFormat format);
+  ResWrap<EntitySet> toEntitySet(InputStream input) throws ODataDeserializerException;
 
   /**
    * Gets an entity object from the given InputStream.
    *
    * @param input stream to be de-serialized.
-   * @param format Atom or JSON
    * @return {@link Entity} instance.
    */
-  ResWrap<Entity> toEntity(InputStream input, ODataPubFormat format);
+  ResWrap<Entity> toEntity(InputStream input) throws ODataDeserializerException;
 
   /**
    * Gets a property object from the given InputStream.
    *
    * @param input stream to be de-serialized.
-   * @param format XML or JSON
    * @return Property instance.
    */
-  ResWrap<Property> toProperty(InputStream input, ODataFormat format);
+  ResWrap<Property> toProperty(InputStream input) throws ODataDeserializerException;
 
   /**
    * Gets the ODataError object represented by the given InputStream.
    *
    * @param input stream to be parsed and de-serialized.
-   * @param isXML 'TRUE' if the error is represented by XML; 'FALSE' otherwise.
    * @return
    */
-  ODataError toError(InputStream input, boolean isXML);
+  ODataError toError(InputStream input) throws ODataDeserializerException;
 }

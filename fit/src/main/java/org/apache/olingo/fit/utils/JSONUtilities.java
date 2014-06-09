@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.fit.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -33,17 +29,40 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.ws.rs.NotFoundException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.op.InjectableSerializerProvider;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.metadata.NavigationProperty;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+
 public class JSONUtilities extends AbstractUtilities {
+
+  private final ObjectMapper mapper;
 
   public JSONUtilities(final ODataServiceVersion version, final Metadata metadata) throws Exception {
     super(version, metadata);
+
+    mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    mapper.setInjectableValues(new InjectableValues.Std()
+            .addValue(Boolean.class, Boolean.TRUE)
+            .addValue(ODataServiceVersion.class, version));
+    mapper.setSerializerProvider(new InjectableSerializerProvider(mapper.getSerializerProvider(),
+            mapper.getSerializationConfig()
+            .withAttribute(ODataServiceVersion.class, version)
+            .withAttribute(Boolean.class, Boolean.TRUE),
+            mapper.getSerializerFactory()));
   }
 
   @Override

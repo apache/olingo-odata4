@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.communication.request.cud.v3;
 
 import java.io.InputStream;
 import java.net.URI;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -29,6 +30,8 @@ import org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkUpdate
 import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.op.ODataSerializerException;
+import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
@@ -53,7 +56,7 @@ public class ODataLinkUpdateRequestImpl extends AbstractODataBasicRequest<ODataL
    * @param targetURI entity URI.
    * @param link entity to be linked.
    */
-  ODataLinkUpdateRequestImpl(final CommonODataClient odataClient,
+  ODataLinkUpdateRequestImpl(final CommonODataClient<?> odataClient,
           final HttpMethod method, final URI targetURI, final ODataLink link) {
 
     super(odataClient, ODataFormat.class, method, targetURI);
@@ -61,9 +64,6 @@ public class ODataLinkUpdateRequestImpl extends AbstractODataBasicRequest<ODataL
     this.link = link;
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public ODataLinkOperationResponse execute() {
     final InputStream input = getPayload();
@@ -76,12 +76,13 @@ public class ODataLinkUpdateRequestImpl extends AbstractODataBasicRequest<ODataL
     }
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   protected InputStream getPayload() {
-    return odataClient.getWriter().writeLink(link, ODataFormat.fromString(getContentType()));
+    try {
+      return odataClient.getWriter().writeLink(link, ODataFormat.fromString(getContentType()));
+    } catch (final ODataSerializerException e) {
+      throw new HttpClientException(e);
+    }
   }
 
   /**

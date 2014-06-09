@@ -35,13 +35,11 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.domain.v3.ODataPropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-import org.apache.olingo.commons.core.op.ResourceFactory;
 
 public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder {
-
-  private static final long serialVersionUID = 8970843539708952308L;
 
   public ODataBinderImpl(final ODataClientImpl client) {
     super(client);
@@ -49,7 +47,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
   @Override
   public void add(final ODataComplexValue<CommonODataProperty> complex, final CommonODataProperty property) {
-    complex.add((ODataProperty) property);
+    complex.add(property);
   }
 
   @Override
@@ -63,10 +61,10 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  public Property getProperty(final CommonODataProperty property, final Class<? extends Entity> reference) {
-    final Property propertyResource = ResourceFactory.newProperty(reference);
+  public Property getProperty(final CommonODataProperty property) {
+    final Property propertyResource = new PropertyImpl();
     propertyResource.setName(property.getName());
-    propertyResource.setValue(getValue(property.getValue(), reference));
+    propertyResource.setValue(getValue(property.getValue()));
 
     if (property.hasPrimitiveValue()) {
       propertyResource.setType(property.getPrimitiveValue().getTypeName());

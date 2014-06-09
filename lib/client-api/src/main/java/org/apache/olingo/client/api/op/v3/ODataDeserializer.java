@@ -19,10 +19,11 @@
 package org.apache.olingo.client.api.op.v3;
 
 import java.io.InputStream;
+
 import org.apache.olingo.client.api.op.ClientODataDeserializer;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.v3.LinkCollection;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 
 public interface ODataDeserializer extends ClientODataDeserializer {
 
@@ -30,9 +31,8 @@ public interface ODataDeserializer extends ClientODataDeserializer {
    * Gets a list of links from the given InputStream.
    *
    * @param input stream to be de-serialized.
-   * @param format OData format.
    * @return de-serialized links.
+   * @throws ODataDeserializerException 
    */
-  ResWrap<LinkCollection> toLinkCollection(InputStream input, ODataFormat format);
-
+  ResWrap<LinkCollection> toLinkCollection(InputStream input) throws ODataDeserializerException;
 }

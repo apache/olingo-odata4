@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
@@ -36,7 +37,8 @@ import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataFormat;
-
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.op.ODataSerializerException;
 import org.junit.Test;
 
 public class PropertyTest extends AbstractTest {
@@ -58,7 +60,8 @@ public class PropertyTest extends AbstractTest {
     assertEquals("-10", value.toString());
   }
 
-  private void primitive(final ODataFormat format) throws IOException, EdmPrimitiveTypeException {
+  private void primitive(final ODataFormat format)
+      throws EdmPrimitiveTypeException, ODataDeserializerException, ODataSerializerException {
     final InputStream input = getClass().getResourceAsStream("Customer_-10_CustomerId." + getSuffix(format));
     final ODataProperty property = getClient().getReader().readProperty(input, format);
     assertNotNull(property);
@@ -83,16 +86,16 @@ public class PropertyTest extends AbstractTest {
   }
 
   @Test
-  public void xmlPrimitive() throws IOException, EdmPrimitiveTypeException {
+  public void xmlPrimitive() throws Exception {
     primitive(ODataFormat.XML);
   }
 
   @Test
-  public void jsonPrimitive() throws IOException, EdmPrimitiveTypeException {
+  public void jsonPrimitive() throws Exception {
     primitive(ODataFormat.JSON);
   }
 
-  private void complex(final ODataFormat format) throws IOException {
+  private void complex(final ODataFormat format) throws ODataDeserializerException, ODataSerializerException {
     final InputStream input = getClass().getResourceAsStream("Customer_-10_PrimaryContactInfo." + getSuffix(format));
     final ODataProperty property = getClient().getReader().readProperty(input, format);
     assertNotNull(property);
@@ -119,16 +122,16 @@ public class PropertyTest extends AbstractTest {
   }
 
   @Test
-  public void xmlComplex() throws IOException {
+  public void xmlComplex() throws Exception {
     complex(ODataFormat.XML);
   }
 
   @Test
-  public void jsonComplex() throws IOException {
+  public void jsonComplex() throws Exception {
     complex(ODataFormat.JSON);
   }
 
-  private void collection(final ODataFormat format) throws IOException {
+  private void collection(final ODataFormat format) throws ODataDeserializerException, ODataSerializerException {
     final InputStream input = getClass().getResourceAsStream("Customer_-10_BackupContactInfo." + getSuffix(format));
     final ODataProperty property = getClient().getReader().readProperty(input, format);
     assertNotNull(property);
@@ -155,12 +158,12 @@ public class PropertyTest extends AbstractTest {
   }
 
   @Test
-  public void xmlCollection() throws IOException {
+  public void xmlCollection() throws Exception {
     collection(ODataFormat.XML);
   }
 
   @Test
-  public void jsonCollection() throws IOException {
+  public void jsonCollection() throws Exception {
     collection(ODataFormat.JSON);
   }
 }

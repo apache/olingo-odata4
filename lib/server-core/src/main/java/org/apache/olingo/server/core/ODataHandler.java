@@ -18,16 +18,31 @@
  */
 package org.apache.olingo.server.core;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.core.data.EntityImpl;
+import org.apache.olingo.commons.core.data.EntitySetImpl;
+import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
+import org.apache.olingo.commons.core.data.PropertyImpl;
+import org.apache.olingo.commons.core.op.InjectableSerializerProvider;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -37,12 +52,18 @@ import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
+import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ODataHandler {
 
@@ -113,6 +134,39 @@ public class ODataHandler {
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
     switch (lastPathSegment.getKind()) {
     case entitySet:
+      long time = System.nanoTime();
+      ResWrap<EntitySet> wrap = new ResWrap<EntitySet>(
+          ContextURL.getInstance(URI.create("dummyContextURL")), "dummyMetadataETag",
+          createEntitySet());
+      System.out.println((System.nanoTime() - time) / 1000 + " microseconds");
+      time = System.nanoTime();
+      CircleStreamBuffer buffer = new CircleStreamBuffer();
+      if (false) {
+        ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(Include.NON_NULL);
+        mapper.setInjectableValues(new InjectableValues.Std()
+            .addValue(ODataServiceVersion.class, ODataServiceVersion.V40)
+            .addValue(Boolean.class, Boolean.TRUE));
+        mapper.setSerializerProvider(new InjectableSerializerProvider(mapper.getSerializerProvider(),
+            mapper.getSerializationConfig()
+                .withAttribute(ODataServiceVersion.class, ODataServiceVersion.V40)
+                .withAttribute(Boolean.class, Boolean.TRUE),
+            mapper.getSerializerFactory()));
+        try {
+          mapper.writeValue(buffer.getOutputStream(), wrap);
+        } catch (final IOException e) {}
+        response.setContent(buffer.getInputStream());
+      } else {
+        ODataSerializer serializer = odata.createSerializer(org.apache.olingo.server.api.serializer.ODataFormat.JSON);
+        response.setContent(serializer.entitySet(
+            edm.getEntityContainer(new FullQualifiedName("com.sap.odata.test1", "Container"))
+                .getEntitySet("ESAllPrim"),
+            wrap.getPayload(),
+            ContextURL.getInstance(URI.create("dummyContextURL"))));
+      }
+      System.out.println((System.nanoTime() - time) / 1000 + " microseconds");
+      response.setStatusCode(200);
+      response.setHeader("Content-Type", ContentType.APPLICATION_JSON);
+
       if (((UriResourcePartTyped) lastPathSegment).isCollection()) {
         if (request.getMethod().equals(HttpMethod.GET)) {
           EntitySetProcessor esp = selectProcessor(EntitySetProcessor.class);
@@ -185,5 +239,35 @@ public class ODataHandler {
         processors.put(procClass, processor);
       }
     }
+  }
+
+  protected Entity createEntity() {
+    Entity entity = new EntityImpl();
+    Property property = new PropertyImpl();
+    property.setName("PropertyString");
+    property.setType("String"); //"dummyType");
+    property.setValue(new PrimitiveValueImpl("dummyValue"));
+    entity.getProperties().add(property);
+    Property propertyInt = new PropertyImpl();
+    propertyInt.setName("PropertyInt16");
+    // propertyInt.setType("Edm.Int32");
+    propertyInt.setValue(new PrimitiveValueImpl("042"));
+    entity.getProperties().add(propertyInt);
+    Property propertyGuid = new PropertyImpl();
+    propertyGuid.setName("PropertyGuid");
+    propertyGuid.setType("Edm.Guid");
+    propertyGuid.setValue(new PrimitiveValueImpl(UUID.randomUUID().toString()));
+    entity.getProperties().add(propertyGuid);
+    return entity;
+  }
+
+  protected EntitySet createEntitySet() {
+    EntitySet entitySet = new EntitySetImpl();
+    entitySet.setCount(4242);
+    entitySet.setNext(URI.create("nextLinkURI"));
+    for (int i = 0; i < 1000; i++) {
+      entitySet.getEntities().add(createEntity());
+    }
+    return entitySet;
   }
 }

@@ -19,13 +19,14 @@
 package org.apache.olingo.client.api.op;
 
 import java.io.InputStream;
+
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.op.CommonODataDeserializer;
+import org.apache.olingo.commons.api.op.ODataDeserializer;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 
-public interface ClientODataDeserializer extends CommonODataDeserializer {
+public interface ClientODataDeserializer extends ODataDeserializer {
 
   XMLMetadata toMetadata(InputStream input);
 
@@ -33,8 +34,8 @@ public interface ClientODataDeserializer extends CommonODataDeserializer {
    * Gets the ServiceDocument object represented by the given InputStream.
    *
    * @param input stream to be de-serialized.
-   * @param format OData service document format.
    * @return <tt>ServiceDocument</tt> object.
+   * @throws ODataDeserializerException 
    */
-  ResWrap<ServiceDocument> toServiceDocument(InputStream input, ODataFormat format);
+  ResWrap<ServiceDocument> toServiceDocument(InputStream input) throws ODataDeserializerException;
 }

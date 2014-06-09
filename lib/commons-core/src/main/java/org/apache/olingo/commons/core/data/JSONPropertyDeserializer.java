@@ -18,37 +18,39 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
-/**
- * Parse JSON string into <tt>JSONPropertyImpl</tt>.
- *
- * @see JSONPropertyImpl
- */
-public class JSONPropertyDeserializer extends AbstractJsonDeserializer<JSONPropertyImpl> {
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-  @Override
-  protected ResWrap<JSONPropertyImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
-          throws IOException, JsonProcessingException {
+/**
+ * Parse JSON string into <tt>Property</tt>.
+ */
+public class JSONPropertyDeserializer extends JsonDeserializer {
+
+  public JSONPropertyDeserializer(final ODataServiceVersion version, final boolean serverMode) {
+    super(version, serverMode);
+  }
+
+  protected ResWrap<Property> doDeserialize(final JsonParser parser) throws IOException {
 
     final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
 
     final String metadataETag;
     final URI contextURL;
-    final JSONPropertyImpl property = new JSONPropertyImpl();
+    final PropertyImpl property = new PropertyImpl();
 
     if (tree.hasNonNull(Constants.JSON_METADATA_ETAG)) {
       metadataETag = tree.get(Constants.JSON_METADATA_ETAG).textValue();
@@ -97,6 +99,6 @@ public class JSONPropertyDeserializer extends AbstractJsonDeserializer<JSONPrope
       }
     }
 
-    return new ResWrap<JSONPropertyImpl>(contextURL, metadataETag, property);
+    return new ResWrap<Property>(contextURL, metadataETag, property);
   }
 }

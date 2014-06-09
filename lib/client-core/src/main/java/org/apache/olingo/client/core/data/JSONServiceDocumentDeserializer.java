@@ -18,34 +18,36 @@
  */
 package org.apache.olingo.client.core.data;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Iterator;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.data.ODataJacksonDeserializer;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.core.data.JsonDeserializer;
 
-public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<ResWrap<AbstractServiceDocument>> {
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-  @Override
-  protected ResWrap<AbstractServiceDocument> doDeserialize(
-          final JsonParser parser, final DeserializationContext ctxt)
-          throws IOException, JsonProcessingException {
+public class JSONServiceDocumentDeserializer extends JsonDeserializer {
+
+  public JSONServiceDocumentDeserializer(final ODataServiceVersion version, final boolean serverMode) {
+    super(version, serverMode);
+  }
+
+  protected ResWrap<ServiceDocument> doDeserialize(final JsonParser parser) throws IOException {
 
     final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
 
-    final AbstractServiceDocument serviceDocument = ODataServiceVersion.V30 == version
-            ? new org.apache.olingo.client.core.data.v3.JSONServiceDocumentImpl()
-            : new org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl();
+    ServiceDocumentImpl serviceDocument = new ServiceDocumentImpl();
 
     final String metadataETag;
     if (tree.hasNonNull(Constants.JSON_METADATA_ETAG)) {
@@ -87,6 +89,15 @@ public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<Re
       }
     }
 
-    return new ResWrap<AbstractServiceDocument>(contextURL, metadataETag, serviceDocument);
+    return new ResWrap<ServiceDocument>(contextURL, metadataETag, serviceDocument);
+  }
+
+  public ResWrap<ServiceDocument> toServiceDocument(final InputStream input) throws ODataDeserializerException {
+    try {
+      JsonParser parser = new JsonFactory(new ObjectMapper()).createParser(input);
+      return doDeserialize(parser);
+    } catch (final IOException e) {
+      throw new ODataDeserializerException(e);
+    }
   }
 }

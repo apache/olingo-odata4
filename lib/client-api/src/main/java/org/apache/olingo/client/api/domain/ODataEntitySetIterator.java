@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -35,6 +36,7 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,8 +55,6 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
    * Logger.
    */
   private static final Logger LOG = LoggerFactory.getLogger(ODataEntitySetIterator.class);
-
-  private static final long serialVersionUID = 9039605899821494025L;
 
   private final CommonODataClient odataClient;
 
@@ -120,8 +120,12 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
 
       if (cached == null) {
         available = false;
-        entitySet = (ES) odataClient.getReader().
-                readEntitySet(new ByteArrayInputStream(osEntitySet.toByteArray()), format);
+        try {
+          entitySet = (ES) odataClient.getReader().
+                  readEntitySet(new ByteArrayInputStream(osEntitySet.toByteArray()), format);
+        } catch (final ODataDeserializerException e) {
+          available = false;
+        }
         close();
       }
     }
@@ -209,8 +213,8 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
         }
 
         if (c >= 0) {
-          jsonEntity = odataClient.getDeserializer().toEntity(
-                  new ByteArrayInputStream(entity.toByteArray()), ODataPubFormat.JSON);
+          jsonEntity = odataClient.getDeserializer(ODataPubFormat.JSON).toEntity(
+                  new ByteArrayInputStream(entity.toByteArray()));
         }
       } else {
         while ((c = input.read()) >= 0) {
@@ -238,8 +242,8 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
         entity.write(">".getBytes(Constants.UTF8));
 
         if (consume(input, "</entry>", entity, true) >= 0) {
-          atomEntity = odataClient.getDeserializer().
-                  toEntity(new ByteArrayInputStream(entity.toByteArray()), ODataPubFormat.ATOM);
+          atomEntity = odataClient.getDeserializer(ODataPubFormat.ATOM).
+                  toEntity(new ByteArrayInputStream(entity.toByteArray()));
         }
       }
     } catch (Exception e) {

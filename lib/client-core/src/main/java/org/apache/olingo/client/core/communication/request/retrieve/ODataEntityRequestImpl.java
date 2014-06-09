@@ -19,15 +19,18 @@
 package org.apache.olingo.client.core.communication.request.retrieve;
 
 import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 
 /**
  * This class implements an OData retrieve query request returning a single entity.
@@ -81,10 +84,12 @@ public class ODataEntityRequestImpl<E extends CommonODataEntity>
     public E getBody() {
       if (entity == null) {
         try {
-          final ResWrap<Entity> resource = odataClient.getDeserializer().
-                  toEntity(getRawResponse(), ODataPubFormat.fromString(getContentType()));
+          final ResWrap<Entity> resource = odataClient.getDeserializer(ODataPubFormat.fromString(getContentType()))
+              .toEntity(getRawResponse());
 
           entity = (E) odataClient.getBinder().getODataEntity(resource);
+        } catch (final ODataDeserializerException e) {
+          throw new HttpClientException(e);
         } finally {
           this.close();
         }

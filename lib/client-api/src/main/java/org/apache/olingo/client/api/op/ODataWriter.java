@@ -19,13 +19,14 @@
 package org.apache.olingo.client.api.op;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Collection;
+
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataSerializerException;
 
 /**
  * OData writer.
@@ -34,7 +35,7 @@ import org.apache.olingo.commons.api.format.ODataPubFormat;
  * <br/>
  * This interface provides method helpers to serialize a set of entities and a single entity as well.
  */
-public interface ODataWriter extends Serializable {
+public interface ODataWriter {
 
   /**
    * Writes a collection of OData entities.
@@ -42,8 +43,10 @@ public interface ODataWriter extends Serializable {
    * @param entities entities to be serialized.
    * @param format serialization format.
    * @return stream of serialized objects.
+   * @throws ODataSerializerException 
    */
-  InputStream writeEntities(Collection<CommonODataEntity> entities, ODataPubFormat format);
+  InputStream writeEntities(Collection<CommonODataEntity> entities, ODataPubFormat format)
+      throws ODataSerializerException;
 
   /**
    * Serializes a single OData entity.
@@ -51,8 +54,10 @@ public interface ODataWriter extends Serializable {
    * @param entity entity to be serialized.
    * @param format serialization format.
    * @return stream of serialized object.
+   * @throws ODataSerializerException 
    */
-  InputStream writeEntity(CommonODataEntity entity, ODataPubFormat format);
+  InputStream writeEntity(CommonODataEntity entity, ODataPubFormat format)
+      throws ODataSerializerException;
 
   /**
    * Writes a single OData entity property.
@@ -60,8 +65,10 @@ public interface ODataWriter extends Serializable {
    * @param property entity property to be serialized.
    * @param format serialization format.
    * @return stream of serialized object.
+   * @throws ODataSerializerException 
    */
-  InputStream writeProperty(CommonODataProperty property, ODataFormat format);
+  InputStream writeProperty(CommonODataProperty property, ODataFormat format)
+      throws ODataSerializerException;
 
   /**
    * Writes an OData link.
@@ -69,6 +76,8 @@ public interface ODataWriter extends Serializable {
    * @param link link to be serialized.
    * @param format serialization format.
    * @return stream of serialized object.
+   * @throws ODataSerializerException 
    */
-  InputStream writeLink(ODataLink link, ODataFormat format);
+  InputStream writeLink(ODataLink link, ODataFormat format)
+      throws ODataSerializerException;
 }

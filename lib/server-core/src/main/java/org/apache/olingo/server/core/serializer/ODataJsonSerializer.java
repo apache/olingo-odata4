@@ -23,8 +23,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.core.serializer.json.ServiceDocumentJsonSerializer;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
@@ -83,5 +94,98 @@ public class ODataJsonSerializer implements ODataSerializer {
   @Override
   public InputStream metadataDocument(final Edm edm) {
     throw new ODataRuntimeException("Metadata in JSON format not supported!");
+  }
+
+  @Override
+  public InputStream entity(final EdmEntityType edmEntityType, final Entity entity, final ContextURL contextURL) {
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    try {
+      JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
+      writeEntity(edmEntityType, entity, contextURL, json);
+      json.close();
+    } catch (final IOException e) {
+      throw new ODataRuntimeException(e);
+    }
+    return buffer.getInputStream();
+  }
+
+  protected void writeEntity(final EdmEntityType entityType, final Entity entity, final ContextURL contextURL,
+      JsonGenerator json) throws IOException {
+    json.writeStartObject();
+    if (contextURL != null) {
+      json.writeStringField(Constants.JSON_CONTEXT, contextURL.getURI().toASCIIString());
+    }
+    if (entity.getETag() != null) {
+      json.writeStringField("@odata.etag", entity.getETag());
+    }
+    if (entity.getMediaETag() != null) {
+      json.writeStringField("@odata.mediaEtag", entity.getMediaETag());
+    }
+    if (entity.getMediaContentType() != null) {
+      json.writeStringField("@odata.mediaContentType", entity.getMediaContentType());
+    }
+    for (final String propertyName : entityType.getPropertyNames()) {
+      json.writeFieldName(propertyName);
+      final EdmProperty edmProperty = (EdmProperty) entityType.getProperty(propertyName);
+      final Property property = entity.getProperty(propertyName);
+      if (property == null) {
+        if (edmProperty.isNullable() == Boolean.FALSE) {
+          throw new ODataRuntimeException("Non-nullable property not present!");
+        } else {
+          json.writeNull();
+        }
+      } else {
+        if (edmProperty.isPrimitive()) {
+          final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
+          final String value = property.getValue().asPrimitive().get();
+          if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean)) {
+            json.writeBoolean(Boolean.parseBoolean(value));
+          } else if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte)
+              || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)
+              || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double)
+              || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16)
+              || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32)
+              || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64)
+              || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte)
+              || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Single)) {
+            json.writeNumber(value);
+          } else {
+            json.writeString(value);
+          }
+        } else {
+          throw new ODataRuntimeException("Non-primitive properties not yet supported!");
+        }
+      }
+    }
+    json.writeEndObject();
+  }
+
+  @Override
+  public InputStream entitySet(final EdmEntitySet edmEntitySet, final EntitySet entitySet,
+      final ContextURL contextURL) {
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    try {
+      JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
+      json.writeStartObject();
+      if (contextURL != null) {
+        json.writeStringField(Constants.JSON_CONTEXT, contextURL.getURI().toASCIIString());
+      }
+      if (entitySet.getCount() != null) {
+        json.writeNumberField("@odata.count", entitySet.getCount());
+      }
+      json.writeFieldName(Constants.VALUE);
+      json.writeStartArray();
+      for (Entity entity : entitySet.getEntities()) {
+        writeEntity(edmEntitySet.getEntityType(), entity, null, json);
+      }
+      json.writeEndArray();
+      if (entitySet.getNext() != null) {
+        json.writeStringField("@odata.nextLink", entitySet.getNext().toASCIIString());
+      }
+      json.close();
+    } catch (final IOException e) {
+      throw new ODataRuntimeException(e);
+    }
+    return buffer.getInputStream();
   }
 }

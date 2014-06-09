@@ -34,7 +34,7 @@ import org.apache.olingo.commons.api.domain.ODataErrorDetail;
  * {...} } } }
  * </tt>.
  */
-public abstract class AbstractODataError implements ODataError {
+public class ODataErrorImpl implements ODataError {
 
   private String code;
 

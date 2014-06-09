@@ -18,83 +18,16 @@
  */
 package org.apache.olingo.commons.api.op;
 
-import java.io.OutputStream;
-import java.io.Serializable;
 import java.io.Writer;
-import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.data.Link;
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.format.ODataFormat;
+
+import org.apache.olingo.commons.api.data.ResWrap;
 
 /**
- * Utility class for serialization.
+ * Interface for serialization.
  */
-public interface ODataSerializer extends Serializable {
+public interface ODataSerializer {
 
-  /**
-   * Writes entity set object onto the given stream.
-   *
-   * @param obj object to be streamed.
-   * @param out output stream.
-   */
-  void entitySet(EntitySet obj, OutputStream out);
+  public <T> void write(final Writer writer, final T obj) throws ODataSerializerException;
 
-  /**
-   * Writes entity set object by the given writer.
-   *
-   * @param obj object to be streamed.
-   * @param writer writer.
-   */
-  void entitySet(EntitySet obj, Writer writer);
-
-  /**
-   * Writes entity object onto the given stream.
-   *
-   * @param obj object to be streamed.
-   * @param out output stream.
-   */
-  void entity(Entity obj, OutputStream out);
-
-  /**
-   * Writes entity object by the given writer.
-   *
-   * @param obj object to be streamed.
-   * @param writer writer.
-   */
-  void entity(Entity obj, Writer writer);
-
-  /**
-   * Writes the property object onto the given stream.
-   *
-   * @param property object to be streamed.
-   * @param out output stream.
-   */
-  void property(Property property, OutputStream out);
-
-  /**
-   * Writes the property object by the given writer.
-   *
-   * @param property object to be streamed.
-   * @param writer writer.
-   */
-  void property(Property property, Writer writer);
-
-  /**
-   * Writes link onto the given stream.
-   *
-   * @param link OData link to be streamed.
-   * @param format streaming format.
-   * @param out output stream.
-   */
-  void link(Link link, ODataFormat format, OutputStream out);
-
-  /**
-   * Writes link by the given writer.
-   *
-   * @param link OData link to be streamed.
-   * @param format streaming format.
-   * @param writer writer.
-   */
-  void link(Link link, ODataFormat format, Writer writer);
+  public <T> void write(final Writer writer, final ResWrap<T> container) throws ODataSerializerException;
 }

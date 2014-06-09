@@ -18,57 +18,52 @@
  */
 package org.apache.olingo.client.api.op;
 
-import java.io.Serializable;
+import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 
-public interface CommonODataBinder extends Serializable {
+public interface CommonODataBinder {
 
   /**
    * Gets a <tt>EntitySet</tt> from the given OData entity set.
    *
    * @param entitySet OData entity set.
-   * @param reference reference class.
    * @return {@link EntitySet} object.
    */
-  EntitySet getEntitySet(CommonODataEntitySet entitySet, Class<? extends EntitySet> reference);
+  EntitySet getEntitySet(CommonODataEntitySet entitySet);
 
   /**
    * Gets an <tt>Entity</tt> from the given OData entity.
    *
    * @param entity OData entity.
-   * @param reference reference class.
    * @return {@link Entity} object.
    */
-  Entity getEntity(CommonODataEntity entity, Class<? extends Entity> reference);
+  Entity getEntity(CommonODataEntity entity);
 
   /**
    * Gets a <tt>Link</tt> from the given OData link.
    *
    * @param link OData link.
-   * @param isXML whether it is JSON or XML / Atom
    * @return <tt>Link</tt> object.
    */
-  Link getLink(ODataLink link, boolean isXML);
+  Link getLink(ODataLink link);
 
   /**
    * Gets a <tt>Property</tt> from the given OData property.
    *
    * @param property OData property.
-   * @param reference reference class.
    * @return <tt>Property</tt> object.
    */
-  Property getProperty(CommonODataProperty property, Class<? extends Entity> reference);
+  Property getProperty(CommonODataProperty property);
 
   /**
    * Adds the given property to the given complex value.

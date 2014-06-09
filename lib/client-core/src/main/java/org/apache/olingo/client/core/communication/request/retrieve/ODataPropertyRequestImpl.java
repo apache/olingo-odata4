@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -27,6 +28,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataProperty
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Property;
@@ -80,11 +82,13 @@ public class ODataPropertyRequestImpl<T extends CommonODataProperty>
     public T getBody() {
       if (property == null) {
         try {
-          final ResWrap<Property> resource = odataClient.getDeserializer().toProperty(
-                  res.getEntity().getContent(), ODataFormat.fromString(getContentType()));
+          final ResWrap<Property> resource = odataClient.getDeserializer(ODataFormat.fromString(getContentType()))
+              .toProperty(res.getEntity().getContent());
 
           property = (T) odataClient.getBinder().getODataProperty(resource);
         } catch (IOException e) {
+          throw new HttpClientException(e);
+        } catch (final ODataDeserializerException e) {
           throw new HttpClientException(e);
         } finally {
           this.close();

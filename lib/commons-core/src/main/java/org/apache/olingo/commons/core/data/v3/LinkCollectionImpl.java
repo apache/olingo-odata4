@@ -16,39 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.data;
+package org.apache.olingo.commons.core.data.v3;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.v3.LinkCollection;
 
-public abstract class AbstractEntitySet extends AbstractODataObject implements EntitySet {
+public class LinkCollectionImpl implements LinkCollection {
 
-  private static final long serialVersionUID = -9159884750819150969L;
-
-  private Integer count;
-
-  private final List<Entity> entities = new ArrayList<Entity>();
-
+  private final List<URI> links = new ArrayList<URI>();
   private URI next;
+  private URI metadata;
 
-  private URI deltaLink;
+  /**
+   * Constructor.
+   */
+  public LinkCollectionImpl() {
+  }
 
-  @Override
-  public void setCount(final Integer count) {
-    this.count = count;
+  /**
+   * Constructor.
+   *
+   * @param next next page link.
+   */
+  public LinkCollectionImpl(final URI next) {
+    this.next = next;
   }
 
   @Override
-  public Integer getCount() {
-    return count;
-  }
-
-  @Override
-  public List<Entity> getEntities() {
-    return entities;
+  public List<URI> getLinks() {
+    return links;
   }
 
   @Override
@@ -61,14 +59,20 @@ public abstract class AbstractEntitySet extends AbstractODataObject implements E
     return next;
   }
 
-  @Override
-  public URI getDeltaLink() {
-    return deltaLink;
+  /**
+   * Gets the metadata URI.
+   */
+  public URI getMetadata() {
+    return metadata;
   }
 
-  @Override
-  public void setDeltaLink(final URI deltaLink) {
-    this.deltaLink = deltaLink;
+  /**
+   * Sets the metadata URI.
+   *
+   * @param metadata metadata URI.
+   */
+  public void setMetadata(final URI metadata) {
+    this.metadata = metadata;
   }
 
 }

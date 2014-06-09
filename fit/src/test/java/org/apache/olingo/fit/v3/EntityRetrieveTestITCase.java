@@ -43,7 +43,6 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.core.op.ResourceFactory;
 import org.junit.Test;
 
 /**
@@ -79,8 +78,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
         final CommonODataEntity inline = ((ODataInlineEntity) link).getEntity();
         assertNotNull(inline);
 
-        debugEntity(client.getBinder().getEntity(
-                inline, ResourceFactory.entityClassForFormat(format == ODataPubFormat.ATOM)), "Just read");
+        debugEntity(client.getBinder().getEntity(inline), "Just read");
 
         final List<? extends CommonODataProperty> properties = inline.getProperties();
         assertEquals(2, properties.size());
@@ -126,8 +124,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
         final CommonODataEntitySet inline = ((ODataInlineEntitySet) link).getEntitySet();
         assertNotNull(inline);
 
-        debugEntitySet(client.getBinder().getEntitySet(inline, ResourceFactory.entitySetClassForFormat(
-                format == ODataPubFormat.ATOM)), "Just read");
+        debugEntitySet(client.getBinder().getEntitySet(inline), "Just read");
 
         found = true;
       }

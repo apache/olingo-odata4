@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.data.EntitySet;
@@ -32,7 +33,7 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.core.op.ResourceFactory;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 import org.junit.Test;
 
 public class EntitySetTest extends AbstractTest {
@@ -42,35 +43,34 @@ public class EntitySetTest extends AbstractTest {
     return v4Client;
   }
 
-  private void read(final ODataPubFormat format) throws IOException {
+  private void read(final ODataPubFormat format) throws IOException, ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("Customers." + getSuffix(format));
     final ODataEntitySet entitySet = getClient().getBinder().getODataEntitySet(
-            getClient().getDeserializer().toEntitySet(input, format));
+            getClient().getDeserializer(format).toEntitySet(input));
     assertNotNull(entitySet);
 
     assertEquals(2, entitySet.getEntities().size());
     assertNull(entitySet.getNext());
 
     final ODataEntitySet written = getClient().getBinder().getODataEntitySet(new ResWrap<EntitySet>((URI) null, null,
-            getClient().getBinder().getEntitySet(
-                    entitySet, ResourceFactory.entitySetClassForFormat(format == ODataPubFormat.ATOM))));
+            getClient().getBinder().getEntitySet(entitySet)));
     assertEquals(entitySet, written);
   }
 
   @Test
-  public void fromAtom() throws IOException {
+  public void fromAtom() throws Exception {
     read(ODataPubFormat.ATOM);
   }
 
   @Test
-  public void fromJSON() throws IOException {
+  public void fromJSON() throws Exception {
     read(ODataPubFormat.JSON);
   }
 
-  private void ref(final ODataPubFormat format) {
+  private void ref(final ODataPubFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("collectionOfEntityReferences." + getSuffix(format));
     final ODataEntitySet entitySet = getClient().getBinder().getODataEntitySet(
-            getClient().getDeserializer().toEntitySet(input, format));
+            getClient().getDeserializer(format).toEntitySet(input));
     assertNotNull(entitySet);
 
     for (ODataEntity entity : entitySet.getEntities()) {
@@ -79,18 +79,17 @@ public class EntitySetTest extends AbstractTest {
     entitySet.setCount(entitySet.getEntities().size());
 
     final ODataEntitySet written = getClient().getBinder().getODataEntitySet(new ResWrap<EntitySet>((URI) null, null,
-            getClient().getBinder().getEntitySet(
-                    entitySet, ResourceFactory.entitySetClassForFormat(format == ODataPubFormat.ATOM))));
+            getClient().getBinder().getEntitySet(entitySet)));
     assertEquals(entitySet, written);
   }
 
   @Test
-  public void atomRef() {
+  public void atomRef() throws Exception {
     ref(ODataPubFormat.ATOM);
   }
 
   @Test
-  public void jsonRef() {
+  public void jsonRef() throws Exception {
     ref(ODataPubFormat.JSON);
   }
 }

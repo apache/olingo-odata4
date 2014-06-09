@@ -36,7 +36,6 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.core.op.ResourceFactory;
 import org.junit.Test;
 
 /**
@@ -111,8 +110,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
 
     assertNotNull(feed);
 
-    debugEntitySet(client.getBinder().getEntitySet(feed, ResourceFactory.entitySetClassForFormat(
-            ODataPubFormat.ATOM == format)), "Just retrieved feed");
+    debugEntitySet(client.getBinder().getEntitySet(feed), "Just retrieved feed");
 
     assertEquals(2, feed.getEntities().size());
     assertNotNull(feed.getNext());

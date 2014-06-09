@@ -19,18 +19,19 @@
 package org.apache.olingo.client.api.op;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Map;
+
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 
 /**
  * OData reader.
@@ -39,7 +40,7 @@ import org.apache.olingo.commons.api.format.ODataPubFormat;
  * <br/>
  * This class provides method helpers to de-serialize an entire entity set, a set of entities or a single entity.
  */
-public interface CommonODataReader extends Serializable {
+public interface CommonODataReader {
 
   /**
    * Parses a stream into metadata representation.
@@ -64,8 +65,9 @@ public interface CommonODataReader extends Serializable {
    * @param input stream to de-serialize.
    * @param format de-serialize as XML or JSON
    * @return List of URIs.
+   * @throws ODataDeserializerException 
    */
-  ODataServiceDocument readServiceDocument(InputStream input, ODataFormat format);
+  ODataServiceDocument readServiceDocument(InputStream input, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * De-Serializes a stream into an OData entity set.
@@ -73,8 +75,9 @@ public interface CommonODataReader extends Serializable {
    * @param input stream to de-serialize.
    * @param format de-serialize format
    * @return de-serialized entity set.
+   * @throws ODataDeserializerException 
    */
-  CommonODataEntitySet readEntitySet(InputStream input, ODataPubFormat format);
+  CommonODataEntitySet readEntitySet(InputStream input, ODataPubFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a stream taking care to de-serializes the first OData entity found.
@@ -82,8 +85,9 @@ public interface CommonODataReader extends Serializable {
    * @param input stream to de-serialize.
    * @param format de-serialize format
    * @return entity de-serialized.
+   * @throws ODataDeserializerException 
    */
-  CommonODataEntity readEntity(InputStream input, ODataPubFormat format);
+  CommonODataEntity readEntity(InputStream input, ODataPubFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a stream taking care to de-serialize the first OData entity property found.
@@ -91,17 +95,19 @@ public interface CommonODataReader extends Serializable {
    * @param input stream to de-serialize.
    * @param format de-serialize as XML or JSON
    * @return OData entity property de-serialized.
+   * @throws ODataDeserializerException 
    */
-  CommonODataProperty readProperty(InputStream input, ODataFormat format);
+  CommonODataProperty readProperty(InputStream input, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a stream into an OData error.
    *
    * @param inputStream stream to de-serialize.
-   * @param isXML 'TRUE' if the error is in XML format.
+   * @param format format
    * @return OData error.
+   * @throws ODataDeserializerException 
    */
-  ODataError readError(InputStream inputStream, boolean isXML);
+  ODataError readError(InputStream inputStream, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a stream into the object type specified by the given reference.
@@ -111,6 +117,7 @@ public interface CommonODataReader extends Serializable {
    * @param format format
    * @param reference reference.
    * @return read object.
+   * @throws ODataDeserializerException 
    */
-  <T> ResWrap<T> read(InputStream src, String format, Class<T> reference);
+  <T> ResWrap<T> read(InputStream src, String format, Class<T> reference) throws ODataDeserializerException;
 }

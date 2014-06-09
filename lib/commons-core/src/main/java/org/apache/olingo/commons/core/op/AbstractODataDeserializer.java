@@ -18,109 +18,84 @@
  */
 package org.apache.olingo.commons.core.op;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.net.URI;
+
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.op.CommonODataDeserializer;
+import org.apache.olingo.commons.api.op.ODataDeserializer;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 import org.apache.olingo.commons.core.data.AtomDeserializer;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.core.data.AtomEntityImpl;
-import org.apache.olingo.commons.core.data.AtomEntitySetImpl;
-import org.apache.olingo.commons.core.data.AtomPropertyImpl;
-import org.apache.olingo.commons.core.data.JSONEntityImpl;
-import org.apache.olingo.commons.core.data.JSONEntitySetImpl;
-import org.apache.olingo.commons.core.data.JSONODataErrorImpl;
-import org.apache.olingo.commons.core.data.JSONPropertyImpl;
-import org.apache.olingo.commons.core.data.XMLODataErrorImpl;
+import org.apache.olingo.commons.core.data.JsonDeserializer;
 
-public abstract class AbstractODataDeserializer extends AbstractJacksonTool implements CommonODataDeserializer {
+import com.fasterxml.aalto.stax.InputFactoryImpl;
+import com.fasterxml.aalto.stax.OutputFactoryImpl;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
+import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
-  private static final long serialVersionUID = -4244158979195609909L;
+public abstract class AbstractODataDeserializer {
 
-  private final AtomDeserializer atomDeserializer;
+  protected final ODataServiceVersion version;
+  protected final ODataDeserializer deserializer;
 
-  public AbstractODataDeserializer(final ODataServiceVersion version) {
-    super(version);
-
-    this.atomDeserializer = new AtomDeserializer(version);
-  }
-
-  @Override
-  public ResWrap<EntitySet> toEntitySet(final InputStream input, final ODataPubFormat format) {
-    return format == ODataPubFormat.ATOM
-            ? this.<EntitySet, AtomEntitySetImpl>atom(input, AtomEntitySetImpl.class)
-            : this.<EntitySet, JSONEntitySetImpl>json(input, JSONEntitySetImpl.class);
-  }
-
-  @Override
-  public ResWrap<Entity> toEntity(final InputStream input, final ODataPubFormat format) {
-    return format == ODataPubFormat.ATOM
-            ? this.<Entity, AtomEntityImpl>atom(input, AtomEntityImpl.class)
-            : this.<Entity, JSONEntityImpl>json(input, JSONEntityImpl.class);
-  }
-
-  @Override
-  public ResWrap<Property> toProperty(final InputStream input, final ODataFormat format) {
-    return format == ODataFormat.XML
-            ? this.<Property, AtomPropertyImpl>atom(input, AtomPropertyImpl.class)
-            : this.<Property, JSONPropertyImpl>json(input, JSONPropertyImpl.class);
-  }
-
-  @Override
-  public ODataError toError(final InputStream input, final boolean isXML) {
-    return isXML
-            ? this.<ODataError, XMLODataErrorImpl>atom(input, XMLODataErrorImpl.class).getPayload()
-            : this.<ODataError, JSONODataErrorImpl>json(input, JSONODataErrorImpl.class).getPayload();
-  }
-
-  /*
-   * ------------------ Protected methods ------------------
-   */
-  protected <T, V extends T> ResWrap<T> atom(final InputStream input, final Class<V> reference) {
-    try {
-      return atomDeserializer.<T, V>read(input, reference);
-    } catch (Exception e) {
-      throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
+  public AbstractODataDeserializer(final ODataServiceVersion version, final Format format) {
+    this.version = version;
+    if (format == ODataFormat.XML || format == ODataPubFormat.ATOM) {
+      deserializer = new AtomDeserializer(version);
+    } else {
+      deserializer = new JsonDeserializer(version, false);
     }
   }
 
-  @SuppressWarnings("unchecked")
-  protected <T, V extends T> ResWrap<T> xml(final InputStream input, final Class<V> reference) {
-    try {
-      final T obj = getXmlMapper().readValue(input, new TypeReference<V>() {
-        @Override
-        public Type getType() {
-          return reference;
-        }
-      });
-
-      return obj instanceof ResWrap ? (ResWrap<T>) obj : new ResWrap<T>((URI) null, null, obj);
-    } catch (Exception e) {
-      throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
-    }
+  public ResWrap<EntitySet> toEntitySet(final InputStream input) throws ODataDeserializerException {
+    return deserializer.toEntitySet(input);
   }
 
-  @SuppressWarnings("unchecked")
-  protected <T, V extends T> ResWrap<T> json(final InputStream input, final Class<V> reference) {
-    try {
-      final T obj = getObjectMapper().readValue(input, new TypeReference<V>() {
-        @Override
-        public Type getType() {
-          return reference;
-        }
-      });
+  public ResWrap<Entity> toEntity(final InputStream input) throws ODataDeserializerException {
+    return deserializer.toEntity(input);
+  }
 
-      return obj instanceof ResWrap ? (ResWrap<T>) obj : new ResWrap<T>((URI) null, null, obj);
-    } catch (Exception e) {
-      throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
-    }
+  public ResWrap<Property> toProperty(final InputStream input) throws ODataDeserializerException {
+    return deserializer.toProperty(input);
+  }
+
+  public ODataError toError(final InputStream input) throws ODataDeserializerException {
+    return deserializer.toError(input);
+  }
+
+  protected XmlMapper getXmlMapper() {
+    final XmlMapper xmlMapper = new XmlMapper(
+        new XmlFactory(new InputFactoryImpl(), new OutputFactoryImpl()), new JacksonXmlModule());
+
+    xmlMapper.setInjectableValues(new InjectableValues.Std().
+        addValue(ODataServiceVersion.class, version).
+        addValue(Boolean.class, Boolean.FALSE));
+
+    xmlMapper.addHandler(new DeserializationProblemHandler() {
+      @Override
+      public boolean handleUnknownProperty(final DeserializationContext ctxt, final JsonParser jp,
+          final com.fasterxml.jackson.databind.JsonDeserializer<?> deserializer,
+          final Object beanOrClass, final String propertyName)
+          throws IOException, JsonProcessingException {
+
+        // skip any unknown property
+        ctxt.getParser().skipChildren();
+        return true;
+      }
+    });
+    return xmlMapper;
   }
 }

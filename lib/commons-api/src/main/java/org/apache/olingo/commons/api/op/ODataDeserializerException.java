@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,8 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.data;
+package org.apache.olingo.commons.api.op;
 
-public class XMLODataErrorImpl extends AbstractODataError {
+import org.apache.olingo.commons.api.ODataException;
 
+public class ODataDeserializerException extends ODataException {
+
+  private static final long serialVersionUID = -3236099963180859670L;
+
+  public ODataDeserializerException(final String msg) {
+    super(msg);
+  }
+
+  public ODataDeserializerException(final Throwable cause) {
+    super(cause);
+  }
+
+  public ODataDeserializerException(final String msg, final Throwable cause) {
+    super(msg, cause);
+  }
 }

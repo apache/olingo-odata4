@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,18 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.data;
+package org.apache.olingo.commons.api.op;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.apache.olingo.commons.api.ODataException;
 
-/**
- * A single property (primitive, complex or collection) represented via JSON.
- */
-@JsonSerialize(using = JSONPropertySerializer.class)
-@JsonDeserialize(using = JSONPropertyDeserializer.class)
-public class JSONPropertyImpl extends AbstractProperty {
+public class ODataSerializerException extends ODataException {
 
-  private static final long serialVersionUID = 553414431536637434L;
+  private static final long serialVersionUID = -3236099963180859670L;
 
+  public ODataSerializerException(final String msg) {
+    super(msg);
+  }
+
+  public ODataSerializerException(final Throwable cause) {
+    super(cause);
+  }
+
+  public ODataSerializerException(final String msg, final Throwable cause) {
+    super(msg, cause);
+  }
 }
