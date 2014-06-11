@@ -89,7 +89,7 @@ public class ODataLinkCollectionRequestImpl extends AbstractODataRetrieveRequest
         } catch (IOException e) {
           throw new HttpClientException(e);
         } catch (final ODataDeserializerException e) {
-          throw new HttpClientException(e);
+          throw new IllegalArgumentException(e);
         } finally {
           this.close();
         }

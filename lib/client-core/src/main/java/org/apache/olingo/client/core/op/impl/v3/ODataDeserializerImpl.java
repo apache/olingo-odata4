@@ -36,14 +36,15 @@ import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.op.ODataDeserializerException;
 import org.apache.olingo.commons.core.data.AtomDeserializer;
+import org.apache.olingo.commons.core.data.JSONLinkCollectionDeserializer;
 import org.apache.olingo.commons.core.op.AbstractODataDeserializer;
 
 public class ODataDeserializerImpl extends AbstractODataDeserializer implements ODataDeserializer {
 
   private final Format format;
 
-  public ODataDeserializerImpl(final ODataServiceVersion version, final Format format) {
-    super(version, format);
+  public ODataDeserializerImpl(final ODataServiceVersion version, final boolean serverMode, final Format format) {
+    super(version, serverMode, format);
     this.format = format;
   }
 
@@ -68,7 +69,7 @@ public class ODataDeserializerImpl extends AbstractODataDeserializer implements 
     try {
       return format == ODataFormat.XML ?
           new AtomDeserializer(version).linkCollection(input) :
-          null; //json(input, LinkCollection.class);
+          new JSONLinkCollectionDeserializer(version, false).toLinkCollection(input);
     } catch (final XMLStreamException e) {
       throw new ODataDeserializerException(e);
     }

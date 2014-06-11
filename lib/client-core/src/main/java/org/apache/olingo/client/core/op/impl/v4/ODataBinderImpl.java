@@ -279,15 +279,14 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
   @Override
   public ODataProperty getODataProperty(final ResWrap<Property> resource) {
+    final Property payload = resource.getPayload();
     final EdmTypeInfo typeInfo = buildTypeInfo(resource.getContextURL(), resource.getMetadataETag(),
-            resource.getPayload().getName(), resource.getPayload().getType());
+        payload.getName(), payload.getType());
 
-    final ODataProperty property = new ODataPropertyImpl(resource.getPayload().getName(),
-            getODataValue(typeInfo == null
-                    ? null
-                    : typeInfo.getFullQualifiedName(),
-                    resource.getPayload(), resource.getContextURL(), resource.getMetadataETag()));
-    odataAnnotations(resource.getPayload(), property);
+    final ODataProperty property = new ODataPropertyImpl(payload.getName(),
+        getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
+            payload, resource.getContextURL(), resource.getMetadataETag()));
+    odataAnnotations(payload, property);
 
     return property;
   }

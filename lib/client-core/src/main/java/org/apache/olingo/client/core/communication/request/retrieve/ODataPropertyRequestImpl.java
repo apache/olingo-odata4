@@ -89,7 +89,7 @@ public class ODataPropertyRequestImpl<T extends CommonODataProperty>
         } catch (IOException e) {
           throw new HttpClientException(e);
         } catch (final ODataDeserializerException e) {
-          throw new HttpClientException(e);
+          throw new IllegalArgumentException(e);
         } finally {
           this.close();
         }

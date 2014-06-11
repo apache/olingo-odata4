@@ -73,6 +73,7 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -80,6 +81,7 @@ import org.apache.olingo.commons.api.op.ODataDeserializer;
 import org.apache.olingo.commons.api.op.ODataSerializer;
 import org.apache.olingo.commons.core.data.AtomSerializer;
 import org.apache.olingo.commons.core.data.EntityImpl;
+import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.JsonDeserializer;
 import org.apache.olingo.commons.core.data.JsonSerializer;
 import org.apache.olingo.commons.core.data.LinkImpl;
@@ -201,7 +203,7 @@ public abstract class AbstractServices {
     try {
       final boolean continueOnError = prefer.contains("odata.continue-on-error");
       return xml.createBatchResponse(
-              exploreMultipart(attachment.getAllAttachments(), BOUNDARY, continueOnError), BOUNDARY);
+              exploreMultipart(attachment.getAllAttachments(), BOUNDARY, continueOnError));
     } catch (IOException e) {
       return xml.createFaultResponse(Accept.XML.toString(version), e);
     }
@@ -638,17 +640,11 @@ public abstract class AbstractServices {
         final Accept contentTypeValue = Accept.parse(contentType, version);
         if (Accept.ATOM == contentTypeValue) {
           container = atomDeserializer.toEntity(IOUtils.toInputStream(entity, Constants.ENCODING));
-          entry = container.getPayload();
         } else {
-          final ResWrap<Entity> jcontainer = jsonDeserializer.toEntity(
-              IOUtils.toInputStream(entity, Constants.ENCODING));
-          entry = jcontainer.getPayload();
-
-          container = new ResWrap<Entity>(
-                  jcontainer.getContextURL(),
-                  jcontainer.getMetadataETag(),
-                  entry);
+          container = jsonDeserializer.toEntity(IOUtils.toInputStream(entity, Constants.ENCODING));
         }
+        entry = container.getPayload();
+        updateInlineEntities(entry);
 
         entityKey = xml.getDefaultEntryKey(entitySetName, entry);
       }
@@ -1116,7 +1112,7 @@ public abstract class AbstractServices {
       } catch (Exception e) {
         LOG.error("Error retrieving entity", e);
         return xml.createFaultResponse(accept, e);
-      }
+     }
     } else {
       return internal;
     }
@@ -1348,8 +1344,7 @@ public abstract class AbstractServices {
       } else {
         final Property pchanges = xml.readProperty(
                 Accept.parse(contentType, version),
-                IOUtils.toInputStream(changes, Constants.ENCODING),
-                entry.getType());
+                IOUtils.toInputStream(changes, Constants.ENCODING));
 
         toBeReplaced.setValue(pchanges.getValue());
       }
@@ -1710,26 +1705,16 @@ public abstract class AbstractServices {
           final ByteArrayOutputStream content = new ByteArrayOutputStream();
           final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
 
-          if (linkInfo.isFeed()) {
-            final ResWrap<EntitySet> container = atomDeserializer.toEntitySet(stream);
-
-            if (acceptType == Accept.ATOM) {
-              atomSerializer.write(writer, container);
-            } else {
-              jsonSerializer.write(writer, container);
-            }
-            writer.flush();
-            writer.close();
+          final ResWrap<?> container = linkInfo.isFeed() ?
+              atomDeserializer.toEntitySet(stream) :
+              atomDeserializer.toEntity(stream);
+          if (acceptType == Accept.ATOM) {
+            atomSerializer.write(writer, container);
           } else {
-            final ResWrap<Entity> container = atomDeserializer.toEntity(stream);
-            if (acceptType == Accept.ATOM) {
-              atomSerializer.write(writer, container);
-            } else {
-              jsonSerializer.write(writer, container);
-            }
-            writer.flush();
-            writer.close();
+            jsonSerializer.write(writer, container);
           }
+          writer.flush();
+          writer.close();
 
           final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
 
@@ -1797,20 +1782,17 @@ public abstract class AbstractServices {
 
     final ResWrap<Property> container = new ResWrap<Property>(
             URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-            + (version.compareTo(ODataServiceVersion.V40) >= 0
-            ? entitySetName + "(" + entityId + ")/" + path
-            : property.getType())),
+                + (version.compareTo(ODataServiceVersion.V40) >= 0 ?
+                    entitySetName + "(" + entityId + ")/" + path : property.getType())),
             entryContainer.getMetadataETag(),
             property);
 
-    return xml.createResponse(
-            null,
-            searchForValue
-            ? IOUtils.toInputStream(
-            container.getPayload().getValue() == null || container.getPayload().getValue().isNull()
-            ? StringUtils.EMPTY
-            : container.getPayload().getValue().asPrimitive().get(), Constants.ENCODING)
-            : utils.writeProperty(acceptType, container),
+    return xml.createResponse(null,
+            searchForValue ?
+                IOUtils.toInputStream(container.getPayload().getValue() == null
+                || container.getPayload().getValue().isNull() ? StringUtils.EMPTY :
+                  container.getPayload().getValue().asPrimitive().get(), Constants.ENCODING) :
+                utils.writeProperty(acceptType, container),
             Commons.getETag(Commons.getEntityBasePath(entitySetName, entityId), version),
             acceptType);
   }
@@ -1869,6 +1851,54 @@ public abstract class AbstractServices {
     }
 
     return utils;
+  }
+
+  protected void updateInlineEntities(Entity entity) {
+    final String type = entity.getType();
+    EntityType entityType;
+    Map<String, NavigationProperty> navProperties = Collections.emptyMap();
+    if (type != null && type.length() > 0) {
+      entityType = metadata.getEntityOrComplexType(type);
+      navProperties = entityType.getNavigationPropertyMap();
+    }
+
+    for (Property property : entity.getProperties()) {
+      if (navProperties.containsKey(property.getName())) {
+        Link alink = new LinkImpl();
+        alink.setTitle(property.getName());
+        alink.getAnnotations().addAll(property.getAnnotations());
+
+        alink.setType(navProperties.get(property.getName()).isEntitySet()
+                ? Constants.get(version, ConstantKey.ATOM_LINK_FEED)
+                : Constants.get(version, ConstantKey.ATOM_LINK_ENTRY));
+
+        alink.setRel(Constants.get(version, ConstantKey.ATOM_LINK_REL) + property.getName());
+
+        if (property.getValue().isComplex()) {
+          Entity inline = new EntityImpl();
+          inline.setType(navProperties.get(property.getName()).getType());
+          for (Property prop : property.getValue().asComplex().get()) {
+            inline.getProperties().add(prop);
+          }
+          alink.setInlineEntity(inline);
+
+        } else if (property.getValue().isCollection()) {
+          EntitySet inline = new EntitySetImpl();
+          for (Value value : property.getValue().asCollection().get()) {
+            Entity inlineEntity = new EntityImpl();
+            inlineEntity.setType(navProperties.get(property.getName()).getType());
+            for (Property prop : value.asComplex().get()) {
+              inlineEntity.getProperties().add(prop);
+            }
+            inline.getEntities().add(inlineEntity);
+          }
+          alink.setInlineEntitySet(inline);
+        } else {
+          throw new IllegalStateException("Invalid navigation property " + property);
+        }
+        entity.getNavigationLinks().add(alink);
+      }
+    }
   }
 
   protected void normalizeAtomEntry(final Entity entry, final String entitySetName, final String entityKey) {

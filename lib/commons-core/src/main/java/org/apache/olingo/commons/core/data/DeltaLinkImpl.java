@@ -23,12 +23,8 @@ import org.apache.olingo.commons.api.data.DeltaLink;
 
 public class DeltaLinkImpl extends AbstractAnnotatedObject implements DeltaLink {
 
-  private static final long serialVersionUID = 581329273399308799L;
-
   private URI source;
-
   private String relationship;
-
   private URI target;
 
   @Override

@@ -34,21 +34,21 @@ import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
+import org.apache.olingo.client.api.http.HttpClientException;
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.client.api.v4.ODataClient;
+import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.op.ODataDeserializerException;
 import org.apache.olingo.commons.api.op.ODataSerializerException;
-import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.api.v4.ODataClient;
-import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
-import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
 /**
  * This class implements an OData invoke operation request.
@@ -143,7 +143,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
       try {
         return odataClient.getWriter().writeEntity(tmp, getPOSTParameterFormat());
       } catch (final ODataSerializerException e) {
-        throw new HttpClientException(e);
+        throw new IllegalArgumentException(e);
       }
     }
 
@@ -228,7 +228,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
         } catch (IOException e) {
           throw new HttpClientException(e);
         } catch (final ODataDeserializerException e) {
-          throw new HttpClientException(e);
+          throw new IllegalArgumentException(e);
         } finally {
           this.close();
         }

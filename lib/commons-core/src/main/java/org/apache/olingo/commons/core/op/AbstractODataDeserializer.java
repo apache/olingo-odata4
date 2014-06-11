@@ -51,12 +51,12 @@ public abstract class AbstractODataDeserializer {
   protected final ODataServiceVersion version;
   protected final ODataDeserializer deserializer;
 
-  public AbstractODataDeserializer(final ODataServiceVersion version, final Format format) {
+  public AbstractODataDeserializer(final ODataServiceVersion version, final boolean serverMode, final Format format) {
     this.version = version;
     if (format == ODataFormat.XML || format == ODataPubFormat.ATOM) {
       deserializer = new AtomDeserializer(version);
     } else {
-      deserializer = new JsonDeserializer(version, false);
+      deserializer = new JsonDeserializer(version, serverMode);
     }
   }
 

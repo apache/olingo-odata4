@@ -65,14 +65,14 @@ public class FSManager {
 
   private final ODataServiceVersion version;
 
-  public static FSManager instance(final ODataServiceVersion version) throws Exception {
+  public static FSManager instance(final ODataServiceVersion version) throws IOException {
     if (!instance.containsKey(version)) {
       instance.put(version, new FSManager(version));
     }
     return instance.get(version);
   }
 
-  private FSManager(final ODataServiceVersion version) throws Exception {
+  private FSManager(final ODataServiceVersion version) throws IOException {
     this.version = version;
     fsManager = VFS.getManager();
 
@@ -150,15 +150,15 @@ public class FSManager {
     try {
       final FileObject fileObject = fsManager.resolveFile(fs + path);
 
-      if (!fileObject.exists()) {
+      if (fileObject.exists()) {
+        // return new in-memory content
+        return fileObject.getContent().getInputStream();
+      } else {
         LOG.warn("In-memory path '{}' not found", path);
         throw new NotFoundException();
       }
-
-      // return new in-memory content
-      return fileObject.getContent().getInputStream();
-    } catch (IOException e) {
-      throw new NotFoundException(e);
+    } catch (FileSystemException e) {
+      throw new NotFoundException();
     }
   }
 

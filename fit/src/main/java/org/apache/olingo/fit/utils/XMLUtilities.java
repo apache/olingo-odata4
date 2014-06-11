@@ -155,7 +155,7 @@ public class XMLUtilities extends AbstractUtilities {
       final Set<Attribute> attributes = new HashSet<Attribute>();
       attributes.add(eventFactory.createAttribute(new QName("title"), link));
       attributes.add(eventFactory.createAttribute(new QName("href"),
-              Commons.getLinksURI(version, entitySetName, entitykey, link)));
+              Commons.getLinksURI(entitySetName, entitykey, link)));
       attributes.add(eventFactory.createAttribute(new QName("rel"),
               Constants.get(version, ConstantKey.ATOM_LINK_REL) + link));
       attributes.add(eventFactory.createAttribute(new QName("type"),
@@ -727,9 +727,7 @@ public class XMLUtilities extends AbstractUtilities {
     return new SimpleEntry<Integer, XMLElement>(Integer.valueOf(depth - 1), getXmlElement(start, reader));
   }
 
-  public InputStream addAtomInlinecount(
-          final InputStream feed, final int count, final Accept accept)
-          throws Exception {
+  public InputStream addAtomInlinecount(final InputStream feed, final int count) throws Exception {
     final XMLEventReader reader = getEventReader(feed);
 
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();

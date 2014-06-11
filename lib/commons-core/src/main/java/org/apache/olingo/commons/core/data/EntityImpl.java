@@ -31,20 +31,15 @@ import org.apache.olingo.commons.api.domain.ODataOperation;
  */
 public class EntityImpl extends AbstractODataObject implements Entity {
 
-  private static final long serialVersionUID = 2127764552600969783L;
-
   private String eTag;
 
   private String type;
 
   private Link readLink;
-
   private Link editLink;
 
   private final List<Link> associationLinks = new ArrayList<Link>();
-
   private final List<Link> navigationLinks = new ArrayList<Link>();
-
   private final List<Link> mediaEditLinks = new ArrayList<Link>();
 
   private final List<ODataOperation> operations = new ArrayList<ODataOperation>();
@@ -52,9 +47,7 @@ public class EntityImpl extends AbstractODataObject implements Entity {
   private final List<Property> properties = new ArrayList<Property>();
 
   private URI mediaContentSource;
-
   private String mediaContentType;
-
   private String mediaETag;
 
   @Override

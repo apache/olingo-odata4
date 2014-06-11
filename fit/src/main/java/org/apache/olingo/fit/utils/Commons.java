@@ -122,20 +122,13 @@ public abstract class Commons {
             + (StringUtils.isNotBlank(entityKey) ? getEntityKey(entityKey) + File.separatorChar : "");
   }
 
-  public static String getLinksURI(
-          final ODataServiceVersion version,
-          final String entitySetName,
-          final String entityId,
-          final String linkName) throws IOException {
+  public static String getLinksURI(final String entitySetName, final String entityId, final String linkName)
+      throws IOException {
     return getEntityURI(entitySetName, entityId) + "/" + linkName;
   }
 
-  public static String getLinksPath(
-          final ODataServiceVersion version,
-          final String entitySetName,
-          final String entityId,
-          final String linkName,
-          final Accept accept) throws IOException {
+  public static String getLinksPath(final String entitySetName, final String entityId,
+      final String linkName, final Accept accept) throws IOException {
     return getLinksPath(ODataServiceVersion.V30, getEntityBasePath(entitySetName, entityId), linkName, accept);
 
   }

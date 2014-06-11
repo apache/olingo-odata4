@@ -27,12 +27,8 @@ import org.apache.olingo.commons.core.data.EntitySetImpl;
 
 public class DeltaImpl extends EntitySetImpl implements Delta {
 
-  private static final long serialVersionUID = 4576771708961553195L;
-
   private final List<DeletedEntity> deletedEntities = new ArrayList<DeletedEntity>();
-
   private final List<DeltaLink> addedLinks = new ArrayList<DeltaLink>();
-
   private final List<DeltaLink> deletedLinks = new ArrayList<DeltaLink>();
 
   @Override

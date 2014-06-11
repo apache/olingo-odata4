@@ -134,7 +134,7 @@ public class V4Services extends AbstractServices {
 
         return xml.createResponse(feed, null, Accept.JSON_FULLMETA);
       } else {
-        throw new Exception("Unexpected crossjoin pattern");
+        throw new IOException("Unexpected crossjoin pattern");
       }
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.JSON.toString(version), e);

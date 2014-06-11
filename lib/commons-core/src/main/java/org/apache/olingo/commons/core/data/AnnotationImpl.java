@@ -23,12 +23,8 @@ import org.apache.olingo.commons.api.data.Value;
 
 public class AnnotationImpl extends AbstractAnnotatedObject implements Annotation {
 
-  private static final long serialVersionUID = -2532246000091187020L;
-
   private String term;
-
   private String type;
-
   private Value value;
 
   @Override

@@ -102,7 +102,7 @@ public class JsonSerializer implements ODataSerializer {
       } else if (obj instanceof Entity) {
         new JSONEntitySerializer(version, serverMode).doContainerSerialize((ResWrap<Entity>) container, json);
       } else if (obj instanceof Property) {
-        new JSONPropertySerializer(version, serverMode).doSerialize((Property) obj, json);
+        new JSONPropertySerializer(version, serverMode).doContainerSerialize((ResWrap<Property>) container, json);
       } else if (obj instanceof Link) {
         link((Link) obj, json);
       }

@@ -25,9 +25,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.op.ODataDeserializerException;
@@ -98,7 +97,7 @@ public class ODataEntitySetRequestImpl<ES extends CommonODataEntitySet>
 
           entitySet = (ES) odataClient.getBinder().getODataEntitySet(resource);
         } catch (final ODataDeserializerException e) {
-          throw new HttpClientException(e);
+          throw new IllegalArgumentException(e);
         } finally {
           this.close();
         }

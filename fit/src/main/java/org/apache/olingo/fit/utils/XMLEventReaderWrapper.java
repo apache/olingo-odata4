@@ -19,13 +19,16 @@
 package org.apache.olingo.fit.utils;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
@@ -43,7 +46,8 @@ public class XMLEventReaderWrapper implements XMLEventReader {
 
   private XMLEvent nextGivenEvent = null;
 
-  public XMLEventReaderWrapper(final InputStream stream, final ODataServiceVersion version) throws Exception {
+  public XMLEventReaderWrapper(final InputStream stream, final ODataServiceVersion version)
+      throws IOException, XMLStreamException {
     final StringBuilder startBuilder = new StringBuilder();
     startBuilder.append("<").append(CONTENT).
             append(" xmlns:m").append("=\"").append(Constants.get(version, ConstantKey.METADATA_NS)).append("\"").

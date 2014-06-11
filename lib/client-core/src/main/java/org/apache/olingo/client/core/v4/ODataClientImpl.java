@@ -115,7 +115,7 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
 
   @Override
   public ODataDeserializer getDeserializer(final Format format) {
-    return new ODataDeserializerImpl(getServiceVersion(), format);
+    return new ODataDeserializerImpl(getServiceVersion(), false, format);
   }
 
   @Override

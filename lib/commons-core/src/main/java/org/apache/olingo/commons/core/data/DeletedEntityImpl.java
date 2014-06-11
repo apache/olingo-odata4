@@ -23,10 +23,7 @@ import org.apache.olingo.commons.api.data.DeletedEntity;
 
 public class DeletedEntityImpl extends AbstractAnnotatedObject implements DeletedEntity {
 
-  private static final long serialVersionUID = 2075093398299488510L;
-
   private URI id;
-
   private Reason reason;
 
   @Override

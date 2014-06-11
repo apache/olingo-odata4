@@ -21,9 +21,11 @@ package org.apache.olingo.commons.core.data.v3;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.commons.api.data.v3.LinkCollection;
 
-public class LinkCollectionImpl implements LinkCollection {
+import org.apache.olingo.commons.api.data.v3.LinkCollection;
+import org.apache.olingo.commons.core.data.AbstractAnnotatedObject;
+
+public class LinkCollectionImpl extends AbstractAnnotatedObject implements LinkCollection {
 
   private final List<URI> links = new ArrayList<URI>();
   private URI next;

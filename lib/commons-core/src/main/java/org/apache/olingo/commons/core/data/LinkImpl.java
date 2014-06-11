@@ -24,20 +24,12 @@ import org.apache.olingo.commons.api.data.Link;
 
 public class LinkImpl extends AbstractAnnotatedObject implements Link {
 
-  private static final long serialVersionUID = -3449344217160035501L;
-
   private String title;
-
   private String rel;
-
   private String href;
-
   private String type;
-
   private String mediaETag;
-
   private Entity entity;
-
   private EntitySet entitySet;
 
   @Override

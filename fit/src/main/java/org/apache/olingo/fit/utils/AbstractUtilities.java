@@ -100,7 +100,7 @@ public abstract class AbstractUtilities {
     this.fsManager = FSManager.instance(version);
     atomDeserializer = new FITAtomDeserializer(version);
     jsonDeserializer = new JsonDeserializer(version, true);
-    atomSerializer = new AtomSerializer(version);
+    atomSerializer = new AtomSerializer(version, true);
     jsonSerializer = new JsonSerializer(version, true);
   }
 
@@ -116,7 +116,6 @@ public abstract class AbstractUtilities {
    * @param is
    * @param links links to be added.
    * @return
-   * @throws IOException
    */
   protected abstract InputStream addLinks(
       final String entitySetName, final String entitykey, final InputStream is, final Set<String> links)
@@ -128,6 +127,7 @@ public abstract class AbstractUtilities {
    * @param is
    * @return
    * @throws IOException
+   * @throws XMLStreamException 
    */
   protected abstract Set<String> retrieveAllLinkNames(final InputStream is) throws Exception;
 
@@ -137,10 +137,8 @@ public abstract class AbstractUtilities {
    * @param entitySetName
    * @param is
    * @return
-   * @throws IOException
    */
-  protected abstract NavigationLinks retrieveNavigationInfo(
-      final String entitySetName, final InputStream is)
+  protected abstract NavigationLinks retrieveNavigationInfo(final String entitySetName, final InputStream is)
       throws Exception;
 
   /**
@@ -151,7 +149,6 @@ public abstract class AbstractUtilities {
    * @param is
    * @param links
    * @return
-   * @throws IOException
    */
   protected abstract InputStream normalizeLinks(
       final String entitySetName, final String entityKey, final InputStream is, final NavigationLinks links)
@@ -219,13 +216,13 @@ public abstract class AbstractUtilities {
     Set<String> linksToBeKept;
     try {
       linksToBeKept = new HashSet<String>(navigationProperties.keySet());
-    } catch (Exception e) {
+    } catch (NullPointerException e) {
       linksToBeKept = Collections.<String> emptySet();
     }
 
     for (String availableLink : new HashSet<String>(linksToBeKept)) {
       try {
-        fsManager.resolve(Commons.getLinksPath(version, entitySetName, key, availableLink, Accept.JSON_FULLMETA));
+        fsManager.resolve(Commons.getLinksPath(entitySetName, key, availableLink, Accept.JSON_FULLMETA));
       } catch (Exception e) {
         linksToBeKept.remove(availableLink);
       }
@@ -350,7 +347,7 @@ public abstract class AbstractUtilities {
       final String entitySetName,
       final String entityKey,
       final String linkName,
-      final Collection<String> links) throws IOException {
+      final Collection<String> links) throws Exception {
 
     final HashSet<String> uris = new HashSet<String>();
 
@@ -371,7 +368,7 @@ public abstract class AbstractUtilities {
 
   public void putLinksInMemory(
       final String basePath, final String entitySetName, final String linkName, final Collection<String> uris)
-      throws IOException {
+      throws Exception {
 
     fsManager.putInMemory(
         Commons.getLinksAsJSON(version, entitySetName, new SimpleEntry<String, Collection<String>>(linkName, uris)),
@@ -416,7 +413,7 @@ public abstract class AbstractUtilities {
     return createResponse(null, entity, etag, accept, null);
   }
 
-  public Response createBatchResponse(final InputStream stream, final String boundary) {
+  public Response createBatchResponse(final InputStream stream) {
     final Response.ResponseBuilder builder = version.compareTo(ODataServiceVersion.V30) <= 0
         ? Response.accepted(stream)
         : Response.ok(stream);
@@ -590,8 +587,7 @@ public abstract class AbstractUtilities {
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
   }
 
-  public Property readProperty(final Accept accept, final InputStream property, final String entryType)
-      throws ODataDeserializerException {
+  public Property readProperty(final Accept accept, final InputStream property) throws ODataDeserializerException {
     return (Accept.ATOM == accept || Accept.XML == accept ?
         atomDeserializer.toProperty(property) : jsonDeserializer.toProperty(property))
         .getPayload();
@@ -611,14 +607,14 @@ public abstract class AbstractUtilities {
   }
 
   private String getDefaultEntryKey(final String entitySetName, final Entity entry, final String propertyName)
-      throws Exception {
+      throws IOException {
 
     String res;
     if (entry.getProperty(propertyName) == null) {
       if (Commons.SEQUENCE.containsKey(entitySetName)) {
         res = String.valueOf(Commons.SEQUENCE.get(entitySetName) + 1);
       } else {
-        throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
+        throw new IOException(String.format("Unable to retrieve entity key value for %s", entitySetName));
       }
     } else {
       res = entry.getProperty(propertyName).getValue().asPrimitive().get();
@@ -639,7 +635,7 @@ public abstract class AbstractUtilities {
             productID = Commons.SEQUENCE.get(entitySetName) + 1;
             res = "OrderID=1" + ",ProductID=" + String.valueOf(productID);
           } else {
-            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
+            throw new IOException(String.format("Unable to retrieve entity key value for %s", entitySetName));
           }
         } else {
           productID = Integer.valueOf(entity.getProperty("OrderID").getValue().asPrimitive().get());
@@ -654,7 +650,7 @@ public abstract class AbstractUtilities {
             messageId = Commons.SEQUENCE.get(entitySetName) + 1;
             res = "FromUsername=1" + ",MessageId=" + String.valueOf(messageId);
           } else {
-            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
+            throw new IOException(String.format("Unable to retrieve entity key value for %s", entitySetName));
           }
         } else {
           messageId = Integer.valueOf(entity.getProperty("MessageId").getValue().asPrimitive().get());
@@ -697,7 +693,7 @@ public abstract class AbstractUtilities {
             productDetailId = Commons.SEQUENCE.get(entitySetName) + 1;
             res = "ProductID=" + String.valueOf(productId) + ",ProductDetailID=" + String.valueOf(productDetailId);
           } else {
-            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
+            throw new IOException(String.format("Unable to retrieve entity key value for %s", entitySetName));
           }
           Commons.SEQUENCE.put(entitySetName, productDetailId);
         } else {
@@ -715,7 +711,7 @@ public abstract class AbstractUtilities {
       } else if ("People".equals(entitySetName)) {
         res = getDefaultEntryKey(entitySetName, entity, "PersonID");
       } else {
-        throw new Exception(String.format("EntitySet '%s' not found", entitySetName));
+        throw new IOException(String.format("EntitySet '%s' not found", entitySetName));
       }
 
       return res;
@@ -740,7 +736,7 @@ public abstract class AbstractUtilities {
    */
   public LinkInfo readLinks(
       final String entitySetName, final String entityId, final String linkName, final Accept accept)
-      throws Exception {
+          throws Exception {
 
     final String basePath = getLinksBasePath(entitySetName, entityId);
 
@@ -857,9 +853,11 @@ public abstract class AbstractUtilities {
       throws Exception;
 
   protected abstract InputStream replaceLink(
-      final InputStream toBeChanged, final String linkName, final InputStream replacement) throws Exception;
+      final InputStream toBeChanged, final String linkName, final InputStream replacement)
+          throws Exception;
 
-  public abstract InputStream selectEntity(final InputStream entity, final String[] propertyNames) throws Exception;
+  public abstract InputStream selectEntity(final InputStream entity, final String[] propertyNames)
+      throws Exception;
 
   protected abstract Accept getDefaultFormat();
 
@@ -869,16 +867,20 @@ public abstract class AbstractUtilities {
       final InputStream content, final String title, final String href) throws Exception;
 
   public abstract InputStream addOperation(
-      final InputStream content, final String name, final String metaAnchor, final String href) throws Exception;
+      final InputStream content, final String name, final String metaAnchor, final String href)
+      throws Exception;
 
   protected abstract InputStream replaceProperty(
       final InputStream src, final InputStream replacement, final List<String> path, final boolean justValue)
       throws Exception;
 
-  protected abstract InputStream deleteProperty(final InputStream src, final List<String> path) throws Exception;
+  protected abstract InputStream deleteProperty(final InputStream src, final List<String> path)
+      throws Exception;
 
-  public abstract Map.Entry<String, List<String>> extractLinkURIs(final InputStream is) throws Exception;
+  public abstract Map.Entry<String, List<String>> extractLinkURIs(final InputStream is)
+      throws Exception;
 
   public abstract Map.Entry<String, List<String>> extractLinkURIs(
-      final String entitySetName, final String entityId, final String linkName) throws Exception;
+      final String entitySetName, final String entityId, final String linkName)
+          throws Exception;
 }

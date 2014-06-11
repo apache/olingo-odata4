@@ -44,8 +44,8 @@ public class ODataDeserializerImpl extends AbstractODataDeserializer implements 
 
   private final Format format;
 
-  public ODataDeserializerImpl(final ODataServiceVersion version, final Format format) {
-    super(version, format);
+  public ODataDeserializerImpl(final ODataServiceVersion version, final boolean serverMode, final Format format) {
+    super(version, serverMode, format);
     this.format = format;
   }
 

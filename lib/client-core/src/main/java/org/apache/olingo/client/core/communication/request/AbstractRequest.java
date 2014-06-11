@@ -50,12 +50,12 @@ public abstract class AbstractRequest {
     // If using and Edm enabled client, checks that the cached service root matches the request URI
     if (odataClient instanceof CommonEdmEnabledODataClient
         && !request.getURI().toASCIIString().startsWith(
-            ((CommonEdmEnabledODataClient) odataClient).getServiceRoot())) {
+            ((CommonEdmEnabledODataClient<?>) odataClient).getServiceRoot())) {
 
       throw new IllegalArgumentException(
           String.format("The current request URI %s does not match the configured service root %s",
               request.getURI().toASCIIString(),
-              ((CommonEdmEnabledODataClient) odataClient).getServiceRoot()));
+              ((CommonEdmEnabledODataClient<?>) odataClient).getServiceRoot()));
     }
   }
 

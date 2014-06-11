@@ -28,13 +28,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
-import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.op.ODataDeserializerException;
 
 /**
  * This class implements a generic OData request.
@@ -101,7 +100,7 @@ public class ODataRawRequestImpl extends AbstractODataRequest<ODataPubFormat>
         return odataClient.getReader().
                 read(new ByteArrayInputStream(obj), getContentType(), reference);
       } catch (final ODataDeserializerException e) {
-        throw new HttpClientException(e);
+        throw new IllegalArgumentException(e);
       }
     }
   }

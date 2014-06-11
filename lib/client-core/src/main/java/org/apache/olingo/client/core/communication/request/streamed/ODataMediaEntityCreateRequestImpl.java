@@ -28,13 +28,12 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.streamed.MediaEntityCreateStreamManager;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreateResponse;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.op.ODataDeserializerException;
 
 /**
@@ -128,7 +127,7 @@ public class ODataMediaEntityCreateRequestImpl<E extends CommonODataEntity>
 
           entity = (E) odataClient.getBinder().getODataEntity(resource);
         } catch (final ODataDeserializerException e) {
-          throw new HttpClientException(e);
+          throw new IllegalArgumentException(e);
         } finally {
           this.close();
         }

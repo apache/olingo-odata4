@@ -26,8 +26,6 @@ import org.apache.olingo.commons.api.data.EntitySet;
 
 public class EntitySetImpl extends AbstractODataObject implements EntitySet {
 
-  private static final long serialVersionUID = -9159884750819150969L;
-
   private Integer count;
 
   private final List<Entity> entities = new ArrayList<Entity>();

@@ -28,14 +28,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.op.ODataSerializerException;
-import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
-import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
 /**
  * This class implements an insert link OData request.
@@ -81,7 +80,7 @@ public class ODataLinkCreateRequestImpl extends AbstractODataBasicRequest<ODataL
     try {
       return odataClient.getWriter().writeLink(link, ODataFormat.fromString(getContentType()));
     } catch (final ODataSerializerException e) {
-      throw new HttpClientException(e);
+      throw new IllegalArgumentException(e);
     }
   }
 

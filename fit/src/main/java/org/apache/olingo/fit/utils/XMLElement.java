@@ -24,10 +24,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.slf4j.Logger;
@@ -66,7 +68,8 @@ public class XMLElement {
     return new ByteArrayInputStream(content.toByteArray());
   }
 
-  public XMLEventReader getContentReader(final ODataServiceVersion version) throws Exception {
+  public XMLEventReader getContentReader(final ODataServiceVersion version)
+      throws XMLStreamException, IOException {
     return new XMLEventReaderWrapper(getContent(), version);
   }
 
@@ -83,7 +86,7 @@ public class XMLElement {
     IOUtils.closeQuietly(content);
   }
 
-  public InputStream toStream() throws Exception {
+  public InputStream toStream() {
     InputStream res;
     try {
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -98,7 +101,10 @@ public class XMLElement {
       osw.close();
 
       res = new ByteArrayInputStream(bos.toByteArray());
-    } catch (Exception e) {
+    } catch (IOException e) {
+      LOG.error("Error serializing element", e);
+      res = null;
+    } catch (XMLStreamException e) {
       LOG.error("Error serializing element", e);
       res = null;
     }

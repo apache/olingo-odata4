@@ -23,12 +23,8 @@ import org.apache.olingo.commons.api.data.Value;
 
 public class PropertyImpl extends AbstractAnnotatedObject implements Property {
 
-  private static final long serialVersionUID = -7175704800169997060L;
-
   private String name;
-
   private String type;
-
   private Value value;
 
   @Override

@@ -20,12 +20,15 @@ package org.apache.olingo.commons.core.data;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.commons.api.data.Annotatable;
 import org.apache.olingo.commons.api.data.Annotation;
 
-public abstract class AbstractAnnotatedObject extends AbstractPayloadObject implements Annotatable {
-
-  private static final long serialVersionUID = 4163841499530412213L;
+public abstract class AbstractAnnotatedObject implements Annotatable {
 
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
@@ -34,4 +37,18 @@ public abstract class AbstractAnnotatedObject extends AbstractPayloadObject impl
     return annotations;
   }
 
+  @Override
+  public boolean equals(final Object obj) {
+    return EqualsBuilder.reflectionEquals(this, obj);
+  }
+
+  @Override
+  public int hashCode() {
+    return HashCodeBuilder.reflectionHashCode(this);
+  }
+
+  @Override
+  public String toString() {
+    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
 }

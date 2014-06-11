@@ -28,7 +28,6 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
-import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
@@ -84,7 +83,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
     try {
       return odataClient.getWriter().writeProperty(property, ODataFormat.fromString(getContentType()));
     } catch (final ODataSerializerException e) {
-      throw new HttpClientException(e);
+      throw new IllegalArgumentException(e);
     }
   }
 
@@ -122,7 +121,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
 
           property = odataClient.getBinder().getODataProperty(resource);
         } catch (final ODataDeserializerException e) {
-          throw new HttpClientException(e);
+          throw new IllegalArgumentException(e);
         } finally {
           this.close();
         }

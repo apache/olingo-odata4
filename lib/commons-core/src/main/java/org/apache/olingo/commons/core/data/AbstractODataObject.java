@@ -21,14 +21,10 @@ package org.apache.olingo.commons.core.data;
 import java.net.URI;
 import java.text.ParseException;
 
-abstract class AbstractODataObject extends AbstractAnnotatedObject {
-
-  private static final long serialVersionUID = -4391162864875546927L;
+public abstract class AbstractODataObject extends AbstractAnnotatedObject {
 
   private URI baseURI;
-
   private URI id;
-
   private String title;
 
   public URI getBaseURI() {

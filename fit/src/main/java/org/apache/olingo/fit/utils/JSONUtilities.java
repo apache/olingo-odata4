@@ -20,6 +20,7 @@ package org.apache.olingo.fit.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -73,21 +74,21 @@ public class JSONUtilities extends AbstractUtilities {
   @Override
   protected InputStream addLinks(
           final String entitySetName, final String entitykey, final InputStream is, final Set<String> links)
-          throws Exception {
+          throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
 
     for (String link : links) {
       srcNode.set(link + Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX),
-              new TextNode(Commons.getLinksURI(version, entitySetName, entitykey, link)));
+              new TextNode(Commons.getLinksURI(entitySetName, entitykey, link)));
     }
 
     return IOUtils.toInputStream(srcNode.toString(), Constants.ENCODING);
   }
 
   @Override
-  protected Set<String> retrieveAllLinkNames(InputStream is) throws Exception {
+  protected Set<String> retrieveAllLinkNames(InputStream is) throws IOException {
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
 
@@ -115,7 +116,7 @@ public class JSONUtilities extends AbstractUtilities {
 
   @Override
   protected NavigationLinks retrieveNavigationInfo(final String entitySetName, final InputStream is)
-          throws Exception {
+          throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
@@ -150,13 +151,10 @@ public class JSONUtilities extends AbstractUtilities {
     return links;
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   protected InputStream normalizeLinks(
           final String entitySetName, final String entityKey, final InputStream is, final NavigationLinks links)
-          throws Exception {
+          throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
 
@@ -191,9 +189,7 @@ public class JSONUtilities extends AbstractUtilities {
     return IOUtils.toInputStream(srcNode.toString(), Constants.ENCODING);
   }
 
-  public InputStream addJsonInlinecount(
-          final InputStream src, final int count, final Accept accept)
-          throws Exception {
+  public InputStream addJsonInlinecount(final InputStream src, final int count) throws Exception {
 
     final JsonNode srcNode = mapper.readTree(src);
 
@@ -208,7 +204,7 @@ public class JSONUtilities extends AbstractUtilities {
     return res;
   }
 
-  public InputStream wrapJsonEntities(final InputStream entities) throws Exception {
+  public InputStream wrapJsonEntities(final InputStream entities) throws IOException {
 
     final JsonNode node = mapper.readTree(entities);
 
@@ -237,7 +233,7 @@ public class JSONUtilities extends AbstractUtilities {
   }
 
   @Override
-  public InputStream selectEntity(final InputStream src, final String[] propertyNames) throws Exception {
+  public InputStream selectEntity(final InputStream src, final String[] propertyNames) throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
 
@@ -264,7 +260,7 @@ public class JSONUtilities extends AbstractUtilities {
   @Override
   public InputStream readEntities(
           final List<String> links, final String linkName, final String next, final boolean forceFeed)
-          throws Exception {
+          throws IOException {
 
     if (links.isEmpty()) {
       throw new NotFoundException();
@@ -312,7 +308,7 @@ public class JSONUtilities extends AbstractUtilities {
   @Override
   protected InputStream replaceLink(
           final InputStream toBeChanged, final String linkName, final InputStream replacement)
-          throws Exception {
+          throws IOException {
 
     final ObjectNode toBeChangedNode = (ObjectNode) mapper.readTree(toBeChanged);
     final ObjectNode replacementNode = (ObjectNode) mapper.readTree(replacement);
@@ -332,7 +328,7 @@ public class JSONUtilities extends AbstractUtilities {
   }
 
   @Override
-  protected Map<String, InputStream> getChanges(final InputStream src) throws Exception {
+  protected Map<String, InputStream> getChanges(final InputStream src) throws IOException {
     final Map<String, InputStream> res = new HashMap<String, InputStream>();
 
     final JsonNode srcObject = mapper.readTree(src);
@@ -348,15 +344,13 @@ public class JSONUtilities extends AbstractUtilities {
 
   @Override
   public Map.Entry<String, List<String>> extractLinkURIs(
-          final String entitySetName, final String entityId, final String linkName)
-          throws Exception {
+          final String entitySetName, final String entityId, final String linkName) throws Exception {
     final LinkInfo links = readLinks(entitySetName, entityId, linkName, Accept.JSON_FULLMETA);
     return extractLinkURIs(links.getLinks());
   }
 
   @Override
-  public Map.Entry<String, List<String>> extractLinkURIs(final InputStream is)
-          throws Exception {
+  public Map.Entry<String, List<String>> extractLinkURIs(final InputStream is) throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
@@ -383,7 +377,7 @@ public class JSONUtilities extends AbstractUtilities {
 
   @Override
   public InputStream addEditLink(
-          final InputStream content, final String title, final String href) throws Exception {
+          final InputStream content, final String title, final String href) throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(content);
     IOUtils.closeQuietly(content);
@@ -394,7 +388,7 @@ public class JSONUtilities extends AbstractUtilities {
 
   @Override
   public InputStream addOperation(final InputStream content, final String name, final String metaAnchor,
-          final String href) throws Exception {
+          final String href) throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(content);
     IOUtils.closeQuietly(content);
@@ -410,7 +404,7 @@ public class JSONUtilities extends AbstractUtilities {
   @Override
   public InputStream replaceProperty(
           final InputStream src, final InputStream replacement, final List<String> path, final boolean justValue)
-          throws Exception {
+          throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
     IOUtils.closeQuietly(src);
@@ -440,7 +434,7 @@ public class JSONUtilities extends AbstractUtilities {
   }
 
   @Override
-  public InputStream deleteProperty(final InputStream src, final List<String> path) throws Exception {
+  public InputStream deleteProperty(final InputStream src, final List<String> path) throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
     IOUtils.closeQuietly(src);
