@@ -37,8 +37,8 @@ import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
-import org.apache.olingo.commons.api.op.ODataSerializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.junit.Test;
 
 public class PropertyTest extends AbstractTest {

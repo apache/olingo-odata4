@@ -36,8 +36,8 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
-import org.apache.olingo.commons.api.op.ODataSerializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
 /**
  * This class implements an OData create request.

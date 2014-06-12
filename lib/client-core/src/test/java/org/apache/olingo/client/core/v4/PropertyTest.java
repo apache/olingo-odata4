@@ -32,8 +32,8 @@ import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
-import org.apache.olingo.commons.api.op.ODataSerializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.junit.Test;
 
 public class PropertyTest extends AbstractTest {

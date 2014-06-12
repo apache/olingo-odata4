@@ -34,7 +34,7 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.op.ODataSerializerException;
+import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
 /**
  * This class implements an update link OData request.

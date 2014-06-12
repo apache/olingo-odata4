@@ -33,7 +33,7 @@ import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.v4.ODataDelta;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ODataDelta, ODataPubFormat>
     implements ODataDeltaRequest {

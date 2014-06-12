@@ -31,7 +31,7 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.junit.Test;
 
 public class EntitySetTest extends AbstractTest {

@@ -25,9 +25,9 @@ import org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFacto
 import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.RetrieveRequestFactory;
-import org.apache.olingo.client.api.op.v3.ODataBinder;
-import org.apache.olingo.client.api.op.v3.ODataDeserializer;
-import org.apache.olingo.client.api.op.v3.ODataReader;
+import org.apache.olingo.client.api.serialization.v3.ODataBinder;
+import org.apache.olingo.client.api.serialization.v3.ODataDeserializer;
+import org.apache.olingo.client.api.serialization.v3.ODataReader;
 import org.apache.olingo.client.api.uri.v3.FilterFactory;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.api.v3.Configuration;
@@ -38,9 +38,9 @@ import org.apache.olingo.client.core.communication.request.batch.v3.BatchRequest
 import org.apache.olingo.client.core.communication.request.cud.v3.CUDRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.invoke.v3.InvokeRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.v3.RetrieveRequestFactoryImpl;
-import org.apache.olingo.client.core.op.impl.v3.ODataBinderImpl;
-import org.apache.olingo.client.core.op.impl.v3.ODataDeserializerImpl;
-import org.apache.olingo.client.core.op.impl.v3.ODataReaderImpl;
+import org.apache.olingo.client.core.serialization.v3.ODataBinderImpl;
+import org.apache.olingo.client.core.serialization.v3.ODataDeserializerImpl;
+import org.apache.olingo.client.core.serialization.v3.ODataReaderImpl;
 import org.apache.olingo.client.core.uri.v3.FilterFactoryImpl;
 import org.apache.olingo.client.core.uri.v3.URIBuilderImpl;
 import org.apache.olingo.commons.api.domain.v3.ODataObjectFactory;
@@ -48,10 +48,10 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.op.ODataSerializer;
-import org.apache.olingo.commons.core.data.AtomSerializer;
-import org.apache.olingo.commons.core.data.JsonSerializer;
+import org.apache.olingo.commons.api.serialization.ODataSerializer;
 import org.apache.olingo.commons.core.domain.v3.ODataObjectFactoryImpl;
+import org.apache.olingo.commons.core.serialization.AtomSerializer;
+import org.apache.olingo.commons.core.serialization.JsonSerializer;
 
 public class ODataClientImpl extends AbstractODataClient<UpdateType> implements ODataClient {
 

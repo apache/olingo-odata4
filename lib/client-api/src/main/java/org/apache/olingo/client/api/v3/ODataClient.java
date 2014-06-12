@@ -23,9 +23,9 @@ import org.apache.olingo.client.api.communication.request.batch.v3.BatchRequestF
 import org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.RetrieveRequestFactory;
-import org.apache.olingo.client.api.op.v3.ODataBinder;
-import org.apache.olingo.client.api.op.v3.ODataDeserializer;
-import org.apache.olingo.client.api.op.v3.ODataReader;
+import org.apache.olingo.client.api.serialization.v3.ODataBinder;
+import org.apache.olingo.client.api.serialization.v3.ODataDeserializer;
+import org.apache.olingo.client.api.serialization.v3.ODataReader;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.api.uri.v3.FilterFactory;
 import org.apache.olingo.commons.api.domain.v3.ODataObjectFactory;

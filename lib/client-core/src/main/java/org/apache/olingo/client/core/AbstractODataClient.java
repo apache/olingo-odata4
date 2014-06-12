@@ -21,8 +21,8 @@ package org.apache.olingo.client.core;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.cud.CommonUpdateType;
-import org.apache.olingo.client.api.op.ODataWriter;
-import org.apache.olingo.client.core.op.ODataWriterImpl;
+import org.apache.olingo.client.api.serialization.ODataWriter;
+import org.apache.olingo.client.core.serialization.ODataWriterImpl;
 
 public abstract class AbstractODataClient<UT extends CommonUpdateType> implements CommonODataClient<UT> {
 

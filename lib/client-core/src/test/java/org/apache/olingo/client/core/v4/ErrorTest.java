@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.client.core.AbstractTest;
 import org.junit.Test;
 

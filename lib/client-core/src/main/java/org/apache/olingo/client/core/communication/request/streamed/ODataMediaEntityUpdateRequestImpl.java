@@ -34,7 +34,7 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 /**
  * This class implements an OData Media Entity create request. Get instance by using ODataStreamedRequestFactory.

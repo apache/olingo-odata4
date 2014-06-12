@@ -26,8 +26,8 @@ import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
-import org.apache.olingo.commons.core.data.JsonDeserializer;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.core.serialization.JsonDeserializer;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;

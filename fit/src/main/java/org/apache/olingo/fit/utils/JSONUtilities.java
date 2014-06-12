@@ -36,7 +36,6 @@ import javax.ws.rs.NotFoundException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.op.InjectableSerializerProvider;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.metadata.NavigationProperty;
 

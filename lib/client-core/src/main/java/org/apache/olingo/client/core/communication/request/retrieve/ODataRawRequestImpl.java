@@ -33,7 +33,7 @@ import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 /**
  * This class implements a generic OData request.

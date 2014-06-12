@@ -37,7 +37,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.junit.Test;
 
 public class EntityTest extends AbstractTest {

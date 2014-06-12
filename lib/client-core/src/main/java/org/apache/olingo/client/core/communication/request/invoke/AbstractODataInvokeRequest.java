@@ -47,8 +47,8 @@ import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
-import org.apache.olingo.commons.api.op.ODataSerializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
 /**
  * This class implements an OData invoke operation request.

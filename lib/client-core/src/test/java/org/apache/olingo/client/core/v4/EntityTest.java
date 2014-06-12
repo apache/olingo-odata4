@@ -44,7 +44,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
 import org.junit.Test;

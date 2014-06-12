@@ -25,16 +25,16 @@ import org.apache.olingo.client.api.communication.request.cud.CommonCUDRequestFa
 import org.apache.olingo.client.api.communication.request.cud.CommonUpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.CommonRetrieveRequestFactory;
-import org.apache.olingo.client.api.op.ClientODataDeserializer;
-import org.apache.olingo.client.api.op.CommonODataBinder;
-import org.apache.olingo.client.api.op.CommonODataReader;
-import org.apache.olingo.client.api.op.ODataWriter;
+import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
+import org.apache.olingo.client.api.serialization.CommonODataBinder;
+import org.apache.olingo.client.api.serialization.CommonODataReader;
+import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.client.api.uri.CommonFilterFactory;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.domain.CommonODataObjectFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.Format;
-import org.apache.olingo.commons.api.op.ODataSerializer;
+import org.apache.olingo.commons.api.serialization.ODataSerializer;
 
 /**
  * Generic client interface (common to all supported OData protocol versions).

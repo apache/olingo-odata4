@@ -36,7 +36,7 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

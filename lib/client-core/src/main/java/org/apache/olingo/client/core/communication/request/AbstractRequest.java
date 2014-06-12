@@ -27,7 +27,7 @@ import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.data.ODataErrorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

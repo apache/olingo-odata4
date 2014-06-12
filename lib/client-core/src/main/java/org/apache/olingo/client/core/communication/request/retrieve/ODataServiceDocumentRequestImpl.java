@@ -29,7 +29,7 @@ import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 /**
  * This class implements an OData service document request.

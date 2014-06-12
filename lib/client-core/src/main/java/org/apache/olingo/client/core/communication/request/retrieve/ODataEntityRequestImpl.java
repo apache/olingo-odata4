@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 /**
  * This class implements an OData retrieve query request returning a single entity.

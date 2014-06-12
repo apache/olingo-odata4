@@ -41,9 +41,9 @@ import org.apache.commons.vfs2.VFS;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.op.ODataSerializerException;
-import org.apache.olingo.commons.core.data.AtomSerializer;
-import org.apache.olingo.commons.core.data.JsonSerializer;
+import org.apache.olingo.commons.api.serialization.ODataSerializerException;
+import org.apache.olingo.commons.core.serialization.AtomSerializer;
+import org.apache.olingo.commons.core.serialization.JsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -36,8 +36,8 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.op.ODataDeserializerException;
-import org.apache.olingo.commons.api.op.ODataSerializerException;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
 /**
  * This class implements an OData update entity property request.
