@@ -28,6 +28,7 @@ import java.net.URI;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.UUID;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.olingo.client.api.communication.header.HeaderName;
@@ -51,12 +52,12 @@ import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class MediaEntityTestITCase extends AbstractTestITCase {
 
-  private void read(final ODataClient client, final ODataPubFormat format) throws IOException {
+  private void read(final ODataClient client, final ODataFormat format) throws IOException {
     final URIBuilder builder = client.newURIBuilder(testDemoServiceRootURL).
             appendEntitySetSegment("Advertisements").
             appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7"));
@@ -82,20 +83,20 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void readAsAtom() throws IOException {
-    read(client, ODataPubFormat.ATOM);
+    read(client, ODataFormat.ATOM);
   }
 
   @Test
   public void readAsJSON() throws IOException {
-    read(ODataClientFactory.getEdmEnabledV4(testDemoServiceRootURL), ODataPubFormat.JSON);
+    read(ODataClientFactory.getEdmEnabledV4(testDemoServiceRootURL), ODataFormat.JSON);
   }
 
   @Test
   public void readAsJSONFull() throws IOException {
-    read(client, ODataPubFormat.JSON_FULL_METADATA);
+    read(client, ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void create(final ODataPubFormat format) throws IOException {
+  private void create(final ODataFormat format) throws IOException {
     final String random = RandomStringUtils.random(110);
     final InputStream input = IOUtils.toInputStream(random);
 
@@ -136,15 +137,15 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void createAsAtom() throws IOException {
-    create(ODataPubFormat.ATOM);
+    create(ODataFormat.ATOM);
   }
 
   @Test
   public void createAsJSON() throws IOException {
-    create(ODataPubFormat.JSON);
+    create(ODataFormat.JSON);
   }
 
-  private void update(final ODataPubFormat format) throws IOException, EdmPrimitiveTypeException {
+  private void update(final ODataFormat format) throws IOException, EdmPrimitiveTypeException {
     final URI uri = client.newURIBuilder(testDemoServiceRootURL).
             appendEntitySetSegment("Advertisements").
             appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7")).build();
@@ -172,11 +173,11 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void updateAsAtom() throws IOException, EdmPrimitiveTypeException {
-    update(ODataPubFormat.ATOM);
+    update(ODataFormat.ATOM);
   }
 
   @Test
   public void updateAsJSON() throws IOException, EdmPrimitiveTypeException {
-    update(ODataPubFormat.JSON);
+    update(ODataFormat.JSON);
   }
 }

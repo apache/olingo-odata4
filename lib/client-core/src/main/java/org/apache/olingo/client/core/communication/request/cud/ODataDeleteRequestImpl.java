@@ -20,21 +20,22 @@ package org.apache.olingo.client.core.communication.request.cud;
 
 import java.io.InputStream;
 import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * This class implements an OData delete request.
  */
-public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDeleteResponse, ODataPubFormat>
-        implements ODataDeleteRequest {
+public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDeleteResponse>
+    implements ODataDeleteRequest {
 
   /**
    * Constructor.
@@ -43,13 +44,16 @@ public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDelet
    * @param method HTTP method to be used
    * @param uri URI of the entity to be deleted.
    */
-  ODataDeleteRequestImpl(final CommonODataClient odataClient, final HttpMethod method, final URI uri) {
-    super(odataClient, ODataPubFormat.class, method, uri);
+  ODataDeleteRequestImpl(final CommonODataClient<?> odataClient, final HttpMethod method, final URI uri) {
+    super(odataClient, method, uri);
+  }
+
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultPubFormat();
   }
 
   /**
-   * {@inheritDoc }
-   * <p>
    * No payload: null will be returned.
    */
   @Override
@@ -57,9 +61,6 @@ public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDelet
     return null;
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public ODataDeleteResponse execute() {
     return new ODataDeleteResponseImpl(httpClient, doExecute());

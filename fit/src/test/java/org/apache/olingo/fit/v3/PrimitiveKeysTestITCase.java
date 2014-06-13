@@ -23,16 +23,16 @@ import static org.junit.Assert.assertNotNull;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class PrimitiveKeysTestITCase extends AbstractTestITCase {
 
-  private void readEntity(final String entityType, final Object key, final ODataPubFormat format) {
+  private void readEntity(final String entityType, final Object key, final ODataFormat format) {
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(
             client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment(entityType).
             appendKeySegment(key).
@@ -45,7 +45,7 @@ public class PrimitiveKeysTestITCase extends AbstractTestITCase {
     assertNotNull(entity.getProperty("Id"));
   }
 
-  private void readPrimitiveKeys(final ODataPubFormat format) {
+  private void readPrimitiveKeys(final ODataFormat format) {
     readEntity("EdmBooleanSet", Boolean.TRUE, format);
     readEntity("EdmByteSet", 255, format);
     readEntity("EdmDecimalSet", new BigDecimal("79228162514264337593543950335"), format);
@@ -60,11 +60,11 @@ public class PrimitiveKeysTestITCase extends AbstractTestITCase {
 
   @Test
   public void readEntityAsAtom() {
-    readPrimitiveKeys(ODataPubFormat.ATOM);
+    readPrimitiveKeys(ODataFormat.ATOM);
   }
 
   @Test
   public void readEntityAsJSON() {
-    readPrimitiveKeys(ODataPubFormat.JSON_FULL_METADATA);
+    readPrimitiveKeys(ODataFormat.JSON_FULL_METADATA);
   }
 }

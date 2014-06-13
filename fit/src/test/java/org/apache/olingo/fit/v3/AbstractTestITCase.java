@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
@@ -49,7 +50,6 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
@@ -64,7 +64,8 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.junit.BeforeClass;
 
 public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
@@ -223,7 +224,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     }
   }
 
-  protected ODataEntity getSampleCustomerInfo(final int id, final String sampleinfo) {
+  protected ODataEntity getSampleCustomerInfo(final String sampleinfo) {
     final ODataEntity entity = getClient().getObjectFactory().newEntity(new FullQualifiedName(
             "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo"));
     entity.setMediaEntity(true);
@@ -288,7 +289,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     if (withInlineInfo) {
       final ODataInlineEntity inlineInfo = getClient().getObjectFactory().newDeepInsertEntity(
               "Info",
-              getSampleCustomerInfo(id, sampleName + "_Info"));
+              getSampleCustomerInfo(sampleName + "_Info"));
       inlineInfo.getEntity().setMediaEntity(true);
       entity.addLink(inlineInfo);
     }
@@ -306,7 +307,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     }
   }
 
-  protected ODataEntity read(final ODataPubFormat format, final URI editLink) {
+  protected ODataEntity read(final ODataFormat format, final URI editLink) {
     final ODataEntityRequest<ODataEntity> req = getClient().getRetrieveRequestFactory().
             getEntityRequest(editLink);
     req.setFormat(format);
@@ -316,7 +317,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
     assertNotNull(entity);
 
-    if (ODataPubFormat.JSON_FULL_METADATA == format || ODataPubFormat.ATOM == format) {
+    if (ODataFormat.JSON_FULL_METADATA == format || ODataFormat.ATOM == format) {
       assertEquals(req.getURI(), entity.getEditLink());
     }
 
@@ -325,7 +326,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
   protected ODataEntity createEntity(
           final String serviceRootURL,
-          final ODataPubFormat format,
+          final ODataFormat format,
           final ODataEntity original,
           final String entitySetName) {
 
@@ -351,7 +352,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
   }
 
   protected ODataEntity compareEntities(final String serviceRootURL,
-          final ODataPubFormat format,
+          final ODataFormat format,
           final ODataEntity original,
           final int actualObjectId,
           final Collection<String> expands) {
@@ -388,7 +389,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
   }
 
   protected void cleanAfterCreate(
-          final ODataPubFormat format,
+          final ODataFormat format,
           final ODataEntity created,
           final boolean includeInline,
           final String baseUri) {
@@ -431,7 +432,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
               getEntityRequest(link);
       // bug that needs to be fixed on the SampleService - cannot get entity not found with header
       // Accept: application/json;odata=minimalmetadata
-      retrieveReq.setFormat(format == ODataPubFormat.JSON_FULL_METADATA ? ODataPubFormat.JSON : format);
+      retrieveReq.setFormat(format == ODataFormat.JSON_FULL_METADATA ? ODataFormat.JSON : format);
 
       Exception exception = null;
       try {
@@ -446,19 +447,19 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
   }
 
   protected void updateEntityDescription(
-          final ODataPubFormat format, final ODataEntity changes, final UpdateType type) {
+          final ODataFormat format, final ODataEntity changes, final UpdateType type) {
 
     updateEntityDescription(format, changes, type, null);
   }
 
   protected void updateEntityDescription(
-          final ODataPubFormat format, final ODataEntity changes, final UpdateType type, final String etag) {
+          final ODataFormat format, final ODataEntity changes, final UpdateType type, final String etag) {
 
     updateEntityStringProperty("Description", format, changes, type, etag);
   }
 
   protected void updateEntityStringProperty(final String propertyName,
-          final ODataPubFormat format, final ODataEntity changes, final UpdateType type, final String etag) {
+      final ODataFormat format, final ODataEntity changes, final UpdateType type, final String etag) {
 
     final URI editLink = changes.getEditLink();
 
@@ -497,7 +498,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
   }
 
   protected void update(
-          final UpdateType type, final ODataEntity changes, final ODataPubFormat format, final String etag) {
+      final UpdateType type, final ODataEntity changes, final ODataFormat format, final String etag) {
 
     final ODataEntityUpdateRequest<ODataEntity> req =
             getClient().getCUDRequestFactory().getEntityUpdateRequest(type, changes);

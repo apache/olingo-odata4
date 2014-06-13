@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
@@ -36,13 +37,12 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
-  private void functionImports(final ODataPubFormat format) throws EdmPrimitiveTypeException {
+  private void functionImports(final ODataFormat format) throws EdmPrimitiveTypeException {
     // GetDefaultColor
     final ODataInvokeRequest<ODataProperty> defaultColorReq = getClient().getInvokeRequestFactory().
             getFunctionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
@@ -113,12 +113,12 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomFunctionImports() throws EdmPrimitiveTypeException {
-    functionImports(ODataPubFormat.ATOM);
+    functionImports(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonFunctionImports() throws EdmPrimitiveTypeException {
-    functionImports(ODataPubFormat.JSON_FULL_METADATA);
+    functionImports(ODataFormat.JSON_FULL_METADATA);
   }
 
   @Test
@@ -182,7 +182,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     assertTrue(prodByAL.getCollectionValue().asJavaCollection().contains("Car"));
   }
 
-  private void actionImports(final ODataPubFormat format) {
+  private void actionImports(final ODataFormat format) {
     // Discount
     final ODataPrimitiveValue percentage = getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(22);
     final ODataInvokeRequest<ODataNoContent> discountReq = getClient().getInvokeRequestFactory().
@@ -215,12 +215,12 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomActionImports() {
-    actionImports(ODataPubFormat.ATOM);
+    actionImports(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonActionImports() {
-    actionImports(ODataPubFormat.JSON_FULL_METADATA);
+    actionImports(ODataFormat.JSON_FULL_METADATA);
   }
 
   @Test
@@ -251,7 +251,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     assertEquals(address.getTypeName(), resetBossAddress.getComplexValue().getTypeName());
   }
 
-  private void bossEmails(final ODataPubFormat format) {
+  private void bossEmails(final ODataFormat format) {
     // ResetBossEmail
     final ODataCollectionValue<org.apache.olingo.commons.api.domain.v4.ODataValue> emails =
             getClient().getObjectFactory().newCollectionValue("Collection(Edm.String)");
@@ -284,11 +284,11 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomBossEmails() throws EdmPrimitiveTypeException {
-    bossEmails(ODataPubFormat.ATOM);
+    bossEmails(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonBossEmails() throws EdmPrimitiveTypeException {
-    bossEmails(ODataPubFormat.JSON_FULL_METADATA);
+    bossEmails(ODataFormat.JSON_FULL_METADATA);
   }
 }

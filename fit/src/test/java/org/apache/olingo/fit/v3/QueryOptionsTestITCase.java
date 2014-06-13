@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -34,7 +35,7 @@ import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 /**
@@ -44,8 +45,6 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
   /**
    * Test <tt>$expand</tt>.
-   *
-   * @see EntityRetrieveTest#readODataEntityWithInline(org.apache.olingo.commons.api.format.ODataPubFormat)
    */
   public void expand() {
     // empty
@@ -102,18 +101,16 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Customer").appendKeySegment(-10).format("json");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(ODataPubFormat.ATOM);
+    req.setFormat(ODataFormat.ATOM);
 
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
     assertNotNull(res);
     assertTrue(res.getContentType().replaceAll(" ", "").
-            startsWith(ODataPubFormat.JSON.toString(client.getServiceVersion())));
+            startsWith(ODataFormat.JSON.toString(client.getServiceVersion())));
   }
 
   /**
    * Test <tt>$skip</tt>.
-   *
-   * @see FeedTest#readFeedWithNextLink(org.apache.olingo.commons.api.format.ODataPubFormat)
    */
   public void skip() {
     // empty
@@ -121,8 +118,6 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
   /**
    * Test <tt>$top</tt>.
-   *
-   * @see FeedTest#readFeed(org.apache.olingo.commons.api.format.ODataPubFormat)
    */
   public void top() {
     // empty
@@ -157,7 +152,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
             getEntitySetRequest(uriBuilder.build());
-    req.setFormat(ODataPubFormat.ATOM);
+    req.setFormat(ODataFormat.ATOM);
     final ODataEntitySet feed = req.execute().getBody();
     assertNotNull(feed);
     assertEquals(feed.getEntities().size(), feed.getCount());

@@ -20,10 +20,10 @@ package org.apache.olingo.server.core;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.server.api.ODataHttpHandler;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
-import org.apache.olingo.server.api.serializer.ODataFormat;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.serializer.ODataJsonSerializer;

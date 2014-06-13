@@ -28,7 +28,7 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 /**
@@ -37,7 +37,7 @@ import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
  * @param <ES> concrete ODataEntitySet implementation
  */
 public class ODataEntitySetRequestImpl<ES extends CommonODataEntitySet>
-        extends AbstractODataRetrieveRequest<ES, ODataPubFormat> implements ODataEntitySetRequest<ES> {
+        extends AbstractODataRetrieveRequest<ES> implements ODataEntitySetRequest<ES> {
 
   private ES entitySet = null;
 
@@ -48,12 +48,14 @@ public class ODataEntitySetRequestImpl<ES extends CommonODataEntitySet>
    * @param query query to be executed.
    */
   public ODataEntitySetRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
-    super(odataClient, ODataPubFormat.class, query);
+    super(odataClient, query);
   }
 
-  /**
-   * {@inheritDoc }
-   */
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultPubFormat();
+  }
+
   @Override
   public ODataRetrieveResponse<ES> execute() {
     final HttpResponse res = doExecute();
@@ -84,15 +86,12 @@ public class ODataEntitySetRequestImpl<ES extends CommonODataEntitySet>
       super(client, res);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     @SuppressWarnings("unchecked")
     public ES getBody() {
       if (entitySet == null) {
         try {
-          final ResWrap<EntitySet> resource = odataClient.getDeserializer(ODataPubFormat.fromString(getContentType()))
+          final ResWrap<EntitySet> resource = odataClient.getDeserializer(ODataFormat.fromString(getContentType()))
               .toEntitySet(getRawResponse());
 
           entitySet = (ES) odataClient.getBinder().getODataEntitySet(resource);

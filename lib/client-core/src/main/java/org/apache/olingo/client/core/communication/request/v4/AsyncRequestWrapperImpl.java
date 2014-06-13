@@ -155,7 +155,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
       if (res.getStatusLine().getStatusCode() == 202) {
         retrieveMonitorDetails(res);
       } else {
-        response = (R) ((AbstractODataRequest<?>) odataRequest).getResponseTemplate().initFromHttpResponse(res);
+        response = (R) ((AbstractODataRequest) odataRequest).getResponseTemplate().initFromHttpResponse(res);
       }
     }
 
@@ -245,7 +245,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     private R instantiateResponse(final HttpResponse res) {
       R odataResponse;
       try {
-        odataResponse = (R) ((AbstractODataRequest<?>) odataRequest).getResponseTemplate().
+        odataResponse = (R) ((AbstractODataRequest) odataRequest).getResponseTemplate().
                 initFromEnclosedPart(res.getEntity().getContent());
 
       } catch (Exception e) {

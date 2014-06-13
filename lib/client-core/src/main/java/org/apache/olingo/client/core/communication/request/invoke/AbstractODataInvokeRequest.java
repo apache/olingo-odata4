@@ -46,7 +46,6 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
@@ -54,7 +53,7 @@ import org.apache.olingo.commons.api.serialization.ODataSerializerException;
  * This class implements an OData invoke operation request.
  */
 public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
-        extends AbstractODataBasicRequest<ODataInvokeResponse<T>, ODataPubFormat>
+        extends AbstractODataBasicRequest<ODataInvokeResponse<T>>
         implements ODataInvokeRequest<T>, ODataBatchableRequest {
 
   private final Class<T> reference;
@@ -78,15 +77,12 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
           final HttpMethod method,
           final URI uri) {
 
-    super(odataClient, ODataPubFormat.class, method, uri);
+    super(odataClient, method, uri);
 
     this.reference = reference;
     this.parameters = new LinkedHashMap<String, ODataValue>();
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public void setParameters(final Map<String, ODataValue> parameters) {
     this.parameters.clear();
@@ -95,20 +91,25 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
     }
   }
 
-  private String getActualFormat(final ODataPubFormat format) {
-    return (CommonODataProperty.class.isAssignableFrom(reference) && format == ODataPubFormat.ATOM)
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultPubFormat();
+  }
+
+  private String getActualFormat(final ODataFormat format) {
+    return (CommonODataProperty.class.isAssignableFrom(reference) && format == ODataFormat.ATOM)
             ? ODataFormat.XML.toString(odataClient.getServiceVersion())
             : format.toString(odataClient.getServiceVersion());
   }
 
   @Override
-  public void setFormat(final ODataPubFormat format) {
+  public void setFormat(final ODataFormat format) {
     final String _format = getActualFormat(format);
     setAccept(_format);
     setContentType(_format);
   }
 
-  protected abstract ODataPubFormat getPOSTParameterFormat();
+  protected abstract ODataFormat getPOSTParameterFormat();
 
   @Override
   protected InputStream getPayload() {
@@ -216,10 +217,10 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
              InputStream responseStream = this.payload == null ? res.getEntity().getContent() : this.payload;
              if (CommonODataEntitySet.class.isAssignableFrom(reference)) {
 	        invokeResult = reference.cast(odataClient.getReader().readEntitySet(responseStream,
-	            ODataPubFormat.fromString(getContentType())));
+	            ODataFormat.fromString(getContentType())));
 	      } else if (CommonODataEntity.class.isAssignableFrom(reference)) {
 	        invokeResult = reference.cast(odataClient.getReader().readEntity(responseStream,
-	            ODataPubFormat.fromString(getContentType())));
+	            ODataFormat.fromString(getContentType())));
 	      } else if (CommonODataProperty.class.isAssignableFrom(reference)) {
 	        invokeResult = reference.cast(odataClient.getReader().readProperty(responseStream,
 	            ODataFormat.fromString(getContentType())));

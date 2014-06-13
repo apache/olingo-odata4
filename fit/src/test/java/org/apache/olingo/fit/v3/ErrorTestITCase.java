@@ -26,6 +26,7 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
@@ -41,7 +42,7 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 /**
@@ -50,10 +51,15 @@ import org.junit.Test;
 public class ErrorTestITCase extends AbstractTestITCase {
 
   private class ErrorGeneratingRequest
-          extends AbstractODataBasicRequest<ODataEntityCreateResponse<ODataEntity>, ODataPubFormat> {
+      extends AbstractODataBasicRequest<ODataEntityCreateResponse<ODataEntity>> {
 
     public ErrorGeneratingRequest(final HttpMethod method, final URI uri) {
-      super(client, ODataPubFormat.class, method, uri);
+      super(client, method, uri);
+    }
+
+    @Override
+    public ODataFormat getDefaultFormat() {
+      return odataClient.getConfiguration().getDefaultPubFormat();
     }
 
     @Override
@@ -83,7 +89,7 @@ public class ErrorTestITCase extends AbstractTestITCase {
     }
   }
 
-  private void stacktraceError(final ODataPubFormat format) {
+  private void stacktraceError(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer");
 
@@ -102,15 +108,15 @@ public class ErrorTestITCase extends AbstractTestITCase {
 
   @Test
   public void xmlStacktraceError() {
-    stacktraceError(ODataPubFormat.ATOM);
+    stacktraceError(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonStacktraceError() {
-    stacktraceError(ODataPubFormat.JSON);
+    stacktraceError(ODataFormat.JSON);
   }
 
-  private void notfoundError(final ODataPubFormat format) {
+  private void notfoundError(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer(154)");
 
@@ -130,15 +136,15 @@ public class ErrorTestITCase extends AbstractTestITCase {
 
   @Test
   public void xmlNotfoundError() {
-    notfoundError(ODataPubFormat.ATOM);
+    notfoundError(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonNotfoundError() {
-    notfoundError(ODataPubFormat.JSON);
+    notfoundError(ODataFormat.JSON);
   }
 
-  private void instreamError(final ODataPubFormat format) {
+  private void instreamError(final ODataFormat format) {
     final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).
             appendOperationCallSegment("InStreamErrorGetCustomer");
     final ODataInvokeRequest<ODataEntitySet> req =
@@ -152,11 +158,11 @@ public class ErrorTestITCase extends AbstractTestITCase {
 
   @Test(expected = IllegalArgumentException.class)
   public void atomInstreamError() {
-    instreamError(ODataPubFormat.ATOM);
+    instreamError(ODataFormat.ATOM);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void jsonInstreamError() {
-    instreamError(ODataPubFormat.JSON);
+    instreamError(ODataFormat.JSON);
   }
 }

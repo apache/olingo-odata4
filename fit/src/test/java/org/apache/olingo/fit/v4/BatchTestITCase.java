@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.fit.v4;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.URI;
@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.communication.header.HeaderName;
@@ -65,7 +66,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class BatchTestITCase extends AbstractTestITCase {
@@ -126,20 +127,20 @@ public class BatchTestITCase extends AbstractTestITCase {
     for (int i = 1; i <= 2; i++) {
       // Create Customer into the changeset
       createReq = client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), newOrder(100 + i));
-      createReq.setFormat(ODataPubFormat.JSON);
+      createReq.setFormat(ODataFormat.JSON);
       changeset.addRequest(createReq);
     }
 
     targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("WrongEntitySet");
     createReq = client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), newOrder(105));
-    createReq.setFormat(ODataPubFormat.JSON);
+    createReq.setFormat(ODataFormat.JSON);
     changeset.addRequest(createReq);
 
     targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
     for (int i = 3; i <= 4; i++) {
       // Create Customer into the changeset
       createReq = client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), newOrder(100 + i));
-      createReq.setFormat(ODataPubFormat.JSON);
+      createReq.setFormat(ODataFormat.JSON);
       changeset.addRequest(createReq);
     }
 
@@ -189,7 +190,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // create new request
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
-    queryReq.setFormat(ODataPubFormat.JSON);
+    queryReq.setFormat(ODataFormat.JSON);
 
     streamManager.addRequest(queryReq);
     // -------------------------------------------
@@ -334,7 +335,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // create new request
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
-    queryReq.setFormat(ODataPubFormat.JSON);
+    queryReq.setFormat(ODataFormat.JSON);
 
     streamManager.addRequest(queryReq);
     // -------------------------------------------
@@ -347,7 +348,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataEntity original = newOrder(2000);
     final ODataEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
-    createReq.setFormat(ODataPubFormat.JSON);
+    createReq.setFormat(ODataFormat.JSON);
     streamManager.addRequest(createReq);
     // -------------------------------------------
 
@@ -401,7 +402,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // create new request
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
-    queryReq.setFormat(ODataPubFormat.JSON);
+    queryReq.setFormat(ODataFormat.JSON);
 
     streamManager.addRequest(queryReq);
     // -------------------------------------------
@@ -425,7 +426,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     final ODataEntityUpdateRequest<ODataEntity> changeReq =
             client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patch);
-    changeReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    changeReq.setFormat(ODataFormat.JSON_FULL_METADATA);
 
     changeset.addRequest(changeReq);
 
@@ -434,7 +435,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataEntity original = newOrder(1000);
     final ODataEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
-    createReq.setFormat(ODataPubFormat.JSON);
+    createReq.setFormat(ODataFormat.JSON);
     changeset.addRequest(createReq);
     // -------------------------------------------
 
@@ -490,7 +491,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     entity = createres.getBody();
     assertEquals(new Integer(1000), entity.getProperty("OrderID").getPrimitiveValue().toCastValue(Integer.class));
 
-    // retrive the third item (ODataRetrieve)
+    // retrieve the third item (ODataRetrieve)
     item = iter.next();
     assertTrue(item instanceof ODataSingleResponseItem);
 
@@ -525,7 +526,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // create new request
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
-    queryReq.setFormat(ODataPubFormat.JSON);
+    queryReq.setFormat(ODataFormat.JSON);
 
     async.addRetrieve(queryReq);
     // -------------------------------------------

@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
@@ -45,7 +46,6 @@ import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.junit.Test;
 
 /**
@@ -59,7 +59,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   @Test
   public void replacePropertyValue() throws Exception {
-    updatePropertyValue(ODataValueFormat.TEXT, UpdateType.REPLACE);
+    updatePropertyValue(ODataFormat.TEXT_PLAIN, UpdateType.REPLACE);
   }
 
   @Test
@@ -128,7 +128,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     uriBuilder.appendEntitySetSegment("Customer").count();
 
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
 
     final ODataRetrieveResponse<ODataPrimitiveValue> res = req.execute();
     assertEquals(200, res.getStatusCode());
@@ -159,8 +159,8 @@ public class PropertyTestITCase extends AbstractTestITCase {
             execute();
   }
 
-  private void updatePropertyValue(final ODataValueFormat format, final UpdateType type)
-          throws IOException, EdmPrimitiveTypeException {
+  private void updatePropertyValue(final ODataFormat format, final UpdateType type)
+      throws IOException, EdmPrimitiveTypeException {
 
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-9).

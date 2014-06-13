@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
@@ -40,7 +41,7 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.ODataMediaFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -150,7 +151,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
       final Set<EntityInvocationHandler> toBeLinked = new HashSet<EntityInvocationHandler>();
       for (Object proxy : type == ODataLinkType.ENTITY_SET_NAVIGATION
-              ? (Collection) property.getValue() : Collections.singleton(property.getValue())) {
+              ? (Collection<?>) property.getValue() : Collections.singleton(property.getValue())) {
 
         final EntityInvocationHandler target = (EntityInvocationHandler) Proxy.getInvocationHandler(proxy);
 
@@ -354,8 +355,8 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
             factory.getClient().getCUDRequestFactory().getMediaEntityUpdateRequest(uri, input);
 
     req.setContentType(StringUtils.isBlank(handler.getEntity().getMediaContentType())
-            ? ODataMediaFormat.WILDCARD.toString()
-            : ODataMediaFormat.fromFormat(handler.getEntity().getMediaContentType()).toString());
+            ? ODataFormat.WILDCARD.toString()
+            : ODataFormat.fromString(handler.getEntity().getMediaContentType()).toString());
 
     if (StringUtils.isNotBlank(handler.getETag())) {
       req.setIfMatch(handler.getETag());

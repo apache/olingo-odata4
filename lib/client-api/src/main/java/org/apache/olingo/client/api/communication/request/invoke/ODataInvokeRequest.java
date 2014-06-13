@@ -19,11 +19,11 @@
 package org.apache.olingo.client.api.communication.request.invoke;
 
 import java.util.Map;
+
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * This class implements an OData invoke operation request.
@@ -31,7 +31,7 @@ import org.apache.olingo.commons.api.format.ODataPubFormat;
  * @param <T> the actual invoke result
  */
 public interface ODataInvokeRequest<T extends ODataInvokeResult>
-        extends ODataBasicRequest<ODataInvokeResponse<T>, ODataPubFormat> {
+    extends ODataBasicRequest<ODataInvokeResponse<T>> {
 
   /**
    * Sets operation parameters.

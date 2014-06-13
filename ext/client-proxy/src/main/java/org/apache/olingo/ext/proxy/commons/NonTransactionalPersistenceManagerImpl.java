@@ -43,13 +43,13 @@ public class NonTransactionalPersistenceManagerImpl extends AbstractPersistenceM
   protected void doFlush(final PersistenceChanges changes, final TransactionItems items) {
     for (Map.Entry<ODataBatchableRequest, EntityInvocationHandler> entry : changes.getChanges().entrySet()) {
       try {
-        final ODataResponse response = ((ODataBasicRequest<?, ?>) entry.getKey()).execute();
+        final ODataResponse response = ((ODataBasicRequest<?>) entry.getKey()).execute();
 
         if (response instanceof ODataEntityCreateResponse && response.getStatusCode() == 201) {
-          entry.getValue().setEntity(((ODataEntityCreateResponse) response).getBody());
+          entry.getValue().setEntity(((ODataEntityCreateResponse<?>) response).getBody());
           LOG.debug("Upgrade created object '{}'", entry.getValue());
         } else if (response instanceof ODataEntityUpdateResponse && response.getStatusCode() == 200) {
-          entry.getValue().setEntity(((ODataEntityUpdateResponse) response).getBody());
+          entry.getValue().setEntity(((ODataEntityUpdateResponse<?>) response).getBody());
           LOG.debug("Upgrade updated object '{}'", entry.getValue());
         }
       } catch (Exception e) {

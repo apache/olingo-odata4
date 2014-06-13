@@ -18,20 +18,16 @@
  */
 package org.apache.olingo.client.api;
 
+import java.util.concurrent.ExecutorService;
+
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.HttpUriRequestFactory;
-
-import java.io.Serializable;
-import java.util.concurrent.ExecutorService;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataMediaFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.format.ODataValueFormat;
 
 /**
  * Configuration wrapper.
  */
-public interface CommonConfiguration extends Serializable {
+public interface CommonConfiguration {
 
   /**
    * Gets the configured default <tt>Accept</tt> header value format for a batch request.
@@ -50,16 +46,16 @@ public interface CommonConfiguration extends Serializable {
    * JSON_FULL_METADATA format will be used as default.
    *
    * @return configured OData format for AtomPub if specified; JSON_FULL_METADATA format otherwise.
-   * @see ODataPubFormat#JSON_FULL_METADATA
+   * @see ODataFormat#JSON_FULL_METADATA
    */
-  ODataPubFormat getDefaultPubFormat();
+  ODataFormat getDefaultPubFormat();
 
   /**
    * Sets the default OData format for AtomPub exchanges.
    *
    * @param format default format.
    */
-  void setDefaultPubFormat(ODataPubFormat format);
+  void setDefaultPubFormat(ODataFormat format);
 
   /**
    * Gets the configured OData format. This value depends on what is returned from <tt>getDefaultPubFormat()</tt>.
@@ -74,38 +70,36 @@ public interface CommonConfiguration extends Serializable {
    * as default.
    *
    * @return configured OData value format if specified; TEXT format otherwise.
-   * @see ODataValueFormat#TEXT
+   * @see ODataFormat#TEXT
    */
-  ODataValueFormat getDefaultValueFormat();
+  ODataFormat getDefaultValueFormat();
 
   /**
    * Sets the default OData value format.
    *
    * @param format default format.
    */
-  void setDefaultValueFormat(ODataValueFormat format);
+  void setDefaultValueFormat(ODataFormat format);
 
   /**
    * Gets the configured OData media format. If this configuration parameter doesn't exist the APPLICATION_OCTET_STREAM
    * format will be used as default.
    *
    * @return configured OData media format if specified; APPLICATION_OCTET_STREAM format otherwise.
-   * @see ODataMediaFormat#WILDCARD
    */
-  ODataMediaFormat getDefaultMediaFormat();
+  ODataFormat getDefaultMediaFormat();
 
   /**
    * Sets the default OData media format.
    *
    * @param format default format.
    */
-  void setDefaultMediaFormat(ODataMediaFormat format);
+  void setDefaultMediaFormat(ODataFormat format);
 
   /**
    * Gets the HttpClient factory to be used for executing requests.
    *
    * @return provided implementation (if configured via <tt>setHttpClientFactory</tt> or default.
-   * @see DefaultHttpClientFactory
    */
   HttpClientFactory getHttpClientFactory();
 
@@ -121,7 +115,6 @@ public interface CommonConfiguration extends Serializable {
    * Gets the HttpUriRequest factory for generating requests to be executed.
    *
    * @return provided implementation (if configured via <tt>setHttpUriRequestFactory</tt> or default.
-   * @see DefaultHttpUriRequestFactory
    */
   HttpUriRequestFactory getHttpUriRequestFactory();
 

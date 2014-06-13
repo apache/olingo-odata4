@@ -21,11 +21,10 @@ package org.apache.olingo.client.api.communication.request.retrieve;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * This class implements an OData EntitySet query request.
  */
 public interface ODataEntitySetIteratorRequest<ES extends CommonODataEntitySet, E extends CommonODataEntity>
-        extends ODataRetrieveRequest<ODataEntitySetIterator<ES, E>, ODataPubFormat> {
+        extends ODataRetrieveRequest<ODataEntitySetIterator<ES, E>> {
 }

@@ -20,12 +20,12 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 
 import java.io.InputStream;
 import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRetrieveRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
@@ -33,32 +33,24 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
 /**
  * This is an abstract representation of an OData retrieve query request returning one or more result item.
  */
-public abstract class AbstractODataRetrieveRequest<V, T extends Format>
-        extends AbstractODataBasicRequest<ODataRetrieveResponse<V>, T>
-        implements ODataRetrieveRequest<V, T> {
+public abstract class AbstractODataRetrieveRequest<T>
+        extends AbstractODataBasicRequest<ODataRetrieveResponse<T>>
+        implements ODataRetrieveRequest<T> {
 
   /**
    * Private constructor.
    *
    * @param odataClient client instance getting this request
-   * @param formatRef reference class for the format being used
    * @param query query to be executed.
    */
-  public AbstractODataRetrieveRequest(final CommonODataClient<?> odataClient, final Class<T> formatRef,
-          final URI query) {
-
-    super(odataClient, formatRef, HttpMethod.GET, query);
+  public AbstractODataRetrieveRequest(final CommonODataClient<?> odataClient, final URI query) {
+    super(odataClient, HttpMethod.GET, query);
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
-  public abstract ODataRetrieveResponse<V> execute();
+  public abstract ODataRetrieveResponse<T> execute();
 
   /**
-   * {@inheritDoc }
-   * <p>
    * This kind of request doesn't have any payload: null will be returned.
    */
   @Override
@@ -70,7 +62,7 @@ public abstract class AbstractODataRetrieveRequest<V, T extends Format>
    * Response abstract class about an ODataRetrieveRequest.
    */
   protected abstract class AbstractODataRetrieveResponse
-          extends AbstractODataResponse implements ODataRetrieveResponse<V> {
+      extends AbstractODataResponse implements ODataRetrieveResponse<T> {
 
     /**
      * Constructor.
@@ -95,10 +87,7 @@ public abstract class AbstractODataRetrieveRequest<V, T extends Format>
       return res;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public abstract V getBody();
+    public abstract T getBody();
   }
 }

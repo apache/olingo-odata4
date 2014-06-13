@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
@@ -35,7 +36,7 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 /**
@@ -49,55 +50,55 @@ public class EntitySetTestITCase extends AbstractTestITCase {
 
   @Test
   public void rawRequestAsAtom() throws IOException {
-    rawRequest(ODataPubFormat.ATOM);
+    rawRequest(ODataFormat.ATOM);
   }
 
   @Test
   public void rawRequestAsJSON() throws IOException {
-    rawRequest(ODataPubFormat.JSON);
+    rawRequest(ODataFormat.JSON);
   }
 
   @Test
   public void readWithInlineCountAsJSON() throws IOException {
-    readWithInlineCount(ODataPubFormat.JSON);
+    readWithInlineCount(ODataFormat.JSON);
   }
 
   @Test
   public void readWithInlineCountAsAtom() throws IOException {
-    readWithInlineCount(ODataPubFormat.ATOM);
+    readWithInlineCount(ODataFormat.ATOM);
   }
 
   @Test
   public void readODataEntitySetIteratorFromAtom() {
-    readODataEntitySetIterator(ODataPubFormat.ATOM);
+    readODataEntitySetIterator(ODataFormat.ATOM);
   }
 
   @Test
   public void readODataEntitySetIteratorFromJSON() {
-    readODataEntitySetIterator(ODataPubFormat.JSON);
+    readODataEntitySetIterator(ODataFormat.JSON);
   }
 
   @Test
   public void readODataEntitySetIteratorFromJSONFullMeta() {
-    readODataEntitySetIterator(ODataPubFormat.JSON_FULL_METADATA);
+    readODataEntitySetIterator(ODataFormat.JSON_FULL_METADATA);
   }
 
   @Test
   public void readODataEntitySetIteratorFromJSONNoMeta() {
-    readODataEntitySetIterator(ODataPubFormat.JSON_NO_METADATA);
+    readODataEntitySetIterator(ODataFormat.JSON_NO_METADATA);
   }
 
   @Test
   public void readODataEntitySetWithNextFromAtom() {
-    readEntitySetWithNextLink(ODataPubFormat.ATOM);
+    readEntitySetWithNextLink(ODataFormat.ATOM);
   }
 
   @Test
   public void readODataEntitySetWithNextFromJSON() {
-    readEntitySetWithNextLink(ODataPubFormat.JSON_FULL_METADATA);
+    readEntitySetWithNextLink(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void readEntitySetWithNextLink(final ODataPubFormat format) {
+  private void readEntitySetWithNextLink(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer");
 
@@ -121,7 +122,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     assertEquals(expected, found);
   }
 
-  private void readODataEntitySetIterator(final ODataPubFormat format) {
+  private void readODataEntitySetIterator(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer");
 
@@ -144,7 +145,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     assertTrue(feedIterator.getNext().toASCIIString().endsWith("Customer?$skiptoken=-9"));
   }
 
-  private void readWithInlineCount(final ODataPubFormat format) {
+  private void readWithInlineCount(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Product").inlineCount(URIBuilder.InlineCount.allpages);
 
@@ -158,7 +159,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     assertEquals(10, entitySet.getPayload().getCount());
   }
 
-  private void rawRequest(final ODataPubFormat format) {
+  private void rawRequest(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Car");
 

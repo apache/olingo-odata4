@@ -21,20 +21,20 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * This class implements an OData media query request.
  */
-public class ODataMediaRequestImpl extends AbstractODataRetrieveRequest<InputStream, ODataMediaFormat>
-        implements ODataMediaRequest {
+public class ODataMediaRequestImpl extends AbstractODataRetrieveRequest<InputStream> implements ODataMediaRequest {
 
   /**
    * Private constructor.
@@ -43,19 +43,21 @@ public class ODataMediaRequestImpl extends AbstractODataRetrieveRequest<InputStr
    * @param query query to be executed.
    */
   ODataMediaRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
-    super(odataClient, ODataMediaFormat.class, query);
+    super(odataClient, query);
 
-    setAccept(ODataMediaFormat.APPLICATION_OCTET_STREAM.toString());
-    setContentType(ODataMediaFormat.APPLICATION_OCTET_STREAM.toString());
+    setAccept(ODataFormat.APPLICATION_OCTET_STREAM.toString());
+    setContentType(ODataFormat.APPLICATION_OCTET_STREAM.toString());
 
     this.odataHeaders.removeHeader(HeaderName.minDataServiceVersion);
     this.odataHeaders.removeHeader(HeaderName.maxDataServiceVersion);
     this.odataHeaders.removeHeader(HeaderName.dataServiceVersion);
   }
 
-  /**
-   * {@inheritDoc }
-   */
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultMediaFormat();
+  }
+
   @Override
   public ODataRetrieveResponse<InputStream> execute() {
     final HttpResponse res = doExecute();

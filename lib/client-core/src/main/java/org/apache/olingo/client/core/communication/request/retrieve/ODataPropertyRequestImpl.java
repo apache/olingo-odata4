@@ -26,18 +26,18 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.http.HttpClientException;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.data.Property;
 
 /**
  * This class implements an OData entity property query request.
  */
 public class ODataPropertyRequestImpl<T extends CommonODataProperty>
-        extends AbstractODataRetrieveRequest<T, ODataFormat> implements ODataPropertyRequest<T> {
+    extends AbstractODataRetrieveRequest<T> implements ODataPropertyRequest<T> {
 
   /**
    * Private constructor.
@@ -46,7 +46,12 @@ public class ODataPropertyRequestImpl<T extends CommonODataProperty>
    * @param query query to be executed.
    */
   public ODataPropertyRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
-    super(odataClient, ODataFormat.class, query);
+    super(odataClient, query);
+  }
+
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultFormat();
   }
 
   @Override

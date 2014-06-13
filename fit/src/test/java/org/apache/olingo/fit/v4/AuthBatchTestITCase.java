@@ -17,10 +17,9 @@ package org.apache.olingo.fit.v4;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
 import java.net.URI;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 
+import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
 import org.apache.olingo.client.api.communication.request.batch.v4.ODataBatchRequest;
@@ -37,7 +36,8 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.junit.Test;
 
 public class AuthBatchTestITCase extends AbstractTestITCase {
 
@@ -63,7 +63,6 @@ public class AuthBatchTestITCase extends AbstractTestITCase {
     batchRequest(unauthclient, testAuthServiceRootURL);
   }
 
-  @SuppressWarnings({"unchecked"})
   private void batchRequest(final ODataClient client, final String baseURL) throws EdmPrimitiveTypeException {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(baseURL);
@@ -82,7 +81,7 @@ public class AuthBatchTestITCase extends AbstractTestITCase {
 
     // create new request
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
-    queryReq.setFormat(ODataPubFormat.JSON);
+    queryReq.setFormat(ODataFormat.JSON);
 
     streamManager.addRequest(queryReq);
     // -------------------------------------------
@@ -106,7 +105,7 @@ public class AuthBatchTestITCase extends AbstractTestITCase {
 
     final ODataEntityUpdateRequest<ODataEntity> changeReq =
             client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patch);
-    changeReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    changeReq.setFormat(ODataFormat.JSON_FULL_METADATA);
 
     changeset.addRequest(changeReq);
     // -------------------------------------------

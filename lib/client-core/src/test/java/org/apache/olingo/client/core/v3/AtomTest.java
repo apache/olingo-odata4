@@ -22,17 +22,18 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.v3.ODataClient;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.client.core.AtomLinksQualifier;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.custommonkey.xmlunit.Diff;
 import org.junit.Test;
 
@@ -43,8 +44,8 @@ public class AtomTest extends AbstractTest {
     return v3Client;
   }
 
-  protected ODataPubFormat getODataPubFormat() {
-    return ODataPubFormat.ATOM;
+  protected ODataFormat getODataPubFormat() {
+    return ODataFormat.ATOM;
   }
 
   protected ODataFormat getODataFormat() {
@@ -67,7 +68,7 @@ public class AtomTest extends AbstractTest {
     assertTrue(diff.similar());
   }
 
-  protected void entitySet(final String filename, final ODataPubFormat format) throws Exception {
+  protected void entitySet(final String filename, final ODataFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer(format).write(writer, getClient().getDeserializer(format).toEntitySet(
         getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
@@ -80,7 +81,7 @@ public class AtomTest extends AbstractTest {
     entitySet("Customer", getODataPubFormat());
   }
 
-  protected void entity(final String filename, final ODataPubFormat format) throws Exception {
+  protected void entity(final String filename, final ODataFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer(format).write(writer, getClient().getDeserializer(format).toEntity(
         getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());

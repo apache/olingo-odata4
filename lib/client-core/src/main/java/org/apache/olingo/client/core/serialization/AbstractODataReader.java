@@ -25,27 +25,25 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.data.ServiceDocument;
-import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.client.api.edm.xml.Schema;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
-import org.apache.olingo.commons.api.domain.ODataServiceDocument;
-import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.serialization.CommonODataReader;
 import org.apache.olingo.client.core.edm.EdmClientImpl;
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.domain.ODataServiceDocument;
+import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.format.ODataValueFormat;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,16 +94,16 @@ public abstract class AbstractODataReader implements CommonODataReader {
                 (URI) null,
                 null,
                 reference.cast(new ODataEntitySetIterator<CommonODataEntitySet, CommonODataEntity>(
-                                client, src, ODataPubFormat.fromString(format))));
+                                client, src, ODataFormat.fromString(format))));
       } else if (CommonODataEntitySet.class.isAssignableFrom(reference)) {
-        final ResWrap<EntitySet> resource = client.getDeserializer(ODataPubFormat.fromString(format))
+        final ResWrap<EntitySet> resource = client.getDeserializer(ODataFormat.fromString(format))
             .toEntitySet(src);
         res = new ResWrap<T>(
                 resource.getContextURL(),
                 resource.getMetadataETag(),
                 reference.cast(client.getBinder().getODataEntitySet(resource)));
       } else if (CommonODataEntity.class.isAssignableFrom(reference)) {
-        final ResWrap<Entity> container = client.getDeserializer(ODataPubFormat.fromString(format)).toEntity(src);
+        final ResWrap<Entity> container = client.getDeserializer(ODataFormat.fromString(format)).toEntity(src);
         res = new ResWrap<T>(
                 container.getContextURL(),
                 container.getMetadataETag(),
@@ -121,7 +119,7 @@ public abstract class AbstractODataReader implements CommonODataReader {
                 (URI) null,
                 null,
                 reference.cast(client.getObjectFactory().newPrimitiveValueBuilder().
-                        setType(ODataValueFormat.fromString(format) == ODataValueFormat.TEXT
+                        setType(ODataFormat.fromString(format) == ODataFormat.TEXT_PLAIN
                                 ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                         setText(IOUtils.toString(src)).
                         build()));

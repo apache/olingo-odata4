@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
@@ -36,7 +37,7 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 /**
@@ -44,7 +45,7 @@ import org.junit.Test;
  */
 public class EntitySetTestITCase extends AbstractTestITCase {
 
-  private void rawRequest(final ODataPubFormat format) {
+  private void rawRequest(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
@@ -60,15 +61,15 @@ public class EntitySetTestITCase extends AbstractTestITCase {
 
   @Test
   public void rawRequestAsAtom() throws IOException {
-    rawRequest(ODataPubFormat.ATOM);
+    rawRequest(ODataFormat.ATOM);
   }
 
   @Test
   public void rawRequestAsJSON() throws IOException {
-    rawRequest(ODataPubFormat.JSON);
+    rawRequest(ODataFormat.JSON);
   }
 
-  private void readWithInlineCount(final ODataClient client, final ODataPubFormat format) {
+  private void readWithInlineCount(final ODataClient client, final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").count(true);
 
@@ -87,20 +88,20 @@ public class EntitySetTestITCase extends AbstractTestITCase {
 
   @Test
   public void readWithInlineCountAsJSON() throws IOException {
-    readWithInlineCount(edmClient, ODataPubFormat.JSON);
+    readWithInlineCount(edmClient, ODataFormat.JSON);
   }
 
   @Test
   public void readWithInlineCountAsFullJSON() throws IOException {
-    readWithInlineCount(client, ODataPubFormat.JSON_FULL_METADATA);
+    readWithInlineCount(client, ODataFormat.JSON_FULL_METADATA);
   }
 
   @Test
   public void readWithInlineCountAsAtom() throws IOException {
-    readWithInlineCount(client, ODataPubFormat.ATOM);
+    readWithInlineCount(client, ODataFormat.ATOM);
   }
 
-  private void readODataEntitySetIterator(final ODataPubFormat format) {
+  private void readODataEntitySetIterator(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     final ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> req =
@@ -124,25 +125,25 @@ public class EntitySetTestITCase extends AbstractTestITCase {
 
   @Test
   public void readODataEntitySetIteratorFromAtom() {
-    readODataEntitySetIterator(ODataPubFormat.ATOM);
+    readODataEntitySetIterator(ODataFormat.ATOM);
   }
 
   @Test
   public void readODataEntitySetIteratorFromJSON() {
-    readODataEntitySetIterator(ODataPubFormat.JSON);
+    readODataEntitySetIterator(ODataFormat.JSON);
   }
 
   @Test
   public void readODataEntitySetIteratorFromJSONFull() {
-    readODataEntitySetIterator(ODataPubFormat.JSON_FULL_METADATA);
+    readODataEntitySetIterator(ODataFormat.JSON_FULL_METADATA);
   }
 
   @Test
   public void readODataEntitySetIteratorFromJSONNo() {
-    readODataEntitySetIterator(ODataPubFormat.JSON_NO_METADATA);
+    readODataEntitySetIterator(ODataFormat.JSON_NO_METADATA);
   }
 
-  private void readWithNext(final ODataPubFormat format) {
+  private void readWithNext(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
@@ -166,12 +167,12 @@ public class EntitySetTestITCase extends AbstractTestITCase {
 
   @Test
   public void readWithNextFromAtom() {
-    readWithNext(ODataPubFormat.ATOM);
+    readWithNext(ODataFormat.ATOM);
   }
 
   @Test
   public void readWithNextFromJSON() {
-    readWithNext(ODataPubFormat.JSON_FULL_METADATA);
+    readWithNext(ODataFormat.JSON_FULL_METADATA);
   }
 
 }

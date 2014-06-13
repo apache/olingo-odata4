@@ -33,12 +33,12 @@ import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class DerivedTypeTestITCase extends AbstractTestITCase {
 
-  private void read(final ODataPubFormat format) {
+  private void read(final ODataFormat format) {
     // 1. entity set
     URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").
@@ -66,15 +66,15 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void readfromAtom() {
-    read(ODataPubFormat.ATOM);
+    read(ODataFormat.ATOM);
   }
 
   @Test
   public void readfromJSON() {
-    read(ODataPubFormat.JSON_FULL_METADATA);
+    read(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void createDelete(final ODataPubFormat format) {
+  private void createDelete(final ODataFormat format) {
     final ODataEntity customer = client.getObjectFactory().
             newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
 
@@ -135,11 +135,11 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void createDeleteAsAtom() {
-    createDelete(ODataPubFormat.ATOM);
+    createDelete(ODataFormat.ATOM);
   }
 
   @Test
   public void createDeleteAsJSON() {
-    createDelete(ODataPubFormat.JSON_FULL_METADATA);
+    createDelete(ODataFormat.JSON_FULL_METADATA);
   }
 }

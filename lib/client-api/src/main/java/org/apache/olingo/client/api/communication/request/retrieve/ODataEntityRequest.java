@@ -19,10 +19,9 @@
 package org.apache.olingo.client.api.communication.request.retrieve;
 
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * Describes an OData retrieve query request returning a single entity.
  */
-public interface ODataEntityRequest<E extends CommonODataEntity> extends ODataRetrieveRequest<E, ODataPubFormat> {
+public interface ODataEntityRequest<E extends CommonODataEntity> extends ODataRetrieveRequest<E> {
 }

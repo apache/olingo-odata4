@@ -23,24 +23,44 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 /**
  * Available formats to be used in various contexts.
  */
-public enum ODataFormat implements Format {
+public enum ODataFormat {
 
-  /**
-   * JSON format with no metadata.
-   */
+  /** JSON format with no metadata. */
   JSON_NO_METADATA,
-  /**
-   * JSON format with minimal metadata (default).
-   */
+  /** JSON format with minimal metadata (default). */
   JSON,
-  /**
-   * JSON format with no metadata.
-   */
+  /** JSON format with full metadata. */
   JSON_FULL_METADATA,
-  /**
-   * XML format.
-   */
-  XML;
+
+  /** XML format. */
+  XML(ContentType.APPLICATION_XML),
+  /** Atom format. */
+  ATOM(ContentType.APPLICATION_ATOM_XML),
+
+  // media formats
+  MEDIA_TYPE_WILDCARD("*"),
+  WILDCARD(ContentType.WILDCARD),
+  APPLICATION_XML(ContentType.APPLICATION_XML),
+  APPLICATION_ATOM_XML(ContentType.APPLICATION_ATOM_XML),
+  APPLICATION_XHTML_XML(ContentType.APPLICATION_XHTML_XML),
+  APPLICATION_SVG_XML(ContentType.APPLICATION_SVG_XML),
+  APPLICATION_JSON(ContentType.APPLICATION_JSON),
+  APPLICATION_FORM_URLENCODED(ContentType.APPLICATION_FORM_URLENCODED),
+  MULTIPART_FORM_DATA(ContentType.MULTIPART_FORM_DATA),
+  APPLICATION_OCTET_STREAM(ContentType.APPLICATION_OCTET_STREAM),
+  TEXT_PLAIN(ContentType.TEXT_PLAIN),
+  TEXT_XML(ContentType.TEXT_XML),
+  TEXT_HTML(ContentType.TEXT_HTML);
+
+  private final String format;
+
+  ODataFormat() {
+    this.format = null;
+  }
+
+  ODataFormat(final String format) {
+    this.format = format;
+  }
 
   /**
    * Gets format as a string.
@@ -48,18 +68,21 @@ public enum ODataFormat implements Format {
    * @param version OData service version.
    * @return format as a string.
    */
-  @Override
   public String toString(final ODataServiceVersion version) {
     if (version.ordinal() < ODataServiceVersion.V30.ordinal()) {
       throw new IllegalArgumentException("Unsupported version " + version);
     }
 
-    return ContentType.formatPerVersion.get(version).get(this.name());
+    return format == null ? ContentType.formatPerVersion.get(version).get(this.name()) : format;
   }
 
   @Override
   public String toString() {
-    throw new UnsupportedOperationException();
+    if (format == null) {
+      throw new UnsupportedOperationException();
+    } else {
+      return format;
+    }
   }
 
   /**
@@ -77,7 +100,11 @@ public enum ODataFormat implements Format {
     _format.append(parts[0].trim());
     if (ContentType.APPLICATION_JSON.equals(parts[0].trim())) {
       if (parts.length > 1) {
-        _format.append(';').append(parts[1].trim());
+        if (parts[1].trim().equalsIgnoreCase("charset=UTF-8")) {
+          result = ODataFormat.JSON;
+        } else {
+          _format.append(';').append(parts[1].trim());
+        }
       } else {
         result = ODataFormat.JSON;
       }
@@ -89,6 +116,7 @@ public enum ODataFormat implements Format {
         if (candidate.equals(value.toString(ODataServiceVersion.V30))
                 || candidate.equals(value.toString(ODataServiceVersion.V40))) {
           result = value;
+          break;
         }
       }
     }

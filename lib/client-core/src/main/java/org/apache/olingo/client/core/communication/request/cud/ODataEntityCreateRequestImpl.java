@@ -35,7 +35,7 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
@@ -45,7 +45,7 @@ import org.apache.olingo.commons.api.serialization.ODataSerializerException;
  * @param <E> concrete ODataEntity implementation
  */
 public class ODataEntityCreateRequestImpl<E extends CommonODataEntity>
-        extends AbstractODataBasicRequest<ODataEntityCreateResponse<E>, ODataPubFormat>
+        extends AbstractODataBasicRequest<ODataEntityCreateResponse<E>>
         implements ODataEntityCreateRequest<E> {
 
   /**
@@ -61,25 +61,24 @@ public class ODataEntityCreateRequestImpl<E extends CommonODataEntity>
    * @param entity entity to be created.
    */
   ODataEntityCreateRequestImpl(final CommonODataClient<?> odataClient, final URI targetURI, final E entity) {
-    super(odataClient, ODataPubFormat.class, HttpMethod.POST, targetURI);
+    super(odataClient, HttpMethod.POST, targetURI);
     this.entity = entity;
   }
 
-  /**
-   * {@inheritDoc }
-   */
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultPubFormat();
+  }
+
   @Override
   protected InputStream getPayload() {
     try {
-      return odataClient.getWriter().writeEntity(entity, ODataPubFormat.fromString(getContentType()));
+      return odataClient.getWriter().writeEntity(entity, ODataFormat.fromString(getContentType()));
     } catch (final ODataSerializerException e) {
       throw new IllegalArgumentException(e);
     }
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public ODataEntityCreateResponse<E> execute() {
     final InputStream input = getPayload();
@@ -126,7 +125,7 @@ public class ODataEntityCreateRequestImpl<E extends CommonODataEntity>
     public E getBody() {
       if (entity == null) {
         try {
-          final ResWrap<Entity> resource = odataClient.getDeserializer(ODataPubFormat.fromString(getAccept()))
+          final ResWrap<Entity> resource = odataClient.getDeserializer(ODataFormat.fromString(getAccept()))
               .toEntity(getRawResponse());
           
           entity = (E) odataClient.getBinder().getODataEntity(resource);

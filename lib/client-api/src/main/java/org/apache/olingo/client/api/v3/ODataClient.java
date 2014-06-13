@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.api.v3;
 
+import org.apache.olingo.client.api.CommonConfiguration;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.batch.v3.BatchRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFactory;
@@ -26,18 +27,18 @@ import org.apache.olingo.client.api.communication.request.retrieve.v3.RetrieveRe
 import org.apache.olingo.client.api.serialization.v3.ODataBinder;
 import org.apache.olingo.client.api.serialization.v3.ODataDeserializer;
 import org.apache.olingo.client.api.serialization.v3.ODataReader;
-import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.api.uri.v3.FilterFactory;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.commons.api.domain.v3.ODataObjectFactory;
-import org.apache.olingo.commons.api.format.Format;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
 public interface ODataClient extends CommonODataClient<UpdateType> {
 
   @Override
-  Configuration getConfiguration();
+  CommonConfiguration getConfiguration();
 
   @Override
-  ODataDeserializer getDeserializer(Format format);
+  ODataDeserializer getDeserializer(ODataFormat format);
 
   @Override
   ODataReader getReader();

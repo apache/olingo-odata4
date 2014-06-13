@@ -19,10 +19,9 @@
 package org.apache.olingo.client.api.communication.request.retrieve;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * This class implements a metadata query request.
  */
-public interface EdmMetadataRequest extends ODataRetrieveRequest<Edm, ODataFormat> {
+public interface EdmMetadataRequest extends ODataRetrieveRequest<Edm> {
 }

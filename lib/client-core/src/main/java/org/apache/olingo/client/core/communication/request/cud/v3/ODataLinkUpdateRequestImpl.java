@@ -39,8 +39,8 @@ import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 /**
  * This class implements an update link OData request.
  */
-public class ODataLinkUpdateRequestImpl extends AbstractODataBasicRequest<ODataLinkOperationResponse, ODataFormat>
-        implements ODataLinkUpdateRequest {
+public class ODataLinkUpdateRequestImpl extends AbstractODataBasicRequest<ODataLinkOperationResponse>
+    implements ODataLinkUpdateRequest {
 
   /**
    * Entity to be linked.
@@ -57,10 +57,14 @@ public class ODataLinkUpdateRequestImpl extends AbstractODataBasicRequest<ODataL
    */
   ODataLinkUpdateRequestImpl(final CommonODataClient<?> odataClient,
           final HttpMethod method, final URI targetURI, final ODataLink link) {
-
-    super(odataClient, ODataFormat.class, method, targetURI);
+    super(odataClient, method, targetURI);
     // set request body
     this.link = link;
+  }
+
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultFormat();
   }
 
   @Override

@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Map;
+
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.invoke.AbstractODataInvokeRequest;
@@ -29,11 +30,11 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
 public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends AbstractODataInvokeRequest<T> {
 
-  private ODataPubFormat format;
+  private ODataFormat format;
 
   public ODataInvokeRequestImpl(final CommonODataClient<?> odataClient, final Class<T> reference,
           final HttpMethod method, final URI uri) {
@@ -42,13 +43,13 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends Abstrac
   }
 
   @Override
-  public void setFormat(final ODataPubFormat format) {
+  public void setFormat(final ODataFormat format) {
     super.setFormat(format);
     this.format = format;
   }
 
   @Override
-  protected ODataPubFormat getPOSTParameterFormat() {
+  protected ODataFormat getPOSTParameterFormat() {
     return format == null ? getDefaultFormat() : format;
   }
 
