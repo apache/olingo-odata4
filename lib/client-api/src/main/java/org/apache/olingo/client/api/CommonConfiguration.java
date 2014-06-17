@@ -196,6 +196,31 @@ public interface CommonConfiguration {
   void setKeyAsSegment(boolean value);
 
   /**
+   * Gets whether query URIs in request should contain fully qualified type name.
+   * - OData Intermediate Conformance Level:
+   * MUST support casting to a derived type according to [OData-URL] if derived types are present in the model.
+   * <br/>
+   * Example: http://host/service/Customers/Model.VipCustomer(102) or 
+   * http://host/service/Customers/Model.VipCustomer
+   *
+   * @return whether query URIs in request should contain fully qualified type name.
+   * segment.
+   */
+  boolean isAddressingDerivedTypes() ;
+
+  /**
+   * Sets whether query URIs in request should contain fully qualified type name.
+   * - OData Intermediate Conformance Level:
+   * MUST support casting to a derived type according to [OData-URL] if derived types are present in the model.
+   * <br/>
+   * Example: http://host/service/Customers/Model.VipCustomer(102) or 
+   * http://host/service/Customers/Model.VipCustomer
+   *
+   * @param value 'TRUE' to use this feature.
+   */
+  void setAddressingDerivedTypes(final boolean value);
+
+  /**
    * Retrieves request executor service.
    *
    * @return request executor service.

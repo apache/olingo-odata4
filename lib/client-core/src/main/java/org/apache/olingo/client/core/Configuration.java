@@ -48,6 +48,8 @@ public class Configuration implements CommonConfiguration {
   private static final String USE_XHTTP_METHOD = "useHTTPMethod";
 
   private static final String KEY_AS_SEGMENT = "keyAsSegment";
+  
+  private static final String ADDRESS_DERIVED_TYPE = "addressDerivedType";
 
   private static final String GZIP_COMPRESSION = "gzipCompression";
 
@@ -185,6 +187,16 @@ public class Configuration implements CommonConfiguration {
     setProperty(KEY_AS_SEGMENT, value);
   }
 
+  @Override
+  public boolean isAddressingDerivedTypes() {
+    return (Boolean) getProperty(ADDRESS_DERIVED_TYPE, true);
+  }
+
+  @Override
+  public void setAddressingDerivedTypes(final boolean value) {
+    setProperty(ADDRESS_DERIVED_TYPE, value);
+  }
+  
   @Override
   public ExecutorService getExecutor() {
     return executor;

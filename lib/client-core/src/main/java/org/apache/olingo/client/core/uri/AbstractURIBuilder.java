@@ -24,9 +24,14 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.olingo.client.api.CommonConfiguration;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.QueryOption;
@@ -269,7 +274,9 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
             break;
 
           default:
-            segmentsBuilder.append('/');
+            if(segmentsBuilder.length() > 0 && segmentsBuilder.charAt(segmentsBuilder.length()-1) != '/') {
+              segmentsBuilder.append('/');
+            }
         }
       }
 
@@ -284,19 +291,27 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
     }
 
     try {
-      final org.apache.http.client.utils.URIBuilder builder =
-              new org.apache.http.client.utils.URIBuilder(segmentsBuilder.toString());
+      StringBuilder sb = segmentsBuilder;
+      if((queryOptions.size() + parameters.size()) > 0){
+          sb.append("?");
+          List<NameValuePair> list1 = new LinkedList<NameValuePair>();
+          for (Map.Entry<String, String> option : queryOptions.entrySet()) {
+        	list1.add(new BasicNameValuePair("$" + option.getKey(), option.getValue()));
+          }
+          for (Map.Entry<String, String> parameter : parameters.entrySet()) {
+    		list1.add(new BasicNameValuePair("@" + parameter.getKey(), parameter.getValue()));
+          }
 
-      for (Map.Entry<String, String> option : queryOptions.entrySet()) {
-        builder.addParameter("$" + option.getKey(), option.getValue());
+          // don't use UriBuilder.build():
+          // it will try to call URLEncodedUtils.format(Iterable<>,Charset) method,
+          // which works in desktop java application, however, throws NoSuchMethodError in android OS,
+          // so here manually construct the URL by its overload URLEncodedUtils.format(List<>,String).
+          String queryStr = URLEncodedUtils.format(list1, "UTF-8");
+          sb.append(queryStr);
       }
-
-      for (Map.Entry<String, String> parameter : parameters.entrySet()) {
-        builder.addParameter("@" + parameter.getKey(), parameter.getValue());
-      }
-
-      return builder.build().normalize();
-    } catch (URISyntaxException e) {
+      
+      return URI.create(sb.toString());
+    } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("Could not build valid URI", e);
     }
   }
