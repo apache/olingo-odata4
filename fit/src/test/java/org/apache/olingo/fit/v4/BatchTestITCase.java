@@ -77,7 +77,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
   private static final int MAX = 10000;
 
-  private final static String ACCEPT = ContentType.APPLICATION_OCTET_STREAM;
+  private final static String ACCEPT = ContentType.APPLICATION_OCTET_STREAM.toContentTypeString();
 
   @Test
   public void stringStreaming() {

@@ -150,7 +150,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     uriBuilder.appendEntitySetSegment("Product").inlineCount(URIBuilder.InlineCount.allpages);
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
-    req.setFormat(format.toString(client.getServiceVersion()));
+    req.setFormat(format.getContentType(client.getServiceVersion()).toContentTypeString());
 
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
@@ -164,7 +164,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     uriBuilder.appendEntitySetSegment("Car");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
-    req.setFormat(format.toString(client.getServiceVersion()));
+    req.setFormat(format.getContentType(client.getServiceVersion()).toContentTypeString());
 
     final ODataRawResponse res = req.execute();
     assertNotNull(res);

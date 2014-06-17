@@ -49,7 +49,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
-    req.setFormat(format.toString(client.getServiceVersion()));
+    req.setFormat(format.getContentType(client.getServiceVersion()).toContentTypeString());
 
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
@@ -74,7 +74,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("People").count(true);
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
-    req.setFormat(format.toString(client.getServiceVersion()));
+    req.setFormat(format.getContentType(client.getServiceVersion()).toContentTypeString());
 
     final ODataRawResponse res = req.execute();
     assertNotNull(res);

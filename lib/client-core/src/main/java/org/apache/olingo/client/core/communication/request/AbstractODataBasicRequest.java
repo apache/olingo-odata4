@@ -57,7 +57,7 @@ public abstract class AbstractODataBasicRequest<T extends ODataResponse>
   @Override
   public void setFormat(final ODataFormat format) {
     if (format != null) {
-      final String formatString = format.toString(odataClient.getServiceVersion());
+      final String formatString = format.getContentType(odataClient.getServiceVersion()).toContentTypeString();
       setAccept(formatString);
       setContentType(formatString);
     }

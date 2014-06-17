@@ -319,7 +319,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
       writer.writeStartElement(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.PROPERTIES);
       properties(writer, entity.getProperties());
     } else {
-      writer.writeAttribute(Constants.ATTR_TYPE, ContentType.APPLICATION_XML);
+      writer.writeAttribute(Constants.ATTR_TYPE, ContentType.APPLICATION_XML.toContentTypeString());
       writer.writeStartElement(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.PROPERTIES);
       properties(writer, entity.getProperties());
       writer.writeEndElement();

@@ -97,9 +97,9 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
   }
 
   private String getActualFormat(final ODataFormat format) {
-    return (CommonODataProperty.class.isAssignableFrom(reference) && format == ODataFormat.ATOM)
-            ? ODataFormat.XML.toString(odataClient.getServiceVersion())
-            : format.toString(odataClient.getServiceVersion());
+    return ((CommonODataProperty.class.isAssignableFrom(reference) && format == ODataFormat.ATOM)
+            ? ODataFormat.XML : format)
+            .getContentType(odataClient.getServiceVersion()).toContentTypeString();
   }
 
   @Override

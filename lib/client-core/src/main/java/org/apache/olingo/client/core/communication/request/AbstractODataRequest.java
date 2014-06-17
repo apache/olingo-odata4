@@ -184,7 +184,9 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   @Override
   public String getAccept() {
     final String acceptHead = odataHeaders.getHeader(HeaderName.accept);
-    return StringUtils.isBlank(acceptHead) ? getDefaultFormat().toString(odataClient.getServiceVersion()) : acceptHead;
+    return StringUtils.isBlank(acceptHead) ?
+        getDefaultFormat().getContentType(odataClient.getServiceVersion()).toContentTypeString() :
+        acceptHead;
   }
 
   @Override
@@ -205,8 +207,9 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   @Override
   public String getContentType() {
     final String contentTypeHead = odataHeaders.getHeader(HeaderName.contentType);
-    return StringUtils.isBlank(contentTypeHead)
-            ? getDefaultFormat().toString(odataClient.getServiceVersion()) : contentTypeHead;
+    return StringUtils.isBlank(contentTypeHead) ?
+        getDefaultFormat().getContentType(odataClient.getServiceVersion()).toContentTypeString() :
+        contentTypeHead;
   }
 
   @Override

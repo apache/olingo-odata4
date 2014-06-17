@@ -72,7 +72,7 @@ public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor 
       LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
       response.setStatusCode(200);
-      response.setHeader("Content-Type", ContentType.APPLICATION_JSON);
+      response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
     }
 
     @Override
@@ -91,7 +91,7 @@ public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor 
       LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
       response.setStatusCode(200);
-      response.setHeader("Content-Type", ContentType.APPLICATION_JSON);
+      response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
     }
 
     protected Entity createEntity() {

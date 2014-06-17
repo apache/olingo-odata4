@@ -124,13 +124,13 @@ public class ConformanceTestITCase extends AbstractTestITCase {
 
     // check for Content-Type
     assertEquals(
-            ODataFormat.JSON_FULL_METADATA.toString(ODataServiceVersion.V40),
+            ODataFormat.JSON_FULL_METADATA.getContentType(ODataServiceVersion.V40).toContentTypeString(),
             req.getHeader("Content-Type"));
     assertEquals(
-            ODataFormat.JSON_FULL_METADATA.toString(ODataServiceVersion.V40),
+            ODataFormat.JSON_FULL_METADATA.getContentType(ODataServiceVersion.V40).toContentTypeString(),
             req.getHeader(HeaderName.contentType.toString()));
     assertEquals(
-            ODataFormat.JSON_FULL_METADATA.toString(ODataServiceVersion.V40),
+            ODataFormat.JSON_FULL_METADATA.getContentType(ODataServiceVersion.V40).toContentTypeString(),
             req.getContentType());
 
     final ODataEntity created = req.execute().getBody();

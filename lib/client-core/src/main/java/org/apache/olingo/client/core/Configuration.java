@@ -82,12 +82,12 @@ public class Configuration implements CommonConfiguration {
   }
 
   @Override
-  public String getDefaultBatchAcceptFormat() {
-    return getProperty(DEFAULT_BATCH_ACCEPT_FORMAT, ContentType.MULTIPART_MIXED).toString();
+  public ContentType getDefaultBatchAcceptFormat() {
+    return (ContentType) getProperty(DEFAULT_BATCH_ACCEPT_FORMAT, ContentType.MULTIPART_MIXED);
   }
 
   @Override
-  public void setDefaultBatchAcceptFormat(final String contentType) {
+  public void setDefaultBatchAcceptFormat(final ContentType contentType) {
     setProperty(DEFAULT_BATCH_ACCEPT_FORMAT, contentType);
   }
 

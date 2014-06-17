@@ -41,7 +41,7 @@ import org.junit.Test;
 
 public class AuthBatchTestITCase extends AbstractTestITCase {
 
-  private final static String ACCEPT = ContentType.APPLICATION_OCTET_STREAM;
+  private final static ContentType ACCEPT = ContentType.APPLICATION_OCTET_STREAM;
 
   @Test
   public void clean() throws EdmPrimitiveTypeException {
@@ -66,8 +66,8 @@ public class AuthBatchTestITCase extends AbstractTestITCase {
   private void batchRequest(final ODataClient client, final String baseURL) throws EdmPrimitiveTypeException {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(baseURL);
-    request.setAccept(ACCEPT);
-    request.addCustomHeader("User-Agent", "Microsoft ADO.NET Data Client xxx");
+    request.setAccept(ACCEPT.toContentTypeString());
+    request.addCustomHeader("User-Agent", "Apache Olingo OData Client");
     request.addCustomHeader(HeaderName.acceptCharset, "UTF-8");
 
     final BatchManager streamManager = request.payloadManager();

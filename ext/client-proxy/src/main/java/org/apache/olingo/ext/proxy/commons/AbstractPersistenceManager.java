@@ -354,9 +354,9 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     final ODataMediaEntityUpdateRequest<?> req =
             factory.getClient().getCUDRequestFactory().getMediaEntityUpdateRequest(uri, input);
 
-    req.setContentType(StringUtils.isBlank(handler.getEntity().getMediaContentType())
-            ? ODataFormat.WILDCARD.toString()
-            : ODataFormat.fromString(handler.getEntity().getMediaContentType()).toString());
+    if (StringUtils.isNotBlank(handler.getEntity().getMediaContentType())) {
+      req.setContentType(ODataFormat.fromString(handler.getEntity().getMediaContentType()).toString());
+    }
 
     if (StringUtils.isNotBlank(handler.getETag())) {
       req.setIfMatch(handler.getETag());

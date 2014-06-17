@@ -51,7 +51,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Car").appendKeySegment(12);
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
-    retrieveReq.setFormat(ODataFormat.WILDCARD);
+    retrieveReq.setAccept("*/*");
 
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());

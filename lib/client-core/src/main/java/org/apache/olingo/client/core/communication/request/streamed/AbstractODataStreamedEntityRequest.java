@@ -50,7 +50,7 @@ public abstract class AbstractODataStreamedEntityRequest<V extends ODataResponse
           final URI uri) {
 
     super(odataClient, method, uri);
-    setAccept(getFormat().toString(odataClient.getServiceVersion()));
+    setAccept(getFormat().getContentType(odataClient.getServiceVersion()).toContentTypeString());
   }
 
   @Override
@@ -61,6 +61,6 @@ public abstract class AbstractODataStreamedEntityRequest<V extends ODataResponse
   @Override
   public final void setFormat(final ODataFormat format) {
     this.format = format;
-    setAccept(format.toString(odataClient.getServiceVersion()));
+    setAccept(format.getContentType(odataClient.getServiceVersion()).toContentTypeString());
   }
 }

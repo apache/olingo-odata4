@@ -150,7 +150,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Car").appendKeySegment(16);
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
-    req.setFormat(format.toString(client.getServiceVersion()));
+    req.setFormat(format.getContentType(client.getServiceVersion()).toContentTypeString());
 
     final ODataRawResponse res = req.execute();
     assertNotNull(res);

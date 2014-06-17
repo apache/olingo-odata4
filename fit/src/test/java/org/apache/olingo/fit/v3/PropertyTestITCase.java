@@ -348,7 +348,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Customer").appendKeySegment(-10).appendPropertySegment("BackupContactInfo");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
-    req.setFormat(format.toString(client.getServiceVersion()));
+    req.setFormat(format.getContentType(client.getServiceVersion()).toContentTypeString());
 
     final ODataRawResponse res = req.execute();
     assertNotNull(res);

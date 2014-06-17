@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.HttpUriRequestFactory;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
@@ -33,13 +34,13 @@ public interface CommonConfiguration {
    * Gets the configured default <tt>Accept</tt> header value format for a batch request.
    * @return configured default <tt>Accept</tt> header value for a batch request.
    */
-  String getDefaultBatchAcceptFormat();
+  ContentType getDefaultBatchAcceptFormat();
   
   /**
    * Set the default <tt>Accept</tt> header value format for a batch request.
    * @param contentType default <tt>Accept</tt> header value.
    */
-  void setDefaultBatchAcceptFormat(String contentType);
+  void setDefaultBatchAcceptFormat(ContentType contentType);
   
   /**
    * Gets the configured OData format for AtomPub exchanges. If this configuration parameter doesn't exist the
@@ -69,8 +70,8 @@ public interface CommonConfiguration {
    * Gets the configured OData value format. If this configuration parameter doesn't exist the TEXT format will be used
    * as default.
    *
-   * @return configured OData value format if specified; TEXT format otherwise.
-   * @see ODataFormat#TEXT
+   * @return configured OData value format if specified; TEXT_PLAIN format otherwise.
+   * @see ODataFormat#TEXT_PLAIN
    */
   ODataFormat getDefaultValueFormat();
 

@@ -320,13 +320,11 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
             && typeRef.getAnnotation(EntityType.class).hasStream()
             && contentSource != null) {
 
-      final String contentType =
-              StringUtils.isBlank(getEntity().getMediaContentType()) ? "*/*" : getEntity().getMediaContentType();
-
-      final ODataMediaRequest retrieveReq = getClient().getRetrieveRequestFactory().
-              getMediaEntityRequest(contentSource);
-      retrieveReq.setFormat(ODataFormat.fromString(contentType));
-
+      final ODataMediaRequest retrieveReq = getClient().getRetrieveRequestFactory()
+          .getMediaEntityRequest(contentSource);
+      if (StringUtils.isNotBlank(getEntity().getMediaContentType())) {
+        retrieveReq.setFormat(ODataFormat.fromString(getEntity().getMediaContentType()));
+      }
       this.stream = retrieveReq.execute().getBody();
     }
 
