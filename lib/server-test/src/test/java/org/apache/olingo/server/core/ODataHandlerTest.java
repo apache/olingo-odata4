@@ -168,6 +168,7 @@ public class ODataHandlerTest {
     
     assertEquals(ODataServiceVersion.V40.toString(), response.getHeaders().get(HttpHeader.ODATA_VERSION));
   }
+  
   @Test(expected = Exception.class)
   public void testMaxVersionNotSupported() {
     ODataRequest request = new ODataRequest();

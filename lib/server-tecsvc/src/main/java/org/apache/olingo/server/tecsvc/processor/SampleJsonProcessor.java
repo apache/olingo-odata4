@@ -37,13 +37,13 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.processor.EntityProcessor;
-import org.apache.olingo.server.api.processor.EntitySetProcessor;
+import org.apache.olingo.server.api.processor.CollectionProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor {
+public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(SampleJsonProcessor.class);
 
     private OData odata;
@@ -56,7 +56,7 @@ public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor 
     }
 
     @Override
-    public void readEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
+    public void readCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
       long time = System.nanoTime();
 
       EntitySet entitySet = createEntitySet();

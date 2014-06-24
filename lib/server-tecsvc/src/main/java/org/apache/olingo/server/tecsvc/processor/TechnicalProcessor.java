@@ -25,11 +25,11 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.processor.EntityProcessor;
-import org.apache.olingo.server.api.processor.EntitySetProcessor;
+import org.apache.olingo.server.api.processor.CollectionProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
-public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor {
+public class TechnicalProcessor implements CollectionProcessor, EntityProcessor {
 
   private OData odata;
   private Edm edm;
@@ -52,7 +52,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor {
   }
 
   @Override
-  public void readEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
+  public void readCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
     response.setContent(new ByteArrayInputStream("EntitySet".getBytes()));
     response.setStatusCode(200);
   }

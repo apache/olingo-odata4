@@ -110,8 +110,8 @@ public class ODataHandler {
     case entitySet:
       if (((UriResourcePartTyped) lastPathSegment).isCollection()) {
         if (request.getMethod().equals(HttpMethod.GET)) {
-          EntitySetProcessor esp = selectProcessor(EntitySetProcessor.class);
-          esp.readEntitySet(request, response, uriInfo, requestedContentType);
+          CollectionProcessor esp = selectProcessor(CollectionProcessor.class);
+          esp.readCollection(request, response, uriInfo, requestedContentType);
         } else {
           throw new ODataRuntimeException("not implemented");
         }
@@ -127,8 +127,8 @@ public class ODataHandler {
     case navigationProperty:
       if (((UriResourceNavigation) lastPathSegment).isCollection()) {
         if (request.getMethod().equals(HttpMethod.GET)) {
-          EntitySetProcessor esp = selectProcessor(EntitySetProcessor.class);
-          esp.readEntitySet(request, response, uriInfo, requestedContentType);
+          CollectionProcessor esp = selectProcessor(CollectionProcessor.class);
+          esp.readCollection(request, response, uriInfo, requestedContentType);
         } else {
           throw new ODataRuntimeException("not implemented");
         }
