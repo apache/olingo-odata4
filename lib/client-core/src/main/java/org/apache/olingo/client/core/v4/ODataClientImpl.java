@@ -32,9 +32,9 @@ import org.apache.olingo.client.api.serialization.v4.ODataReader;
 import org.apache.olingo.client.api.uri.v4.FilterFactory;
 import org.apache.olingo.client.api.uri.v4.SearchFactory;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
-import org.apache.olingo.client.api.v4.Configuration;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.AbstractODataClient;
+import org.apache.olingo.client.core.Configuration;
 import org.apache.olingo.client.core.communication.header.ODataHeadersImpl;
 import org.apache.olingo.client.core.communication.request.batch.v4.BatchRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.cud.v4.CUDRequestFactoryImpl;
@@ -48,9 +48,7 @@ import org.apache.olingo.client.core.uri.v4.FilterFactoryImpl;
 import org.apache.olingo.client.core.uri.v4.URIBuilderImpl;
 import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
 import org.apache.olingo.commons.core.domain.v4.ODataObjectFactoryImpl;
 import org.apache.olingo.commons.core.serialization.AtomSerializer;
@@ -58,7 +56,7 @@ import org.apache.olingo.commons.core.serialization.JsonSerializer;
 
 public class ODataClientImpl extends AbstractODataClient<UpdateType> implements ODataClient {
 
-  protected final Configuration configuration = new ConfigurationImpl();
+  protected final Configuration configuration = new Configuration();
 
   private final FilterFactory filterFactory = new FilterFactoryImpl(getServiceVersion());
 
@@ -114,14 +112,13 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   }
 
   @Override
-  public ODataDeserializer getDeserializer(final Format format) {
+  public ODataDeserializer getDeserializer(final ODataFormat format) {
     return new ODataDeserializerImpl(getServiceVersion(), false, format);
   }
 
   @Override
-  public ODataSerializer getSerializer(final Format format) {
-    return format instanceof ODataPubFormat && format == ODataPubFormat.ATOM
-        || format instanceof ODataFormat && format == ODataFormat.XML ?
+  public ODataSerializer getSerializer(final ODataFormat format) {
+    return format == ODataFormat.ATOM || format == ODataFormat.XML ?
         new AtomSerializer(getServiceVersion()) : new JsonSerializer(getServiceVersion(), false);
   }
 

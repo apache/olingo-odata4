@@ -21,9 +21,10 @@ package org.apache.olingo.ext.proxy;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.commons.EntityContainerInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.NonTransactionalPersistenceManagerImpl;
@@ -47,7 +48,7 @@ public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<
           final C client, final boolean transactional) {
 
     if (!FACTORY_PER_SERVICEROOT.containsKey(client.getServiceRoot())) {
-      client.getConfiguration().setDefaultPubFormat(ODataPubFormat.JSON_FULL_METADATA);
+      client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON_FULL_METADATA);
       final EntityContainerFactory<C> instance = new EntityContainerFactory<C>(client, transactional);
       FACTORY_PER_SERVICEROOT.put(client.getServiceRoot(), instance);
     }

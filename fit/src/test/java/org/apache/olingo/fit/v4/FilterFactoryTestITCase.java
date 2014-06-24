@@ -19,7 +19,6 @@
 package org.apache.olingo.fit.v4;
 
 import static org.junit.Assert.assertEquals;
-import static org.apache.olingo.fit.v4.AbstractTestITCase.client;
 
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.uri.URIFilter;
@@ -28,7 +27,7 @@ import org.apache.olingo.client.api.uri.v4.FilterFactory;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class FilterFactoryTestITCase extends AbstractTestITCase {
@@ -51,7 +50,7 @@ public class FilterFactoryTestITCase extends AbstractTestITCase {
 
     final ODataEntitySetRequest<ODataEntitySet> req =
             client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
-    req.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    req.setFormat(ODataFormat.JSON_FULL_METADATA);
 
     final ODataEntitySet feed = req.execute().getBody();
     assertEquals(3, feed.getEntities().size());

@@ -19,10 +19,9 @@
 package org.apache.olingo.client.api.communication.request.retrieve;
 
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
-import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * This class implements an OData service document request.
  */
-public interface ODataServiceDocumentRequest extends ODataRetrieveRequest<ODataServiceDocument, ODataFormat> {
+public interface ODataServiceDocumentRequest extends ODataRetrieveRequest<ODataServiceDocument> {
 }

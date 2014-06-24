@@ -19,12 +19,13 @@
 package org.apache.olingo.client.core.communication.request.streamed;
 
 import java.net.URI;
+
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamedEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * Abstract class representing a request concerning a streamed entity.
@@ -36,7 +37,7 @@ public abstract class AbstractODataStreamedEntityRequest<V extends ODataResponse
         extends AbstractODataStreamedRequest<V, T>
         implements ODataStreamedEntityRequest<V, T> {
 
-  private ODataPubFormat format;
+  private ODataFormat format;
 
   /**
    * Constructor.
@@ -49,23 +50,17 @@ public abstract class AbstractODataStreamedEntityRequest<V extends ODataResponse
           final URI uri) {
 
     super(odataClient, method, uri);
-    setAccept(getFormat().toString(odataClient.getServiceVersion()));
+    setAccept(getFormat().getContentType(odataClient.getServiceVersion()).toContentTypeString());
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
-  public final ODataPubFormat getFormat() {
+  public final ODataFormat getFormat() {
     return format == null ? odataClient.getConfiguration().getDefaultPubFormat() : format;
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
-  public final void setFormat(final ODataPubFormat format) {
+  public final void setFormat(final ODataFormat format) {
     this.format = format;
-    setAccept(format.toString(odataClient.getServiceVersion()));
+    setAccept(format.getContentType(odataClient.getServiceVersion()).toContentTypeString());
   }
 }

@@ -25,16 +25,15 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 public interface ODataReader extends CommonODataReader {
 
   @Override
-  ODataEntitySet readEntitySet(InputStream input, ODataPubFormat format) throws ODataDeserializerException;
+  ODataEntitySet readEntitySet(InputStream input, ODataFormat format) throws ODataDeserializerException;
 
   @Override
-  ODataEntity readEntity(InputStream input, ODataPubFormat format) throws ODataDeserializerException;
+  ODataEntity readEntity(InputStream input, ODataFormat format) throws ODataDeserializerException;
 
   @Override
   ODataProperty readProperty(InputStream input, ODataFormat format) throws ODataDeserializerException;

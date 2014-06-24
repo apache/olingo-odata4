@@ -19,23 +19,24 @@
 package org.apache.olingo.fit.v4;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.api.uri.QueryOption;
+import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 /**
@@ -124,12 +125,12 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Customers").appendKeySegment(1).format("json");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(ODataPubFormat.ATOM);
+    req.setFormat(ODataFormat.ATOM);
 
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
     assertNotNull(res);
     assertTrue(res.getContentType().replaceAll(" ", "").
-            startsWith(ODataPubFormat.JSON.toString(client.getServiceVersion())));
+            startsWith(ODataFormat.JSON.getContentType(client.getServiceVersion()).toContentTypeString()));
   }
 
   /**

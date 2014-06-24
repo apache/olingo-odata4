@@ -33,7 +33,6 @@ import org.apache.olingo.client.core.serialization.AbstractODataDeserializer;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.serialization.AtomDeserializer;
@@ -41,9 +40,9 @@ import org.apache.olingo.commons.core.serialization.JsonLinkCollectionDeserializ
 
 public class ODataDeserializerImpl extends AbstractODataDeserializer implements ODataDeserializer {
 
-  private final Format format;
+  private final ODataFormat format;
 
-  public ODataDeserializerImpl(final ODataServiceVersion version, final boolean serverMode, final Format format) {
+  public ODataDeserializerImpl(final ODataServiceVersion version, final boolean serverMode, final ODataFormat format) {
     super(version, serverMode, format);
     this.format = format;
   }

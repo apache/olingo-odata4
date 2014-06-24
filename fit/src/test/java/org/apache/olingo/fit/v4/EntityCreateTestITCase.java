@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
 import java.util.Calendar;
+
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
@@ -34,22 +35,22 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomCreateAndDelete() {
-    createAndDeleteOrder(ODataPubFormat.ATOM, 1000);
+    createAndDeleteOrder(ODataFormat.ATOM, 1000);
   }
 
   @Test
   public void jsonCreateAndDelete() {
-    createAndDeleteOrder(ODataPubFormat.JSON, 1001);
+    createAndDeleteOrder(ODataFormat.JSON, 1001);
   }
 
-  private void onContained(final ODataPubFormat format) {
+  private void onContained(final ODataFormat format) {
     final URI uri = getClient().newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Accounts").
             appendKeySegment(101).appendNavigationSegment("MyPaymentInstruments").build();
 
@@ -99,15 +100,15 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomOnContained() {
-    onContained(ODataPubFormat.ATOM);
+    onContained(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonOnContained() {
-    onContained(ODataPubFormat.JSON);
+    onContained(ODataFormat.JSON);
   }
 
-  private void deepInsert(final ODataPubFormat format, final int productId, final int productDetailId)
+  private void deepInsert(final ODataFormat format, final int productId, final int productDetailId)
           throws EdmPrimitiveTypeException {
 
     final ODataEntity product = getClient().getObjectFactory().
@@ -178,11 +179,11 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomDeepInsert() throws EdmPrimitiveTypeException {
-    deepInsert(ODataPubFormat.ATOM, 10, 10);
+    deepInsert(ODataFormat.ATOM, 10, 10);
   }
 
   @Test
   public void jsonDeepInsert() throws EdmPrimitiveTypeException {
-    deepInsert(ODataPubFormat.JSON_FULL_METADATA, 11, 11);
+    deepInsert(ODataFormat.JSON_FULL_METADATA, 11, 11);
   }
 }

@@ -32,14 +32,13 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 /**
  * This class implements a generic OData request.
  */
-public class ODataRawRequestImpl extends AbstractODataRequest<ODataPubFormat>
-        implements ODataRawRequest {
+public class ODataRawRequestImpl extends AbstractODataRequest implements ODataRawRequest {
 
   /**
    * Constructor.
@@ -48,7 +47,12 @@ public class ODataRawRequestImpl extends AbstractODataRequest<ODataPubFormat>
    * @param uri request URI.
    */
   ODataRawRequestImpl(final CommonODataClient<?> odataClient, final URI uri) {
-    super(odataClient, ODataPubFormat.class, HttpMethod.GET, uri);
+    super(odataClient, HttpMethod.GET, uri);
+  }
+
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultPubFormat();
   }
 
   @Override

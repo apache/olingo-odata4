@@ -32,7 +32,7 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.junit.Test;
 
@@ -43,7 +43,7 @@ public class EntitySetTest extends AbstractTest {
     return v4Client;
   }
 
-  private void read(final ODataPubFormat format) throws IOException, ODataDeserializerException {
+  private void read(final ODataFormat format) throws IOException, ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("Customers." + getSuffix(format));
     final ODataEntitySet entitySet = getClient().getBinder().getODataEntitySet(
             getClient().getDeserializer(format).toEntitySet(input));
@@ -59,15 +59,15 @@ public class EntitySetTest extends AbstractTest {
 
   @Test
   public void fromAtom() throws Exception {
-    read(ODataPubFormat.ATOM);
+    read(ODataFormat.ATOM);
   }
 
   @Test
   public void fromJSON() throws Exception {
-    read(ODataPubFormat.JSON);
+    read(ODataFormat.JSON);
   }
 
-  private void ref(final ODataPubFormat format) throws ODataDeserializerException {
+  private void ref(final ODataFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("collectionOfEntityReferences." + getSuffix(format));
     final ODataEntitySet entitySet = getClient().getBinder().getODataEntitySet(
             getClient().getDeserializer(format).toEntitySet(input));
@@ -85,11 +85,11 @@ public class EntitySetTest extends AbstractTest {
 
   @Test
   public void atomRef() throws Exception {
-    ref(ODataPubFormat.ATOM);
+    ref(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonRef() throws Exception {
-    ref(ODataPubFormat.JSON);
+    ref(ODataFormat.JSON);
   }
 }

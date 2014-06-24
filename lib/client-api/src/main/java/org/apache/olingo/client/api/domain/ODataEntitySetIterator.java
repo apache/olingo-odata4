@@ -35,7 +35,7 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,11 +56,11 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
    */
   private static final Logger LOG = LoggerFactory.getLogger(ODataEntitySetIterator.class);
 
-  private final CommonODataClient odataClient;
+  private final CommonODataClient<?> odataClient;
 
   private final InputStream stream;
 
-  private final ODataPubFormat format;
+  private final ODataFormat format;
 
   private ResWrap<Entity> cached;
 
@@ -80,14 +80,14 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
    * @param format OData format.
    */
   public ODataEntitySetIterator(final CommonODataClient<?> odataClient, final InputStream stream,
-          final ODataPubFormat format) {
+          final ODataFormat format) {
 
     this.odataClient = odataClient;
     this.stream = stream;
     this.format = format;
     this.osEntitySet = new ByteArrayOutputStream();
 
-    if (format == ODataPubFormat.ATOM) {
+    if (format == ODataFormat.ATOM) {
       namespaces = getAllElementAttributes(stream, "feed", osEntitySet);
     } else {
       namespaces = null;
@@ -112,7 +112,7 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
   @SuppressWarnings("unchecked")
   public boolean hasNext() {
     if (available && cached == null) {
-      if (format == ODataPubFormat.ATOM) {
+      if (format == ODataFormat.ATOM) {
         cached = nextAtomEntityFromEntitySet(stream, osEntitySet, namespaces);
       } else {
         cached = nextJSONEntityFromEntitySet(stream, osEntitySet);
@@ -213,7 +213,7 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
         }
 
         if (c >= 0) {
-          jsonEntity = odataClient.getDeserializer(ODataPubFormat.JSON).toEntity(
+          jsonEntity = odataClient.getDeserializer(ODataFormat.JSON).toEntity(
                   new ByteArrayInputStream(entity.toByteArray()));
         }
       } else {
@@ -242,7 +242,7 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
         entity.write(">".getBytes(Constants.UTF8));
 
         if (consume(input, "</entry>", entity, true) >= 0) {
-          atomEntity = odataClient.getDeserializer(ODataPubFormat.ATOM).
+          atomEntity = odataClient.getDeserializer(ODataFormat.ATOM).
                   toEntity(new ByteArrayInputStream(entity.toByteArray()));
         }
       }

@@ -21,11 +21,10 @@ package org.apache.olingo.client.api.communication.request.cud;
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * This class implements an OData delete request.
  */
 public interface ODataDeleteRequest
-        extends ODataBasicRequest<ODataDeleteResponse, ODataPubFormat>, ODataBatchableRequest {
+    extends ODataBasicRequest<ODataDeleteResponse>, ODataBatchableRequest {
 }

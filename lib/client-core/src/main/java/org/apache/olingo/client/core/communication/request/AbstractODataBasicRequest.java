@@ -23,60 +23,51 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * Basic request abstract implementation.
  *
- * @param <V> OData response type corresponding to the request implementation.
- * @param <T> OData format being used.
+ * @param <T> OData response type corresponding to the request implementation.
  */
-public abstract class AbstractODataBasicRequest<V extends ODataResponse, T extends Format>
-        extends AbstractODataRequest<T>
-        implements ODataBasicRequest<V, T> {
+public abstract class AbstractODataBasicRequest<T extends ODataResponse>
+    extends AbstractODataRequest implements ODataBasicRequest<T> {
 
   /**
    * Constructor.
    *
    * @param odataClient client instance getting this request
-   * @param formatRef reference class for the format being used
    * @param method request method.
    * @param uri OData request URI.
    */
-  public AbstractODataBasicRequest(final CommonODataClient<?> odataClient,
-          final Class<T> formatRef, final HttpMethod method, final URI uri) {
-
-    super(odataClient, formatRef, method, uri);
+  public AbstractODataBasicRequest(final CommonODataClient<?> odataClient, final HttpMethod method, final URI uri) {
+    super(odataClient, method, uri);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
-  public void setFormat(final T format) {
+  public void setFormat(final ODataFormat format) {
     if (format != null) {
-      setAccept(format.toString(odataClient.getServiceVersion()));
-      setContentType(format.toString(odataClient.getServiceVersion()));
+      final String formatString = format.getContentType(odataClient.getServiceVersion()).toContentTypeString();
+      setAccept(formatString);
+      setContentType(formatString);
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
-  public final Future<V> asyncExecute() {
-    return odataClient.getConfiguration().getExecutor().submit(new Callable<V>() {
+  public final Future<T> asyncExecute() {
+    return odataClient.getConfiguration().getExecutor().submit(new Callable<T>() {
       @Override
-      public V call() throws Exception {
+      public T call() throws Exception {
         return execute();
       }
     });

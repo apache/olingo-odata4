@@ -34,7 +34,6 @@ import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
 public class ODataWriterImpl implements ODataWriter {
@@ -46,7 +45,7 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeEntities(final Collection<CommonODataEntity> entities, final ODataPubFormat format)
+  public InputStream writeEntities(final Collection<CommonODataEntity> entities, final ODataFormat format)
       throws ODataSerializerException {
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     OutputStreamWriter writer;
@@ -67,7 +66,7 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeEntity(final CommonODataEntity entity, final ODataPubFormat format)
+  public InputStream writeEntity(final CommonODataEntity entity, final ODataFormat format)
       throws ODataSerializerException {
     return writeEntities(Collections.<CommonODataEntity>singleton(entity), format);
   }

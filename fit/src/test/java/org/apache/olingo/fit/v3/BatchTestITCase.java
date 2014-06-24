@@ -19,8 +19,8 @@
 package org.apache.olingo.fit.v3;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -28,6 +28,7 @@ import java.net.URI;
 import java.util.Iterator;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
@@ -56,8 +57,7 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-import static org.apache.olingo.fit.v3.AbstractTestITCase.client;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class BatchTestITCase extends AbstractTestITCase {
@@ -116,7 +116,7 @@ public class BatchTestITCase extends AbstractTestITCase {
       createReq = client.getCUDRequestFactory().getEntityCreateRequest(
               targetURI.build(),
               getSampleCustomerProfile(100 + i, "Sample customer", false));
-      createReq.setFormat(ODataPubFormat.JSON);
+      createReq.setFormat(ODataFormat.JSON);
       changeset.addRequest(createReq);
     }
 
@@ -124,7 +124,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     createReq = client.getCUDRequestFactory().getEntityCreateRequest(
             targetURI.build(),
             getSampleCustomerProfile(105, "Sample customer", false));
-    createReq.setFormat(ODataPubFormat.JSON);
+    createReq.setFormat(ODataFormat.JSON);
     changeset.addRequest(createReq);
 
     targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
@@ -133,7 +133,7 @@ public class BatchTestITCase extends AbstractTestITCase {
       createReq = client.getCUDRequestFactory().getEntityCreateRequest(
               targetURI.build(),
               getSampleCustomerProfile(100 + i, "Sample customer", false));
-      createReq.setFormat(ODataPubFormat.ATOM);
+      createReq.setFormat(ODataFormat.ATOM);
       changeset.addRequest(createReq);
     }
 
@@ -318,7 +318,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // create new request
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
-    queryReq.setFormat(ODataPubFormat.ATOM);
+    queryReq.setFormat(ODataFormat.ATOM);
 
     streamManager.addRequest(queryReq);
     // -------------------------------------------
@@ -340,9 +340,9 @@ public class BatchTestITCase extends AbstractTestITCase {
             "Description",
             client.getObjectFactory().newPrimitiveValueBuilder().buildString("new description from batch")));
 
-    final ODataEntityUpdateRequest changeReq =
+    final ODataEntityUpdateRequest<?> changeReq =
             client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.MERGE, merge);
-    changeReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    changeReq.setFormat(ODataFormat.JSON_FULL_METADATA);
     changeReq.setIfMatch(getETag(editLink));
 
     changeset.addRequest(changeReq);
@@ -352,7 +352,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataEntity original = getSampleCustomerProfile(1000, "Sample customer", false);
     final ODataEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
-    createReq.setFormat(ODataPubFormat.ATOM);
+    createReq.setFormat(ODataFormat.ATOM);
     changeset.addRequest(createReq);
 
     // Delete customer created above

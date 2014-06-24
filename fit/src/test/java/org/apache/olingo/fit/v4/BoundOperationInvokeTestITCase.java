@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
@@ -42,12 +43,12 @@ import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
-  private void functions(final ODataPubFormat format) throws EdmPrimitiveTypeException {
+  private void functions(final ODataFormat format) throws EdmPrimitiveTypeException {
     // GetEmployeesCount
     URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     final ODataEntityRequest<ODataSingleton> singletonReq =
@@ -167,12 +168,12 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomFunctions() throws EdmPrimitiveTypeException {
-    functions(ODataPubFormat.ATOM);
+    functions(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonFunctions() throws EdmPrimitiveTypeException {
-    functions(ODataPubFormat.JSON_FULL_METADATA);
+    functions(ODataFormat.JSON_FULL_METADATA);
   }
 
   @Test
@@ -261,7 +262,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertEquals(41.79, getActualAmountRes.getPrimitiveValue().toCastValue(Double.class), 0);
   }
 
-  private void actions(final ODataPubFormat format) throws EdmPrimitiveTypeException {
+  private void actions(final ODataFormat format) throws EdmPrimitiveTypeException {
     // IncreaseRevenue
     URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     ODataEntityRequest<ODataEntity> entityReq =
@@ -365,12 +366,12 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomActions() throws EdmPrimitiveTypeException {
-    actions(ODataPubFormat.ATOM);
+    actions(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonActions() throws EdmPrimitiveTypeException {
-    actions(ODataPubFormat.JSON_FULL_METADATA);
+    actions(ODataFormat.JSON_FULL_METADATA);
   }
 
   @Test

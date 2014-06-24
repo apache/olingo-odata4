@@ -32,17 +32,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
-import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.format.ODataMediaFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
@@ -108,7 +108,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
           final Class<?> typeRef,
           final EntityContainerInvocationHandler containerHandler) {
 
-    super(typeRef, (ODataLinked) entity, containerHandler);
+    super(typeRef, entity, containerHandler);
 
     this.entityURI = entityURI;
     this.internal = entity;
@@ -320,13 +320,11 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
             && typeRef.getAnnotation(EntityType.class).hasStream()
             && contentSource != null) {
 
-      final String contentType =
-              StringUtils.isBlank(getEntity().getMediaContentType()) ? "*/*" : getEntity().getMediaContentType();
-
-      final ODataMediaRequest retrieveReq = getClient().getRetrieveRequestFactory().
-              getMediaEntityRequest(contentSource);
-      retrieveReq.setFormat(ODataMediaFormat.fromFormat(contentType));
-
+      final ODataMediaRequest retrieveReq = getClient().getRetrieveRequestFactory()
+          .getMediaEntityRequest(contentSource);
+      if (StringUtils.isNotBlank(getEntity().getMediaContentType())) {
+        retrieveReq.setFormat(ODataFormat.fromString(getEntity().getMediaContentType()));
+      }
       this.stream = retrieveReq.execute().getBody();
     }
 

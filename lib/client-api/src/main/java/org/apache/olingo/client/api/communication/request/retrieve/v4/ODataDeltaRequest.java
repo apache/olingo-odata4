@@ -20,10 +20,9 @@ package org.apache.olingo.client.api.communication.request.retrieve.v4;
 
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRetrieveRequest;
 import org.apache.olingo.commons.api.domain.v4.ODataDelta;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * Describes an OData retrieve request returning a delta object.
  */
-public interface ODataDeltaRequest extends ODataRetrieveRequest<ODataDelta, ODataPubFormat> {
+public interface ODataDeltaRequest extends ODataRetrieveRequest<ODataDelta> {
 }

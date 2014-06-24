@@ -35,8 +35,8 @@ import org.apache.olingo.client.core.communication.request.retrieve.AbstractODat
 /**
  * This class implements an OData link query request.
  */
-public class ODataLinkCollectionRequestImpl extends AbstractODataRetrieveRequest<ODataLinkCollection, ODataFormat>
-        implements ODataLinkCollectionRequest {
+public class ODataLinkCollectionRequestImpl extends AbstractODataRetrieveRequest<ODataLinkCollection>
+    implements ODataLinkCollectionRequest {
 
   /**
    * Private constructor.
@@ -46,13 +46,15 @@ public class ODataLinkCollectionRequestImpl extends AbstractODataRetrieveRequest
    * @param linkName link name.
    */
   ODataLinkCollectionRequestImpl(final ODataClient odataClient, final URI targetURI, final String linkName) {
-    super(odataClient, ODataFormat.class,
-            odataClient.newURIBuilder(targetURI.toASCIIString()).appendLinksSegment(linkName).build());
+    super(odataClient,
+        odataClient.newURIBuilder(targetURI.toASCIIString()).appendLinksSegment(linkName).build());
   }
 
-  /**
-   * {@inheritDoc }
-   */
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultFormat();
+  }
+
   @Override
   public ODataRetrieveResponse<ODataLinkCollection> execute() {
     return new ODataLinkCollectionResponseImpl(httpClient, doExecute());

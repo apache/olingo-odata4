@@ -24,22 +24,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.olingo.client.api.CommonConfiguration;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataMediaFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.HttpUriRequestFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.apache.olingo.client.core.http.DefaultHttpUriRequestFactory;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
-public abstract class AbstractConfiguration implements CommonConfiguration {
+public class Configuration implements CommonConfiguration {
 
   private static final String DEFAULT_PUB_FORMAT = "pubFormat";
 
   private static final String DEFAULT_VALUE_FORMAT = "valueFormat";
-  
+
   private static final String DEFAULT_BATCH_ACCEPT_FORMAT = "batchAcceptFormat";
 
   private static final String DEFAULT_MEDIA_FORMAT = "valueFormat";
@@ -59,8 +56,6 @@ public abstract class AbstractConfiguration implements CommonConfiguration {
   private static final String GZIP_COMPRESSION = "gzipCompression";
 
   private static final String CHUNKING = "chunking";
-
-  private static final long serialVersionUID = 1L;
 
   private final Map<String, Object> CONF = new HashMap<String, Object>();
 
@@ -89,71 +84,49 @@ public abstract class AbstractConfiguration implements CommonConfiguration {
   }
 
   @Override
-  public String getDefaultBatchAcceptFormat() {
-    return getProperty(DEFAULT_BATCH_ACCEPT_FORMAT, ContentType.MULTIPART_MIXED).toString();
-  }
-  
-  @Override
-  public void setDefaultBatchAcceptFormat(final String contentType) {
-    setProperty(DEFAULT_BATCH_ACCEPT_FORMAT, contentType);
-  }
-  
-  @Override
-  public ODataPubFormat getDefaultPubFormat() {
-    return ODataPubFormat.valueOf(
-            getProperty(DEFAULT_PUB_FORMAT, ODataPubFormat.JSON_FULL_METADATA.name()).toString());
+  public ContentType getDefaultBatchAcceptFormat() {
+    return (ContentType) getProperty(DEFAULT_BATCH_ACCEPT_FORMAT, ContentType.MULTIPART_MIXED);
   }
 
   @Override
-  public void setDefaultPubFormat(final ODataPubFormat format) {
-    setProperty(DEFAULT_PUB_FORMAT, format.name());
+  public void setDefaultBatchAcceptFormat(final ContentType contentType) {
+    setProperty(DEFAULT_BATCH_ACCEPT_FORMAT, contentType);
+  }
+
+  @Override
+  public ODataFormat getDefaultPubFormat() {
+    return (ODataFormat) getProperty(DEFAULT_PUB_FORMAT, ODataFormat.JSON_FULL_METADATA);
+  }
+
+  @Override
+  public void setDefaultPubFormat(final ODataFormat format) {
+    setProperty(DEFAULT_PUB_FORMAT, format);
   }
 
   @Override
   public ODataFormat getDefaultFormat() {
-    ODataFormat format;
-
-    switch (getDefaultPubFormat()) {
-      case ATOM:
-        format = ODataFormat.XML;
-        break;
-
-      case JSON_FULL_METADATA:
-        format = ODataFormat.JSON_FULL_METADATA;
-        break;
-
-      case JSON_NO_METADATA:
-        format = ODataFormat.JSON_NO_METADATA;
-        break;
-
-      case JSON:
-      default:
-        format = ODataFormat.JSON;
-    }
-
-    return format;
+    ODataFormat format = getDefaultPubFormat();
+    return format == ODataFormat.ATOM ? ODataFormat.XML : format;
   }
 
   @Override
-  public ODataValueFormat getDefaultValueFormat() {
-    return ODataValueFormat.valueOf(
-            getProperty(DEFAULT_VALUE_FORMAT, ODataValueFormat.TEXT.name()).toString());
+  public ODataFormat getDefaultValueFormat() {
+    return (ODataFormat) getProperty(DEFAULT_VALUE_FORMAT, ODataFormat.TEXT_PLAIN);
   }
 
   @Override
-  public void setDefaultValueFormat(final ODataValueFormat format) {
-    setProperty(DEFAULT_VALUE_FORMAT, format.name());
+  public void setDefaultValueFormat(final ODataFormat format) {
+    setProperty(DEFAULT_VALUE_FORMAT, format);
   }
 
   @Override
-  public ODataMediaFormat getDefaultMediaFormat() {
-    return ODataMediaFormat.valueOf(
-            getProperty(DEFAULT_VALUE_FORMAT, ODataMediaFormat.APPLICATION_OCTET_STREAM.name()).toString());
+  public ODataFormat getDefaultMediaFormat() {
+    return (ODataFormat) getProperty(DEFAULT_VALUE_FORMAT, ODataFormat.APPLICATION_OCTET_STREAM);
   }
 
   @Override
-  public void setDefaultMediaFormat(final ODataMediaFormat format) {
-    setProperty(DEFAULT_MEDIA_FORMAT, format.name());
+  public void setDefaultMediaFormat(final ODataFormat format) {
+    setProperty(DEFAULT_MEDIA_FORMAT, format);
   }
 
   @Override

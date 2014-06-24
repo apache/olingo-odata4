@@ -42,8 +42,8 @@ import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 /**
  * This class implements an OData update entity property request.
  */
-public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<ODataPropertyUpdateResponse, ODataFormat>
-        implements ODataPropertyUpdateRequest {
+public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<ODataPropertyUpdateResponse>
+    implements ODataPropertyUpdateRequest {
 
   /**
    * Value to be created.
@@ -61,9 +61,14 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
   ODataPropertyUpdateRequestImpl(final CommonODataClient<?> odataClient,
           final HttpMethod method, final URI targetURI, final CommonODataProperty property) {
 
-    super(odataClient, ODataFormat.class, method, targetURI);
+    super(odataClient, method, targetURI);
     // set request body
     this.property = property;
+  }
+
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultFormat();
   }
 
   @Override

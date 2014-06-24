@@ -34,7 +34,7 @@ import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 /**
  * This class implements an OData service document request.
  */
-public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveRequest<ODataServiceDocument, ODataFormat>
+public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveRequest<ODataServiceDocument>
     implements ODataServiceDocumentRequest {
 
   /**
@@ -44,12 +44,14 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
    * @param uri request URI.
    */
   ODataServiceDocumentRequestImpl(final CommonODataClient<?> odataClient, final URI uri) {
-    super(odataClient, ODataFormat.class, uri);
+    super(odataClient, uri);
   }
 
-  /**
-   * {@inheritDoc }
-   */
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultFormat();
+  }
+
   @Override
   public ODataRetrieveResponse<ODataServiceDocument> execute() {
     final HttpResponse res = doExecute();

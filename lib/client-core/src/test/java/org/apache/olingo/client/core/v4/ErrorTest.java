@@ -22,10 +22,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.apache.olingo.client.api.v4.ODataClient;
-import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.junit.Test;
 
 public class ErrorTest extends AbstractTest {
@@ -35,14 +35,14 @@ public class ErrorTest extends AbstractTest {
     return v4Client;
   }
 
-  private ODataError error(final String name, final ODataPubFormat format) throws ODataDeserializerException {
+  private ODataError error(final String name, final ODataFormat format) throws ODataDeserializerException {
     final ODataError error = getClient().getDeserializer(format).toError(
             getClass().getResourceAsStream(name + "." + getSuffix(format)));
     assertNotNull(error);
     return error;
   }
 
-  private void simple(final ODataPubFormat format) throws ODataDeserializerException {
+  private void simple(final ODataFormat format) throws ODataDeserializerException {
     final ODataError error = error("error", format);
     assertEquals("501", error.getCode());
     assertEquals("Unsupported functionality", error.getMessage());
@@ -51,12 +51,12 @@ public class ErrorTest extends AbstractTest {
 
   @Test
   public void jsonSimple() throws Exception {
-    simple(ODataPubFormat.JSON);
+    simple(ODataFormat.JSON);
   }
 
   @Test
   public void atomSimple() throws Exception {
-    simple(ODataPubFormat.ATOM);
+    simple(ODataFormat.ATOM);
   }
 
 }

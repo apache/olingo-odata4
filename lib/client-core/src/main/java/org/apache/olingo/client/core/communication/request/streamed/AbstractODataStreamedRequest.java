@@ -23,23 +23,24 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.entity.ContentType;
-import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.client.core.communication.request.Wrapper;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
-import org.apache.commons.io.IOUtils;
+import org.apache.olingo.client.core.communication.request.Wrapper;
+import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * Streamed OData request abstract class.
@@ -48,7 +49,7 @@ import org.apache.commons.io.IOUtils;
  * @param <T> OData request payload type corresponding to the request implementation.
  */
 public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T extends ODataPayloadManager<V>>
-        extends AbstractODataRequest<ODataMediaFormat> implements ODataStreamedRequest<V, T> {
+        extends AbstractODataRequest implements ODataStreamedRequest<V, T> {
 
   /**
    * OData payload stream manager.
@@ -71,9 +72,14 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
   public AbstractODataStreamedRequest(final CommonODataClient<?> odataClient,
           final HttpMethod method, final URI uri) {
 
-    super(odataClient, ODataMediaFormat.class, method, uri);
+    super(odataClient, method, uri);
     setAccept(ContentType.APPLICATION_OCTET_STREAM.getMimeType());
     setContentType(ContentType.APPLICATION_OCTET_STREAM.getMimeType());
+  }
+
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultMediaFormat();
   }
 
   /**

@@ -19,10 +19,9 @@
 package org.apache.olingo.client.api.communication.request.retrieve;
 
 import java.io.InputStream;
-import org.apache.olingo.commons.api.format.ODataMediaFormat;
 
 /**
  * This class implements an OData media query request.
  */
-public interface ODataMediaRequest extends ODataRetrieveRequest<InputStream, ODataMediaFormat> {
+public interface ODataMediaRequest extends ODataRetrieveRequest<InputStream> {
 }

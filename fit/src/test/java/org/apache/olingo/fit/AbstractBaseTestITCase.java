@@ -30,7 +30,6 @@ import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,14 +78,14 @@ public abstract class AbstractBaseTestITCase {
     if (LOG.isDebugEnabled()) {
       StringWriter writer = new StringWriter();
       try {
-        getClient().getSerializer(ODataPubFormat.ATOM).write(writer, getClient().getBinder().getEntity(entity));
+        getClient().getSerializer(ODataFormat.ATOM).write(writer, getClient().getBinder().getEntity(entity));
       } catch (final ODataSerializerException e) {}
       writer.flush();
       LOG.debug(message + " (Atom)\n{}", writer.toString());
 
       writer = new StringWriter();
       try {
-        getClient().getSerializer(ODataPubFormat.JSON).write(writer, getClient().getBinder().getEntity(entity));
+        getClient().getSerializer(ODataFormat.JSON).write(writer, getClient().getBinder().getEntity(entity));
       } catch (final ODataSerializerException e) {}
       writer.flush();
       LOG.debug(message + " (JSON)\n{}", writer.toString());

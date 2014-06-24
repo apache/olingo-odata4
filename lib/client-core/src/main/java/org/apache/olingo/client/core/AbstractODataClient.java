@@ -26,8 +26,6 @@ import org.apache.olingo.client.core.serialization.ODataWriterImpl;
 
 public abstract class AbstractODataClient<UT extends CommonUpdateType> implements CommonODataClient<UT> {
 
-  private static final long serialVersionUID = 7269096702397630265L;
-
   private final ODataWriter writer = new ODataWriterImpl(this);
 
   @Override

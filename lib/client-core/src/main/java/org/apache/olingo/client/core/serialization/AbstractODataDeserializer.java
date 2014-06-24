@@ -27,9 +27,7 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.serialization.AtomDeserializer;
@@ -51,9 +49,10 @@ public abstract class AbstractODataDeserializer {
   protected final ODataServiceVersion version;
   protected final ODataDeserializer deserializer;
 
-  public AbstractODataDeserializer(final ODataServiceVersion version, final boolean serverMode, final Format format) {
+  public AbstractODataDeserializer(final ODataServiceVersion version, final boolean serverMode,
+      final ODataFormat format) {
     this.version = version;
-    if (format == ODataFormat.XML || format == ODataPubFormat.ATOM) {
+    if (format == ODataFormat.XML || format == ODataFormat.ATOM) {
       deserializer = new AtomDeserializer(version);
     } else {
       deserializer = new JsonDeserializer(version, serverMode);

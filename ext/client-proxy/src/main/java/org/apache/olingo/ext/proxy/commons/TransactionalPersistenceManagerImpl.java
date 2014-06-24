@@ -54,7 +54,8 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
   protected void doFlush(final PersistenceChanges changes, final TransactionItems items) {
     final CommonODataBatchRequest request =
             factory.getClient().getBatchRequestFactory().getBatchRequest(factory.getClient().getServiceRoot());
-    ((ODataRequest) request).setAccept(factory.getClient().getConfiguration().getDefaultBatchAcceptFormat());
+    String accept = factory.getClient().getConfiguration().getDefaultBatchAcceptFormat().toContentTypeString();
+    ((ODataRequest) request).setAccept(accept);
 
     final BatchManager streamManager = (BatchManager) ((ODataStreamedRequest) request).payloadManager();
 

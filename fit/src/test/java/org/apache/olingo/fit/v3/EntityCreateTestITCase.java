@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
+
 import org.apache.http.entity.ContentType;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
@@ -48,8 +49,7 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 /**
@@ -63,7 +63,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void createAsAtom() {
-    final ODataPubFormat format = ODataPubFormat.ATOM;
+    final ODataFormat format = ODataFormat.ATOM;
     final int id = 1;
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
 
@@ -75,7 +75,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void createAsJSON() {
-    final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
+    final ODataFormat format = ODataFormat.JSON_FULL_METADATA;
     final int id = 2;
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
 
@@ -87,7 +87,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void createWithInlineAsAtom() {
-    final ODataPubFormat format = ODataPubFormat.ATOM;
+    final ODataFormat format = ODataFormat.ATOM;
     final int id = 3;
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", true);
 
@@ -101,7 +101,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   @Test
   public void createWithInlineAsJSON() {
     // this needs to be full, otherwise there is no mean to recognize links
-    final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
+    final ODataFormat format = ODataFormat.JSON_FULL_METADATA;
     final int id = 4;
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", true);
 
@@ -114,12 +114,12 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void createInlineWithoutLinkAsAtom() {
-    final ODataPubFormat format = ODataPubFormat.ATOM;
+    final ODataFormat format = ODataFormat.ATOM;
     final int id = 5;
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
 
     original.addLink(client.getObjectFactory().newDeepInsertEntity(
-            "Info", getSampleCustomerInfo(id, "Sample Customer_Info")));
+            "Info", getSampleCustomerInfo("Sample Customer_Info")));
 
     createEntity(getServiceRoot(), format, original, "Customer");
     final ODataEntity actual =
@@ -141,12 +141,12 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void createInlineWithoutLinkAsJSON() {
-    final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
+    final ODataFormat format = ODataFormat.JSON_FULL_METADATA;
     final int id = 6;
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
 
     original.addLink(client.getObjectFactory().newDeepInsertEntity(
-            "Info", getSampleCustomerInfo(id, "Sample Customer_Info")));
+            "Info", getSampleCustomerInfo("Sample Customer_Info")));
 
     createEntity(getServiceRoot(), format, original, "Customer");
     final ODataEntity actual =
@@ -168,7 +168,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void createWithNavigationAsAtom() {
-    final ODataPubFormat format = ODataPubFormat.ATOM;
+    final ODataFormat format = ODataFormat.ATOM;
     final ODataEntity actual = createWithNavigationLink(format, 5);
     cleanAfterCreate(format, actual, false, getServiceRoot());
   }
@@ -176,14 +176,14 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   @Test
   public void createWithNavigationAsJSON() {
     // this needs to be full, otherwise there is no mean to recognize links
-    final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
+    final ODataFormat format = ODataFormat.JSON_FULL_METADATA;
     final ODataEntity actual = createWithNavigationLink(format, 6);
     cleanAfterCreate(format, actual, false, getServiceRoot());
   }
 
   @Test
   public void createWithFeedNavigationAsAtom() throws EdmPrimitiveTypeException {
-    final ODataPubFormat format = ODataPubFormat.ATOM;
+    final ODataFormat format = ODataFormat.ATOM;
     final ODataEntity actual = createWithFeedNavigationLink(format, 7);
     cleanAfterCreate(format, actual, false, getServiceRoot());
   }
@@ -191,14 +191,14 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   @Test
   public void createWithFeedNavigationAsJSON() throws EdmPrimitiveTypeException {
     // this needs to be full, otherwise there is no mean to recognize links
-    final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
+    final ODataFormat format = ODataFormat.JSON_FULL_METADATA;
     final ODataEntity actual = createWithFeedNavigationLink(format, 8);
     cleanAfterCreate(format, actual, false, getServiceRoot());
   }
 
   @Test
   public void createWithBackNavigationAsAtom() throws EdmPrimitiveTypeException {
-    final ODataPubFormat format = ODataPubFormat.ATOM;
+    final ODataFormat format = ODataFormat.ATOM;
     final ODataEntity actual = createWithBackNavigationLink(format, 9);
     cleanAfterCreate(format, actual, true, getServiceRoot());
   }
@@ -206,19 +206,19 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   @Test
   public void createWithBackNavigationAsJSON() throws EdmPrimitiveTypeException {
     // this needs to be full, otherwise there is no mean to recognize links
-    final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
+    final ODataFormat format = ODataFormat.JSON_FULL_METADATA;
     final ODataEntity actual = createWithBackNavigationLink(format, 10);
     cleanAfterCreate(format, actual, true, getServiceRoot());
   }
 
   @Test
   public void multiKeyAsAtom() {
-    multiKey(ODataPubFormat.ATOM);
+    multiKey(ODataFormat.ATOM);
   }
 
   @Test
   public void multiKeyAsJSON() {
-    multiKey(ODataPubFormat.JSON);
+    multiKey(ODataFormat.JSON);
   }
 
   @Test
@@ -256,7 +256,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer");
     final ODataEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), original);
-    createReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    createReq.setFormat(ODataFormat.JSON_FULL_METADATA);
     createReq.setContentType(ContentType.APPLICATION_ATOM_XML.getMimeType());
     createReq.setPrefer(client.newPreferences().returnContent());
 
@@ -274,7 +274,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     }
   }
 
-  private ODataEntity createWithFeedNavigationLink(final ODataPubFormat format, final int id)
+  private ODataEntity createWithFeedNavigationLink(final ODataFormat format, final int id)
           throws EdmPrimitiveTypeException {
 
     final String sampleName = "Sample customer";
@@ -337,7 +337,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     return actual;
   }
 
-  private ODataEntity createWithNavigationLink(final ODataPubFormat format, final int id) {
+  private ODataEntity createWithNavigationLink(final ODataFormat format, final int id) {
     final String sampleName = "Sample customer";
 
     final ODataEntity original = getSampleCustomerProfile(id, sampleName, false);
@@ -374,7 +374,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     return actual;
   }
 
-  private ODataEntity createWithBackNavigationLink(final ODataPubFormat format, final int id)
+  private ODataEntity createWithBackNavigationLink(final ODataFormat format, final int id)
           throws EdmPrimitiveTypeException {
 
     final String sampleName = "Sample customer";
@@ -440,7 +440,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     return customer;
   }
 
-  private void multiKey(final ODataPubFormat format) {
+  private void multiKey(final ODataFormat format) {
     final ODataEntity message = client.getObjectFactory().newEntity(new FullQualifiedName(
             "Microsoft.Test.OData.Services.AstoriaDefaultService.Message"));
 

@@ -30,7 +30,7 @@ import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.junit.Test;
 
@@ -41,7 +41,7 @@ public class EntitySetTest extends AbstractTest {
     return v3Client;
   }
 
-  private void read(final ODataPubFormat format) throws IOException, ODataDeserializerException {
+  private void read(final ODataFormat format) throws IOException, ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("Customer." + getSuffix(format));
     final ODataEntitySet entitySet = getClient().getBinder().getODataEntitySet(
         getClient().getDeserializer(format).toEntitySet(input));
@@ -57,11 +57,11 @@ public class EntitySetTest extends AbstractTest {
 
   @Test
   public void fromAtom() throws Exception {
-    read(ODataPubFormat.ATOM);
+    read(ODataFormat.ATOM);
   }
 
   @Test
   public void fromJSON() throws Exception {
-    read(ODataPubFormat.JSON);
+    read(ODataFormat.JSON);
   }
 }

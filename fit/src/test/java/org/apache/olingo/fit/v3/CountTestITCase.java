@@ -18,14 +18,16 @@
  */
 package org.apache.olingo.fit.v3;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
-import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.junit.Test;
 
 public class CountTestITCase extends AbstractTestITCase {
 
@@ -34,7 +36,7 @@ public class CountTestITCase extends AbstractTestITCase {
     CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").count();
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     try {
       final ODataValue value = req.execute().getBody();
       assertTrue(10 <= Integer.parseInt(value.toString()));
@@ -48,10 +50,10 @@ public class CountTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").count();
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     req.setAccept("application/json;odata=fullmetadata");
     try {
-      final ODataValue value = req.execute().getBody();
+      req.execute().getBody();
       fail();
     } catch (ODataClientErrorException e) {
       assertEquals(415, e.getStatusLine().getStatusCode());
