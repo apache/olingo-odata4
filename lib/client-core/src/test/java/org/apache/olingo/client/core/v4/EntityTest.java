@@ -40,6 +40,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
+import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -357,7 +358,7 @@ public class EntityTest extends AbstractTest {
 
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", entity.getTypeName().toString());
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress",
-             entity.getProperty("HomeAddress").getValue().getTypeName());
+            ((ODataValuable) entity.getProperty("HomeAddress")).getValue().getTypeName());
   }
 
   @Test
