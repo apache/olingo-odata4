@@ -161,6 +161,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
     if (boundOp == null) {
       boundOp = entity.getOperation(new FullQualifiedName(targetFQN.getNamespace(), operation.name()).toString());
     }
+    boolean useOperationFQN = this.getClient().getConfiguration().isUseUrlOperationFQN();
     if (boundOp == null) {
     	// json minimal/none metadata doesn't return operations for entity, so here try creating it from Edm: 
     	EdmAction action = this.getClient().getEdm(null).getBoundAction(
@@ -170,7 +171,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
     		boundOp.setMetadataAnchor(action.getFullQualifiedName().toString());
     		boundOp.setTitle(boundOp.getMetadataAnchor());
     		boundOp.setTarget(URI.create(entity.getEditLink().toString() + "/" 
-                  + action.getFullQualifiedName().toString()));
+                  + (useOperationFQN ? action.getFullQualifiedName().toString() : operation.name())));
     	}
     }
     if (boundOp == null) {
@@ -182,7 +183,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
     		boundOp.setMetadataAnchor(func.getFullQualifiedName().toString());
     		boundOp.setTitle(boundOp.getMetadataAnchor());
     		boundOp.setTarget(URI.create(entity.getEditLink().toString() + "/" 
-                  + func.getFullQualifiedName().toString()));
+                  + (useOperationFQN ? func.getFullQualifiedName().toString() : operation.name())));
     	}
     }
     if (boundOp == null) {
