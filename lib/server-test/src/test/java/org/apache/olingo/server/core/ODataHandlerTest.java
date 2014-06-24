@@ -47,10 +47,10 @@ public class ODataHandlerTest {
 
   @Before
   public void before() {
-    OData server = OData.newInstance();
-    Edm edm = server.createEdm(new EdmTechProvider());
+    OData odata = OData.newInstance();
+    Edm edm = odata.createEdm(new EdmTechProvider());
 
-    handler = new ODataHandler(server, edm);
+    handler = new ODataHandler(odata, edm);
   }
 
   @Test
@@ -182,4 +182,5 @@ public class ODataHandlerTest {
     
     assertEquals(ODataServiceVersion.V40.toString(), response.getHeaders().get(HttpHeader.ODATA_VERSION));
   }
+  
 }

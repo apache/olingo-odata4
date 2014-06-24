@@ -19,6 +19,8 @@
 package org.apache.olingo.server.api.processor;
 
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;

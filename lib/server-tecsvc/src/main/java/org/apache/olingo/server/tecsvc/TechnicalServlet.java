@@ -26,11 +26,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.processor.SampleJsonProcessor;
-import org.apache.olingo.server.tecsvc.processor.TechnicalProcessor;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +58,7 @@ public class TechnicalServlet extends HttpServlet {
     
 //    handler.register(new TechnicalProcessor(dataProvider));
     handler.register(new SampleJsonProcessor());
-
+    
     handler.process(req, resp);
   }
 

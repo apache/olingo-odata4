@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.api.processor;
 
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.server.api.OData;
 

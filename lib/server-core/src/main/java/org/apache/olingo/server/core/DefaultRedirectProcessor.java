@@ -18,12 +18,16 @@
  */
 package org.apache.olingo.server.core;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.processor.Processor;
 
 public class DefaultRedirectProcessor implements RedirectProcessor {
 

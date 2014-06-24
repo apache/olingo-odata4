@@ -16,19 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api;
+package org.apache.olingo.server.api.processor;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+public interface SupportCustomContentTypes {
 
-import org.apache.olingo.server.api.processor.Processor;
-
-public interface ODataHttpHandler {
-
-  void process(HttpServletRequest request, HttpServletResponse response);
-
-  void register(Processor processor);
-
+  public List<String> getSupportedContentTypes(Class<? extends Processor> processorClass);
+  
 }
