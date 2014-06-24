@@ -95,7 +95,7 @@ public class ODataBatchUtilities {
    * <p>
    * Usually used to read an entire batch part.
    *
-   * @param batchController batch controller.
+   * @param controller batch controller.
    * @param os destination stream of batch part (null to discard).
    * @param checkCurrent if 'TRUE' the current line will be included into the delimiter verification.
    * @return latest read line.
@@ -111,7 +111,7 @@ public class ODataBatchUtilities {
    * <p>
    * Usually used to read an entire batch part.
    *
-   * @param batchController batch controller.
+   * @param controller batch controller.
    * @param os destination stream of batch part (null to discard).
    * @param count number of batch line to be read.
    * @param checkCurrent if 'TRUE' the current line will be included into the delimiter verification.
@@ -302,7 +302,7 @@ public class ODataBatchUtilities {
     final String contentType = headers.containsKey(HeaderName.contentType.toString())
             ? headers.get(HeaderName.contentType.toString()).toString() : StringUtils.EMPTY;
 
-    if (contentType.contains(ContentType.MULTIPART_MIXED)) {
+    if (contentType.contains(ContentType.MULTIPART_MIXED.toContentTypeString())) {
       nextItemType = BatchItemType.CHANGESET;
     } else if (contentType.contains(ODataBatchConstants.ITEM_CONTENT_TYPE)) {
       nextItemType = BatchItemType.RETRIEVE;

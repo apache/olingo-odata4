@@ -24,10 +24,10 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
-public abstract class AbstractMetadataRequestImpl<V> extends AbstractODataRetrieveRequest<V, ODataFormat> {
+public abstract class AbstractMetadataRequestImpl<V> extends AbstractODataRetrieveRequest<V> {
 
-  public AbstractMetadataRequestImpl(final CommonODataClient odataClient, final URI query) {
-    super(odataClient, ODataFormat.class, query);
+  public AbstractMetadataRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
+    super(odataClient, query);
     super.setAccept(ContentType.APPLICATION_XML.getMimeType());
     super.setContentType(ContentType.APPLICATION_XML.getMimeType());
   }

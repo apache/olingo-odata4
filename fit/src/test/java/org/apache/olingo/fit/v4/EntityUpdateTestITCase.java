@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.UUID;
+
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
@@ -32,12 +33,12 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class EntityUpdateTestITCase extends AbstractTestITCase {
 
-  private void upsert(final UpdateType updateType, final ODataPubFormat format) {
+  private void upsert(final UpdateType updateType, final ODataFormat format) {
     final ODataEntity order = getClient().getObjectFactory().
             newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));
 
@@ -72,17 +73,17 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomUpsert() {
-    upsert(UpdateType.PATCH, ODataPubFormat.ATOM);
-    upsert(UpdateType.REPLACE, ODataPubFormat.ATOM);
+    upsert(UpdateType.PATCH, ODataFormat.ATOM);
+    upsert(UpdateType.REPLACE, ODataFormat.ATOM);
   }
 
   @Test
   public void jsonUpsert() {
-    upsert(UpdateType.PATCH, ODataPubFormat.JSON);
-    upsert(UpdateType.REPLACE, ODataPubFormat.JSON);
+    upsert(UpdateType.PATCH, ODataFormat.JSON);
+    upsert(UpdateType.REPLACE, ODataFormat.JSON);
   }
 
-  private void onContained(final ODataPubFormat format) {
+  private void onContained(final ODataFormat format) {
     final String newName = UUID.randomUUID().toString();
     final ODataEntity changes = getClient().getObjectFactory().newEntity(
             new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument"));
@@ -106,15 +107,15 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomOnContained() {
-    onContained(ODataPubFormat.ATOM);
+    onContained(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonOnContained() {
-    onContained(ODataPubFormat.JSON);
+    onContained(ODataFormat.JSON);
   }
 
-  private void bindOperation(final ODataPubFormat format) throws EdmPrimitiveTypeException {
+  private void bindOperation(final ODataFormat format) throws EdmPrimitiveTypeException {
     final ODataEntity changes = getClient().getObjectFactory().newEntity(
             new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
     final ODataLink parent = getClient().getObjectFactory().newEntityNavigationLink("Parent",
@@ -144,11 +145,11 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomBindOperation() throws EdmPrimitiveTypeException {
-    bindOperation(ODataPubFormat.ATOM);
+    bindOperation(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonBindOperation() throws EdmPrimitiveTypeException {
-    bindOperation(ODataPubFormat.JSON);
+    bindOperation(ODataFormat.JSON);
   }
 }

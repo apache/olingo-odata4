@@ -36,7 +36,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.junit.Test;
 
@@ -47,7 +47,7 @@ public class EntityTest extends AbstractTest {
     return v3Client;
   }
 
-  private void readAndWrite(final ODataPubFormat format) throws ODataDeserializerException {
+  private void readAndWrite(final ODataFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("Customer_-10." + getSuffix(format));
     final ODataEntity entity = getClient().getBinder().getODataEntity(
         getClient().getDeserializer(format).toEntity(input));
@@ -75,15 +75,15 @@ public class EntityTest extends AbstractTest {
 
   @Test
   public void fromAtom() throws Exception {
-    readAndWrite(ODataPubFormat.ATOM);
+    readAndWrite(ODataFormat.ATOM);
   }
 
   @Test
   public void fromJSON() throws Exception {
-    readAndWrite(ODataPubFormat.JSON_FULL_METADATA);
+    readAndWrite(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void readGeospatial(final ODataPubFormat format) throws ODataDeserializerException {
+  private void readGeospatial(final ODataFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("AllGeoTypesSet_-8." + getSuffix(format));
     final ODataEntity entity = getClient().getBinder().getODataEntity(
         getClient().getDeserializer(format).toEntity(input));
@@ -106,16 +106,16 @@ public class EntityTest extends AbstractTest {
 
   @Test
   public void withGeospatialFromAtom() throws Exception {
-    readGeospatial(ODataPubFormat.ATOM);
+    readGeospatial(ODataFormat.ATOM);
   }
 
   @Test
   public void withGeospatialFromJSON() throws Exception {
     // this needs to be full, otherwise there is no mean to recognize geospatial types
-    readGeospatial(ODataPubFormat.JSON_FULL_METADATA);
+    readGeospatial(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void withActions(final ODataPubFormat format) throws ODataDeserializerException {
+  private void withActions(final ODataFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("ComputerDetail_-10." + getSuffix(format));
     final ODataEntity entity = getClient().getBinder().getODataEntity(
         getClient().getDeserializer(format).toEntity(input));
@@ -132,16 +132,16 @@ public class EntityTest extends AbstractTest {
 
   @Test
   public void withActionsFromAtom() throws Exception {
-    withActions(ODataPubFormat.ATOM);
+    withActions(ODataFormat.ATOM);
   }
 
   @Test
   public void withActionsFromJSON() throws Exception {
     // this needs to be full, otherwise actions will not be provided
-    withActions(ODataPubFormat.JSON_FULL_METADATA);
+    withActions(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void mediaEntity(final ODataPubFormat format) throws ODataDeserializerException {
+  private void mediaEntity(final ODataFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("Car_16." + getSuffix(format));
     final ODataEntity entity = getClient().getBinder().getODataEntity(
         getClient().getDeserializer(format).toEntity(input));
@@ -157,15 +157,15 @@ public class EntityTest extends AbstractTest {
 
   @Test
   public void mediaEntityFromAtom() throws Exception {
-    mediaEntity(ODataPubFormat.ATOM);
+    mediaEntity(ODataFormat.ATOM);
   }
 
   @Test
   public void mediaEntityFromJSON() throws Exception {
-    mediaEntity(ODataPubFormat.JSON_FULL_METADATA);
+    mediaEntity(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void issue128(final ODataPubFormat format) throws EdmPrimitiveTypeException, ODataDeserializerException {
+  private void issue128(final ODataFormat format) throws EdmPrimitiveTypeException, ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("AllGeoTypesSet_-5." + getSuffix(format));
     final ODataEntity entity = getClient().getBinder().getODataEntity(
         getClient().getDeserializer(format).toEntity(input));
@@ -184,11 +184,11 @@ public class EntityTest extends AbstractTest {
 
   @Test
   public void issue128FromAtom() throws Exception {
-    issue128(ODataPubFormat.ATOM);
+    issue128(ODataFormat.ATOM);
   }
 
   @Test
   public void issue128FromJSON() throws Exception {
-    issue128(ODataPubFormat.JSON_FULL_METADATA);
+    issue128(ODataFormat.JSON_FULL_METADATA);
   }
 }

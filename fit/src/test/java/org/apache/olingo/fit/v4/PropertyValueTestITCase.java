@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
@@ -33,8 +34,6 @@ import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.junit.Test;
 
 public class PropertyValueTestITCase extends AbstractTestITCase {
@@ -44,7 +43,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PersonID");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     assertEquals("5", req.execute().getBody().toString());
   }
 
@@ -53,7 +52,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("IsRegistered");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     assertEquals("true", req.execute().getBody().toString());
   }
 
@@ -62,7 +61,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("FirstName");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     assertEquals("Peter", req.execute().getBody().toString());
   }
 
@@ -71,7 +70,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Orders").appendKeySegment(8).appendPropertySegment("OrderDate");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     final ODataPrimitiveValue property = req.execute().getBody();
     assertEquals("2011-03-04T16:03:57Z", property.toString());
   }
@@ -81,7 +80,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("Height");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     final ODataPrimitiveValue property = req.execute().getBody();
     assertEquals("179", property.toString());
   }
@@ -91,7 +90,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     final ODataPrimitiveValue property = req.execute().getBody();
     assertEquals("fi653p3+MklA/LdoBlhWgnMTUUEo8tEgtbMXnF0a3CUNL9BZxXpSRiD9ebTnmNR0zWPjJ"
             + "VIDx4tdmCnq55XrJh+RW9aI/b34wAogK3kcORw=", property.toString());
@@ -102,7 +101,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setAccept(ODataPubFormat.ATOM.toString(ODataServiceVersion.V40));
+    req.setAccept(ODataFormat.ATOM.getContentType(ODataServiceVersion.V40).toContentTypeString());
     req.execute().getBody();
   }
 
@@ -111,7 +110,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setAccept(ODataFormat.XML.toString(client.getServiceVersion()));
+    req.setAccept(ODataFormat.XML.getContentType(client.getServiceVersion()).toContentTypeString());
     req.execute().getBody();
   }
 
@@ -133,7 +132,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("HomeAddress");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     final ODataPrimitiveValue property = req.execute().getBody();
     assertTrue(StringUtils.isBlank(property.toString()));
   }

@@ -18,7 +18,11 @@
  */
 package org.apache.olingo.fit.v3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
+
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
@@ -26,8 +30,7 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
-import org.apache.olingo.commons.api.format.ODataValueFormat;
-import static org.junit.Assert.*;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class PropertyValueTestITCase extends AbstractTestITCase {
@@ -37,7 +40,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-10).appendPropertySegment("ProductId");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     final ODataValue value = req.execute().getBody();
     assertNotNull(value);
     assertEquals(-10, Integer.parseInt(value.toString()));
@@ -48,7 +51,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-10).appendPropertySegment("ProductId");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     final ODataValue value = req.execute().getBody();
     assertNotNull(value);
     assertEquals(-10, Integer.parseInt(value.toString()));
@@ -59,7 +62,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-6).appendPropertySegment("Description");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     final ODataValue value = req.execute().getBody();
     assertNotNull(value);
     assertEquals("expdybhclurfobuyvzmhkgrnrajhamqmkhqpmiypittnp", value.toString());
@@ -71,7 +74,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Product").appendKeySegment(-7).appendPropertySegment(
                     "NestedComplexConcurrency/ModifiedDate");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     final ODataValue value = req.execute().getBody();
     assertNotNull(value);
     assertEquals("7866-11-16T22:25:52.747755+01:00", value.toString());
@@ -82,7 +85,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-6).appendPropertySegment("Dimensions/Height");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     final ODataValue value = req.execute().getBody();
     assertNotNull(value);
     assertEquals("-79228162514264337593543950335", value.toString());
@@ -111,11 +114,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     req.setAccept("application/atom+xml");
     ODataRetrieveResponse<ODataEntity> res = req.execute();
     assertEquals(200, res.getStatusCode());
-    ODataEntity entitySet = res.getBody();
-    assertNotNull(entitySet);
-    assertEquals("fi653p3+MklA/LdoBlhWgnMTUUEo8tEgtbMXnF0a3CUNL9BZxXpSRiD9ebTnmNR0zWPjJ"
-            + "VIDx4tdmCnq55XrJh+RW9aI/b34wAogK3kcORw=",
-            entitySet.getProperties().get(0).getValue().toString());
+    res.getBody();
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -126,11 +125,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     req.setAccept("application/xml");
     ODataRetrieveResponse<ODataEntity> res = req.execute();
     assertEquals(200, res.getStatusCode());
-    ODataEntity entitySet = res.getBody();
-    assertNotNull(entitySet);
-    assertEquals("fi653p3+MklA/LdoBlhWgnMTUUEo8tEgtbMXnF0a3CUNL9BZxXpSRiD9ebTnmNR0zWPjJ"
-            + "VIDx4tdmCnq55XrJh+RW9aI/b34wAogK3kcORw=",
-            entitySet.getProperties().get(0).getValue().toString());
+    res.getBody();
   }
 
   @Test
@@ -139,7 +134,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Product").appendKeySegment(-7).appendPropertySegment(
                     "ComplexConcurrency/QueriedDateTime");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     final ODataValue value = req.execute().getBody();
     if (value.isPrimitive()) {
       assertNotNull(value);

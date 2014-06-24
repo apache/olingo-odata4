@@ -27,7 +27,6 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 public class ODataReaderImpl extends AbstractODataReader implements ODataReader {
@@ -37,13 +36,13 @@ public class ODataReaderImpl extends AbstractODataReader implements ODataReader 
   }
 
   @Override
-  public ODataEntitySet readEntitySet(final InputStream input, final ODataPubFormat format)
+  public ODataEntitySet readEntitySet(final InputStream input, final ODataFormat format)
       throws ODataDeserializerException {
     return ((ODataClient) client).getBinder().getODataEntitySet(client.getDeserializer(format).toEntitySet(input));
   }
 
   @Override
-  public ODataEntity readEntity(final InputStream input, final ODataPubFormat format)
+  public ODataEntity readEntity(final InputStream input, final ODataFormat format)
       throws ODataDeserializerException {
     return ((ODataClient) client).getBinder().getODataEntity(client.getDeserializer(format).toEntity(input));
   }

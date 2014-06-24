@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
@@ -48,7 +49,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.ODataValueFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
@@ -141,7 +142,6 @@ class EntitySetInvocationHandler<
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
@@ -183,7 +183,7 @@ class EntitySetInvocationHandler<
   public Long count() {
     final ODataValueRequest req = getClient().getRetrieveRequestFactory().
             getValueRequest(getClient().newURIBuilder(this.uri.toASCIIString()).count().build());
-    req.setFormat(ODataValueFormat.TEXT);
+    req.setFormat(ODataFormat.TEXT_PLAIN);
     return Long.valueOf(req.execute().getBody().asPrimitive().toString());
   }
 

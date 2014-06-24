@@ -18,8 +18,12 @@
  */
 package org.apache.olingo.fit.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
@@ -28,7 +32,6 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
@@ -36,10 +39,9 @@ import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.domain.v4.ODataEntityImpl;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.junit.BeforeClass;
 
 public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
@@ -86,7 +88,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     return client;
   }
 
-  protected ODataEntity read(final ODataPubFormat format, final URI editLink) {
+  protected ODataEntity read(final ODataFormat format, final URI editLink) {
     final ODataEntityRequest<ODataEntity> req = getClient().getRetrieveRequestFactory().getEntityRequest(editLink);
     req.setFormat(format);
 
@@ -95,14 +97,14 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
     assertNotNull(entity);
 
-    if (ODataPubFormat.JSON_FULL_METADATA == format || ODataPubFormat.ATOM == format) {
+    if (ODataFormat.JSON_FULL_METADATA == format || ODataFormat.ATOM == format) {
       assertEquals(req.getURI(), entity.getEditLink());
     }
 
     return entity;
   }
 
-  protected void createAndDeleteOrder(final ODataPubFormat format, final int id) {
+  protected void createAndDeleteOrder(final ODataFormat format, final int id) {
     final ODataEntity order = new ODataEntityImpl(
             new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));
 

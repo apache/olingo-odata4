@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
@@ -39,8 +40,7 @@ import org.apache.olingo.client.api.communication.response.ODataStreamUpdateResp
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
-import org.apache.olingo.commons.api.format.ODataMediaFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class MediaEntityTestITCase extends AbstractTestITCase {
@@ -51,7 +51,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Car").appendKeySegment(12);
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
-    retrieveReq.setFormat(ODataMediaFormat.WILDCARD);
+    retrieveReq.setAccept("*/*");
 
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
@@ -66,7 +66,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
             client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").appendKeySegment(12);
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
-    retrieveReq.setFormat(ODataMediaFormat.APPLICATION_XML);
+    retrieveReq.setFormat(ODataFormat.APPLICATION_XML);
 
     retrieveReq.execute();
   }
@@ -77,12 +77,12 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
             client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").appendKeySegment(12);
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
-    retrieveReq.setFormat(ODataMediaFormat.APPLICATION_JSON);
+    retrieveReq.setFormat(ODataFormat.APPLICATION_JSON);
 
     retrieveReq.execute();
   }
 
-  private void updateMediaEntity(final ODataPubFormat format, final int id) throws Exception {
+  private void updateMediaEntity(final ODataFormat format, final int id) throws Exception {
     final URIBuilder builder =
             client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").appendKeySegment(id);
 
@@ -106,15 +106,15 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void updateMediaEntityAsAtom() throws Exception {
-    updateMediaEntity(ODataPubFormat.ATOM, 14);
+    updateMediaEntity(ODataFormat.ATOM, 14);
   }
 
   @Test
   public void updateMediaEntityAsJson() throws Exception {
-    updateMediaEntity(ODataPubFormat.JSON, 15);
+    updateMediaEntity(ODataFormat.JSON, 15);
   }
 
-  private void createMediaEntity(final ODataPubFormat format, final InputStream input) throws Exception {
+  private void createMediaEntity(final ODataFormat format, final InputStream input) throws Exception {
     final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car");
 
     final ODataMediaEntityCreateRequest<ODataEntity> createReq =
@@ -148,17 +148,17 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void createMediaEntityAsAtom() throws Exception {
-    createMediaEntity(ODataPubFormat.ATOM, IOUtils.toInputStream("buffered stream sample"));
+    createMediaEntity(ODataFormat.ATOM, IOUtils.toInputStream("buffered stream sample"));
   }
 
   @Test
   public void createMediaEntityAsJson() throws Exception {
-    createMediaEntity(ODataPubFormat.JSON, IOUtils.toInputStream("buffered stream sample"));
+    createMediaEntity(ODataFormat.JSON, IOUtils.toInputStream("buffered stream sample"));
   }
 
   @Test
   public void issue137() throws Exception {
-    createMediaEntity(ODataPubFormat.JSON, this.getClass().getResourceAsStream("/sample.png"));
+    createMediaEntity(ODataFormat.JSON, this.getClass().getResourceAsStream("/sample.png"));
   }
 
   @Test

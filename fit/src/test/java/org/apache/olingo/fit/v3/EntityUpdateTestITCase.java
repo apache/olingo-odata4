@@ -24,6 +24,7 @@ import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
+
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
@@ -33,8 +34,7 @@ import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResp
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 /**
@@ -48,7 +48,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void mergeAsAtom() {
-    final ODataPubFormat format = ODataPubFormat.ATOM;
+    final ODataFormat format = ODataFormat.ATOM;
     final URI uri = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
     final String etag = getETag(uri);
@@ -59,7 +59,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void mergeAsJSON() {
-    final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
+    final ODataFormat format = ODataFormat.JSON_FULL_METADATA;
     final URI uri = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
     final String etag = getETag(uri);
@@ -70,7 +70,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void patchAsAtom() {
-    final ODataPubFormat format = ODataPubFormat.ATOM;
+    final ODataFormat format = ODataFormat.ATOM;
     final URI uri = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
     final String etag = getETag(uri);
@@ -81,7 +81,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void patchAsJSON() {
-    final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
+    final ODataFormat format = ODataFormat.JSON_FULL_METADATA;
     final URI uri = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
     final String etag = getETag(uri);
@@ -92,7 +92,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void replaceAsAtom() {
-    final ODataPubFormat format = ODataPubFormat.ATOM;
+    final ODataFormat format = ODataFormat.ATOM;
     final ODataEntity changes = read(format, client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
@@ -100,7 +100,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void replaceAsJSON() {
-    final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
+    final ODataFormat format = ODataFormat.JSON_FULL_METADATA;
     final ODataEntity changes = read(format, client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
@@ -108,15 +108,15 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void patchLinkAsAtom() throws EdmPrimitiveTypeException {
-    patchLink(ODataPubFormat.ATOM);
+    patchLink(ODataFormat.ATOM);
   }
 
   @Test
   public void patchLinkAsJSON() throws EdmPrimitiveTypeException {
-    patchLink(ODataPubFormat.JSON_FULL_METADATA);
+    patchLink(ODataFormat.JSON_FULL_METADATA);
   }
 
-  public void patchLink(final ODataPubFormat format) throws EdmPrimitiveTypeException {
+  public void patchLink(final ODataFormat format) throws EdmPrimitiveTypeException {
     final URI uri = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).build();
 
@@ -172,7 +172,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     // ---------------------------------------
   }
 
-  private ODataEntityUpdateRequest<ODataEntity> buildMultiKeyUpdateReq(final ODataPubFormat format)
+  private ODataEntityUpdateRequest<ODataEntity> buildMultiKeyUpdateReq(final ODataFormat format)
           throws EdmPrimitiveTypeException {
 
     final LinkedHashMap<String, Object> multiKey = new LinkedHashMap<String, Object>();
@@ -192,19 +192,19 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     return client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.MERGE, message);
   }
 
-  private void mergeMultiKey(final ODataPubFormat format) throws EdmPrimitiveTypeException {
+  private void mergeMultiKey(final ODataFormat format) throws EdmPrimitiveTypeException {
     final ODataEntityUpdateResponse<ODataEntity> res = buildMultiKeyUpdateReq(format).execute();
     assertEquals(204, res.getStatusCode());
   }
 
   @Test
   public void mergeMultiKeyAsAtom() throws EdmPrimitiveTypeException {
-    mergeMultiKey(ODataPubFormat.ATOM);
+    mergeMultiKey(ODataFormat.ATOM);
   }
 
   @Test
   public void mergeMultiKeyAsJSON() throws EdmPrimitiveTypeException {
-    mergeMultiKey(ODataPubFormat.JSON_FULL_METADATA);
+    mergeMultiKey(ODataFormat.JSON_FULL_METADATA);
   }
 
   @Test

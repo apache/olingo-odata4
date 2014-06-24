@@ -27,12 +27,12 @@ import org.apache.olingo.client.api.communication.request.retrieve.v4.ODataDelta
 import org.apache.olingo.commons.api.domain.v4.ODataDelta;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class DeltaTestITCase extends AbstractTestITCase {
 
-  private void parse(final ODataPubFormat format) {
+  private void parse(final ODataFormat format) {
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
             client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").build());
     req.setPrefer(client.newPreferences().trackChanges());
@@ -76,11 +76,11 @@ public class DeltaTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomParse() {
-    parse(ODataPubFormat.ATOM);
+    parse(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonParse() {
-    parse(ODataPubFormat.JSON);
+    parse(ODataFormat.JSON);
   }
 }

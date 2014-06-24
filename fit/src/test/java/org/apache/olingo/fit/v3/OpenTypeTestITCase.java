@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 import java.util.UUID;
+
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
@@ -35,7 +36,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class OpenTypeTestITCase extends AbstractTestITCase {
@@ -52,13 +53,13 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertTrue(metadata.getEntityType(new FullQualifiedName(schema.getNamespace(), "RowIndex")).isOpenType());
   }
 
-  private ODataEntity readRow(final ODataPubFormat format, final String uuid) {
+  private ODataEntity readRow(final ODataFormat format, final String uuid) {
     final URIBuilder builder = getClient().newURIBuilder(testOpenTypeServiceRootURL).
             appendEntitySetSegment("Row").appendKeySegment(UUID.fromString(uuid));
     return read(format, builder.build());
   }
 
-  private void read(final ODataPubFormat format) {
+  private void read(final ODataFormat format) {
     ODataEntity row = readRow(format, "71f7d0dc-ede4-45eb-b421-555a2aa1e58f");
     assertEquals(EdmPrimitiveTypeKind.Double, row.getProperty("Double").getPrimitiveValue().getTypeKind());
     assertEquals(EdmPrimitiveTypeKind.Guid, row.getProperty("Id").getPrimitiveValue().getTypeKind());
@@ -69,15 +70,15 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void readAsAtom() {
-    read(ODataPubFormat.ATOM);
+    read(ODataFormat.ATOM);
   }
 
   @Test
   public void readAsJSON() {
-    read(ODataPubFormat.JSON_FULL_METADATA);
+    read(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void cud(final ODataPubFormat format) {
+  private void cud(final ODataFormat format) {
     final Integer id = 1426;
 
     ODataEntity rowIndex = getClient().getObjectFactory().newEntity(
@@ -172,11 +173,11 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void cudAsAtom() {
-    cud(ODataPubFormat.ATOM);
+    cud(ODataFormat.ATOM);
   }
 
   @Test
   public void cudAsJSON() {
-    cud(ODataPubFormat.JSON_FULL_METADATA);
+    cud(ODataFormat.JSON_FULL_METADATA);
   }
 }

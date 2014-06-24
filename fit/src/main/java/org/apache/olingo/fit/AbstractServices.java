@@ -123,6 +123,8 @@ public abstract class AbstractServices {
   private static final Pattern REF_PATTERN = Pattern.compile("([$]\\d+)");
 
   protected static final String BOUNDARY = "batch_243234_25424_ef_892u748";
+  protected static final String MULTIPART_MIXED = "multipart/mixed";//ContentType.MULTIPART_MIXED.toContentTypeString();
+  protected static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 
   protected final ODataServiceVersion version;
   protected final Metadata metadata;
@@ -194,8 +196,8 @@ public abstract class AbstractServices {
 
   @POST
   @Path("/$batch")
-  @Consumes(ContentType.MULTIPART_MIXED)
-  @Produces(ContentType.APPLICATION_OCTET_STREAM + ";boundary=" + BOUNDARY)
+  @Consumes(MULTIPART_MIXED)
+  @Produces(APPLICATION_OCTET_STREAM + ";boundary=" + BOUNDARY)
   public Response batch(
           @HeaderParam("Authorization") @DefaultValue(StringUtils.EMPTY) String authorization,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
@@ -611,7 +613,7 @@ public abstract class AbstractServices {
       final String entityKey;
       if (xml.isMediaContent(entitySetName)) {
         entry = new EntityImpl();
-        entry.setMediaContentType(ContentType.WILDCARD);
+        entry.setMediaContentType(ContentType.APPLICATION_OCTET_STREAM.toContentTypeString());
         entry.setType(entitySet.getType());
 
         entityKey = xml.getDefaultEntryKey(entitySetName, entry);

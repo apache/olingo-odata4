@@ -19,37 +19,35 @@
 package org.apache.olingo.client.api.communication.request;
 
 import java.util.concurrent.Future;
+
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.commons.api.format.Format;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * Basic OData request.
  *
- * @param <V> OData response type corresponding to the request implementation.
- * @param <T> Accepted content-type formats by the request in object.
+ * @param <T> OData response type corresponding to the request implementation.
  */
-public interface ODataBasicRequest<V extends ODataResponse, T extends Format> extends ODataRequest {
+public interface ODataBasicRequest<T extends ODataResponse> extends ODataRequest {
 
   /**
    * Request execute.
    *
    * @return return an OData response.
    */
-  V execute();
+  T execute();
 
   /**
    * Async request execute.
    *
    * @return <code>Future&lt;ODataResponse&gt;</code> about the executed request.
    */
-  Future<V> asyncExecute();
+  Future<T> asyncExecute();
 
   /**
    * Override configured request format.
    *
    * @param format request format.
-   * @see com.msopentech.odatajclient.engine.format.ODataFormat
-   * @see com.msopentech.odatajclient.engine.format.ODataPubFormat
    */
-  void setFormat(T format);
+  void setFormat(ODataFormat format);
 }

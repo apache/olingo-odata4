@@ -18,20 +18,22 @@
  */
 package org.apache.olingo.client.core.v4;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.AtomLinksQualifier;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.custommonkey.xmlunit.Diff;
-import static org.junit.Assert.assertTrue;
 
 public class AtomTest extends JSONTest {
 
@@ -41,8 +43,8 @@ public class AtomTest extends JSONTest {
   }
 
   @Override
-  protected ODataPubFormat getODataPubFormat() {
-    return ODataPubFormat.ATOM;
+  protected ODataFormat getODataPubFormat() {
+    return ODataFormat.ATOM;
   }
 
   @Override

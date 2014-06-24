@@ -733,7 +733,12 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     try {
       final XMLEventReader reader = getReader(input);
       final StartElement start = skipBeforeFirstStartElement(reader);
-      return getContainer(start, entity(reader, start));
+      final Entity entity = entity(reader, start);
+      if (entity == null) {
+        throw new ODataDeserializerException("No entity found!");
+      } else {
+        return getContainer(start, entity);
+      }
     } catch (XMLStreamException e) {
       throw new ODataDeserializerException(e);
     }

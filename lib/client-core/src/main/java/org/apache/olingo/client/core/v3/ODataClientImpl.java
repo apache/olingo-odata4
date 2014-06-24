@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.v3;
 
+import org.apache.olingo.client.api.CommonConfiguration;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
 import org.apache.olingo.client.api.communication.request.batch.v3.BatchRequestFactory;
@@ -30,9 +31,9 @@ import org.apache.olingo.client.api.serialization.v3.ODataDeserializer;
 import org.apache.olingo.client.api.serialization.v3.ODataReader;
 import org.apache.olingo.client.api.uri.v3.FilterFactory;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
-import org.apache.olingo.client.api.v3.Configuration;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.AbstractODataClient;
+import org.apache.olingo.client.core.Configuration;
 import org.apache.olingo.client.core.communication.header.ODataHeadersImpl;
 import org.apache.olingo.client.core.communication.request.batch.v3.BatchRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.cud.v3.CUDRequestFactoryImpl;
@@ -45,9 +46,7 @@ import org.apache.olingo.client.core.uri.v3.FilterFactoryImpl;
 import org.apache.olingo.client.core.uri.v3.URIBuilderImpl;
 import org.apache.olingo.commons.api.domain.v3.ODataObjectFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
 import org.apache.olingo.commons.core.domain.v3.ODataObjectFactoryImpl;
 import org.apache.olingo.commons.core.serialization.AtomSerializer;
@@ -55,7 +54,7 @@ import org.apache.olingo.commons.core.serialization.JsonSerializer;
 
 public class ODataClientImpl extends AbstractODataClient<UpdateType> implements ODataClient {
 
-  protected final Configuration configuration = new ConfigurationImpl();
+  protected final Configuration configuration = new Configuration();
 
   private final FilterFactory filterFactory = new FilterFactoryImpl(getServiceVersion());
 
@@ -88,7 +87,7 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   }
 
   @Override
-  public Configuration getConfiguration() {
+  public CommonConfiguration getConfiguration() {
     return configuration;
   }
 
@@ -103,14 +102,13 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   }
 
   @Override
-  public ODataDeserializer getDeserializer(final Format format) {
+  public ODataDeserializer getDeserializer(final ODataFormat format) {
     return new ODataDeserializerImpl(getServiceVersion(), false, format);
   }
 
   @Override
-  public ODataSerializer getSerializer(final Format format) {
-    return format instanceof ODataPubFormat && format == ODataPubFormat.ATOM
-        || format instanceof ODataFormat && format == ODataFormat.XML ?
+  public ODataSerializer getSerializer(final ODataFormat format) {
+    return format == ODataFormat.ATOM || format == ODataFormat.XML ?
         new AtomSerializer(getServiceVersion()) : new JsonSerializer(getServiceVersion(), false);
   }
 

@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
@@ -42,7 +43,7 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 /**
@@ -54,7 +55,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     return testStaticServiceRootURL;
   }
 
-  private void withInlineEntry(final ODataPubFormat format) {
+  private void withInlineEntry(final ODataFormat format) {
     final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).expand("Info");
 
@@ -97,16 +98,16 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void withInlineEntryFromAtom() {
-    withInlineEntry(ODataPubFormat.ATOM);
+    withInlineEntry(ODataFormat.ATOM);
   }
 
   @Test
   public void withInlineEntryFromJSON() {
     // this needs to be full, otherwise there is no mean to recognize links
-    withInlineEntry(ODataPubFormat.JSON_FULL_METADATA);
+    withInlineEntry(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void withInlineFeed(final ODataPubFormat format) {
+  private void withInlineFeed(final ODataFormat format) {
     final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).expand("Orders");
 
@@ -135,21 +136,21 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void withInlineFeedFromAtom() {
-    withInlineFeed(ODataPubFormat.ATOM);
+    withInlineFeed(ODataFormat.ATOM);
   }
 
   @Test
   public void withInlineFeedFromJSON() {
     // this needs to be full, otherwise there is no mean to recognize links
-    withInlineFeed(ODataPubFormat.JSON_FULL_METADATA);
+    withInlineFeed(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void rawRequest(final ODataPubFormat format) {
+  private void rawRequest(final ODataFormat format) {
     final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Car").appendKeySegment(16);
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
-    req.setFormat(format.toString(client.getServiceVersion()));
+    req.setFormat(format.getContentType(client.getServiceVersion()).toContentTypeString());
 
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
@@ -163,16 +164,16 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void rawRequestAsAtom() {
-    rawRequest(ODataPubFormat.ATOM);
+    rawRequest(ODataFormat.ATOM);
   }
 
   @Test
   public void rawRequestAsJSON() {
     // this needs to be full, otherwise actions will not be provided
-    rawRequest(ODataPubFormat.JSON_FULL_METADATA);
+    rawRequest(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void multiKey(final ODataPubFormat format) throws EdmPrimitiveTypeException {
+  private void multiKey(final ODataFormat format) throws EdmPrimitiveTypeException {
     final LinkedHashMap<String, Object> multiKey = new LinkedHashMap<String, Object>();
     multiKey.put("FromUsername", "1");
     multiKey.put("MessageId", -10);
@@ -191,25 +192,25 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void multiKeyAsAtom() throws EdmPrimitiveTypeException {
-    multiKey(ODataPubFormat.ATOM);
+    multiKey(ODataFormat.ATOM);
   }
 
   @Test
   public void multiKeyAsJSON() throws EdmPrimitiveTypeException {
-    multiKey(ODataPubFormat.JSON_FULL_METADATA);
+    multiKey(ODataFormat.JSON_FULL_METADATA);
   }
 
   @Test
   public void checkForETagAsAtom() {
-    checkForETag(ODataPubFormat.ATOM);
+    checkForETag(ODataFormat.ATOM);
   }
 
   @Test
   public void checkForETagAsJSON() {
-    checkForETag(ODataPubFormat.JSON_FULL_METADATA);
+    checkForETag(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void checkForETag(final ODataPubFormat format) {
+  private void checkForETag(final ODataFormat format) {
     final CommonURIBuilder<?> uriBuilder =
             client.newURIBuilder(getServiceRoot()).appendEntitySetSegment("Product").appendKeySegment(-10);
 
@@ -231,14 +232,14 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(getServiceRoot()).appendEntitySetSegment("Car");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(ODataPubFormat.JSON);
+    req.setFormat(ODataFormat.JSON);
 
     // this statement should cause an IllegalArgumentException bearing JsonParseException
     // since we are attempting to parse an EntitySet as if it was an Entity
     req.execute().getBody();
   }
 
-  private void geospatial(final ODataPubFormat format) {
+  private void geospatial(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("AllGeoTypesSet").appendKeySegment(-10);
 
@@ -251,11 +252,11 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void geospatialAsJSON() {
-    geospatial(ODataPubFormat.JSON_FULL_METADATA);
+    geospatial(ODataFormat.JSON_FULL_METADATA);
   }
 
   @Test
   public void geospatialAsAtom() {
-    geospatial(ODataPubFormat.ATOM);
+    geospatial(ODataFormat.ATOM);
   }
 }

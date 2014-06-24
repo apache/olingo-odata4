@@ -30,11 +30,11 @@ public enum ODataLinkType {
   /**
    * Entity navigation link.
    */
-  ENTITY_NAVIGATION(ContentType.APPLICATION_ATOM_XML + ";type=entry"),
+  ENTITY_NAVIGATION(ContentType.APPLICATION_ATOM_XML_ENTRY),
   /**
    * Entity set navigation link.
    */
-  ENTITY_SET_NAVIGATION(ContentType.APPLICATION_ATOM_XML + ";type=feed"),
+  ENTITY_SET_NAVIGATION(ContentType.APPLICATION_ATOM_XML_FEED),
   /**
    * Association link.
    */
@@ -48,6 +48,10 @@ public enum ODataLinkType {
 
   private ODataLinkType(final String type) {
     this.type = type;
+  }
+
+  private ODataLinkType(ContentType contentType) {
+    this(contentType.toContentTypeString());
   }
 
   private ODataLinkType setType(final String type) {

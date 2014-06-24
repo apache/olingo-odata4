@@ -69,11 +69,6 @@ public abstract class AbstractValue implements Value {
   }
 
   @Override
-  public NullValue asNull() {
-    return isNull() ? (NullValue) this : null;
-  }
-
-  @Override
   public PrimitiveValue asPrimitive() {
     return isPrimitive() ? (PrimitiveValue) this : null;
   }

@@ -26,7 +26,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
     client.getConfiguration().setKeyAsSegment(true);
   }
 
-  private void read(final ODataPubFormat format) {
+  private void read(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testKeyAsSegmentServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-10);
 
@@ -55,17 +55,17 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   @Test
   public void fromAtom() {
-    read(ODataPubFormat.ATOM);
+    read(ODataFormat.ATOM);
   }
 
   @Test
   public void fromJSON() {
-    read(ODataPubFormat.JSON_FULL_METADATA);
+    read(ODataFormat.JSON_FULL_METADATA);
   }
 
   @Test
   public void createODataEntityAsAtom() {
-    final ODataPubFormat format = ODataPubFormat.ATOM;
+    final ODataFormat format = ODataFormat.ATOM;
     final int id = 1;
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
 
@@ -77,7 +77,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   @Test
   public void createODataEntityAsJSON() {
-    final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
+    final ODataFormat format = ODataFormat.JSON_FULL_METADATA;
     final int id = 2;
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
 
@@ -89,7 +89,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   @Test
   public void replaceODataEntityAsAtom() {
-    final ODataPubFormat format = ODataPubFormat.ATOM;
+    final ODataFormat format = ODataFormat.ATOM;
     final ODataEntity changes = read(format, client.newURIBuilder(testKeyAsSegmentServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
@@ -97,7 +97,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   @Test
   public void replaceODataEntityAsJSON() {
-    final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
+    final ODataFormat format = ODataFormat.JSON_FULL_METADATA;
     final ODataEntity changes = read(format, client.newURIBuilder(testKeyAsSegmentServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);

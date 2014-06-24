@@ -39,11 +39,11 @@ import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
+import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
@@ -77,7 +77,7 @@ public class EntityTest extends AbstractTest {
     };
   }
 
-  private void singleton(final ODataPubFormat format) throws ODataDeserializerException {
+  private void singleton(final ODataFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("VipCustomer." + getSuffix(format));
     final ODataEntity entity = getClient().getBinder().getODataEntity(
             getClient().getDeserializer(format).toEntity(input));
@@ -101,7 +101,7 @@ public class EntityTest extends AbstractTest {
       }
       if ("Orders".equals(link.getName())) {
         checked++;
-        if (format == ODataPubFormat.ATOM) {
+        if (format == ODataFormat.ATOM) {
           assertEquals(ODataLinkType.ENTITY_SET_NAVIGATION, link.getType());
         }
       }
@@ -127,15 +127,15 @@ public class EntityTest extends AbstractTest {
 
   @Test
   public void atomSingleton() throws Exception {
-    singleton(ODataPubFormat.ATOM);
+    singleton(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonSingleton() throws Exception {
-    singleton(ODataPubFormat.JSON_FULL_METADATA);
+    singleton(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void withEnums(final ODataPubFormat format) throws ODataDeserializerException {
+  private void withEnums(final ODataFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("Products_5." + getSuffix(format));
     final ODataEntity entity = getClient().getBinder().getODataEntity(
             getClient().getDeserializer(format).toEntity(input));
@@ -162,15 +162,15 @@ public class EntityTest extends AbstractTest {
 
   @Test
   public void atomWithEnums() throws Exception {
-    withEnums(ODataPubFormat.ATOM);
+    withEnums(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonWithEnums() throws Exception {
-    withEnums(ODataPubFormat.JSON_FULL_METADATA);
+    withEnums(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void withInlineEntitySet(final ODataPubFormat format) throws ODataDeserializerException {
+  private void withInlineEntitySet(final ODataFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream(
             "Accounts_101_expand_MyPaymentInstruments." + getSuffix(format));
     final ODataEntity entity = getClient().getBinder().getODataEntity(
@@ -196,15 +196,15 @@ public class EntityTest extends AbstractTest {
 
   @Test
   public void atomWithInlineEntitySet() throws Exception {
-    withInlineEntitySet(ODataPubFormat.ATOM);
+    withInlineEntitySet(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonWithInlineEntitySet() throws Exception {
-    withInlineEntitySet(ODataPubFormat.JSON_FULL_METADATA);
+    withInlineEntitySet(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void mediaEntity(final ODataPubFormat format) throws ODataDeserializerException {
+  private void mediaEntity(final ODataFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream(
             "Advertisements_f89dee73-af9f-4cd4-b330-db93c25ff3c7." + getSuffix(format));
     final ODataEntity entity = getClient().getBinder().getODataEntity(
@@ -222,15 +222,15 @@ public class EntityTest extends AbstractTest {
 
   @Test
   public void atomMediaEntity() throws Exception {
-    mediaEntity(ODataPubFormat.ATOM);
+    mediaEntity(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonMediaEntity() throws Exception {
-    mediaEntity(ODataPubFormat.JSON_FULL_METADATA);
+    mediaEntity(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void withStream(final ODataPubFormat format) throws ODataDeserializerException {
+  private void withStream(final ODataFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("PersonDetails_1." + getSuffix(format));
     final ODataEntity entity = getClient().getBinder().getODataEntity(
             getClient().getDeserializer(format).toEntity(input));
@@ -248,15 +248,15 @@ public class EntityTest extends AbstractTest {
 
   @Test
   public void atomWithStream() throws Exception {
-    withStream(ODataPubFormat.ATOM);
+    withStream(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonWithStream() throws Exception {
-    withStream(ODataPubFormat.JSON_FULL_METADATA);
+    withStream(ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void ref(final ODataPubFormat format) throws ODataDeserializerException {
+  private void ref(final ODataFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("entityReference." + getSuffix(format));
     final ODataEntity entity = getClient().getBinder().getODataEntity(
             getClient().getDeserializer(format).toEntity(input));
@@ -271,15 +271,15 @@ public class EntityTest extends AbstractTest {
 
   @Test
   public void atomRef() throws Exception {
-    ref(ODataPubFormat.ATOM);
+    ref(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonRef() throws Exception {
-    ref(ODataPubFormat.JSON);
+    ref(ODataFormat.JSON);
   }
 
-  private void complexNavigationProperties(final ODataPubFormat format) throws ODataDeserializerException {
+  private void complexNavigationProperties(final ODataFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("entity.withcomplexnavigation." + getSuffix(format));
     final ODataEntity entity = getClient().getBinder().getODataEntity(
             getClient().getDeserializer(format).toEntity(input));
@@ -298,15 +298,15 @@ public class EntityTest extends AbstractTest {
 
   @Test
   public void atomComplexNavigationProperties() throws Exception {
-    complexNavigationProperties(ODataPubFormat.ATOM);
+    complexNavigationProperties(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonComplexNavigationProperties() throws Exception {
-    complexNavigationProperties(ODataPubFormat.JSON);
+    complexNavigationProperties(ODataFormat.JSON);
   }
 
-  private void annotated(final ODataPubFormat format) throws EdmPrimitiveTypeException, ODataDeserializerException {
+  private void annotated(final ODataFormat format) throws EdmPrimitiveTypeException, ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("annotated." + getSuffix(format));
     final ODataEntity entity = getClient().getBinder().getODataEntity(
             getClient().getDeserializer(format).toEntity(input));
@@ -343,15 +343,15 @@ public class EntityTest extends AbstractTest {
 
   @Test
   public void atomAnnotated() throws Exception {
-    complexNavigationProperties(ODataPubFormat.ATOM);
+    complexNavigationProperties(ODataFormat.ATOM);
   }
 
   @Test
   public void jsonAnnotated() throws Exception {
-    complexNavigationProperties(ODataPubFormat.JSON);
+    complexNavigationProperties(ODataFormat.JSON);
   }
 
-  private void derived(final ODataClient client, final ODataPubFormat format) throws ODataDeserializerException {
+  private void derived(final ODataClient client, final ODataFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("Customer." + getSuffix(format));    
     final ODataEntity entity = client.getBinder().getODataEntity(client.getDeserializer(format).toEntity(input));
     assertNotNull(entity);
@@ -363,16 +363,16 @@ public class EntityTest extends AbstractTest {
 
   @Test
   public void derivedFromAtom() throws Exception {
-    derived(getClient(), ODataPubFormat.ATOM);
+    derived(getClient(), ODataFormat.ATOM);
   }
 
   @Test
   public void derivedFromJSON() throws Exception {
-    derived(getEdmEnabledClient(), ODataPubFormat.JSON);
+    derived(getEdmEnabledClient(), ODataFormat.JSON);
   }
 
   @Test
   public void derivedFromFullJSON() throws Exception {
-    derived(getClient(), ODataPubFormat.JSON_FULL_METADATA);
+    derived(getClient(), ODataFormat.JSON_FULL_METADATA);
   }
 }

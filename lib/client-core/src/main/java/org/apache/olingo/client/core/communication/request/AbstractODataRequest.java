@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.util.Collection;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -38,32 +39,22 @@ import org.apache.olingo.client.api.communication.header.ODataHeaders;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.commons.api.format.ODataMediaFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.format.ODataValueFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * Abstract representation of an OData request. Get instance by using factories.
- *
- * @param <T> Accepted content-type formats by the request in object.
  *
  * @see org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFactory
  * @see org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFactory
  * @see org.apache.olingo.client.api.communication.request.batch.v3.BatchRequestFactory
  * @see org.apache.olingo.client.api.communication.request.batch.v4.BatchRequestFactory
- * @see org.apache.olingo.client.api.communication.request.invoke.v3.InvokeRequestFactory
- * @see org.apache.olingo.client.api.communication.request.invoke.v4.InvokeRequestFactory
- * @see org.apache.olingo.client.api.communication.request.streamed.v3.StreamedRequestFactory
- * @see org.apache.olingo.client.api.communication.request.streamed.v4.StreamedRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory
  */
-public abstract class AbstractODataRequest<T extends Format> extends AbstractRequest implements ODataRequest {
+public abstract class AbstractODataRequest extends AbstractRequest implements ODataRequest {
 
   protected final CommonODataClient<?> odataClient;
-
-  private final Class<T> formatRef;
 
   /**
    * OData request method.
@@ -93,17 +84,13 @@ public abstract class AbstractODataRequest<T extends Format> extends AbstractReq
   /**
    * Constructor.
    *
-   * @param odataClient client instance getting this request
-   * @param formatRef reference class for the format being used
-   * @param method HTTP request method. If configured X-HTTP-METHOD header will be used.
-   * @param uri OData request URI.
+   * @param odataClient  client instance getting this request
+   * @param method       HTTP request method. If configured X-HTTP-METHOD header will be used.
+   * @param uri          OData request URI.
    */
-  protected AbstractODataRequest(final CommonODataClient<?> odataClient,
-          final Class<T> formatRef, final HttpMethod method, final URI uri) {
+  protected AbstractODataRequest(final CommonODataClient<?> odataClient, final HttpMethod method, final URI uri) {
 
     this.odataClient = odataClient;
-
-    this.formatRef = formatRef;
     this.method = method;
 
     // initialize default headers
@@ -123,171 +110,108 @@ public abstract class AbstractODataRequest<T extends Format> extends AbstractReq
             createHttpUriRequest(this.method, this.uri);
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  @SuppressWarnings("unchecked")
-  public T getDefaultFormat() {
-    return (T) (formatRef.equals(ODataPubFormat.class)
-            ? odataClient.getConfiguration().getDefaultPubFormat()
-            : (formatRef.equals(ODataValueFormat.class)
-            ? odataClient.getConfiguration().getDefaultValueFormat()
-            : (formatRef.equals(ODataMediaFormat.class)
-            ? odataClient.getConfiguration().getDefaultMediaFormat()
-            : odataClient.getConfiguration().getDefaultFormat())));
-  }
+  public abstract ODataFormat getDefaultFormat();
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public URI getURI() {
     return uri;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public Collection<String> getHeaderNames() {
     return odataHeaders.getHeaderNames();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public String getHeader(final String name) {
     return odataHeaders.getHeader(name);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public ODataRequest setAccept(final String value) {
     odataHeaders.setHeader(HeaderName.accept, value);
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public ODataRequest setIfMatch(final String value) {
     odataHeaders.setHeader(HeaderName.ifMatch, value);
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public ODataRequest setIfNoneMatch(final String value) {
     odataHeaders.setHeader(HeaderName.ifNoneMatch, value);
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public ODataRequest setPrefer(final String value) {
     odataHeaders.setHeader(HeaderName.prefer, value);
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public ODataRequest setXHTTPMethod(final String value) {
     odataHeaders.setHeader(HeaderName.xHttpMethod, value);
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public ODataRequest setContentType(final String value) {
     odataHeaders.setHeader(HeaderName.contentType, value);
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public ODataRequest setSlug(final String value) {
     odataHeaders.setHeader(HeaderName.slug, value);
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public ODataRequest addCustomHeader(final String name, final String value) {
     odataHeaders.setHeader(name, value);
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public ODataRequest addCustomHeader(final HeaderName name, final String value) {
     odataHeaders.setHeader(name, value);
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public String getAccept() {
     final String acceptHead = odataHeaders.getHeader(HeaderName.accept);
-    return StringUtils.isBlank(acceptHead) ? getDefaultFormat().toString(odataClient.getServiceVersion()) : acceptHead;
+    return StringUtils.isBlank(acceptHead) ?
+        getDefaultFormat().getContentType(odataClient.getServiceVersion()).toContentTypeString() :
+        acceptHead;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public String getIfMatch() {
     return odataHeaders.getHeader(HeaderName.ifMatch);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public String getIfNoneMatch() {
     return odataHeaders.getHeader(HeaderName.ifNoneMatch);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public String getPrefer() {
     return odataHeaders.getHeader(HeaderName.prefer);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public String getContentType() {
     final String contentTypeHead = odataHeaders.getHeader(HeaderName.contentType);
-    return StringUtils.isBlank(contentTypeHead)
-            ? getDefaultFormat().toString(odataClient.getServiceVersion()) : contentTypeHead;
+    return StringUtils.isBlank(contentTypeHead) ?
+        getDefaultFormat().getContentType(odataClient.getServiceVersion()).toContentTypeString() :
+        contentTypeHead;
   }
 
-  /**
-   * ${@inheritDoc }
-   */
   @Override
   public HttpMethod getMethod() {
     return method;
@@ -302,9 +226,6 @@ public abstract class AbstractODataRequest<T extends Format> extends AbstractReq
     return odataHeaders;
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public byte[] toByteArray() {
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -341,9 +262,6 @@ public abstract class AbstractODataRequest<T extends Format> extends AbstractReq
     }
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public InputStream rawExecute() {
     try {

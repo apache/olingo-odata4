@@ -36,8 +36,6 @@ public interface Value {
 
   Object get();
 
-  NullValue asNull();
-
   PrimitiveValue asPrimitive();
 
   EnumValue asEnum();

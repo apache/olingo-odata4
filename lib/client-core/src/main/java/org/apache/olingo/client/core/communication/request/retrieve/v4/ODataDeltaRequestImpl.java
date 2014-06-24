@@ -32,14 +32,19 @@ import org.apache.olingo.client.core.communication.request.retrieve.AbstractODat
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.v4.ODataDelta;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
-public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ODataDelta, ODataPubFormat>
+public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ODataDelta>
     implements ODataDeltaRequest {
 
   public ODataDeltaRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
-    super(odataClient, ODataPubFormat.class, query);
+    super(odataClient, query);
+  }
+
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultPubFormat();
   }
 
   @Override
@@ -67,7 +72,7 @@ public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ODataDel
       if (delta == null) {
         try {
           final ResWrap<Delta> resource = ((ODataClient) odataClient)
-              .getDeserializer(ODataPubFormat.fromString(getContentType()))
+              .getDeserializer(ODataFormat.fromString(getContentType()))
                   .toDelta(res.getEntity().getContent());
 
           delta = ((ODataClient) odataClient).getBinder().getODataDelta(resource);

@@ -28,14 +28,14 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 /**
  * This class implements an OData retrieve query request returning a single entity.
  */
 public class ODataEntityRequestImpl<E extends CommonODataEntity>
-        extends AbstractODataRetrieveRequest<E, ODataPubFormat> implements ODataEntityRequest<E> {
+        extends AbstractODataRetrieveRequest<E> implements ODataEntityRequest<E> {
 
   /**
    * Private constructor.
@@ -44,7 +44,12 @@ public class ODataEntityRequestImpl<E extends CommonODataEntity>
    * @param query query to be executed.
    */
   public ODataEntityRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
-    super(odataClient, ODataPubFormat.class, query);
+    super(odataClient, query);
+  }
+
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultPubFormat();
   }
 
   @Override
@@ -83,7 +88,7 @@ public class ODataEntityRequestImpl<E extends CommonODataEntity>
     public E getBody() {
       if (entity == null) {
         try {
-          final ResWrap<Entity> resource = odataClient.getDeserializer(ODataPubFormat.fromString(getContentType()))
+          final ResWrap<Entity> resource = odataClient.getDeserializer(ODataFormat.fromString(getContentType()))
               .toEntity(getRawResponse());
 
           entity = (E) odataClient.getBinder().getODataEntity(resource);

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
@@ -46,12 +47,12 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class InvokeTestITCase extends AbstractTestITCase {
 
-  private void getWithNoParams(final ODataPubFormat format) {
+  private void getWithNoParams(final ODataFormat format) {
     // 1. get primitive value property
     URIBuilder builder = getClient().newURIBuilder(testStaticServiceRootURL).
             appendOperationCallSegment("GetPrimitiveString");
@@ -83,15 +84,15 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void getWithNoParamsAsAtom() {
-    getWithNoParams(ODataPubFormat.ATOM);
+    getWithNoParams(ODataFormat.ATOM);
   }
 
   @Test
   public void getWithNoParamsAsJSON() {
-    getWithNoParams(ODataPubFormat.JSON);
+    getWithNoParams(ODataFormat.JSON);
   }
 
-  private void getWithParams(final ODataPubFormat format) throws EdmPrimitiveTypeException {
+  private void getWithParams(final ODataFormat format) throws EdmPrimitiveTypeException {
     // 1. primitive result
     URIBuilder builder = getClient().newURIBuilder(testStaticServiceRootURL).
             appendOperationCallSegment("GetArgumentPlusOne");
@@ -133,15 +134,15 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void getWithParamsAsAtom() throws EdmPrimitiveTypeException {
-    getWithParams(ODataPubFormat.ATOM);
+    getWithParams(ODataFormat.ATOM);
   }
 
   @Test
   public void getWithParamsAsJSON() throws EdmPrimitiveTypeException {
-    getWithParams(ODataPubFormat.JSON);
+    getWithParams(ODataFormat.JSON);
   }
 
-  private ODataEntity createEmployee(final ODataPubFormat format) {
+  private ODataEntity createEmployee(final ODataFormat format) {
     final ODataEntity employee = getClient().getObjectFactory().newEntity(new FullQualifiedName(
             "Microsoft.Test.OData.Services.AstoriaDefaultService.Employee"));
 
@@ -169,7 +170,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     return req.execute().getBody();
   }
 
-  private void deleteEmployee(final ODataPubFormat format, final Integer id) {
+  private void deleteEmployee(final ODataFormat format, final Integer id) {
     final URIBuilder uriBuilder = getClient().newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Person").appendKeySegment(id);
 
@@ -182,7 +183,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
   @Test
   public void boundPost() throws EdmPrimitiveTypeException {
     // 0. create an employee
-    final ODataEntity created = createEmployee(ODataPubFormat.JSON_FULL_METADATA);
+    final ODataEntity created = createEmployee(ODataFormat.JSON_FULL_METADATA);
     assertNotNull(created);
     final Integer createdId = created.getProperty("PersonId").getPrimitiveValue().toCastValue(Integer.class);
     assertNotNull(createdId);
@@ -192,7 +193,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     final ODataInvokeRequest<ODataNoContent> req = getClient().getInvokeRequestFactory().
             getActionInvokeRequest(operation.getTarget(), ODataNoContent.class);
-    req.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    req.setFormat(ODataFormat.JSON_FULL_METADATA);
     final ODataInvokeResponse<ODataNoContent> res = req.execute();
     assertNotNull(res);
     assertEquals(204, res.getStatusCode());
@@ -202,13 +203,13 @@ public class InvokeTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Person").appendKeySegment(createdId);
     final ODataEntityRequest<ODataEntity> retrieveRes =
             getClient().getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    retrieveRes.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    retrieveRes.setFormat(ODataFormat.JSON_FULL_METADATA);
     final ODataEntity read = retrieveRes.execute().getBody();
     assertEquals("0", read.getProperty("Salary").getPrimitiveValue().toString());
     assertTrue(read.getProperty("Title").getPrimitiveValue().toString().endsWith("[Sacked]"));
 
     // 3. remove the test employee
-    deleteEmployee(ODataPubFormat.JSON_FULL_METADATA, createdId);
+    deleteEmployee(ODataFormat.JSON_FULL_METADATA, createdId);
   }
 
   @Test

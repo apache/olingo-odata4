@@ -30,7 +30,6 @@ import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 /**
@@ -77,7 +76,7 @@ public interface CommonODataReader {
    * @return de-serialized entity set.
    * @throws ODataDeserializerException
    */
-  CommonODataEntitySet readEntitySet(InputStream input, ODataPubFormat format) throws ODataDeserializerException;
+  CommonODataEntitySet readEntitySet(InputStream input, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a stream taking care to de-serializes the first OData entity found.
@@ -87,7 +86,7 @@ public interface CommonODataReader {
    * @return entity de-serialized.
    * @throws ODataDeserializerException
    */
-  CommonODataEntity readEntity(InputStream input, ODataPubFormat format) throws ODataDeserializerException;
+  CommonODataEntity readEntity(InputStream input, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a stream taking care to de-serialize the first OData entity property found.

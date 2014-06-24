@@ -22,15 +22,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
@@ -39,8 +37,11 @@ import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JSONTest extends AbstractTest {
 
@@ -51,8 +52,8 @@ public class JSONTest extends AbstractTest {
     return v4Client;
   }
 
-  protected ODataPubFormat getODataPubFormat() {
-    return ODataPubFormat.JSON;
+  protected ODataFormat getODataPubFormat() {
+    return ODataFormat.JSON;
   }
 
   protected ODataFormat getODataFormat() {
@@ -128,7 +129,7 @@ public class JSONTest extends AbstractTest {
     assertEquals(expected, actualNode);
   }
 
-  protected void entitySet(final String filename, final ODataPubFormat format) throws Exception {
+  protected void entitySet(final String filename, final ODataFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer(format).write(writer, getClient().getDeserializer(format).toEntitySet(
         getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
@@ -142,7 +143,7 @@ public class JSONTest extends AbstractTest {
     entitySet("collectionOfEntityReferences", getODataPubFormat());
   }
 
-  protected void entity(final String filename, final ODataPubFormat format) throws Exception {
+  protected void entity(final String filename, final ODataFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer(format).write(writer, getClient().getDeserializer(format).toEntity(
         getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
@@ -187,11 +188,11 @@ public class JSONTest extends AbstractTest {
 
   @Test
   public void crossjoin() throws Exception {
-    assertNotNull(getClient().getDeserializer(ODataPubFormat.JSON_FULL_METADATA).toEntitySet(
+    assertNotNull(getClient().getDeserializer(ODataFormat.JSON_FULL_METADATA).toEntitySet(
         getClass().getResourceAsStream("crossjoin.json")));
   }
 
-  protected void delta(final String filename, final ODataPubFormat format) throws Exception {
+  protected void delta(final String filename, final ODataFormat format) throws Exception {
     final Delta delta = getClient().getDeserializer(format).toDelta(
         getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload();
     assertNotNull(delta);

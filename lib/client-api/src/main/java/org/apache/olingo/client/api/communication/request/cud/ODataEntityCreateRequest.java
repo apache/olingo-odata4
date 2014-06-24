@@ -22,7 +22,6 @@ import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * This interface describes an OData create request.
@@ -30,5 +29,5 @@ import org.apache.olingo.commons.api.format.ODataPubFormat;
  * @param <E> concrete ODataEntity implementation
  */
 public interface ODataEntityCreateRequest<E extends CommonODataEntity>
-        extends ODataBasicRequest<ODataEntityCreateResponse<E>, ODataPubFormat>, ODataBatchableRequest {
+    extends ODataBasicRequest<ODataEntityCreateResponse<E>>, ODataBatchableRequest {
 }

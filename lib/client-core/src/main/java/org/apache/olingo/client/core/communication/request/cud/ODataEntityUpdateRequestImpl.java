@@ -35,7 +35,7 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
@@ -45,7 +45,7 @@ import org.apache.olingo.commons.api.serialization.ODataSerializerException;
  * @param <E> concrete ODataEntity implementation
  */
 public class ODataEntityUpdateRequestImpl<E extends CommonODataEntity>
-    extends AbstractODataBasicRequest<ODataEntityUpdateResponse<E>, ODataPubFormat>
+    extends AbstractODataBasicRequest<ODataEntityUpdateResponse<E>>
     implements ODataEntityUpdateRequest<E> {
 
   /**
@@ -64,13 +64,15 @@ public class ODataEntityUpdateRequestImpl<E extends CommonODataEntity>
   public ODataEntityUpdateRequestImpl(final CommonODataClient<?> odataClient,
       final HttpMethod method, final URI uri, final E changes) {
 
-    super(odataClient, ODataPubFormat.class, method, uri);
+    super(odataClient, method, uri);
     this.changes = changes;
   }
 
-  /**
-   * {@inheritDoc }
-   */
+  @Override
+  public ODataFormat getDefaultFormat() {
+    return odataClient.getConfiguration().getDefaultPubFormat();
+  }
+
   @Override
   public ODataEntityUpdateResponse<E> execute() {
     final InputStream input = getPayload();
@@ -86,7 +88,7 @@ public class ODataEntityUpdateRequestImpl<E extends CommonODataEntity>
   @Override
   protected InputStream getPayload() {
     try {
-      return odataClient.getWriter().writeEntity(changes, ODataPubFormat.fromString(getContentType()));
+      return odataClient.getWriter().writeEntity(changes, ODataFormat.fromString(getContentType()));
     } catch (final ODataSerializerException e) {
       throw new IllegalArgumentException(e);
     }
@@ -124,7 +126,7 @@ public class ODataEntityUpdateRequestImpl<E extends CommonODataEntity>
     public E getBody() {
       if (entity == null) {
         try {
-          final ResWrap<Entity> resource = odataClient.getDeserializer(ODataPubFormat.fromString(getAccept()))
+          final ResWrap<Entity> resource = odataClient.getDeserializer(ODataFormat.fromString(getAccept()))
               .toEntity(getRawResponse());
 
           entity = (E) odataClient.getBinder().getODataEntity(resource);
