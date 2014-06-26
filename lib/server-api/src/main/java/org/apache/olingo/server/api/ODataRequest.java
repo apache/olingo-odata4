@@ -19,6 +19,7 @@
 package org.apache.olingo.server.api;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,14 +45,26 @@ public class ODataRequest {
   }
 
   /**
-   * Add header to request where name handled as case insensitive key.
+   * Add header to request where name handled as case insensitive key. If a header already exists then the list of
+   * values will just be extended.
    * @param name case insensitive header name
    * @param values
    */
   public void addHeader(String name, List<String> values) {
-    headers.put(name.toUpperCase(), values);
+    String key = name.toUpperCase();
+    if (headers.containsKey(key)) {
+      List<String> oldValues = headers.get(key);
+      
+      List<String> newValues = new ArrayList<String>();
+      newValues.addAll(oldValues);
+      newValues.addAll(values);
+
+      headers.put(name.toUpperCase(), newValues);
+    } else {
+      headers.put(name.toUpperCase(), values);
+    }
   }
-  
+
   /**
    * Returns header value for name where name is a case insensitive key.
    * @return the header value or null if not found
@@ -59,7 +72,7 @@ public class ODataRequest {
   public List<String> getHeader(String name) {
     return headers.get(name.toUpperCase());
   }
-  
+
   public InputStream getBody() {
     return body;
   }
@@ -94,7 +107,7 @@ public class ODataRequest {
 
   public void setRawODataPath(String rawODataPath) {
     this.rawODataPath = rawODataPath;
-    
+
   }
 
   public void setRawBaseUri(String rawBaseUri) {
