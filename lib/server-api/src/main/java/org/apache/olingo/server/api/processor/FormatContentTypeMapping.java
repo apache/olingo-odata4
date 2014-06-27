@@ -18,10 +18,36 @@
  */
 package org.apache.olingo.server.api.processor;
 
-import java.util.List;
+public class FormatContentTypeMapping {
 
-public interface SupportCustomContentTypes {
+  private String formatAlias;
+  private String contentType;
 
-  public List<String> getSupportedContentTypes(Class<? extends Processor> processorClass);
-  
+  public FormatContentTypeMapping(String formatAlias, String contentType) {
+    super();
+    this.formatAlias = formatAlias;
+    this.contentType = contentType;
+  }
+
+  public String getFormatAlias() {
+    return formatAlias;
+  }
+
+  public String getContentType() {
+    return contentType;
+  }
+
+  public void setFormatAlias(String formatAlias) {
+    this.formatAlias = formatAlias;
+  }
+
+  public void setContentType(String contentType) {
+    this.contentType = contentType;
+  }
+
+  @Override
+  public String toString() {
+    return "('" + formatAlias + "', '" + contentType + "')";
+  }
+
 }

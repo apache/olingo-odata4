@@ -182,7 +182,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     odRequest.setRawServiceResolutionUri(rawServiceResolutionUri);
   }
 
-  private void extractHeaders(ODataRequest odRequest, final HttpServletRequest req) {
+  static void extractHeaders(ODataRequest odRequest, final HttpServletRequest req) {
     for (Enumeration<?> headerNames = req.getHeaderNames(); headerNames.hasMoreElements();) {
       String headerName = (String) headerNames.nextElement();
       List<String> headerValues = new ArrayList<String>();

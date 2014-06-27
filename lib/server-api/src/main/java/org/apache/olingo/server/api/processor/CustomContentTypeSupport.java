@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.server.api.processor;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.server.api.OData;
+import java.util.List;
 
-public interface Processor {
+public interface CustomContentTypeSupport {
 
-  void init(OData odata, Edm edm);
+  public List<FormatContentTypeMapping> modifySupportedContentTypes(
+      List<FormatContentTypeMapping> supportedContentTypes, Class<? extends Processor> processorClass);
 
 }

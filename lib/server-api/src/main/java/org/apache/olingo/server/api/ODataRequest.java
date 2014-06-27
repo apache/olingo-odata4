@@ -54,7 +54,7 @@ public class ODataRequest {
     String key = name.toUpperCase();
     if (headers.containsKey(key)) {
       List<String> oldValues = headers.get(key);
-      
+
       List<String> newValues = new ArrayList<String>();
       newValues.addAll(oldValues);
       newValues.addAll(values);
