@@ -50,7 +50,7 @@ public class AcceptType {
   private static final String PARAMETER_Q = "q";
   private static final Pattern Q_PARAMETER_VALUE_PATTERN = Pattern.compile("1|0|1\\.0{1,3}|0\\.\\d{1,3}");
 
-  public static final AcceptType WILDCARD = create(MEDIA_TYPE_WILDCARD, MEDIA_TYPE_WILDCARD, null, 1F);
+  public static final AcceptType WILDCARD = create(MEDIA_TYPE_WILDCARD, MEDIA_TYPE_WILDCARD, createParameterMap(), 1F);
 
   private final String type;
   private final String subtype;
@@ -66,7 +66,7 @@ public class AcceptType {
     this.quality = quality;
   }
 
-  private TreeMap<String, String> createParameterMap() {
+  private static TreeMap<String, String> createParameterMap() {
     return new TreeMap<String, String>(new Comparator<String>() {
       @Override
       public int compare(final String o1, final String o2) {
@@ -123,11 +123,15 @@ public class AcceptType {
    * @return a new <code>AcceptType</code> object
    * @throws IllegalArgumentException if input string is not parseable
    */
-  public static AcceptType create(final String format) {
-    if (format == null) {
-      throw new IllegalArgumentException("Parameter format MUST NOT be NULL.");
+  public static List<AcceptType> create(final String format) {
+    List<AcceptType> result = new ArrayList<AcceptType>();
+    
+    String[] values = format.split(",");
+    for (String value : values) {
+      result.add(new AcceptType(value.trim()));
     }
-    return new AcceptType(format);
+    
+    return result;
   }
 
   /**
@@ -136,7 +140,7 @@ public class AcceptType {
    * @param format
    * @return a new <code>ContentType</code> object
    */
-  public static AcceptType parse(final String format) {
+  public static List<AcceptType> parse(final String format) {
     try {
       return AcceptType.create(format);
     } catch (IllegalArgumentException e) {
@@ -222,7 +226,7 @@ public class AcceptType {
   public static List<AcceptType> create(final List<String> acceptTypeStrings) {
     List<AcceptType> acceptTypes = new ArrayList<AcceptType>(acceptTypeStrings.size());
     for (String contentTypeString : acceptTypeStrings) {
-      acceptTypes.add(create(contentTypeString));
+      acceptTypes.addAll(create(contentTypeString));
     }
     return acceptTypes;
   }
