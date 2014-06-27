@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.core.edm.primitivetype;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -46,7 +47,7 @@ public final class EdmDateTime extends SingletonPrimitiveType {
 
   @Override
   public Class<?> getDefaultType() {
-    return Calendar.class;
+    return Timestamp.class;
   }
 
   @Override
@@ -59,7 +60,7 @@ public final class EdmDateTime extends SingletonPrimitiveType {
     final Date date;
     try {
       date = DATE_FORMAT.get().parse(dateParts[0]);
-    } catch (Exception e) {
+    } catch (ParseException e) {
       throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
     }
 
@@ -93,9 +94,9 @@ public final class EdmDateTime extends SingletonPrimitiveType {
       calendar.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
 
       if (!decimals.isEmpty()) {
-        final int fractionalSecs = calendar.get(Calendar.MILLISECOND);
-        // if fractional are just milliseconds, convert to nanoseconds
-        timestamp.setNanos(fractionalSecs < 1000 ? fractionalSecs * 1000000 : fractionalSecs);
+        final int nanos = Integer.parseInt(decimals.length() > 9 ? decimals.substring(0, 9) :
+            decimals + "000000000".substring(decimals.length()));
+        timestamp.setNanos(nanos);
       }
     }
 

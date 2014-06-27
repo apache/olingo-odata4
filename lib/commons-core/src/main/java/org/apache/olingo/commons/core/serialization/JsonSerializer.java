@@ -26,28 +26,28 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotatable;
 import org.apache.olingo.commons.api.data.Annotation;
-import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
-import org.apache.olingo.commons.api.data.PrimitiveValue;
+import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
-import org.apache.olingo.commons.api.data.Value;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -58,10 +58,10 @@ public class JsonSerializer implements ODataSerializer {
   protected boolean serverMode;
 
   private static final EdmPrimitiveTypeKind[] NUMBER_TYPES = {
-    EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
-    EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double,
-    EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64,
-    EdmPrimitiveTypeKind.Decimal
+      EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
+      EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double,
+      EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64,
+      EdmPrimitiveTypeKind.Decimal
   };
 
   private final JsonGeoValueSerializer geoSerializer = new JsonGeoValueSerializer();
@@ -87,6 +87,8 @@ public class JsonSerializer implements ODataSerializer {
       json.flush();
     } catch (final IOException e) {
       throw new ODataSerializerException(e);
+    } catch (final EdmPrimitiveTypeException e) {
+      throw new ODataSerializerException(e);
     }
   }
 
@@ -108,6 +110,8 @@ public class JsonSerializer implements ODataSerializer {
       json.flush();
     } catch (final IOException e) {
       throw new ODataSerializerException(e);
+    } catch (final EdmPrimitiveTypeException e) {
+      throw new ODataSerializerException(e);
     }
   }
 
@@ -117,7 +121,8 @@ public class JsonSerializer implements ODataSerializer {
     jgen.writeEndObject();
   }
 
-  protected void links(final Linked linked, final JsonGenerator jgen) throws IOException {
+  protected void links(final Linked linked, final JsonGenerator jgen)
+      throws IOException, EdmPrimitiveTypeException {
     if (serverMode) {
       serverLinks(linked, jgen);
     } else {
@@ -125,7 +130,8 @@ public class JsonSerializer implements ODataSerializer {
     }
   }
 
-  protected void clientLinks(final Linked linked, final JsonGenerator jgen) throws IOException {
+  protected void clientLinks(final Linked linked, final JsonGenerator jgen)
+      throws IOException, EdmPrimitiveTypeException {
     final Map<String, List<String>> entitySetLinks = new HashMap<String, List<String>>();
     for (Link link : linked.getNavigationLinks()) {
       for (Annotation annotation : link.getAnnotations()) {
@@ -179,14 +185,15 @@ public class JsonSerializer implements ODataSerializer {
     }
   }
 
-  protected void serverLinks(final Linked linked, final JsonGenerator jgen) throws IOException {
+  protected void serverLinks(final Linked linked, final JsonGenerator jgen)
+      throws IOException, EdmPrimitiveTypeException {
     if (linked instanceof Entity) {
       for (Link link : ((Entity) linked).getMediaEditLinks()) {
         if (StringUtils.isNotBlank(link.getHref())) {
           jgen.writeStringField(
-                  link.getTitle() + StringUtils.prependIfMissing(
-                          version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK), "@"),
-                  link.getHref());
+              link.getTitle() + StringUtils.prependIfMissing(
+                  version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK), "@"),
+              link.getHref());
         }
       }
     }
@@ -194,8 +201,8 @@ public class JsonSerializer implements ODataSerializer {
     for (Link link : linked.getAssociationLinks()) {
       if (StringUtils.isNotBlank(link.getHref())) {
         jgen.writeStringField(
-                link.getTitle() + version.getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK),
-                link.getHref());
+            link.getTitle() + version.getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK),
+            link.getHref());
       }
     }
 
@@ -206,8 +213,8 @@ public class JsonSerializer implements ODataSerializer {
 
       if (StringUtils.isNotBlank(link.getHref())) {
         jgen.writeStringField(
-                link.getTitle() + version.getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK),
-                link.getHref());
+            link.getTitle() + version.getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK),
+            link.getHref());
       }
 
       if (link.getInlineEntity() != null) {
@@ -224,80 +231,113 @@ public class JsonSerializer implements ODataSerializer {
     }
   }
 
-  private void collection(final JsonGenerator jgen, final String itemType, final CollectionValue value)
-          throws IOException {
-
+  private void collection(final JsonGenerator jgen, final EdmTypeInfo typeInfo,
+      final ValueType valueType, final List<?> value) throws IOException, EdmPrimitiveTypeException {
     jgen.writeStartArray();
-    for (Value item : value.get()) {
-      value(jgen, itemType, item);
+    for (Object item : value) {
+      final EdmTypeInfo itemTypeInfo = typeInfo == null ? null :
+          new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
+      switch (valueType) {
+      case COLLECTION_PRIMITIVE:
+        primitiveValue(jgen, itemTypeInfo, item);
+        break;
+      case COLLECTION_GEOSPATIAL:
+        jgen.writeStartObject();
+        geoSerializer.serialize(jgen, (Geospatial) item);
+        jgen.writeEndObject();
+        break;
+      case COLLECTION_ENUM:
+        jgen.writeString(item.toString());
+        break;
+      case COLLECTION_COMPLEX:
+        @SuppressWarnings("unchecked")
+        final List<Property> complexItem = (List<Property>) item;
+        complexValue(jgen, itemTypeInfo, complexItem, null);
+        break;
+      case COLLECTION_LINKED_COMPLEX:
+        final LinkedComplexValue complexItem2 = (LinkedComplexValue) item;
+        complexValue(jgen, itemTypeInfo, complexItem2.getValue(), complexItem2);
+      default:
+        break;
+      }
     }
     jgen.writeEndArray();
   }
 
-  protected void primitiveValue(final JsonGenerator jgen, final EdmTypeInfo typeInfo, final PrimitiveValue value)
-          throws IOException {
+  protected void primitiveValue(final JsonGenerator jgen, final EdmTypeInfo typeInfo, final Object value)
+      throws IOException, EdmPrimitiveTypeException {
+    final EdmPrimitiveTypeKind kind = typeInfo == null ? null : typeInfo.getPrimitiveTypeKind();
+    final boolean isNumber = kind == null ? value instanceof Number : ArrayUtils.contains(NUMBER_TYPES, kind);
+    final boolean isBoolean = kind == null ? value instanceof Boolean : kind == EdmPrimitiveTypeKind.Boolean;
 
-    final boolean isNumber = typeInfo == null
-            ? NumberUtils.isNumber(value.get())
-            : ArrayUtils.contains(NUMBER_TYPES, typeInfo.getPrimitiveTypeKind());
-    final boolean isBoolean = typeInfo == null
-            ? (value.get().equalsIgnoreCase(Boolean.TRUE.toString())
-            || value.get().equalsIgnoreCase(Boolean.FALSE.toString()))
-            : typeInfo.getPrimitiveTypeKind() == EdmPrimitiveTypeKind.Boolean;
-
-    if (isNumber) {
-      jgen.writeNumber(value.get());
+    if (value == null) {
+      jgen.writeNull();
     } else if (isBoolean) {
-      jgen.writeBoolean(BooleanUtils.toBoolean(value.get()));
+      jgen.writeBoolean((Boolean) value);
     } else {
-      jgen.writeString(value.get());
+      final String serialized = kind == null ? value.toString() :
+          EdmPrimitiveTypeFactory.getInstance(kind)  // TODO: add facets
+              .valueToString(value, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
+      if (isNumber) {
+        jgen.writeNumber(serialized);
+      } else {
+        jgen.writeString(serialized);
+      }
     }
   }
 
-  private void value(final JsonGenerator jgen, final String type, final Value value) throws IOException {
-    final EdmTypeInfo typeInfo = type == null
-            ? null
-            : new EdmTypeInfo.Builder().setTypeExpression(type).build();
+  private void complexValue(final JsonGenerator jgen, final EdmTypeInfo typeInfo,
+      final List<Property> value, final Linked linked)
+      throws IOException, EdmPrimitiveTypeException {
+    jgen.writeStartObject();
 
-    if (value == null || value.isNull()) {
+    if (typeInfo != null) {
+      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE), typeInfo.external(version));
+    }
+
+    for (Property property : value) {
+      valuable(jgen, property, property.getName());
+    }
+    if (linked != null) {
+      links(linked, jgen);
+    }
+
+    jgen.writeEndObject();
+  }
+
+  private void value(final JsonGenerator jgen, final String type, final Valuable value)
+      throws IOException, EdmPrimitiveTypeException {
+    final EdmTypeInfo typeInfo = type == null ? null : new EdmTypeInfo.Builder().setTypeExpression(type).build();
+
+    if (value.isNull()) {
       jgen.writeNull();
     } else if (value.isPrimitive()) {
       primitiveValue(jgen, typeInfo, value.asPrimitive());
     } else if (value.isEnum()) {
-      jgen.writeString(value.asEnum().get());
+      jgen.writeString(value.asEnum().toString());
     } else if (value.isGeospatial()) {
       jgen.writeStartObject();
-      geoSerializer.serialize(jgen, value.asGeospatial().get());
+      geoSerializer.serialize(jgen, value.asGeospatial());
       jgen.writeEndObject();
     } else if (value.isCollection()) {
-      collection(jgen, typeInfo == null ? null : typeInfo.getFullQualifiedName().toString(), value.asCollection());
+      collection(jgen, typeInfo, value.getValueType(), value.asCollection());
+    } else if (value.isLinkedComplex()) {
+      complexValue(jgen, typeInfo, value.asLinkedComplex().getValue(), value.asLinkedComplex());
     } else if (value.isComplex()) {
-      jgen.writeStartObject();
-
-      if (typeInfo != null) {
-        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE), typeInfo.external(version));
-      }
-
-      for (Property property : value.asComplex().get()) {
-        valuable(jgen, property, property.getName());
-      }
-      if (value.isLinkedComplex()) {
-        links(value.asLinkedComplex(), jgen);
-      }
-
-      jgen.writeEndObject();
+      complexValue(jgen, typeInfo, value.asComplex(), null);
     }
   }
 
-  protected void valuable(final JsonGenerator jgen, final Valuable valuable, final String name) throws IOException {
-    if (!Constants.VALUE.equals(name) && !(valuable instanceof Annotation) && !valuable.getValue().isComplex()) {
+  protected void valuable(final JsonGenerator jgen, final Valuable valuable, final String name)
+      throws IOException, EdmPrimitiveTypeException {
+    if (!Constants.VALUE.equals(name) && !(valuable instanceof Annotation) && !valuable.isComplex()) {
       String type = valuable.getType();
-      if (StringUtils.isBlank(type) && valuable.getValue().isPrimitive() || valuable.getValue().isNull()) {
+      if (StringUtils.isBlank(type) && valuable.isPrimitive() || valuable.isNull()) {
         type = EdmPrimitiveTypeKind.String.getFullQualifiedName().toString();
       }
       if (StringUtils.isNotBlank(type)) {
         jgen.writeFieldName(
-                name + StringUtils.prependIfMissing(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE), "@"));
+            name + StringUtils.prependIfMissing(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE), "@"));
         jgen.writeString(new EdmTypeInfo.Builder().setTypeExpression(type).build().external(version));
       }
     }
@@ -309,6 +349,6 @@ public class JsonSerializer implements ODataSerializer {
     }
 
     jgen.writeFieldName(name);
-    value(jgen, valuable.getType(), valuable.getValue());
+    value(jgen, valuable.getType(), valuable);
   }
 }

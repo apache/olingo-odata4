@@ -28,9 +28,10 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
-import org.apache.olingo.commons.core.data.NullValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
@@ -81,12 +82,16 @@ public class JsonPropertyDeserializer extends JsonDeserializer {
     }
 
     if (tree.has(Constants.JSON_NULL) && tree.get(Constants.JSON_NULL).asBoolean()) {
-      property.setValue(new NullValueImpl());
+      property.setValue(ValueType.PRIMITIVE, null);
       tree.remove(Constants.JSON_NULL);
     }
 
     if (property.getValue() == null) {
-      value(property, tree.has(Constants.VALUE) ? tree.get(Constants.VALUE) : tree, parser.getCodec());
+      try {
+        value(property, tree.has(Constants.VALUE) ? tree.get(Constants.VALUE) : tree, parser.getCodec());
+      } catch (final EdmPrimitiveTypeException e) {
+        throw new IOException(e);
+      }
       tree.remove(Constants.VALUE);
     }
 
@@ -97,7 +102,11 @@ public class JsonPropertyDeserializer extends JsonDeserializer {
         final Annotation annotation = new AnnotationImpl();
         annotation.setTerm(field.getKey().substring(1));
 
-        value(annotation, field.getValue(), parser.getCodec());
+        try {
+          value(annotation, field.getValue(), parser.getCodec());
+        } catch (final EdmPrimitiveTypeException e) {
+          throw new IOException(e);
+        }
         property.getAnnotations().add(annotation);
       }
     }

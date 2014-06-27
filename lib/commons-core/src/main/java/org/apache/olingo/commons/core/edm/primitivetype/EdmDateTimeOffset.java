@@ -53,7 +53,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
 
   @Override
   public Class<?> getDefaultType() {
-    return Calendar.class;
+    return Timestamp.class;
   }
 
   @Override
@@ -83,10 +83,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
             Byte.parseByte(matcher.group(5)),
             matcher.group(6) == null ? 0 : Byte.parseByte(matcher.group(6)));
 
-    // cloning the original Calendar instance to avoid vanishing the Calendar value check - triggered by any
-    // get method - empowered by the convertDateTime() method below
-    final Timestamp timestamp = new Timestamp(((Calendar) dateTimeValue.clone()).getTimeInMillis());
-
+    int nanoSeconds = 0;
     if (matcher.group(7) != null) {
       if (matcher.group(7).length() == 1 || matcher.group(7).length() > 13) {
         throw new EdmPrimitiveTypeException(
@@ -97,24 +94,21 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
         throw new EdmPrimitiveTypeException(
                 "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
       }
-      final String milliSeconds = decimals.length() > 3
-              ? decimals.substring(0, 3)
-              : decimals + "000".substring(decimals.length());
-      dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
-
-      if (!decimals.isEmpty()) {
-        final int fractionalSecs = dateTimeValue.get(Calendar.MILLISECOND);
-        // if fractional are just milliseconds, convert to nanoseconds
-        timestamp.setNanos(fractionalSecs < 1000 ? fractionalSecs * 1000000 : fractionalSecs);
+      if (returnType.isAssignableFrom(Timestamp.class)) {
+        if (!decimals.isEmpty()) {
+          nanoSeconds = Integer.parseInt(decimals.length() > 9 ? decimals.substring(0, 9) :
+              decimals + "000000000".substring(decimals.length()));
+        }
+      } else {
+        final String milliSeconds = decimals.length() > 3 ?
+            decimals.substring(0, 3) :
+            decimals + "000".substring(decimals.length());
+        dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
       }
     }
 
-    if (returnType.isAssignableFrom(Timestamp.class)) {
-      return returnType.cast(timestamp);
-    }
-
     try {
-      return convertDateTime(dateTimeValue, returnType);
+      return convertDateTime(dateTimeValue, nanoSeconds, returnType);
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException(
               "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
@@ -128,14 +122,15 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
    * Converts a {@link Calendar} value into the requested return type if possible.
    *
    * @param dateTimeValue the value
-   * @param returnType the class of the returned value; it must be one of {@link Calendar}, {@link Long}, or
-   * {@link Date}
+   * @param nanoSeconds   nanoseconds part of the value; only used for the {@link Timestamp} return type
+   * @param returnType    the class of the returned value;
+   *                      it must be one of {@link Calendar}, {@link Long}, {@link Date}, or {@link Timestamp}
    * @return the converted value
    * @throws IllegalArgumentException if the Calendar value is not valid
    * @throws ClassCastException if the return type is not allowed
    */
-  protected static <T> T convertDateTime(final Calendar dateTimeValue, final Class<T> returnType)
-          throws IllegalArgumentException, ClassCastException {
+  protected static <T> T convertDateTime(final Calendar dateTimeValue, final int nanoSeconds,
+      final Class<T> returnType) throws IllegalArgumentException, ClassCastException {
 
     // The Calendar class does not check any values until a get method is called,
     // so we do just that to validate the fields that may have been set,
@@ -154,7 +149,9 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
     } else if (returnType.isAssignableFrom(Date.class)) {
       return returnType.cast(dateTimeValue.getTime()); // may throw IllegalArgumentException
     } else if (returnType.isAssignableFrom(Timestamp.class)) {
-      return returnType.cast(new Timestamp(dateTimeValue.getTimeInMillis()));
+      Timestamp timestamp = new Timestamp(dateTimeValue.getTimeInMillis());
+      timestamp.setNanos(nanoSeconds);
+      return returnType.cast(timestamp);
     } else {
       throw new ClassCastException("unsupported return type " + returnType.getSimpleName());
     }
@@ -168,7 +165,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
     final Calendar dateTimeValue;
     final int fractionalSecs;
     if (value instanceof Timestamp) {
-      final Calendar tmp = Calendar.getInstance();
+      final Calendar tmp = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
       tmp.setTimeInMillis(((Timestamp) value).getTime());
       dateTimeValue = createDateTime(tmp);
       fractionalSecs = ((Timestamp) value).getNanos();

@@ -182,7 +182,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     assertNotEquals(newMsg, oldMsg);
 
-    final ODataPrimitiveValue newVal = client.getObjectFactory().newPrimitiveValueBuilder().setText(newMsg).build();
+    final ODataPrimitiveValue newVal = client.getObjectFactory().newPrimitiveValueBuilder().setValue(newMsg).build();
 
     final ODataValueUpdateRequest updateReq =
             client.getCUDRequestFactory().getValueUpdateRequest(uriBuilder.build(), type, newVal);
@@ -224,7 +224,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     final int origSize = originalValue.size();
 
-    originalValue.add(client.getObjectFactory().newPrimitiveValueBuilder().setText(newItem).build());
+    originalValue.add(client.getObjectFactory().newPrimitiveValueBuilder().setValue(newItem).build());
     assertEquals(origSize + 1, originalValue.size());
 
     final ODataPropertyUpdateRequest updateReq = client.getCUDRequestFactory().
@@ -271,7 +271,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     final int origSize = originalValue.size();
 
-    originalValue.add(client.getObjectFactory().newPrimitiveValueBuilder().setText(newItem).build());
+    originalValue.add(client.getObjectFactory().newPrimitiveValueBuilder().setValue(newItem).build());
     assertEquals(origSize + 1, originalValue.size());
 
     final ODataPropertyUpdateRequest updateReq =
@@ -319,7 +319,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     assertNotEquals(newMsg, oldMsg);
 
     phoneNumber = client.getObjectFactory().newPrimitiveProperty("PhoneNumber",
-            client.getObjectFactory().newPrimitiveValueBuilder().setText(newMsg).build());
+            client.getObjectFactory().newPrimitiveValueBuilder().setValue(newMsg).build());
 
     final ODataPropertyUpdateRequest updateReq =
             client.getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(uriBuilder.build(), phoneNumber);

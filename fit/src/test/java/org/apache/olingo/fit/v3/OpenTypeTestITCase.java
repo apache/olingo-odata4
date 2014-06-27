@@ -112,15 +112,15 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildBinary("text".getBytes())));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("LastContacted",
             getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.DateTimeOffset).setText("2001-04-05T05:05:05.001+00:01").build()));
+            setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(null).build()));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("Contacted",
             getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.DateTime).setText("2001-04-05T05:05:04.001").build()));
+            setType(EdmPrimitiveTypeKind.DateTime).setValue(null).build()));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("GUID",
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildGuid(UUID.randomUUID())));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("PreferedContactTime",
             getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Time).setText("-P9DT51M10.5063807S").build()));
+            setType(EdmPrimitiveTypeKind.Time).setValue(null).build()));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("Byte",
             getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Byte).setValue(24).build()));

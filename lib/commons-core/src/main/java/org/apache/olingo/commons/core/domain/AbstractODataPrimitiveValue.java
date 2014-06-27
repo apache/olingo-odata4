@@ -18,9 +18,8 @@
  */
 package org.apache.olingo.commons.core.domain;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.UUID;
+
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.AbstractODataValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
@@ -83,12 +82,6 @@ public abstract class AbstractODataPrimitiveValue extends AbstractODataValue imp
     }
 
     @Override
-    public AbstractBuilder setText(final String text) {
-      getInstance().text = text;
-      return this;
-    }
-
-    @Override
     public AbstractBuilder setValue(final Object value) {
       getInstance().value = value;
       return this;
@@ -96,39 +89,9 @@ public abstract class AbstractODataPrimitiveValue extends AbstractODataValue imp
 
     @Override
     public ODataPrimitiveValue build() {
-      if (getInstance().text == null && getInstance().value == null) {
-        throw new IllegalArgumentException("Must provide either text or value");
-      }
-      if (getInstance().text != null && getInstance().value != null) {
-        throw new IllegalArgumentException("Cannot provide both text and value");
-      }
-
       if (getInstance().type == null) {
         setType(EdmPrimitiveTypeKind.String);
       }
-
-      if (getInstance().text != null) {
-        final Class<?> returnType = getInstance().type.getDefaultType().isAssignableFrom(Calendar.class)
-                ? Timestamp.class : getInstance().type.getDefaultType();
-        try {
-          // TODO: when Edm is available, set facets when calling this method
-          getInstance().value = getInstance().type.valueOfString(
-                  getInstance().text, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
-                  returnType);
-        } catch (EdmPrimitiveTypeException e) {
-          throw new IllegalArgumentException(e);
-        }
-      }
-      if (getInstance().value != null) {
-        try {
-          // TODO: when Edm is available, set facets when calling this method
-          getInstance().text = getInstance().type.valueToString(
-                  getInstance().value, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
-        } catch (EdmPrimitiveTypeException e) {
-          throw new IllegalArgumentException(e);
-        }
-      }
-
       return getInstance();
     }
 
@@ -190,11 +153,6 @@ public abstract class AbstractODataPrimitiveValue extends AbstractODataValue imp
   private EdmPrimitiveType type;
 
   /**
-   * Text value.
-   */
-  private String text;
-
-  /**
    * Actual value.
    */
   private Object value;
@@ -225,16 +183,36 @@ public abstract class AbstractODataPrimitiveValue extends AbstractODataValue imp
 
   @Override
   public <T> T toCastValue(final Class<T> reference) throws EdmPrimitiveTypeException {
-    return typeKind.isGeospatial()
-            ? reference.cast(this.value)
-            // TODO: when Edm is available, set facets when calling this method
-            : type.valueOfString(this.text,
-                    null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, reference);
+    if (value == null) {
+      return null;
+    } else if (typeKind.isGeospatial()) {
+      return reference.cast(value);
+    } else {
+      try {
+        // TODO: when Edm is available, set facets when calling this method
+        return type.valueOfString(type.valueToString(value,
+            null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
+            null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, reference);
+      } catch (EdmPrimitiveTypeException e) {
+        throw new IllegalArgumentException(e);
+      }
+    }
   }
 
   @Override
   public String toString() {
-    return this.text;
+    if (value == null) {
+      return "";
+    } else if (typeKind.isGeospatial()) {
+      return value.toString();
+    } else {
+      try {
+        // TODO: when Edm is available, set facets when calling this method
+        return type.valueToString(value, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
+      } catch (EdmPrimitiveTypeException e) {
+        throw new IllegalArgumentException(e);
+      }
+    }
   }
 
 }

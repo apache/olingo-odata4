@@ -18,84 +18,112 @@
  */
 package org.apache.olingo.commons.core.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.olingo.commons.api.data.CollectionValue;
-import org.apache.olingo.commons.api.data.ComplexValue;
-import org.apache.olingo.commons.api.data.EnumValue;
-import org.apache.olingo.commons.api.data.GeospatialValue;
+import org.apache.olingo.commons.api.data.Annotatable;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.LinkedComplexValue;
-import org.apache.olingo.commons.api.data.NullValue;
-import org.apache.olingo.commons.api.data.PrimitiveValue;
-import org.apache.olingo.commons.api.data.Value;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.Valuable;
+import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
 
-public abstract class AbstractValue implements Value {
+public abstract class AbstractValuable implements Valuable, Annotatable {
+
+  private ValueType valueType = null;
+  private Object value = null;
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
   public boolean isNull() {
-    return false;
+    return value == null;
   }
 
   @Override
   public boolean isPrimitive() {
-    return false;
+    return valueType == ValueType.PRIMITIVE;
   }
 
   @Override
   public boolean isGeospatial() {
-    return false;
+    return valueType == ValueType.GEOSPATIAL;
   }
 
   @Override
   public boolean isEnum() {
-    return false;
+    return valueType == ValueType.ENUM;
   }
 
   @Override
   public boolean isComplex() {
-    return false;
+    return valueType == ValueType.COMPLEX;
   }
 
   @Override
   public boolean isLinkedComplex() {
-    return false;
+    return valueType == ValueType.LINKED_COMPLEX;
   }
 
   @Override
   public boolean isCollection() {
-    return false;
+    return valueType != null && valueType != valueType.getBaseType();
   }
 
   @Override
-  public PrimitiveValue asPrimitive() {
-    return isPrimitive() ? (PrimitiveValue) this : null;
+  public Object asPrimitive() {
+    return isPrimitive() ? value : null;
   }
 
   @Override
-  public GeospatialValue asGeospatial() {
-    return isGeospatial() ? (GeospatialValue) this : null;
+  public Geospatial asGeospatial() {
+    return isGeospatial() ? (Geospatial) value : null;
   }
 
   @Override
-  public EnumValue asEnum() {
-    return isEnum() ? (EnumValue) this : null;
+  public Object asEnum() {
+    return isEnum() ? value : null;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public ComplexValue asComplex() {
-    return isComplex() ? (ComplexValue) this : null;
+  public List<Property> asComplex() {
+    return isComplex() ? (List<Property>) value : null;
   }
 
   @Override
   public LinkedComplexValue asLinkedComplex() {
-    return isLinkedComplex() ? (LinkedComplexValue) this : null;
+    return isLinkedComplex() ? (LinkedComplexValue) value : null;
   }
 
   @Override
-  public CollectionValue asCollection() {
-    return isCollection() ? (CollectionValue) this : null;
+  public List<?> asCollection() {
+    return isCollection() ? (List<?>) value : null;
+  }
+
+  @Override
+  public Object getValue() {
+    return value;
+  }
+
+  @Override
+  public void setValue(final ValueType valueType, final Object value) {
+    this.valueType = valueType;
+    this.value  = value;
+  }
+
+  @Override
+  public ValueType getValueType() {
+    return valueType;
+  }
+
+  @Override
+  public List<Annotation> getAnnotations() {
+    return annotations;
   }
 
   @Override

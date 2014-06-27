@@ -78,7 +78,7 @@ public abstract class AbstractODataProperty implements CommonODataProperty {
    */
   @Override
   public boolean hasNullValue() {
-    return this.value == null;
+    return this.value == null || value.isPrimitive() && value.asPrimitive().toValue() == null;
   }
 
   /**

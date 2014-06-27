@@ -32,8 +32,6 @@ public interface ODataPrimitiveValue extends ODataValue {
 
     Builder setType(EdmPrimitiveTypeKind type);
 
-    Builder setText(String text);
-
     Builder setValue(Object value);
 
     ODataPrimitiveValue build();

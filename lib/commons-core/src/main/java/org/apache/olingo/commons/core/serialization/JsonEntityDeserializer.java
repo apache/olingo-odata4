@@ -37,6 +37,7 @@ import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataOperation;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
 import org.apache.olingo.commons.core.data.EntityImpl;
@@ -188,7 +189,11 @@ public class JsonEntityDeserializer extends JsonDeserializer {
       } else if (customAnnotation.matches() && !"odata".equals(customAnnotation.group(2))) {
         final Annotation annotation = new AnnotationImpl();
         annotation.setTerm(customAnnotation.group(2) + "." + customAnnotation.group(3));
-        value(annotation, field.getValue(), parser.getCodec());
+        try {
+          value(annotation, field.getValue(), parser.getCodec());
+        } catch (final EdmPrimitiveTypeException e) {
+          throw new IOException(e);
+        }
 
         if (!annotations.containsKey(customAnnotation.group(1))) {
           annotations.put(customAnnotation.group(1), new ArrayList<Annotation>());
@@ -216,7 +221,11 @@ public class JsonEntityDeserializer extends JsonDeserializer {
 
     tree.remove(toRemove);
 
-    populate(entity, entity.getProperties(), tree, parser.getCodec());
+    try {
+      populate(entity, entity.getProperties(), tree, parser.getCodec());
+    } catch (final EdmPrimitiveTypeException e) {
+      throw new IOException(e);
+    }
 
     return new ResWrap<Entity>(contextURL, metadataETag, entity);
   }

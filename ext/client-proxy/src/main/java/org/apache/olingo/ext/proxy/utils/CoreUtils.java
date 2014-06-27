@@ -93,7 +93,7 @@ public final class CoreUtils {
       final EdmTypeInfo intType = new EdmTypeInfo.Builder().
               setEdm(client.getCachedEdm()).setTypeExpression(type.getFullQualifiedName().toString()).build();
 
-      for (Object collectionItem : (Collection) obj) {
+      for (Object collectionItem : (Collection<?>) obj) {
         if (intType.isPrimitiveType()) {
           value.asCollection().add(getODataValue(client, intType, collectionItem).asPrimitive());
         } else if (intType.isComplexType()) {
@@ -137,7 +137,7 @@ public final class CoreUtils {
         throw new UnsupportedInV3Exception();
       } else {
         value = ((org.apache.olingo.commons.api.domain.v4.ODataObjectFactory) client.getObjectFactory()).
-                newEnumValue(type.getFullQualifiedName().toString(), ((Enum) obj).name());
+                newEnumValue(type.getFullQualifiedName().toString(), ((Enum<?>) obj).name());
       }
     } else {
       value = client.getObjectFactory().newPrimitiveValueBuilder().setType(type.getPrimitiveTypeKind()).setValue(obj).
@@ -280,6 +280,9 @@ public final class CoreUtils {
         if (clazz.equals(target)) {
           return new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(kind.toString()).build();
         } else if (target.isAssignableFrom(clazz)) {
+          bckCandidate = kind;
+        } else if (target == Timestamp.class
+            && (kind == EdmPrimitiveTypeKind.DateTime || kind == EdmPrimitiveTypeKind.DateTimeOffset)) {
           bckCandidate = kind;
         }
       }
@@ -495,7 +498,6 @@ public final class CoreUtils {
     }
   }
 
-  @SuppressWarnings("unchecked")
   public static Object getObjectFromODataValue(
           final CommonEdmEnabledODataClient<?> client,
           final ODataValue value,

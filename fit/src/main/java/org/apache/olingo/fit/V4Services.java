@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -60,18 +61,15 @@ import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.core.data.CollectionValueImpl;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.EnumValueImpl;
-import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.fit.metadata.Metadata;
@@ -481,7 +479,7 @@ public class V4Services extends AbstractServices {
 
       final Property property = new PropertyImpl();
       property.setType("Edm.Int32");
-      property.setValue(new PrimitiveValueImpl("2"));
+      property.setValue(ValueType.PRIMITIVE, 2);
       final ResWrap<Property> container = new ResWrap<Property>(
           URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
           property);
@@ -545,12 +543,12 @@ public class V4Services extends AbstractServices {
       final Property productId = new PropertyImpl();
       productId.setName("ProductID");
       productId.setType("Edm.Int32");
-      productId.setValue(new PrimitiveValueImpl(entityId));
+      productId.setValue(ValueType.PRIMITIVE, Integer.valueOf(entityId));
       entry.getProperties().add(productId);
       final Property productDetailId = new PropertyImpl();
       productDetailId.setName("ProductDetailID");
       productDetailId.setType("Edm.Int32");
-      productDetailId.setValue(new PrimitiveValueImpl("2"));
+      productDetailId.setValue(ValueType.PRIMITIVE, 2);
       entry.getProperties().add(productDetailId);
 
       final EntitySetImpl feed = new EntitySetImpl();
@@ -707,7 +705,7 @@ public class V4Services extends AbstractServices {
 
       final Property property = new PropertyImpl();
       property.setType("Edm.Double");
-      property.setValue(new PrimitiveValueImpl("41.79"));
+      property.setValue(ValueType.PRIMITIVE, 41.79);
 
       final ResWrap<Property> container = new ResWrap<Property>((URI) null, null, property);
 
@@ -1096,7 +1094,7 @@ public class V4Services extends AbstractServices {
 
       final PropertyImpl property = new PropertyImpl();
       property.setType("Microsoft.Test.OData.Services.ODataWCFService.Color");
-      property.setValue(new EnumValueImpl("Red"));
+      property.setValue(ValueType.ENUM, "Red");
       final ResWrap<Property> container = new ResWrap<Property>(
           URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
           property);
@@ -1160,13 +1158,8 @@ public class V4Services extends AbstractServices {
 
       final PropertyImpl property = new PropertyImpl();
       property.setType("Collection(String)");
-      final CollectionValue value = new CollectionValueImpl();
-      value.get().add(new PrimitiveValueImpl("Cheetos"));
-      value.get().add(new PrimitiveValueImpl("Mushrooms"));
-      value.get().add(new PrimitiveValueImpl("Apple"));
-      value.get().add(new PrimitiveValueImpl("Car"));
-      value.get().add(new PrimitiveValueImpl("Computer"));
-      property.setValue(value);
+      final List<String> value = Arrays.asList("Cheetos", "Mushrooms", "Apple", "Car", "Computer");
+      property.setValue(ValueType.COLLECTION_PRIMITIVE, value);
       final ResWrap<Property> container = new ResWrap<Property>(
           URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
           property);
@@ -1198,19 +1191,13 @@ public class V4Services extends AbstractServices {
 
       final PropertyImpl property = new PropertyImpl();
       property.setType("Collection(Edm.String)");
-      final CollectionValue value = new CollectionValueImpl();
-      value.get().add(new PrimitiveValueImpl("first@olingo.apache.org"));
-      value.get().add(new PrimitiveValueImpl("second@olingo.apache.org"));
-      property.setValue(value);
+      property.setValue(ValueType.COLLECTION_PRIMITIVE,
+          Arrays.asList("first@olingo.apache.org", "second@olingo.apache.org"));
       final ResWrap<Property> container = new ResWrap<Property>(
           URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
           property);
 
-      return xml.createResponse(
-          null,
-          xml.writeProperty(acceptType, container),
-          null,
-          acceptType);
+      return xml.createResponse(null, xml.writeProperty(acceptType, container), null, acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -1244,11 +1231,11 @@ public class V4Services extends AbstractServices {
         property = paramContainer.getPayload();
       }
 
-      assert property.getValue().isComplex();
-      assert 1 == property.getValue().asComplex().get().size();
-      assert "Edm.Int32".equals(property.getValue().asComplex().get().get(0).getType());
-      assert property.getValue().asComplex().get().get(0).getValue().isPrimitive();
-      assert "percentage".equals(property.getValue().asComplex().get().get(0).getName());
+      assert property.isComplex();
+      assert 1 == property.asComplex().size();
+      assert "Edm.Int32".equals(property.asComplex().get(0).getType());
+      assert property.asComplex().get(0).isPrimitive();
+      assert "percentage".equals(property.asComplex().get(0).getName());
 
       return xml.createResponse(null, null, null, acceptType, Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -1276,7 +1263,7 @@ public class V4Services extends AbstractServices {
       final Entity entity = xml.readEntity(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
 
       assert "Microsoft.Test.OData.Services.ODataWCFService.Address".equals(entity.getType());
-      assert entity.getProperty("address").getValue().isComplex();
+      assert entity.getProperty("address").isComplex();
 
       final ResWrap<Property> result = new ResWrap<Property>(
           URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
@@ -1315,7 +1302,7 @@ public class V4Services extends AbstractServices {
 
       assert 1 == entry.getProperties().size();
       assert "Collection(Edm.String)".equals(entry.getProperty("emails").getType());
-      assert entry.getProperty("emails").getValue().isCollection();
+      assert entry.getProperty("emails").isCollection();
 
       return xml.createResponse(
           null,

@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
@@ -118,17 +119,22 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
             "Microsoft.Test.OData.Services.OpenTypesServiceV4.ContactDetails");
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("FirstContacted",
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildBinary("text".getBytes())));
+    Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+00:01"));
+    dateTime.set(2014, 3, 5, 5, 5, 5);
+    dateTime.set(Calendar.MILLISECOND, 1);
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("LastContacted",
             getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.DateTimeOffset).setText("2001-04-05T05:05:05.001+00:01").build()));
+            setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(dateTime).build()));
+    Calendar date = Calendar.getInstance();
+    date.set(2001, 3, 5);
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("Contacted",
             getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Date).setText("2001-04-05").build()));
+            setType(EdmPrimitiveTypeKind.Date).setValue(date).build()));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("GUID",
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildGuid(UUID.randomUUID())));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("PreferedContactTime",
             getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setText("-P9DT51M10.5063807S").build()));
+            setType(EdmPrimitiveTypeKind.Duration).setValue(0).build()));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("Byte",
             getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Byte).setValue(24).build()));

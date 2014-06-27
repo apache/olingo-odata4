@@ -63,7 +63,7 @@ public class PrimitiveValueTest extends AbstractTest {
     assertEquals(Integer.valueOf(primitive), value.asPrimitive().toCastValue(Integer.class));
 
     value = getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Int32).setText("9").build();
+            setType(EdmPrimitiveTypeKind.Int32).setValue(9).build();
     assertEquals("9", value.asPrimitive().toCastValue(Integer.class).toString());
   }
 
@@ -75,7 +75,7 @@ public class PrimitiveValueTest extends AbstractTest {
     assertEquals(primitive, value.toString());
 
     value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.String).
-            setText("1126a28b-a4af-4bbd-bf0a-2b2c22635565").build();
+            setValue("1126a28b-a4af-4bbd-bf0a-2b2c22635565").build();
     assertEquals("1126a28b-a4af-4bbd-bf0a-2b2c22635565", value.asPrimitive().toCastValue(String.class));
   }
 
@@ -88,7 +88,7 @@ public class PrimitiveValueTest extends AbstractTest {
     assertEquals(primitive, value.asPrimitive().toCastValue(BigDecimal.class));
 
     value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Decimal).
-            setText("-79228162514264337593543950335").build();
+            setValue(new BigDecimal("-79228162514264337593543950335")).build();
     assertEquals("-79228162514264337593543950335", value.asPrimitive().toCastValue(BigDecimal.class).toString());
   }
 
@@ -121,15 +121,15 @@ public class PrimitiveValueTest extends AbstractTest {
 
   @Test
   public void time() throws EdmPrimitiveTypeException {
-    final String primitive = "-P9DT51M10.5063807S";
     final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Time).setText(primitive).build();
+            setType(EdmPrimitiveTypeKind.Time).setValue(BigDecimal.valueOf(-780670.5063807)).build();
     assertEquals(EdmPrimitiveTypeKind.Time, value.asPrimitive().getTypeKind());
     assertEquals(BigDecimal.valueOf(-780670.5063807), value.asPrimitive().toCastValue(BigDecimal.class));
+    assertEquals("-P9DT51M10.5063807S", value.asPrimitive().toString());
 
     final ODataPrimitiveValue write = getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Time).setValue(BigDecimal.valueOf(-780670.5063807)).build();
-    assertEquals(primitive, write.toString());
+    assertEquals("-P9DT51M10.5063807S", write.toString());
   }
 
   @Test
@@ -159,7 +159,7 @@ public class PrimitiveValueTest extends AbstractTest {
     assertEquals("2013-01-10T02:00:00.022Z", value.asPrimitive().toString());
 
     final ODataValue parsed = getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.DateTimeOffset).setText(value.asPrimitive().toString()).build();
+            setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(value.asPrimitive().toValue()).build();
     assertEquals(22, parsed.asPrimitive().toCastValue(Calendar.class).get(Calendar.MILLISECOND));
   }
 
@@ -172,7 +172,7 @@ public class PrimitiveValueTest extends AbstractTest {
     assertEquals(primitive, value.asPrimitive().toCastValue(UUID.class));
 
     value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Guid).
-            setText("1126a28b-a4af-4bbd-bf0a-2b2c22635565").build();
+            setValue(UUID.fromString("1126a28b-a4af-4bbd-bf0a-2b2c22635565")).build();
     assertEquals("1126a28b-a4af-4bbd-bf0a-2b2c22635565", value.asPrimitive().toCastValue(UUID.class).toString());
   }
 
@@ -187,8 +187,7 @@ public class PrimitiveValueTest extends AbstractTest {
             Base64.encodeBase64String(value.asPrimitive().toCastValue(byte[].class)));
 
     value = getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Binary).
-            setText(Base64.encodeBase64String("primitive".getBytes())).build();
+            setType(EdmPrimitiveTypeKind.Binary).setValue("primitive".getBytes()).build();
     assertEquals("primitive", new String(value.asPrimitive().toCastValue(byte[].class)));
   }
 

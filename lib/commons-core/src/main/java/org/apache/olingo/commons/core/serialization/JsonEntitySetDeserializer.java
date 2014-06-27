@@ -28,6 +28,7 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
@@ -108,7 +109,11 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
         final Annotation annotation = new AnnotationImpl();
         annotation.setTerm(field.getKey().substring(1));
 
-        value(annotation, field.getValue(), parser.getCodec());
+        try {
+          value(annotation, field.getValue(), parser.getCodec());
+        } catch (final EdmPrimitiveTypeException e) {
+          throw new IOException(e);
+        }
         entitySet.getAnnotations().add(annotation);
       }
     }

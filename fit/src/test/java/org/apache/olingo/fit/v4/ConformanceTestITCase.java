@@ -23,7 +23,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.math.BigDecimal;
 import java.net.URI;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
@@ -93,22 +96,24 @@ public class ConformanceTestITCase extends AbstractTestITCase {
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(2000));
     order.getProperties().add(orderId);
 
+    Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    dateTime.set(2011, 2, 4, 16, 3, 57);
     final ODataProperty orderDate = getClient().getObjectFactory().newPrimitiveProperty("OrderDate",
             getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.DateTimeOffset).setText("2011-03-04T16:03:57Z").build());
+            setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(dateTime).build());
     order.getProperties().add(orderDate);
 
     final ODataProperty shelfLife = getClient().getObjectFactory().newPrimitiveProperty("ShelfLife",
             getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000001S").build());
+            setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000001")).build());
     order.getProperties().add(shelfLife);
 
     final ODataCollectionValue<ODataValue> orderShelfLifesValue = getClient().getObjectFactory().
             newCollectionValue("Collection(Duration)");
     orderShelfLifesValue.add(getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000001S").build());
+            setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000001")).build());
     orderShelfLifesValue.add(getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000002S").build());
+            setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build());
     final ODataProperty orderShelfLifes = getClient().getObjectFactory().
             newCollectionProperty("OrderShelfLifes", orderShelfLifesValue);
     order.getProperties().add(orderShelfLifes);

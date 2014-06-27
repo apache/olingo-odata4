@@ -18,13 +18,32 @@
  */
 package org.apache.olingo.commons.api.data;
 
+import java.util.List;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+
 public interface Valuable {
 
   String getType();
-
   void setType(String type);
 
-  Value getValue();
+  boolean isNull();
+  boolean isPrimitive();
+  boolean isGeospatial();
+  boolean isEnum();
+  boolean isComplex();
+  boolean isLinkedComplex();
+  boolean isCollection();
 
-  void setValue(Value value);
+  Object getValue();
+
+  Object asPrimitive();
+  Object asEnum();
+  Geospatial asGeospatial();
+  List<Property> asComplex();
+  LinkedComplexValue asLinkedComplex();
+  List<?> asCollection();
+
+  void setValue(ValueType valuetype, Object value);
+  ValueType getValueType();
 }

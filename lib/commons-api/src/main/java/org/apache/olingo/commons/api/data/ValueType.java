@@ -16,25 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.data;
+package org.apache.olingo.commons.api.data;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.olingo.commons.api.data.ComplexValue;
-import org.apache.olingo.commons.api.data.Property;
+public enum ValueType {
+  PRIMITIVE, GEOSPATIAL, ENUM, COMPLEX, LINKED_COMPLEX,
+  COLLECTION_PRIMITIVE(PRIMITIVE),
+  COLLECTION_GEOSPATIAL(GEOSPATIAL),
+  COLLECTION_ENUM(ENUM),
+  COLLECTION_COMPLEX(COMPLEX),
+  COLLECTION_LINKED_COMPLEX(LINKED_COMPLEX);
 
-public class ComplexValueImpl extends AbstractValue implements ComplexValue {
+  private final ValueType baseType;
 
-  private final List<Property> value = new ArrayList<Property>();
-
-  @Override
-  public boolean isComplex() {
-    return true;
+  private ValueType() {
+    baseType = this;
   }
 
-  @Override
-  public List<Property> get() {
-    return value;
+  private ValueType(ValueType baseType) {
+    this.baseType = baseType;
   }
 
+  public ValueType getBaseType() {
+    return baseType;
+  }
 }

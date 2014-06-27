@@ -21,8 +21,10 @@ package org.apache.olingo.fit.v4;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
@@ -45,11 +47,12 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     order.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("OrderID",
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(9)));
     order.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("OrderDate",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).build()));
+            getClient().getObjectFactory().newPrimitiveValueBuilder()
+            .setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(
+                Calendar.getInstance(TimeZone.getTimeZone("GMT"))).build()));
     order.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("ShelfLife",
             getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000002S").build()));
+            setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build()));
 
     final URI upsertURI = getClient().newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Orders").appendKeySegment(9).build();

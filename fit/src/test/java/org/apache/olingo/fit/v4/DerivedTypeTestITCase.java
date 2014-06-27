@@ -20,6 +20,10 @@ package org.apache.olingo.fit.v4;
 
 import static org.junit.Assert.assertEquals;
 
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.TimeZone;
+
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
@@ -103,12 +107,14 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
             client.getObjectFactory().newCollectionValue("Edm.String")));
     customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("City",
             client.getObjectFactory().newPrimitiveValueBuilder().buildString("Pescara")));
+    Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    dateTime.set(1977, 8, 8, 0, 0, 0);
     customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Birthday",
             client.getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.DateTimeOffset).setText("1977-09-08T00:00:00Z").build()));
+            setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(dateTime).build()));
     customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("TimeBetweenLastTwoOrders",
             client.getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000002S").build()));
+            setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build()));
 
     final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().
             getEntityCreateRequest(

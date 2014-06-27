@@ -33,6 +33,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
@@ -105,12 +106,14 @@ public class ODataJsonSerializer implements ODataSerializer {
       json.close();
     } catch (final IOException e) {
       throw new ODataRuntimeException(e);
+    } catch (final EdmPrimitiveTypeException e) {
+      throw new ODataRuntimeException(e);
     }
     return buffer.getInputStream();
   }
 
   protected void writeEntity(final EdmEntityType entityType, final Entity entity, final ContextURL contextURL,
-      JsonGenerator json) throws IOException {
+      JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
     json.writeStartObject();
     if (contextURL != null) {
       json.writeStringField(Constants.JSON_CONTEXT, contextURL.getURI().toASCIIString());
@@ -137,7 +140,10 @@ public class ODataJsonSerializer implements ODataSerializer {
       } else {
         if (edmProperty.isPrimitive()) {
           final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
-          final String value = property.getValue().asPrimitive().get();
+          final String value = type.valueToString(property.asPrimitive(),
+              edmProperty.isNullable(), edmProperty.getMaxLength(),
+              edmProperty.getPrecision(), edmProperty.getScale(),
+              edmProperty.isUnicode());
           if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean)) {
             json.writeBoolean(Boolean.parseBoolean(value));
           } else if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte)
@@ -184,6 +190,8 @@ public class ODataJsonSerializer implements ODataSerializer {
       }
       json.close();
     } catch (final IOException e) {
+      throw new ODataRuntimeException(e);
+    } catch (final EdmPrimitiveTypeException e) {
       throw new ODataRuntimeException(e);
     }
     return buffer.getInputStream();
