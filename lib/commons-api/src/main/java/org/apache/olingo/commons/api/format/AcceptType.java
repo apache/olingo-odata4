@@ -50,7 +50,7 @@ public class AcceptType {
   private static final String PARAMETER_Q = "q";
   private static final Pattern Q_PARAMETER_VALUE_PATTERN = Pattern.compile("1|0|1\\.0{1,3}|0\\.\\d{1,3}");
 
-  public static final AcceptType WILDCARD = create(MEDIA_TYPE_WILDCARD, MEDIA_TYPE_WILDCARD, null, 1F);
+  public static final AcceptType WILDCARD = create(MEDIA_TYPE_WILDCARD, MEDIA_TYPE_WILDCARD, createParameterMap(), 1F);
 
   private final String type;
   private final String subtype;
@@ -66,7 +66,7 @@ public class AcceptType {
     this.quality = quality;
   }
 
-  private TreeMap<String, String> createParameterMap() {
+  private static TreeMap<String, String> createParameterMap() {
     return new TreeMap<String, String>(new Comparator<String>() {
       @Override
       public int compare(final String o1, final String o2) {

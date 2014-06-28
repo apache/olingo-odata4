@@ -19,11 +19,25 @@
 package org.apache.olingo.commons.core.data;
 
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ValueType;
 
 public class PropertyImpl extends AbstractValuable implements Property {
 
   private String name;
   private String type;
+
+  public PropertyImpl() {
+  }
+
+  public PropertyImpl(String type, String name) {
+    this.name = name;
+    this.type = type;
+  }
+
+  public PropertyImpl(String type, String name, ValueType valueType, Object value) {
+    this(name, type);
+    setValue(valueType, value);
+  }
 
   @Override
   public String getName() {

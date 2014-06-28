@@ -30,6 +30,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
@@ -71,7 +72,7 @@ public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor 
               ContextURL.getInstance(URI.create("dummyContextURL"))));
       LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
-      response.setStatusCode(200);
+      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
     }
 
@@ -90,7 +91,7 @@ public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor 
               ContextURL.getInstance(URI.create("dummyContextURL"))));
       LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
-      response.setStatusCode(200);
+      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
     }
 
@@ -98,17 +99,14 @@ public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor 
       Entity entity = new EntityImpl();
       Property property = new PropertyImpl();
       property.setName("PropertyString");
-      property.setType("String"); //"dummyType");
       property.setValue(ValueType.PRIMITIVE, "dummyValue");
       entity.getProperties().add(property);
       Property propertyInt = new PropertyImpl();
       propertyInt.setName("PropertyInt16");
-      // propertyInt.setType("Edm.Int32");
       propertyInt.setValue(ValueType.PRIMITIVE, 42);
       entity.getProperties().add(propertyInt);
       Property propertyGuid = new PropertyImpl();
       propertyGuid.setName("PropertyGuid");
-      propertyGuid.setType("Edm.Guid");
       propertyGuid.setValue(ValueType.PRIMITIVE, UUID.randomUUID());
       entity.getProperties().add(propertyGuid);
       return entity;

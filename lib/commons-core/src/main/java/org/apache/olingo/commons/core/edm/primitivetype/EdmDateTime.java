@@ -95,7 +95,7 @@ public final class EdmDateTime extends SingletonPrimitiveType {
 
       if (!decimals.isEmpty()) {
         final int nanos = Integer.parseInt(decimals.length() > 9 ? decimals.substring(0, 9) :
-            decimals + "000000000".substring(decimals.length()));
+                decimals + "000000000".substring(decimals.length()));
         timestamp.setNanos(nanos);
       }
     }
@@ -115,32 +115,22 @@ public final class EdmDateTime extends SingletonPrimitiveType {
           final Boolean isNullable, final Integer maxLength, final Integer precision,
           final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
-    Date date = null;
-    Integer fractionalSecs = null;
     if (value instanceof Calendar) {
       final Calendar calendar = (Calendar) value;
-      date = calendar.getTime();
-      fractionalSecs = calendar.get(Calendar.MILLISECOND);
-    }
-    if (value instanceof Timestamp) {
+      Date date = calendar.getTime();
+      Integer fractionalSecs = calendar.get(Calendar.MILLISECOND);
+      final StringBuilder result = new StringBuilder().append(DATE_FORMAT.get().format(date));
+      EdmDateTimeOffset.appendMilliseconds(result, fractionalSecs, precision);
+      return result.toString();
+    } else if (value instanceof Timestamp) {
       final Timestamp timestamp = (Timestamp) value;
-      date = new Date(timestamp.getTime());
-      fractionalSecs = timestamp.getNanos();
+      Date date = new Date(timestamp.getTime());
+      Integer fractionalSecs = timestamp.getNanos();
+      final StringBuilder result = new StringBuilder().append(DATE_FORMAT.get().format(date));
+      EdmDateTimeOffset.appendFractionalSeconds(result, fractionalSecs, precision);
+      return result.toString();
+    } else {
+      throw new EdmPrimitiveTypeException("EdmDateTime only supports conversion from Calendar and Timestamp");
     }
-
-    final StringBuilder result = new StringBuilder().append(DATE_FORMAT.get().format(date));
-
-    try {
-      if (value instanceof Timestamp) {
-        EdmDateTimeOffset.appendFractionalSeconds(result, fractionalSecs, precision);
-      } else {
-        EdmDateTimeOffset.appendMilliseconds(result, fractionalSecs, precision);
-      }
-    } catch (final IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)", e);
-    }
-
-    return result.toString();
   }
 }

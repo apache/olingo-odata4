@@ -16,20 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.serializer;
+package org.apache.olingo.server.core.serializer.json;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.util.List;
 
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -38,7 +41,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.core.serializer.json.ServiceDocumentJsonSerializer;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,42 +130,104 @@ public class ODataJsonSerializer implements ODataSerializer {
       json.writeStringField("@odata.mediaContentType", entity.getMediaContentType());
     }
     for (final String propertyName : entityType.getPropertyNames()) {
-      json.writeFieldName(propertyName);
       final EdmProperty edmProperty = (EdmProperty) entityType.getProperty(propertyName);
       final Property property = entity.getProperty(propertyName);
-      if (property == null) {
-        if (edmProperty.isNullable() == Boolean.FALSE) {
-          throw new ODataRuntimeException("Non-nullable property not present!");
-        } else {
-          json.writeNull();
-        }
+      writeProperty(edmProperty, property, json);
+    }
+    json.writeEndObject();
+  }
+
+  protected void writeProperty(final EdmProperty edmProperty, final Property property, JsonGenerator json)
+      throws IOException, EdmPrimitiveTypeException {
+    json.writeFieldName(edmProperty.getName());
+    if (property == null || property.isNull()) {
+      if (edmProperty.isNullable() == Boolean.FALSE) {
+        throw new ODataRuntimeException("Non-nullable property not present!");
       } else {
-        if (edmProperty.isPrimitive()) {
-          final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
-          final String value = type.valueToString(property.asPrimitive(),
-              edmProperty.isNullable(), edmProperty.getMaxLength(),
-              edmProperty.getPrecision(), edmProperty.getScale(),
-              edmProperty.isUnicode());
-          if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean)) {
-            json.writeBoolean(Boolean.parseBoolean(value));
-          } else if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte)
-              || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)
-              || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double)
-              || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16)
-              || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32)
-              || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64)
-              || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte)
-              || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Single)) {
-            json.writeNumber(value);
-          } else {
-            json.writeString(value);
-          }
+        json.writeNull();
+      }
+    } else {
+      if (edmProperty.isPrimitive()) {
+        if (property.isPrimitive()) {
+          writePrimitiveValue(edmProperty, property.asPrimitive(), json);
+        } else if (property.isGeospatial()) {
+          throw new ODataRuntimeException("Property type not yet supported!");
+        } else if (property.isEnum()) {
+          json.writeString(property.asEnum().toString());
         } else {
-          throw new ODataRuntimeException("Non-primitive properties not yet supported!");
+          throw new ODataRuntimeException("Inconsistent property type!");
+        }
+      } else if (edmProperty.isCollection()) {
+        json.writeStartArray();
+        for (Object value : property.asCollection()) {
+          switch (property.getValueType()) {
+          case COLLECTION_PRIMITIVE:
+            writePrimitiveValue(edmProperty, value, json);
+            break;
+          case COLLECTION_GEOSPATIAL:
+            throw new ODataRuntimeException("Property type not yet supported!");
+          case COLLECTION_ENUM:
+            json.writeString(value.toString());
+            break;
+          case COLLECTION_LINKED_COMPLEX:
+            writeLinkedComplexValue(edmProperty, (LinkedComplexValue) value, json);
+            break;
+          default:
+            throw new ODataRuntimeException("Property type not yet supported!");
+          }
+        }
+        json.writeEndArray();
+      } else {
+        if (property.isLinkedComplex()) {
+          writeLinkedComplexValue(edmProperty, property.asLinkedComplex(), json);
+        } else {
+          throw new ODataRuntimeException("Property type not yet supported!");
         }
       }
     }
+  }
+
+  protected void writePrimitiveValue(final EdmProperty edmProperty, final Object primitiveValue, JsonGenerator json)
+      throws EdmPrimitiveTypeException, IOException {
+    final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
+    final String value = type.valueToString(primitiveValue,
+        edmProperty.isNullable(), edmProperty.getMaxLength(),
+        edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode());
+    if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean)) {
+      json.writeBoolean(Boolean.parseBoolean(value));
+    } else if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte)
+        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)
+        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double)
+        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16)
+        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32)
+        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64)
+        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte)
+        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Single)) {
+      json.writeNumber(value);
+    } else {
+      json.writeString(value);
+    }
+  }
+
+  private void writeLinkedComplexValue(final EdmProperty edmProperty, final LinkedComplexValue linkedComplexValue,
+      JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
+    final EdmComplexType type = (EdmComplexType) edmProperty.getType();
+    final List<Property> properties = linkedComplexValue.getValue();
+    json.writeStartObject();
+    for (final String propertyName : type.getPropertyNames()) {
+      final Property property = findProperty(propertyName, properties);
+      writeProperty((EdmProperty) type.getProperty(propertyName), property, json);
+    }
     json.writeEndObject();
+  }
+
+  private Property findProperty(String propertyName, List<Property> properties) {
+    for (final Property property : properties) {
+      if (propertyName.equals(property.getName())) {
+        return property;
+      }
+    }
+    return null;
   }
 
   @Override
