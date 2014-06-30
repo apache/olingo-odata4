@@ -18,10 +18,12 @@
  */
 package org.apache.olingo.server.core;
 
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,18 +43,19 @@ import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
-import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ContentNegotiatorTest {
 
-  static final private String ACCEPT_CASE_JSON = "application/json;odata=verbose;q=0.2";
+  static final private String ACCEPT_CASE_JSONV = "application/json;odata=verbose;q=0.2";
+  static final private String ACCEPT_CASE_JSON = "application/json;q=0.2";
   static final private String ACCEPT_CASE_XML = "application/xml";
+  static final private String ACCEPT_CASE_WILDCARD1 = "*/*";
+  static final private String ACCEPT_CASE_WILDCARD2 = "application/*";
   static final private String ACCEPT_CASE_TEXT = "text/plain;q=0.5";
-  static final private String ACCEPT_CASE_MULTI = "text/plain;q=0.5,application/aaa;q=0.4";
+  static final private String ACCEPT_CASE_MULTI = "application/aaa;q=0.4,text/plain;q=0.5";
 
   //@formatter:off (Eclipse formatter)
   //CHECKSTYLE:OFF (Maven checkstyle)
@@ -61,43 +64,36 @@ public class ContentNegotiatorTest {
       /* expected               $format           accept                 alias        ct mapping    */
       { "application/json",     null,             null,                  null         ,null             },
       { "application/json",     "json",           null,                  null         ,null             },
-      { "application/json",     "json",           "application/json",    null         ,null             },
-      { "a",                    "a",              null,                  "a"          ,"a/a"            },
-
-//      { "application/json",     null,             "application/json",    null         ,null             },
-//      { "application/json",     null,             ACCEPT_CASE_JSON,      null         ,null             },
-//      { "application/json",     null,             "*/*",                 null         ,null             },
-//      { "a/a",                  "a",               null,                 "a, b"       ,"a/a,b/b"        },
-//      { "a",                    null,             "*/*",                 "a, b"       ,null             },
-//      { "a",                    "a",              "*/*",                 "a, b"       ,null             },
+      { "application/json",     "json",           ACCEPT_CASE_JSON,      null         ,null             },
+      { "a/a",                  "a",              null,                  "a"          ,"a/a"            },
+      { "application/json",     null,             ACCEPT_CASE_JSON,      null         ,null             },
+      { "application/json",     null,             ACCEPT_CASE_WILDCARD1, null         ,null             },
+      { "application/json",     null,             ACCEPT_CASE_WILDCARD2, null         ,null             },
+      { "a/a",                  "a",              null,                  "a, b"       ,"a/a,b/b"        },
+      { " a/a ",                " a ",            null,                  " a , b"     ," a/a , b/b "    },
+      { "a;x=y",                "a",              ACCEPT_CASE_WILDCARD1, "a"          ,"a;x=y"          },
   };                                                                                          
 
   String[][] casesMetadata = {                                                                 
       /* expected               $format           accept                 alias        ct mapping    */
       { "application/xml",      null,             null,                  null         ,null             },
       { "application/xml",      "xml",            null,                  null         ,null             },
-      { "application/xml",      null,             "application/xml",     null         ,null             },
-      { "application/xml",      "xml",            "application/xml",     null         ,null             },
+      { "application/xml",      "xml",            ACCEPT_CASE_XML,       null         ,null             },
+      { "a/a",                  "a",              null,                  "a"          ,"a/a"            },
       { "application/xml",      null,             ACCEPT_CASE_XML,       null         ,null             },
-      { "application/xml",      null,             "*/*",                 null         ,null             },
-      { "a",                    "a",              null,                  "a, b"       ,null             },
-      { "a",                    "a",              null,                  "a, b"       ,null             },
-      { "a",                    null,             "*/*",                 "a, b"       ,null             },
-      { "a",                    "a",              "*/*",                 "a, b"       ,null             },
+      { "application/xml",      null,             ACCEPT_CASE_WILDCARD1, null         ,null             },
+      { "application/xml",      null,             ACCEPT_CASE_WILDCARD2, null         ,null             },
+      { "a/a",                  "a",              null,                  "a, b"       ,"a/a,b/b"        },
+      { " a/a ",                " a ",            null,                  " a , b"     ," a/a , b/b "    },
+      { "a;x=y",                "a",              ACCEPT_CASE_WILDCARD1, "a"          ,"a;x=y"          },
   };
 
-//  String[][] casesEntitySet = {                                                               
-//      /* expected               $format           accept                 supported    $formatmapping    */
-//      { "application/json",     null,             null,                  null         ,null             },
-//      { "application/json",     "json",           null,                  null         ,null             },
-//      { "application/json",     "json",           "application/json",    null         ,null             },
-//      { "application/json",     null,             "application/json",    null         ,null             },
-//      { "application/json",     null,             ACCEPT_CASE_JSON,      null         ,null             },
-//      { "application/json",     null,             "*/*",                 null         ,null             },
-//      { "a",                    "a",              null,                  "a, b"       ,null             },
-//      { "a",                    null,             "*/*",                 "a, b"       ,null             },
-//      { "a",                    "a",              "*/*",                 "a, b"       ,null             },
-//  };  
+  String[][] casesFail = {                                                                 
+      /* expected               $format           accept                 alias        ct mapping    */
+      { "application/xml",      "xxx",            null,                  null         ,null             },
+      { "a/a",                  "a",              null,                  "b"          ,"b/b"            },
+      { "application/xml",      null,             ACCEPT_CASE_JSON,      null         ,null             },
+  };
   //CHECKSTYLE:ON
   //@formatter:on
 
@@ -105,19 +101,45 @@ public class ContentNegotiatorTest {
 
   @Test
   public void testServiceDocumentSingleCase() {
-    String[] useCase = { "application/json", null, null, null, null };
+    String[] useCase = { " a/a ", " a ", null, " a , b", " a/a , b/b " };
 
     testContentNegotiation(useCase, ServiceDocumentProcessor.class);
   }
 
   @Test
-  public void testServiceDocumentDefault() {
+  public void testServiceDocument() {
     for (String[] useCase : casesServiceDocument) {
       testContentNegotiation(useCase, ServiceDocumentProcessor.class);
     }
   }
 
-  public void testContentNegotiation(String[] useCase, Class<ServiceDocumentProcessor> processorClass) {
+  @Test
+  public void testMetadataSingleCase() {
+    String[] useCase = { "application/xml", null, null, null, null };
+
+    testContentNegotiation(useCase, MetadataProcessor.class);
+  }
+
+  @Test
+  public void testMetadata() {
+    for (String[] useCase : casesMetadata) {
+      testContentNegotiation(useCase, MetadataProcessor.class);
+    }
+  }
+
+  @Test
+  public void testMetadataFail() {
+    for (String[] useCase : casesFail) {
+      try {
+        testContentNegotiation(useCase, MetadataProcessor.class);
+        fail("Exeption expected!");
+      } catch (Exception e) {
+
+      }
+    }
+  }
+
+  public void testContentNegotiation(String[] useCase, Class<? extends Processor> processorClass) {
 
     LOG.debug(Arrays.asList(useCase).toString());
 
@@ -129,16 +151,20 @@ public class ContentNegotiatorTest {
 
     ProcessorStub p = new ProcessorStub(createCustomContentTypeMapping(useCase[3], useCase[4]));
 
-    List<FormatContentTypeMapping> supportedContentTypes =
-        cn.getSupportedContentTypes(p, processorClass);
-
     FormatOption fo = null;
     if (useCase[1] != null) {
       fo = mock(FormatOption.class);
-      when(fo.getText()).thenReturn(useCase[1]);
+      when(fo.getText()).thenReturn(useCase[1].trim());
     }
 
-    String requestedContentType = cn.doContentNegotiation(fo, request, supportedContentTypes);
+    if (useCase[2] != null) {
+      request.addHeader(HttpHeader.ACCEPT, Arrays.asList(useCase[2]));
+    }
+
+    List<FormatContentTypeMapping> supportedContentTypes =
+        cn.getSupportedContentTypes(p, processorClass);
+
+    String requestedContentType = cn.doContentNegotiation(fo, request, supportedContentTypes, processorClass);
 
     assertNotNull(requestedContentType);
     assertEquals(useCase[0], requestedContentType);
@@ -162,96 +188,6 @@ public class ContentNegotiatorTest {
     }
 
     return map;
-  }
-
-  @Test
-  @Ignore
-  public void testMetadataDefault() {
-
-    for (String[] useCase : casesMetadata) {
-      ODataRequest request = new ODataRequest();
-      request.setMethod(HttpMethod.GET);
-      request.setRawODataPath("/$metadata" + (useCase[1] == null ? "" : "?$format=" + useCase[1]));
-
-//      ODataResponse response = callHandler(useCase, request);
-//
-//      assertEquals(useCase[0], response.getHeaders().get(HttpHeader.CONTENT_TYPE));
-    }
-  }
-
-//  @Test
-//  public void testEntitySet() {
-//
-//    for (String[] useCase : casesEntitySet) {
-//      ODataRequest request = new ODataRequest();
-//      request.setMethod(HttpMethod.GET);
-//      request.setRawODataPath("/ESAllPrim" + (useCase[1] == null ? "" : "?$format=" + useCase[1]));
-//
-//      ODataResponse response = callHandler(useCase, request, new CollectionProcessorStub());
-//
-//      assertEquals(useCase[0], response.getHeaders().get(HttpHeader.CONTENT_TYPE));
-//    }
-//  }
-
-//  private ODataResponse callHandler(String[] useCase, ODataRequest request,
-//      Processor defaultProcessor) {
-//    ODataHandler handler = createHandler();
-//
-//    if (useCase[2] != null) {
-//      request.addHeader(HttpHeader.ACCEPT, Arrays.asList(useCase[2]));
-//    }
-//
-//    if (useCase[3] != null) {
-//        String[] aliase = useCase[3].split(",");
-//        String[] mappings = useCase[4].split(",");
-//
-//        FormatContentTypeMapping[] formatCTMap = new FormatContentTypeMapping[aliase.length];
-//        
-//        for(int i=0; i< formatCTMap.length; i++) {
-//          formatCTMap[i] = new FormatContentTypeMapping(aliase[i], mappings[i]);
-//        }
-//    
-//
-//      ProcessorStub stub = new ProcessorStub(formatCTMap);
-//      handler.register(stub);
-//    } else {
-//      if (defaultProcessor != null) {
-//        handler.register(defaultProcessor);
-//      }
-//    }
-//
-//    ODataResponse response = handler.process(request);
-//    return response;
-//  }
-
-//  ODataResponse callHandler(String[] useCase, ODataRequest request) {
-//    return callHandler(useCase, request, null);
-//  }
-
-  private class CollectionProcessorStub implements CollectionProcessor {
-
-    @Override
-    public void init(OData odata, Edm edm) {}
-
-    @Override
-    public void readCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
-      response.setHeader(HttpHeader.CONTENT_TYPE, format);
-    }
-  }
-
-  @Test
-  public void testDefaultSupportedContentTypesServiceDocument() {
-    ContentNegotiator cn = new ContentNegotiator();
-
-    ProcessorStub p = new ProcessorStub(null);
-
-    List<FormatContentTypeMapping> supportedContentTypes =
-        cn.getSupportedContentTypes(p, ServiceDocumentProcessor.class);
-
-    assertNotNull(supportedContentTypes);
-    assertEquals(1, supportedContentTypes.size());
-    assertEquals("json", supportedContentTypes.get(0).getFormatAlias());
-    assertEquals("application/json", supportedContentTypes.get(0).getContentType());
   }
 
   @Test
@@ -322,6 +258,5 @@ public class ContentNegotiatorTest {
     public void readMetadata(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
       response.setHeader(HttpHeader.CONTENT_TYPE, format);
     }
-
   }
 }

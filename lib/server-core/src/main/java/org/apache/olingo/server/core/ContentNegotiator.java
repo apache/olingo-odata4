@@ -19,9 +19,11 @@
 package org.apache.olingo.server.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.olingo.commons.api.format.AcceptType;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -65,7 +67,7 @@ public class ContentNegotiator {
   }
 
   public String doContentNegotiation(FormatOption formatOption, ODataRequest request,
-      List<FormatContentTypeMapping> supportedContentTypes) {
+      List<FormatContentTypeMapping> supportedContentTypes, Class<? extends Processor> processorClass) {
     String requestedContentType = null;
 
     List<String> acceptHeaderValues = request.getHeader(HttpHeader.ACCEPT);
@@ -74,46 +76,68 @@ public class ContentNegotiator {
 
     if (formatOption != null) {
 
-      if ("json".equalsIgnoreCase(formatOption.getText())) {
-        requestedContentType = HttpContentType.APPLICATION_JSON;
+      if ("json".equalsIgnoreCase(formatOption.getText().trim())) {
+        requestedContentType = ContentType.APPLICATION_JSON.toContentTypeString();
         for (FormatContentTypeMapping entry : supportedContentTypes) {
-          if (requestedContentType.equalsIgnoreCase(entry.getContentType())){
+          if (requestedContentType.equalsIgnoreCase(entry.getContentType().trim())) {
+            supported = true;
+            break;
+          }
+        }
+      } else if ("xml".equalsIgnoreCase(formatOption.getText().trim())) {
+        requestedContentType = ContentType.APPLICATION_XML.toContentTypeString();
+        for (FormatContentTypeMapping entry : supportedContentTypes) {
+          if (requestedContentType.equalsIgnoreCase(entry.getContentType().trim())) {
             supported = true;
             break;
           }
         }
       } else {
-        requestedContentType = formatOption.getText();
         for (FormatContentTypeMapping entry : supportedContentTypes) {
-          if (requestedContentType.equalsIgnoreCase(entry.getFormatAlias())){
+          if (formatOption.getText().equalsIgnoreCase(entry.getFormatAlias().trim())) {
+            requestedContentType = entry.getContentType();
             supported = true;
             break;
           }
         }
       }
     } else if (acceptHeaderValues != null) {
-      List<String> acceptedContentTypes = new ArrayList<String>();
+      List<AcceptType> acceptedContentTypes = new ArrayList<AcceptType>();
 
-//      for (String acceptHeaderValue : acceptHeaderValues) {
-//        acceptedContentTypes.addAll(parseAcceptHeader(acceptHeaderValue));
-//      }
+      for (String acceptHeaderValue : acceptHeaderValues) {
+        acceptedContentTypes.addAll((AcceptType.create(acceptHeaderValue)));
+      }
+      AcceptType.sort(acceptedContentTypes);
 
-      for (String acceptedContentType : acceptedContentTypes) {
-//        if (isContentTypeSupported(acceptedContentType, supportedContentTypes)) {
-//          requestedContentType = acceptedContentType;
-//        }
+      for (AcceptType acceptedType : acceptedContentTypes) {
+        for (FormatContentTypeMapping supportedType : supportedContentTypes) {
+          ContentType s = ContentType.create(supportedType.getContentType());
+          if (acceptedType.matches(s)) {
+            requestedContentType = s.toContentTypeString();
+            supported = true;
+            break;
+          }
+        }
+        if (supported) {
+          break;
+        }
       }
 
       if (requestedContentType == null) {
         throw new RuntimeException("unsupported accept content type: " + acceptedContentTypes + " != "
             + supportedContentTypes);
       }
-
-      requestedContentType = null;
     } else {
-      requestedContentType = HttpContentType.APPLICATION_JSON;
+
+      if (processorClass == MetadataProcessor.class) {
+        requestedContentType = HttpContentType.APPLICATION_XML;
+      }
+      else {
+        requestedContentType = HttpContentType.APPLICATION_JSON;
+      }
+      
       for (FormatContentTypeMapping entry : supportedContentTypes) {
-        if (requestedContentType.equalsIgnoreCase(entry.getContentType())){
+        if (requestedContentType.equalsIgnoreCase(entry.getContentType().trim())) {
           supported = true;
           break;
         }
