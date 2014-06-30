@@ -77,7 +77,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     req.setFormat(ODataFormat.TEXT_PLAIN);
     final ODataValue value = req.execute().getBody();
     assertNotNull(value);
-    assertEquals("7866-11-16T22:25:52.747755+01:00", value.toString());
+    assertEquals("7866-11-16T22:25:52.747755", value.toString());
   }
 
   @Test

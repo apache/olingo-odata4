@@ -21,6 +21,7 @@ package org.apache.olingo.commons.core.serialization;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -33,32 +34,28 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotatable;
 import org.apache.olingo.commons.api.data.Annotation;
-import org.apache.olingo.commons.api.data.CollectionValue;
-import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Linked;
+import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
-import org.apache.olingo.commons.api.data.Value;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataPropertyType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
-import org.apache.olingo.commons.core.data.CollectionValueImpl;
-import org.apache.olingo.commons.core.data.ComplexValueImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.EnumValueImpl;
-import org.apache.olingo.commons.core.data.GeospatialValueImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
-import org.apache.olingo.commons.core.data.NullValueImpl;
-import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
@@ -115,7 +112,7 @@ public class JsonDeserializer implements ODataDeserializer {
     jsonNextLink = version.getJSONMap().get(ODataServiceVersion.JSON_NEXT_LINK);
     jsonDeltaLink = version.getJSONMap().get(ODataServiceVersion.JSON_DELTA_LINK);
     jsonError = version.getJSONMap().get(ODataServiceVersion.JSON_ERROR);
-}
+  }
 
   private JsonGeoValueDeserializer getGeoDeserializer() {
     if (geoDeserializer == null) {
@@ -274,7 +271,8 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   protected void populate(final Annotatable annotatable, final List<Property> properties,
-      final ObjectNode tree, final ObjectCodec codec) throws IOException {
+      final ObjectNode tree, final ObjectCodec codec)
+          throws IOException, EdmPrimitiveTypeException {
 
     String type = null;
     Annotation annotation = null;
@@ -315,96 +313,92 @@ public class JsonDeserializer implements ODataDeserializer {
     }
   }
 
-  private Value fromPrimitive(final JsonNode node, final EdmTypeInfo typeInfo) {
-    final Value value;
-
-    if (node.isNull()) {
-      value = new NullValueImpl();
-    } else {
-      if (typeInfo != null && typeInfo.getPrimitiveTypeKind().isGeospatial()) {
-        value = new GeospatialValueImpl(getGeoDeserializer().deserialize(node, typeInfo));
-      } else {
-        value = new PrimitiveValueImpl(node.asText());
-      }
-    }
-
-    return value;
+  private Object fromPrimitive(final JsonNode node, final EdmTypeInfo typeInfo) throws EdmPrimitiveTypeException {
+    return node.isNull() ? null :
+        typeInfo == null ? node.asText() :
+            typeInfo.getPrimitiveTypeKind().isGeospatial() ?
+                getGeoDeserializer().deserialize(node, typeInfo) :
+                ((EdmPrimitiveType) typeInfo.getType())
+                    .valueOfString(node.asText(), true, null,
+                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, true,
+                        ((EdmPrimitiveType) typeInfo.getType()).getDefaultType());
   }
 
-  private ComplexValue fromComplex(final ObjectNode node, final ObjectCodec codec) throws IOException {
-    final ComplexValue value = version.compareTo(ODataServiceVersion.V40) < 0
-        ? new ComplexValueImpl()
-        : new LinkedComplexValueImpl();
+  private Object fromComplex(final ObjectNode node, final ObjectCodec codec)
+      throws IOException, EdmPrimitiveTypeException {
+    final Object value = version.compareTo(ODataServiceVersion.V40) < 0 ?
+        new ArrayList<Property>() :
+        new LinkedComplexValueImpl();
 
-    if (value.isLinkedComplex()) {
+    if (value instanceof LinkedComplexValue) {
       final Set<String> toRemove = new HashSet<String>();
       for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
         final Map.Entry<String, JsonNode> field = itor.next();
 
-        links(field, value.asLinkedComplex(), toRemove, node, codec);
+        links(field, (LinkedComplexValue) value, toRemove, node, codec);
       }
       node.remove(toRemove);
-    }
 
-    populate(value.asLinkedComplex(), value.get(), node, codec);
+      populate((LinkedComplexValue) value, ((LinkedComplexValue) value).getValue(), node, codec);
+    } else {
+      populate(null, (List<Property>) value, node, codec);
+    }
 
     return value;
   }
 
-  private CollectionValue fromCollection(final Iterator<JsonNode> nodeItor, final EdmTypeInfo typeInfo,
-      final ObjectCodec codec) throws IOException {
+  private void fromCollection(Valuable valuable, final Iterator<JsonNode> nodeItor, final EdmTypeInfo typeInfo,
+      final ObjectCodec codec) throws IOException, EdmPrimitiveTypeException {
 
-    final CollectionValueImpl value = new CollectionValueImpl();
+    List<Object> values = new ArrayList<Object>();
+    ValueType valueType = ValueType.COLLECTION_PRIMITIVE;
 
-    final EdmTypeInfo type = typeInfo == null
-        ? null
-        : new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
+    final EdmTypeInfo type = typeInfo == null ? null :
+        new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
 
     while (nodeItor.hasNext()) {
       final JsonNode child = nodeItor.next();
 
       if (child.isValueNode()) {
         if (typeInfo == null || typeInfo.isPrimitiveType()) {
-          value.get().add(fromPrimitive(child, type));
+          final Object value = fromPrimitive(child, type);
+          valueType = value instanceof Geospatial ? ValueType.COLLECTION_GEOSPATIAL : ValueType.COLLECTION_PRIMITIVE;
+          values.add(value);
         } else {
-          value.get().add(new EnumValueImpl(child.asText()));
+          valueType = ValueType.COLLECTION_ENUM;
+          values.add(child.asText());
         }
       } else if (child.isContainerNode()) {
         if (child.has(jsonType)) {
           ((ObjectNode) child).remove(jsonType);
         }
-        value.get().add(fromComplex((ObjectNode) child, codec));
+        final Object value = fromComplex((ObjectNode) child, codec);
+        valueType = value instanceof LinkedComplexValue ? ValueType.COLLECTION_LINKED_COMPLEX :
+            ValueType.COLLECTION_COMPLEX;
+        values.add(value);
       }
     }
-
-    return value;
+    valuable.setValue(valueType, values);
   }
 
   protected void value(final Valuable valuable, final JsonNode node, final ObjectCodec codec)
-      throws IOException {
-
-    EdmTypeInfo typeInfo = StringUtils.isBlank(valuable.getType())
-        ? null
-        : new EdmTypeInfo.Builder().setTypeExpression(valuable.getType()).build();
+      throws IOException, EdmPrimitiveTypeException {
+    EdmTypeInfo typeInfo = StringUtils.isBlank(valuable.getType()) ? null :
+        new EdmTypeInfo.Builder().setTypeExpression(valuable.getType()).build();
 
     final Map.Entry<ODataPropertyType, EdmTypeInfo> guessed = guessPropertyType(node);
     if (typeInfo == null) {
       typeInfo = guessed.getValue();
     }
 
-    final ODataPropertyType propType = typeInfo == null
-        ? guessed.getKey()
-        : typeInfo.isCollection()
-            ? ODataPropertyType.COLLECTION
-            : typeInfo.isPrimitiveType()
-                ? ODataPropertyType.PRIMITIVE
-                : node.isValueNode()
-                    ? ODataPropertyType.ENUM
-                    : ODataPropertyType.COMPLEX;
+    final ODataPropertyType propType = typeInfo == null ? guessed.getKey() :
+        typeInfo.isCollection() ? ODataPropertyType.COLLECTION :
+            typeInfo.isPrimitiveType() ? ODataPropertyType.PRIMITIVE :
+                node.isValueNode() ? ODataPropertyType.ENUM : ODataPropertyType.COMPLEX;
 
     switch (propType) {
     case COLLECTION:
-      valuable.setValue(fromCollection(node.elements(), typeInfo, codec));
+      fromCollection(valuable, node.elements(), typeInfo, codec);
       break;
 
     case COMPLEX:
@@ -412,23 +406,26 @@ public class JsonDeserializer implements ODataDeserializer {
         valuable.setType(node.get(jsonType).asText());
         ((ObjectNode) node).remove(jsonType);
       }
-      valuable.setValue(fromComplex((ObjectNode) node, codec));
+      final Object value = fromComplex((ObjectNode) node, codec);
+      valuable.setValue(value instanceof LinkedComplexValue ? ValueType.LINKED_COMPLEX : ValueType.COMPLEX, value);
       break;
 
     case ENUM:
-      valuable.setValue(new EnumValueImpl(node.asText()));
+      valuable.setValue(ValueType.ENUM, node.asText());
       break;
 
     case PRIMITIVE:
       if (valuable.getType() == null && typeInfo != null) {
         valuable.setType(typeInfo.getFullQualifiedName().toString());
       }
-      valuable.setValue(fromPrimitive(node, typeInfo));
+      final Object primitiveValue = fromPrimitive(node, typeInfo);
+      valuable.setValue(primitiveValue instanceof Geospatial ? ValueType.GEOSPATIAL : ValueType.PRIMITIVE,
+          primitiveValue);
       break;
 
     case EMPTY:
     default:
-      valuable.setValue(new PrimitiveValueImpl(StringUtils.EMPTY));
+      valuable.setValue(ValueType.PRIMITIVE, StringUtils.EMPTY);
     }
   }
 

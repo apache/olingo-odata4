@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.serialization.v4;
 
 import java.net.URI;
+import java.util.List;
 
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
@@ -41,10 +42,11 @@ import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
-import org.apache.olingo.commons.api.data.Value;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
@@ -67,8 +69,8 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
-import org.apache.olingo.commons.core.data.EnumValueImpl;
 import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataAnnotationImpl;
@@ -123,16 +125,40 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
   private void updateValuable(final Valuable propertyResource, final ODataValuable odataValuable) {
 
-    propertyResource.setValue(getValue(odataValuable.getValue()));
-
+    final Object propertyValue = getValue(odataValuable.getValue());
     if (odataValuable.hasPrimitiveValue()) {
       propertyResource.setType(odataValuable.getPrimitiveValue().getTypeName());
+      propertyResource.setValue(
+          propertyValue instanceof Geospatial ? ValueType.GEOSPATIAL : ValueType.PRIMITIVE,
+          propertyValue);
     } else if (odataValuable.hasEnumValue()) {
       propertyResource.setType(odataValuable.getEnumValue().getTypeName());
+      propertyResource.setValue(ValueType.ENUM, propertyValue);
     } else if (odataValuable.hasComplexValue()) {
       propertyResource.setType(odataValuable.getComplexValue().getTypeName());
+      propertyResource.setValue(
+          propertyValue instanceof LinkedComplexValue ? ValueType.LINKED_COMPLEX : ValueType.COMPLEX,
+          propertyValue);
     } else if (odataValuable.hasCollectionValue()) {
-      propertyResource.setType(odataValuable.getCollectionValue().getTypeName());
+      final ODataCollectionValue<org.apache.olingo.commons.api.domain.v4.ODataValue> collectionValue =
+          odataValuable.getCollectionValue();
+      propertyResource.setType(collectionValue.getTypeName());
+      final org.apache.olingo.commons.api.domain.v4.ODataValue value =
+          collectionValue.iterator().hasNext() ? collectionValue.iterator().next() : null;
+      ValueType valueType = ValueType.COLLECTION_PRIMITIVE;
+      if (value == null) {
+        valueType = ValueType.COLLECTION_PRIMITIVE;
+      } else if (value.isPrimitive()) { 
+        valueType = value.asPrimitive().toValue() instanceof Geospatial ?
+            ValueType.COLLECTION_GEOSPATIAL : ValueType.COLLECTION_PRIMITIVE;
+      } else if (value.isEnum()) {
+        valueType = ValueType.COLLECTION_ENUM;
+      } else if (value.isLinkedComplex()) {
+        valueType = ValueType.COLLECTION_LINKED_COMPLEX;
+      } else if (value.isComplex()) {
+        valueType = ValueType.COLLECTION_COMPLEX;
+      }
+      propertyResource.setValue(valueType, propertyValue);
     }
   }
 
@@ -190,13 +216,13 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  protected Value getValue(final ODataValue value) {
-    Value valueResource;
+  protected Object getValue(final ODataValue value) {
+    Object valueResource;
     if (value instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
             && ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).isEnum()) {
 
-      valueResource = new EnumValueImpl(
-              ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).asEnum().getValue());
+      valueResource =
+              ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).asEnum().getValue();
     } else {
       valueResource = super.getValue(value);
 
@@ -204,7 +230,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
               && ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).isLinkedComplex()) {
 
         final LinkedComplexValue lcValueResource = new LinkedComplexValueImpl();
-        lcValueResource.get().addAll(valueResource.asComplex().get());
+        lcValueResource.getValue().addAll((List<Property>) valueResource);
 
         final ODataLinkedComplexValue linked =
                 ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).asLinkedComplex();
@@ -296,10 +322,8 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     final EdmTypeInfo typeInfo = buildTypeInfo(type == null ? null : type.getFullQualifiedName(), resource.getType());
 
     final ODataProperty property = new ODataPropertyImpl(resource.getName(),
-            getODataValue(typeInfo == null
-                    ? null
-                    : typeInfo.getFullQualifiedName(),
-                    resource, null, null));
+        getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
+            resource, null, null));
     odataAnnotations(resource, property);
 
     return property;
@@ -312,20 +336,20 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     // fixes enum values treated as primitive when no type information is available
     if (client instanceof EdmEnabledODataClient && type != null) {
       final EdmEnumType edmType = ((EdmEnabledODataClient) client).getEdm(metadataETag).getEnumType(type);
-      if (valuable.getValue().isPrimitive() && edmType != null) {
-        valuable.setValue(new EnumValueImpl(valuable.getValue().asPrimitive().get()));
+      if (valuable.isPrimitive() && edmType != null) {
+        valuable.setValue(ValueType.ENUM, valuable.asPrimitive());
       }
     }
 
     ODataValue value;
-    if (valuable.getValue().isEnum()) {
+    if (valuable.isEnum()) {
       value = ((ODataClient) client).getObjectFactory().newEnumValue(type == null ? null : type.toString(),
-              valuable.getValue().asEnum().get());
-    } else if (valuable.getValue().isLinkedComplex()) {
+              valuable.asEnum().toString());
+    } else if (valuable.isLinkedComplex()) {
       final ODataLinkedComplexValue lcValue =
               ((ODataClient) client).getObjectFactory().newLinkedComplexValue(type == null ? null : type.toString());
 
-      for (Property property : valuable.getValue().asLinkedComplex().get()) {
+      for (Property property : valuable.asLinkedComplex().getValue()) {
         lcValue.add(getODataProperty(new ResWrap<Property>(contextURL, metadataETag, property)));
       }
 
@@ -334,9 +358,9 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
         edmType = ((EdmEnabledODataClient) client).getEdm(metadataETag).getComplexType(type);
       }
 
-      odataNavigationLinks(edmType, valuable.getValue().asLinkedComplex(), lcValue, metadataETag,
+      odataNavigationLinks(edmType, valuable.asLinkedComplex(), lcValue, metadataETag,
               contextURL == null ? null : contextURL.getURI());
-      odataAnnotations(valuable.getValue().asLinkedComplex(), lcValue);
+      odataAnnotations(valuable.asLinkedComplex(), lcValue);
 
       value = lcValue;
     } else {

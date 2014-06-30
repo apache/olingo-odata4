@@ -26,15 +26,19 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.domain.v3.ODataPropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -64,14 +68,30 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   public Property getProperty(final CommonODataProperty property) {
     final Property propertyResource = new PropertyImpl();
     propertyResource.setName(property.getName());
-    propertyResource.setValue(getValue(property.getValue()));
 
+    final Object propertyValue = getValue(property.getValue());
     if (property.hasPrimitiveValue()) {
       propertyResource.setType(property.getPrimitiveValue().getTypeName());
+      propertyResource.setValue(
+          propertyValue instanceof Geospatial ? ValueType.GEOSPATIAL : ValueType.PRIMITIVE,
+          propertyValue);
     } else if (property.hasComplexValue()) {
       propertyResource.setType(((ODataProperty) property).getComplexValue().getTypeName());
+      propertyResource.setValue(ValueType.COMPLEX, propertyValue);
     } else if (property.hasCollectionValue()) {
-      propertyResource.setType(((ODataProperty) property).getCollectionValue().getTypeName());
+      final ODataCollectionValue<ODataValue> collectionValue = ((ODataProperty) property).getCollectionValue();
+      propertyResource.setType(collectionValue.getTypeName());
+      final ODataValue value = collectionValue.iterator().hasNext() ? collectionValue.iterator().next() : null;
+      ValueType valueType = ValueType.COLLECTION_PRIMITIVE;
+      if (value == null) {
+        valueType = ValueType.COLLECTION_PRIMITIVE;
+      } else if (value.isPrimitive()) { 
+        valueType = value.asPrimitive().toValue() instanceof Geospatial ?
+            ValueType.COLLECTION_GEOSPATIAL : ValueType.COLLECTION_PRIMITIVE;
+      } else if (value.isComplex()) {
+        valueType = ValueType.COLLECTION_COMPLEX;
+      }
+      propertyResource.setValue(valueType, propertyValue);
     }
 
     return propertyResource;
@@ -102,10 +122,8 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     final EdmTypeInfo typeInfo = buildTypeInfo(type == null ? null : type.getFullQualifiedName(), resource.getType());
 
     return new ODataPropertyImpl(resource.getName(),
-            getODataValue(typeInfo == null
-                    ? null
-                    : typeInfo.getFullQualifiedName(),
-                    resource, null, null));
+        getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
+            resource, null, null));
   }
 
   @Override

@@ -32,6 +32,7 @@ import org.apache.olingo.client.core.edm.xml.v4.XMLMetadataImpl;
 import org.apache.olingo.client.core.serialization.AbstractODataDeserializer;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
@@ -70,6 +71,8 @@ public class ODataDeserializerImpl extends AbstractODataDeserializer implements 
           new AtomDeserializer(version).delta(input) :
           new JsonDeltaDeserializer(version, false).toDelta(input);
     } catch (XMLStreamException e) {
+      throw new ODataDeserializerException(e);
+    } catch (final EdmPrimitiveTypeException e) {
       throw new ODataDeserializerException(e);
     }
   }

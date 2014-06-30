@@ -26,6 +26,7 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
@@ -40,12 +41,13 @@ public class JsonPropertySerializer extends JsonSerializer {
     super(version, serverMode);
   }
 
-  protected void doSerialize(final Property property, final JsonGenerator jgen) throws IOException {
+  protected void doSerialize(final Property property, final JsonGenerator jgen)
+      throws IOException, EdmPrimitiveTypeException {
     doContainerSerialize(new ResWrap<Property>((URI) null, null, property), jgen);
   }
 
   protected void doContainerSerialize(final ResWrap<Property> container, final JsonGenerator jgen)
-          throws IOException {
+          throws IOException, EdmPrimitiveTypeException {
 
     final Property property = container.getPayload();
 
@@ -66,21 +68,25 @@ public class JsonPropertySerializer extends JsonSerializer {
       valuable(jgen, annotation, "@" + annotation.getTerm());
     }
 
-    if (property.getValue().isNull()) {
+    if (property.isNull()) {
       jgen.writeBooleanField(Constants.JSON_NULL, true);
-    } else if (property.getValue().isPrimitive()) {
+    } else if (property.isPrimitive()) {
       final EdmTypeInfo typeInfo = property.getType() == null
               ? null
               : new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
 
       jgen.writeFieldName(Constants.VALUE);
-      primitiveValue(jgen, typeInfo, property.getValue().asPrimitive());
-    } else if (property.getValue().isEnum()) {
-      jgen.writeStringField(Constants.VALUE, property.getValue().asEnum().get());
-    } else if (property.getValue().isGeospatial() || property.getValue().isCollection()) {
+      primitiveValue(jgen, typeInfo, property.asPrimitive());
+    } else if (property.isEnum()) {
+      jgen.writeStringField(Constants.VALUE, property.asEnum().toString());
+    } else if (property.isGeospatial() || property.isCollection()) {
       valuable(jgen, property, Constants.VALUE);
-    } else if (property.getValue().isComplex()) {
-      for (Property cproperty : property.getValue().asComplex().get()) {
+    } else if (property.isLinkedComplex()) {
+      for (Property cproperty : property.asLinkedComplex().getValue()) {
+        valuable(jgen, cproperty, cproperty.getName());
+      }
+    } else if (property.isComplex()) {
+      for (Property cproperty : property.asComplex()) {
         valuable(jgen, cproperty, cproperty.getName());
       }
     }

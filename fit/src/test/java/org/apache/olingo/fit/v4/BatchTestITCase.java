@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.Collection;
@@ -674,11 +675,11 @@ public class BatchTestITCase extends AbstractTestITCase {
             setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).build()));
     order.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("ShelfLife",
             getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000002S").build()));
+            setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build()));
     order.getProperties().add(getClient().getObjectFactory().newCollectionProperty("OrderShelfLifes",
             getClient().getObjectFactory().newCollectionValue(EdmPrimitiveTypeKind.Duration.name()).add(
             getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Duration).
-            setText("PT0.0000002S").build())));
+            setValue(new BigDecimal("0.0000002")).build())));
 
     return order;
   }

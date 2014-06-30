@@ -29,6 +29,7 @@ import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataOperation;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
@@ -43,12 +44,13 @@ public class JsonEntitySerializer extends JsonSerializer {
     super(version, serverMode);
   }
 
-  protected void doSerialize(final Entity entity, final JsonGenerator jgen) throws IOException {
+  protected void doSerialize(final Entity entity, final JsonGenerator jgen)
+      throws IOException, EdmPrimitiveTypeException {
     doContainerSerialize(new ResWrap<Entity>((URI) null, null, entity), jgen);
   }
 
   protected void doContainerSerialize(final ResWrap<Entity> container, final JsonGenerator jgen)
-      throws IOException {
+      throws IOException, EdmPrimitiveTypeException {
 
     final Entity entity = container.getPayload();
 

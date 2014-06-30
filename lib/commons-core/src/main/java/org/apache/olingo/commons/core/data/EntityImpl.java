@@ -132,6 +132,12 @@ public class EntityImpl extends AbstractODataObject implements Entity {
   }
 
   @Override
+  public Entity addProperty(Property property) {
+    properties.add(property);
+    return this;
+  }
+
+  @Override
   public List<Property> getProperties() {
     return properties;
   }

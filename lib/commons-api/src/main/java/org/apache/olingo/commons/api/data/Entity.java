@@ -109,6 +109,14 @@ public interface Entity extends Linked, Annotatable {
   List<ODataOperation> getOperations();
 
   /**
+   * Add property to this Entity.
+   *
+   * @param property property which is added
+   * @return this Entity for fluid/flow adding
+   */
+  Entity addProperty(Property property);
+
+  /**
    * Gets properties.
    *
    * @return properties.

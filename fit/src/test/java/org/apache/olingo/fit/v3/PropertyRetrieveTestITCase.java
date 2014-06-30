@@ -20,11 +20,11 @@ package org.apache.olingo.fit.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
+
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
@@ -52,15 +52,16 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
       final ODataProperty property = req.execute().getBody();
       assertNotNull(property);
       if (property.hasNullValue()) {
-        assertNull(property.getValue());
+        assertTrue(property.getValue() == null
+            || property.getValue().isPrimitive() && property.getValue().asPrimitive().toValue() == null);
       } else if (property.hasPrimitiveValue()) {
         final ODataPrimitiveValue value = property.getPrimitiveValue();
         assertTrue(value.isPrimitive());
       } else if (property.hasComplexValue()) {
-        final ODataComplexValue value = property.getComplexValue();
+        final ODataComplexValue<?> value = property.getComplexValue();
         assertTrue(value.isComplex());
       } else if (property.hasCollectionValue()) {
-        final ODataCollectionValue value = property.getCollectionValue();
+        final ODataCollectionValue<?> value = property.getCollectionValue();
         assertTrue(value.isCollection());
       }
     } catch (ODataClientErrorException e) {

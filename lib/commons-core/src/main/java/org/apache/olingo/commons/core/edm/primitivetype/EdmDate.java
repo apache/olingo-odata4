@@ -62,7 +62,7 @@ public final class EdmDate extends SingletonPrimitiveType {
             Byte.parseByte(matcher.group(3)));
 
     try {
-      return EdmDateTimeOffset.convertDateTime(dateTimeValue, returnType);
+      return EdmDateTimeOffset.convertDateTime(dateTimeValue, 0, returnType);
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException(
               "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);

@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -37,12 +38,13 @@ public class JsonEntitySetSerializer extends JsonSerializer {
     super(version, serverMode);
   }
 
-  protected void doSerialize(final EntitySet entitySet, final JsonGenerator jgen) throws IOException {
+  protected void doSerialize(final EntitySet entitySet, final JsonGenerator jgen)
+      throws IOException, EdmPrimitiveTypeException {
     doContainerSerialize(new ResWrap<EntitySet>((URI) null, null, entitySet), jgen);
   }
 
   protected void doContainerSerialize(final ResWrap<EntitySet> container, final JsonGenerator jgen)
-      throws IOException {
+      throws IOException, EdmPrimitiveTypeException {
 
     final EntitySet entitySet = container.getPayload();
 

@@ -121,8 +121,8 @@ public abstract class AbstractODataReader implements CommonODataReader {
                 reference.cast(client.getObjectFactory().newPrimitiveValueBuilder().
                         setType(ODataFormat.fromString(format) == ODataFormat.TEXT_PLAIN
                                 ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
-                        setText(IOUtils.toString(src)).
-                        build()));
+                        setValue(IOUtils.toString(src))  // TODO: set correct value
+                        .build()));
       } else if (XMLMetadata.class.isAssignableFrom(reference)) {
         res = new ResWrap<T>(
                 (URI) null,

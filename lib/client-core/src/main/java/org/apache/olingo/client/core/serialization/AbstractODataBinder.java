@@ -20,7 +20,8 @@ package org.apache.olingo.client.core.serialization;
 
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -38,7 +39,6 @@ import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
-import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
@@ -65,17 +65,11 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
-import org.apache.olingo.commons.core.data.CollectionValueImpl;
-import org.apache.olingo.commons.core.data.ComplexValueImpl;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.GeospatialValueImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.data.NullValueImpl;
-import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.slf4j.Logger;
@@ -223,32 +217,29 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     return linkResource;
   }
 
-  protected Value getValue(final ODataValue value) {
-    Value valueResource = null;
-
+  protected Object getValue(final ODataValue value) {
     if (value == null) {
-      valueResource = new NullValueImpl();
+      return null;
     } else if (value.isPrimitive()) {
-      valueResource = value.asPrimitive().getTypeKind().isGeospatial()
-          ? new GeospatialValueImpl((Geospatial) value.asPrimitive().toValue())
-          : new PrimitiveValueImpl(value.asPrimitive().toString());
+      return value.asPrimitive().toValue();
     } else if (value.isComplex()) {
       final ODataComplexValue<? extends CommonODataProperty> _value = value.asComplex();
-      valueResource = new ComplexValueImpl();
+      List<Property> valueResource = new ArrayList<Property>();
 
-      for (final Iterator<? extends CommonODataProperty> itor = _value.iterator(); itor.hasNext();) {
-        valueResource.asComplex().get().add(getProperty(itor.next()));
+      for (final CommonODataProperty propertyValue : _value) {
+        valueResource.add(getProperty(propertyValue));
       }
+      return valueResource;
     } else if (value.isCollection()) {
       final ODataCollectionValue<? extends ODataValue> _value = value.asCollection();
-      valueResource = new CollectionValueImpl();
+      ArrayList<Object> valueResource = new ArrayList<Object>();
 
-      for (final Iterator<? extends ODataValue> itor = _value.iterator(); itor.hasNext();) {
-        valueResource.asCollection().get().add(getValue(itor.next()));
+      for (final ODataValue collectionValue : _value) {
+        valueResource.add(getValue(collectionValue));
       }
+      return valueResource;
     }
-
-    return valueResource;
+    return null;
   }
 
   protected abstract boolean add(CommonODataEntitySet entitySet, CommonODataEntity entity);
@@ -493,32 +484,34 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       final Valuable valuable, final ContextURL contextURL, final String metadataETag) {
 
     ODataValue value = null;
-    if (valuable.getValue().isGeospatial()) {
-      value = client.getObjectFactory().newPrimitiveValueBuilder().
-          setValue(valuable.getValue().asGeospatial().get()).
-          setType(type == null
+    if (valuable.isGeospatial()) {
+      value = client.getObjectFactory().newPrimitiveValueBuilder()
+          .setValue(valuable.asGeospatial())
+          .setType(type == null
               || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(type)
-              || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(type)
-              ? valuable.getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
-              : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).build();
-    } else if (valuable.getValue().isPrimitive()) {
-      value = client.getObjectFactory().newPrimitiveValueBuilder().
-          setText(valuable.getValue().asPrimitive().get()).
-          setType(type == null || !EdmPrimitiveType.EDM_NAMESPACE.equals(type.getNamespace())
-              ? null
-              : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).build();
-    } else if (valuable.getValue().isComplex()) {
+              || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(type) ?
+              valuable.asGeospatial().getEdmPrimitiveTypeKind() :
+              EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).build();
+    } else if (valuable.isPrimitive() || valuable.getValueType() == null) {
+      value = client.getObjectFactory().newPrimitiveValueBuilder()
+          .setValue(valuable.asPrimitive())
+          .setType(type == null || !EdmPrimitiveType.EDM_NAMESPACE.equals(type.getNamespace()) ? null :
+               EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).build();
+    } else if (valuable.isComplex() || valuable.isLinkedComplex()) {
       value = client.getObjectFactory().newComplexValue(type == null ? null : type.toString());
-
-      for (Property property : valuable.getValue().asComplex().get()) {
-        value.asComplex().add(getODataProperty(new ResWrap<Property>(contextURL, metadataETag, property)));
+      if (!valuable.isNull()) {
+        final List<Property> properties = valuable.isLinkedComplex() ?
+            valuable.asLinkedComplex().getValue() : valuable.asComplex();
+        for (Property property : properties) {
+          value.asComplex().add(getODataProperty(new ResWrap<Property>(contextURL, metadataETag, property)));
+        }
       }
-    } else if (valuable.getValue().isCollection()) {
+    } else if (valuable.isCollection()) {
       value = client.getObjectFactory().newCollectionValue(type == null ? null : "Collection(" + type.toString() + ")");
 
-      for (Value _value : valuable.getValue().asCollection().get()) {
+      for (Object _value : valuable.asCollection()) {
         final Property fake = new PropertyImpl();
-        fake.setValue(_value);
+        fake.setValue(valuable.getValueType().getBaseType(), _value);
         value.asCollection().add(getODataValue(type, fake, contextURL, metadataETag));
       }
     }

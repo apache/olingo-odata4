@@ -54,7 +54,7 @@ public class PropertyTest extends AbstractTest {
 
     final ODataPrimitiveValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.String).
-            setText(IOUtils.toString(input)).
+            setValue(IOUtils.toString(input)).
             build();
     assertNotNull(value);
     assertEquals("-10", value.toString());
@@ -77,7 +77,7 @@ public class PropertyTest extends AbstractTest {
       // This is needed because type information gets lost with JSON serialization
       final ODataPrimitiveValue typedValue = getClient().getObjectFactory().newPrimitiveValueBuilder().
               setType(property.getPrimitiveValue().getTypeKind()).
-              setText(written.getPrimitiveValue().toString()).
+              setValue(written.getPrimitiveValue().toValue()).
               build();
       comparable = getClient().getObjectFactory().newPrimitiveProperty(written.getName(), typedValue);
     }

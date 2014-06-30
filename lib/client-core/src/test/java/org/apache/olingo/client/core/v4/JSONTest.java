@@ -213,10 +213,10 @@ public class JSONTest extends AbstractTest {
     assertEquals(2, delta.getEntities().size());
     Property property = delta.getEntities().get(0).getProperty("ContactName");
     assertNotNull(property);
-    assertTrue(property.getValue().isPrimitive());
+    assertTrue(property.isPrimitive());
     property = delta.getEntities().get(1).getProperty("ShippingAddress");
     assertNotNull(property);
-    assertTrue(property.getValue().isComplex());
+    assertTrue(property.isLinkedComplex());
   }
 
   @Test

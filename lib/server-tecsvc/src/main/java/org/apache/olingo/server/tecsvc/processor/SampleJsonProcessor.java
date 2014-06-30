@@ -25,13 +25,14 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
@@ -71,7 +72,7 @@ public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor
               ContextURL.getInstance(URI.create("dummyContextURL"))));
       LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
-      response.setStatusCode(200);
+      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
     }
 
@@ -90,7 +91,7 @@ public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor
               ContextURL.getInstance(URI.create("dummyContextURL"))));
       LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
-      response.setStatusCode(200);
+      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
     }
 
@@ -98,18 +99,15 @@ public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor
       Entity entity = new EntityImpl();
       Property property = new PropertyImpl();
       property.setName("PropertyString");
-      property.setType("String"); //"dummyType");
-      property.setValue(new PrimitiveValueImpl("dummyValue"));
+      property.setValue(ValueType.PRIMITIVE, "dummyValue");
       entity.getProperties().add(property);
       Property propertyInt = new PropertyImpl();
       propertyInt.setName("PropertyInt16");
-      // propertyInt.setType("Edm.Int32");
-      propertyInt.setValue(new PrimitiveValueImpl("42"));
+      propertyInt.setValue(ValueType.PRIMITIVE, 42);
       entity.getProperties().add(propertyInt);
       Property propertyGuid = new PropertyImpl();
       propertyGuid.setName("PropertyGuid");
-      propertyGuid.setType("Edm.Guid");
-      propertyGuid.setValue(new PrimitiveValueImpl(UUID.randomUUID().toString()));
+      propertyGuid.setValue(ValueType.PRIMITIVE, UUID.randomUUID());
       entity.getProperties().add(propertyGuid);
       return entity;
     }

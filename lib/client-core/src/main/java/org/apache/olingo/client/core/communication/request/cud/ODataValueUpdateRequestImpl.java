@@ -115,9 +115,6 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
       super(client, res);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public ODataPrimitiveValue getBody() {
       if (value == null) {
@@ -127,7 +124,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
           value = odataClient.getObjectFactory().newPrimitiveValueBuilder().
                   setType(format == ODataFormat.TEXT_PLAIN
                   ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
-                  setText(IOUtils.toString(getRawResponse())).
+                  setValue(getRawResponse()).
                   build();
         } catch (Exception e) {
           throw new HttpClientException(e);

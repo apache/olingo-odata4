@@ -37,39 +37,36 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
-import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.DeletedEntity.Reason;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
-import org.apache.olingo.commons.api.data.Value;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.domain.ODataPropertyType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.data.AbstractODataObject;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
-import org.apache.olingo.commons.core.data.CollectionValueImpl;
-import org.apache.olingo.commons.core.data.ComplexValueImpl;
 import org.apache.olingo.commons.core.data.DeletedEntityImpl;
 import org.apache.olingo.commons.core.data.DeltaLinkImpl;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.EnumValueImpl;
-import org.apache.olingo.commons.core.data.GeospatialValueImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
-import org.apache.olingo.commons.core.data.NullValueImpl;
 import org.apache.olingo.commons.core.data.ODataErrorImpl;
-import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.data.v3.LinkCollectionImpl;
 import org.apache.olingo.commons.core.data.v4.DeltaImpl;
@@ -92,10 +89,10 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     this.geoDeserializer = new AtomGeoValueDeserializer();
   }
 
-  private Value fromPrimitive(final XMLEventReader reader, final StartElement start,
-      final EdmTypeInfo typeInfo) throws XMLStreamException {
+  private Object fromPrimitive(final XMLEventReader reader, final StartElement start,
+      final EdmTypeInfo typeInfo) throws XMLStreamException, EdmPrimitiveTypeException {
 
-    Value value = null;
+    Object value = null;
 
     boolean foundEndProperty = false;
     while (reader.hasNext() && !foundEndProperty) {
@@ -104,13 +101,17 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       if (event.isStartElement() && typeInfo != null && typeInfo.getPrimitiveTypeKind().isGeospatial()) {
         final EdmPrimitiveTypeKind geoType = EdmPrimitiveTypeKind.valueOfFQN(
             version, typeInfo.getFullQualifiedName().toString());
-        value = new GeospatialValueImpl(this.geoDeserializer.deserialize(reader, event.asStartElement(), geoType));
+        value = geoDeserializer.deserialize(reader, event.asStartElement(), geoType);
       }
 
       if (event.isCharacters() && !event.asCharacters().isWhiteSpace()
           && (typeInfo == null || !typeInfo.getPrimitiveTypeKind().isGeospatial())) {
 
-        value = new PrimitiveValueImpl(event.asCharacters().getData());
+        final String stringValue = event.asCharacters().getData();
+        value = typeInfo == null ? stringValue :  // TODO: add facets
+            ((EdmPrimitiveType) typeInfo.getType()).valueOfString(stringValue, true, null,
+                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, true,
+                ((EdmPrimitiveType) typeInfo.getType()).getDefaultType());
       }
 
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
@@ -118,13 +119,13 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       }
     }
 
-    return value == null ? new PrimitiveValueImpl(StringUtils.EMPTY) : value;
+    return value;
   }
 
-  private Value fromComplexOrEnum(final XMLEventReader reader, final StartElement start)
-      throws XMLStreamException {
+  private Object fromComplexOrEnum(final XMLEventReader reader, final StartElement start)
+      throws XMLStreamException, EdmPrimitiveTypeException {
 
-    Value value = null;
+    Object value = null;
 
     boolean foundEndProperty = false;
     while (reader.hasNext() && !foundEndProperty) {
@@ -132,9 +133,8 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
 
       if (event.isStartElement()) {
         if (value == null) {
-          value = version.compareTo(ODataServiceVersion.V40) < 0
-              ? new ComplexValueImpl()
-              : new LinkedComplexValueImpl();
+          value = version.compareTo(ODataServiceVersion.V40) < 0 ?
+              new ArrayList<Property>() : new LinkedComplexValueImpl();
         }
 
         if (Constants.QNAME_ATOM_ELEM_LINK.equals(event.asStartElement().getName())) {
@@ -159,20 +159,21 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
           if (link.getRel().startsWith(
               version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL))) {
 
-            value.asLinkedComplex().getNavigationLinks().add(link);
+            ((LinkedComplexValue) value).getNavigationLinks().add(link);
             inline(reader, event.asStartElement(), link);
           } else if (link.getRel().startsWith(
               version.getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL))) {
 
-            value.asLinkedComplex().getAssociationLinks().add(link);
+            ((Valuable) value).asLinkedComplex().getAssociationLinks().add(link);
           }
         } else {
-          value.asComplex().get().add(property(reader, event.asStartElement()));
+          (value instanceof LinkedComplexValue ? ((LinkedComplexValue) value).getValue() : (List<Property>) value)
+              .add(property(reader, event.asStartElement()));
         }
       }
 
       if (event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
-        value = new EnumValueImpl(event.asCharacters().getData());
+        value = event.asCharacters().getData();
       }
 
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
@@ -183,14 +184,14 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     return value;
   }
 
-  private CollectionValue fromCollection(final XMLEventReader reader, final StartElement start,
-      final EdmTypeInfo typeInfo) throws XMLStreamException {
+  private void fromCollection(Valuable valuable, final XMLEventReader reader, final StartElement start,
+      final EdmTypeInfo typeInfo) throws XMLStreamException, EdmPrimitiveTypeException {
 
-    final CollectionValueImpl value = new CollectionValueImpl();
+    List<Object> values = new ArrayList<Object>();
+    ValueType valueType = ValueType.COLLECTION_PRIMITIVE;
 
-    final EdmTypeInfo type = typeInfo == null
-        ? null
-        : new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
+    final EdmTypeInfo type = typeInfo == null ? null :
+        new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
 
     boolean foundEndProperty = false;
     while (reader.hasNext() && !foundEndProperty) {
@@ -199,12 +200,22 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       if (event.isStartElement()) {
         switch (guessPropertyType(reader, typeInfo)) {
         case COMPLEX:
+          final Object complexValue = fromComplexOrEnum(reader, event.asStartElement());
+          valueType = complexValue instanceof LinkedComplexValue ?
+              ValueType.COLLECTION_LINKED_COMPLEX : ValueType.COLLECTION_COMPLEX;
+          values.add(complexValue);
+          break;
+
         case ENUM:
-          value.get().add(fromComplexOrEnum(reader, event.asStartElement()));
+          valueType = ValueType.COLLECTION_ENUM;
+          values.add(fromComplexOrEnum(reader, event.asStartElement()));
           break;
 
         case PRIMITIVE:
-          value.get().add(fromPrimitive(reader, event.asStartElement(), type));
+          final Object value = fromPrimitive(reader, event.asStartElement(), type);
+          valueType = value instanceof Geospatial ?
+              ValueType.COLLECTION_GEOSPATIAL : ValueType.COLLECTION_PRIMITIVE;
+          values.add(value);
           break;
 
         default:
@@ -216,8 +227,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
         foundEndProperty = true;
       }
     }
-
-    return value;
+    valuable.setValue(valueType, values);
   }
 
   private ODataPropertyType guessPropertyType(final XMLEventReader reader, final EdmTypeInfo typeInfo)
@@ -235,9 +245,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
 
     final ODataPropertyType type;
     if (child == null) {
-      type = typeInfo == null || typeInfo.isPrimitiveType()
-          ? ODataPropertyType.PRIMITIVE
-          : ODataPropertyType.ENUM;
+      type = typeInfo == null || typeInfo.isPrimitiveType() ? ODataPropertyType.PRIMITIVE : ODataPropertyType.ENUM;
     } else {
       if (child.isStartElement()) {
         if (Constants.NS_GML.equals(child.asStartElement().getName().getNamespaceURI())) {
@@ -260,7 +268,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
   }
 
   private Property property(final XMLEventReader reader, final StartElement start)
-      throws XMLStreamException {
+      throws XMLStreamException, EdmPrimitiveTypeException {
 
     final PropertyImpl property = new PropertyImpl();
 
@@ -279,39 +287,36 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     return property;
   }
 
-  private void valuable(final Valuable valuable, final XMLEventReader reader, final StartElement start)
-      throws XMLStreamException {
+  private void valuable(Valuable valuable, final XMLEventReader reader, final StartElement start)
+      throws XMLStreamException, EdmPrimitiveTypeException {
 
     final Attribute nullAttr = start.getAttributeByName(this.nullQName);
 
-    Value value;
+    final Attribute typeAttr = start.getAttributeByName(this.typeQName);
+    final String typeAttrValue = typeAttr == null ? null : typeAttr.getValue();
+
+    final EdmTypeInfo typeInfo = StringUtils.isBlank(typeAttrValue) ? null :
+        new EdmTypeInfo.Builder().setTypeExpression(typeAttrValue).build();
+
+    if (typeInfo != null) {
+      valuable.setType(typeInfo.internal());
+    }
+
+    final ODataPropertyType propType = typeInfo == null ? guessPropertyType(reader, typeInfo) :
+        typeInfo.isCollection() ? ODataPropertyType.COLLECTION :
+            typeInfo.isPrimitiveType() ? ODataPropertyType.PRIMITIVE : ODataPropertyType.COMPLEX;
+
     if (nullAttr == null) {
-      final Attribute typeAttr = start.getAttributeByName(this.typeQName);
-      final String typeAttrValue = typeAttr == null ? null : typeAttr.getValue();
-
-      final EdmTypeInfo typeInfo = StringUtils.isBlank(typeAttrValue)
-          ? null
-          : new EdmTypeInfo.Builder().setTypeExpression(typeAttrValue).build();
-
-      if (typeInfo != null) {
-        valuable.setType(typeInfo.internal());
-      }
-
-      final ODataPropertyType propType = typeInfo == null
-          ? guessPropertyType(reader, typeInfo)
-          : typeInfo.isCollection()
-              ? ODataPropertyType.COLLECTION
-              : typeInfo.isPrimitiveType()
-                  ? ODataPropertyType.PRIMITIVE
-                  : ODataPropertyType.COMPLEX;
-
       switch (propType) {
       case COLLECTION:
-        value = fromCollection(reader, start, typeInfo);
+        fromCollection(valuable, reader, start, typeInfo);
         break;
 
       case COMPLEX:
-        value = fromComplexOrEnum(reader, start);
+        final Object complexValue = fromComplexOrEnum(reader, start);
+        valuable.setValue(complexValue instanceof LinkedComplexValue ? ValueType.LINKED_COMPLEX :
+            complexValue instanceof List<?> ? ValueType.COMPLEX : ValueType.ENUM,
+            complexValue);
         break;
 
       case PRIMITIVE:
@@ -319,18 +324,21 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
         if (typeInfo == null) {
           valuable.setType(EdmPrimitiveTypeKind.String.getFullQualifiedName().toString());
         }
-        value = fromPrimitive(reader, start, typeInfo);
+        final Object value = fromPrimitive(reader, start, typeInfo);
+        valuable.setValue(value instanceof Geospatial ? ValueType.GEOSPATIAL : ValueType.PRIMITIVE, value);
         break;
 
       case EMPTY:
       default:
-        value = new PrimitiveValueImpl(StringUtils.EMPTY);
+        valuable.setValue(ValueType.PRIMITIVE, StringUtils.EMPTY);
       }
     } else {
-      value = new NullValueImpl();
+      valuable.setValue(propType == ODataPropertyType.PRIMITIVE ? ValueType.PRIMITIVE :
+        propType == ODataPropertyType.ENUM ? ValueType.ENUM :
+        propType == ODataPropertyType.COMPLEX ? ValueType.COMPLEX :
+        propType == ODataPropertyType.COLLECTION ? ValueType.COLLECTION_PRIMITIVE : ValueType.PRIMITIVE,
+        null);
     }
-
-    valuable.setValue(value);
   }
 
   @Override
@@ -340,6 +348,8 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       final StartElement start = skipBeforeFirstStartElement(reader);
       return getContainer(start, property(reader, start));
     } catch (XMLStreamException e) {
+      throw new ODataDeserializerException(e);
+    } catch (final EdmPrimitiveTypeException e) {
       throw new ODataDeserializerException(e);
     }
   }
@@ -381,7 +391,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
   }
 
   private void inline(final XMLEventReader reader, final StartElement start, final LinkImpl link)
-      throws XMLStreamException {
+      throws XMLStreamException, EdmPrimitiveTypeException {
 
     boolean foundEndElement = false;
     while (reader.hasNext() && !foundEndElement) {
@@ -417,13 +427,15 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     }
   }
 
-  public ResWrap<Delta> delta(final InputStream input) throws XMLStreamException {
+  public ResWrap<Delta> delta(final InputStream input)
+      throws XMLStreamException, EdmPrimitiveTypeException {
     final XMLEventReader reader = getReader(input);
     final StartElement start = skipBeforeFirstStartElement(reader);
     return getContainer(start, delta(reader, start));
   }
 
-  private Delta delta(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
+  private Delta delta(final XMLEventReader reader, final StartElement start)
+      throws XMLStreamException, EdmPrimitiveTypeException {
     if (!Constants.QNAME_ATOM_ELEM_FEED.equals(start.getName())) {
       return null;
     }
@@ -547,7 +559,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
   }
 
   private void properties(final XMLEventReader reader, final StartElement start, final EntityImpl entity)
-      throws XMLStreamException {
+      throws XMLStreamException, EdmPrimitiveTypeException {
 
     final Map<String, List<Annotation>> annotations = new HashMap<String, List<Annotation>>();
 
@@ -581,7 +593,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
   }
 
   private Annotation annotation(final XMLEventReader reader, final StartElement start)
-      throws XMLStreamException {
+      throws XMLStreamException, EdmPrimitiveTypeException {
 
     final Annotation annotation = new AnnotationImpl();
 
@@ -602,7 +614,8 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     return entity;
   }
 
-  private Entity entity(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
+  private Entity entity(final XMLEventReader reader, final StartElement start)
+      throws XMLStreamException, EdmPrimitiveTypeException {
     final EntityImpl entity;
     if (entryRefQName.equals(start.getName())) {
       entity = entityRef(start);
@@ -741,6 +754,8 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       }
     } catch (XMLStreamException e) {
       throw new ODataDeserializerException(e);
+    } catch (final EdmPrimitiveTypeException e) {
+      throw new ODataDeserializerException(e);
     }
   }
 
@@ -761,7 +776,8 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     }
   }
 
-  private EntitySet entitySet(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
+  private EntitySet entitySet(final XMLEventReader reader, final StartElement start)
+      throws XMLStreamException, EdmPrimitiveTypeException {
     if (!Constants.QNAME_ATOM_ELEM_FEED.equals(start.getName())) {
       return null;
     }
@@ -825,6 +841,8 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       final StartElement start = skipBeforeFirstStartElement(reader);
       return getContainer(start, entitySet(reader, start));
     } catch (XMLStreamException e) {
+      throw new ODataDeserializerException(e);
+    } catch (final EdmPrimitiveTypeException e) {
       throw new ODataDeserializerException(e);
     }
   }

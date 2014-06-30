@@ -617,7 +617,7 @@ public abstract class AbstractUtilities {
         throw new IOException(String.format("Unable to retrieve entity key value for %s", entitySetName));
       }
     } else {
-      res = entry.getProperty(propertyName).getValue().asPrimitive().get();
+      res = entry.getProperty(propertyName).asPrimitive().toString();
     }
     Commons.SEQUENCE.put(entitySetName, Integer.valueOf(res));
 
@@ -638,9 +638,9 @@ public abstract class AbstractUtilities {
             throw new IOException(String.format("Unable to retrieve entity key value for %s", entitySetName));
           }
         } else {
-          productID = Integer.valueOf(entity.getProperty("OrderID").getValue().asPrimitive().get());
-          res = "OrderID=" + entity.getProperty("OrderID").getValue().asPrimitive().get()
-              + ",ProductID=" + entity.getProperty("ProductID").getValue().asPrimitive().get();
+          productID = (Integer) entity.getProperty("OrderID").asPrimitive();
+          res = "OrderID=" + entity.getProperty("OrderID").asPrimitive()
+              + ",ProductID=" + entity.getProperty("ProductID").asPrimitive();
         }
         Commons.SEQUENCE.put(entitySetName, productID);
       } else if ("Message".equals(entitySetName)) {
@@ -653,9 +653,9 @@ public abstract class AbstractUtilities {
             throw new IOException(String.format("Unable to retrieve entity key value for %s", entitySetName));
           }
         } else {
-          messageId = Integer.valueOf(entity.getProperty("MessageId").getValue().asPrimitive().get());
-          res = "FromUsername=" + entity.getProperty("FromUsername").getValue().asPrimitive().get()
-              + ",MessageId=" + entity.getProperty("MessageId").getValue().asPrimitive().get();
+          messageId = (Integer) entity.getProperty("MessageId").asPrimitive();
+          res = "FromUsername=" + entity.getProperty("FromUsername").asPrimitive()
+              + ",MessageId=" + entity.getProperty("MessageId").asPrimitive();
         }
         Commons.SEQUENCE.put(entitySetName, messageId);
       } else if ("Order".equals(entitySetName)) {
@@ -681,7 +681,7 @@ public abstract class AbstractUtilities {
       } else if ("RowIndex".equals(entitySetName)) {
         res = getDefaultEntryKey(entitySetName, entity, "Id");
       } else if ("Login".equals(entitySetName)) {
-        res = entity.getProperty("Username").getValue().asPrimitive().get();
+        res = (String) entity.getProperty("Username").asPrimitive();
       } else if ("Products".equals(entitySetName)) {
         res = getDefaultEntryKey(entitySetName, entity, "ProductID");
       } else if ("ProductDetails".equals(entitySetName)) {
@@ -697,10 +697,10 @@ public abstract class AbstractUtilities {
           }
           Commons.SEQUENCE.put(entitySetName, productDetailId);
         } else {
-          productId = Integer.valueOf(entity.getProperty("ProductID").getValue().asPrimitive().get());
-          productDetailId = Integer.valueOf(entity.getProperty("ProductDetailID").getValue().asPrimitive().get());
-          res = "ProductID=" + entity.getProperty("ProductID").getValue().asPrimitive().get()
-              + ",ProductDetailID=" + entity.getProperty("ProductDetailID").getValue().asPrimitive().get();
+          productId = (Integer) entity.getProperty("ProductID").asPrimitive();
+          productDetailId = (Integer) entity.getProperty("ProductDetailID").asPrimitive();
+          res = "ProductID=" + entity.getProperty("ProductID").asPrimitive()
+              + ",ProductDetailID=" + entity.getProperty("ProductDetailID").asPrimitive();
         }
         Commons.SEQUENCE.put(entitySetName, productDetailId);
         Commons.SEQUENCE.put("Products", productId);

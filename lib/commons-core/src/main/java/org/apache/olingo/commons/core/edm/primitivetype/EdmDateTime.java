@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.core.edm.primitivetype;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -46,7 +47,7 @@ public final class EdmDateTime extends SingletonPrimitiveType {
 
   @Override
   public Class<?> getDefaultType() {
-    return Calendar.class;
+    return Timestamp.class;
   }
 
   @Override
@@ -59,7 +60,7 @@ public final class EdmDateTime extends SingletonPrimitiveType {
     final Date date;
     try {
       date = DATE_FORMAT.get().parse(dateParts[0]);
-    } catch (Exception e) {
+    } catch (ParseException e) {
       throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
     }
 
@@ -93,9 +94,9 @@ public final class EdmDateTime extends SingletonPrimitiveType {
       calendar.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
 
       if (!decimals.isEmpty()) {
-        final int fractionalSecs = calendar.get(Calendar.MILLISECOND);
-        // if fractional are just milliseconds, convert to nanoseconds
-        timestamp.setNanos(fractionalSecs < 1000 ? fractionalSecs * 1000000 : fractionalSecs);
+        final int nanos = Integer.parseInt(decimals.length() > 9 ? decimals.substring(0, 9) :
+                decimals + "000000000".substring(decimals.length()));
+        timestamp.setNanos(nanos);
       }
     }
 
@@ -114,32 +115,22 @@ public final class EdmDateTime extends SingletonPrimitiveType {
           final Boolean isNullable, final Integer maxLength, final Integer precision,
           final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
-    Date date = null;
-    Integer fractionalSecs = null;
     if (value instanceof Calendar) {
       final Calendar calendar = (Calendar) value;
-      date = calendar.getTime();
-      fractionalSecs = calendar.get(Calendar.MILLISECOND);
-    }
-    if (value instanceof Timestamp) {
+      Date date = calendar.getTime();
+      Integer fractionalSecs = calendar.get(Calendar.MILLISECOND);
+      final StringBuilder result = new StringBuilder().append(DATE_FORMAT.get().format(date));
+      EdmDateTimeOffset.appendMilliseconds(result, fractionalSecs, precision);
+      return result.toString();
+    } else if (value instanceof Timestamp) {
       final Timestamp timestamp = (Timestamp) value;
-      date = new Date(timestamp.getTime());
-      fractionalSecs = timestamp.getNanos();
+      Date date = new Date(timestamp.getTime());
+      Integer fractionalSecs = timestamp.getNanos();
+      final StringBuilder result = new StringBuilder().append(DATE_FORMAT.get().format(date));
+      EdmDateTimeOffset.appendFractionalSeconds(result, fractionalSecs, precision);
+      return result.toString();
+    } else {
+      throw new EdmPrimitiveTypeException("EdmDateTime only supports conversion from Calendar and Timestamp");
     }
-
-    final StringBuilder result = new StringBuilder().append(DATE_FORMAT.get().format(date));
-
-    try {
-      if (value instanceof Timestamp) {
-        EdmDateTimeOffset.appendFractionalSeconds(result, fractionalSecs, precision);
-      } else {
-        EdmDateTimeOffset.appendMilliseconds(result, fractionalSecs, precision);
-      }
-    } catch (final IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)", e);
-    }
-
-    return result.toString();
   }
 }

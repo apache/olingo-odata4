@@ -20,17 +20,22 @@ package org.apache.olingo.client.core.edm.v4.annotation;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.ConstantAnnotationExpression;
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.annotation.EdmConstantAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
 import org.apache.olingo.commons.core.domain.v4.ODataCollectionValueImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataEnumValueImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataPrimitiveValueImpl;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotationExpression {
 
@@ -55,54 +60,53 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
         value = collValue;
       }
     } else {
-      final ODataPrimitiveValueImpl.BuilderImpl primitiveValueBuilder =
-              new ODataPrimitiveValueImpl.BuilderImpl(edm.getServiceMetadata().getDataServiceVersion());
-      primitiveValueBuilder.setText(constExprConstruct.getValue());
-
+      EdmPrimitiveTypeKind kind;
       switch (constExprConstruct.getType()) {
         case Binary:
-          primitiveValueBuilder.setType(EdmPrimitiveTypeKind.Binary);
+          kind = EdmPrimitiveTypeKind.Binary;
           break;
-
         case Bool:
-          primitiveValueBuilder.setType(EdmPrimitiveTypeKind.Boolean);
+          kind = EdmPrimitiveTypeKind.Boolean;
           break;
-
         case Date:
-          primitiveValueBuilder.setType(EdmPrimitiveTypeKind.Date);
+          kind = EdmPrimitiveTypeKind.Date;
           break;
-
         case DateTimeOffset:
-          primitiveValueBuilder.setType(EdmPrimitiveTypeKind.DateTimeOffset);
+          kind = EdmPrimitiveTypeKind.DateTimeOffset;
           break;
-
         case Decimal:
-          primitiveValueBuilder.setType(EdmPrimitiveTypeKind.Decimal);
+          kind = EdmPrimitiveTypeKind.Decimal;
           break;
-
         case Duration:
-          primitiveValueBuilder.setType(EdmPrimitiveTypeKind.Duration);
+          kind = EdmPrimitiveTypeKind.Duration;
           break;
-
         case Float:
-          primitiveValueBuilder.setType(EdmPrimitiveTypeKind.Single);
+          kind = EdmPrimitiveTypeKind.Single;
           break;
-
         case Guid:
-          primitiveValueBuilder.setType(EdmPrimitiveTypeKind.Guid);
+          kind = EdmPrimitiveTypeKind.Guid;
           break;
-
         case Int:
-          primitiveValueBuilder.setType(EdmPrimitiveTypeKind.Int32);
+          kind = EdmPrimitiveTypeKind.Int32;
           break;
-
         case TimeOfDay:
-          primitiveValueBuilder.setType(EdmPrimitiveTypeKind.TimeOfDay);
+          kind = EdmPrimitiveTypeKind.TimeOfDay;
           break;
-
         case String:
         default:
-          primitiveValueBuilder.setType(EdmPrimitiveTypeKind.String);
+          kind = EdmPrimitiveTypeKind.String;
+      }
+      final ODataPrimitiveValueImpl.BuilderImpl primitiveValueBuilder =
+          new ODataPrimitiveValueImpl.BuilderImpl(edm.getServiceMetadata().getDataServiceVersion());
+      primitiveValueBuilder.setType(kind);
+      try {
+        final EdmPrimitiveType primitiveType = EdmPrimitiveTypeFactory.getInstance(kind);
+        primitiveValueBuilder.setValue(
+            primitiveType.valueOfString(constExprConstruct.getValue(),
+                null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
+                primitiveType.getDefaultType()));
+      } catch (final EdmPrimitiveTypeException e) {
+        throw new IllegalArgumentException(e);
       }
 
       value = primitiveValueBuilder.build();

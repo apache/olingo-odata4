@@ -210,6 +210,29 @@ public interface CommonConfiguration {
   boolean isAddressingDerivedTypes() ;
 
   /**
+   * Sets whether operation name in request URI should be fully qualified name, which is required by OData V4 protocol,
+   * but some service may still choose to support shorter name.
+   * <br/>
+   * Example: http://host/service/Customers(2)/NS1.Model.IncreaseSalary VS 
+   * http://host/service/Customers(2)/IncreaseSalary
+   *
+   * @param value 'TRUE' to use this feature.
+   */  
+  void setUseUrlOperationFQN(final boolean value);
+  
+  /**
+   * Sets whether operation name in request URI should be fully qualified name, which is required by OData V4 protocol,
+   * but some service may still choose to support shorter name.
+   * <br/>
+   * Example: http://host/service/Customers(2)/NS1.Model.IncreaseSalary VS 
+   * http://host/service/Customers(2)/IncreaseSalary
+   *
+   * @return whether whether operation name in request URI should be fully qualified name.
+   * segment.
+   */
+  boolean isUseUrlOperationFQN() ;
+
+  /**
    * Sets whether query URIs in request should contain fully qualified type name.
    * - OData Intermediate Conformance Level:
    * MUST support casting to a derived type according to [OData-URL] if derived types are present in the model.

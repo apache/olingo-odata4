@@ -19,13 +19,25 @@
 package org.apache.olingo.commons.core.data;
 
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.data.Value;
+import org.apache.olingo.commons.api.data.ValueType;
 
-public class PropertyImpl extends AbstractAnnotatedObject implements Property {
+public class PropertyImpl extends AbstractValuable implements Property {
 
   private String name;
   private String type;
-  private Value value;
+
+  public PropertyImpl() {
+  }
+
+  public PropertyImpl(String type, String name) {
+    this.name = name;
+    this.type = type;
+  }
+
+  public PropertyImpl(String type, String name, ValueType valueType, Object value) {
+    this(name, type);
+    setValue(valueType, value);
+  }
 
   @Override
   public String getName() {
@@ -48,12 +60,7 @@ public class PropertyImpl extends AbstractAnnotatedObject implements Property {
   }
 
   @Override
-  public Value getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(final Value value) {
-    this.value = value;
+  public boolean isNull() {
+    return getValue() == null || "Edm.Null".equals(type);  // TODO: improve
   }
 }

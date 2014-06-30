@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.api.data;
 
-public interface LinkedComplexValue extends ComplexValue, Linked, Annotatable {
+import java.util.List;
 
+public interface LinkedComplexValue extends Linked, Annotatable {
+
+  List<Property> getValue();
 }

@@ -58,10 +58,7 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
     dateTimeValue.set(Calendar.MINUTE, Byte.parseByte(matcher.group(2)));
     dateTimeValue.set(Calendar.SECOND, matcher.group(3) == null ? 0 : Byte.parseByte(matcher.group(3)));
 
-    // cloning the original Calendar instance to avoid vanishing the Calendar value check - triggered by any
-    // get method - empowered by the convertDateTime() method below
-    final Timestamp timestamp = new Timestamp(((Calendar) dateTimeValue.clone()).getTimeInMillis());
-
+    int nanoSeconds = 0;
     if (matcher.group(4) != null) {
       if (matcher.group(4).length() == 1 || matcher.group(4).length() > 13) {
         throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
@@ -71,22 +68,19 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
         throw new EdmPrimitiveTypeException(
                 "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
       }
-      final String milliSeconds = decimals.length() > 3
-                                  ? decimals.substring(0, 3)
-                                  : decimals + "000".substring(decimals.length());
-      dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
-
-      if (!decimals.isEmpty()) {
-        timestamp.setNanos(Integer.parseInt(decimals));
+      final String milliSeconds = decimals.length() > 3 ?
+          decimals.substring(0, 3) :
+          decimals + "000".substring(decimals.length());
+      final short millis = Short.parseShort(milliSeconds);
+      if (returnType.isAssignableFrom(Timestamp.class)) {
+        nanoSeconds = millis * 1000 * 1000;
+      } else {
+        dateTimeValue.set(Calendar.MILLISECOND, millis);
       }
     }
 
-    if (returnType.isAssignableFrom(Timestamp.class)) {
-      return returnType.cast(timestamp);
-    }
-
     try {
-      return EdmDateTimeOffset.convertDateTime(dateTimeValue, returnType);
+      return EdmDateTimeOffset.convertDateTime(dateTimeValue, nanoSeconds, returnType);
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException(
               "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);

@@ -22,10 +22,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
@@ -350,8 +352,10 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     boundOp = entity.getOperation("Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI");
     assertNotNull(boundOp);
 
+    Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    dateTime.set(2014, 3, 9, 0, 0, 0);
     final ODataPrimitiveValue newDate = client.getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.DateTimeOffset).setText("2014-04-09T00:00:00Z").build();
+            setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(dateTime).build();
     final ODataInvokeRequest<ODataEntity> getDefaultPIReq =
             client.getInvokeRequestFactory().getActionInvokeRequest(boundOp.getTarget(), ODataEntity.class,
                     Collections.<String, ODataValue>singletonMap("newDate", newDate));
@@ -434,8 +438,10 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertEquals(2, resetAddressRes.getProperty("PersonID").getPrimitiveValue().toCastValue(Integer.class), 0);
 
     // RefreshDefaultPI
+    Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    dateTime.set(2014, 3, 9, 0, 0, 0);
     final ODataPrimitiveValue newDate = edmClient.getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.DateTimeOffset).setText("2014-04-09T00:00:00Z").build();
+            setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(dateTime).build();
     final ODataInvokeRequest<ODataEntity> getDefaultPIReq =
             edmClient.getInvokeRequestFactory().getBoundActionInvokeRequest(
                     edmClient.newURIBuilder().appendEntitySetSegment("Accounts").appendKeySegment(102).build(),

@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,13 +68,15 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.data.Value;
+import org.apache.olingo.commons.api.data.Valuable;
+import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -82,9 +85,8 @@ import org.apache.olingo.commons.api.serialization.ODataSerializer;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.data.NullValueImpl;
-import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.serialization.AtomSerializer;
 import org.apache.olingo.commons.core.serialization.JsonDeserializer;
 import org.apache.olingo.commons.core.serialization.JsonSerializer;
@@ -228,7 +230,7 @@ public abstract class AbstractServices {
     final Property id = new PropertyImpl();
     id.setType("Edm.Int32");
     id.setName("StoredPIID");
-    id.setValue(new PrimitiveValueImpl("1000"));
+    id.setValue(ValueType.PRIMITIVE, 1000);
     entity.getProperties().add(id);
     final Link edit = new LinkImpl();
     edit.setHref(uriInfo.getRequestUri().toASCIIString());
@@ -474,7 +476,7 @@ public abstract class AbstractServices {
         if (_property == null) {
           container.getPayload().getProperties().add(property);
         } else {
-          _property.setValue(property.getValue());
+          _property.setValue(property.getValueType(), property.getValue());
         }
       }
 
@@ -625,7 +627,9 @@ public abstract class AbstractServices {
           final Property prop = new PropertyImpl();
           prop.setName(id.getKey());
           prop.setType(id.getValue().toString());
-          prop.setValue(new PrimitiveValueImpl(entityKey));
+          prop.setValue(ValueType.PRIMITIVE,
+              id.getValue() == EdmPrimitiveTypeKind.Int32 ? Integer.parseInt(entityKey) :
+              id.getValue() == EdmPrimitiveTypeKind.Guid ? UUID.fromString(entityKey) : entityKey);
           entry.getProperties().add(prop);
         }
 
@@ -721,8 +725,8 @@ public abstract class AbstractServices {
       final InputStream entity = entityInfo.getValue();
       final ResWrap<Entity> container = atomDeserializer.toEntity(entity);
 
-      container.getPayload().getProperty("Salary").setValue(new PrimitiveValueImpl("0"));
-      container.getPayload().getProperty("Title").setValue(new PrimitiveValueImpl("[Sacked]"));
+      container.getPayload().getProperty("Salary").setValue(ValueType.PRIMITIVE, 0);
+      container.getPayload().getProperty("Title").setValue(ValueType.PRIMITIVE, "[Sacked]");
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
@@ -815,7 +819,8 @@ public abstract class AbstractServices {
 
       final Entity param = xml.readEntity(utils.getKey(), IOUtils.toInputStream(argument, Constants.ENCODING));
 
-      container.getPayload().getProperty("Dimensions").setValue(param.getProperty("dimensions").getValue());
+      final Property property = param.getProperty("dimensions");
+      container.getPayload().getProperty("Dimensions").setValue(property.getValueType(), property.getValue());
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
@@ -850,8 +855,10 @@ public abstract class AbstractServices {
 
       final Entity param = xml.readEntity(utils.getKey(), IOUtils.toInputStream(argument, Constants.ENCODING));
 
-      container.getPayload().getProperty("SpecificationsBag").setValue(param.getProperty("specifications").getValue());
-      container.getPayload().getProperty("PurchaseDate").setValue(param.getProperty("purchaseTime").getValue());
+      Property property = param.getProperty("specifications");
+      container.getPayload().getProperty("SpecificationsBag").setValue(property.getValueType(), property.getValue());
+      property = param.getProperty("purchaseTime");
+      container.getPayload().getProperty("PurchaseDate").setValue(property.getValueType(), property.getValue());
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
@@ -1327,8 +1334,8 @@ public abstract class AbstractServices {
         if (toBeReplaced == null) {
           toBeReplaced = entry.getProperty(element.trim());
         } else {
-          ComplexValue value = toBeReplaced.getValue().asComplex();
-          for (Property field : value.get()) {
+          List<Property> value = toBeReplaced.asComplex();
+          for (Property field : value) {
             if (field.getName().equalsIgnoreCase(element)) {
               toBeReplaced = field;
             }
@@ -1342,13 +1349,13 @@ public abstract class AbstractServices {
 
       if (justValue) {
         // just for primitive values
-        toBeReplaced.setValue(new PrimitiveValueImpl(changes));
+        toBeReplaced.setValue(ValueType.PRIMITIVE, changes);
       } else {
         final Property pchanges = xml.readProperty(
                 Accept.parse(contentType, version),
                 IOUtils.toInputStream(changes, Constants.ENCODING));
 
-        toBeReplaced.setValue(pchanges.getValue());
+        toBeReplaced.setValue(pchanges.getValueType(), pchanges.getValue());
       }
 
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
@@ -1767,12 +1774,12 @@ public abstract class AbstractServices {
 
     final String[] pathElems = StringUtils.split(path, "/");
     Property property = entryContainer.getPayload().getProperty(pathElems[0]);
-    if (pathElems.length > 1 && property.getValue().isComplex()) {
-      for (Property sub : property.getValue().asComplex().get()) {
+    if (pathElems.length > 1 && property.isComplex()) {
+      for (Property sub : property.asComplex()) {
         if (pathElems[1].equals(sub.getName())) {
           property = sub;
-          if (pathElems.length > 2 && property.getValue().isComplex()) {
-            for (Property subsub : property.getValue().asComplex().get()) {
+          if (pathElems.length > 2 && property.isComplex()) {
+            for (Property subsub : property.asComplex()) {
               if (pathElems[2].equals(subsub.getName())) {
                 property = subsub;
               }
@@ -1790,13 +1797,25 @@ public abstract class AbstractServices {
             property);
 
     return xml.createResponse(null,
-            searchForValue ?
-                IOUtils.toInputStream(container.getPayload().getValue() == null
-                || container.getPayload().getValue().isNull() ? StringUtils.EMPTY :
-                  container.getPayload().getValue().asPrimitive().get(), Constants.ENCODING) :
-                utils.writeProperty(acceptType, container),
+        searchForValue ?
+            IOUtils.toInputStream(
+                container.getPayload().isNull() ? StringUtils.EMPTY : stringValue(container.getPayload()),
+                Constants.ENCODING) :
+            utils.writeProperty(acceptType, container),
             Commons.getETag(Commons.getEntityBasePath(entitySetName, entityId), version),
             acceptType);
+  }
+
+  private String stringValue(final Property property) {
+    EdmPrimitiveTypeKind kind = EdmPrimitiveTypeKind.valueOfFQN(version, property.getType());
+    try {
+      return EdmPrimitiveTypeFactory.getInstance(kind)
+          .valueToString(property.asPrimitive(), null, null,
+              org.apache.olingo.commons.api.Constants.DEFAULT_PRECISION,
+              org.apache.olingo.commons.api.Constants.DEFAULT_SCALE, null);
+    } catch (final EdmPrimitiveTypeException e) {
+      return property.asPrimitive().toString();
+    }
   }
 
   /**
@@ -1876,20 +1895,21 @@ public abstract class AbstractServices {
 
         alink.setRel(Constants.get(version, ConstantKey.ATOM_LINK_REL) + property.getName());
 
-        if (property.getValue().isComplex()) {
+        if (property.isComplex()) {
           Entity inline = new EntityImpl();
           inline.setType(navProperties.get(property.getName()).getType());
-          for (Property prop : property.getValue().asComplex().get()) {
+          for (Property prop : property.asComplex()) {
             inline.getProperties().add(prop);
           }
           alink.setInlineEntity(inline);
 
-        } else if (property.getValue().isCollection()) {
+        } else if (property.isCollection()) {
           EntitySet inline = new EntitySetImpl();
-          for (Value value : property.getValue().asCollection().get()) {
+          for (Object value : property.asCollection()) {
             Entity inlineEntity = new EntityImpl();
             inlineEntity.setType(navProperties.get(property.getName()).getType());
-            for (Property prop : value.asComplex().get()) {
+            for (Property prop : (value instanceof LinkedComplexValue ?
+                ((LinkedComplexValue) value).getValue() : ((Valuable) value).asComplex())) {
               inlineEntity.getProperties().add(prop);
             }
             inline.getEntities().add(inlineEntity);
@@ -1911,7 +1931,7 @@ public abstract class AbstractServices {
       if (entry.getProperty(property.getKey()) == null && property.getValue().isNullable()) {
         final PropertyImpl prop = new PropertyImpl();
         prop.setName(property.getKey());
-        prop.setValue(new NullValueImpl());
+        prop.setValue(ValueType.PRIMITIVE, null);
         entry.getProperties().add(prop);
       }
     }

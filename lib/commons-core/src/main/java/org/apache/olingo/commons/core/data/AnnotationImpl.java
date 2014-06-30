@@ -19,13 +19,11 @@
 package org.apache.olingo.commons.core.data;
 
 import org.apache.olingo.commons.api.data.Annotation;
-import org.apache.olingo.commons.api.data.Value;
 
-public class AnnotationImpl extends AbstractAnnotatedObject implements Annotation {
+public class AnnotationImpl extends AbstractValuable implements Annotation {
 
   private String term;
   private String type;
-  private Value value;
 
   @Override
   public String getTerm() {
@@ -45,15 +43,5 @@ public class AnnotationImpl extends AbstractAnnotatedObject implements Annotatio
   @Override
   public void setType(final String type) {
     this.type = type;
-  }
-
-  @Override
-  public Value getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(final Value value) {
-    this.value = value;
   }
 }

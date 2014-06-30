@@ -51,6 +51,8 @@ public class Configuration implements CommonConfiguration {
   
   private static final String ADDRESS_DERIVED_TYPE = "addressDerivedType";
 
+  private static final String USE_OPERATION_FQN_IN_URL = "useOperationFqnInUrl";
+
   private static final String GZIP_COMPRESSION = "gzipCompression";
 
   private static final String CHUNKING = "chunking";
@@ -195,6 +197,16 @@ public class Configuration implements CommonConfiguration {
   @Override
   public void setAddressingDerivedTypes(final boolean value) {
     setProperty(ADDRESS_DERIVED_TYPE, value);
+  }
+  
+  @Override
+  public boolean isUseUrlOperationFQN() {
+    return (Boolean) getProperty(USE_OPERATION_FQN_IN_URL, true);
+  }
+
+  @Override
+  public void setUseUrlOperationFQN(final boolean value) {
+    setProperty(USE_OPERATION_FQN_IN_URL, value);
   }
   
   @Override

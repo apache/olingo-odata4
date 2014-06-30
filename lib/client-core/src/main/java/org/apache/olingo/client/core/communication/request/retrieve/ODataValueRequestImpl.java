@@ -84,9 +84,6 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPri
       super(client, res);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public ODataPrimitiveValue getBody() {
       if (value == null) {
@@ -94,10 +91,9 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPri
 
         try {
           value = odataClient.getObjectFactory().newPrimitiveValueBuilder().
-                  setType(format == ODataFormat.TEXT_PLAIN
-                          ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
-                  setText(IOUtils.toString(getRawResponse())).
-                  build();
+                  setType(format == ODataFormat.TEXT_PLAIN ?
+                      EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
+                  setValue(IOUtils.toString(getRawResponse())).build();
         } catch (Exception e) {
           throw new HttpClientException(e);
         } finally {
