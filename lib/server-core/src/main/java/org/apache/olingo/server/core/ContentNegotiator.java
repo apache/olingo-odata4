@@ -19,9 +19,7 @@
 package org.apache.olingo.server.core;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.olingo.commons.api.format.AcceptType;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -53,7 +51,7 @@ public class ContentNegotiator {
     return defaults;
   }
 
-  public List<FormatContentTypeMapping> getSupportedContentTypes(Processor processor,
+  private List<FormatContentTypeMapping> getSupportedContentTypes(Processor processor,
       Class<? extends Processor> processorClass) {
 
     List<FormatContentTypeMapping> supportedContentTypes = getDefaultSupportedContentTypes(processorClass);
@@ -67,9 +65,11 @@ public class ContentNegotiator {
   }
 
   public String doContentNegotiation(FormatOption formatOption, ODataRequest request,
-      List<FormatContentTypeMapping> supportedContentTypes, Class<? extends Processor> processorClass) {
+      Processor processor, Class<? extends Processor> processorClass) {
     String requestedContentType = null;
 
+    List<FormatContentTypeMapping> supportedContentTypes = getSupportedContentTypes(processor, processorClass);
+    
     List<String> acceptHeaderValues = request.getHeader(HttpHeader.ACCEPT);
 
     boolean supported = false;

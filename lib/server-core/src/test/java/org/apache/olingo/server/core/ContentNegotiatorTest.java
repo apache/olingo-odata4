@@ -161,10 +161,7 @@ public class ContentNegotiatorTest {
       request.addHeader(HttpHeader.ACCEPT, Arrays.asList(useCase[2]));
     }
 
-    List<FormatContentTypeMapping> supportedContentTypes =
-        cn.getSupportedContentTypes(p, processorClass);
-
-    String requestedContentType = cn.doContentNegotiation(fo, request, supportedContentTypes, processorClass);
+    String requestedContentType = cn.doContentNegotiation(fo, request, p, processorClass);
 
     assertNotNull(requestedContentType);
     assertEquals(useCase[0], requestedContentType);
@@ -188,37 +185,6 @@ public class ContentNegotiatorTest {
     }
 
     return map;
-  }
-
-  @Test
-  public void testDefaultSupportedContentTypesMetadata() {
-    ContentNegotiator cn = new ContentNegotiator();
-
-    ProcessorStub p = new ProcessorStub(null);
-
-    List<FormatContentTypeMapping> supportedContentTypes = cn.getSupportedContentTypes(p, MetadataProcessor.class);
-
-    assertNotNull(supportedContentTypes);
-    assertEquals(1, supportedContentTypes.size());
-    assertEquals("xml", supportedContentTypes.get(0).getFormatAlias());
-    assertEquals("application/xml", supportedContentTypes.get(0).getContentType());
-  }
-
-  @Test
-  public void testCustomSupportedContentTypesServiceDocument() {
-    ContentNegotiator cn = new ContentNegotiator();
-
-    ProcessorStub p = new ProcessorStub(Arrays.asList(new FormatContentTypeMapping("a", "a/a")));
-
-    List<FormatContentTypeMapping> supportedContentTypes =
-        cn.getSupportedContentTypes(p, ServiceDocumentProcessor.class);
-
-    assertNotNull(supportedContentTypes);
-    assertEquals(2, supportedContentTypes.size());
-    assertEquals("json", supportedContentTypes.get(0).getFormatAlias());
-    assertEquals("application/json", supportedContentTypes.get(0).getContentType());
-    assertEquals("a", supportedContentTypes.get(1).getFormatAlias());
-    assertEquals("a/a", supportedContentTypes.get(1).getContentType());
   }
 
   private class ProcessorStub implements ServiceDocumentProcessor, MetadataProcessor,
