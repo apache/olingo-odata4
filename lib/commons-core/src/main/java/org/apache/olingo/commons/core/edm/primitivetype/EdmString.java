@@ -74,7 +74,8 @@ public final class EdmString extends SingletonPrimitiveType {
     if (isUnicode != null && !isUnicode && !PATTERN_ASCII.matcher(result).matches()
         || maxLength != null && maxLength < result.length()) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
+              "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent('" +
+                  value + "', facets)");
     }
 
     return result;
