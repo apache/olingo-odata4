@@ -145,7 +145,7 @@ public class JsonDeserializer implements ODataDeserializer {
         link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
 
         EntitySet entitySet = new EntitySetImpl();
-        Iterator<JsonNode> entries = ((ArrayNode) inline).elements();
+        Iterator<JsonNode> entries = inline.elements();
         while (entries.hasNext()) {
           entitySet.getEntities().add(
               entityDeserializer.doDeserialize(entries.next().traverse(codec)).getPayload());
@@ -326,25 +326,24 @@ public class JsonDeserializer implements ODataDeserializer {
 
   private Object fromComplex(final ObjectNode node, final ObjectCodec codec)
       throws IOException, EdmPrimitiveTypeException {
-    final Object value = version.compareTo(ODataServiceVersion.V40) < 0 ?
-        new ArrayList<Property>() :
-        new LinkedComplexValueImpl();
 
-    if (value instanceof LinkedComplexValue) {
+    if (version.compareTo(ODataServiceVersion.V40) < 0) {
+      List<Property> properties = new ArrayList<Property>();
+      populate(null, properties, node, codec);
+      return properties;
+    } else {
+      LinkedComplexValue linkComplexValue = new LinkedComplexValueImpl();
       final Set<String> toRemove = new HashSet<String>();
       for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
         final Map.Entry<String, JsonNode> field = itor.next();
 
-        links(field, (LinkedComplexValue) value, toRemove, node, codec);
+        links(field, linkComplexValue, toRemove, node, codec);
       }
       node.remove(toRemove);
 
-      populate((LinkedComplexValue) value, ((LinkedComplexValue) value).getValue(), node, codec);
-    } else {
-      populate(null, (List<Property>) value, node, codec);
+      populate(linkComplexValue, linkComplexValue.getValue(), node, codec);
+      return linkComplexValue;
     }
-
-    return value;
   }
 
   private void fromCollection(Valuable valuable, final Iterator<JsonNode> nodeItor, final EdmTypeInfo typeInfo,

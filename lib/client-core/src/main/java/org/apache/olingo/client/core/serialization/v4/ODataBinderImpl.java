@@ -216,6 +216,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   protected Object getValue(final ODataValue value) {
     Object valueResource;
     if (value instanceof org.apache.olingo.commons.api.domain.v4.ODataValue

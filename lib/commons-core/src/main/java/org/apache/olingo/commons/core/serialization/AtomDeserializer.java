@@ -122,6 +122,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     return value;
   }
 
+  @SuppressWarnings("unchecked")
   private Object fromComplexOrEnum(final XMLEventReader reader, final StartElement start)
       throws XMLStreamException, EdmPrimitiveTypeException {
 
