@@ -24,7 +24,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -43,8 +42,6 @@ import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
 public class ComplexInvocationHandler extends AbstractStructuredInvocationHandler {
-
-  private static final long serialVersionUID = 2629912294765040037L;
 
   private static Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init(
           final CommonEdmEnabledODataClient<?> client,
@@ -151,8 +148,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
       }
     }
 
-    for (final Iterator<? extends CommonODataProperty> itor = getComplex().iterator(); itor.hasNext();) {
-      final CommonODataProperty property = itor.next();
+    for (final CommonODataProperty property : getComplex()) {
       if (!propertyNames.contains(property.getName())) {
         res.add(property.getName());
       }
@@ -180,10 +176,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
     if (value == null) {
       toBeAdded = null;
     } else if (Collection.class.isAssignableFrom(value.getClass())) {
-      toBeAdded = new ArrayList<Object>();
-      for (Object obj : (Collection) value) {
-        Collection.class.cast(toBeAdded).add(obj);
-      }
+      toBeAdded = new ArrayList<Object>((Collection<? extends Object>) value);
     } else {
       toBeAdded = value;
     }
