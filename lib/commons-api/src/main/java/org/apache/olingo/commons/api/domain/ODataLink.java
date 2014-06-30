@@ -1,24 +1,25 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.commons.api.domain;
 
 import java.net.URI;
+
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
@@ -49,7 +50,7 @@ public class ODataLink extends ODataItem {
     }
 
     public Builder setURI(final URI baseURI, final String href) {
-      this.uri = getURI(baseURI, href);
+      uri = getURI(baseURI, href);
       return this;
     }
 
@@ -72,7 +73,7 @@ public class ODataLink extends ODataItem {
    * Build URI starting from the given base and href.
    * <br/>
    * If href is absolute or base is null then base will be ignored.
-   *
+   * 
    * @param base URI prefix.
    * @param href URI suffix.
    * @return built URI.
@@ -90,6 +91,7 @@ public class ODataLink extends ODataItem {
 
     return uri.normalize();
   }
+
   /**
    * Link type.
    */
@@ -107,7 +109,7 @@ public class ODataLink extends ODataItem {
 
   /**
    * Constructor.
-   *
+   * 
    * @param version OData service version.
    * @param uri URI.
    * @param type type.
@@ -116,29 +118,29 @@ public class ODataLink extends ODataItem {
   protected ODataLink(final ODataServiceVersion version, final URI uri, final ODataLinkType type, final String title) {
     super(title);
 
-    this.link = uri;
+    link = uri;
     this.type = type;
 
     switch (this.type) {
-      case ASSOCIATION:
-        this.rel = version.getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL) + title;
-        break;
+    case ASSOCIATION:
+      rel = version.getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL) + title;
+      break;
 
-      case ENTITY_NAVIGATION:
-      case ENTITY_SET_NAVIGATION:
-        this.rel = version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL) + title;
-        break;
+    case ENTITY_NAVIGATION:
+    case ENTITY_SET_NAVIGATION:
+      rel = version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL) + title;
+      break;
 
-      case MEDIA_EDIT:
-      default:
-        this.rel = version.getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL) + title;
-        break;
+    case MEDIA_EDIT:
+    default:
+      rel = version.getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL) + title;
+      break;
     }
   }
 
   /**
    * Constructor.
-   *
+   * 
    * @param version OData service version.
    * @param baseURI base URI.
    * @param href href.
@@ -146,14 +148,14 @@ public class ODataLink extends ODataItem {
    * @param title title.
    */
   protected ODataLink(final ODataServiceVersion version,
-          final URI baseURI, final String href, final ODataLinkType type, final String title) {
+      final URI baseURI, final String href, final ODataLinkType type, final String title) {
 
     this(version, getURI(baseURI, href), type, title);
   }
 
   /**
    * Gets link type.
-   *
+   * 
    * @return link type;
    */
   public ODataLinkType getType() {
@@ -170,7 +172,7 @@ public class ODataLink extends ODataItem {
 
   /**
    * Gets link rel.
-   *
+   * 
    * @return link rel
    */
   public String getRel() {
@@ -179,7 +181,7 @@ public class ODataLink extends ODataItem {
 
   /**
    * Gets Media ETag.
-   *
+   * 
    * @return media ETag
    */
   public String getMediaETag() {

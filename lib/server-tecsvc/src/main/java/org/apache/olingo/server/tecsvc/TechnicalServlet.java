@@ -42,27 +42,28 @@ public class TechnicalServlet extends HttpServlet {
   private DataProvider dataProvider;
 
   @Override
-  protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+  protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException,
+      IOException {
     LOG.debug("ReferenceServlet:service() called");
 
-    if(dataProvider == null){
+    if (dataProvider == null) {
       dataProvider = new DataProvider();
     }
-    
+
     dataProvider.reset();
-    
+
     OData odata = OData.newInstance();
     Edm edm = odata.createEdm(new EdmTechProvider());
 
     ODataHttpHandler handler = odata.createHandler(edm);
-    
+
 //    handler.register(new TechnicalProcessor(dataProvider));
     handler.register(new SampleJsonProcessor());
-    
+
     handler.process(req, resp);
   }
 
-  public void bla(HttpServletRequest hr, HttpServletResponse hres) {
+  public void bla(final HttpServletRequest hr, final HttpServletResponse hres) {
 //    ODataServer s = ODataServer.newInstance();
 //
 //    ODataRequest r = s.createRequest(hr);

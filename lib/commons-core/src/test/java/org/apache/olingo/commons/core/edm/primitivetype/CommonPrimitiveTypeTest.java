@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -56,7 +56,7 @@ public class CommonPrimitiveTypeTest extends PrimitiveTypeBaseTest {
     assertEquals("Byte", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte).getName());
     assertEquals("Date", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Date).getName());
     assertEquals("DateTimeOffset",
-            EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.DateTimeOffset).getName());
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.DateTimeOffset).getName());
     assertEquals("Decimal", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).getName());
     assertEquals("Double", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double).getName());
     assertEquals("Duration", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Duration).getName());
@@ -86,7 +86,7 @@ public class CommonPrimitiveTypeTest extends PrimitiveTypeBaseTest {
     assertEquals("Edm.Byte", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte).toString());
     assertEquals("Edm.Date", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Date).toString());
     assertEquals("Edm.DateTimeOffset",
-            EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.DateTimeOffset).toString());
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.DateTimeOffset).toString());
     assertEquals("Edm.Decimal", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).toString());
     assertEquals("Edm.Double", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double).toString());
     assertEquals("Edm.Duration", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Duration).toString());
@@ -111,7 +111,7 @@ public class CommonPrimitiveTypeTest extends PrimitiveTypeBaseTest {
       final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(kind);
       assertTrue(instance.isCompatible(instance));
       assertFalse(instance.isCompatible(EdmPrimitiveTypeFactory.getInstance(
-              (kind == EdmPrimitiveTypeKind.String ? EdmPrimitiveTypeKind.Binary : EdmPrimitiveTypeKind.String))));
+          (kind == EdmPrimitiveTypeKind.String ? EdmPrimitiveTypeKind.Binary : EdmPrimitiveTypeKind.String))));
     }
   }
 
@@ -121,16 +121,16 @@ public class CommonPrimitiveTypeTest extends PrimitiveTypeBaseTest {
 
     assertEquals(byte[].class, EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary).getDefaultType());
     assertEquals(Boolean.class,
-            EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean).getDefaultType());
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean).getDefaultType());
     assertEquals(Short.class, EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte).getDefaultType());
     assertEquals(Calendar.class, EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Date).getDefaultType());
     assertEquals(Timestamp.class,
-            EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.DateTimeOffset).getDefaultType());
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.DateTimeOffset).getDefaultType());
     assertEquals(BigDecimal.class,
-            EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).getDefaultType());
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).getDefaultType());
     assertEquals(Double.class, EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double).getDefaultType());
     assertEquals(BigDecimal.class,
-            EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Duration).getDefaultType());
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Duration).getDefaultType());
     assertEquals(UUID.class, EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Guid).getDefaultType());
     assertEquals(Short.class, EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16).getDefaultType());
     assertEquals(Integer.class, EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32).getDefaultType());
@@ -139,7 +139,7 @@ public class CommonPrimitiveTypeTest extends PrimitiveTypeBaseTest {
     assertEquals(Float.class, EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Single).getDefaultType());
     assertEquals(String.class, EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String).getDefaultType());
     assertEquals(Calendar.class,
-            EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.TimeOfDay).getDefaultType());
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.TimeOfDay).getDefaultType());
   }
 
   @Test
@@ -163,14 +163,14 @@ public class CommonPrimitiveTypeTest extends PrimitiveTypeBaseTest {
     }
 
     assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary).
-            validate("abcd", null, 3, null, null, null));
+        validate("abcd", null, 3, null, null, null));
     assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary).
-            validate("abcd", null, 2, null, null, null));
+        validate("abcd", null, 2, null, null, null));
 
     assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
-            validate("1", null, null, null, null, null));
+        validate("1", null, null, null, null, null));
     assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
-            validate("1.2", null, null, null, 0, null));
+        validate("1.2", null, null, null, 0, null));
   }
 
   @Test

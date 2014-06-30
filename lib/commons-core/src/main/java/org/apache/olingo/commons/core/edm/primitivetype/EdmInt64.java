@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -37,11 +37,11 @@ public final class EdmInt64 extends SingletonPrimitiveType {
   @Override
   public boolean isCompatible(final EdmPrimitiveType primitiveType) {
     return primitiveType instanceof Uint7
-           || primitiveType instanceof EdmByte
-           || primitiveType instanceof EdmSByte
-           || primitiveType instanceof EdmInt16
-           || primitiveType instanceof EdmInt32
-           || primitiveType instanceof EdmInt64;
+        || primitiveType instanceof EdmByte
+        || primitiveType instanceof EdmSByte
+        || primitiveType instanceof EdmInt16
+        || primitiveType instanceof EdmInt32
+        || primitiveType instanceof EdmInt64;
   }
 
   @Override
@@ -51,31 +51,31 @@ public final class EdmInt64 extends SingletonPrimitiveType {
 
   @Override
   protected <T> T internalValueOfString(final String value,
-          final Boolean isNullable, final Integer maxLength, final Integer precision,
-          final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+      final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
 
     Long valueLong;
     try {
       valueLong = Long.parseLong(value);
     } catch (final NumberFormatException e) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
+          "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
     }
 
     try {
       return convertNumber(valueLong, returnType);
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
+          "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
     } catch (final ClassCastException e) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
+          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
     }
   }
 
   /**
    * Converts a whole {@link Number} value into the requested return type if possible.
-   *
+   * 
    * @param value the value
    * @param returnType the class of the returned value; it must be one of {@link BigInteger}, {@link Long},
    * {@link Integer}, {@link Short}, or {@link Byte}
@@ -84,7 +84,7 @@ public final class EdmInt64 extends SingletonPrimitiveType {
    * @throws ClassCastException if the return type is not allowed
    */
   public static <T> T convertNumber(final Number value, final Class<T> returnType)
-          throws IllegalArgumentException, ClassCastException {
+      throws IllegalArgumentException, ClassCastException {
 
     if (returnType.isAssignableFrom(Long.class)) {
       return returnType.cast(value.longValue());
@@ -115,8 +115,8 @@ public final class EdmInt64 extends SingletonPrimitiveType {
 
   @Override
   protected <T> String internalValueToString(final T value,
-          final Boolean isNullable, final Integer maxLength, final Integer precision,
-          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long) {
       return value.toString();
@@ -125,11 +125,11 @@ public final class EdmInt64 extends SingletonPrimitiveType {
         return value.toString();
       } else {
         throw new EdmPrimitiveTypeException(
-                "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+            "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
       }
     } else {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
     }
   }
 }

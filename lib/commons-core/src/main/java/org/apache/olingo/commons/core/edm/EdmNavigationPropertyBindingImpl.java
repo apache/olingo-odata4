@@ -25,7 +25,7 @@ public class EdmNavigationPropertyBindingImpl implements EdmNavigationPropertyBi
   private final String path;
   private final String target;
 
-  public EdmNavigationPropertyBindingImpl(String path, String target){
+  public EdmNavigationPropertyBindingImpl(final String path, final String target) {
     this.path = path;
     this.target = target;
   }
@@ -39,5 +39,5 @@ public class EdmNavigationPropertyBindingImpl implements EdmNavigationPropertyBi
   public String getTarget() {
     return target;
   }
-  
+
 }

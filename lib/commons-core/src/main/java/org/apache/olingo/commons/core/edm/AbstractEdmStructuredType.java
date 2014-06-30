@@ -43,10 +43,10 @@ public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements E
   private List<String> navigationPropertyNames;
 
   public AbstractEdmStructuredType(
-          final Edm edm,
-          final FullQualifiedName typeName,
-          final EdmTypeKind kind,
-          final FullQualifiedName baseTypeName) {
+      final Edm edm,
+      final FullQualifiedName typeName,
+      final EdmTypeKind kind,
+      final FullQualifiedName baseTypeName) {
 
     super(edm, typeName, kind);
     this.baseTypeName = baseTypeName;
@@ -128,7 +128,7 @@ public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements E
       throw new EdmException("Target type must not be null");
     }
     while (!sourceType.getName().equals(targetType.getName())
-            || !sourceType.getNamespace().equals(targetType.getNamespace())) {
+        || !sourceType.getNamespace().equals(targetType.getNamespace())) {
 
       sourceType = sourceType.getBaseType();
       if (sourceType == null) {

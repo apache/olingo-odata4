@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -31,7 +31,7 @@ import java.util.TreeMap;
 
 /**
  * Internally used {@link ContentType} for OData library.
- *
+ * 
  * For more details on format and content of a {@link ContentType} see
  * <em>Media Type</em> format as defined in
  * <a href="http://www.ietf.org/rfc/rfc7231.txt">RFC 7231</a>, chapter 3.1.1.1.
@@ -39,9 +39,9 @@ import java.util.TreeMap;
  * media-type = type "/" subtype *( OWS ";" OWS parameter )
  * type = token
  * subtype = token
- * OWS = *( SP / HTAB )  ; optional whitespace
+ * OWS = *( SP / HTAB ) ; optional whitespace
  * </pre>
- *
+ * 
  * Once created a {@link ContentType} is <b>IMMUTABLE</b>.
  */
 public class ContentType {
@@ -57,22 +57,22 @@ public class ContentType {
 
   public static final ContentType APPLICATION_XML = create("application", "xml");
   public static final ContentType APPLICATION_XML_CS_UTF_8 = create(APPLICATION_XML, PARAMETER_CHARSET,
-          CHARSET_UTF_8);
+      CHARSET_UTF_8);
   public static final ContentType APPLICATION_ATOM_XML = create("application", "atom+xml");
   public static final ContentType APPLICATION_ATOM_XML_CS_UTF_8 = create(APPLICATION_ATOM_XML,
-          PARAMETER_CHARSET, CHARSET_UTF_8);
+      PARAMETER_CHARSET, CHARSET_UTF_8);
   public static final ContentType APPLICATION_ATOM_XML_ENTRY = create(APPLICATION_ATOM_XML, PARAMETER_TYPE, "entry");
   public static final ContentType APPLICATION_ATOM_XML_ENTRY_CS_UTF_8 = create(APPLICATION_ATOM_XML_ENTRY,
-          PARAMETER_CHARSET, CHARSET_UTF_8);
+      PARAMETER_CHARSET, CHARSET_UTF_8);
   public static final ContentType APPLICATION_ATOM_XML_FEED = create(APPLICATION_ATOM_XML, PARAMETER_TYPE, "feed");
   public static final ContentType APPLICATION_ATOM_XML_FEED_CS_UTF_8 = create(APPLICATION_ATOM_XML_FEED,
-          PARAMETER_CHARSET, CHARSET_UTF_8);
+      PARAMETER_CHARSET, CHARSET_UTF_8);
   public static final ContentType APPLICATION_ATOM_SVC = create("application", "atomsvc+xml");
   public static final ContentType APPLICATION_ATOM_SVC_CS_UTF_8 = create(APPLICATION_ATOM_SVC,
-          PARAMETER_CHARSET, CHARSET_UTF_8);
+      PARAMETER_CHARSET, CHARSET_UTF_8);
   public static final ContentType APPLICATION_JSON = create("application", "json");
   public static final ContentType APPLICATION_JSON_CS_UTF_8 = create(APPLICATION_JSON,
-          PARAMETER_CHARSET, CHARSET_UTF_8);
+      PARAMETER_CHARSET, CHARSET_UTF_8);
   public static final ContentType APPLICATION_OCTET_STREAM = create("application", "octet-stream");
   public static final ContentType TEXT_PLAIN = create("text", "plain");
   public static final ContentType TEXT_PLAIN_CS_UTF_8 = create(TEXT_PLAIN, PARAMETER_CHARSET, CHARSET_UTF_8);
@@ -149,14 +149,14 @@ public class ContentType {
   }
 
   /**
-   *
+   * 
    * @param contentType
    * @param parameterKey
    * @param parameterValue
    * @return a new <code>ContentType</code> object
    */
   public static ContentType create(final ContentType contentType,
-                                   final String parameterKey, final String parameterValue) {
+      final String parameterKey, final String parameterValue) {
     ContentType newContentType = new ContentType(contentType.type, contentType.subtype, contentType.parameters);
     newContentType.parameters.put(parameterKey, parameterValue);
     return newContentType;
@@ -182,9 +182,9 @@ public class ContentType {
   /**
    * Parses the given input string (<code>format</code>) and returns created {@link ContentType} if input was valid or
    * return <code>NULL</code> if input was not parseable.
-   *
+   * 
    * For the definition of the supported format see {@link #create(String)}.
-   *
+   * 
    * @param format a string in format as defined in RFC 7231, chapter 3.1.1.1
    * @return a new <code>ContentType</code> object
    */
@@ -196,7 +196,8 @@ public class ContentType {
     }
   }
 
-  protected static void parse(final String format, List<String> typeSubtype, Map<String, String> parameters) {
+  protected static void
+      parse(final String format, final List<String> typeSubtype, final Map<String, String> parameters) {
     final String[] typesAndParameters = format.split(PARAMETER_SEPARATOR, 2);
     final String types = typesAndParameters[0];
     final String params = (typesAndParameters.length > 1 ? typesAndParameters[1] : null);
@@ -217,7 +218,7 @@ public class ContentType {
       }
     } else {
       throw new IllegalArgumentException("No separator '" + TYPE_SUBTYPE_SEPARATOR
-              + "' was found in format '" + format + "'.");
+          + "' was found in format '" + format + "'.");
     }
 
     parseParameters(params, parameters);
@@ -230,15 +231,15 @@ public class ContentType {
    * See RFC 7231:
    * The type, subtype, and parameter name tokens are case-insensitive.
    * Parameter values might or might not be case-sensitive, depending on
-   * the semantics of the parameter name.  The presence or absence of a
+   * the semantics of the parameter name. The presence or absence of a
    * parameter might be significant to the processing of a media-type,
    * depending on its definition within the media type registry.
    * </p>
-   *
+   * 
    * @param parameters
    * @param parameterMap
    */
-  private static void parseParameters(final String parameters, Map<String, String> parameterMap) {
+  private static void parseParameters(final String parameters, final Map<String, String> parameterMap) {
     if (parameters != null) {
       String[] splittedParameters = parameters.split(PARAMETER_SEPARATOR);
       for (String parameter : splittedParameters) {
@@ -247,7 +248,7 @@ public class ContentType {
         String value = keyValue.length > 1 ? keyValue[1] : null;
         if (value != null && Character.isWhitespace(value.charAt(0))) {
           throw new IllegalArgumentException(
-                  "Value of parameter '" + key + "' starts with whitespace ('" + parameters + "').");
+              "Value of parameter '" + key + "' starts with whitespace ('" + parameters + "').");
         }
         parameterMap.put(key, value);
       }
@@ -263,7 +264,7 @@ public class ContentType {
   }
 
   /**
-   *
+   * 
    * @return parameters of this {@link ContentType} as unmodifiable map.
    */
   public Map<String, String> getParameters() {
@@ -282,7 +283,7 @@ public class ContentType {
    * <li>if <code>type</code> and/or <code>subtype</code> is set to "*" (in such a case the <code>parameters</code> are
    * ignored).</li>
    * </ul>
-   *
+   * 
    * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code>.
    */
   @Override
@@ -330,7 +331,7 @@ public class ContentType {
    * </ul>
    * The set <code>parameters</code> are <b>always</b> ignored (for compare with parameters see {@link #equals(Object)}
    * ).
-   *
+   * 
    * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code>.
    */
   public boolean isCompatible(final ContentType obj) {
@@ -345,7 +346,7 @@ public class ContentType {
    * Check equal without parameters.
    * It is possible that no decision about <code>equal/none equal</code> can be determined a <code>NULL</code> is
    * returned.
-   *
+   * 
    * @param obj to checked object
    * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code>
    * or <code>NULL</code> if no decision about <code>equal/none equal</code> could be determined.
@@ -387,7 +388,7 @@ public class ContentType {
 
   /**
    * Check whether both string are equal ignoring the case of the strings.
-   *
+   * 
    * @param first first string
    * @param second second string
    * @return <code>true</code> if both strings are equal (by ignoring the case), otherwise <code>false</code> is

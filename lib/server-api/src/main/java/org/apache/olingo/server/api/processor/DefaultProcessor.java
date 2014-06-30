@@ -36,13 +36,14 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
   private Edm edm;
 
   @Override
-  public void init(OData odata, Edm edm) {
+  public void init(final OData odata, final Edm edm) {
     this.odata = odata;
     this.edm = edm;
   }
 
   @Override
-  public void readServiceDocument(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
+  public void readServiceDocument(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
+      final String format) {
     ODataSerializer serializer;
     InputStream responseEntity;
 
@@ -56,7 +57,8 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
   }
 
   @Override
-  public void readMetadata(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
+  public void readMetadata(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
+      final String format) {
     ODataSerializer serializer;
     InputStream responseEntity;
 

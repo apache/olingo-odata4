@@ -1,258 +1,220 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 
 package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 
-import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
-import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.EntityType;
-import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
-import org.apache.olingo.ext.proxy.api.annotations.Key;
-import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
-import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
-import org.apache.olingo.ext.proxy.api.annotations.Property;
-import org.apache.olingo.ext.proxy.api.annotations.Operation;
-import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.ext.proxy.api.Annotatable;
-import org.apache.olingo.ext.proxy.api.AbstractOpenType;
-import org.apache.olingo.ext.proxy.api.OperationType;
-import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.fit.proxy.v4.demo.odatademo.*;
-import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.*;
-
-import org.apache.olingo.commons.api.edm.geo.Geospatial;
-import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
-import org.apache.olingo.commons.api.edm.geo.LineString;
-import org.apache.olingo.commons.api.edm.geo.MultiLineString;
-import org.apache.olingo.commons.api.edm.geo.MultiPoint;
-import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
-import org.apache.olingo.commons.api.edm.geo.Point;
-import org.apache.olingo.commons.api.edm.geo.Polygon;
-
+import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.ext.proxy.api.Annotatable;
+import org.apache.olingo.ext.proxy.api.annotations.Key;
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("ODataDemo")
 @org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "PersonDetail",
-        openType = false,
-        hasStream = false,
-        isAbstract = false)
-public interface PersonDetail 
-  extends Annotatable,java.io.Serializable {
+    openType = false,
+    hasStream = false,
+    isAbstract = false)
+public interface PersonDetail
+    extends Annotatable, java.io.Serializable {
 
-    
-    @Key
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PersonID", 
-                type = "Edm.Int32", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.Integer getPersonID();
+  @Key
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PersonID",
+      type = "Edm.Int32",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.Integer getPersonID();
 
-    void setPersonID(java.lang.Integer _personID);    
-    
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Age", 
-                type = "Edm.Byte", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.Short getAge();
+  void setPersonID(java.lang.Integer _personID);
 
-    void setAge(java.lang.Short _age);    
-    
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Gender", 
-                type = "Edm.Boolean", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.Boolean getGender();
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Age",
+      type = "Edm.Byte",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.Short getAge();
 
-    void setGender(java.lang.Boolean _gender);    
-    
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Phone", 
-                type = "Edm.String", 
-                nullable = true,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.String getPhone();
+  void setAge(java.lang.Short _age);
 
-    void setPhone(java.lang.String _phone);    
-    
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Address", 
-                type = "ODataDemo.Address", 
-                nullable = true,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Address getAddress();
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Gender",
+      type = "Edm.Boolean",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.Boolean getGender();
 
-    void setAddress(org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Address _address);    
-        
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Photo", 
-                type = "Edm.Stream", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.io.InputStream getPhoto();
+  void setGender(java.lang.Boolean _gender);
 
-    void setPhoto(java.io.InputStream _photo);    
-    
-    
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Phone",
+      type = "Edm.String",
+      nullable = true,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.String getPhone();
 
-    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Person", 
-                type = "ODataDemo.Person", 
-                targetSchema = "ODataDemo", 
-                targetContainer = "DemoService", 
-                targetEntitySet = "Persons",
-                containsTarget = false)
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person getPerson();
+  void setPhone(java.lang.String _phone);
 
-    void setPerson(org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person _person);
-    
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Address",
+      type = "ODataDemo.Address",
+      nullable = true,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Address getAddress();
 
+  void setAddress(org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Address _address);
 
-    ComplexFactory factory();
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Photo",
+      type = "Edm.Stream",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.io.InputStream getPhoto();
 
-    interface ComplexFactory {
-         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Address",
-                   type = "ODataDemo.Address")
-         org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Address newAddress();
+  void setPhoto(java.io.InputStream _photo);
 
-    }
+  @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Person",
+      type = "ODataDemo.Person",
+      targetSchema = "ODataDemo",
+      targetContainer = "DemoService",
+      targetEntitySet = "Persons",
+      containsTarget = false)
+  org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person getPerson();
 
-    Annotations annotations();
+  void setPerson(org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person _person);
 
-    interface Annotations {
+  ComplexFactory factory();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PersonID",
-                   type = "Edm.Int32")
-        Annotatable getPersonIDAnnotations();
+  interface ComplexFactory {
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Address",
+        type = "ODataDemo.Address")
+    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Address newAddress();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Age",
-                   type = "Edm.Byte")
-        Annotatable getAgeAnnotations();
+  }
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Gender",
-                   type = "Edm.Boolean")
-        Annotatable getGenderAnnotations();
+  Annotations annotations();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Phone",
-                   type = "Edm.String")
-        Annotatable getPhoneAnnotations();
+  interface Annotations {
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Address",
-                   type = "ODataDemo.Address")
-        Annotatable getAddressAnnotations();
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PersonID",
+        type = "Edm.Int32")
+    Annotatable getPersonIDAnnotations();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Photo",
-                   type = "Edm.Stream")
-        Annotatable getPhotoAnnotations();
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Age",
+        type = "Edm.Byte")
+    Annotatable getAgeAnnotations();
 
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Gender",
+        type = "Edm.Boolean")
+    Annotatable getGenderAnnotations();
 
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Phone",
+        type = "Edm.String")
+    Annotatable getPhoneAnnotations();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Person", 
-                  type = "ODataDemo.Person")
-        Annotatable getPersonAnnotations();
-    }
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Address",
+        type = "ODataDemo.Address")
+    Annotatable getAddressAnnotations();
+
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Photo",
+        type = "Edm.Stream")
+    Annotatable getPhotoAnnotations();
+
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Person",
+        type = "ODataDemo.Person")
+    Annotatable getPersonAnnotations();
+  }
 
 }

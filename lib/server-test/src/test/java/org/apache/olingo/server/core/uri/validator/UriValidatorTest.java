@@ -275,7 +275,7 @@ public class UriValidatorTest {
   }
 
   @Test
-  public void validateForHttpMethods()  throws Exception {
+  public void validateForHttpMethods() throws Exception {
     String uri = URI_ENTITY;
     parseAndValidate(uri, HttpMethod.GET);
     parseAndValidate(uri, HttpMethod.POST);
@@ -284,7 +284,7 @@ public class UriValidatorTest {
     parseAndValidate(uri, HttpMethod.PATCH);
     parseAndValidate(uri, HttpMethod.MERGE);
   }
-  
+
   @Test
   public void validateOrderBy() throws Exception {
     String[] uris = { "/ESAllPrim?$orderby=PropertyString" };
@@ -363,7 +363,8 @@ public class UriValidatorTest {
     return uris.toArray(new String[0]);
   }
 
-  private void parseAndValidate(final String uri, HttpMethod method) throws UriParserException, UriValidationException {
+  private void parseAndValidate(final String uri, final HttpMethod method) throws UriParserException,
+      UriValidationException {
     UriInfo uriInfo = parser.parseUri(uri.trim(), edm);
     UriValidator validator = new UriValidator();
 

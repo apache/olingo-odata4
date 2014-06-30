@@ -28,17 +28,17 @@ public class AcceptTypeTest {
 
   @Test
   public void testMultiValueCreate() {
-    List<AcceptType>  atl = AcceptType.create("1/1,2/2 , 3/3 ");
+    List<AcceptType> atl = AcceptType.create("1/1,2/2 , 3/3 ");
 
     assertEquals(3, atl.size());
     assertEquals("1/1", atl.get(0).toString());
     assertEquals("2/2", atl.get(1).toString());
     assertEquals("3/3", atl.get(2).toString());
   }
-  
+
   @Test
   public void testSingleValueCreate() {
-    List<AcceptType>  atl = AcceptType.create(" a/a ");
+    List<AcceptType> atl = AcceptType.create(" a/a ");
 
     assertEquals(1, atl.size());
     assertEquals("a/a", atl.get(0).toString());

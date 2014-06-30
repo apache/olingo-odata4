@@ -1,33 +1,34 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.fit.proxy.v4;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
+
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
@@ -54,7 +55,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   public static void initContainer() {
     otcontainerFactory = EntityContainerFactory.getV4(testOpenTypeServiceRootURL);
     otcontainerFactory.getClient().getConfiguration().
-            setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+        setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     otcontainer = otcontainerFactory.getEntityContainer(DefaultContainer.class);
     assertNotNull(otcontainer);
   }
@@ -62,11 +63,11 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   @Test
   public void checkOpenTypeEntityTypesExist() {
     assertTrue(otcontainer.getRow().newRow().getClass().getInterfaces()[0].
-            getAnnotation(EntityType.class).openType());
+        getAnnotation(EntityType.class).openType());
     assertTrue(otcontainer.getRowIndex().newRowIndex().getClass().getInterfaces()[0].
-            getAnnotation(EntityType.class).openType());
+        getAnnotation(EntityType.class).openType());
     assertTrue(otcontainer.getRow().newIndexedRow().getClass().getInterfaces()[0].
-            getAnnotation(EntityType.class).openType());
+        getAnnotation(EntityType.class).openType());
     otcontainerFactory.getContext().detachAll();
   }
 
@@ -138,7 +139,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertEquals("Fabio", AccountInfo.class.cast(rowIndex.getAdditionalProperty("info")).getFirstName());
     assertEquals("Martelli", AccountInfo.class.cast(rowIndex.getAdditionalProperty("info")).getLastName());
     assertEquals("fabio.martelli@tirasa.net", AccountInfo.class.cast(rowIndex.getAdditionalProperty("info")).
-            getAdditionalProperty("email"));
+        getAdditionalProperty("email"));
 
     otcontainerFactory.getContext().detachAll();
 

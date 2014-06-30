@@ -38,21 +38,21 @@ public class ContentNegotiator {
 
   private final static Logger LOG = LoggerFactory.getLogger(ContentNegotiator.class);
 
-  private List<FormatContentTypeMapping> getDefaultSupportedContentTypes(Class<? extends Processor> processorClass) {
+  private List<FormatContentTypeMapping>
+      getDefaultSupportedContentTypes(final Class<? extends Processor> processorClass) {
     List<FormatContentTypeMapping> defaults = new ArrayList<FormatContentTypeMapping>();
 
     if (processorClass == MetadataProcessor.class) {
       defaults.add(new FormatContentTypeMapping("xml", ContentType.APPLICATION_XML.toContentTypeString()));
-    }
-    else {
+    } else {
       defaults.add(new FormatContentTypeMapping("json", ContentType.APPLICATION_JSON.toContentTypeString()));
     }
 
     return defaults;
   }
 
-  private List<FormatContentTypeMapping> getSupportedContentTypes(Processor processor,
-      Class<? extends Processor> processorClass) {
+  private List<FormatContentTypeMapping> getSupportedContentTypes(final Processor processor,
+      final Class<? extends Processor> processorClass) {
 
     List<FormatContentTypeMapping> supportedContentTypes = getDefaultSupportedContentTypes(processorClass);
 
@@ -64,12 +64,12 @@ public class ContentNegotiator {
     return supportedContentTypes;
   }
 
-  public String doContentNegotiation(FormatOption formatOption, ODataRequest request,
-      Processor processor, Class<? extends Processor> processorClass) {
+  public String doContentNegotiation(final FormatOption formatOption, final ODataRequest request,
+      final Processor processor, final Class<? extends Processor> processorClass) {
     String requestedContentType = null;
 
     List<FormatContentTypeMapping> supportedContentTypes = getSupportedContentTypes(processor, processorClass);
-    
+
     List<String> acceptHeaderValues = request.getHeader(HttpHeader.ACCEPT);
 
     boolean supported = false;
@@ -131,11 +131,10 @@ public class ContentNegotiator {
 
       if (processorClass == MetadataProcessor.class) {
         requestedContentType = HttpContentType.APPLICATION_XML;
-      }
-      else {
+      } else {
         requestedContentType = HttpContentType.APPLICATION_JSON;
       }
-      
+
       for (FormatContentTypeMapping entry : supportedContentTypes) {
         if (requestedContentType.equalsIgnoreCase(entry.getContentType().trim())) {
           supported = true;

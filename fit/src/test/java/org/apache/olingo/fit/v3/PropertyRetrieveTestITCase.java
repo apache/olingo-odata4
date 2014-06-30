@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -42,11 +42,12 @@ import org.junit.Test;
 
 public class PropertyRetrieveTestITCase extends AbstractTestITCase {
 
-  private void retrievePropertyTest(final ODataFormat format, String entitySegment, String structuralSegment) {
+  private void
+      retrievePropertyTest(final ODataFormat format, final String entitySegment, final String structuralSegment) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment(entitySegment).appendPropertySegment(structuralSegment);
+        appendEntitySetSegment(entitySegment).appendPropertySegment(structuralSegment);
     final ODataPropertyRequest<ODataProperty> req = client.getRetrieveRequestFactory().
-            getPropertyRequest(uriBuilder.build());
+        getPropertyRequest(uriBuilder.build());
     req.setFormat(format);
     try {
       final ODataProperty property = req.execute().getBody();
@@ -70,127 +71,137 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
       }
     }
   }
-  //test with json header
+
+  // test with json header
 
   @Test
   public void jsonRetrieveProperty() {
-    //Primitive types
+    // Primitive types
     retrievePropertyTest(ODataFormat.JSON, "Customer(-10)", "Name");
     retrievePropertyTest(ODataFormat.JSON, "Customer(-10)", "CustomerId");
     retrievePropertyTest(ODataFormat.JSON, "Message(FromUsername='1',MessageId=-10)", "Sent");
     retrievePropertyTest(ODataFormat.JSON, "Message(FromUsername='1',MessageId=-10)", "IsRead");
-    //Collection of Complex types
+    // Collection of Complex types
     retrievePropertyTest(ODataFormat.JSON, "Customer(-10)", "BackupContactInfo");
-    //Collection of primitives
+    // Collection of primitives
     retrievePropertyTest(ODataFormat.JSON, "Customer(-10)/PrimaryContactInfo", "EmailBag");
-    //complex types
+    // complex types
     retrievePropertyTest(ODataFormat.JSON, "Order(-9)", "Concurrency");
   }
-  //test with json full metadata
+
+  // test with json full metadata
 
   @Test
   public void jsonFullMetadataRetrieveProperty() {
-    //primitive types
+    // primitive types
     retrievePropertyTest(ODataFormat.JSON_FULL_METADATA, "Customer(-10)", "Name");
     retrievePropertyTest(ODataFormat.JSON_FULL_METADATA, "Customer(-10)", "CustomerId");
     retrievePropertyTest(ODataFormat.JSON_FULL_METADATA, "Message(FromUsername='1',MessageId=-10)", "Sent");
     retrievePropertyTest(ODataFormat.JSON_FULL_METADATA, "Message(FromUsername='1',MessageId=-10)", "IsRead");
-    //Collection of Complex types
+    // Collection of Complex types
     retrievePropertyTest(ODataFormat.JSON_FULL_METADATA, "Customer(-10)", "BackupContactInfo");
-    //Collection of primitives		
+    // Collection of primitives
     retrievePropertyTest(ODataFormat.JSON_FULL_METADATA, "Customer(-10)/PrimaryContactInfo", "EmailBag");
-    //Complex types
+    // Complex types
     retrievePropertyTest(ODataFormat.JSON_FULL_METADATA, "Order(-9)", "Concurrency");
   }
+
   // json with no metadata
 
   @Test
   public void jsonNoMetadataRetrieveProperty() {
-    //primitive types
+    // primitive types
     retrievePropertyTest(ODataFormat.JSON_NO_METADATA, "Customer(-10)", "Name");
     retrievePropertyTest(ODataFormat.JSON_NO_METADATA, "Customer(-10)", "CustomerId");
     retrievePropertyTest(ODataFormat.JSON_NO_METADATA, "Message(FromUsername='1',MessageId=-10)", "Sent");
     retrievePropertyTest(ODataFormat.JSON_NO_METADATA, "Message(FromUsername='1',MessageId=-10)", "IsRead");
-    //Collection of Complex types
+    // Collection of Complex types
     retrievePropertyTest(ODataFormat.JSON_NO_METADATA, "Customer(-10)", "BackupContactInfo");
-    //Collection of Primitives
+    // Collection of Primitives
     retrievePropertyTest(ODataFormat.JSON_NO_METADATA, "Customer(-10)/PrimaryContactInfo", "EmailBag");
-    //Complex types
+    // Complex types
     retrievePropertyTest(ODataFormat.JSON_NO_METADATA, "Order(-9)", "Concurrency");
 
   }
+
   // json with minimla metadata
 
   @Test
   public void jsonmininalRetrieveProperty() {
-    //primitive types
+    // primitive types
     retrievePropertyTest(ODataFormat.JSON_NO_METADATA, "Customer(-10)", "Name");
     retrievePropertyTest(ODataFormat.JSON_NO_METADATA, "Customer(-10)", "CustomerId");
     retrievePropertyTest(ODataFormat.JSON_NO_METADATA, "Message(FromUsername='1',MessageId=-10)", "Sent");
     retrievePropertyTest(ODataFormat.JSON_NO_METADATA, "Message(FromUsername='1',MessageId=-10)", "IsRead");
-    //Collection of complex types
+    // Collection of complex types
     retrievePropertyTest(ODataFormat.JSON_NO_METADATA, "Customer(-10)", "BackupContactInfo");
-    //Collection of primitives
+    // Collection of primitives
     retrievePropertyTest(ODataFormat.JSON_NO_METADATA, "Customer(-10)/PrimaryContactInfo", "EmailBag");
-    //Complex types
+    // Complex types
     retrievePropertyTest(ODataFormat.JSON_NO_METADATA, "Order(-9)", "Concurrency");
   }
+
   // with xml header
 
   @Test
   public void xmlRetrieveProperty() {
-    //primitive types
+    // primitive types
     retrievePropertyTest(ODataFormat.XML, "Customer(-10)", "Name");
     retrievePropertyTest(ODataFormat.XML, "Customer(-10)", "CustomerId");
     retrievePropertyTest(ODataFormat.XML, "Message(FromUsername='1',MessageId=-10)", "Sent");
     retrievePropertyTest(ODataFormat.XML, "Message(FromUsername='1',MessageId=-10)", "IsRead");
-    //Collection of Complex types
+    // Collection of Complex types
     retrievePropertyTest(ODataFormat.XML, "Customer(-10)", "BackupContactInfo");
-    //Collection of primitives
+    // Collection of primitives
     retrievePropertyTest(ODataFormat.XML, "Customer(-10)/PrimaryContactInfo", "EmailBag");
-    //Complex types
+    // Complex types
     retrievePropertyTest(ODataFormat.XML, "Order(-9)", "Concurrency");
   }
+
   // with atom header
 
   @Test
   public void atomRetrieveProperty() {
-    //primitive types
+    // primitive types
     retrievePropertyTest(ODataFormat.XML, "Customer(-10)", "Name");
     retrievePropertyTest(ODataFormat.XML, "Customer(-10)", "CustomerId");
     retrievePropertyTest(ODataFormat.XML, "Message(FromUsername='1',MessageId=-10)", "Sent");
     retrievePropertyTest(ODataFormat.XML, "Message(FromUsername='1',MessageId=-10)", "IsRead");
-    //Collection of Complex types 
+    // Collection of Complex types
     retrievePropertyTest(ODataFormat.XML, "Customer(-10)", "BackupContactInfo");
-    //Collection of primitives
+    // Collection of primitives
     retrievePropertyTest(ODataFormat.XML, "Customer(-10)/PrimaryContactInfo", "EmailBag");
-    //complex types
+    // complex types
     retrievePropertyTest(ODataFormat.XML, "Order(-9)", "Concurrency");
   }
+
   // with invalid structural segment
 
   @Test
   public void invalidSegmentRetrieveProperty() {
-    //primitive types
+    // primitive types
     retrievePropertyTest(ODataFormat.XML, "Customers(-10)", "Name");
 
   }
+
   // with null pub format
 
   @Test
   public void nullSegmentRetrieveProperty() {
-    //primitive types
+    // primitive types
     retrievePropertyTest(null, "Customers(-10)", "Name");
 
   }
+
   // with null accept header format
 
   @Test
   public void nullAcceptRetrieveProperty() {
-    //primitive types
+    // primitive types
     retrievePropertyTest(ODataFormat.XML, "Customers(-10)", "Name");
 
   }
+
   // with json pub format and atom accept format
 
   @Test
@@ -199,21 +210,23 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
     retrievePropertyTest(ODataFormat.JSON_FULL_METADATA, "Customers(-10)", "Name");
 
   }
-  //bad request 400 error. Message takes two keys
+
+  // bad request 400 error. Message takes two keys
 
   @Test
   public void badRequestTest() {
-    //primitive types
+    // primitive types
     retrievePropertyTest(ODataFormat.JSON_FULL_METADATA, "Message(FromUsername='1')", "Sent");
   }
-  //navigation link of stream
+
+  // navigation link of stream
 
   @Test
   public void navigationMediaLink() {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
-            appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photos");
+        appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photos");
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
-            getEntitySetRequest(uriBuilder.build());
+        getEntitySetRequest(uriBuilder.build());
     req.setAccept("application/json");
     final ODataRetrieveResponse<ODataEntitySet> res = req.execute();
     assertEquals(200, res.getStatusCode());
@@ -223,21 +236,22 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
     assertNotNull(entity);
     assertEquals(entity.size(), 2);
     assertEquals(testStaticServiceRootURL + "/ProductPhoto(PhotoId=-3,ProductId=-3)",
-            entity.get(0).getProperties().get(0).getValue().toString());
+        entity.get(0).getProperties().get(0).getValue().toString());
     assertEquals(testStaticServiceRootURL + "/ProductPhoto(PhotoId=-2,ProductId=-2)",
-            entity.get(1).getProperties().get(0).getValue().toString());
+        entity.get(1).getProperties().get(0).getValue().toString());
     for (int i = 0; i < entity.size(); i++) {
       assertNotNull(entity.get(0).getProperties().get(0).getValue());
     }
   }
-  //navigation link of stream, Bad Request(404 error). 'Photo' is not a valid navigation link
+
+  // navigation link of stream, Bad Request(404 error). 'Photo' is not a valid navigation link
 
   @Test
   public void navigationMediaLinkInvalidQuery() {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
-            appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photo");
+        appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photo");
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
-            getEntitySetRequest(uriBuilder.build());
+        getEntitySetRequest(uriBuilder.build());
     req.setAccept("application/json");
     try {
       final ODataRetrieveResponse<ODataEntitySet> res = req.execute();
@@ -248,9 +262,9 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
       assertNotNull(entity);
       assertEquals(entity.size(), 2);
       assertEquals(testStaticServiceRootURL + "/ProductPhoto(PhotoId=-3,ProductId=-3)", entity.get(0).
-              getProperties().get(0).getValue().toString());
+          getProperties().get(0).getValue().toString());
       assertEquals(testStaticServiceRootURL + "/ProductPhoto(PhotoId=-2,ProductId=-2)", entity.get(1).
-              getProperties().get(0).getValue().toString());
+          getProperties().get(0).getValue().toString());
     } catch (ODataClientErrorException e) {
       assertEquals(404, e.getStatusLine().getStatusCode());
     }
@@ -259,9 +273,9 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
   @Test
   public void navigationMediaLinkInvalidFormat() {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
-            appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photos");
+        appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photos");
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
-            getEntitySetRequest(uriBuilder.build());
+        getEntitySetRequest(uriBuilder.build());
     req.setAccept("application/atom+xml");
     try {
       final ODataRetrieveResponse<ODataEntitySet> res = req.execute();
@@ -272,9 +286,9 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
       assertNotNull(entity);
       assertEquals(entity.size(), 2);
       assertEquals(testStaticServiceRootURL + "/ProductPhoto(PhotoId=-3,ProductId=-3)", entity.get(0).
-              getProperties().get(0).getValue().toString());
+          getProperties().get(0).getValue().toString());
       assertEquals(testStaticServiceRootURL + "/ProductPhoto(PhotoId=-2,ProductId=-2)", entity.get(1).
-              getProperties().get(0).getValue().toString());
+          getProperties().get(0).getValue().toString());
     } catch (ODataClientErrorException e) {
       assertEquals(415, e.getStatusLine().getStatusCode());
     }

@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -114,16 +114,16 @@ public class BatchTestITCase extends AbstractTestITCase {
     for (int i = 1; i <= 2; i++) {
       // Create Customer into the changeset
       createReq = client.getCUDRequestFactory().getEntityCreateRequest(
-              targetURI.build(),
-              getSampleCustomerProfile(100 + i, "Sample customer", false));
+          targetURI.build(),
+          getSampleCustomerProfile(100 + i, "Sample customer", false));
       createReq.setFormat(ODataFormat.JSON);
       changeset.addRequest(createReq);
     }
 
     targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("WrongEntitySet");
     createReq = client.getCUDRequestFactory().getEntityCreateRequest(
-            targetURI.build(),
-            getSampleCustomerProfile(105, "Sample customer", false));
+        targetURI.build(),
+        getSampleCustomerProfile(105, "Sample customer", false));
     createReq.setFormat(ODataFormat.JSON);
     changeset.addRequest(createReq);
 
@@ -131,8 +131,8 @@ public class BatchTestITCase extends AbstractTestITCase {
     for (int i = 3; i <= 4; i++) {
       // Create Customer into the changeset
       createReq = client.getCUDRequestFactory().getEntityCreateRequest(
-              targetURI.build(),
-              getSampleCustomerProfile(100 + i, "Sample customer", false));
+          targetURI.build(),
+          getSampleCustomerProfile(100 + i, "Sample customer", false));
       createReq.setFormat(ODataFormat.ATOM);
       changeset.addRequest(createReq);
     }
@@ -148,7 +148,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals(404, res.getStatusCode());
     assertEquals("Not Found", res.getStatusMessage());
     assertEquals(Integer.valueOf(3), Integer.valueOf(
-            res.getHeader(ODataBatchConstants.CHANGESET_CONTENT_ID_NAME).iterator().next()));
+        res.getHeader(ODataBatchConstants.CHANGESET_CONTENT_ID_NAME).iterator().next()));
     assertFalse(chgResponseItem.hasNext());
   }
 
@@ -166,7 +166,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // add create request
     final ODataEntityCreateRequest<ODataEntity> createReq =
-            client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), customer);
+        client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), customer);
 
     changeset.addRequest(createReq);
 
@@ -176,12 +176,12 @@ public class BatchTestITCase extends AbstractTestITCase {
     // add update request: link CustomerInfo(17) to the new customer
     final ODataEntity customerChanges = client.getObjectFactory().newEntity(customer.getTypeName());
     customerChanges.addLink(client.getObjectFactory().newEntityNavigationLink(
-            "Info",
-            client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("CustomerInfo").
+        "Info",
+        client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("CustomerInfo").
             appendKeySegment(17).build()));
 
     final ODataEntityUpdateRequest<ODataEntity> updateReq = client.getCUDRequestFactory().getEntityUpdateRequest(
-            URI.create("$" + createRequestRef), UpdateType.PATCH, customerChanges);
+        URI.create("$" + createRequestRef), UpdateType.PATCH, customerChanges);
 
     changeset.addRequest(updateReq);
 
@@ -204,10 +204,10 @@ public class BatchTestITCase extends AbstractTestITCase {
     customer = ((ODataEntityCreateResponse<ODataEntity>) res).getBody();
 
     ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(
-            URIUtils.getURI(testStaticServiceRootURL, customer.getEditLink().toASCIIString() + "/Info"));
+        URIUtils.getURI(testStaticServiceRootURL, customer.getEditLink().toASCIIString() + "/Info"));
 
     assertEquals(Integer.valueOf(17),
-            req.execute().getBody().getProperty("CustomerInfoId").getPrimitiveValue().toCastValue(Integer.class));
+        req.execute().getBody().getProperty("CustomerInfoId").getPrimitiveValue().toCastValue(Integer.class));
 
     res = chgitem.next();
     assertEquals(204, res.getStatusCode());
@@ -215,13 +215,13 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // clean ...
     assertEquals(204, client.getCUDRequestFactory().getDeleteRequest(
-            URIUtils.getURI(testStaticServiceRootURL, customer.getEditLink().toASCIIString())).execute().
-            getStatusCode());
+        URIUtils.getURI(testStaticServiceRootURL, customer.getEditLink().toASCIIString())).execute().
+        getStatusCode());
 
     try {
       client.getRetrieveRequestFactory().getEntityRequest(
-              URIUtils.getURI(testStaticServiceRootURL, customer.getEditLink().toASCIIString())).
-              execute().getBody();
+          URIUtils.getURI(testStaticServiceRootURL, customer.getEditLink().toASCIIString())).
+          execute().getBody();
       fail();
     } catch (Exception e) {
       // ignore
@@ -238,16 +238,16 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataChangeset changeset = streamManager.addChangeset();
 
     final ODataEntity info =
-            client.getObjectFactory().newEntity(
+        client.getObjectFactory().newEntity(
             new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo"));
 
     info.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Information",
-            client.getObjectFactory().newPrimitiveValueBuilder().buildString("Sample information about customer 30")));
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("Sample information about customer 30")));
 
     URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("CustomerInfo");
 
     ODataEntityCreateRequest<ODataEntity> createReq =
-            client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), info);
+        client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), info);
 
     changeset.addRequest(createReq);
 
@@ -256,7 +256,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     ODataEntity customer = getSampleCustomerProfile(30, "sample customer", false);
     customer.getNavigationLinks().add(
-            client.getObjectFactory().newEntityNavigationLink("Info", URI.create("$" + createRequestRef)));
+        client.getObjectFactory().newEntityNavigationLink("Info", URI.create("$" + createRequestRef)));
 
     uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
 
@@ -292,12 +292,12 @@ public class BatchTestITCase extends AbstractTestITCase {
     uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer").appendKeySegment(30);
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(
-            URIUtils.getURI(testStaticServiceRootURL, uriBuilder.build() + "/Info"));
+        URIUtils.getURI(testStaticServiceRootURL, uriBuilder.build() + "/Info"));
 
     final ODataEntity navigatedInfo = req.execute().getBody();
 
     assertEquals(infoEntity.getProperty("CustomerInfoId").getPrimitiveValue().toCastValue(Integer.class),
-            navigatedInfo.getProperty("CustomerInfoId").getPrimitiveValue().toCastValue(Integer.class));
+        navigatedInfo.getProperty("CustomerInfoId").getPrimitiveValue().toCastValue(Integer.class));
   }
 
   @Test
@@ -314,7 +314,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // prepare URI
     URIBuilder targetURI = client.newURIBuilder(testStaticServiceRootURL);
     targetURI.appendEntitySetSegment("Customer").appendKeySegment(-10).
-            expand("Logins").select("CustomerId,Logins/Username");
+        expand("Logins").select("CustomerId,Logins/Username");
 
     // create new request
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
@@ -330,18 +330,18 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // Update Product into the changeset
     targetURI = client.newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Product").appendKeySegment(-10);
+        appendEntitySetSegment("Product").appendKeySegment(-10);
     final URI editLink = targetURI.build();
 
     final ODataEntity merge = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
     merge.setEditLink(editLink);
 
     merge.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
-            "Description",
-            client.getObjectFactory().newPrimitiveValueBuilder().buildString("new description from batch")));
+        "Description",
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("new description from batch")));
 
     final ODataEntityUpdateRequest<?> changeReq =
-            client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.MERGE, merge);
+        client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.MERGE, merge);
     changeReq.setFormat(ODataFormat.JSON_FULL_METADATA);
     changeReq.setIfMatch(getETag(editLink));
 
@@ -351,13 +351,13 @@ public class BatchTestITCase extends AbstractTestITCase {
     targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
     final ODataEntity original = getSampleCustomerProfile(1000, "Sample customer", false);
     final ODataEntityCreateRequest<ODataEntity> createReq =
-            client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
+        client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
     createReq.setFormat(ODataFormat.ATOM);
     changeset.addRequest(createReq);
 
     // Delete customer created above
     targetURI =
-            client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer").appendKeySegment(1000);
+        client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer").appendKeySegment(1000);
     final ODataDeleteRequest deleteReq = client.getCUDRequestFactory().getDeleteRequest(targetURI.build());
     changeset.addRequest(deleteReq);
     // -------------------------------------------
@@ -368,7 +368,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // prepare URI
     targetURI = client.newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Product").appendKeySegment(-10);
+        appendEntitySetSegment("Product").appendKeySegment(-10);
 
     // create new request
     queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
@@ -392,7 +392,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals("OK", res.getStatusMessage());
 
     ODataEntityRequestImpl<ODataEntity>.ODataEntityResponseImpl entres =
-            (ODataEntityRequestImpl.ODataEntityResponseImpl) res;
+        (ODataEntityRequestImpl.ODataEntityResponseImpl) res;
 
     ODataEntity entity = entres.getBody();
     assertEquals(-10, entity.getProperty("CustomerId").getPrimitiveValue().toCastValue(Integer.class), 0);
@@ -433,7 +433,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     entres = (ODataEntityRequestImpl.ODataEntityResponseImpl) res;
     entity = entres.getBody();
     assertEquals("new description from batch",
-            entity.getProperty("Description").getPrimitiveValue().toCastValue(String.class));
+        entity.getProperty("Description").getPrimitiveValue().toCastValue(String.class));
 
     assertFalse(iter.hasNext());
   }
@@ -444,13 +444,13 @@ public class BatchTestITCase extends AbstractTestITCase {
       super(new Wrapper<Future<HttpResponse>>());
     }
 
-    public ODataPayloadManager<ODataBatchResponse> addObject(byte[] src) {
+    public ODataPayloadManager<ODataBatchResponse> addObject(final byte[] src) {
       stream(src);
       return this;
     }
 
     @Override
-    protected ODataBatchResponse getResponse(long timeout, TimeUnit unit) {
+    protected ODataBatchResponse getResponse(final long timeout, final TimeUnit unit) {
       throw new UnsupportedOperationException("Not supported yet.");
     }
   };
@@ -487,37 +487,6 @@ public class BatchTestITCase extends AbstractTestITCase {
         assertTrue(builder.toString().contains(MAX + ") send info"));
         assertTrue(builder.toString().endsWith(SUFFIX));
 
-      } catch (IOException e) {
-        fail();
-      }
-    }
-  }
-
-  private static class BatchStreamingThread extends Thread {
-
-    private final BatchManager streaming;
-
-    public BatchStreamingThread(final BatchManager streaming) {
-      this.streaming = streaming;
-    }
-
-    @Override
-    public void run() {
-      try {
-        final StringBuilder builder = new StringBuilder();
-
-        byte[] buff = new byte[1024];
-
-        int len;
-
-        while ((len = streaming.getBody().read(buff)) >= 0) {
-          builder.append(new String(buff, 0, len));
-        }
-
-        LOG.debug("Batch request {}", builder.toString());
-
-        assertTrue(builder.toString().contains("Content-Id:2"));
-        assertTrue(builder.toString().contains("GET " + testStaticServiceRootURL));
       } catch (IOException e) {
         fail();
       }

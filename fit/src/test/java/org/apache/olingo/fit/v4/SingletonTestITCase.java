@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -44,7 +44,7 @@ public class SingletonTestITCase extends AbstractTestITCase {
   private void read(final ODataClient client, final ODataFormat format) throws EdmPrimitiveTypeException {
     final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     final ODataEntityRequest<ODataSingleton> singleton =
-            client.getRetrieveRequestFactory().getSingletonRequest(builder.build());
+        client.getRetrieveRequestFactory().getSingletonRequest(builder.build());
     singleton.setFormat(format);
     final ODataSingleton company = singleton.execute().getBody();
     assertNotNull(company);
@@ -52,13 +52,13 @@ public class SingletonTestITCase extends AbstractTestITCase {
     assertEquals(0, company.getProperty("CompanyID").getPrimitiveValue().toCastValue(Integer.class), 0);
     // cast to workaround JDK 6 bug, fixed in JDK 7
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.CompanyCategory",
-            ((ODataValuable) company.getProperty("CompanyCategory")).getValue().getTypeName());
+        ((ODataValuable) company.getProperty("CompanyCategory")).getValue().getTypeName());
     assertTrue(company.getProperty("CompanyCategory").hasEnumValue());
   }
 
   @Test
   public void readFromAtom() throws EdmPrimitiveTypeException {
-      read(client, ODataFormat.ATOM);
+    read(client, ODataFormat.ATOM);
   }
 
   @Test
@@ -71,12 +71,12 @@ public class SingletonTestITCase extends AbstractTestITCase {
     read(client, ODataFormat.JSON_FULL_METADATA);
   }
 
-  private void readWithAnnotations(final ODataClient client, final ODataFormat format) 
-          throws EdmPrimitiveTypeException {
-    
-    final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Boss");    
+  private void readWithAnnotations(final ODataClient client, final ODataFormat format)
+      throws EdmPrimitiveTypeException {
+
+    final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Boss");
     final ODataEntityRequest<ODataSingleton> singleton =
-            client.getRetrieveRequestFactory().getSingletonRequest(builder.build());
+        client.getRetrieveRequestFactory().getSingletonRequest(builder.build());
     singleton.setFormat(format);
     singleton.setPrefer(client.newPreferences().includeAnnotations("*"));
     final ODataSingleton boss = singleton.execute().getBody();
@@ -104,13 +104,13 @@ public class SingletonTestITCase extends AbstractTestITCase {
 
   private void update(final ODataFormat format) throws EdmPrimitiveTypeException {
     final ODataSingleton changes = getClient().getObjectFactory().newSingleton(
-            new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Company"));
+        new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Company"));
     changes.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Revenue",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt64(132520L)));
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt64(132520L)));
 
     final URI uri = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company").build();
     final ODataEntityUpdateRequest<ODataSingleton> req = getClient().getCUDRequestFactory().
-            getSingletonUpdateRequest(uri, UpdateType.PATCH, changes);
+        getSingletonUpdateRequest(uri, UpdateType.PATCH, changes);
     req.setFormat(format);
 
     final ODataEntityUpdateResponse<ODataSingleton> res = req.execute();

@@ -62,7 +62,7 @@ public abstract class AbstractEdmNavigationProperty extends EdmElementImpl imple
           property = type.getNavigationProperty(element);
           if (property == null) {
             throw new EdmException("Cannot find navigation property with name: " + element
-                    + " at type " + type.getName());
+                + " at type " + type.getName());
           }
           type = (EdmStructuredType) property.getType();
         }

@@ -1,248 +1,251 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
-import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
-import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.EntityType;
-import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
+import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
-import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
-import org.apache.olingo.ext.proxy.api.annotations.Property;
-import org.apache.olingo.ext.proxy.api.annotations.Operation;
-import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.ext.proxy.api.Annotatable;
-import org.apache.olingo.ext.proxy.api.AbstractOpenType;
-import org.apache.olingo.ext.proxy.api.OperationType;
-import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
-import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.*;
-
-import org.apache.olingo.commons.api.edm.geo.Geospatial;
-import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
-import org.apache.olingo.commons.api.edm.geo.LineString;
-import org.apache.olingo.commons.api.edm.geo.MultiLineString;
-import org.apache.olingo.commons.api.edm.geo.MultiPoint;
-import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
-import org.apache.olingo.commons.api.edm.geo.Point;
-import org.apache.olingo.commons.api.edm.geo.Polygon;
 
 @KeyRef(OrderLineKey.class)
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "BackOrderLine",
-        openType = false,
-        hasStream = false,
-        isAbstract = false,
-        baseType = "Microsoft.Test.OData.Services.AstoriaDefaultService.OrderLine")
-public interface BackOrderLine 
-  extends Annotatable,org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine {
+    openType = false,
+    hasStream = false,
+    isAbstract = false,
+    baseType = "Microsoft.Test.OData.Services.AstoriaDefaultService.OrderLine")
+public interface BackOrderLine
+    extends
+    Annotatable,
+    org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine {
 
-        
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "OrderLineStream", 
-                type = "Edm.Stream", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.io.InputStream getOrderLineStream();
+  @Override
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "OrderLineStream",
+      type = "Edm.Stream",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.io.InputStream getOrderLineStream();
 
-    void setOrderLineStream(java.io.InputStream _orderLineStream);    
-    
-    @Key
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "OrderId", 
-                type = "Edm.Int32", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.Integer getOrderId();
+  @Override
+  void setOrderLineStream(java.io.InputStream _orderLineStream);
 
-    void setOrderId(java.lang.Integer _orderId);    
-    
-    @Key
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductId", 
-                type = "Edm.Int32", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.Integer getProductId();
+  @Override
+  @Key
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "OrderId",
+      type = "Edm.Int32",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.Integer getOrderId();
 
-    void setProductId(java.lang.Integer _productId);    
-    
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Quantity", 
-                type = "Edm.Int32", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.Integer getQuantity();
+  @Override
+  void setOrderId(java.lang.Integer _orderId);
 
-    void setQuantity(java.lang.Integer _quantity);    
-    
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ConcurrencyToken", 
-                type = "Edm.String", 
-                nullable = true,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.String getConcurrencyToken();
+  @Override
+  @Key
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductId",
+      type = "Edm.Int32",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.Integer getProductId();
 
-    void setConcurrencyToken(java.lang.String _concurrencyToken);    
-    
-    
+  @Override
+  void setProductId(java.lang.Integer _productId);
 
-    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Order", 
-                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Order", 
-                targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
-                targetContainer = "DefaultContainer", 
-                targetEntitySet = "Order",
-                containsTarget = false)
-    org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Order getOrder();
+  @Override
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Quantity",
+      type = "Edm.Int32",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.Integer getQuantity();
 
-    void setOrder(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Order _order);
-    
-    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Product", 
-                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product", 
-                targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
-                targetContainer = "DefaultContainer", 
-                targetEntitySet = "Product",
-                containsTarget = false)
-    org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Product getProduct();
+  @Override
+  void setQuantity(java.lang.Integer _quantity);
 
-    void setProduct(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Product _product);
-    
+  @Override
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ConcurrencyToken",
+      type = "Edm.String",
+      nullable = true,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.String getConcurrencyToken();
 
-        @Override
-        Operations operations();
+  @Override
+  void setConcurrencyToken(java.lang.String _concurrencyToken);
 
-    interface Operations            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine.Operations{
-    
-        }
+  @Override
+  @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Order",
+      type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Order",
+      targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService",
+      targetContainer = "DefaultContainer",
+      targetEntitySet = "Order",
+      containsTarget = false)
+  org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Order
+      getOrder();
 
-    ComplexFactory factory();
+  @Override
+      void
+      setOrder(
+          org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Order _order);
 
-    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine.ComplexFactory{
-    }
+  @Override
+  @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Product",
+      type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product",
+      targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService",
+      targetContainer = "DefaultContainer",
+      targetEntitySet = "Product",
+      containsTarget = false)
+  org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Product
+      getProduct();
 
-    Annotations annotations();
+  @Override
+      void
+      setProduct(
+          org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Product _product);
 
-    interface Annotations            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine.Annotations{
+  @Override
+  Operations operations();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "OrderLineStream",
-                   type = "Edm.Stream")
-        Annotatable getOrderLineStreamAnnotations();
+  interface Operations
+      extends
+      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine.Operations {
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "OrderId",
-                   type = "Edm.Int32")
-        Annotatable getOrderIdAnnotations();
+  }
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ProductId",
-                   type = "Edm.Int32")
-        Annotatable getProductIdAnnotations();
+  @Override
+  ComplexFactory factory();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Quantity",
-                   type = "Edm.Int32")
-        Annotatable getQuantityAnnotations();
+  interface ComplexFactory
+      extends
+      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine.ComplexFactory {}
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ConcurrencyToken",
-                   type = "Edm.String")
-        Annotatable getConcurrencyTokenAnnotations();
+  @Override
+  Annotations annotations();
 
+  interface Annotations
+      extends
+      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine.Annotations {
 
+    @Override
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "OrderLineStream",
+        type = "Edm.Stream")
+    Annotatable getOrderLineStreamAnnotations();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Order", 
-                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Order")
-        Annotatable getOrderAnnotations();
+    @Override
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "OrderId",
+        type = "Edm.Int32")
+    Annotatable getOrderIdAnnotations();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Product", 
-                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product")
-        Annotatable getProductAnnotations();
-    }
+    @Override
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ProductId",
+        type = "Edm.Int32")
+    Annotatable getProductIdAnnotations();
+
+    @Override
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Quantity",
+        type = "Edm.Int32")
+    Annotatable getQuantityAnnotations();
+
+    @Override
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ConcurrencyToken",
+        type = "Edm.String")
+    Annotatable getConcurrencyTokenAnnotations();
+
+    @Override
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Order",
+        type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Order")
+    Annotatable getOrderAnnotations();
+
+    @Override
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Product",
+        type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product")
+    Annotatable getProductAnnotations();
+  }
 
 }

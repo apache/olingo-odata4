@@ -39,7 +39,7 @@ public class FullQualifiedName {
   public FullQualifiedName(final String namespace, final String name) {
     this.namespace = namespace;
     this.name = name;
-    this.fqn = namespace + "." + name;
+    fqn = namespace + "." + name;
   }
 
   /**
@@ -49,12 +49,12 @@ public class FullQualifiedName {
     final int dotIdx = namespaceAndName.lastIndexOf('.');
     if (dotIdx == -1 || dotIdx == 0 || dotIdx == namespaceAndName.length() - 1) {
       throw new IllegalArgumentException(
-              "Malformed " + FullQualifiedName.class.getSimpleName() + ": " + namespaceAndName);
+          "Malformed " + FullQualifiedName.class.getSimpleName() + ": " + namespaceAndName);
     }
 
-    this.fqn = namespaceAndName;
-    this.namespace = this.fqn.substring(0, dotIdx);
-    this.name = this.fqn.substring(dotIdx + 1);
+    fqn = namespaceAndName;
+    namespace = fqn.substring(0, dotIdx);
+    name = fqn.substring(dotIdx + 1);
   }
 
   /**

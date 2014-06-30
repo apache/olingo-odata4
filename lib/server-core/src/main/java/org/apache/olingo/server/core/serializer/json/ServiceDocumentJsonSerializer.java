@@ -63,7 +63,7 @@ public class ServiceDocumentJsonSerializer {
         metadataUri = serviceRoot + "/" + METADATA;
       }
     }
-    
+
     gen.writeObjectField(ODATA_CONTEXT, metadataUri);
     gen.writeArrayFieldStart(VALUE);
 

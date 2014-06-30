@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -43,11 +43,12 @@ public abstract class AbstractEdmEntityType extends AbstractEdmStructuredType im
 
   private List<EdmKeyPropertyRef> keyPropertyRefsList;
 
-  protected AbstractEdmEntityType(final Edm edm, final FullQualifiedName typeName, final FullQualifiedName baseTypeName,
-          final boolean hashStream) {
+  protected AbstractEdmEntityType(final Edm edm, final FullQualifiedName typeName,
+      final FullQualifiedName baseTypeName,
+      final boolean hashStream) {
 
     super(edm, typeName, EdmTypeKind.ENTITY, baseTypeName);
-    this.hasStream = hashStream;
+    hasStream = hashStream;
   }
 
   protected void setEdmKeyPropertyRef(final List<EdmKeyPropertyRef> edmKey) {
@@ -118,7 +119,7 @@ public abstract class AbstractEdmEntityType extends AbstractEdmStructuredType im
 
   @Override
   protected void checkBaseType() {
-    //Current Client implementation doesn`t need this so I implemented an empty body here.
+    // Current Client implementation doesn`t need this so I implemented an empty body here.
   }
 
   @Override

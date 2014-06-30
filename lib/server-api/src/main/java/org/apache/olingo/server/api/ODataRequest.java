@@ -50,7 +50,7 @@ public class ODataRequest {
    * @param name case insensitive header name
    * @param values
    */
-  public void addHeader(String name, List<String> values) {
+  public void addHeader(final String name, final List<String> values) {
     String key = name.toUpperCase();
     if (headers.containsKey(key)) {
       List<String> oldValues = headers.get(key);
@@ -69,7 +69,7 @@ public class ODataRequest {
    * Returns header value for name where name is a case insensitive key.
    * @return the header value or null if not found
    */
-  public List<String> getHeader(String name) {
+  public List<String> getHeader(final String name) {
     return headers.get(name.toUpperCase());
   }
 
@@ -85,7 +85,7 @@ public class ODataRequest {
     return rawQueryPath;
   }
 
-  public void setRawQueryPath(String rawQueryPath) {
+  public void setRawQueryPath(final String rawQueryPath) {
     this.rawQueryPath = rawQueryPath;
   }
 
@@ -101,16 +101,16 @@ public class ODataRequest {
     return rawODataPath;
   }
 
-  public void setRawRequestUri(String rawRequestUri) {
+  public void setRawRequestUri(final String rawRequestUri) {
     this.rawRequestUri = rawRequestUri;
   }
 
-  public void setRawODataPath(String rawODataPath) {
+  public void setRawODataPath(final String rawODataPath) {
     this.rawODataPath = rawODataPath;
 
   }
 
-  public void setRawBaseUri(String rawBaseUri) {
+  public void setRawBaseUri(final String rawBaseUri) {
     this.rawBaseUri = rawBaseUri;
   }
 
@@ -118,7 +118,7 @@ public class ODataRequest {
     return rawServiceResolutionUri;
   }
 
-  public void setRawServiceResolutionUri(String rawServiceResolutionUri) {
+  public void setRawServiceResolutionUri(final String rawServiceResolutionUri) {
     this.rawServiceResolutionUri = rawServiceResolutionUri;
   }
 }

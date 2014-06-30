@@ -1,28 +1,28 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.GeoUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
@@ -40,6 +40,8 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 class JsonGeoValueDeserializer {
 
   private final ODataServiceVersion version;
@@ -55,9 +57,9 @@ class JsonGeoValueDeserializer {
       point = new Point(GeoUtils.getDimension(type), srid);
       try {
         point.setX(EdmDouble.getInstance().valueOfString(itor.next().asText(), null, null,
-                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, Double.class));
+            Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, Double.class));
         point.setY(EdmDouble.getInstance().valueOfString(itor.next().asText(), null, null,
-                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, Double.class));
+            Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, Double.class));
       } catch (EdmPrimitiveTypeException e) {
         throw new IllegalArgumentException("While deserializing point coordinates as double", e);
       }
@@ -77,7 +79,7 @@ class JsonGeoValueDeserializer {
       }
       multiPoint = new MultiPoint(GeoUtils.getDimension(type), srid, points);
     } else {
-      multiPoint = new MultiPoint(GeoUtils.getDimension(type), srid, Collections.<Point>emptyList());
+      multiPoint = new MultiPoint(GeoUtils.getDimension(type), srid, Collections.<Point> emptyList());
     }
 
     return multiPoint;
@@ -94,14 +96,14 @@ class JsonGeoValueDeserializer {
       }
       lineString = new LineString(GeoUtils.getDimension(type), srid, points);
     } else {
-      lineString = new LineString(GeoUtils.getDimension(type), srid, Collections.<Point>emptyList());
+      lineString = new LineString(GeoUtils.getDimension(type), srid, Collections.<Point> emptyList());
     }
 
     return lineString;
   }
 
   private MultiLineString multiLineString(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
-          final SRID srid) {
+      final SRID srid) {
 
     final MultiLineString multiLineString;
 
@@ -113,7 +115,7 @@ class JsonGeoValueDeserializer {
       }
       multiLineString = new MultiLineString(GeoUtils.getDimension(type), srid, lineStrings);
     } else {
-      multiLineString = new MultiLineString(GeoUtils.getDimension(type), srid, Collections.<LineString>emptyList());
+      multiLineString = new MultiLineString(GeoUtils.getDimension(type), srid, Collections.<LineString> emptyList());
     }
 
     return multiLineString;
@@ -158,14 +160,14 @@ class JsonGeoValueDeserializer {
       }
       multiPolygon = new MultiPolygon(GeoUtils.getDimension(type), srid, polygons);
     } else {
-      multiPolygon = new MultiPolygon(GeoUtils.getDimension(type), srid, Collections.<Polygon>emptyList());
+      multiPolygon = new MultiPolygon(GeoUtils.getDimension(type), srid, Collections.<Polygon> emptyList());
     }
 
     return multiPolygon;
   }
 
   private GeospatialCollection collection(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
-          final SRID srid) {
+      final SRID srid) {
 
     final GeospatialCollection collection;
 
@@ -177,12 +179,12 @@ class JsonGeoValueDeserializer {
         final String collItemType = geo.get(Constants.ATTR_TYPE).asText();
         final String callAsType;
         if (EdmPrimitiveTypeKind.GeographyCollection.name().equals(collItemType)
-                || EdmPrimitiveTypeKind.GeometryCollection.name().equals(collItemType)) {
+            || EdmPrimitiveTypeKind.GeometryCollection.name().equals(collItemType)) {
 
           callAsType = collItemType;
         } else {
           callAsType = (type == EdmPrimitiveTypeKind.GeographyCollection ? "Geography" : "Geometry")
-                  + collItemType;
+              + collItemType;
         }
 
         geospatials.add(deserialize(geo, new EdmTypeInfo.Builder().setTypeExpression(callAsType).build()));
@@ -190,7 +192,7 @@ class JsonGeoValueDeserializer {
 
       collection = new GeospatialCollection(GeoUtils.getDimension(type), srid, geospatials);
     } else {
-      collection = new GeospatialCollection(GeoUtils.getDimension(type), srid, Collections.<Geospatial>emptyList());
+      collection = new GeospatialCollection(GeoUtils.getDimension(type), srid, Collections.<Geospatial> emptyList());
     }
 
     return collection;
@@ -199,8 +201,8 @@ class JsonGeoValueDeserializer {
   public Geospatial deserialize(final JsonNode node, final EdmTypeInfo typeInfo) {
     final EdmPrimitiveTypeKind actualType;
     if ((typeInfo.getPrimitiveTypeKind() == EdmPrimitiveTypeKind.Geography
-            || typeInfo.getPrimitiveTypeKind() == EdmPrimitiveTypeKind.Geometry)
-            && node.has(Constants.ATTR_TYPE)) {
+        || typeInfo.getPrimitiveTypeKind() == EdmPrimitiveTypeKind.Geometry)
+        && node.has(Constants.ATTR_TYPE)) {
 
       String nodeType = node.get(Constants.ATTR_TYPE).asText();
       if (nodeType.startsWith("Geo")) {
@@ -213,53 +215,53 @@ class JsonGeoValueDeserializer {
     }
 
     final Iterator<JsonNode> cooItor = node.has(Constants.JSON_COORDINATES)
-            ? node.get(Constants.JSON_COORDINATES).elements()
-            : Collections.<JsonNode>emptyList().iterator();
+        ? node.get(Constants.JSON_COORDINATES).elements()
+        : Collections.<JsonNode> emptyList().iterator();
 
     SRID srid = null;
     if (node.has(Constants.JSON_CRS)) {
       srid = SRID.valueOf(
-              node.get(Constants.JSON_CRS).get(Constants.PROPERTIES).get(Constants.JSON_NAME).asText().split(":")[1]);
+          node.get(Constants.JSON_CRS).get(Constants.PROPERTIES).get(Constants.JSON_NAME).asText().split(":")[1]);
     }
 
     Geospatial value = null;
     switch (actualType) {
-      case GeographyPoint:
-      case GeometryPoint:
-        value = point(cooItor, actualType, srid);
-        break;
+    case GeographyPoint:
+    case GeometryPoint:
+      value = point(cooItor, actualType, srid);
+      break;
 
-      case GeographyMultiPoint:
-      case GeometryMultiPoint:
-        value = multipoint(cooItor, actualType, srid);
-        break;
+    case GeographyMultiPoint:
+    case GeometryMultiPoint:
+      value = multipoint(cooItor, actualType, srid);
+      break;
 
-      case GeographyLineString:
-      case GeometryLineString:
-        value = lineString(cooItor, actualType, srid);
-        break;
+    case GeographyLineString:
+    case GeometryLineString:
+      value = lineString(cooItor, actualType, srid);
+      break;
 
-      case GeographyMultiLineString:
-      case GeometryMultiLineString:
-        value = multiLineString(cooItor, actualType, srid);
-        break;
+    case GeographyMultiLineString:
+    case GeometryMultiLineString:
+      value = multiLineString(cooItor, actualType, srid);
+      break;
 
-      case GeographyPolygon:
-      case GeometryPolygon:
-        value = polygon(cooItor, actualType, srid);
-        break;
+    case GeographyPolygon:
+    case GeometryPolygon:
+      value = polygon(cooItor, actualType, srid);
+      break;
 
-      case GeographyMultiPolygon:
-      case GeometryMultiPolygon:
-        value = multiPolygon(cooItor, actualType, srid);
-        break;
+    case GeographyMultiPolygon:
+    case GeometryMultiPolygon:
+      value = multiPolygon(cooItor, actualType, srid);
+      break;
 
-      case GeographyCollection:
-      case GeometryCollection:
-        value = collection(node.get(Constants.JSON_GEOMETRIES).elements(), actualType, srid);
-        break;
+    case GeographyCollection:
+    case GeometryCollection:
+      value = collection(node.get(Constants.JSON_GEOMETRIES).elements(), actualType, srid);
+      break;
 
-      default:
+    default:
     }
 
     return value;

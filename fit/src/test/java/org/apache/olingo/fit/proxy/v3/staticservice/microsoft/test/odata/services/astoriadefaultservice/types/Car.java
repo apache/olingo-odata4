@@ -1,189 +1,154 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
-import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
-import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.EntityType;
-import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
-import org.apache.olingo.ext.proxy.api.annotations.Key;
-import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
-import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
-import org.apache.olingo.ext.proxy.api.annotations.Property;
-import org.apache.olingo.ext.proxy.api.annotations.Operation;
-import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.ext.proxy.api.Annotatable;
-import org.apache.olingo.ext.proxy.api.AbstractOpenType;
-import org.apache.olingo.ext.proxy.api.OperationType;
-import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
-
-import org.apache.olingo.commons.api.edm.geo.Geospatial;
-import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
-import org.apache.olingo.commons.api.edm.geo.LineString;
-import org.apache.olingo.commons.api.edm.geo.MultiLineString;
-import org.apache.olingo.commons.api.edm.geo.MultiPoint;
-import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
-import org.apache.olingo.commons.api.edm.geo.Point;
-import org.apache.olingo.commons.api.edm.geo.Polygon;
-
+import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.ext.proxy.api.Annotatable;
+import org.apache.olingo.ext.proxy.api.annotations.Key;
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "Car",
-        openType = false,
-        hasStream = true,
-        isAbstract = false)
-public interface Car 
-  extends Annotatable,java.io.Serializable {
+    openType = false,
+    hasStream = true,
+    isAbstract = false)
+public interface Car
+    extends Annotatable, java.io.Serializable {
 
-    
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Photo", 
-                type = "Edm.Stream", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.io.InputStream getPhoto();
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Photo",
+      type = "Edm.Stream",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.io.InputStream getPhoto();
 
-    void setPhoto(java.io.InputStream _photo);    
-    
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Video", 
-                type = "Edm.Stream", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.io.InputStream getVideo();
+  void setPhoto(java.io.InputStream _photo);
 
-    void setVideo(java.io.InputStream _video);    
-    
-    @Key
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "VIN", 
-                type = "Edm.Int32", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.Integer getVIN();
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Video",
+      type = "Edm.Stream",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.io.InputStream getVideo();
 
-    void setVIN(java.lang.Integer _vIN);    
-    
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Description", 
-                type = "Edm.String", 
-                nullable = true,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.String getDescription();
+  void setVideo(java.io.InputStream _video);
 
-    void setDescription(java.lang.String _description);    
-    
-    
+  @Key
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "VIN",
+      type = "Edm.Int32",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.Integer getVIN();
 
-    void setStream(java.io.InputStream stream);
+  void setVIN(java.lang.Integer _vIN);
 
-    java.io.InputStream getStream();
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Description",
+      type = "Edm.String",
+      nullable = true,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.String getDescription();
 
+  void setDescription(java.lang.String _description);
 
-    ComplexFactory factory();
+  void setStream(java.io.InputStream stream);
 
-    interface ComplexFactory {
-    }
+  java.io.InputStream getStream();
 
-    Annotations annotations();
+  ComplexFactory factory();
 
-    interface Annotations {
+  interface ComplexFactory {}
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Photo",
-                   type = "Edm.Stream")
-        Annotatable getPhotoAnnotations();
+  Annotations annotations();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Video",
-                   type = "Edm.Stream")
-        Annotatable getVideoAnnotations();
+  interface Annotations {
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "VIN",
-                   type = "Edm.Int32")
-        Annotatable getVINAnnotations();
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Photo",
+        type = "Edm.Stream")
+    Annotatable getPhotoAnnotations();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Description",
-                   type = "Edm.String")
-        Annotatable getDescriptionAnnotations();
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Video",
+        type = "Edm.Stream")
+    Annotatable getVideoAnnotations();
 
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "VIN",
+        type = "Edm.Int32")
+    Annotatable getVINAnnotations();
 
-    }
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Description",
+        type = "Edm.String")
+    Annotatable getDescriptionAnnotations();
+
+  }
 
 }

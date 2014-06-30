@@ -24,15 +24,15 @@ package org.apache.olingo.commons.api.edm;
 public interface EdmNavigationPropertyBinding {
 
   /**
-   * A path contains the full qualified name of the type it is referring to as a first segment. If it is a type 
-   * nested inside another type the path is separated by forward slashes. 
+   * A path contains the full qualified name of the type it is referring to as a first segment. If it is a type
+   * nested inside another type the path is separated by forward slashes.
    * @return path which leads to the target.
    */
   String getPath();
-  
+
   /**
    * @return the entity set or singleton this binding refers to.
    */
   String getTarget();
-  
+
 }

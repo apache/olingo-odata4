@@ -38,10 +38,10 @@ public class Target {
       instance = new Target();
       if (bindingTargetParts.length == 1) {
         instance.setEntityContainer(defaultContainer.getFullQualifiedName()).
-                setTargetName(bindingTargetParts[0]);
+            setTargetName(bindingTargetParts[0]);
       } else {
         instance.setEntityContainer(new FullQualifiedName(bindingTargetParts[0])).
-                setTargetName(bindingTargetParts[1]);
+            setTargetName(bindingTargetParts[1]);
       }
     }
 

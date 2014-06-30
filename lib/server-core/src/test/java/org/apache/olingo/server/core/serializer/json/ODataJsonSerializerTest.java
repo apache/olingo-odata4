@@ -18,6 +18,12 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ValueType;
@@ -32,12 +38,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
 
 public class ODataJsonSerializerTest {
 
@@ -79,10 +79,10 @@ public class ODataJsonSerializerTest {
     String resultString = streamToString(result);
 //    System.out.println(resultString);
     Assert.assertEquals("{\"@odata.context\":\"http://localhost:8080/test.svc\",\"Property1\":\"Value_1\"}",
-            resultString);
+        resultString);
   }
 
-  private String streamToString(InputStream result) throws IOException {
+  private String streamToString(final InputStream result) throws IOException {
     byte[] buffer = new byte[8192];
     StringBuilder sb = new StringBuilder();
 

@@ -148,13 +148,13 @@ public class ODataHandlerTest {
 
     request.setMethod(HttpMethod.GET);
     request.setRawODataPath("$metadata");
-    
+
     ODataResponse response = handler.process(request);
     assertNotNull(response);
-    
+
     assertEquals(ODataServiceVersion.V40.toString(), response.getHeaders().get(HttpHeader.ODATA_VERSION));
   }
-  
+
   @Test
   public void testMaxVersionSupported() {
     ODataRequest request = new ODataRequest();
@@ -162,13 +162,13 @@ public class ODataHandlerTest {
     request.setMethod(HttpMethod.GET);
     request.setRawODataPath("$metadata");
     request.addHeader(HttpHeader.ODATA_MAX_VERSION, Arrays.asList(ODataServiceVersion.V40.toString()));
-    
+
     ODataResponse response = handler.process(request);
     assertNotNull(response);
-    
+
     assertEquals(ODataServiceVersion.V40.toString(), response.getHeaders().get(HttpHeader.ODATA_VERSION));
   }
-  
+
   @Test(expected = Exception.class)
   public void testMaxVersionNotSupported() {
     ODataRequest request = new ODataRequest();
@@ -176,11 +176,11 @@ public class ODataHandlerTest {
     request.setMethod(HttpMethod.GET);
     request.setRawODataPath("$metadata");
     request.addHeader(HttpHeader.ODATA_MAX_VERSION, Arrays.asList(ODataServiceVersion.V30.toString()));
-    
+
     ODataResponse response = handler.process(request);
     assertNotNull(response);
-    
+
     assertEquals(ODataServiceVersion.V40.toString(), response.getHeaders().get(HttpHeader.ODATA_VERSION));
   }
-  
+
 }

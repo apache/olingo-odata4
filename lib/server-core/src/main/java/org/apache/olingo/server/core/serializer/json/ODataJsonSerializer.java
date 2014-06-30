@@ -115,7 +115,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   protected void writeEntity(final EdmEntityType entityType, final Entity entity, final ContextURL contextURL,
-      JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
+      final JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
     json.writeStartObject();
     if (contextURL != null) {
       json.writeStringField(Constants.JSON_CONTEXT, contextURL.getURI().toASCIIString());
@@ -137,7 +137,7 @@ public class ODataJsonSerializer implements ODataSerializer {
     json.writeEndObject();
   }
 
-  protected void writeProperty(final EdmProperty edmProperty, final Property property, JsonGenerator json)
+  protected void writeProperty(final EdmProperty edmProperty, final Property property, final JsonGenerator json)
       throws IOException, EdmPrimitiveTypeException {
     json.writeFieldName(edmProperty.getName());
     if (property == null || property.isNull()) {
@@ -187,7 +187,8 @@ public class ODataJsonSerializer implements ODataSerializer {
     }
   }
 
-  protected void writePrimitiveValue(final EdmProperty edmProperty, final Object primitiveValue, JsonGenerator json)
+  protected void writePrimitiveValue(final EdmProperty edmProperty, final Object primitiveValue,
+      final JsonGenerator json)
       throws EdmPrimitiveTypeException, IOException {
     final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
     final String value = type.valueToString(primitiveValue,
@@ -210,7 +211,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   private void writeLinkedComplexValue(final EdmProperty edmProperty, final LinkedComplexValue linkedComplexValue,
-      JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
+      final JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
     final EdmComplexType type = (EdmComplexType) edmProperty.getType();
     final List<Property> properties = linkedComplexValue.getValue();
     json.writeStartObject();
@@ -221,7 +222,7 @@ public class ODataJsonSerializer implements ODataSerializer {
     json.writeEndObject();
   }
 
-  private Property findProperty(String propertyName, List<Property> properties) {
+  private Property findProperty(final String propertyName, final List<Property> properties) {
     for (final Property property : properties) {
       if (propertyName.equals(property.getName())) {
         return property;

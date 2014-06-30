@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -41,10 +42,10 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
 public abstract class AbstractGeospatialType<T extends Geospatial> extends SingletonPrimitiveType {
 
   private static final Pattern PATTERN =
-          Pattern.compile("([a-z]+)'SRID=([0-9]+);([a-zA-Z]+)\\((.*)\\)'");
+      Pattern.compile("([a-z]+)'SRID=([0-9]+);([a-zA-Z]+)\\((.*)\\)'");
 
   private static final Pattern COLLECTION_PATTERN =
-          Pattern.compile("([a-z]+)'SRID=([0-9]+);Collection\\(([a-zA-Z]+)\\((.*)\\)\\)'");
+      Pattern.compile("([a-z]+)'SRID=([0-9]+);Collection\\(([a-zA-Z]+)\\((.*)\\)\\)'");
 
   private final Class<T> reference;
 
@@ -85,8 +86,8 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
   }
 
   private Point newPoint(final SRID srid, final String point, final Boolean isNullable,
-          final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-          throws EdmPrimitiveTypeException {
+      final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
+      throws EdmPrimitiveTypeException {
 
     final String[] pointCoo = StringUtils.split(point, ' ');
     if (pointCoo == null || pointCoo.length != 2) {
@@ -95,39 +96,39 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     final Point result = new Point(this.dimension, srid);
     result.setX(EdmDouble.getInstance().valueOfString(pointCoo[0],
-            isNullable, maxLength, precision, scale, isUnicode, Double.class));
+        isNullable, maxLength, precision, scale, isUnicode, Double.class));
     result.setY(EdmDouble.getInstance().valueOfString(pointCoo[1],
-            isNullable, maxLength, precision, scale, isUnicode, Double.class));
+        isNullable, maxLength, precision, scale, isUnicode, Double.class));
 
     return result;
   }
 
   protected Point stringToPoint(final String value, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     final Matcher matcher = getMatcher(PATTERN, value);
 
     return newPoint(SRID.valueOf(matcher.group(2)), matcher.group(4),
-            isNullable, maxLength, precision, scale, isUnicode);
+        isNullable, maxLength, precision, scale, isUnicode);
   }
 
   protected MultiPoint stringToMultiPoint(final String value, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     final Matcher matcher = getMatcher(PATTERN, value);
 
     final List<Point> points = new ArrayList<Point>();
     for (String pointCoo : StringUtils.split(matcher.group(4), ',')) {
       points.add(newPoint(null, pointCoo.substring(1, pointCoo.length() - 1),
-              isNullable, maxLength, precision, scale, isUnicode));
+          isNullable, maxLength, precision, scale, isUnicode));
     }
 
     return new MultiPoint(dimension, SRID.valueOf(matcher.group(2)), points);
   }
 
   private LineString newLineString(final SRID srid, final String lineString, final Boolean isNullable,
-          final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-          throws EdmPrimitiveTypeException {
+      final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
+      throws EdmPrimitiveTypeException {
 
     final List<Point> points = new ArrayList<Point>();
     for (String pointCoo : StringUtils.split(lineString, ',')) {
@@ -138,23 +139,23 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
   }
 
   protected LineString stringToLineString(final String value, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     final Matcher matcher = getMatcher(PATTERN, value);
 
     return newLineString(SRID.valueOf(matcher.group(2)), matcher.group(4),
-            isNullable, maxLength, precision, scale, isUnicode);
+        isNullable, maxLength, precision, scale, isUnicode);
   }
 
   protected MultiLineString stringToMultiLineString(final String value, final Boolean isNullable,
-          final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-          throws EdmPrimitiveTypeException {
+      final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
+      throws EdmPrimitiveTypeException {
 
     final Matcher matcher = getMatcher(PATTERN, value);
 
     final List<LineString> lineStrings = new ArrayList<LineString>();
     for (String coo : matcher.group(4).contains("),(")
-            ? matcher.group(4).split("\\),\\(") : new String[] {matcher.group(4)}) {
+        ? matcher.group(4).split("\\),\\(") : new String[] { matcher.group(4) }) {
 
       String lineString = coo;
       if (lineString.charAt(0) == '(') {
@@ -171,8 +172,8 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
   }
 
   private Polygon newPolygon(final SRID srid, final String polygon, final Boolean isNullable,
-          final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-          throws EdmPrimitiveTypeException {
+      final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
+      throws EdmPrimitiveTypeException {
 
     final String[] first = polygon.split("\\),\\(");
 
@@ -189,22 +190,22 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
   }
 
   protected Polygon stringToPolygon(final String value, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     final Matcher matcher = getMatcher(PATTERN, value);
 
     return newPolygon(SRID.valueOf(matcher.group(2)), matcher.group(4),
-            isNullable, maxLength, precision, scale, isUnicode);
+        isNullable, maxLength, precision, scale, isUnicode);
   }
 
   protected MultiPolygon stringToMultiPolygon(final String value, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     final Matcher matcher = getMatcher(PATTERN, value);
 
     final List<Polygon> polygons = new ArrayList<Polygon>();
     for (String coo : matcher.group(4).contains(")),((")
-            ? matcher.group(4).split("\\)\\),\\(\\(") : new String[] {matcher.group(4)}) {
+        ? matcher.group(4).split("\\)\\),\\(\\(") : new String[] { matcher.group(4) }) {
 
       String polygon = coo;
       if (polygon.startsWith("((")) {
@@ -227,115 +228,115 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
   }
 
   protected GeospatialCollection stringToCollection(final String value, final Boolean isNullable,
-          final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-          throws EdmPrimitiveTypeException {
+      final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
+      throws EdmPrimitiveTypeException {
 
     final Matcher matcher = getMatcher(COLLECTION_PATTERN, value);
 
     Geospatial item = null;
     switch (Geospatial.Type.valueOf(matcher.group(3).toUpperCase())) {
-      case POINT:
-        item = newPoint(SRID.valueOf(matcher.group(2)), matcher.group(4),
-                isNullable, maxLength, precision, scale, isUnicode);
-        break;
+    case POINT:
+      item = newPoint(SRID.valueOf(matcher.group(2)), matcher.group(4),
+          isNullable, maxLength, precision, scale, isUnicode);
+      break;
 
-      case MULTIPOINT:
-        final List<Point> points = new ArrayList<Point>();
-        for (String pointCoo : StringUtils.split(matcher.group(4), ',')) {
-          points.add(newPoint(null, pointCoo.substring(1, pointCoo.length() - 1),
-                  isNullable, maxLength, precision, scale, isUnicode));
-        }
+    case MULTIPOINT:
+      final List<Point> points = new ArrayList<Point>();
+      for (String pointCoo : StringUtils.split(matcher.group(4), ',')) {
+        points.add(newPoint(null, pointCoo.substring(1, pointCoo.length() - 1),
+            isNullable, maxLength, precision, scale, isUnicode));
+      }
 
-        item = new MultiPoint(dimension, SRID.valueOf(matcher.group(2)), points);
-        break;
+      item = new MultiPoint(dimension, SRID.valueOf(matcher.group(2)), points);
+      break;
 
-      case LINESTRING:
-        item = newLineString(SRID.valueOf(matcher.group(2)), matcher.group(4),
-                isNullable, maxLength, precision, scale, isUnicode);
-        break;
+    case LINESTRING:
+      item = newLineString(SRID.valueOf(matcher.group(2)), matcher.group(4),
+          isNullable, maxLength, precision, scale, isUnicode);
+      break;
 
-      case MULTILINESTRING:
-        final List<LineString> lineStrings = new ArrayList<LineString>();
-        for (String coo : StringUtils.split(matcher.group(4), ',')) {
-          lineStrings.add(newLineString(null, coo.substring(1, coo.length() - 1),
-                  isNullable, maxLength, precision, scale, isUnicode));
-        }
+    case MULTILINESTRING:
+      final List<LineString> lineStrings = new ArrayList<LineString>();
+      for (String coo : StringUtils.split(matcher.group(4), ',')) {
+        lineStrings.add(newLineString(null, coo.substring(1, coo.length() - 1),
+            isNullable, maxLength, precision, scale, isUnicode));
+      }
 
-        item = new MultiLineString(this.dimension, SRID.valueOf(matcher.group(2)), lineStrings);
-        break;
+      item = new MultiLineString(this.dimension, SRID.valueOf(matcher.group(2)), lineStrings);
+      break;
 
-      case POLYGON:
-        item = newPolygon(SRID.valueOf(matcher.group(2)), matcher.group(4),
-                isNullable, maxLength, precision, scale, isUnicode);
-        break;
+    case POLYGON:
+      item = newPolygon(SRID.valueOf(matcher.group(2)), matcher.group(4),
+          isNullable, maxLength, precision, scale, isUnicode);
+      break;
 
-      case MULTIPOLYGON:
-        final List<Polygon> polygons = new ArrayList<Polygon>();
-        for (String coo : StringUtils.split(matcher.group(4), ',')) {
-          polygons.add(newPolygon(null, coo.substring(1, coo.length() - 1),
-                  isNullable, maxLength, precision, scale, isUnicode));
-        }
+    case MULTIPOLYGON:
+      final List<Polygon> polygons = new ArrayList<Polygon>();
+      for (String coo : StringUtils.split(matcher.group(4), ',')) {
+        polygons.add(newPolygon(null, coo.substring(1, coo.length() - 1),
+            isNullable, maxLength, precision, scale, isUnicode));
+      }
 
-        item = new MultiPolygon(dimension, SRID.valueOf(matcher.group(2)), polygons);
-        break;
+      item = new MultiPolygon(dimension, SRID.valueOf(matcher.group(2)), polygons);
+      break;
 
-      default:
+    default:
     }
 
     return new GeospatialCollection(dimension, SRID.valueOf(matcher.group(2)),
-            Collections.<Geospatial>singletonList(item));
+        Collections.<Geospatial> singletonList(item));
   }
 
   private StringBuilder toStringBuilder(final SRID srid) {
     return new StringBuilder(dimension.name().toLowerCase()).append('\'').
-            append("SRID=").append(srid).append(';');
+        append("SRID=").append(srid).append(';');
   }
 
   private String point(final Point point, final Boolean isNullable,
-          final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-          throws EdmPrimitiveTypeException {
+      final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
+      throws EdmPrimitiveTypeException {
 
     return new StringBuilder().
-            append(EdmDouble.getInstance().valueToString(point.getX(),
-                            isNullable, maxLength, precision, scale, isUnicode)).
-            append(' ').
-            append(EdmDouble.getInstance().valueToString(point.getY(),
-                            isNullable, maxLength, precision, scale, isUnicode)).
-            toString();
+        append(EdmDouble.getInstance().valueToString(point.getX(),
+            isNullable, maxLength, precision, scale, isUnicode)).
+        append(' ').
+        append(EdmDouble.getInstance().valueToString(point.getY(),
+            isNullable, maxLength, precision, scale, isUnicode)).
+        toString();
   }
 
   protected String toString(final Point point, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (dimension != point.getDimension()) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
     }
 
     return toStringBuilder(point.getSrid()).
-            append(reference.getSimpleName()).
-            append('(').
-            append(point(point, isNullable, maxLength, precision, scale, isUnicode)).
-            append(")'").
-            toString();
+        append(reference.getSimpleName()).
+        append('(').
+        append(point(point, isNullable, maxLength, precision, scale, isUnicode)).
+        append(")'").
+        toString();
   }
 
   protected String toString(final MultiPoint multiPoint, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (dimension != multiPoint.getDimension()) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
     }
 
     final StringBuilder result = toStringBuilder(multiPoint.getSrid()).
-            append(reference.getSimpleName()).
-            append('(');
+        append(reference.getSimpleName()).
+        append('(');
 
     for (final Iterator<Point> itor = multiPoint.iterator(); itor.hasNext();) {
       result.append('(').
-              append(point(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
-              append(')');
+          append(point(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
+          append(')');
       if (itor.hasNext()) {
         result.append(',');
       }
@@ -345,8 +346,8 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
   }
 
   private String lineString(final LineString lineString, final Boolean isNullable,
-          final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-          throws EdmPrimitiveTypeException {
+      final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
+      throws EdmPrimitiveTypeException {
 
     final StringBuilder result = new StringBuilder();
 
@@ -361,36 +362,36 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
   }
 
   protected String toString(final LineString lineString, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (dimension != lineString.getDimension()) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
     }
 
     return toStringBuilder(lineString.getSrid()).
-            append(reference.getSimpleName()).
-            append('(').
-            append(lineString(lineString, isNullable, maxLength, precision, scale, isUnicode)).
-            append(")'").toString();
+        append(reference.getSimpleName()).
+        append('(').
+        append(lineString(lineString, isNullable, maxLength, precision, scale, isUnicode)).
+        append(")'").toString();
   }
 
   protected String toString(final MultiLineString multiLineString, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (dimension != multiLineString.getDimension()) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
     }
 
     final StringBuilder result = toStringBuilder(multiLineString.getSrid()).
-            append(reference.getSimpleName()).
-            append('(');
+        append(reference.getSimpleName()).
+        append('(');
 
     for (final Iterator<LineString> itor = multiLineString.iterator(); itor.hasNext();) {
       result.append('(').
-              append(lineString(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
-              append(')');
+          append(lineString(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
+          append(')');
       if (itor.hasNext()) {
         result.append(',');
       }
@@ -400,8 +401,8 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
   }
 
   private String polygon(final Polygon polygon, final Boolean isNullable,
-          final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-          throws EdmPrimitiveTypeException {
+      final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
+      throws EdmPrimitiveTypeException {
 
     final StringBuilder result = new StringBuilder();
 
@@ -424,36 +425,36 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
   }
 
   protected String toString(final Polygon polygon, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (dimension != polygon.getDimension()) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
     }
 
     return toStringBuilder(polygon.getSrid()).
-            append(reference.getSimpleName()).
-            append('(').
-            append(polygon(polygon, isNullable, maxLength, precision, scale, isUnicode)).
-            append(")'").toString();
+        append(reference.getSimpleName()).
+        append('(').
+        append(polygon(polygon, isNullable, maxLength, precision, scale, isUnicode)).
+        append(")'").toString();
   }
 
   protected String toString(final MultiPolygon multiPolygon, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (dimension != multiPolygon.getDimension()) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
     }
 
     final StringBuilder result = toStringBuilder(multiPolygon.getSrid()).
-            append(reference.getSimpleName()).
-            append('(');
+        append(reference.getSimpleName()).
+        append('(');
 
     for (final Iterator<Polygon> itor = multiPolygon.iterator(); itor.hasNext();) {
       result.append('(').
-              append(polygon(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
-              append(')');
+          append(polygon(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
+          append(')');
       if (itor.hasNext()) {
         result.append(',');
       }
@@ -463,73 +464,73 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
   }
 
   protected String toString(final GeospatialCollection collection, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (dimension != collection.getDimension()) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
     }
 
     final StringBuilder result = toStringBuilder(collection.getSrid()).
-            append("Collection(");
+        append("Collection(");
 
     if (collection.iterator().hasNext()) {
       final Geospatial item = collection.iterator().next();
       result.append(item.getClass().getSimpleName()).append('(');
 
       switch (item.getEdmPrimitiveTypeKind()) {
-        case GeographyPoint:
-        case GeometryPoint:
-          result.append(point((Point) item, isNullable, maxLength, precision, scale, isUnicode));
-          break;
+      case GeographyPoint:
+      case GeometryPoint:
+        result.append(point((Point) item, isNullable, maxLength, precision, scale, isUnicode));
+        break;
 
-        case GeographyMultiPoint:
-        case GeometryMultiPoint:
-          for (final Iterator<Point> itor = ((MultiPoint) item).iterator(); itor.hasNext();) {
-            result.append('(').
-                    append(point(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
-                    append(')');
-            if (itor.hasNext()) {
-              result.append(',');
-            }
+      case GeographyMultiPoint:
+      case GeometryMultiPoint:
+        for (final Iterator<Point> itor = ((MultiPoint) item).iterator(); itor.hasNext();) {
+          result.append('(').
+              append(point(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
+              append(')');
+          if (itor.hasNext()) {
+            result.append(',');
           }
-          break;
+        }
+        break;
 
-        case GeographyLineString:
-        case GeometryLineString:
-          result.append(lineString((LineString) item, isNullable, maxLength, precision, scale, isUnicode));
-          break;
+      case GeographyLineString:
+      case GeometryLineString:
+        result.append(lineString((LineString) item, isNullable, maxLength, precision, scale, isUnicode));
+        break;
 
-        case GeographyMultiLineString:
-        case GeometryMultiLineString:
-          for (final Iterator<LineString> itor = ((MultiLineString) item).iterator(); itor.hasNext();) {
-            result.append('(').
-                    append(lineString(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
-                    append(')');
-            if (itor.hasNext()) {
-              result.append(',');
-            }
+      case GeographyMultiLineString:
+      case GeometryMultiLineString:
+        for (final Iterator<LineString> itor = ((MultiLineString) item).iterator(); itor.hasNext();) {
+          result.append('(').
+              append(lineString(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
+              append(')');
+          if (itor.hasNext()) {
+            result.append(',');
           }
-          break;
+        }
+        break;
 
-        case GeographyPolygon:
-        case GeometryPolygon:
-          result.append(polygon((Polygon) item, isNullable, maxLength, precision, scale, isUnicode));
-          break;
+      case GeographyPolygon:
+      case GeometryPolygon:
+        result.append(polygon((Polygon) item, isNullable, maxLength, precision, scale, isUnicode));
+        break;
 
-        case GeographyMultiPolygon:
-        case GeometryMultiPolygon:
-          for (final Iterator<Polygon> itor = ((MultiPolygon) item).iterator(); itor.hasNext();) {
-            result.append('(').
-                    append(polygon(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
-                    append(')');
-            if (itor.hasNext()) {
-              result.append(',');
-            }
+      case GeographyMultiPolygon:
+      case GeometryMultiPolygon:
+        for (final Iterator<Polygon> itor = ((MultiPolygon) item).iterator(); itor.hasNext();) {
+          result.append('(').
+              append(polygon(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
+              append(')');
+          if (itor.hasNext()) {
+            result.append(',');
           }
-          break;
+        }
+        break;
 
-        default:
+      default:
       }
 
       result.append(')');

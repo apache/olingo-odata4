@@ -1,28 +1,29 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.fit.proxy.v3;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+
 import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
@@ -46,10 +47,10 @@ public class PrimitiveKeysTestITCase extends AbstractTestITCase {
 
   @Test
   public void readPrimitiveKeys() {
-    final EntityContainerFactory<EdmEnabledODataClient> testContainerFactory = 
-            EntityContainerFactory.getV3(testPrimitiveKeysServiceRootURL);
+    final EntityContainerFactory<EdmEnabledODataClient> testContainerFactory =
+        EntityContainerFactory.getV3(testPrimitiveKeysServiceRootURL);
     testContainerFactory.getClient().getConfiguration().
-            setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+        setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     final TestContext testContainer = testContainerFactory.getEntityContainer(TestContext.class);
     assertNotNull(testContainer);
 
@@ -62,7 +63,7 @@ public class PrimitiveKeysTestITCase extends AbstractTestITCase {
     assertEquals(Short.valueOf("255"), edmByteSet.getId());
 
     final EdmDecimal edmDecimalSet =
-            testContainer.getEdmDecimalSet().get(new BigDecimal("79228162514264337593543950335"));
+        testContainer.getEdmDecimalSet().get(new BigDecimal("79228162514264337593543950335"));
     assertNotNull(edmDecimalSet);
     assertEquals(new BigDecimal("79228162514264337593543950335"), edmDecimalSet.getId());
 
@@ -75,7 +76,7 @@ public class PrimitiveKeysTestITCase extends AbstractTestITCase {
     assertEquals(3.4028235E+38F, edmSingleSet.getId(), 0);
 
     final EdmGuid edmGuidSet =
-            testContainer.getEdmGuidSet().get(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+        testContainer.getEdmGuidSet().get(UUID.fromString("00000000-0000-0000-0000-000000000000"));
     assertNotNull(edmGuidSet);
     assertEquals(UUID.fromString("00000000-0000-0000-0000-000000000000"), edmGuidSet.getId());
 

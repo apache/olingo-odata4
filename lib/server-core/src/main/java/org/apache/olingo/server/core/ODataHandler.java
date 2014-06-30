@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.server.core;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,27 +25,22 @@ import java.util.Map;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.AcceptType;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.processor.CollectionProcessor;
-import org.apache.olingo.server.api.processor.FormatContentTypeMapping;
 import org.apache.olingo.server.api.processor.DefaultProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
-import org.apache.olingo.server.api.processor.CustomContentTypeSupport;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
-import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 import org.slf4j.Logger;
@@ -64,7 +55,7 @@ public class ODataHandler {
   private Map<Class<? extends Processor>, Processor> processors = new HashMap<Class<? extends Processor>, Processor>();
 
   public ODataHandler(final OData server, final Edm edm) {
-    this.odata = server;
+    odata = server;
     this.edm = edm;
 
     register(new DefaultProcessor());
@@ -86,8 +77,6 @@ public class ODataHandler {
       validator.validate(uriInfo, request.getMethod());
 
       String requestedContentType = null;
-      List<FormatContentTypeMapping> supportedContentTypes = null;
-
       switch (uriInfo.getKind()) {
       case metadata:
         MetadataProcessor mp = selectProcessor(MetadataProcessor.class);
@@ -124,12 +113,11 @@ public class ODataHandler {
     }
   }
 
-  private void handleResourceDispatching(final ODataRequest request, ODataResponse response, UriInfo uriInfo) {
+  private void
+      handleResourceDispatching(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo) {
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
     String requestedContentType = null;
-    List<String> supportedContentTypes = null;
-
     switch (lastPathSegment.getKind()) {
     case entitySet:
       if (((UriResourcePartTyped) lastPathSegment).isCollection()) {
@@ -186,7 +174,7 @@ public class ODataHandler {
     }
   }
 
-  private void validateODataVersion(ODataRequest request, ODataResponse response) {
+  private void validateODataVersion(final ODataRequest request, final ODataResponse response) {
     List<String> maxVersionHeader = request.getHeader(HttpHeader.ODATA_MAX_VERSION);
 
     if (maxVersionHeader != null && maxVersionHeader.size() > 0) {
@@ -198,7 +186,7 @@ public class ODataHandler {
     response.setHeader(HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
   }
 
-  private <T extends Processor> T selectProcessor(Class<T> cls) {
+  private <T extends Processor> T selectProcessor(final Class<T> cls) {
     @SuppressWarnings("unchecked")
     T p = (T) processors.get(cls);
 
@@ -209,7 +197,7 @@ public class ODataHandler {
     return p;
   }
 
-  public void register(Processor processor) {
+  public void register(final Processor processor) {
 
     processor.init(odata, edm);
 

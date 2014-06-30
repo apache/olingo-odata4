@@ -24,35 +24,28 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.CollectionProcessor;
+import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
 public class TechnicalProcessor implements CollectionProcessor, EntityProcessor {
 
-  private OData odata;
-  private Edm edm;
-  private final DataProvider dataProvider;
-
-  public TechnicalProcessor(DataProvider dataProvider) {
-    this.dataProvider = dataProvider;
-  }
+  public TechnicalProcessor(final DataProvider dataProvider) {}
 
   @Override
-  public void init(OData odata, Edm edm) {
-    this.odata = odata;
-    this.edm = edm;
-  }
+  public void init(final OData odata, final Edm edm) {}
 
   @Override
-  public void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
+  public void readEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
+      final String format) {
     response.setContent(new ByteArrayInputStream("Entity".getBytes()));
     response.setStatusCode(200);
   }
 
   @Override
-  public void readCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
+  public void readCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
+      final String format) {
     response.setContent(new ByteArrayInputStream("EntitySet".getBytes()));
     response.setStatusCode(200);
   }

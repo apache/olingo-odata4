@@ -1,26 +1,25 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import java.io.IOException;
-import java.util.Iterator;
+
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -36,6 +35,8 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+
 class JsonGeoValueSerializer {
 
   private void srid(final JsonGenerator jgen, final SRID srid) throws IOException {
@@ -50,34 +51,34 @@ class JsonGeoValueSerializer {
   private void point(final JsonGenerator jgen, final Point point) throws IOException {
     try {
       jgen.writeNumber(EdmDouble.getInstance().valueToString(point.getX(), null, null,
-              Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null));
+          Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null));
       jgen.writeNumber(EdmDouble.getInstance().valueToString(point.getY(), null, null,
-              Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null));
+          Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null));
     } catch (EdmPrimitiveTypeException e) {
       throw new IllegalArgumentException("While serializing point coordinates as double", e);
     }
   }
 
   private void multipoint(final JsonGenerator jgen, final MultiPoint multiPoint) throws IOException {
-    for (final Iterator<Point> itor = multiPoint.iterator(); itor.hasNext();) {
+    for (Point point : multiPoint) {
       jgen.writeStartArray();
-      point(jgen, itor.next());
+      point(jgen, point);
       jgen.writeEndArray();
     }
   }
 
   private void lineString(final JsonGenerator jgen, final ComposedGeospatial<Point> lineString) throws IOException {
-    for (final Iterator<Point> itor = lineString.iterator(); itor.hasNext();) {
+    for (Point point : lineString) {
       jgen.writeStartArray();
-      point(jgen, itor.next());
+      point(jgen, point);
       jgen.writeEndArray();
     }
   }
 
   private void multiLineString(final JsonGenerator jgen, final MultiLineString multiLineString) throws IOException {
-    for (final Iterator<LineString> itor = multiLineString.iterator(); itor.hasNext();) {
+    for (LineString lineString : multiLineString) {
       jgen.writeStartArray();
-      lineString(jgen, itor.next());
+      lineString(jgen, lineString);
       jgen.writeEndArray();
     }
   }
@@ -96,8 +97,7 @@ class JsonGeoValueSerializer {
   }
 
   private void multiPolygon(final JsonGenerator jgen, final MultiPolygon multiPolygon) throws IOException {
-    for (final Iterator<Polygon> itor = multiPolygon.iterator(); itor.hasNext();) {
-      final Polygon polygon = itor.next();
+    for (Polygon polygon : multiPolygon) {
       jgen.writeStartArray();
       polygon(jgen, polygon);
       jgen.writeEndArray();
@@ -106,9 +106,9 @@ class JsonGeoValueSerializer {
 
   private void collection(final JsonGenerator jgen, final GeospatialCollection collection) throws IOException {
     jgen.writeArrayFieldStart(Constants.JSON_GEOMETRIES);
-    for (final Iterator<Geospatial> itor = collection.iterator(); itor.hasNext();) {
+    for (Geospatial geospatial : collection) {
       jgen.writeStartObject();
-      serialize(jgen, itor.next());
+      serialize(jgen, geospatial);
       jgen.writeEndObject();
     }
     jgen.writeEndArray();
@@ -116,7 +116,7 @@ class JsonGeoValueSerializer {
 
   public void serialize(final JsonGenerator jgen, final Geospatial value) throws IOException {
     if (value.getEdmPrimitiveTypeKind().equals(EdmPrimitiveTypeKind.GeographyCollection)
-            || value.getEdmPrimitiveTypeKind().equals(EdmPrimitiveTypeKind.GeometryCollection)) {
+        || value.getEdmPrimitiveTypeKind().equals(EdmPrimitiveTypeKind.GeometryCollection)) {
 
       jgen.writeStringField(Constants.ATTR_TYPE, EdmPrimitiveTypeKind.GeometryCollection.name());
     } else {
@@ -126,54 +126,54 @@ class JsonGeoValueSerializer {
     }
 
     switch (value.getEdmPrimitiveTypeKind()) {
-      case GeographyPoint:
-      case GeometryPoint:
-        jgen.writeArrayFieldStart(Constants.JSON_COORDINATES);
-        point(jgen, (Point) value);
-        jgen.writeEndArray();
-        break;
+    case GeographyPoint:
+    case GeometryPoint:
+      jgen.writeArrayFieldStart(Constants.JSON_COORDINATES);
+      point(jgen, (Point) value);
+      jgen.writeEndArray();
+      break;
 
-      case GeographyMultiPoint:
-      case GeometryMultiPoint:
-        jgen.writeArrayFieldStart(Constants.JSON_COORDINATES);
-        multipoint(jgen, (MultiPoint) value);
-        jgen.writeEndArray();
-        break;
+    case GeographyMultiPoint:
+    case GeometryMultiPoint:
+      jgen.writeArrayFieldStart(Constants.JSON_COORDINATES);
+      multipoint(jgen, (MultiPoint) value);
+      jgen.writeEndArray();
+      break;
 
-      case GeographyLineString:
-      case GeometryLineString:
-        jgen.writeArrayFieldStart(Constants.JSON_COORDINATES);
-        lineString(jgen, (LineString) value);
-        jgen.writeEndArray();
-        break;
+    case GeographyLineString:
+    case GeometryLineString:
+      jgen.writeArrayFieldStart(Constants.JSON_COORDINATES);
+      lineString(jgen, (LineString) value);
+      jgen.writeEndArray();
+      break;
 
-      case GeographyMultiLineString:
-      case GeometryMultiLineString:
-        jgen.writeArrayFieldStart(Constants.JSON_COORDINATES);
-        multiLineString(jgen, (MultiLineString) value);
-        jgen.writeEndArray();
-        break;
+    case GeographyMultiLineString:
+    case GeometryMultiLineString:
+      jgen.writeArrayFieldStart(Constants.JSON_COORDINATES);
+      multiLineString(jgen, (MultiLineString) value);
+      jgen.writeEndArray();
+      break;
 
-      case GeographyPolygon:
-      case GeometryPolygon:
-        jgen.writeArrayFieldStart(Constants.JSON_COORDINATES);
-        polygon(jgen, (Polygon) value);
-        jgen.writeEndArray();
-        break;
+    case GeographyPolygon:
+    case GeometryPolygon:
+      jgen.writeArrayFieldStart(Constants.JSON_COORDINATES);
+      polygon(jgen, (Polygon) value);
+      jgen.writeEndArray();
+      break;
 
-      case GeographyMultiPolygon:
-      case GeometryMultiPolygon:
-        jgen.writeArrayFieldStart(Constants.JSON_COORDINATES);
-        multiPolygon(jgen, (MultiPolygon) value);
-        jgen.writeEndArray();
-        break;
+    case GeographyMultiPolygon:
+    case GeometryMultiPolygon:
+      jgen.writeArrayFieldStart(Constants.JSON_COORDINATES);
+      multiPolygon(jgen, (MultiPolygon) value);
+      jgen.writeEndArray();
+      break;
 
-      case GeographyCollection:
-      case GeometryCollection:
-        collection(jgen, (GeospatialCollection) value);
-        break;
+    case GeographyCollection:
+    case GeometryCollection:
+      collection(jgen, (GeospatialCollection) value);
+      break;
 
-      default:
+    default:
     }
 
     if (value.getSrid() != null && value.getSrid().isNotDefault()) {

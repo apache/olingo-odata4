@@ -23,7 +23,7 @@ public class FormatContentTypeMapping {
   private String formatAlias;
   private String contentType;
 
-  public FormatContentTypeMapping(String formatAlias, String contentType) {
+  public FormatContentTypeMapping(final String formatAlias, final String contentType) {
     super();
     this.formatAlias = formatAlias;
     this.contentType = contentType;
@@ -37,11 +37,11 @@ public class FormatContentTypeMapping {
     return contentType;
   }
 
-  public void setFormatAlias(String formatAlias) {
+  public void setFormatAlias(final String formatAlias) {
     this.formatAlias = formatAlias;
   }
 
-  public void setContentType(String contentType) {
+  public void setContentType(final String contentType) {
     this.contentType = contentType;
   }
 

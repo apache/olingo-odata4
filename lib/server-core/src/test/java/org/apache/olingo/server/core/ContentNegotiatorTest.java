@@ -49,13 +49,10 @@ import org.slf4j.LoggerFactory;
 
 public class ContentNegotiatorTest {
 
-  static final private String ACCEPT_CASE_JSONV = "application/json;odata=verbose;q=0.2";
   static final private String ACCEPT_CASE_JSON = "application/json;q=0.2";
   static final private String ACCEPT_CASE_XML = "application/xml";
   static final private String ACCEPT_CASE_WILDCARD1 = "*/*";
   static final private String ACCEPT_CASE_WILDCARD2 = "application/*";
-  static final private String ACCEPT_CASE_TEXT = "text/plain;q=0.5";
-  static final private String ACCEPT_CASE_MULTI = "application/aaa;q=0.4,text/plain;q=0.5";
 
   //@formatter:off (Eclipse formatter)
   //CHECKSTYLE:OFF (Maven checkstyle)
@@ -139,7 +136,7 @@ public class ContentNegotiatorTest {
     }
   }
 
-  public void testContentNegotiation(String[] useCase, Class<? extends Processor> processorClass) {
+  public void testContentNegotiation(final String[] useCase, final Class<? extends Processor> processorClass) {
 
     LOG.debug(Arrays.asList(useCase).toString());
 
@@ -167,7 +164,8 @@ public class ContentNegotiatorTest {
     assertEquals(useCase[0], requestedContentType);
   }
 
-  private List<FormatContentTypeMapping> createCustomContentTypeMapping(String formatString, String contentTypeString) {
+  private List<FormatContentTypeMapping> createCustomContentTypeMapping(final String formatString,
+      final String contentTypeString) {
     List<FormatContentTypeMapping> map = null;
 
     assertTrue(!(formatString == null ^ contentTypeString == null));
@@ -193,17 +191,17 @@ public class ContentNegotiatorTest {
 
     List<FormatContentTypeMapping> customMapping;
 
-    ProcessorStub(List<FormatContentTypeMapping> mapping) {
-      this.customMapping = mapping;
+    ProcessorStub(final List<FormatContentTypeMapping> mapping) {
+      customMapping = mapping;
     }
 
     @Override
-    public void init(OData odata, Edm edm) {}
+    public void init(final OData odata, final Edm edm) {}
 
     @Override
     public List<FormatContentTypeMapping> modifySupportedContentTypes(
-        List<FormatContentTypeMapping> supportedContentTypes,
-        Class<? extends Processor> processorClass) {
+        final List<FormatContentTypeMapping> supportedContentTypes,
+        final Class<? extends Processor> processorClass) {
       if (customMapping != null) {
         supportedContentTypes.addAll(customMapping);
       }
@@ -211,17 +209,20 @@ public class ContentNegotiatorTest {
     }
 
     @Override
-    public void readServiceDocument(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
+    public void readServiceDocument(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
+        final String format) {
       response.setHeader(HttpHeader.CONTENT_TYPE, format);
     }
 
     @Override
-    public void readCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
+    public void readCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
+        final String format) {
       response.setHeader(HttpHeader.CONTENT_TYPE, format);
     }
 
     @Override
-    public void readMetadata(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
+    public void readMetadata(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
+        final String format) {
       response.setHeader(HttpHeader.CONTENT_TYPE, format);
     }
   }

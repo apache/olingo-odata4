@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -20,23 +20,24 @@ package org.apache.olingo.fit.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+
 import org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.ODataLinkCollectionRequest;
 import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
+import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 /**
@@ -50,10 +51,10 @@ public class LinkTestITCase extends AbstractTestITCase {
 
   private ODataLinkCollection doRetrieveLinkURIs(final ODataFormat format, final String linkname) throws IOException {
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).
-            appendEntitySetSegment("Customer").appendKeySegment(-10);
+        appendEntitySetSegment("Customer").appendKeySegment(-10);
 
     final ODataLinkCollectionRequest req =
-            client.getRetrieveRequestFactory().getLinkCollectionRequest(uriBuilder.build(), linkname);
+        client.getRetrieveRequestFactory().getLinkCollectionRequest(uriBuilder.build(), linkname);
     req.setFormat(format);
 
     final ODataRetrieveResponse<ODataLinkCollection> res = req.execute();
@@ -93,13 +94,13 @@ public class LinkTestITCase extends AbstractTestITCase {
 
     // 2. create new link
     final ODataLink newLink = client.getObjectFactory().
-            newAssociationLink(URI.create(getServiceRoot() + "/Login('3')"));
+        newAssociationLink(URI.create(getServiceRoot() + "/Login('3')"));
 
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).
-            appendEntitySetSegment("Customer").appendKeySegment(-10).appendLinksSegment("Logins");
+        appendEntitySetSegment("Customer").appendKeySegment(-10).appendLinksSegment("Logins");
 
     final ODataLinkCreateRequest req =
-            client.getCUDRequestFactory().getLinkCreateRequest(uriBuilder.build(), newLink);
+        client.getCUDRequestFactory().getLinkCreateRequest(uriBuilder.build(), newLink);
     req.setFormat(format);
 
     final ODataLinkOperationResponse res = req.execute();
@@ -113,7 +114,7 @@ public class LinkTestITCase extends AbstractTestITCase {
     assertEquals(Collections.singletonList(newLink.getLink()), after);
 
     assertEquals(204, client.getCUDRequestFactory().getDeleteRequest(
-            client.newURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer").
+        client.newURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer").
             appendKeySegment(-10).appendLinksSegment("Logins('3')").build()).execute().getStatusCode());
   }
 
@@ -133,13 +134,13 @@ public class LinkTestITCase extends AbstractTestITCase {
 
     // 2. update the link
     ODataLink newLink = client.getObjectFactory().
-            newAssociationLink(URI.create(getServiceRoot() + "/CustomerInfo(12)"));
+        newAssociationLink(URI.create(getServiceRoot() + "/CustomerInfo(12)"));
 
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-10).appendLinksSegment("Info");
 
     ODataLinkUpdateRequest req =
-            client.getCUDRequestFactory().getLinkUpdateRequest(uriBuilder.build(), updateType, newLink);
+        client.getCUDRequestFactory().getLinkUpdateRequest(uriBuilder.build(), updateType, newLink);
     req.setFormat(format);
 
     ODataLinkOperationResponse res = req.execute();

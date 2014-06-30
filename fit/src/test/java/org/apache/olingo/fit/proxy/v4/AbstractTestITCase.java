@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
+
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
@@ -81,7 +82,7 @@ public abstract class AbstractTestITCase {
     containerFactory.getContext().detachAll();
   }
 
-  protected Customer readCustomer(final InMemoryEntities container, int id) {
+  protected Customer readCustomer(final InMemoryEntities container, final int id) {
     final Customer customer = container.getCustomers().get(id);
     assertNotNull(customer);
     assertEquals(id, customer.getPersonID(), 0);
@@ -90,8 +91,8 @@ public abstract class AbstractTestITCase {
   }
 
   protected void createAndDeleteOrder(
-          final InMemoryEntities container, final EntityContainerFactory<EdmEnabledODataClient> containerFactory) {
-    
+      final InMemoryEntities container, final EntityContainerFactory<EdmEnabledODataClient> containerFactory) {
+
     final Order order = container.getOrders().newOrder();
     order.setOrderID(105);
 
@@ -101,7 +102,7 @@ public abstract class AbstractTestITCase {
     order.setOrderDate(orderDate);
 
     order.setShelfLife(BigDecimal.TEN);
-    order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] {BigDecimal.TEN.negate(), BigDecimal.TEN}));
+    order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] { BigDecimal.TEN.negate(), BigDecimal.TEN }));
 
     container.flush();
 
@@ -110,7 +111,7 @@ public abstract class AbstractTestITCase {
     assertEquals(orderDate.getTimeInMillis(), actual.getOrderDate().getTimeInMillis());
     assertEquals(BigDecimal.TEN, actual.getShelfLife());
     assertEquals(2, actual.getOrderShelfLifes().size());
-    
+
     container.getOrders().delete(105);
     actual = container.getOrders().get(105);
     assertNull(actual);

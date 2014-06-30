@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -28,20 +28,20 @@ import java.util.regex.Pattern;
 
 /**
  * Internally used {@link AcceptType} for OData library.
- *
+ * 
  * See RFC 7231, chapter 5.3.2:
  * <pre>
  * Accept = #( media-range [ accept-params ] )
  * media-range = ( "&#42;/&#42;"
- *               / ( type "/" "&#42;" )
- *               / ( type "/" subtype )
- *               ) *( OWS ";" OWS parameter )
- * accept-params  = weight *( accept-ext )
+ * / ( type "/" "&#42;" )
+ * / ( type "/" subtype )
+ * ) *( OWS ";" OWS parameter )
+ * accept-params = weight *( accept-ext )
  * accept-ext = OWS ";" OWS token [ "=" ( token / quoted-string ) ]
  * weight = OWS ";" OWS "q=" qvalue
  * qvalue = ( "0" [ "." 0*3DIGIT ] ) / ( "1" [ "." 0*3("0") ] )
  * </pre>
- *
+ * 
  * Once created a {@link AcceptType} is <b>IMMUTABLE</b>.
  */
 public class AcceptType {
@@ -80,11 +80,11 @@ public class AcceptType {
       throw new IllegalArgumentException("Type parameter MUST NOT be null.");
     }
     List<String> typeSubtype = new ArrayList<String>();
-    this.parameters = createParameterMap();
+    parameters = createParameterMap();
     ContentType.parse(type, typeSubtype, parameters);
     this.type = typeSubtype.get(0);
-    this.subtype = typeSubtype.get(1);
-    if (MEDIA_TYPE_WILDCARD.equals(this.type) && !MEDIA_TYPE_WILDCARD.equals(this.subtype)) {
+    subtype = typeSubtype.get(1);
+    if (MEDIA_TYPE_WILDCARD.equals(this.type) && !MEDIA_TYPE_WILDCARD.equals(subtype)) {
       throw new IllegalArgumentException("Illegal combination of WILDCARD type with NONE WILDCARD subtype.");
     }
     final String q = parameters.get(PARAMETER_Q);
@@ -125,12 +125,12 @@ public class AcceptType {
    */
   public static List<AcceptType> create(final String format) {
     List<AcceptType> result = new ArrayList<AcceptType>();
-    
+
     String[] values = format.split(",");
     for (String value : values) {
       result.add(new AcceptType(value.trim()));
     }
-    
+
     return result;
   }
 
@@ -216,7 +216,7 @@ public class AcceptType {
 
   /**
    * Create a list of {@link AcceptType} based on given input strings (<code>contentTypes</code>).
-   *
+   * 
    * If one of the given strings can not be parsed an exception is thrown (hence no list is returned with the parseable
    * strings).
    * @param acceptTypeStrings a list of strings
@@ -237,7 +237,7 @@ public class AcceptType {
    * as defined in RFC 7231, chapters 3.1.1.1, 5.3.1, and 5.3.2.
    * @param toSort list which is sorted and hence re-arranged
    */
-  public static void sort(List<AcceptType> toSort) {
+  public static void sort(final List<AcceptType> toSort) {
     Collections.sort(toSort,
         new Comparator<AcceptType>() {
           @Override

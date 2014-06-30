@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -57,7 +57,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   private void withInlineEntry(final ODataFormat format) {
     final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(getServiceRoot()).
-            appendEntitySetSegment("Customer").appendKeySegment(-10).expand("Info");
+        appendEntitySetSegment("Customer").appendKeySegment(-10).expand("Info");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
@@ -85,9 +85,9 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
         assertEquals(2, properties.size());
 
         assertTrue(properties.get(0).getName().equals("CustomerInfoId")
-                || properties.get(1).getName().equals("CustomerInfoId"));
+            || properties.get(1).getName().equals("CustomerInfoId"));
         assertTrue(properties.get(0).getValue().toString().equals("11")
-                || properties.get(1).getValue().toString().equals("11"));
+            || properties.get(1).getValue().toString().equals("11"));
 
         found = true;
       }
@@ -109,7 +109,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   private void withInlineFeed(final ODataFormat format) {
     final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(getServiceRoot()).
-            appendEntitySetSegment("Customer").appendKeySegment(-10).expand("Orders");
+        appendEntitySetSegment("Customer").appendKeySegment(-10).expand("Orders");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
@@ -147,7 +147,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   private void rawRequest(final ODataFormat format) {
     final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(getServiceRoot()).
-            appendEntitySetSegment("Car").appendKeySegment(16);
+        appendEntitySetSegment("Car").appendKeySegment(16);
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
     req.setFormat(format.getContentType(client.getServiceVersion()).toContentTypeString());
@@ -179,7 +179,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     multiKey.put("MessageId", -10);
 
     final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(getServiceRoot()).
-            appendEntitySetSegment("Message").appendKeySegment(multiKey);
+        appendEntitySetSegment("Message").appendKeySegment(multiKey);
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
@@ -212,7 +212,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   private void checkForETag(final ODataFormat format) {
     final CommonURIBuilder<?> uriBuilder =
-            client.newURIBuilder(getServiceRoot()).appendEntitySetSegment("Product").appendKeySegment(-10);
+        client.newURIBuilder(getServiceRoot()).appendEntitySetSegment("Product").appendKeySegment(-10);
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
@@ -241,7 +241,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   private void geospatial(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).
-            appendEntitySetSegment("AllGeoTypesSet").appendKeySegment(-10);
+        appendEntitySetSegment("AllGeoTypesSet").appendKeySegment(-10);
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);

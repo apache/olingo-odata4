@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -113,9 +113,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/redirect/{name}({id})")
   public Response conformanceRedirect(
-      @Context UriInfo uriInfo,
-      @PathParam("name") String name,
-      @PathParam("id") String id) {
+      @Context final UriInfo uriInfo,
+      @PathParam("name") final String name,
+      @PathParam("id") final String id) {
     return Response.temporaryRedirect(
         URI.create(uriInfo.getRequestUri().toASCIIString().replace("/redirect", ""))).build();
   }
@@ -123,8 +123,8 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/$crossjoin({elements:.*})")
   public Response crossjoin(
-      @PathParam("elements") String elements,
-      @QueryParam("$filter") String filter) {
+      @PathParam("elements") final String elements,
+      @QueryParam("$filter") final String filter) {
 
     try {
       if (CROSSJOIN_PATTERN.matcher("$crossjoin(" + elements + ")?$filter=" + filter).matches()) {
@@ -142,8 +142,8 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/relatedEntitySelect/{path:.*}")
   public Response relatedEntitySelect(
-      @PathParam("path") String path,
-      @QueryParam("$expand") String expand) {
+      @PathParam("path") final String path,
+      @QueryParam("$expand") final String expand) {
 
     if (RELENTITY_SELECT_PATTERN.matcher(expand).matches()) {
       return xml.createResponse(null, null, Accept.JSON_FULLMETA);
@@ -356,17 +356,17 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/People/{type:.*}")
   public Response getPeople(
-      @Context UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
       @PathParam("type") final String type,
-      @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) String top,
-      @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) String skip,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
-      @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) String count,
-      @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) String filter,
-      @QueryParam("$search") @DefaultValue(StringUtils.EMPTY) String search,
-      @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) String orderby,
-      @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) String skiptoken) {
+      @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) final String top,
+      @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) final String skip,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+      @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) final String count,
+      @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) final String filter,
+      @QueryParam("$search") @DefaultValue(StringUtils.EMPTY) final String search,
+      @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) final String orderby,
+      @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) final String skiptoken) {
 
     return StringUtils.isBlank(filter) && StringUtils.isBlank(search)
         ? NumberUtils.isNumber(type)
@@ -379,9 +379,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Boss")
   public Response getSingletonBoss(
-      @Context UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
         uriInfo.getRequestUri().toASCIIString(), accept, "Boss", StringUtils.EMPTY, format, null, null, false);
@@ -390,9 +390,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Company")
   public Response getSingletonCompany(
-      @Context UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
         uriInfo.getRequestUri().toASCIIString(), accept, "Company", StringUtils.EMPTY, format, null, null, false);
@@ -403,11 +403,11 @@ public class V4Services extends AbstractServices {
   @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
   @Consumes({ MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
   public Response patchSingletonCompany(
-      @Context UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
-      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
-      @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) String ifMatch,
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
+      @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) final String ifMatch,
       final String changes) {
 
     return super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, "Company", StringUtils.EMPTY, changes);
@@ -416,11 +416,11 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Customers")
   public Response getCustomers(
-      @Context UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
-      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
-      @QueryParam("$deltatoken") @DefaultValue(StringUtils.EMPTY) String deltatoken) {
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
+      @QueryParam("$deltatoken") @DefaultValue(StringUtils.EMPTY) final String deltatoken) {
 
     try {
       final Accept acceptType;
@@ -466,8 +466,8 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Company/Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount{paren:[\\(\\)]*}")
   public Response functionGetEmployeesCount(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Accept acceptType;
@@ -497,9 +497,9 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/Company/Microsoft.Test.OData.Services.ODataWCFService.IncreaseRevenue{paren:[\\(\\)]*}")
   public Response actionIncreaseRevenue(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
       final String param) {
 
     try {
@@ -526,9 +526,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Products({entityId})/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails({param:.*})")
   public Response functionGetProductDetails(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @PathParam("entityId") String entityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @PathParam("entityId") final String entityId,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Accept acceptType;
@@ -571,9 +571,9 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/Products({entityId})/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight{paren:[\\(\\)]*}")
   public Response actionAddAccessRight(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
       final String param) {
 
     try {
@@ -610,11 +610,11 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/Customers(PersonID={personId})/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress{paren:[\\(\\)]*}")
   public Response actionResetAddress(
-      @Context UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @PathParam("personId") String personId,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @PathParam("personId") final String personId,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
       final String param) {
 
     try {
@@ -636,10 +636,10 @@ public class V4Services extends AbstractServices {
   @Path("/ProductDetails(ProductID={productId},ProductDetailID={productDetailId})"
       + "/Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct{paren:[\\(\\)]*}")
   public Response functionGetRelatedProduct(
-      @Context UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @PathParam("productId") String productId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @PathParam("productId") final String productId,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
         uriInfo.getRequestUri().toASCIIString(), accept, "Products", productId, format, null, null, false);
@@ -648,11 +648,11 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/Accounts({entityId})/Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI{paren:[\\(\\)]*}")
   public Response actionRefreshDefaultPI(
-      @Context UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
-      @PathParam("entityId") String entityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+      @PathParam("entityId") final String entityId,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
       final String param) {
 
     try {
@@ -671,9 +671,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Accounts({entityId})/Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI{paren:[\\(\\)]*}")
   public Response functionGetDefaultPI(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @PathParam("entityId") String entityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @PathParam("entityId") final String entityId,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getContainedEntity(accept, entityId, "MyPaymentInstruments", entityId + "901", format);
   }
@@ -681,9 +681,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Accounts({entityId})/Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo{paren:[\\(\\)]*}")
   public Response functionGetAccountInfo(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @PathParam("entityId") String entityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @PathParam("entityId") final String entityId,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getPath(accept, "Accounts", entityId, "AccountInfo", format);
   }
@@ -691,9 +691,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Accounts({entityId})/MyGiftCard/Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount({param:.*})")
   public Response functionGetActualAmount(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @PathParam("entityId") String entityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @PathParam("entityId") final String entityId,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Accept acceptType;
@@ -721,7 +721,7 @@ public class V4Services extends AbstractServices {
 
   /**
    * Retrieve entity reference sample.
-   *
+   * 
    * @param accept Accept header.
    * @param path path.
    * @param format format query option.
@@ -730,9 +730,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/{path:.*}/$ref")
   public Response getEntityReference(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @PathParam("path") String path,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @PathParam("path") final String path,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
@@ -802,11 +802,11 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Accounts({entityId})/{containedEntitySetName}({containedEntityId})")
   public Response getContainedEntity(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @PathParam("entityId") String entityId,
-      @PathParam("containedEntitySetName") String containedEntitySetName,
-      @PathParam("containedEntityId") String containedEntityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @PathParam("entityId") final String entityId,
+      @PathParam("containedEntitySetName") final String containedEntitySetName,
+      @PathParam("containedEntityId") final String containedEntityId,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Accept acceptType;
@@ -840,11 +840,11 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/Accounts({entityId})/{containedEntitySetName:.*}")
   public Response postContainedEntity(
-      @Context UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
-      @PathParam("entityId") String entityId,
-      @PathParam("containedEntitySetName") String containedEntitySetName,
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+      @PathParam("entityId") final String entityId,
+      @PathParam("containedEntitySetName") final String containedEntitySetName,
       final String entity) {
 
     try {
@@ -917,13 +917,13 @@ public class V4Services extends AbstractServices {
   @PATCH
   @Path("/{entitySetName}({entityId})/{containedEntitySetName}({containedEntityId})")
   public Response patchContainedEntity(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
-      @PathParam("entitySetName") String entitySetName,
-      @PathParam("entityId") String entityId,
-      @PathParam("containedEntitySetName") String containedEntitySetName,
-      @PathParam("containedEntityId") String containedEntityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+      @PathParam("entitySetName") final String entitySetName,
+      @PathParam("entityId") final String entityId,
+      @PathParam("containedEntitySetName") final String containedEntitySetName,
+      @PathParam("containedEntityId") final String containedEntityId,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
       final String changes) {
 
     try {
@@ -985,9 +985,9 @@ public class V4Services extends AbstractServices {
   @DELETE
   @Path("/Accounts({entityId})/{containedEntitySetName}({containedEntityId})")
   public Response removeContainedEntity(
-      @PathParam("entityId") String entityId,
-      @PathParam("containedEntitySetName") String containedEntitySetName,
-      @PathParam("containedEntityId") String containedEntityId) {
+      @PathParam("entityId") final String entityId,
+      @PathParam("containedEntitySetName") final String containedEntitySetName,
+      @PathParam("containedEntityId") final String containedEntityId) {
 
     try {
       // 1. Fetch the contained entity to be removed
@@ -1026,10 +1026,10 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Accounts({entityId})/{containedEntitySetName:.*}")
   public Response getContainedEntitySet(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @PathParam("entityId") String entityId,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @PathParam("entityId") final String entityId,
       @PathParam("containedEntitySetName") String containedEntitySetName,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     if ("MyGiftCard".equals(containedEntitySetName)) {
       return getContainedEntity(accept, entityId, containedEntitySetName, null, format);
@@ -1081,8 +1081,8 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/GetDefaultColor()")
   public Response functionGetDefaultColor(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Accept acceptType;
@@ -1112,9 +1112,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/GetPerson2({param:.*})")
   public Response functionGetPerson2(
-      @Context UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
         uriInfo.getRequestUri().toASCIIString(), accept, "Customers", "1", format, null, null, false);
@@ -1123,9 +1123,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/GetPerson({param:.*})")
   public Response functionGetPerson(
-      @Context UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
         uriInfo.getRequestUri().toASCIIString(), accept, "Customers", "1", format, null, null, false);
@@ -1134,9 +1134,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/GetAllProducts()")
   public Response functionGetAllProducts(
-      @Context UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntitySet(uriInfo, accept, "Products", null, null, format, null, null, null, null);
   }
@@ -1144,9 +1144,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/GetProductsByAccessLevel({param:.*})")
   public Response functionGetProductsByAccessLevel(
-      @Context UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Accept acceptType;
@@ -1177,9 +1177,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/GetBossEmails({param:.*})")
   public Response functionGetBossEmails(
-      @Context UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Accept acceptType;
@@ -1206,9 +1206,9 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/Discount()")
   public Response actionDiscount(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
       final String param) {
 
     try {
@@ -1246,9 +1246,9 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/ResetBossAddress()")
   public Response actionResetBossAddress(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
       final String param) {
 
     try {
@@ -1284,9 +1284,9 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/ResetBossEmail()")
   public Response actionResetBossEmail(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
       final String param) {
 
     try {
@@ -1317,9 +1317,9 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/Products({productId})/Categories/$ref")
   public Response createLinked(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
       final String entity) {
 
     return xml.createResponse(null, null, null, Status.NO_CONTENT);
@@ -1328,9 +1328,9 @@ public class V4Services extends AbstractServices {
   @DELETE
   @Path("/Products({productId})/Categories({categoryId})/$ref")
   public Response deleteLinked(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
       final String entity) {
 
     return xml.createResponse(null, null, null, Status.NO_CONTENT);

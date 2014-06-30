@@ -29,7 +29,7 @@ import org.junit.Test;
  * Tests for percent-encoding.
  * 
  */
-public class EncoderTest  {
+public class EncoderTest {
 
   private final static String RFC3986_UNRESERVED = "-._~"; // + ALPHA + DIGIT
   private final static String RFC3986_GEN_DELIMS = ":/?#[]@";

@@ -1,13 +1,13 @@
 Manifest-Version: 1.0
-Implementation-Vendor: The Apache Software Foundation
 Implementation-Title: olingo-server-test
 Implementation-Version: 0.1.0-SNAPSHOT
-Implementation-Vendor-Id: org.apache.olingo
 Built-By: d036242
-Build-Jdk: 1.7.0_45
 Specification-Vendor: The Apache Software Foundation
-Specification-Title: olingo-server-test
 Created-By: Apache Maven 3.0.5
+Implementation-Vendor: The Apache Software Foundation
+Implementation-Vendor-Id: org.apache.olingo
+Build-Jdk: 1.7.0_45
+Specification-Title: olingo-server-test
 Specification-Version: 0.1.0-SNAPSHOT
 Archiver-Version: Plexus Archiver
 

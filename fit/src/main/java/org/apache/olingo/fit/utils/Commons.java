@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -60,14 +60,14 @@ public abstract class Commons {
   protected static final Logger LOG = LoggerFactory.getLogger(Commons.class);
 
   private static final EnumMap<ODataServiceVersion, Metadata> METADATA =
-          new EnumMap<ODataServiceVersion, Metadata>(ODataServiceVersion.class);
+      new EnumMap<ODataServiceVersion, Metadata>(ODataServiceVersion.class);
 
   protected static final Pattern MULTIKEY_PATTERN = Pattern.compile("(.*=.*,?)+");
 
   protected static final Map<String, Integer> SEQUENCE = new HashMap<String, Integer>();
 
   protected static final Map<String, Pair<String, EdmPrimitiveTypeKind>> MEDIA_CONTENT =
-          new HashMap<String, Pair<String, EdmPrimitiveTypeKind>>();
+      new HashMap<String, Pair<String, EdmPrimitiveTypeKind>>();
 
   static {
     SEQUENCE.put("Customer", 1000);
@@ -89,12 +89,12 @@ public abstract class Commons {
     SEQUENCE.put("People", 1000);
 
     MEDIA_CONTENT.put("CustomerInfo",
-            new ImmutablePair<String, EdmPrimitiveTypeKind>("CustomerInfoId", EdmPrimitiveTypeKind.Int32));
+        new ImmutablePair<String, EdmPrimitiveTypeKind>("CustomerInfoId", EdmPrimitiveTypeKind.Int32));
     MEDIA_CONTENT.put("Car",
-            new ImmutablePair<String, EdmPrimitiveTypeKind>("VIN", EdmPrimitiveTypeKind.Int32));
+        new ImmutablePair<String, EdmPrimitiveTypeKind>("VIN", EdmPrimitiveTypeKind.Int32));
     MEDIA_CONTENT.put("Car/Photo", null);
     MEDIA_CONTENT.put("Advertisements",
-            new ImmutablePair<String, EdmPrimitiveTypeKind>("ID", EdmPrimitiveTypeKind.Guid));
+        new ImmutablePair<String, EdmPrimitiveTypeKind>("ID", EdmPrimitiveTypeKind.Guid));
   }
 
   public static Metadata getMetadata(final ODataServiceVersion version) {
@@ -119,7 +119,7 @@ public abstract class Commons {
   public static String getEntityBasePath(final String entitySetName, final String entityKey) {
     // expected singleton in case of null key
     return entitySetName + File.separatorChar
-            + (StringUtils.isNotBlank(entityKey) ? getEntityKey(entityKey) + File.separatorChar : "");
+        + (StringUtils.isNotBlank(entityKey) ? getEntityKey(entityKey) + File.separatorChar : "");
   }
 
   public static String getLinksURI(final String entitySetName, final String entityId, final String linkName)
@@ -134,12 +134,12 @@ public abstract class Commons {
   }
 
   public static String getLinksPath(
-          final ODataServiceVersion version, final String basePath, final String linkName, final Accept accept)
-          throws IOException {
+      final ODataServiceVersion version, final String basePath, final String linkName, final Accept accept)
+      throws IOException {
     try {
       return FSManager.instance(version)
-              .getAbsolutePath(basePath + Constants.get(version, ConstantKey.LINKS_FILE_PATH)
-                      + File.separatorChar + linkName, accept);
+          .getAbsolutePath(basePath + Constants.get(version, ConstantKey.LINKS_FILE_PATH)
+              + File.separatorChar + linkName, accept);
     } catch (Exception e) {
       throw new IOException(e);
     }
@@ -163,7 +163,7 @@ public abstract class Commons {
   }
 
   public static InputStream getLinksAsATOM(final ODataServiceVersion version,
-          final Map.Entry<String, Collection<String>> link) throws IOException {
+      final Map.Entry<String, Collection<String>> link) throws IOException {
 
     final StringBuilder builder = new StringBuilder();
     builder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
@@ -185,13 +185,13 @@ public abstract class Commons {
   }
 
   public static InputStream getLinksAsJSON(final ODataServiceVersion version,
-          final String entitySetName, final Map.Entry<String, Collection<String>> link)
-          throws IOException {
+      final String entitySetName, final Map.Entry<String, Collection<String>> link)
+      throws IOException {
 
     final ObjectNode links = new ObjectNode(JsonNodeFactory.instance);
     links.put(
-            Constants.get(version, ConstantKey.JSON_ODATAMETADATA_NAME),
-            Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + entitySetName + "/$links/" + link.getKey());
+        Constants.get(version, ConstantKey.JSON_ODATAMETADATA_NAME),
+        Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + entitySetName + "/$links/" + link.getKey());
 
     final ArrayNode uris = new ArrayNode(JsonNodeFactory.instance);
 
@@ -222,9 +222,9 @@ public abstract class Commons {
       IOUtils.closeQuietly(is);
 
       final ObjectMapper mapper = new ObjectMapper(
-              new JsonFactory().configure(JsonParser.Feature.ALLOW_NUMERIC_LEADING_ZEROS, true));
+          new JsonFactory().configure(JsonParser.Feature.ALLOW_NUMERIC_LEADING_ZEROS, true));
       final JsonNode node =
-              changeFormat((ObjectNode) mapper.readTree(new ByteArrayInputStream(bos.toByteArray())), version, target);
+          changeFormat((ObjectNode) mapper.readTree(new ByteArrayInputStream(bos.toByteArray())), version, target);
 
       return IOUtils.toInputStream(node.toString(), Constants.ENCODING);
     } catch (Exception e) {
@@ -239,40 +239,40 @@ public abstract class Commons {
   public static JsonNode changeFormat(final ObjectNode node, final ODataServiceVersion version, final Accept target) {
     final List<String> toBeRemoved = new ArrayList<String>();
     switch (target) {
-      case JSON_NOMETA:
-        // nometa + minimal
-        toBeRemoved.add(Constants.get(version, ConstantKey.JSON_ODATAMETADATA_NAME));
+    case JSON_NOMETA:
+      // nometa + minimal
+      toBeRemoved.add(Constants.get(version, ConstantKey.JSON_ODATAMETADATA_NAME));
 
-      case JSON:
-        // minimal
-        toBeRemoved.add(Constants.get(version, ConstantKey.JSON_EDITLINK_NAME));
-        toBeRemoved.add(Constants.get(version, ConstantKey.JSON_ID_NAME));
-        toBeRemoved.add(Constants.get(version, ConstantKey.JSON_TYPE_NAME));
+    case JSON:
+      // minimal
+      toBeRemoved.add(Constants.get(version, ConstantKey.JSON_EDITLINK_NAME));
+      toBeRemoved.add(Constants.get(version, ConstantKey.JSON_ID_NAME));
+      toBeRemoved.add(Constants.get(version, ConstantKey.JSON_TYPE_NAME));
 
-        final Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
-        while (fields.hasNext()) {
-          final Map.Entry<String, JsonNode> field = fields.next();
-          if (field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_MEDIA_SUFFIX))
-                  || field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX))
-                  || field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_TYPE_SUFFIX))) {
-            toBeRemoved.add(field.getKey());
-          } else if (field.getValue().isObject()) {
-            changeFormat((ObjectNode) field.getValue(), version, target);
-          } else if (field.getValue().isArray()) {
-            for (final Iterator<JsonNode> subItor = field.getValue().elements(); subItor.hasNext();) {
-              final JsonNode subNode = subItor.next();
-              if (subNode.isObject()) {
-                changeFormat((ObjectNode) subNode, version, target);
-              }
+      final Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
+      while (fields.hasNext()) {
+        final Map.Entry<String, JsonNode> field = fields.next();
+        if (field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_MEDIA_SUFFIX))
+            || field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX))
+            || field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_TYPE_SUFFIX))) {
+          toBeRemoved.add(field.getKey());
+        } else if (field.getValue().isObject()) {
+          changeFormat((ObjectNode) field.getValue(), version, target);
+        } else if (field.getValue().isArray()) {
+          for (final Iterator<JsonNode> subItor = field.getValue().elements(); subItor.hasNext();) {
+            final JsonNode subNode = subItor.next();
+            if (subNode.isObject()) {
+              changeFormat((ObjectNode) subNode, version, target);
             }
           }
         }
-      case JSON_FULLMETA:
-        //ignore: no changes
-        break;
+      }
+    case JSON_FULLMETA:
+      // ignore: no changes
+      break;
 
-      default:
-        throw new UnsupportedOperationException(target.name());
+    default:
+      throw new UnsupportedOperationException(target.name());
     }
     node.remove(toBeRemoved);
 
