@@ -81,7 +81,7 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
-  public InputStream entitySet(final EdmEntitySet edmEntitySet, final EntitySet entitySet, 
+  public InputStream entitySet(final EdmEntitySet edmEntitySet, final EntitySet entitySet,
       final ContextURL contextURL) {
     throw new ODataRuntimeException("Entityset serialization not implemented for XML format");
   }

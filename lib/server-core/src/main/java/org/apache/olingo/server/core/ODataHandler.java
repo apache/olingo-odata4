@@ -25,7 +25,6 @@ import java.util.Map;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
@@ -76,13 +75,15 @@ public class ODataHandler {
       UriValidator validator = new UriValidator();
       validator.validate(uriInfo, request.getMethod());
 
+      ContentNegotiator contentNegotiator = new ContentNegotiator();
+
       String requestedContentType = null;
       switch (uriInfo.getKind()) {
       case metadata:
         MetadataProcessor mp = selectProcessor(MetadataProcessor.class);
 
-        /* TODO content negotiation */
-        requestedContentType = ContentType.APPLICATION_XML.toContentTypeString();
+        requestedContentType =
+            contentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, mp, MetadataProcessor.class);
 
         mp.readMetadata(request, response, uriInfo, requestedContentType);
         break;
@@ -93,8 +94,9 @@ public class ODataHandler {
         } else {
           ServiceDocumentProcessor sdp = selectProcessor(ServiceDocumentProcessor.class);
 
-          /* TODO content negotiation */
-          requestedContentType = ContentType.APPLICATION_JSON.toContentTypeString();
+          requestedContentType =
+              contentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, sdp,
+                  ServiceDocumentProcessor.class);
 
           sdp.readServiceDocument(request, response, uriInfo, requestedContentType);
         }
@@ -118,14 +120,16 @@ public class ODataHandler {
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
     String requestedContentType = null;
+    ContentNegotiator contentNegotiator = new ContentNegotiator();
+
     switch (lastPathSegment.getKind()) {
     case entitySet:
       if (((UriResourcePartTyped) lastPathSegment).isCollection()) {
         if (request.getMethod().equals(HttpMethod.GET)) {
           CollectionProcessor cp = selectProcessor(CollectionProcessor.class);
 
-          /* TODO content negotiation */
-          requestedContentType = ContentType.APPLICATION_JSON.toContentTypeString();
+          requestedContentType =
+              contentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp, CollectionProcessor.class);
 
           cp.readCollection(request, response, uriInfo, requestedContentType);
         } else {
@@ -135,8 +139,8 @@ public class ODataHandler {
         if (request.getMethod().equals(HttpMethod.GET)) {
           EntityProcessor ep = selectProcessor(EntityProcessor.class);
 
-          /* TODO content negotiation */
-          requestedContentType = ContentType.APPLICATION_JSON.toContentTypeString();
+          requestedContentType =
+              contentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
 
           ep.readEntity(request, response, uriInfo, requestedContentType);
         } else {
@@ -149,8 +153,8 @@ public class ODataHandler {
         if (request.getMethod().equals(HttpMethod.GET)) {
           CollectionProcessor cp = selectProcessor(CollectionProcessor.class);
 
-          /* TODO content negotiation */
-          requestedContentType = ContentType.APPLICATION_JSON.toContentTypeString();
+          requestedContentType =
+              contentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp, CollectionProcessor.class);
 
           cp.readCollection(request, response, uriInfo, requestedContentType);
         } else {
@@ -160,8 +164,8 @@ public class ODataHandler {
         if (request.getMethod().equals(HttpMethod.GET)) {
           EntityProcessor ep = selectProcessor(EntityProcessor.class);
 
-          /* TODO content negotiation */
-          requestedContentType = ContentType.APPLICATION_JSON.toContentTypeString();
+          requestedContentType =
+              contentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
 
           ep.readEntity(request, response, uriInfo, requestedContentType);
         } else {
