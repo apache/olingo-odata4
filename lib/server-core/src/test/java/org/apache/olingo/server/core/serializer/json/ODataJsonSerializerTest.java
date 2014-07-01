@@ -18,15 +18,10 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
-import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.*;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
@@ -36,17 +31,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,11 +54,14 @@ public class ODataJsonSerializerTest {
 
   public static class TecComplexProperty implements TechProperty {
 
-    final String name;
     final String typeName;
-    public TecComplexProperty(String typeName, String name) {
-      this.name = name;
+    final String name;
+    final List<EdmProperty> properties;
+
+    public TecComplexProperty(String typeName, String name, List<EdmProperty> propertyNames) {
       this.typeName = typeName;
+      this.name = name;
+      this.properties = new ArrayList<EdmProperty>(propertyNames);
     }
     @Override
     public String getName() {
@@ -82,6 +74,9 @@ public class ODataJsonSerializerTest {
     @Override
     public EdmPrimitiveTypeKind getType() {
       return null;
+    }
+    public List<EdmProperty> getProperties() {
+      return properties;
     }
   }
 
@@ -181,7 +176,7 @@ public class ODataJsonSerializerTest {
     Mockito.when(edmETCompAllPrim.getName()).thenReturn(ETCompAllPrim);
     List<EdmProperty> capProperties = Arrays.asList(
         mockProperty(TecSimpleProperty.Int16, false),
-        mockProperty(new TecComplexProperty(CTAllPrim_Type, CTAllPrim), false, true)
+        mockProperty(new TecComplexProperty(CTAllPrim_Type, CTAllPrim, properties), false)
     );
     List<String> capPropertyNames = new ArrayList<String>();
 
@@ -193,22 +188,27 @@ public class ODataJsonSerializerTest {
   }
 
   private EdmProperty mockProperty(TechProperty name) {
-    return mockProperty(name, true, false);
+    return mockProperty(name, true);
   }
 
-  private EdmProperty mockProperty(TechProperty name, boolean nullable) {
-    return mockProperty(name, nullable, false);
-  }
-
-  private EdmProperty mockProperty(TechProperty tecProperty, boolean nullable, boolean complex) {
+  private EdmProperty mockProperty(TechProperty tecProperty, boolean nullable) {
     EdmProperty edmElement = Mockito.mock(EdmProperty.class);
     Mockito.when(edmElement.getName()).thenReturn(tecProperty.getName());
-    if(complex) {
+    if (tecProperty instanceof TecComplexProperty) {
+      TecComplexProperty complexProperty = (TecComplexProperty) tecProperty;
       Mockito.when(edmElement.isPrimitive()).thenReturn(false);
-      EdmType type = Mockito.mock(EdmType.class);
+      EdmComplexType type = Mockito.mock(EdmComplexType.class);
       Mockito.when(type.getKind()).thenReturn(EdmTypeKind.COMPLEX);
       Mockito.when(type.getName()).thenReturn(tecProperty.getTypeName());
       Mockito.when(edmElement.getType()).thenReturn(type);
+
+      List<String> propertyNames = new ArrayList<String>();
+      List<EdmProperty> properties = complexProperty.getProperties();
+      for (EdmProperty property : properties) {
+        propertyNames.add(property.getName());
+        Mockito.when(type.getProperty(property.getName())).thenReturn(property);
+      }
+      Mockito.when(type.getPropertyNames()).thenReturn(propertyNames);
     } else {
       Mockito.when(edmElement.isPrimitive()).thenReturn(true);
       // TODO: set default values
@@ -287,19 +287,22 @@ public class ODataJsonSerializerTest {
     Assert.assertEquals(100, count);
   }
 
-  @Test(expected = ODataRuntimeException.class)
+  @Test
   public void entityETCompAllPrim() throws Exception {
     Entity complexCtAllPrim = createETAllPrim();
 
     Entity entity = new EntityImpl();
     entity.addProperty(new PropertyImpl("Edm.Int16", TecSimpleProperty.Int16.name, ValueType.PRIMITIVE, 4711));
-    entity.addProperty(createProperty(new TecComplexProperty(CTAllPrim_Type, CTAllPrim),
-        ValueType.COMPLEX, complexCtAllPrim));
+    entity.addProperty(createProperty(
+            new TecComplexProperty(CTAllPrim_Type, CTAllPrim, Collections.<EdmProperty>emptyList()),
+            ValueType.COMPLEX, complexCtAllPrim.getProperties()));
 
     InputStream result = serializer.entity(edmETCompAllPrim, entity, contextUrl);
     String resultString = streamToString(result);
     String expectedResult = "{" +
         "\"@odata.context\":\"http://localhost:8080/test.svc\"," +
+        "\"PropertyInt16\":4711," +
+        "\"CTAllPrim\":{" +
         "\"PropertyInt16\":4711," +
         "\"PropertyString\":\"StringValue\"," +
         "\"PropertyBoolean\":true," +
@@ -316,7 +319,7 @@ public class ODataJsonSerializerTest {
         "\"PropertyDuration\":\"P16148383DT8H0S\"," +
         "\"PropertyGuid\":\"0000aaaa-00bb-00cc-00dd-000000ffffff\"," +
         "\"PropertyTimeOfDay\":\"10:12:00\"" +
-        "}";
+        "}}";
     Assert.assertEquals(expectedResult, resultString);
   }
 

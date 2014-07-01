@@ -18,36 +18,24 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.util.List;
-
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.data.ContextURL;
-import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.data.LinkedComplexValue;
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmComplexType;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.data.*;
+import org.apache.olingo.commons.api.edm.*;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.util.List;
 
 public class ODataJsonSerializer implements ODataSerializer {
 
@@ -148,42 +136,54 @@ public class ODataJsonSerializer implements ODataSerializer {
       }
     } else {
       if (edmProperty.isPrimitive()) {
-        if (property.isPrimitive()) {
-          writePrimitiveValue(edmProperty, property.asPrimitive(), json);
-        } else if (property.isGeospatial()) {
-          throw new ODataRuntimeException("Property type not yet supported!");
-        } else if (property.isEnum()) {
-          json.writeString(property.asEnum().toString());
-        } else {
-          throw new ODataRuntimeException("Inconsistent property type!");
-        }
+        handlePrimitive(edmProperty, property, json);
       } else if (edmProperty.isCollection()) {
-        json.writeStartArray();
-        for (Object value : property.asCollection()) {
-          switch (property.getValueType()) {
-          case COLLECTION_PRIMITIVE:
-            writePrimitiveValue(edmProperty, value, json);
-            break;
-          case COLLECTION_GEOSPATIAL:
-            throw new ODataRuntimeException("Property type not yet supported!");
-          case COLLECTION_ENUM:
-            json.writeString(value.toString());
-            break;
-          case COLLECTION_LINKED_COMPLEX:
-            writeLinkedComplexValue(edmProperty, (LinkedComplexValue) value, json);
-            break;
-          default:
-            throw new ODataRuntimeException("Property type not yet supported!");
-          }
-        }
-        json.writeEndArray();
+        handleCollection(edmProperty, property, json);
       } else {
         if (property.isLinkedComplex()) {
-          writeLinkedComplexValue(edmProperty, property.asLinkedComplex(), json);
+          writeComplexValue(edmProperty, property.asLinkedComplex().getValue(), json);
+        } else if(property.isComplex()) {
+          writeComplexValue(edmProperty, property.asComplex(), json);
         } else {
           throw new ODataRuntimeException("Property type not yet supported!");
         }
       }
+    }
+  }
+
+  private void handleCollection(EdmProperty edmProperty, Property property, JsonGenerator json)
+          throws IOException, EdmPrimitiveTypeException {
+    json.writeStartArray();
+    for (Object value : property.asCollection()) {
+      switch (property.getValueType()) {
+      case COLLECTION_PRIMITIVE:
+        writePrimitiveValue(edmProperty, value, json);
+        break;
+      case COLLECTION_GEOSPATIAL:
+        throw new ODataRuntimeException("Property type not yet supported!");
+      case COLLECTION_ENUM:
+        json.writeString(value.toString());
+        break;
+      case COLLECTION_LINKED_COMPLEX:
+        writeComplexValue(edmProperty, ((LinkedComplexValue) value).getValue(), json);
+        break;
+      default:
+        throw new ODataRuntimeException("Property type not yet supported!");
+      }
+    }
+    json.writeEndArray();
+  }
+
+  private void handlePrimitive(EdmProperty edmProperty, Property property, JsonGenerator json)
+          throws EdmPrimitiveTypeException, IOException {
+    if (property.isPrimitive()) {
+      writePrimitiveValue(edmProperty, property.asPrimitive(), json);
+    } else if (property.isGeospatial()) {
+      throw new ODataRuntimeException("Property type not yet supported!");
+    } else if (property.isEnum()) {
+      json.writeString(property.asEnum().toString());
+    } else {
+      throw new ODataRuntimeException("Inconsistent property type!");
     }
   }
 
@@ -209,10 +209,9 @@ public class ODataJsonSerializer implements ODataSerializer {
     }
   }
 
-  private void writeLinkedComplexValue(final EdmProperty edmProperty, final LinkedComplexValue linkedComplexValue,
-      JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
+  private void writeComplexValue(final EdmProperty edmProperty, final List<Property> properties,
+                                       JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
     final EdmComplexType type = (EdmComplexType) edmProperty.getType();
-    final List<Property> properties = linkedComplexValue.getValue();
     json.writeStartObject();
     for (final String propertyName : type.getPropertyNames()) {
       final Property property = findProperty(propertyName, properties);

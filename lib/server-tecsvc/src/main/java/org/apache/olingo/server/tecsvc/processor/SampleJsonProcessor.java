@@ -19,6 +19,8 @@
 package org.apache.olingo.server.tecsvc.processor;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.olingo.commons.api.data.ContextURL;
@@ -27,7 +29,10 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -41,6 +46,7 @@ import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.uri.UriResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,16 +66,13 @@ public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor 
     public void readEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
       long time = System.nanoTime();
 
-      EntitySet entitySet = createEntitySet();
-
       LOG.info((System.nanoTime() - time) / 1000 + " microseconds");
       time = System.nanoTime();
       ODataSerializer serializer = odata.createSerializer(ODataFormat.JSON);
-      response.setContent(serializer.entitySet(
-              edm.getEntityContainer(new FullQualifiedName("com.sap.odata.test1", "Container"))
-                      .getEntitySet("ESAllPrim"),
-              entitySet,
-              ContextURL.getInstance(URI.create("dummyContextURL"))));
+      EdmEntitySet edmEntitySet = getEntitySet(uriInfo);
+      EntitySet entitySet = createEntitySet(edmEntitySet.getEntityType());
+      response.setContent(serializer.entitySet(edmEntitySet, entitySet,
+              getContextUrl(request, edmEntitySet.getEntityType())));
       LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -79,23 +82,45 @@ public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor 
     @Override
     public void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
       long time = System.nanoTime();
-      Entity entity = createEntity();
 
       LOG.info((System.nanoTime() - time) / 1000 + " microseconds");
       time = System.nanoTime();
       ODataSerializer serializer = odata.createSerializer(ODataFormat.JSON);
-      response.setContent(serializer.entity(
-              edm.getEntityContainer(new FullQualifiedName("com.sap.odata.test1", "Container"))
-                      .getEntitySet("ESAllPrim").getEntityType(),
-              entity,
-              ContextURL.getInstance(URI.create("dummyContextURL"))));
+      EdmEntityType entityType = getEntityType(uriInfo);
+      Entity entity = createEntity(entityType);
+
+      response.setContent(serializer.entity(entityType, entity,
+              getContextUrl(request, entityType)));
       LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
     }
 
-    protected Entity createEntity() {
+  private ContextURL getContextUrl(ODataRequest request, EdmEntityType entityType) {
+    return ContextURL.getInstance(URI.create(request.getRawBaseUri() + "/" + entityType.getName()));
+  }
+
+  public EdmEntityType getEntityType(UriInfo uriInfo) {
+    return getEntitySet(uriInfo).getEntityType();
+  }
+
+  public EdmEntitySet getEntitySet(UriInfo uriInfo) {
+      List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
+      if(resourcePaths.isEmpty()) {
+        throw new RuntimeException("Invalid resource path.");
+      }
+      String entitySetName = resourcePaths.get(resourcePaths.size()-1).toString();
+      return edm.getEntityContainer(new FullQualifiedName("com.sap.odata.test1", "Container"))
+              .getEntitySet(entitySetName);
+    }
+
+    protected Entity createEntity(EdmEntityType entityType) {
+      boolean complex = (entityType.getName().contains("Comp"));
+      return createEntity(complex);
+    }
+
+    protected Entity createEntity(boolean complex) {
       Entity entity = new EntityImpl();
       Property property = new PropertyImpl();
       property.setName("PropertyString");
@@ -109,15 +134,40 @@ public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor 
       propertyGuid.setName("PropertyGuid");
       propertyGuid.setValue(ValueType.PRIMITIVE, UUID.randomUUID());
       entity.getProperties().add(propertyGuid);
+
+      if(complex) {
+        entity.addProperty(createComplexProperty());
+      }
+
       return entity;
     }
 
-    protected EntitySet createEntitySet() {
+  protected Property createComplexProperty() {
+    List<Property> properties = new ArrayList<Property>();
+    Property property = new PropertyImpl();
+    property.setName("PropertyString");
+    property.setValue(ValueType.PRIMITIVE, "dummyValue");
+    properties.add(property);
+    Property propertyInt = new PropertyImpl();
+    propertyInt.setName("PropertyInt16");
+    propertyInt.setValue(ValueType.PRIMITIVE, 42);
+    properties.add(propertyInt);
+    Property propertyGuid = new PropertyImpl();
+    propertyGuid.setName("PropertyGuid");
+    propertyGuid.setValue(ValueType.PRIMITIVE, UUID.randomUUID());
+    properties.add(propertyGuid);
+
+    return new PropertyImpl("com.sap.odata.test1.ETCompAllPrim", "PropertyComplex", ValueType.COMPLEX,
+            properties);
+  }
+
+
+  protected EntitySet createEntitySet(EdmEntityType edmEntityType) {
       EntitySet entitySet = new EntitySetImpl();
       entitySet.setCount(4242);
       entitySet.setNext(URI.create("nextLinkURI"));
       for (int i = 0; i < 1000; i++) {
-        entitySet.getEntities().add(createEntity());
+        entitySet.getEntities().add(createEntity(edmEntityType));
       }
       return entitySet;
     }
