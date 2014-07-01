@@ -19,9 +19,11 @@
 package org.apache.olingo.commons.api.format;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class AcceptTypeTest {
@@ -42,5 +44,17 @@ public class AcceptTypeTest {
 
     assertEquals(1, atl.size());
     assertEquals("a/a", atl.get(0).toString());
+  }
+  
+  @Test
+  @Ignore("buggy and not yet fixed")
+  public void testWildcard() {
+    List<AcceptType> atl = AcceptType.create("*; q=.2");
+    
+    assertNotNull(atl);
+    assertEquals(1, atl.size());
+    assertEquals("", atl.get(0).getType());
+    assertEquals("", atl.get(0).getSubtype());
+    assertEquals(".2", atl.get(0).getParameters().get("q"));
   }
 }

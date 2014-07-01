@@ -31,7 +31,7 @@ import org.junit.Test;
 
 public class BasicITCase {
 
-  private static final String BASE_URI = "http://localhost:9080/tecsvc/odata.svc";
+  private static final String REF_SERVICE = TecSvcConst.BASE_URL;
 
   private ODataClient odata;
 
@@ -42,7 +42,9 @@ public class BasicITCase {
 
   @Test
   public void readServiceDocument() {
-    ODataServiceDocumentRequest request = odata.getRetrieveRequestFactory().getServiceDocumentRequest(BASE_URI + "/");
+    ODataServiceDocumentRequest request =
+        odata.getRetrieveRequestFactory().getServiceDocumentRequest(REF_SERVICE);
+    request.setAccept("application/json;odata.metadata=minimal");
     assertNotNull(request);
     ODataServiceDocument serviceDocument = request.execute().getBody();
     assertNotNull(serviceDocument);
@@ -50,7 +52,7 @@ public class BasicITCase {
 
   @Test
   public void readMetadata() {
-    EdmMetadataRequest request = odata.getRetrieveRequestFactory().getMetadataRequest(BASE_URI + "/$metadata");
+    EdmMetadataRequest request = odata.getRetrieveRequestFactory().getMetadataRequest(REF_SERVICE);
     assertNotNull(request);
     Edm edm = request.execute().getBody();
     assertNotNull(edm);

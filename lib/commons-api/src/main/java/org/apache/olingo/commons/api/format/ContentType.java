@@ -341,7 +341,7 @@ public class ContentType {
     }
     return compatible.booleanValue();
   }
-
+  
   /**
    * Check equal without parameters.
    * It is possible that no decision about <code>equal/none equal</code> can be determined a <code>NULL</code> is

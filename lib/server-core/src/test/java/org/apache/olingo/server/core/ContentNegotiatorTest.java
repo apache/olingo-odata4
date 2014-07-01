@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
@@ -49,6 +50,8 @@ import org.slf4j.LoggerFactory;
 
 public class ContentNegotiatorTest {
 
+  static final private String ACCEPT_CASE_MIN = "application/json;odata.metadata=minimal";
+  static final private String ACCEPT_CASE_FULL = "application/json;odata.metadata=full";
   static final private String ACCEPT_CASE_JSON = "application/json;q=0.2";
   static final private String ACCEPT_CASE_XML = "application/xml";
   static final private String ACCEPT_CASE_WILDCARD1 = "*/*";
@@ -67,8 +70,10 @@ public class ContentNegotiatorTest {
       { "application/json",     null,             ACCEPT_CASE_WILDCARD1, null         ,null             },
       { "application/json",     null,             ACCEPT_CASE_WILDCARD2, null         ,null             },
       { "a/a",                  "a",              null,                  "a, b"       ,"a/a,b/b"        },
-      { " a/a ",                " a ",            null,                  " a , b"     ," a/a , b/b "    },
-      { "a;x=y",                "a",              ACCEPT_CASE_WILDCARD1, "a"          ,"a;x=y"          },
+      { "a/a",                  " a ",            null,                  " a , b"     ," a/a , b/b "    },
+      { "a/a;x=y",              "a",              ACCEPT_CASE_WILDCARD1, "a"          ,"a/a;x=y"        },
+      { "application/json",     "json",           ACCEPT_CASE_MIN,       null         ,null             },
+      { ACCEPT_CASE_FULL,       null,             ACCEPT_CASE_FULL,      "dummy"     ,ACCEPT_CASE_FULL  }, 
   };                                                                                          
 
   String[][] casesMetadata = {                                                                 
@@ -81,8 +86,8 @@ public class ContentNegotiatorTest {
       { "application/xml",      null,             ACCEPT_CASE_WILDCARD1, null         ,null             },
       { "application/xml",      null,             ACCEPT_CASE_WILDCARD2, null         ,null             },
       { "a/a",                  "a",              null,                  "a, b"       ,"a/a,b/b"        },
-      { " a/a ",                " a ",            null,                  " a , b"     ," a/a , b/b "    },
-      { "a;x=y",                "a",              ACCEPT_CASE_WILDCARD1, "a"          ,"a;x=y"          },
+      { "a/a",                  " a ",            null,                  " a , b"     ," a/a , b/b "    },
+      { "a/a;x=y",              "a",              ACCEPT_CASE_WILDCARD1, "a"          ,"a/a;x=y"        },
   };
 
   String[][] casesFail = {                                                                 
@@ -90,6 +95,7 @@ public class ContentNegotiatorTest {
       { "application/xml",      "xxx",            null,                  null         ,null             },
       { "a/a",                  "a",              null,                  "b"          ,"b/b"            },
       { "application/xml",      null,             ACCEPT_CASE_JSON,      null         ,null             },
+      { "application/json",     null,             ACCEPT_CASE_FULL,      null         ,null             }, // not jet supported
   };
   //CHECKSTYLE:ON
   //@formatter:on
@@ -98,7 +104,7 @@ public class ContentNegotiatorTest {
 
   @Test
   public void testServiceDocumentSingleCase() {
-    String[] useCase = { " a/a ", " a ", null, " a , b", " a/a , b/b " };
+    String[] useCase = { ACCEPT_CASE_FULL, null, ACCEPT_CASE_FULL, "dummy", ACCEPT_CASE_FULL };
 
     testContentNegotiation(useCase, ServiceDocumentProcessor.class);
   }
@@ -156,10 +162,10 @@ public class ContentNegotiatorTest {
       request.addHeader(HttpHeader.ACCEPT, Arrays.asList(useCase[2]));
     }
 
-    String requestedContentType = ContentNegotiator.doContentNegotiation(fo, request, p, processorClass);
+    ContentType requestedContentType = ContentNegotiator.doContentNegotiation(fo, request, p, processorClass);
 
     assertNotNull(requestedContentType);
-    assertEquals(useCase[0], requestedContentType);
+    assertEquals(useCase[0], requestedContentType.toContentTypeString());
   }
 
   private List<FormatContentTypeMapping> createCustomContentTypeMapping(final String formatString,

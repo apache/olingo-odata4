@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.format.AcceptType;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.processor.CustomContentTypeSupport;
@@ -39,7 +38,7 @@ public class ContentNegotiator {
   private final static Logger LOG = LoggerFactory.getLogger(ContentNegotiator.class);
 
   private ContentNegotiator() {}
-  
+
   private static List<FormatContentTypeMapping>
       getDefaultSupportedContentTypes(final Class<? extends Processor> processorClass) {
     List<FormatContentTypeMapping> defaults = new ArrayList<FormatContentTypeMapping>();
@@ -48,6 +47,8 @@ public class ContentNegotiator {
       defaults.add(new FormatContentTypeMapping("xml", ContentType.APPLICATION_XML.toContentTypeString()));
     } else {
       defaults.add(new FormatContentTypeMapping("json", ContentType.APPLICATION_JSON.toContentTypeString()));
+      defaults.add(new FormatContentTypeMapping("json", ContentType.APPLICATION_JSON.toContentTypeString()
+          + ";odata.metadata=minimal"));
     }
 
     return defaults;
@@ -66,9 +67,9 @@ public class ContentNegotiator {
     return supportedContentTypes;
   }
 
-  public static String doContentNegotiation(final FormatOption formatOption, final ODataRequest request,
+  public static ContentType doContentNegotiation(final FormatOption formatOption, final ODataRequest request,
       final Processor processor, final Class<? extends Processor> processorClass) {
-    String requestedContentType = null;
+    ContentType requestedContentType = null;
 
     List<FormatContentTypeMapping> supportedContentTypes = getSupportedContentTypes(processor, processorClass);
 
@@ -79,17 +80,17 @@ public class ContentNegotiator {
     if (formatOption != null) {
 
       if ("json".equalsIgnoreCase(formatOption.getText().trim())) {
-        requestedContentType = ContentType.APPLICATION_JSON.toContentTypeString();
+        requestedContentType = ContentType.APPLICATION_JSON;
         for (FormatContentTypeMapping entry : supportedContentTypes) {
-          if (requestedContentType.equalsIgnoreCase(entry.getContentType().trim())) {
+          if (requestedContentType.isCompatible(ContentType.create(entry.getContentType().trim()))) {
             supported = true;
             break;
           }
         }
       } else if ("xml".equalsIgnoreCase(formatOption.getText().trim())) {
-        requestedContentType = ContentType.APPLICATION_XML.toContentTypeString();
+        requestedContentType = ContentType.APPLICATION_XML;
         for (FormatContentTypeMapping entry : supportedContentTypes) {
-          if (requestedContentType.equalsIgnoreCase(entry.getContentType().trim())) {
+          if (requestedContentType.isCompatible(ContentType.create(entry.getContentType().trim()))) {
             supported = true;
             break;
           }
@@ -97,7 +98,7 @@ public class ContentNegotiator {
       } else {
         for (FormatContentTypeMapping entry : supportedContentTypes) {
           if (formatOption.getText().equalsIgnoreCase(entry.getFormatAlias().trim())) {
-            requestedContentType = entry.getContentType();
+            requestedContentType = ContentType.create(entry.getContentType().trim());
             supported = true;
             break;
           }
@@ -113,9 +114,9 @@ public class ContentNegotiator {
 
       for (AcceptType acceptedType : acceptedContentTypes) {
         for (FormatContentTypeMapping supportedType : supportedContentTypes) {
-          ContentType s = ContentType.create(supportedType.getContentType());
-          if (acceptedType.matches(s)) {
-            requestedContentType = s.toContentTypeString();
+          ContentType ct = ContentType.create(supportedType.getContentType());
+          if (acceptedType.matches(ct)) {
+            requestedContentType = ct;
             supported = true;
             break;
           }
@@ -132,13 +133,13 @@ public class ContentNegotiator {
     } else {
 
       if (processorClass == MetadataProcessor.class) {
-        requestedContentType = HttpContentType.APPLICATION_XML;
+        requestedContentType = ContentType.APPLICATION_XML;
       } else {
-        requestedContentType = HttpContentType.APPLICATION_JSON;
+        requestedContentType = ContentType.APPLICATION_JSON;
       }
 
       for (FormatContentTypeMapping entry : supportedContentTypes) {
-        if (requestedContentType.equalsIgnoreCase(entry.getContentType().trim())) {
+        if (requestedContentType.isCompatible(ContentType.create(entry.getContentType().trim()))) {
           supported = true;
           break;
         }

@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
@@ -75,7 +76,7 @@ public class ODataHandler {
       UriValidator validator = new UriValidator();
       validator.validate(uriInfo, request.getMethod());
 
-      String requestedContentType = null;
+      ContentType requestedContentType = null;
       switch (uriInfo.getKind()) {
       case metadata:
         MetadataProcessor mp = selectProcessor(MetadataProcessor.class);
@@ -83,7 +84,7 @@ public class ODataHandler {
         requestedContentType =
             ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, mp, MetadataProcessor.class);
 
-        mp.readMetadata(request, response, uriInfo, requestedContentType);
+        mp.readMetadata(request, response, uriInfo, requestedContentType.toContentTypeString());
         break;
       case service:
         if ("".equals(request.getRawODataPath())) {
@@ -96,7 +97,7 @@ public class ODataHandler {
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, sdp,
                   ServiceDocumentProcessor.class);
 
-          sdp.readServiceDocument(request, response, uriInfo, requestedContentType);
+          sdp.readServiceDocument(request, response, uriInfo, requestedContentType.toContentTypeString());
         }
         break;
       case resource:
@@ -117,7 +118,7 @@ public class ODataHandler {
       handleResourceDispatching(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo) {
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
-    String requestedContentType = null;
+    ContentType requestedContentType = null;
 
     switch (lastPathSegment.getKind()) {
     case entitySet:
@@ -128,7 +129,7 @@ public class ODataHandler {
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp, CollectionProcessor.class);
 
-          cp.readCollection(request, response, uriInfo, requestedContentType);
+          cp.readCollection(request, response, uriInfo, requestedContentType.toContentTypeString());
         } else {
           throw new ODataRuntimeException("not implemented");
         }
@@ -139,7 +140,7 @@ public class ODataHandler {
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
 
-          ep.readEntity(request, response, uriInfo, requestedContentType);
+          ep.readEntity(request, response, uriInfo, requestedContentType.toContentTypeString());
         } else {
           throw new ODataRuntimeException("not implemented");
         }
@@ -153,7 +154,7 @@ public class ODataHandler {
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp, CollectionProcessor.class);
 
-          cp.readCollection(request, response, uriInfo, requestedContentType);
+          cp.readCollection(request, response, uriInfo, requestedContentType.toContentTypeString());
         } else {
           throw new ODataRuntimeException("not implemented");
         }
@@ -164,7 +165,7 @@ public class ODataHandler {
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
 
-          ep.readEntity(request, response, uriInfo, requestedContentType);
+          ep.readEntity(request, response, uriInfo, requestedContentType.toContentTypeString());
         } else {
           throw new ODataRuntimeException("not implemented");
         }

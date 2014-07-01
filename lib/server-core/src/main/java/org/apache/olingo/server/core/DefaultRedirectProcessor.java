@@ -34,8 +34,16 @@ public class DefaultRedirectProcessor implements RedirectProcessor {
   public void redirect(final ODataRequest request, final ODataResponse response) {
     response.setStatusCode(HttpStatusCode.TEMPORARY_REDIRECT.getStatusCode());
 
-    String location = request.getRawRequestUri() + "/";
+    String location;
+
+    String rawUri = request.getRawRequestUri();
+    String rawQueryPath = request.getRawQueryPath();
+    if (rawQueryPath == null) {
+      location = request.getRawRequestUri() + "/";
+    } else {
+      location = rawUri.substring(0, rawUri.indexOf(rawQueryPath) - 1) + "/?" + rawQueryPath;
+    }
+
     response.setHeader(HttpHeader.LOCATION, location);
   }
-
 }
