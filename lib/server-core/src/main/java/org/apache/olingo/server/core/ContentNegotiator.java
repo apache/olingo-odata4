@@ -38,7 +38,9 @@ public class ContentNegotiator {
 
   private final static Logger LOG = LoggerFactory.getLogger(ContentNegotiator.class);
 
-  private List<FormatContentTypeMapping>
+  private ContentNegotiator() {}
+  
+  private static List<FormatContentTypeMapping>
       getDefaultSupportedContentTypes(final Class<? extends Processor> processorClass) {
     List<FormatContentTypeMapping> defaults = new ArrayList<FormatContentTypeMapping>();
 
@@ -51,7 +53,7 @@ public class ContentNegotiator {
     return defaults;
   }
 
-  private List<FormatContentTypeMapping> getSupportedContentTypes(final Processor processor,
+  private static List<FormatContentTypeMapping> getSupportedContentTypes(final Processor processor,
       final Class<? extends Processor> processorClass) {
 
     List<FormatContentTypeMapping> supportedContentTypes = getDefaultSupportedContentTypes(processorClass);
@@ -64,7 +66,7 @@ public class ContentNegotiator {
     return supportedContentTypes;
   }
 
-  public String doContentNegotiation(final FormatOption formatOption, final ODataRequest request,
+  public static String doContentNegotiation(final FormatOption formatOption, final ODataRequest request,
       final Processor processor, final Class<? extends Processor> processorClass) {
     String requestedContentType = null;
 

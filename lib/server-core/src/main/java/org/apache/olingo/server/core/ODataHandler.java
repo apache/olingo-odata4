@@ -75,15 +75,13 @@ public class ODataHandler {
       UriValidator validator = new UriValidator();
       validator.validate(uriInfo, request.getMethod());
 
-      ContentNegotiator contentNegotiator = new ContentNegotiator();
-
       String requestedContentType = null;
       switch (uriInfo.getKind()) {
       case metadata:
         MetadataProcessor mp = selectProcessor(MetadataProcessor.class);
 
         requestedContentType =
-            contentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, mp, MetadataProcessor.class);
+            ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, mp, MetadataProcessor.class);
 
         mp.readMetadata(request, response, uriInfo, requestedContentType);
         break;
@@ -95,7 +93,7 @@ public class ODataHandler {
           ServiceDocumentProcessor sdp = selectProcessor(ServiceDocumentProcessor.class);
 
           requestedContentType =
-              contentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, sdp,
+              ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, sdp,
                   ServiceDocumentProcessor.class);
 
           sdp.readServiceDocument(request, response, uriInfo, requestedContentType);
@@ -120,7 +118,6 @@ public class ODataHandler {
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
     String requestedContentType = null;
-    ContentNegotiator contentNegotiator = new ContentNegotiator();
 
     switch (lastPathSegment.getKind()) {
     case entitySet:
@@ -129,7 +126,7 @@ public class ODataHandler {
           CollectionProcessor cp = selectProcessor(CollectionProcessor.class);
 
           requestedContentType =
-              contentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp, CollectionProcessor.class);
+              ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp, CollectionProcessor.class);
 
           cp.readCollection(request, response, uriInfo, requestedContentType);
         } else {
@@ -140,7 +137,7 @@ public class ODataHandler {
           EntityProcessor ep = selectProcessor(EntityProcessor.class);
 
           requestedContentType =
-              contentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
+              ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
 
           ep.readEntity(request, response, uriInfo, requestedContentType);
         } else {
@@ -154,7 +151,7 @@ public class ODataHandler {
           CollectionProcessor cp = selectProcessor(CollectionProcessor.class);
 
           requestedContentType =
-              contentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp, CollectionProcessor.class);
+              ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp, CollectionProcessor.class);
 
           cp.readCollection(request, response, uriInfo, requestedContentType);
         } else {
@@ -165,7 +162,7 @@ public class ODataHandler {
           EntityProcessor ep = selectProcessor(EntityProcessor.class);
 
           requestedContentType =
-              contentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
+              ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
 
           ep.readEntity(request, response, uriInfo, requestedContentType);
         } else {

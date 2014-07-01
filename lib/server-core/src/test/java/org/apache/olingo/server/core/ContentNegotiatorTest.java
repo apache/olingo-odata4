@@ -144,8 +144,6 @@ public class ContentNegotiatorTest {
     request.setMethod(HttpMethod.GET);
     request.setRawODataPath("/" + (useCase[1] == null ? "" : "?$format=" + useCase[1]));
 
-    ContentNegotiator cn = new ContentNegotiator();
-
     ProcessorStub p = new ProcessorStub(createCustomContentTypeMapping(useCase[3], useCase[4]));
 
     FormatOption fo = null;
@@ -158,7 +156,7 @@ public class ContentNegotiatorTest {
       request.addHeader(HttpHeader.ACCEPT, Arrays.asList(useCase[2]));
     }
 
-    String requestedContentType = cn.doContentNegotiation(fo, request, p, processorClass);
+    String requestedContentType = ContentNegotiator.doContentNegotiation(fo, request, p, processorClass);
 
     assertNotNull(requestedContentType);
     assertEquals(useCase[0], requestedContentType);
