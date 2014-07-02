@@ -135,18 +135,16 @@ public class ODataJsonSerializer implements ODataSerializer {
         json.writeNull();
       }
     } else {
-      if (edmProperty.isPrimitive()) {
-        handlePrimitive(edmProperty, property, json);
-      } else if (edmProperty.isCollection()) {
+      if (edmProperty.isCollection()) {
         handleCollection(edmProperty, property, json);
+      } else if (edmProperty.isPrimitive()) {
+        handlePrimitive(edmProperty, property, json);
+      } else if (property.isLinkedComplex()) {
+        writeComplexValue(edmProperty, property.asLinkedComplex().getValue(), json);
+      } else if(property.isComplex()) {
+        writeComplexValue(edmProperty, property.asComplex(), json);
       } else {
-        if (property.isLinkedComplex()) {
-          writeComplexValue(edmProperty, property.asLinkedComplex().getValue(), json);
-        } else if(property.isComplex()) {
-          writeComplexValue(edmProperty, property.asComplex(), json);
-        } else {
-          throw new ODataRuntimeException("Property type not yet supported!");
-        }
+        throw new ODataRuntimeException("Property type not yet supported!");
       }
     }
   }
@@ -166,6 +164,9 @@ public class ODataJsonSerializer implements ODataSerializer {
         break;
       case COLLECTION_LINKED_COMPLEX:
         writeComplexValue(edmProperty, ((LinkedComplexValue) value).getValue(), json);
+        break;
+      case COLLECTION_COMPLEX:
+        writeComplexValue(edmProperty, property.asComplex(), json);
         break;
       default:
         throw new ODataRuntimeException("Property type not yet supported!");
@@ -237,7 +238,8 @@ public class ODataJsonSerializer implements ODataSerializer {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
       if (contextURL != null) {
-        json.writeStringField(Constants.JSON_CONTEXT, contextURL.getURI().toASCIIString());
+        String context = "$metadata#" + edmEntitySet.getName();
+        json.writeStringField(Constants.JSON_CONTEXT, context);
       }
       if (entitySet.getCount() != null) {
         json.writeNumberField("@odata.count", entitySet.getCount());

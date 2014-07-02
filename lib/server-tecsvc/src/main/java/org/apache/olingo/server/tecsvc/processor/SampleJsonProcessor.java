@@ -19,9 +19,7 @@
 package org.apache.olingo.server.tecsvc.processor;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
@@ -70,9 +68,9 @@ public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor 
       time = System.nanoTime();
       ODataSerializer serializer = odata.createSerializer(ODataFormat.JSON);
       EdmEntitySet edmEntitySet = getEntitySet(uriInfo);
-      EntitySet entitySet = createEntitySet(edmEntitySet.getEntityType());
-      response.setContent(serializer.entitySet(edmEntitySet, entitySet,
-              getContextUrl(request, edmEntitySet.getEntityType())));
+      ContextURL contextUrl = getContextUrl(request, edmEntitySet.getEntityType());
+      EntitySet entitySet = createEntitySet(edmEntitySet.getEntityType(), contextUrl.getURI().toASCIIString());
+      response.setContent(serializer.entitySet(edmEntitySet, entitySet, contextUrl));
       LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -106,41 +104,66 @@ public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor 
   }
 
   public EdmEntitySet getEntitySet(UriInfo uriInfo) {
-      List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
-      if(resourcePaths.isEmpty()) {
-        throw new RuntimeException("Invalid resource path.");
-      }
-      String entitySetName = resourcePaths.get(resourcePaths.size()-1).toString();
-      return edm.getEntityContainer(new FullQualifiedName("com.sap.odata.test1", "Container"))
-              .getEntitySet(entitySetName);
+    List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
+    if(resourcePaths.isEmpty()) {
+      throw new RuntimeException("Invalid resource path.");
+    }
+    String entitySetName = resourcePaths.get(resourcePaths.size()-1).toString();
+    return edm.getEntityContainer(new FullQualifiedName("com.sap.odata.test1", "Container"))
+            .getEntitySet(entitySetName);
+  }
+
+  protected Entity createEntity(EdmEntityType entityType) {
+    boolean complex = (entityType.getName().contains("Comp"));
+    if(entityType.getName().contains("Coll")) {
+      return createEntityWithCollection(complex);
+    }
+    return createEntity(complex);
+  }
+
+  protected Entity createEntity(boolean complex) {
+    Entity entity = new EntityImpl();
+    Property property = new PropertyImpl();
+    property.setName("PropertyString");
+    property.setValue(ValueType.PRIMITIVE, "dummyValue");
+    entity.getProperties().add(property);
+    Property propertyInt = new PropertyImpl();
+    propertyInt.setName("PropertyInt16");
+    propertyInt.setValue(ValueType.PRIMITIVE, 42);
+    entity.getProperties().add(propertyInt);
+    Property propertyGuid = new PropertyImpl();
+    propertyGuid.setName("PropertyGuid");
+    propertyGuid.setValue(ValueType.PRIMITIVE, UUID.randomUUID());
+    entity.getProperties().add(propertyGuid);
+
+    if(complex) {
+      entity.addProperty(createComplexProperty());
     }
 
-    protected Entity createEntity(EdmEntityType entityType) {
-      boolean complex = (entityType.getName().contains("Comp"));
-      return createEntity(complex);
+    return entity;
+  }
+
+  protected Entity createEntityWithCollection(boolean complex) {
+    Entity entity = new EntityImpl();
+    Property propertyInt = new PropertyImpl();
+    propertyInt.setName("PropertyInt16");
+    propertyInt.setValue(ValueType.PRIMITIVE, 42);
+    Property property = new PropertyImpl();
+    property.setName("CollPropertyString");
+    property.setValue(ValueType.COLLECTION_PRIMITIVE, Arrays.asList("dummyValue", "dummyValue_2"));
+    entity.getProperties().add(property);
+    entity.getProperties().add(propertyInt);
+    Property propertyGuid = new PropertyImpl();
+    propertyGuid.setName("CollPropertyGuid");
+    propertyGuid.setValue(ValueType.COLLECTION_PRIMITIVE, Arrays.asList(UUID.randomUUID(), UUID.randomUUID()));
+    entity.getProperties().add(propertyGuid);
+
+    if(complex) {
+      entity.addProperty(createCollectionOfComplexProperty());
     }
 
-    protected Entity createEntity(boolean complex) {
-      Entity entity = new EntityImpl();
-      Property property = new PropertyImpl();
-      property.setName("PropertyString");
-      property.setValue(ValueType.PRIMITIVE, "dummyValue");
-      entity.getProperties().add(property);
-      Property propertyInt = new PropertyImpl();
-      propertyInt.setName("PropertyInt16");
-      propertyInt.setValue(ValueType.PRIMITIVE, 42);
-      entity.getProperties().add(propertyInt);
-      Property propertyGuid = new PropertyImpl();
-      propertyGuid.setName("PropertyGuid");
-      propertyGuid.setValue(ValueType.PRIMITIVE, UUID.randomUUID());
-      entity.getProperties().add(propertyGuid);
-
-      if(complex) {
-        entity.addProperty(createComplexProperty());
-      }
-
-      return entity;
-    }
+    return entity;
+  }
 
   protected Property createComplexProperty() {
     List<Property> properties = new ArrayList<Property>();
@@ -161,14 +184,48 @@ public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor 
             properties);
   }
 
+  protected Property createCollectionOfComplexProperty() {
+    List<Property> properties = new ArrayList<Property>();
+    Property property = new PropertyImpl();
+    property.setName("PropertyString");
+    property.setValue(ValueType.PRIMITIVE, "dummyValue");
+    properties.add(property);
+    Property propertyInt = new PropertyImpl();
+    propertyInt.setName("PropertyInt16");
+    propertyInt.setValue(ValueType.PRIMITIVE, 42);
+    properties.add(propertyInt);
+    Property propertyGuid = new PropertyImpl();
+    propertyGuid.setName("PropertyGuid");
+    propertyGuid.setValue(ValueType.PRIMITIVE, UUID.randomUUID());
+    properties.add(propertyGuid);
 
-  protected EntitySet createEntitySet(EdmEntityType edmEntityType) {
-      EntitySet entitySet = new EntitySetImpl();
-      entitySet.setCount(4242);
-      entitySet.setNext(URI.create("nextLinkURI"));
-      for (int i = 0; i < 1000; i++) {
-        entitySet.getEntities().add(createEntity(edmEntityType));
-      }
-      return entitySet;
-    }
+    List<Property> properties2 = new ArrayList<Property>();
+    Property property2 = new PropertyImpl();
+    property2.setName("PropertyString");
+    property2.setValue(ValueType.PRIMITIVE, "dummyValue2");
+    properties2.add(property2);
+    Property property2Int = new PropertyImpl();
+    property2Int.setName("PropertyInt16");
+    property2Int.setValue(ValueType.PRIMITIVE, 44);
+    properties2.add(property2Int);
+    Property property2Guid = new PropertyImpl();
+    property2Guid.setName("PropertyGuid");
+    property2Guid.setValue(ValueType.PRIMITIVE, UUID.randomUUID());
+    properties2.add(property2Guid);
+
+    return new PropertyImpl("com.sap.odata.test1.ETCompAllPrim", "PropertyComplex", ValueType.COMPLEX,
+            Arrays.asList(properties, properties2));
   }
+
+
+  protected EntitySet createEntitySet(EdmEntityType edmEntityType, String baseUri) {
+    EntitySet entitySet = new EntitySetImpl();
+    int count = (int) ((Math.random() * 50) + 1);
+    entitySet.setCount(count);
+    entitySet.setNext(URI.create(baseUri + "nextLink"));
+    for (int i = 0; i < count; i++) {
+      entitySet.getEntities().add(createEntity(edmEntityType));
+    }
+    return entitySet;
+  }
+}
