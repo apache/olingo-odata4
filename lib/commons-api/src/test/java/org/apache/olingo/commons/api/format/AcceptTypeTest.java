@@ -23,7 +23,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class AcceptTypeTest {
@@ -45,16 +44,21 @@ public class AcceptTypeTest {
     assertEquals(1, atl.size());
     assertEquals("a/a", atl.get(0).toString());
   }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testWrongQParameter() {
+    AcceptType.create(" a/a;q=z ");
+  }
   
   @Test
-  @Ignore("buggy and not yet fixed")
   public void testWildcard() {
     List<AcceptType> atl = AcceptType.create("*; q=.2");
     
     assertNotNull(atl);
     assertEquals(1, atl.size());
-    assertEquals("", atl.get(0).getType());
-    assertEquals("", atl.get(0).getSubtype());
+    assertEquals("*", atl.get(0).getType());
+    assertEquals("*", atl.get(0).getSubtype());
     assertEquals(".2", atl.get(0).getParameters().get("q"));
+    assertEquals(new Float(0.2), atl.get(0).getQuality());
   }
 }

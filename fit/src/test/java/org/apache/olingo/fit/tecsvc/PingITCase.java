@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.apache.olingo.commons.api.http.HttpHeader;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,6 @@ public class PingITCase {
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");
-    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json");
     connection.connect();
 
     int code = connection.getResponseCode();
@@ -59,7 +57,6 @@ public class PingITCase {
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");
-    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json");
     connection.connect();
 
     int code = connection.getResponseCode();
