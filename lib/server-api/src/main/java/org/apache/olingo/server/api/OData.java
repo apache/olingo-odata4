@@ -24,6 +24,11 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 
+/**
+ * Root object for serving factory tasks and support loosely coupling of implementation (core) from the api. This is not
+ * a singleton (static variables) to avoid issues with synchronization, OSGi, hot deployment and so on. Each thread
+ * (request) should keep its own instance.
+ */
 public abstract class OData {
 
   private static final String IMPLEMENTATION = "org.apache.olingo.server.core.ODataImpl";
@@ -46,10 +51,23 @@ public abstract class OData {
     }
   }
 
+  /**
+   * Create a new serializer object for rendering content in the specified format. Serializers are used in Processor
+   * implementations.
+   * @param format - Any format supported by Olingo (XML, JSON ...)
+   */
   public abstract ODataSerializer createSerializer(ODataFormat format);
 
+  /**
+   * Create a new ODataHttpHandler for handling OData requests in a http context. 
+   * @param edm - metadata object required to handle an OData request
+   */
   public abstract ODataHttpHandler createHandler(Edm edm);
 
+  /**
+   * Create an metadata object.
+   * @param edmProvider - A custom or default implementation for creating metadata
+   */
   public abstract Edm createEdm(EdmProvider edmProvider);
 
 }

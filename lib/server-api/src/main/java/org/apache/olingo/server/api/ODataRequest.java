@@ -26,6 +26,9 @@ import java.util.Map;
 
 import org.apache.olingo.commons.api.http.HttpMethod;
 
+/**
+ * Request object carry http information optimized and required to handle OData requests only. 
+ */
 public class ODataRequest {
   private HttpMethod method;
   private Map<String, List<String>> headers = new HashMap<String, List<String>>();
@@ -36,6 +39,9 @@ public class ODataRequest {
   private String rawBaseUri;
   private String rawServiceResolutionUri;
 
+  /**
+   * @return the http method (GET, PUT, POST ...)
+   */
   public HttpMethod getMethod() {
     return method;
   }
@@ -73,6 +79,9 @@ public class ODataRequest {
     return headers.get(name.toUpperCase());
   }
 
+  /**
+   * @return the request payload or null
+   */
   public InputStream getBody() {
     return body;
   }
@@ -81,6 +90,9 @@ public class ODataRequest {
     this.body = body;
   }
 
+  /**
+   * @return decoded query options e.g. "$format=json"
+   */
   public String getRawQueryPath() {
     return rawQueryPath;
   }
@@ -89,14 +101,23 @@ public class ODataRequest {
     this.rawQueryPath = rawQueryPath;
   }
 
+  /**
+   * @return encoded base uri e.g. "http://localhost/my%20service"
+   */
   public String getRawBaseUri() {
     return rawBaseUri;
   }
 
+  /**
+   * @return encoded request uri e.g. "http://localhost/my%20service/sys1/Employees?$format=json"
+   */
   public String getRawRequestUri() {
     return rawRequestUri;
   }
 
+  /**
+   * @return encoded OData path segments e.g. "/Employees"
+   */
   public String getRawODataPath() {
     return rawODataPath;
   }
@@ -114,6 +135,9 @@ public class ODataRequest {
     this.rawBaseUri = rawBaseUri;
   }
 
+  /**
+   * @return a decoded path segment that does not belong to the OData url schema or null  e.g. "sys1" 
+   */
   public String getRawServiceResolutionUri() {
     return rawServiceResolutionUri;
   }

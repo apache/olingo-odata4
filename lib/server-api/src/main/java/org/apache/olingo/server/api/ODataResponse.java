@@ -23,6 +23,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Response object to carry OData relevant http information (statusCode, content & response headers)
+ */
 public class ODataResponse {
 
   private int statusCode;

@@ -25,7 +25,7 @@ import org.apache.olingo.commons.api.format.AcceptType;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.processor.CustomContentTypeSupport;
+import org.apache.olingo.server.api.processor.CustomContentTypeSupportProcessor;
 import org.apache.olingo.server.api.processor.FormatContentTypeMapping;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.Processor;
@@ -59,9 +59,10 @@ public class ContentNegotiator {
 
     List<FormatContentTypeMapping> supportedContentTypes = getDefaultSupportedContentTypes(processorClass);
 
-    if (processor instanceof CustomContentTypeSupport) {
+    if (processor instanceof CustomContentTypeSupportProcessor) {
       supportedContentTypes =
-          ((CustomContentTypeSupport) processor).modifySupportedContentTypes(supportedContentTypes, processorClass);
+          ((CustomContentTypeSupportProcessor) processor).modifySupportedContentTypes(supportedContentTypes,
+              processorClass);
     }
 
     return supportedContentTypes;
