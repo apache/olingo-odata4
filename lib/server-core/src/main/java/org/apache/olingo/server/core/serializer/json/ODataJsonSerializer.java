@@ -238,8 +238,7 @@ public class ODataJsonSerializer implements ODataSerializer {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
       if (contextURL != null) {
-        String context = "$metadata#" + edmEntitySet.getName();
-        json.writeStringField(Constants.JSON_CONTEXT, context);
+        json.writeStringField(Constants.JSON_CONTEXT, contextURL.getURI().toASCIIString());
       }
       if (entitySet.getCount() != null) {
         json.writeNumberField("@odata.count", entitySet.getCount());

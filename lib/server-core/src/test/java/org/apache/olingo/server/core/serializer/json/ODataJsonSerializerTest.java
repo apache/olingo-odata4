@@ -35,6 +35,7 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,29 +48,29 @@ public class ODataJsonSerializerTest {
   private static final String CTAllPrim = "CTAllPrim";
   private static final String CTAllPrim_Type = "com.sap.odata.test1.CTAllPrim";
 
-  interface TechProperty {
+  interface TecSvcProperty {
     String getName();
     String getTypeName();
     EdmPrimitiveTypeKind getType();
     boolean isCollection();
   }
 
-  public static class TecComplexProperty implements TechProperty {
+  public static class TecSvcComplexProperty implements TecSvcProperty {
 
     final String typeName;
     final String name;
     final List<EdmProperty> properties = new ArrayList<EdmProperty>();
     boolean collection = false;
 
-    public TecComplexProperty(String typeName, String name) {
+    public TecSvcComplexProperty(String typeName, String name) {
       this.typeName = typeName;
       this.name = name;
     }
-    TechProperty addProperties(List<EdmProperty> properties) {
+    TecSvcProperty addProperties(List<EdmProperty> properties) {
       this.properties.addAll(properties);
       return this;
     }
-    TechProperty asCollection() {
+    TecSvcProperty asCollection() {
       this.collection = true;
       return this;
     }
@@ -94,7 +95,7 @@ public class ODataJsonSerializerTest {
     }
   }
 
-  enum TecSimpleProperty implements TechProperty {
+  enum TecSvcSimpleProperty implements TecSvcProperty {
     Int16("PropertyInt16", EdmPrimitiveTypeKind.Int16),
     String("PropertyString", EdmPrimitiveTypeKind.String),
     Boolean("PropertyBoolean", EdmPrimitiveTypeKind.Boolean),
@@ -136,10 +137,10 @@ public class ODataJsonSerializerTest {
     final EdmPrimitiveTypeKind type;
     final boolean isCollection;
 
-    TecSimpleProperty(String name, EdmPrimitiveTypeKind type) {
+    TecSvcSimpleProperty(String name, EdmPrimitiveTypeKind type) {
       this(name, type, false);
     }
-    TecSimpleProperty(String name, EdmPrimitiveTypeKind type, boolean collection) {
+    TecSvcSimpleProperty(String name, EdmPrimitiveTypeKind type, boolean collection) {
       this.name = name;
       this.type = type;
       this.isCollection = collection;
@@ -162,7 +163,6 @@ public class ODataJsonSerializerTest {
     }
   }
 
-  private ContextURL contextUrl;
   private EdmEntitySet edmESAllPrim;
   private EdmEntitySet edmESCompAllPrim;
   private EdmEntitySet edmESCollAllPrim;
@@ -174,28 +174,26 @@ public class ODataJsonSerializerTest {
 
   @Before
   public void prepare() throws Exception {
-    contextUrl = ContextURL.getInstance(new URI("http://localhost:8080/test.svc"));
-
     // entity all primitive
     edmETAllPrim = Mockito.mock(EdmEntityType.class);
     Mockito.when(edmETAllPrim.getName()).thenReturn(ETAllPrim);
     List<EdmProperty> properties = Arrays.asList(
-        mockProperty(TecSimpleProperty.Int16, false),
-        mockProperty(TecSimpleProperty.String),
-        mockProperty(TecSimpleProperty.Boolean),
-        mockProperty(TecSimpleProperty.Byte),
-        mockProperty(TecSimpleProperty.SByte),
-        mockProperty(TecSimpleProperty.Int32),
-        mockProperty(TecSimpleProperty.Int64),
-        mockProperty(TecSimpleProperty.Single),
-        mockProperty(TecSimpleProperty.Double),
-        mockProperty(TecSimpleProperty.Decimal),
-        mockProperty(TecSimpleProperty.Binary),
-        mockProperty(TecSimpleProperty.Date),
-        mockProperty(TecSimpleProperty.DateTimeOffset),
-        mockProperty(TecSimpleProperty.Duration),
-        mockProperty(TecSimpleProperty.Guid),
-        mockProperty(TecSimpleProperty.TimeOfDay)
+        mockProperty(TecSvcSimpleProperty.Int16, false),
+        mockProperty(TecSvcSimpleProperty.String),
+        mockProperty(TecSvcSimpleProperty.Boolean),
+        mockProperty(TecSvcSimpleProperty.Byte),
+        mockProperty(TecSvcSimpleProperty.SByte),
+        mockProperty(TecSvcSimpleProperty.Int32),
+        mockProperty(TecSvcSimpleProperty.Int64),
+        mockProperty(TecSvcSimpleProperty.Single),
+        mockProperty(TecSvcSimpleProperty.Double),
+        mockProperty(TecSvcSimpleProperty.Decimal),
+        mockProperty(TecSvcSimpleProperty.Binary),
+        mockProperty(TecSvcSimpleProperty.Date),
+        mockProperty(TecSvcSimpleProperty.DateTimeOffset),
+        mockProperty(TecSvcSimpleProperty.Duration),
+        mockProperty(TecSvcSimpleProperty.Guid),
+        mockProperty(TecSvcSimpleProperty.TimeOfDay)
 //        mockProperty(NavPropertyETTwoPrimOne, false),
 //        mockProperty(NavPropertyETTwoPrimMany, false)
     );
@@ -211,13 +209,21 @@ public class ODataJsonSerializerTest {
     edmESAllPrim = Mockito.mock(EdmEntitySet.class);
     Mockito.when(edmESAllPrim.getName()).thenReturn("ESAllPrim");
     Mockito.when(edmESAllPrim.getEntityType()).thenReturn(edmETAllPrim);
+    // Entity Set All Primitive
+    edmESCompAllPrim = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(edmESCompAllPrim.getName()).thenReturn("ESCompAllPrim");
+    Mockito.when(edmESCompAllPrim.getEntityType()).thenReturn(edmETCompAllPrim);
+    // Entity Set All Primitive
+    edmESCollAllPrim = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(edmESCollAllPrim.getName()).thenReturn("ESCollAllPrim");
+    Mockito.when(edmESCollAllPrim.getEntityType()).thenReturn(edmETCollAllPrim);
 
     // Entity Type Complex All Primitive
     edmETCompAllPrim = Mockito.mock(EdmEntityType.class);
     Mockito.when(edmETCompAllPrim.getName()).thenReturn(ETCompAllPrim);
     List<EdmProperty> capProperties = Arrays.asList(
-        mockProperty(TecSimpleProperty.Int16, false),
-        mockProperty(new TecComplexProperty(CTAllPrim_Type, CTAllPrim).addProperties(properties), false)
+        mockProperty(TecSvcSimpleProperty.Int16, false),
+        mockProperty(new TecSvcComplexProperty(CTAllPrim_Type, CTAllPrim).addProperties(properties), false)
     );
     List<String> capPropertyNames = new ArrayList<String>();
 
@@ -232,22 +238,22 @@ public class ODataJsonSerializerTest {
     edmETCollAllPrim = Mockito.mock(EdmEntityType.class);
     Mockito.when(edmETCollAllPrim.getName()).thenReturn(ETCollAllPrim);
     List<EdmProperty> allCollProperties = Arrays.asList(
-            mockProperty(TecSimpleProperty.Int16, false),
-            mockProperty(TecSimpleProperty.Collection_String),
-            mockProperty(TecSimpleProperty.Collection_Boolean),
-            mockProperty(TecSimpleProperty.Collection_Byte),
-            mockProperty(TecSimpleProperty.Collection_SByte),
-            mockProperty(TecSimpleProperty.Collection_Int32),
-            mockProperty(TecSimpleProperty.Collection_Int64),
-            mockProperty(TecSimpleProperty.Collection_Single),
-            mockProperty(TecSimpleProperty.Collection_Double),
-            mockProperty(TecSimpleProperty.Collection_Decimal),
-            mockProperty(TecSimpleProperty.Collection_Binary),
-            mockProperty(TecSimpleProperty.Collection_Date),
-            mockProperty(TecSimpleProperty.Collection_DateTimeOffset),
-            mockProperty(TecSimpleProperty.Collection_Duration),
-            mockProperty(TecSimpleProperty.Collection_Guid),
-            mockProperty(TecSimpleProperty.Collection_TimeOfDay)
+            mockProperty(TecSvcSimpleProperty.Int16, false),
+            mockProperty(TecSvcSimpleProperty.Collection_String),
+            mockProperty(TecSvcSimpleProperty.Collection_Boolean),
+            mockProperty(TecSvcSimpleProperty.Collection_Byte),
+            mockProperty(TecSvcSimpleProperty.Collection_SByte),
+            mockProperty(TecSvcSimpleProperty.Collection_Int32),
+            mockProperty(TecSvcSimpleProperty.Collection_Int64),
+            mockProperty(TecSvcSimpleProperty.Collection_Single),
+            mockProperty(TecSvcSimpleProperty.Collection_Double),
+            mockProperty(TecSvcSimpleProperty.Collection_Decimal),
+            mockProperty(TecSvcSimpleProperty.Collection_Binary),
+            mockProperty(TecSvcSimpleProperty.Collection_Date),
+            mockProperty(TecSvcSimpleProperty.Collection_DateTimeOffset),
+            mockProperty(TecSvcSimpleProperty.Collection_Duration),
+            mockProperty(TecSvcSimpleProperty.Collection_Guid),
+            mockProperty(TecSvcSimpleProperty.Collection_TimeOfDay)
     );
     List<String> etCollAllPrimPropertyNames = new ArrayList<String>();
 
@@ -260,15 +266,15 @@ public class ODataJsonSerializerTest {
     // Entity Set all primitive collection
   }
 
-  private EdmProperty mockProperty(TechProperty name) {
+  private EdmProperty mockProperty(TecSvcProperty name) {
     return mockProperty(name, true);
   }
 
-  private EdmProperty mockProperty(TechProperty tecProperty, boolean nullable) {
+  private EdmProperty mockProperty(TecSvcProperty tecProperty, boolean nullable) {
     EdmProperty edmElement = Mockito.mock(EdmProperty.class);
     Mockito.when(edmElement.getName()).thenReturn(tecProperty.getName());
-    if (tecProperty instanceof TecComplexProperty) {
-      TecComplexProperty complexProperty = (TecComplexProperty) tecProperty;
+    if (tecProperty instanceof TecSvcComplexProperty) {
+      TecSvcComplexProperty complexProperty = (TecSvcComplexProperty) tecProperty;
       Mockito.when(edmElement.isPrimitive()).thenReturn(false);
       EdmComplexType type = Mockito.mock(EdmComplexType.class);
       Mockito.when(type.getKind()).thenReturn(EdmTypeKind.COMPLEX);
@@ -295,11 +301,11 @@ public class ODataJsonSerializerTest {
     return edmElement;
   }
 
-  private PropertyImpl createProperty(TechProperty property, ValueType vType, Object value) {
+  private PropertyImpl createProperty(TecSvcProperty property, ValueType vType, Object value) {
     return new PropertyImpl(property.getTypeName(), property.getName(), vType, value);
   }
 
-  private PropertyImpl createProperty(String type, TecSimpleProperty property, ValueType vType, Object ... value) {
+  private PropertyImpl createProperty(String type, TecSvcSimpleProperty property, ValueType vType, Object ... value) {
     final Object propValue;
     if(value == null || value.length ==0) {
       propValue = null;
@@ -315,10 +321,10 @@ public class ODataJsonSerializerTest {
   public void entitySimple() throws Exception {
     Entity entity = createETAllPrim();
 
-    InputStream result = serializer.entity(edmETAllPrim, entity, contextUrl);
+    InputStream result = serializer.entity(edmETAllPrim, entity, createContextURL(edmESAllPrim, true));
     String resultString = streamToString(result);
     String expectedResult = "{" +
-        "\"@odata.context\":\"http://localhost:8080/test.svc\"," +
+        "\"@odata.context\":\"$metadata#ESAllPrim/$entity\"," +
         "\"PropertyInt16\":4711," +
         "\"PropertyString\":\"StringValue\"," +
         "\"PropertyBoolean\":true," +
@@ -347,16 +353,17 @@ public class ODataJsonSerializerTest {
       entitySet.getEntities().add(createETAllPrim(i));
     }
     entitySet.setCount(entitySet.getEntities().size());
+    ContextURL contextUrl = createContextURL(edmESAllPrim, false);
     entitySet.setNext(URI.create(contextUrl.getURI().toASCIIString() + "/next"));
 
     InputStream result = serializer.entitySet(edmEntitySet, entitySet, contextUrl);
     String resultString = streamToString(result);
 
     Assert.assertTrue(resultString.matches("\\{" +
-        "\"@odata\\.context\":\"http://localhost:8080/test.svc\"," +
+        "\"@odata\\.context\":\"\\$metadata#ESAllPrim\"," +
         "\"@odata\\.count\":100," +
         "\"value\":\\[.*\\]," +
-        "\"@odata\\.nextLink\":\"http://localhost:8080/test.svc/next\"" +
+        "\"@odata\\.nextLink\":\"\\$metadata#ESAllPrim/next\"" +
         "\\}"));
 
     Matcher matcher = Pattern.compile("(\\{[a-z0-9:\\=\"\\-,\\.\\+]*\\})",
@@ -372,10 +379,11 @@ public class ODataJsonSerializerTest {
   public void entityCollAllPrim() throws Exception {
     Entity entity = createETCollAllPrim(4711);
 
+    ContextURL contextUrl = createContextURL(edmESCollAllPrim, true);
     InputStream result = serializer.entity(edmETCollAllPrim, entity, contextUrl);
     String resultString = streamToString(result);
     String expectedResult = "{" +
-        "\"@odata.context\":\"http://localhost:8080/test.svc\"," +
+        "\"@odata.context\":\"$metadata#ESCollAllPrim/$entity\"," +
         "\"PropertyInt16\":4711," +
         "\"CollPropertyString\":[\"StringValue_1\",\"StringValue_2\"]," +
         "\"CollPropertyBoolean\":[true,false]," +
@@ -401,15 +409,16 @@ public class ODataJsonSerializerTest {
     Entity complexCtAllPrim = createETAllPrim();
 
     Entity entity = new EntityImpl();
-    entity.addProperty(new PropertyImpl("Edm.Int16", TecSimpleProperty.Int16.name, ValueType.PRIMITIVE, 4711));
+    entity.addProperty(new PropertyImpl("Edm.Int16", TecSvcSimpleProperty.Int16.name, ValueType.PRIMITIVE, 4711));
     entity.addProperty(createProperty(
-            new TecComplexProperty(CTAllPrim_Type, CTAllPrim),
+            new TecSvcComplexProperty(CTAllPrim_Type, CTAllPrim),
             ValueType.COMPLEX, complexCtAllPrim.getProperties()));
 
+    ContextURL contextUrl = createContextURL(edmESCompAllPrim, true);
     InputStream result = serializer.entity(edmETCompAllPrim, entity, contextUrl);
     String resultString = streamToString(result);
     String expectedResult = "{" +
-        "\"@odata.context\":\"http://localhost:8080/test.svc\"," +
+        "\"@odata.context\":\"$metadata#ESCompAllPrim/$entity\"," +
         "\"PropertyInt16\":4711," +
         "\"CTAllPrim\":{" +
         "\"PropertyInt16\":4711," +
@@ -432,6 +441,13 @@ public class ODataJsonSerializerTest {
     Assert.assertEquals(expectedResult, resultString);
   }
 
+  private ContextURL createContextURL(EdmEntitySet entitySet, boolean isEntity) throws URISyntaxException {
+    StringBuilder sb = new StringBuilder("$metadata#" + entitySet.getName());
+    if(isEntity) {
+      sb.append("/$entity");
+    }
+    return ContextURL.getInstance(new URI(sb.toString()));
+  }
 
   private Entity createETAllPrim() {
     return createETAllPrim(4711);
@@ -446,41 +462,41 @@ public class ODataJsonSerializerTest {
     date2.set(2014, Calendar.JULY, 2, 13, 30, 0);
     date2.set(Calendar.MILLISECOND, 0);
     //
-    entity.addProperty(createProperty("Edm.Int16", TecSimpleProperty.Int16, ValueType.PRIMITIVE, id));
+    entity.addProperty(createProperty("Edm.Int16", TecSvcSimpleProperty.Int16, ValueType.PRIMITIVE, id));
     //
-    entity.addProperty(createProperty("Collection(Edm.Int16)", TecSimpleProperty.Collection_Int16,
+    entity.addProperty(createProperty("Collection(Edm.Int16)", TecSvcSimpleProperty.Collection_Int16,
             ValueType.COLLECTION_PRIMITIVE, id));
-    entity.addProperty(createProperty("Collection(Edm.String)", TecSimpleProperty.Collection_String,
+    entity.addProperty(createProperty("Collection(Edm.String)", TecSvcSimpleProperty.Collection_String,
             ValueType.COLLECTION_PRIMITIVE, "StringValue_1", "StringValue_2"));
-    entity.addProperty(createProperty("Collection(Edm.Boolean)", TecSimpleProperty.Collection_Boolean,
+    entity.addProperty(createProperty("Collection(Edm.Boolean)", TecSvcSimpleProperty.Collection_Boolean,
             ValueType.COLLECTION_PRIMITIVE, Boolean.TRUE, Boolean.FALSE));
-    entity.addProperty(createProperty("Collection(Edm.Byte)", TecSimpleProperty.Collection_Byte,
+    entity.addProperty(createProperty("Collection(Edm.Byte)", TecSvcSimpleProperty.Collection_Byte,
             ValueType.COLLECTION_PRIMITIVE, Byte.valueOf("19"), Byte.valueOf("42")));
-    entity.addProperty(createProperty("Collection(Edm.SByte)", TecSimpleProperty.Collection_SByte,
+    entity.addProperty(createProperty("Collection(Edm.SByte)", TecSvcSimpleProperty.Collection_SByte,
             ValueType.COLLECTION_PRIMITIVE, Short.valueOf("1"), Short.valueOf("2")));
-    entity.addProperty(createProperty("Collection(Edm.Int32)", TecSimpleProperty.Collection_Int32,
+    entity.addProperty(createProperty("Collection(Edm.Int32)", TecSvcSimpleProperty.Collection_Int32,
             ValueType.COLLECTION_PRIMITIVE, Integer.MAX_VALUE, Integer.MIN_VALUE));
-    entity.addProperty(createProperty("Collection(Edm.Int64)", TecSimpleProperty.Collection_Int64,
+    entity.addProperty(createProperty("Collection(Edm.Int64)", TecSvcSimpleProperty.Collection_Int64,
             ValueType.COLLECTION_PRIMITIVE, Long.MAX_VALUE, Long.MIN_VALUE));
-    entity.addProperty(createProperty("Collection(Edm.Single)", TecSimpleProperty.Collection_Single,
+    entity.addProperty(createProperty("Collection(Edm.Single)", TecSvcSimpleProperty.Collection_Single,
             ValueType.COLLECTION_PRIMITIVE, 47.11, 11.47));
-    entity.addProperty(createProperty("Collection(Edm.Double)", TecSimpleProperty.Collection_Double,
+    entity.addProperty(createProperty("Collection(Edm.Double)", TecSvcSimpleProperty.Collection_Double,
             ValueType.COLLECTION_PRIMITIVE, 4.711, 711.4));
-    entity.addProperty(createProperty("Collection(Edm.Decimal)", TecSimpleProperty.Collection_Decimal,
+    entity.addProperty(createProperty("Collection(Edm.Decimal)", TecSvcSimpleProperty.Collection_Decimal,
             ValueType.COLLECTION_PRIMITIVE, 4711.1174, 1174.4711));
-    entity.addProperty(createProperty("Collection(Edm.Binary)", TecSimpleProperty.Collection_Binary,
+    entity.addProperty(createProperty("Collection(Edm.Binary)", TecSvcSimpleProperty.Collection_Binary,
             ValueType.COLLECTION_PRIMITIVE, new byte[]{0x04, 0x07, 0x01, 0x01}, "test".getBytes()));
-    entity.addProperty(createProperty("Collection(Edm.Date)", TecSimpleProperty.Collection_Date,
+    entity.addProperty(createProperty("Collection(Edm.Date)", TecSvcSimpleProperty.Collection_Date,
             ValueType.COLLECTION_PRIMITIVE, date, date2));
-    entity.addProperty(createProperty("Collection(Edm.DateTimeOffset)", TecSimpleProperty.Collection_DateTimeOffset,
+    entity.addProperty(createProperty("Collection(Edm.DateTimeOffset)", TecSvcSimpleProperty.Collection_DateTimeOffset,
             ValueType.COLLECTION_PRIMITIVE, date.getTime(), date2.getTime()));
-    entity.addProperty(createProperty("Collection(Edm.Duration)", TecSimpleProperty.Collection_Duration,
+    entity.addProperty(createProperty("Collection(Edm.Duration)", TecSvcSimpleProperty.Collection_Duration,
             ValueType.COLLECTION_PRIMITIVE, date.getTimeInMillis(), date2.getTimeInMillis()));
-    entity.addProperty(createProperty("Collection(Edm.Guid)", TecSimpleProperty.Collection_Guid,
+    entity.addProperty(createProperty("Collection(Edm.Guid)", TecSvcSimpleProperty.Collection_Guid,
             ValueType.COLLECTION_PRIMITIVE,
             UUID.fromString("AAAA-BB-CC-DD-FFFFFF"),
             UUID.fromString("FFFF-DD-CC-BB-AAAAAA")));
-    entity.addProperty(createProperty("Collection(Edm.TimeOfDay)", TecSimpleProperty.Collection_TimeOfDay,
+    entity.addProperty(createProperty("Collection(Edm.TimeOfDay)", TecSvcSimpleProperty.Collection_TimeOfDay,
             ValueType.COLLECTION_PRIMITIVE, date, date2));
     return entity;
   }
@@ -490,26 +506,28 @@ public class ODataJsonSerializerTest {
     Calendar date = Calendar.getInstance();
     date.set(2014, Calendar.MARCH, 19, 10, 12, 0);
     date.set(Calendar.MILLISECOND, 0);
-    entity.addProperty(createProperty("Edm.Int16", TecSimpleProperty.Int16, ValueType.PRIMITIVE, id));
-    entity.addProperty(createProperty("Edm.String", TecSimpleProperty.String, ValueType.PRIMITIVE, "StringValue"));
-    entity.addProperty(createProperty("Edm.Boolean", TecSimpleProperty.Boolean, ValueType.PRIMITIVE, Boolean.TRUE));
-    entity.addProperty(createProperty("Edm.Byte", TecSimpleProperty.Byte, ValueType.PRIMITIVE, Byte.valueOf("19")));
-    entity.addProperty(createProperty("Edm.SByte", TecSimpleProperty.SByte, ValueType.PRIMITIVE, Short.valueOf("1")));
-    entity.addProperty(createProperty("Edm.Int32", TecSimpleProperty.Int32, ValueType.PRIMITIVE, Integer.MAX_VALUE));
-    entity.addProperty(createProperty("Edm.Int64", TecSimpleProperty.Int64, ValueType.PRIMITIVE, Long.MAX_VALUE));
-    entity.addProperty(createProperty("Edm.Single", TecSimpleProperty.Single, ValueType.PRIMITIVE, 47.11));
-    entity.addProperty(createProperty("Edm.Double", TecSimpleProperty.Double, ValueType.PRIMITIVE, 4.711));
-    entity.addProperty(createProperty("Edm.Decimal", TecSimpleProperty.Decimal, ValueType.PRIMITIVE, 4711.1174));
-    entity.addProperty(createProperty("Edm.Binary", TecSimpleProperty.Binary, ValueType.PRIMITIVE,
+    entity.addProperty(createProperty("Edm.Int16", TecSvcSimpleProperty.Int16, ValueType.PRIMITIVE, id));
+    entity.addProperty(createProperty("Edm.String", TecSvcSimpleProperty.String, ValueType.PRIMITIVE, "StringValue"));
+    entity.addProperty(createProperty("Edm.Boolean", TecSvcSimpleProperty.Boolean, ValueType.PRIMITIVE, Boolean.TRUE));
+    entity.addProperty(createProperty("Edm.Byte", TecSvcSimpleProperty.Byte, ValueType.PRIMITIVE, Byte.valueOf("19")));
+    entity.addProperty(createProperty("Edm.SByte",
+            TecSvcSimpleProperty.SByte, ValueType.PRIMITIVE, Short.valueOf("1")));
+    entity.addProperty(createProperty("Edm.Int32",
+            TecSvcSimpleProperty.Int32, ValueType.PRIMITIVE, Integer.MAX_VALUE));
+    entity.addProperty(createProperty("Edm.Int64", TecSvcSimpleProperty.Int64, ValueType.PRIMITIVE, Long.MAX_VALUE));
+    entity.addProperty(createProperty("Edm.Single", TecSvcSimpleProperty.Single, ValueType.PRIMITIVE, 47.11));
+    entity.addProperty(createProperty("Edm.Double", TecSvcSimpleProperty.Double, ValueType.PRIMITIVE, 4.711));
+    entity.addProperty(createProperty("Edm.Decimal", TecSvcSimpleProperty.Decimal, ValueType.PRIMITIVE, 4711.1174));
+    entity.addProperty(createProperty("Edm.Binary", TecSvcSimpleProperty.Binary, ValueType.PRIMITIVE,
         new byte[]{0x04, 0x07, 0x01, 0x01}));
-    entity.addProperty(createProperty("Edm.Date", TecSimpleProperty.Date, ValueType.PRIMITIVE, date));
-    entity.addProperty(createProperty("Edm.DateTimeOffset", TecSimpleProperty.DateTimeOffset, ValueType.PRIMITIVE,
+    entity.addProperty(createProperty("Edm.Date", TecSvcSimpleProperty.Date, ValueType.PRIMITIVE, date));
+    entity.addProperty(createProperty("Edm.DateTimeOffset", TecSvcSimpleProperty.DateTimeOffset, ValueType.PRIMITIVE,
         date.getTime()));
-    entity.addProperty(createProperty("Edm.Duration", TecSimpleProperty.Duration, ValueType.PRIMITIVE,
+    entity.addProperty(createProperty("Edm.Duration", TecSvcSimpleProperty.Duration, ValueType.PRIMITIVE,
         date.getTimeInMillis()));
-    entity.addProperty(createProperty("Edm.Guid", TecSimpleProperty.Guid, ValueType.PRIMITIVE,
+    entity.addProperty(createProperty("Edm.Guid", TecSvcSimpleProperty.Guid, ValueType.PRIMITIVE,
         UUID.fromString("AAAA-BB-CC-DD-FFFFFF")));
-    entity.addProperty(createProperty("Edm.TimeOfDay", TecSimpleProperty.TimeOfDay, ValueType.PRIMITIVE, date));
+    entity.addProperty(createProperty("Edm.TimeOfDay", TecSvcSimpleProperty.TimeOfDay, ValueType.PRIMITIVE, date));
     return entity;
   }
 
