@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -28,9 +28,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.TimeZone;
+
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
@@ -41,14 +43,12 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetailKey;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.
-        PaymentInstrument;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.
-        PaymentInstrumentCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.
-        ProductDetailCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
+//CHECKSTYLE:ON (Maven checkstyle)
 import org.junit.Test;
 
 /**
@@ -77,7 +77,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     employee.setPersonID(id);
     employee.setFirstName("Fabio");
     employee.setLastName("Martelli");
-    employee.setEmails(Collections.<String>singleton("fabio.martelli@tirasa.net"));
+    employee.setEmails(Collections.<String> singleton("fabio.martelli@tirasa.net"));
     final Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     date.clear();
     date.set(2011, 3, 4, 9, 0, 0);
@@ -87,7 +87,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");
     employee.setHomeAddress(homeAddress);
-    employee.setNumbers(Arrays.asList(new String[] {"3204725072", "08569930"}));
+    employee.setNumbers(Arrays.asList(new String[] { "3204725072", "08569930" }));
 
     getContainer().flush();
 
@@ -123,13 +123,13 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     customer.setFirstName("Fabio");
     customer.setLastName("Martelli");
     customer.setCity("Pescara");
-    customer.setEmails(Collections.<String>singleton("fabio.martelli@tirasa.net"));
+    customer.setEmails(Collections.<String> singleton("fabio.martelli@tirasa.net"));
     Address homeAddress = customer.factory().newHomeAddress();
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");
     customer.setHomeAddress(homeAddress);
-    customer.setNumbers(Arrays.asList(new String[] {"3204725072", "08569930"}));
+    customer.setNumbers(Arrays.asList(new String[] { "3204725072", "08569930" }));
 
     final OrderCollection orders = getContainer().getOrders().newOrderCollection();
     orders.add(getContainer().getOrders().get(8));
@@ -165,7 +165,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     order.setOrderDate(orderDate);
 
     order.setShelfLife(BigDecimal.TEN);
-    order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] {BigDecimal.TEN.negate(), BigDecimal.TEN}));
+    order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] { BigDecimal.TEN.negate(), BigDecimal.TEN }));
     // -------------------------------
 
     // -------------------------------
@@ -177,13 +177,13 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     customer.setFirstName("Fabio");
     customer.setLastName("Martelli");
     customer.setCity("Pescara");
-    customer.setEmails(Collections.<String>singleton("fabio.martelli@tirasa.net"));
+    customer.setEmails(Collections.<String> singleton("fabio.martelli@tirasa.net"));
     final Address homeAddress = customer.factory().newHomeAddress();
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");
     customer.setHomeAddress(homeAddress);
-    customer.setNumbers(Arrays.asList(new String[] {"3204725072", "08569930"}));
+    customer.setNumbers(Arrays.asList(new String[] { "3204725072", "08569930" }));
 
     final OrderCollection orders = getContainer().getOrders().newOrderCollection();
     orders.add(order);
@@ -264,7 +264,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     product.setDiscontinued(false);
     product.setUserAccess(AccessLevel.Execute);
     product.setSkinColor(Color.Blue);
-    product.setCoverColors(Arrays.asList(new Color[] {Color.Red, Color.Green}));
+    product.setCoverColors(Arrays.asList(new Color[] { Color.Red, Color.Green }));
 
     final ProductDetail detail = getContainer().getProductDetails().newProductDetail();
     detail.setProductID(product.getProductID());
@@ -290,7 +290,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     final int sizeBefore = instruments.size();
 
     final PaymentInstrument instrument = getContainer().getAccounts().get(101).
-            getMyPaymentInstruments().newPaymentInstrument();
+        getMyPaymentInstruments().newPaymentInstrument();
 
     final int id = RandomUtils.nextInt(101999, 105000);
     instrument.setPaymentInstrumentID(id);

@@ -91,7 +91,7 @@ public class ResourceValidator implements TestValidator {
     uriPathInfo = null;
     try {
       uriInfoTmp = (UriInfoImpl) testParser.parseUri(uri, edm);
-      
+
       UriValidator uriValidator = new UriValidator();
       uriValidator.validate(uriInfoTmp, HttpMethod.GET);
     } catch (Exception e) {

@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -144,29 +144,29 @@ public class PropertyTestITCase extends AbstractTestITCase {
   @Test
   public void nullNullableProperty() {
     final ODataDeleteResponse res = client.getCUDRequestFactory().getDeleteRequest(client.newURIBuilder(
-            getServiceRoot()).
-            appendEntitySetSegment("Order").appendKeySegment(-8).
-            appendPropertySegment("CustomerId").appendValueSegment().build()).
-            execute();
+        getServiceRoot()).
+        appendEntitySetSegment("Order").appendKeySegment(-8).
+        appendPropertySegment("CustomerId").appendValueSegment().build()).
+        execute();
     assertEquals(204, res.getStatusCode());
   }
 
   @Test(expected = ODataClientErrorException.class)
   public void nullNonNullableProperty() {
     client.getCUDRequestFactory().getDeleteRequest(client.newURIBuilder(getServiceRoot()).
-            appendEntitySetSegment("Driver").appendKeySegment("1").
-            appendPropertySegment("BirthDate").appendValueSegment().build()).
-            execute();
+        appendEntitySetSegment("Driver").appendKeySegment("1").
+        appendPropertySegment("BirthDate").appendValueSegment().build()).
+        execute();
   }
 
   private void updatePropertyValue(final ODataFormat format, final UpdateType type)
       throws IOException, EdmPrimitiveTypeException {
 
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).
-            appendEntitySetSegment("Customer").appendKeySegment(-9).
-            appendPropertySegment("PrimaryContactInfo").
-            appendPropertySegment("HomePhone").
-            appendPropertySegment("PhoneNumber");
+        appendEntitySetSegment("Customer").appendKeySegment(-9).
+        appendPropertySegment("PrimaryContactInfo").
+        appendPropertySegment("HomePhone").
+        appendPropertySegment("PhoneNumber");
 
     ODataValueRequest retrieveReq = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     retrieveReq.setFormat(format);
@@ -185,7 +185,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     final ODataPrimitiveValue newVal = client.getObjectFactory().newPrimitiveValueBuilder().setValue(newMsg).build();
 
     final ODataValueUpdateRequest updateReq =
-            client.getCUDRequestFactory().getValueUpdateRequest(uriBuilder.build(), type, newVal);
+        client.getCUDRequestFactory().getValueUpdateRequest(uriBuilder.build(), type, newVal);
     updateReq.setFormat(format);
 
     final ODataValueUpdateResponse updateRes = updateReq.execute();
@@ -205,22 +205,22 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   private void updateComplexProperty(final ODataFormat format, final UpdateType type) throws IOException {
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).
-            appendEntitySetSegment("Customer").appendKeySegment(-9).appendPropertySegment("PrimaryContactInfo");
+        appendEntitySetSegment("Customer").appendKeySegment(-9).appendPropertySegment("PrimaryContactInfo");
 
     ODataPropertyRequest<ODataProperty> retrieveReq = client.getRetrieveRequestFactory().
-            getPropertyRequest(uriBuilder.build());
+        getPropertyRequest(uriBuilder.build());
     retrieveReq.setFormat(format);
 
     ODataRetrieveResponse<ODataProperty> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
 
     ODataProperty primaryContactInfo = client.getObjectFactory().
-            newComplexProperty("PrimaryContactInfo", retrieveRes.getBody().getComplexValue());
+        newComplexProperty("PrimaryContactInfo", retrieveRes.getBody().getComplexValue());
 
     final String newItem = "new item " + System.currentTimeMillis();
 
     final ODataCollectionValue<ODataValue> originalValue =
-            primaryContactInfo.getComplexValue().get("EmailBag").getCollectionValue();
+        primaryContactInfo.getComplexValue().get("EmailBag").getCollectionValue();
 
     final int origSize = originalValue.size();
 
@@ -228,7 +228,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     assertEquals(origSize + 1, originalValue.size());
 
     final ODataPropertyUpdateRequest updateReq = client.getCUDRequestFactory().
-            getPropertyComplexValueUpdateRequest(uriBuilder.build(), type, primaryContactInfo);
+        getPropertyComplexValueUpdateRequest(uriBuilder.build(), type, primaryContactInfo);
     if (client.getConfiguration().isUseXHTTPMethod()) {
       assertEquals(HttpMethod.POST, updateReq.getMethod());
     } else {
@@ -253,17 +253,17 @@ public class PropertyTestITCase extends AbstractTestITCase {
   private void updateCollectionProperty(final ODataFormat format) throws IOException {
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-10).
-            appendPropertySegment("PrimaryContactInfo").appendPropertySegment("AlternativeNames");
+        appendPropertySegment("PrimaryContactInfo").appendPropertySegment("AlternativeNames");
 
     ODataPropertyRequest<ODataProperty> retrieveReq = client.getRetrieveRequestFactory().
-            getPropertyRequest(uriBuilder.build());
+        getPropertyRequest(uriBuilder.build());
     retrieveReq.setFormat(format);
 
     ODataRetrieveResponse<ODataProperty> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
 
     ODataProperty alternativeNames = client.getObjectFactory().newCollectionProperty("AlternativeNames",
-            retrieveRes.getBody().getCollectionValue());
+        retrieveRes.getBody().getCollectionValue());
 
     final String newItem = "new item " + System.currentTimeMillis();
 
@@ -275,7 +275,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     assertEquals(origSize + 1, originalValue.size());
 
     final ODataPropertyUpdateRequest updateReq =
-            client.getCUDRequestFactory().getPropertyCollectionValueUpdateRequest(uriBuilder.build(),
+        client.getCUDRequestFactory().getPropertyCollectionValueUpdateRequest(uriBuilder.build(),
             alternativeNames);
     if (client.getConfiguration().isUseXHTTPMethod()) {
       assertEquals(HttpMethod.POST, updateReq.getMethod());
@@ -301,11 +301,11 @@ public class PropertyTestITCase extends AbstractTestITCase {
   private void updatePrimitiveProperty(final ODataFormat format) throws IOException, EdmPrimitiveTypeException {
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-9).
-            appendPropertySegment("PrimaryContactInfo").
-            appendPropertySegment("HomePhone").appendPropertySegment("PhoneNumber");
+        appendPropertySegment("PrimaryContactInfo").
+        appendPropertySegment("HomePhone").appendPropertySegment("PhoneNumber");
 
     ODataPropertyRequest<ODataProperty> retrieveReq = client.getRetrieveRequestFactory().
-            getPropertyRequest(uriBuilder.build());
+        getPropertyRequest(uriBuilder.build());
     retrieveReq.setFormat(format);
 
     ODataRetrieveResponse<ODataProperty> retrieveRes = retrieveReq.execute();
@@ -319,10 +319,10 @@ public class PropertyTestITCase extends AbstractTestITCase {
     assertNotEquals(newMsg, oldMsg);
 
     phoneNumber = client.getObjectFactory().newPrimitiveProperty("PhoneNumber",
-            client.getObjectFactory().newPrimitiveValueBuilder().setValue(newMsg).build());
+        client.getObjectFactory().newPrimitiveValueBuilder().setValue(newMsg).build());
 
     final ODataPropertyUpdateRequest updateReq =
-            client.getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(uriBuilder.build(), phoneNumber);
+        client.getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(uriBuilder.build(), phoneNumber);
     if (client.getConfiguration().isUseXHTTPMethod()) {
       assertEquals(HttpMethod.POST, updateReq.getMethod());
     } else {
@@ -345,7 +345,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   private void rawRequest(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).
-            appendEntitySetSegment("Customer").appendKeySegment(-10).appendPropertySegment("BackupContactInfo");
+        appendEntitySetSegment("Customer").appendKeySegment(-10).appendPropertySegment("BackupContactInfo");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
     req.setFormat(format.getContentType(client.getServiceVersion()).toContentTypeString());

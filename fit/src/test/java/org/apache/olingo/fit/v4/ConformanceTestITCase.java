@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -73,10 +73,10 @@ public class ConformanceTestITCase extends AbstractTestITCase {
   @Test
   public void item1() {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
+        appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
     final ODataEntityRequest<ODataEntity> req =
-            client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+        client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
 
     assertEquals("4.0", req.getHeader("OData-MaxVersion"));
     assertEquals("4.0", req.getHeader(HeaderName.odataMaxVersion.toString()));
@@ -90,36 +90,36 @@ public class ConformanceTestITCase extends AbstractTestITCase {
   @Test
   public void item2() {
     final ODataEntity order =
-            new ODataEntityImpl(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));
+        new ODataEntityImpl(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));
 
     final ODataProperty orderId = getClient().getObjectFactory().newPrimitiveProperty("OrderID",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(2000));
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(2000));
     order.getProperties().add(orderId);
 
     Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     dateTime.set(2011, 2, 4, 16, 3, 57);
     final ODataProperty orderDate = getClient().getObjectFactory().newPrimitiveProperty("OrderDate",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().
+        getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(dateTime).build());
     order.getProperties().add(orderDate);
 
     final ODataProperty shelfLife = getClient().getObjectFactory().newPrimitiveProperty("ShelfLife",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().
+        getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000001")).build());
     order.getProperties().add(shelfLife);
 
     final ODataCollectionValue<ODataValue> orderShelfLifesValue = getClient().getObjectFactory().
-            newCollectionValue("Collection(Duration)");
+        newCollectionValue("Collection(Duration)");
     orderShelfLifesValue.add(getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000001")).build());
+        setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000001")).build());
     orderShelfLifesValue.add(getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build());
+        setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build());
     final ODataProperty orderShelfLifes = getClient().getObjectFactory().
-            newCollectionProperty("OrderShelfLifes", orderShelfLifesValue);
+        newCollectionProperty("OrderShelfLifes", orderShelfLifesValue);
     order.getProperties().add(orderShelfLifes);
 
     final ODataEntityCreateRequest<ODataEntity> req = getClient().getCUDRequestFactory().getEntityCreateRequest(
-            getClient().newURIBuilder(testStaticServiceRootURL).
+        getClient().newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Orders").build(), order);
     req.setFormat(ODataFormat.JSON_FULL_METADATA);
 
@@ -129,22 +129,22 @@ public class ConformanceTestITCase extends AbstractTestITCase {
 
     // check for Content-Type
     assertEquals(
-            ODataFormat.JSON_FULL_METADATA.getContentType(ODataServiceVersion.V40).toContentTypeString(),
-            req.getHeader("Content-Type"));
+        ODataFormat.JSON_FULL_METADATA.getContentType(ODataServiceVersion.V40).toContentTypeString(),
+        req.getHeader("Content-Type"));
     assertEquals(
-            ODataFormat.JSON_FULL_METADATA.getContentType(ODataServiceVersion.V40).toContentTypeString(),
-            req.getHeader(HeaderName.contentType.toString()));
+        ODataFormat.JSON_FULL_METADATA.getContentType(ODataServiceVersion.V40).toContentTypeString(),
+        req.getHeader(HeaderName.contentType.toString()));
     assertEquals(
-            ODataFormat.JSON_FULL_METADATA.getContentType(ODataServiceVersion.V40).toContentTypeString(),
-            req.getContentType());
+        ODataFormat.JSON_FULL_METADATA.getContentType(ODataServiceVersion.V40).toContentTypeString(),
+        req.getContentType());
 
     final ODataEntity created = req.execute().getBody();
     assertNotNull(created);
 
     final URI deleteURI = created.getEditLink() == null
-            ? getClient().newURIBuilder(testStaticServiceRootURL).
+        ? getClient().newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Orders").appendKeySegment(2000).build()
-            : created.getEditLink();
+        : created.getEditLink();
     final ODataDeleteRequest deleteReq = getClient().getCUDRequestFactory().getDeleteRequest(deleteURI);
     final ODataDeleteResponse deleteRes = deleteReq.execute();
     assertEquals(204, deleteRes.getStatusCode());
@@ -156,10 +156,10 @@ public class ConformanceTestITCase extends AbstractTestITCase {
   @Test
   public void item4() {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("redirect").
-            appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
+        appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
     final ODataEntityRequest<ODataEntity> req =
-            client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+        client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
 
     assertEquals("4.0", req.getHeader("OData-MaxVersion"));
     assertEquals("4.0", req.getHeader(HeaderName.odataMaxVersion.toString()));
@@ -181,7 +181,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
-            getEntitySetRequest(uriBuilder.build());
+        getEntitySetRequest(uriBuilder.build());
     req.setFormat(ODataFormat.JSON_FULL_METADATA);
     req.setPrefer(client.newPreferences().maxPageSize(5));
 
@@ -215,29 +215,29 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     final Integer id = 2000;
 
     ODataEntity rowIndex = getClient().getObjectFactory().newEntity(
-            new FullQualifiedName("Microsoft.Test.OData.Services.OpenTypesServiceV4.RowIndex"));
+        new FullQualifiedName("Microsoft.Test.OData.Services.OpenTypesServiceV4.RowIndex"));
     getClient().getBinder().add(rowIndex,
-            getClient().getObjectFactory().newPrimitiveProperty("Id",
-                    getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
+        getClient().getObjectFactory().newPrimitiveProperty("Id",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
 
     // add property not in metadata
     getClient().getBinder().add(rowIndex,
-            getClient().getObjectFactory().newPrimitiveProperty("aString",
-                    getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("string")));
+        getClient().getObjectFactory().newPrimitiveProperty("aString",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("string")));
 
     // add navigation property not in metadata
     rowIndex.addLink(client.getObjectFactory().newEntityNavigationLink(
-            "Row", URI.create(testOpenTypeServiceRootURL + "/Row(71f7d0dc-ede4-45eb-b421-555a2aa1e58f)")));
+        "Row", URI.create(testOpenTypeServiceRootURL + "/Row(71f7d0dc-ede4-45eb-b421-555a2aa1e58f)")));
 
     final ODataEntityCreateRequest<ODataEntity> createReq = getClient().getCUDRequestFactory().
-            getEntityCreateRequest(getClient().newURIBuilder(testOpenTypeServiceRootURL).
-                    appendEntitySetSegment("RowIndex").build(), rowIndex);
+        getEntityCreateRequest(getClient().newURIBuilder(testOpenTypeServiceRootURL).
+            appendEntitySetSegment("RowIndex").build(), rowIndex);
 
     final ODataEntityCreateResponse<ODataEntity> createRes = createReq.execute();
     assertEquals(201, createRes.getStatusCode());
 
     final URIBuilder builder = getClient().newURIBuilder(testOpenTypeServiceRootURL).
-            appendEntitySetSegment("RowIndex").appendKeySegment(id);
+        appendEntitySetSegment("RowIndex").appendKeySegment(id);
 
     rowIndex = read(ODataFormat.JSON_FULL_METADATA, builder.build());
     assertNotNull(rowIndex);
@@ -246,7 +246,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     assertNotNull(rowIndex.getNavigationLink("Row"));
 
     final ODataDeleteResponse deleteRes = getClient().getCUDRequestFactory().
-            getDeleteRequest(rowIndex.getEditLink()).execute();
+        getDeleteRequest(rowIndex.getEditLink()).execute();
     assertEquals(204, deleteRes.getStatusCode());
   }
 
@@ -256,18 +256,18 @@ public class ConformanceTestITCase extends AbstractTestITCase {
   @Test
   public void item7() {
     final URI uri = client.newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Customers").appendKeySegment(1).build();
+        appendEntitySetSegment("Customers").appendKeySegment(1).build();
 
     final ODataEntity patch = client.getObjectFactory().newEntity(
-            new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
+        new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
     patch.setEditLink(uri);
 
     final String newname = "New Name (" + System.currentTimeMillis() + ")";
     patch.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("FirstName",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString(newname)));
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildString(newname)));
 
     final ODataEntityUpdateRequest<ODataEntity> req =
-            getClient().getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patch);
+        getClient().getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patch);
 
     final ODataEntityUpdateResponse<ODataEntity> res = req.execute();
     assertEquals(204, res.getStatusCode());
@@ -287,7 +287,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     client.getConfiguration().setHttpClientFactory(new BasicAuthHttpClientFactory("odatajclient", "odatajclient"));
 
     final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testAuthServiceRootURL).
-            appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
+        appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(ODataFormat.JSON_FULL_METADATA);
@@ -303,8 +303,8 @@ public class ConformanceTestITCase extends AbstractTestITCase {
   @Test
   public void item9() {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Orders").appendKeySegment(8).appendNavigationSegment("CustomerForOrder").
-            appendRefSegment();
+        appendEntitySetSegment("Orders").appendKeySegment(8).appendNavigationSegment("CustomerForOrder").
+        appendRefSegment();
 
     ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(ODataFormat.JSON_FULL_METADATA);
@@ -317,7 +317,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     assertTrue(entity.getId().toASCIIString().endsWith("/StaticService/V40/Static.svc/Customers(PersonID=1)"));
 
     final URI referenceURI = client.newURIBuilder(testStaticServiceRootURL).
-            appendEntityIdSegment(entity.getId().toASCIIString()).build();
+        appendEntityIdSegment(entity.getId().toASCIIString()).build();
 
     req = client.getRetrieveRequestFactory().getEntityRequest(referenceURI);
     req.setFormat(ODataFormat.JSON_FULL_METADATA);
@@ -333,7 +333,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
   @Test
   public void item10() {
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
-            client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").build());
+        client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").build());
     req.setPrefer(client.newPreferences().trackChanges());
 
     final ODataEntitySet customers = req.execute().getBody();
@@ -379,14 +379,14 @@ public class ConformanceTestITCase extends AbstractTestITCase {
   @Test
   public void item11() {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("async").appendEntitySetSegment("Orders");
+        appendEntitySetSegment("async").appendEntitySetSegment("Orders");
 
     final ODataEntitySetRequest<ODataEntitySet> req =
-            client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
+        client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
     req.setFormat(ODataFormat.JSON_FULL_METADATA);
 
     final AsyncRequestWrapper<ODataRetrieveResponse<ODataEntitySet>> async =
-            client.getAsyncRequestFactory().<ODataRetrieveResponse<ODataEntitySet>>getAsyncRequestWrapper(req);
+        client.getAsyncRequestFactory().<ODataRetrieveResponse<ODataEntitySet>> getAsyncRequestWrapper(req);
     async.callback(URI.create("http://client.service.it/callback/endpoint"));
 
     final AsyncResponseWrapper<ODataRetrieveResponse<ODataEntitySet>> responseWrapper = async.execute();
@@ -406,10 +406,10 @@ public class ConformanceTestITCase extends AbstractTestITCase {
   @Test
   public void item12() {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
+        appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
     final ODataEntityRequest<ODataEntity> req =
-            client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+        client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(ODataFormat.JSON);
 
     assertEquals("application/json;odata.metadata=minimal", req.getHeader("Accept"));

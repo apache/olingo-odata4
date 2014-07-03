@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -74,7 +74,7 @@ public interface EdmPrimitiveType extends EdmType {
 
   /**
    * Checks type compatibility.
-   *
+   * 
    * @param primitiveType the {@link EdmPrimitiveType} to be tested for compatibility
    * @return <code>true</code> if the provided type is compatible to this type
    */
@@ -83,14 +83,14 @@ public interface EdmPrimitiveType extends EdmType {
   /**
    * Returns the default Java type for this EDM primitive type as described in the documentation of
    * {@link EdmPrimitiveType}.
-   *
+   * 
    * @return the default Java type
    */
   Class<?> getDefaultType();
 
   /**
    * Validates literal value.
-   *
+   * 
    * @param value the literal value
    * @param isNullable whether the <code>null</code> value is allowed
    * @param maxLength the maximum length
@@ -100,11 +100,11 @@ public interface EdmPrimitiveType extends EdmType {
    * @return <code>true</code> if the validation is successful
    */
   boolean validate(String value,
-          Boolean isNullable, Integer maxLength, Integer precision, Integer scale, Boolean isUnicode);
+      Boolean isNullable, Integer maxLength, Integer precision, Integer scale, Boolean isUnicode);
 
   /**
    * Converts literal representation of value to system data type.
-   *
+   * 
    * @param value the literal representation of value
    * @param isNullable whether the <code>null</code> value is allowed
    * @param maxLength the maximum length
@@ -117,15 +117,15 @@ public interface EdmPrimitiveType extends EdmType {
    * @return the value as an instance of the class the parameter <code>returnType</code> indicates
    */
   <T> T valueOfString(String value,
-          Boolean isNullable, Integer maxLength, Integer precision, Integer scale, Boolean isUnicode,
-          Class<T> returnType) throws EdmPrimitiveTypeException;
+      Boolean isNullable, Integer maxLength, Integer precision, Integer scale, Boolean isUnicode,
+      Class<T> returnType) throws EdmPrimitiveTypeException;
 
   /**
    * Converts system data type to literal representation of value.
    * <p>
    * Returns <code>null</code> if value is <code>null</code> and <code>null</code> is an allowed value.
    * </p>
-   *
+   * 
    * @param value the Java value as Object; its type must be one of the list in the documentation of
    * {@link EdmPrimitiveType}
    * @param isNullable whether the <code>null</code> value is allowed
@@ -137,15 +137,15 @@ public interface EdmPrimitiveType extends EdmType {
    * @return literal representation as String
    */
   String valueToString(Object value,
-          Boolean isNullable, Integer maxLength, Integer precision, Integer scale, Boolean isUnicode)
-          throws EdmPrimitiveTypeException;
+      Boolean isNullable, Integer maxLength, Integer precision, Integer scale, Boolean isUnicode)
+      throws EdmPrimitiveTypeException;
 
   /**
    * Converts default literal representation to URI literal representation.
    * <p>
    * Returns <code>null</code> if the literal is <code>null</code>. Does not perform any validation.
    * </p>
-   *
+   * 
    * @param literal the literal in default representation
    * @return URI literal representation as String
    */
@@ -157,7 +157,7 @@ public interface EdmPrimitiveType extends EdmType {
    * Returns <code>null</code> if the literal is <code>null</code>. Checks the presence of a required prefix and of
    * required surrounding quotation marks but does not perform any further validation.
    * </p>
-   *
+   * 
    * @param literal the literal in URI representation
    * @return default literal representation as String
    * @throws EdmPrimitiveTypeException if a required prefix or required surrounding quotation marks are missing

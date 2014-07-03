@@ -22,7 +22,7 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.uri.UriInfo;
 
-public interface MetadataProcessor extends Processor{
+public interface MetadataProcessor extends Processor {
 
   void readMetadata(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format);
 }

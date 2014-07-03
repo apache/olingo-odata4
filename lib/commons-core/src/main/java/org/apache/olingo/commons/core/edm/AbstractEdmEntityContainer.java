@@ -54,7 +54,7 @@ public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements
   private boolean allFunctionImportsLoaded = false;
 
   public AbstractEdmEntityContainer(final Edm edm, final FullQualifiedName entityContainerName,
-          final FullQualifiedName parentContainerName) {
+      final FullQualifiedName parentContainerName) {
     super(edm, entityContainerName.getName());
     this.entityContainerName = entityContainerName;
     this.parentContainerName = parentContainerName;

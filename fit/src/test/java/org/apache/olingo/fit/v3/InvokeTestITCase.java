@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -55,10 +55,10 @@ public class InvokeTestITCase extends AbstractTestITCase {
   private void getWithNoParams(final ODataFormat format) {
     // 1. get primitive value property
     URIBuilder builder = getClient().newURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment("GetPrimitiveString");
+        appendOperationCallSegment("GetPrimitiveString");
 
     ODataInvokeRequest<ODataProperty> req = getClient().getInvokeRequestFactory().
-            getFunctionInvokeRequest(builder.build(), ODataProperty.class);
+        getFunctionInvokeRequest(builder.build(), ODataProperty.class);
     req.setFormat(format);
     ODataInvokeResponse<ODataProperty> res = req.execute();
     assertNotNull(res);
@@ -69,7 +69,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     // 2. get collection of complex type property
     builder = getClient().newURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment("EntityProjectionReturnsCollectionOfComplexTypes");
+        appendOperationCallSegment("EntityProjectionReturnsCollectionOfComplexTypes");
 
     req = getClient().getInvokeRequestFactory().getFunctionInvokeRequest(builder.build(), ODataProperty.class);
     req.setFormat(format);
@@ -95,12 +95,12 @@ public class InvokeTestITCase extends AbstractTestITCase {
   private void getWithParams(final ODataFormat format) throws EdmPrimitiveTypeException {
     // 1. primitive result
     URIBuilder builder = getClient().newURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment("GetArgumentPlusOne");
+        appendOperationCallSegment("GetArgumentPlusOne");
 
     ODataValue param = getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(154);
     final ODataInvokeRequest<ODataProperty> primitiveReq = getClient().getInvokeRequestFactory().
-            getFunctionInvokeRequest(builder.build(), ODataProperty.class,
-                    Collections.<String, ODataValue>singletonMap("arg1", param));
+        getFunctionInvokeRequest(builder.build(), ODataProperty.class,
+            Collections.<String, ODataValue> singletonMap("arg1", param));
     primitiveReq.setFormat(format);
 
     final ODataInvokeResponse<ODataProperty> primitiveRes = primitiveReq.execute();
@@ -115,8 +115,8 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     param = getClient().getObjectFactory().newPrimitiveValueBuilder().buildString(StringUtils.EMPTY);
     final ODataInvokeRequest<ODataEntitySet> feedReq = getClient().getInvokeRequestFactory().
-            getFunctionInvokeRequest(builder.build(), ODataEntitySet.class,
-                    Collections.<String, ODataValue>singletonMap("Name", param));
+        getFunctionInvokeRequest(builder.build(), ODataEntitySet.class,
+            Collections.<String, ODataValue> singletonMap("Name", param));
     feedReq.setFormat(format);
 
     final ODataInvokeResponse<ODataEntitySet> feedRes = feedReq.execute();
@@ -144,35 +144,35 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
   private ODataEntity createEmployee(final ODataFormat format) {
     final ODataEntity employee = getClient().getObjectFactory().newEntity(new FullQualifiedName(
-            "Microsoft.Test.OData.Services.AstoriaDefaultService.Employee"));
+        "Microsoft.Test.OData.Services.AstoriaDefaultService.Employee"));
 
     employee.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("PersonId",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(1244)));
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(1244)));
     employee.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Name",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("Test employee")));
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("Test employee")));
     employee.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty(
-            "ManagersPersonId", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(3777)));
+        "ManagersPersonId", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(3777)));
     employee.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty(
-            "Salary", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(1000)));
+        "Salary", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(1000)));
     employee.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty(
-            "Title", getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("CEO")));
+        "Title", getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("CEO")));
 
     final URIBuilder uriBuilder = getClient().newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Person");
 
     final ODataEntityCreateRequest<ODataEntity> createReq =
-            getClient().getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), employee);
+        getClient().getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), employee);
     createReq.setFormat(format);
     final ODataEntityCreateResponse<ODataEntity> createRes = createReq.execute();
     assertEquals(201, createRes.getStatusCode());
 
     final ODataEntityRequest<ODataEntity> req =
-            getClient().getRetrieveRequestFactory().getEntityRequest(uriBuilder.appendKeySegment(1244).build());
+        getClient().getRetrieveRequestFactory().getEntityRequest(uriBuilder.appendKeySegment(1244).build());
     return req.execute().getBody();
   }
 
   private void deleteEmployee(final ODataFormat format, final Integer id) {
     final URIBuilder uriBuilder = getClient().newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Person").appendKeySegment(id);
+        appendEntitySetSegment("Person").appendKeySegment(id);
 
     final ODataDeleteRequest deleteReq = getClient().getCUDRequestFactory().getDeleteRequest(uriBuilder.build());
     deleteReq.setFormat(format);
@@ -192,7 +192,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     final ODataOperation operation = created.getOperations().get(0);
 
     final ODataInvokeRequest<ODataNoContent> req = getClient().getInvokeRequestFactory().
-            getActionInvokeRequest(operation.getTarget(), ODataNoContent.class);
+        getActionInvokeRequest(operation.getTarget(), ODataNoContent.class);
     req.setFormat(ODataFormat.JSON_FULL_METADATA);
     final ODataInvokeResponse<ODataNoContent> res = req.execute();
     assertNotNull(res);
@@ -200,9 +200,9 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     // 2. check that invoked action has effectively run
     final URIBuilder uriBuilder = getClient().newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Person").appendKeySegment(createdId);
+        appendEntitySetSegment("Person").appendKeySegment(createdId);
     final ODataEntityRequest<ODataEntity> retrieveRes =
-            getClient().getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+        getClient().getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     retrieveRes.setFormat(ODataFormat.JSON_FULL_METADATA);
     final ODataEntity read = retrieveRes.execute().getBody();
     assertEquals("0", read.getProperty("Salary").getPrimitiveValue().toString());
@@ -216,25 +216,25 @@ public class InvokeTestITCase extends AbstractTestITCase {
   public void boundPostWithParams() throws EdmPrimitiveTypeException {
     // 1. read employees and store their current salary
     final URIBuilder builder = getClient().newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Person").
-            appendEntitySetSegment("Microsoft.Test.OData.Services.AstoriaDefaultService.Employee");
+        appendEntitySetSegment("Person").
+        appendEntitySetSegment("Microsoft.Test.OData.Services.AstoriaDefaultService.Employee");
     final URI employeesURI = builder.build();
     ODataEntitySet employees = getClient().getRetrieveRequestFactory().
-            getEntitySetRequest(employeesURI).execute().getBody();
+        getEntitySetRequest(employeesURI).execute().getBody();
     assertFalse(employees.getEntities().isEmpty());
     final Map<Integer, Integer> preSalaries = new HashMap<Integer, Integer>(employees.getCount());
     for (ODataEntity employee : employees.getEntities()) {
       preSalaries.put(employee.getProperty("PersonId").getPrimitiveValue().toCastValue(Integer.class),
-              employee.getProperty("Salary").getPrimitiveValue().toCastValue(Integer.class));
+          employee.getProperty("Salary").getPrimitiveValue().toCastValue(Integer.class));
     }
     assertFalse(preSalaries.isEmpty());
 
     // 2. invoke action bound, with additional parameter
     final ODataValue param = getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(1);
     final ODataInvokeRequest<ODataNoContent> req = getClient().getInvokeRequestFactory().
-            getActionInvokeRequest(
-                    builder.appendOperationCallSegment("IncreaseSalaries").build(), ODataNoContent.class,
-                    Collections.<String, ODataValue>singletonMap("n", param));
+        getActionInvokeRequest(
+            builder.appendOperationCallSegment("IncreaseSalaries").build(), ODataNoContent.class,
+            Collections.<String, ODataValue> singletonMap("n", param));
     final ODataInvokeResponse<ODataNoContent> res = req.execute();
     assertNotNull(res);
     assertEquals(204, res.getStatusCode());
@@ -243,9 +243,8 @@ public class InvokeTestITCase extends AbstractTestITCase {
     employees = getClient().getRetrieveRequestFactory().getEntitySetRequest(employeesURI).execute().getBody();
     assertFalse(employees.getEntities().isEmpty());
     for (ODataEntity employee : employees.getEntities()) {
-      assertTrue(
-              preSalaries.get(employee.getProperty("PersonId").getPrimitiveValue().toCastValue(Integer.class))
-              < employee.getProperty("Salary").getPrimitiveValue().toCastValue(Integer.class));
+      assertTrue(preSalaries.get(employee.getProperty("PersonId").getPrimitiveValue().toCastValue(Integer.class))
+      < employee.getProperty("Salary").getPrimitiveValue().toCastValue(Integer.class));
     }
   }
 }

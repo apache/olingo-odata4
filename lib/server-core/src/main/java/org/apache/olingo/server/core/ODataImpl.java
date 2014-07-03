@@ -26,8 +26,8 @@ import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 import org.apache.olingo.server.core.serializer.ODataXmlSerializerImpl;
+import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 
 public class ODataImpl extends OData {
 

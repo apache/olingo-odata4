@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -21,12 +21,13 @@ package org.apache.olingo.commons.core.domain;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.domain.AbstractODataPayload;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataOperation;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 /**
@@ -95,7 +96,7 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
 
   @Override
   public FullQualifiedName getTypeName() {
-    return this.typeName;
+    return typeName;
   }
 
   @Override
@@ -122,12 +123,12 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
 
   /**
    * Gets operations.
-   *
+   * 
    * @return operations.
    */
   @Override
   public List<ODataOperation> getOperations() {
-    return this.operations;
+    return operations;
   }
 
   @Override
@@ -150,20 +151,20 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
     boolean result = false;
 
     switch (link.getType()) {
-      case ASSOCIATION:
-        result = associationLinks.contains(link) ? false : associationLinks.add(link);
-        break;
+    case ASSOCIATION:
+      result = associationLinks.contains(link) ? false : associationLinks.add(link);
+      break;
 
-      case ENTITY_NAVIGATION:
-      case ENTITY_SET_NAVIGATION:
-        result = navigationLinks.contains(link) ? false : navigationLinks.add(link);
-        break;
+    case ENTITY_NAVIGATION:
+    case ENTITY_SET_NAVIGATION:
+      result = navigationLinks.contains(link) ? false : navigationLinks.add(link);
+      break;
 
-      case MEDIA_EDIT:
-        result = mediaEditLinks.contains(link) ? false : mediaEditLinks.add(link);
-        break;
+    case MEDIA_EDIT:
+      result = mediaEditLinks.contains(link) ? false : mediaEditLinks.add(link);
+      break;
 
-      default:
+    default:
     }
 
     return result;
@@ -242,7 +243,7 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
 
   @Override
   public void setMediaEntity(final boolean isMediaEntity) {
-    this.mediaEntity = isMediaEntity;
+    mediaEntity = isMediaEntity;
   }
 
   @Override
@@ -272,6 +273,6 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
 
   @Override
   public void setMediaETag(final String eTag) {
-    this.mediaETag = eTag;
+    mediaETag = eTag;
   }
 }

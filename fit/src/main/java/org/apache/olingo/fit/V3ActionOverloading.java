@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Map;
+
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -34,6 +35,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -52,14 +54,14 @@ public class V3ActionOverloading extends V3Services {
 
   public V3ActionOverloading() throws Exception {
     super(new Metadata(FSManager.instance(ODataServiceVersion.V30).readRes(
-            "actionOverloading" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)),
-            Accept.XML), ODataServiceVersion.V30));
+        "actionOverloading" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)),
+        Accept.XML), ODataServiceVersion.V30));
   }
 
   private Response replaceServiceName(final Response response) {
     try {
       final String content = IOUtils.toString((InputStream) response.getEntity(), Constants.ENCODING).
-              replaceAll("Static\\.svc", "ActionOverloading.svc");
+          replaceAll("Static\\.svc", "ActionOverloading.svc");
 
       final Response.ResponseBuilder builder = Response.status(response.getStatus());
       for (String headerName : response.getHeaders().keySet()) {
@@ -88,15 +90,15 @@ public class V3ActionOverloading extends V3Services {
   @Override
   public Response getMetadata() {
     return super.getMetadata("actionOverloading"
-            + StringUtils.capitalize(Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)));
+        + StringUtils.capitalize(Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)));
   }
 
   @POST
   @Path("/RetrieveProduct")
   public Response unboundRetrieveProduct(
-          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType) {
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType) {
 
     final Accept acceptType;
     if (StringUtils.isNotBlank(format)) {
@@ -110,7 +112,7 @@ public class V3ActionOverloading extends V3Services {
 
     try {
       final InputStream result = FSManager.instance(ODataServiceVersion.V30).
-              readFile("actionOverloadingRetrieveProduct", acceptType);
+          readFile("actionOverloadingRetrieveProduct", acceptType);
       return replaceServiceName(xml.createResponse(result, null, acceptType));
     } catch (Exception e) {
       return replaceServiceName(xml.createFaultResponse(accept, e));
@@ -121,10 +123,10 @@ public class V3ActionOverloading extends V3Services {
   @Path("/Product({entityId})")
   @Override
   public Response getProduct(
-          @Context UriInfo uriInfo,
-          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-          @PathParam("entityId") final String entityId,
-          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @PathParam("entityId") final String entityId,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     final Map.Entry<Accept, AbstractUtilities> utils = super.getUtilities(accept, format);
 
@@ -138,12 +140,12 @@ public class V3ActionOverloading extends V3Services {
     try {
       if (utils.getKey() == Accept.JSON_FULLMETA || utils.getKey() == Accept.ATOM) {
         entity = utils.getValue().addOperation(entity, "RetrieveProduct", "#DefaultContainer.RetrieveProduct",
-                uriInfo.getAbsolutePath().toASCIIString()
+            uriInfo.getAbsolutePath().toASCIIString()
                 + "/RetrieveProduct");
       }
 
       return replaceServiceName(utils.getValue().createResponse(
-              entity, Commons.getETag(entityInfo.getKey(), ODataServiceVersion.V30), utils.getKey()));
+          entity, Commons.getETag(entityInfo.getKey(), ODataServiceVersion.V30), utils.getKey()));
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
       return replaceServiceName(xml.createFaultResponse(accept, e));
@@ -153,9 +155,9 @@ public class V3ActionOverloading extends V3Services {
   @POST
   @Path("/Product({entityId})/RetrieveProduct")
   public Response productBoundRetrieveProduct(
-          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType) {
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType) {
 
     return unboundRetrieveProduct(accept, format, contentType);
   }
@@ -163,11 +165,11 @@ public class V3ActionOverloading extends V3Services {
   @GET
   @Path("/OrderLine(OrderId={orderId},ProductId={productId})")
   public Response getOrderLine(
-          @Context UriInfo uriInfo,
-          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-          @PathParam("orderId") final String orderId,
-          @PathParam("productId") final String productId,
-          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @PathParam("orderId") final String orderId,
+      @PathParam("productId") final String productId,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     final Map.Entry<Accept, AbstractUtilities> utils = super.getUtilities(accept, format);
 
@@ -176,18 +178,18 @@ public class V3ActionOverloading extends V3Services {
     }
 
     final Map.Entry<String, InputStream> entityInfo = utils.getValue().
-            readEntity("OrderLine", orderId + " " + productId, utils.getKey());
+        readEntity("OrderLine", orderId + " " + productId, utils.getKey());
 
     InputStream entity = entityInfo.getValue();
     try {
       if (utils.getKey() == Accept.JSON_FULLMETA || utils.getKey() == Accept.ATOM) {
         entity = utils.getValue().addOperation(entity, "RetrieveProduct", "#DefaultContainer.RetrieveProduct",
-                uriInfo.getAbsolutePath().toASCIIString()
+            uriInfo.getAbsolutePath().toASCIIString()
                 + "/RetrieveProduct");
       }
 
       return replaceServiceName(utils.getValue().createResponse(
-              entity, Commons.getETag(entityInfo.getKey(), ODataServiceVersion.V30), utils.getKey()));
+          entity, Commons.getETag(entityInfo.getKey(), ODataServiceVersion.V30), utils.getKey()));
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
       return replaceServiceName(xml.createFaultResponse(accept, e));
@@ -197,9 +199,9 @@ public class V3ActionOverloading extends V3Services {
   @POST
   @Path("/OrderLine(OrderId={orderId},ProductId={productId})/RetrieveProduct")
   public Response orderLineBoundRetrieveProduct(
-          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType) {
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType) {
 
     return unboundRetrieveProduct(accept, format, contentType);
   }

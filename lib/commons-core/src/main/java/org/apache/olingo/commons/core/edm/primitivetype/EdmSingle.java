@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -30,7 +30,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 public final class EdmSingle extends SingletonPrimitiveType {
 
   private static final Pattern PATTERN = Pattern.compile(
-          "(?:\\+|-)?\\p{Digit}{1,9}(?:\\.\\p{Digit}{1,9})?(?:(?:E|e)(?:\\+|-)?\\p{Digit}{1,2})?");
+      "(?:\\+|-)?\\p{Digit}{1,9}(?:\\.\\p{Digit}{1,9})?(?:(?:E|e)(?:\\+|-)?\\p{Digit}{1,2})?");
 
   private static final EdmSingle INSTANCE = new EdmSingle();
 
@@ -41,12 +41,12 @@ public final class EdmSingle extends SingletonPrimitiveType {
   @Override
   public boolean isCompatible(final EdmPrimitiveType primitiveType) {
     return primitiveType instanceof Uint7
-           || primitiveType instanceof EdmByte
-           || primitiveType instanceof EdmSByte
-           || primitiveType instanceof EdmInt16
-           || primitiveType instanceof EdmInt32
-           || primitiveType instanceof EdmInt64
-           || primitiveType instanceof EdmSingle;
+        || primitiveType instanceof EdmByte
+        || primitiveType instanceof EdmSByte
+        || primitiveType instanceof EdmInt16
+        || primitiveType instanceof EdmInt32
+        || primitiveType instanceof EdmInt64
+        || primitiveType instanceof EdmSingle;
   }
 
   @Override
@@ -56,8 +56,8 @@ public final class EdmSingle extends SingletonPrimitiveType {
 
   @Override
   protected <T> T internalValueOfString(final String value,
-          final Boolean isNullable, final Integer maxLength, final Integer precision,
-          final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+      final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
 
     Float result = null;
     BigDecimal bigDecimalValue = null;
@@ -91,25 +91,25 @@ public final class EdmSingle extends SingletonPrimitiveType {
         return returnType.cast(result.doubleValue());
       } else {
         throw new EdmPrimitiveTypeException(
-                "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType)");
+            "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType)");
       }
     } else {
       try {
         return EdmDecimal.convertDecimal(bigDecimalValue, returnType);
       } catch (final IllegalArgumentException e) {
         throw new EdmPrimitiveTypeException(
-                "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
+            "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
       } catch (final ClassCastException e) {
         throw new EdmPrimitiveTypeException(
-                "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
+            "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
       }
     }
   }
 
   @Override
   protected <T> String internalValueToString(final T value,
-          final Boolean isNullable, final Integer maxLength, final Integer precision,
-          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (value instanceof Long || value instanceof Integer) {
       if (Math.abs(((Number) value).longValue()) < 1L << 22) {
@@ -132,7 +132,7 @@ public final class EdmSingle extends SingletonPrimitiveType {
       }
     } else if (value instanceof Float) {
       return (Float) value == Float.NEGATIVE_INFINITY ? EdmDouble.NEGATIVE_INFINITY
-             : (Float) value == Float.POSITIVE_INFINITY ? EdmDouble.POSITIVE_INFINITY : value.toString();
+          : (Float) value == Float.POSITIVE_INFINITY ? EdmDouble.POSITIVE_INFINITY : value.toString();
     } else if (value instanceof BigDecimal) {
       final float floatValue = ((BigDecimal) value).floatValue();
       if (!Float.isInfinite(floatValue) && BigDecimal.valueOf(floatValue).compareTo((BigDecimal) value) == 0) {
@@ -142,7 +142,7 @@ public final class EdmSingle extends SingletonPrimitiveType {
       }
     } else {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
     }
   }
 }

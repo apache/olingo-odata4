@@ -1,42 +1,42 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.fit.proxy.v3;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+
 import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
-        DefaultContainer;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.
-        ContactDetails;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
+//CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.DefaultContainer;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Aliases;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone;
-
+//CHECKSTYLE:ON (Maven checkstyle)
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,9 +83,9 @@ public abstract class AbstractTestITCase {
   }
 
   protected Customer getSampleCustomerProfile(
-          final Integer id,
-          final String sampleName,
-          final DefaultContainer container) {
+      final Integer id,
+      final String sampleName,
+      final DefaultContainer container) {
 
     final Customer customer = container.getCustomer().newCustomer();
 
@@ -97,27 +97,27 @@ public abstract class AbstractTestITCase {
 
     final ContactDetails cd = customer.factory().newPrimaryContactInfo();
     cd.setAlternativeNames(Arrays.asList("alternative1", "alternative2"));
-    cd.setEmailBag(Collections.<String>singleton("myname@mydomain.org"));
-    cd.setMobilePhoneBag(Collections.<Phone>emptySet());
+    cd.setEmailBag(Collections.<String> singleton("myname@mydomain.org"));
+    cd.setMobilePhoneBag(Collections.<Phone> emptySet());
     customer.setPrimaryContactInfo(cd);
 
     final Aliases aliases = cd.factory().newContactAlias();
-    aliases.setAlternativeNames(Collections.<String>singleton("myAlternativeName"));
+    aliases.setAlternativeNames(Collections.<String> singleton("myAlternativeName"));
     cd.setContactAlias(aliases);
 
     final ContactDetails bcd = customer.factory().newBackupContactInfo();
     bcd.setAlternativeNames(Arrays.asList("alternative3", "alternative4"));
-    bcd.setEmailBag(Collections.<String>emptySet());
-    bcd.setMobilePhoneBag(Collections.<Phone>emptySet());
-    customer.setBackupContactInfo(Collections.<ContactDetails>singleton(bcd));
+    bcd.setEmailBag(Collections.<String> emptySet());
+    bcd.setMobilePhoneBag(Collections.<Phone> emptySet());
+    customer.setBackupContactInfo(Collections.<ContactDetails> singleton(bcd));
 
     return customer;
   }
 
   protected void checkSampleCustomerProfile(
-          final Customer customer,
-          final Integer id,
-          final String sampleName) {
+      final Customer customer,
+      final Integer id,
+      final String sampleName) {
 
     assertEquals(id, customer.getCustomerId());
     assertNotNull(customer.getPrimaryContactInfo());
@@ -138,7 +138,7 @@ public abstract class AbstractTestITCase {
     assertTrue(bcd.getMobilePhoneBag().isEmpty());
   }
 
-  protected Customer readCustomer(final DefaultContainer container, int id) {
+  protected Customer readCustomer(final DefaultContainer container, final int id) {
     final Customer customer = container.getCustomer().get(id);
     assertNotNull(customer);
     assertEquals(Integer.valueOf(id), customer.getCustomerId());

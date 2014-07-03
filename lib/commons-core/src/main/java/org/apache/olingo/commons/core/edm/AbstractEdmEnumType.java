@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -49,8 +49,8 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
     super(edm, fqn, EdmTypeKind.ENUM);
 
     this.isFlags = isFlags;
-    this.uriPrefix = fqn.getFullQualifiedNameAsString() + '\'';
-    this.uriSuffix = "'";
+    uriPrefix = fqn.getFullQualifiedNameAsString() + '\'';
+    uriSuffix = "'";
   }
 
   protected abstract Collection<? extends EdmMember> getMembers();
@@ -92,7 +92,7 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
 
   @Override
   public boolean validate(final String value, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode) {
+      final Integer precision, final Integer scale, final Boolean isUnicode) {
 
     try {
       valueOfString(value, isNullable, maxLength, precision, scale, isUnicode, getDefaultType());
@@ -113,7 +113,7 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
       }
       if (memberValueLong == null) {
         throw new EdmPrimitiveTypeException(
-                "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+            "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
       }
       result = result == null ? memberValueLong : result | memberValueLong;
     }
@@ -122,8 +122,8 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
 
   @Override
   public <T> T valueOfString(final String value, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode, final Class<T> returnType)
-          throws EdmPrimitiveTypeException {
+      final Integer precision, final Integer scale, final Boolean isUnicode, final Class<T> returnType)
+      throws EdmPrimitiveTypeException {
 
     if (value == null) {
       if (isNullable != null && !isNullable) {
@@ -136,10 +136,10 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
       return EdmInt64.convertNumber(parseEnumValue(value), returnType);
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
+          "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
     } catch (final ClassCastException e) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
+          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
     }
   }
 
@@ -160,14 +160,14 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
 
     if (remaining != 0) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
     }
     return result.toString();
   }
 
   @Override
   public String valueToString(final Object value, final Boolean isNullable, final Integer maxLength,
-          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (value == null) {
       if (isNullable != null && !isNullable) {
@@ -179,14 +179,14 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
       return constructEnumValue(((Number) value).longValue());
     } else {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
     }
   }
 
   @Override
   public String toUriLiteral(final String literal) {
     return literal == null ? null
-            : uriPrefix.isEmpty() && uriSuffix.isEmpty() ? literal : uriPrefix + literal + uriSuffix;
+        : uriPrefix.isEmpty() && uriSuffix.isEmpty() ? literal : uriPrefix + literal + uriSuffix;
   }
 
   @Override
@@ -196,7 +196,7 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
     } else if (uriPrefix.isEmpty() && uriSuffix.isEmpty()) {
       return literal;
     } else if (literal.length() >= uriPrefix.length() + uriSuffix.length()
-            && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
+        && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
       return literal.substring(uriPrefix.length(), literal.length() - uriSuffix.length());
     } else {
       throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(literal)");

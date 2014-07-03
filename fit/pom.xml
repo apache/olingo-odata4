@@ -210,7 +210,7 @@
               <artifactId>olingo-server-tecsvc</artifactId>
               <type>war</type>
               <properties>
-                <context>tecsvc</context>
+                <context>olingo-server-tecsvc</context>
               </properties>
             </deployable>
             <deployable>

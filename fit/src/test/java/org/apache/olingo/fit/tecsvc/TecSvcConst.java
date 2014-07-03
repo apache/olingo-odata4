@@ -16,14 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.processor;
+package org.apache.olingo.fit.tecsvc;
 
-import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.uri.UriInfo;
+public class TecSvcConst {
 
-public interface EntitySetProcessor extends Processor {
-
-  void readEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format);
-
+  public final static String BASE_URL = "http://localhost:9080/olingo-server-tecsvc/odata.svc";
+  
 }

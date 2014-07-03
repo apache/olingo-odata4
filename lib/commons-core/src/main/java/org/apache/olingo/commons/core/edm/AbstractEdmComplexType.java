@@ -28,9 +28,9 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 public abstract class AbstractEdmComplexType extends AbstractEdmStructuredType implements EdmComplexType {
 
   public AbstractEdmComplexType(
-          final Edm edm,
-          final FullQualifiedName typeName,
-          final FullQualifiedName baseTypeName) {
+      final Edm edm,
+      final FullQualifiedName typeName,
+      final FullQualifiedName baseTypeName) {
     super(edm, typeName, EdmTypeKind.COMPLEX, baseTypeName);
   }
 
@@ -41,7 +41,7 @@ public abstract class AbstractEdmComplexType extends AbstractEdmStructuredType i
       baseType = edm.getComplexType(baseTypeName);
       if (baseType == null) {
         throw new EdmException("Can't find base type with name: " + baseTypeName + " for complex type: "
-                + getName());
+            + getName());
       }
     }
     return baseType;

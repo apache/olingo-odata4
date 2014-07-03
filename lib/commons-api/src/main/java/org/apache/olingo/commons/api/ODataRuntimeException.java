@@ -22,15 +22,15 @@ public class ODataRuntimeException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
 
-  public ODataRuntimeException(String msg) {
+  public ODataRuntimeException(final String msg) {
     super(msg);
   }
 
-  public ODataRuntimeException(String msg, Exception e) {
+  public ODataRuntimeException(final String msg, final Exception e) {
     super(msg, e);
   }
 
-  public ODataRuntimeException(Exception e) {
+  public ODataRuntimeException(final Exception e) {
     super(e);
   }
 

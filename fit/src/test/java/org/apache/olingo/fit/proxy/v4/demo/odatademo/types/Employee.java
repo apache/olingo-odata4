@@ -1,228 +1,201 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 
 package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 
-import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
-import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.EntityType;
-import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
-import org.apache.olingo.ext.proxy.api.annotations.Key;
-import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
-import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
-import org.apache.olingo.ext.proxy.api.annotations.Property;
-import org.apache.olingo.ext.proxy.api.annotations.Operation;
-import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.ext.proxy.api.Annotatable;
-import org.apache.olingo.ext.proxy.api.AbstractOpenType;
-import org.apache.olingo.ext.proxy.api.OperationType;
-import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.fit.proxy.v4.demo.odatademo.*;
-import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.*;
-
-import org.apache.olingo.commons.api.edm.geo.Geospatial;
-import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
-import org.apache.olingo.commons.api.edm.geo.LineString;
-import org.apache.olingo.commons.api.edm.geo.MultiLineString;
-import org.apache.olingo.commons.api.edm.geo.MultiPoint;
-import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
-import org.apache.olingo.commons.api.edm.geo.Point;
-import org.apache.olingo.commons.api.edm.geo.Polygon;
-
+import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.ext.proxy.api.Annotatable;
+import org.apache.olingo.ext.proxy.api.annotations.Key;
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("ODataDemo")
 @org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "Employee",
-        openType = false,
-        hasStream = false,
-        isAbstract = false,
-        baseType = "ODataDemo.Person")
-public interface Employee 
-  extends Annotatable,org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person {
+    openType = false,
+    hasStream = false,
+    isAbstract = false,
+    baseType = "ODataDemo.Person")
+public interface Employee
+    extends Annotatable, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person {
 
-    
-    @Key
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ID", 
-                type = "Edm.Int32", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.Integer getID();
+  @Override
+  @Key
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ID",
+      type = "Edm.Int32",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.Integer getID();
 
-    void setID(java.lang.Integer _iD);    
-    
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Name", 
-                type = "Edm.String", 
-                nullable = true,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.String getName();
+  @Override
+  void setID(java.lang.Integer _iD);
 
-    void setName(java.lang.String _name);    
-    
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "EmployeeID", 
-                type = "Edm.Int64", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.Long getEmployeeID();
+  @Override
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Name",
+      type = "Edm.String",
+      nullable = true,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.String getName();
 
-    void setEmployeeID(java.lang.Long _employeeID);    
-    
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "HireDate", 
-                type = "Edm.DateTimeOffset", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.util.Calendar getHireDate();
+  @Override
+  void setName(java.lang.String _name);
 
-    void setHireDate(java.util.Calendar _hireDate);    
-    
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Salary", 
-                type = "Edm.Single", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.Float getSalary();
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "EmployeeID",
+      type = "Edm.Int64",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.Long getEmployeeID();
 
-    void setSalary(java.lang.Float _salary);    
-    
-    
+  void setEmployeeID(java.lang.Long _employeeID);
 
-    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "PersonDetail", 
-                type = "ODataDemo.PersonDetail", 
-                targetSchema = "ODataDemo", 
-                targetContainer = "DemoService", 
-                targetEntitySet = "PersonDetails",
-                containsTarget = false)
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail getPersonDetail();
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "HireDate",
+      type = "Edm.DateTimeOffset",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.util.Calendar getHireDate();
 
-    void setPersonDetail(org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail _personDetail);
-    
+  void setHireDate(java.util.Calendar _hireDate);
 
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Salary",
+      type = "Edm.Single",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.Float getSalary();
 
-    ComplexFactory factory();
+  void setSalary(java.lang.Float _salary);
 
-    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person.ComplexFactory{
-    }
+  @Override
+  @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "PersonDetail",
+      type = "ODataDemo.PersonDetail",
+      targetSchema = "ODataDemo",
+      targetContainer = "DemoService",
+      targetEntitySet = "PersonDetails",
+      containsTarget = false)
+  org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail getPersonDetail();
 
-    Annotations annotations();
+  @Override
+  void setPersonDetail(org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail _personDetail);
 
-    interface Annotations            extends org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person.Annotations{
+  @Override
+  ComplexFactory factory();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ID",
-                   type = "Edm.Int32")
-        Annotatable getIDAnnotations();
+  interface ComplexFactory extends org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person.ComplexFactory {}
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Name",
-                   type = "Edm.String")
-        Annotatable getNameAnnotations();
+  @Override
+  Annotations annotations();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "EmployeeID",
-                   type = "Edm.Int64")
-        Annotatable getEmployeeIDAnnotations();
+  interface Annotations extends org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person.Annotations {
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "HireDate",
-                   type = "Edm.DateTimeOffset")
-        Annotatable getHireDateAnnotations();
+    @Override
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ID",
+        type = "Edm.Int32")
+    Annotatable getIDAnnotations();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Salary",
-                   type = "Edm.Single")
-        Annotatable getSalaryAnnotations();
+    @Override
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Name",
+        type = "Edm.String")
+    Annotatable getNameAnnotations();
 
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "EmployeeID",
+        type = "Edm.Int64")
+    Annotatable getEmployeeIDAnnotations();
 
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "HireDate",
+        type = "Edm.DateTimeOffset")
+    Annotatable getHireDateAnnotations();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "PersonDetail", 
-                  type = "ODataDemo.PersonDetail")
-        Annotatable getPersonDetailAnnotations();
-    }
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Salary",
+        type = "Edm.Single")
+    Annotatable getSalaryAnnotations();
+
+    @Override
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "PersonDetail",
+        type = "ODataDemo.PersonDetail")
+    Annotatable getPersonDetailAnnotations();
+  }
 
 }

@@ -156,7 +156,7 @@ public interface HttpHeader {
    * OData Custom Header
    */
   public static final String ODATA_VERSION = "OData-Version";
-  
+
   /**
    * OData Custom Header
    */

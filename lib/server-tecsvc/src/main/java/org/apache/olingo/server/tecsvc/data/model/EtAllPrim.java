@@ -46,7 +46,7 @@ public class EtAllPrim {
     return PropertyInt16;
   }
 
-  public void setPropertyInt16(int propertyInt16) {
+  public void setPropertyInt16(final int propertyInt16) {
     PropertyInt16 = propertyInt16;
   }
 
@@ -54,7 +54,7 @@ public class EtAllPrim {
     return PropertyString;
   }
 
-  public void setPropertyString(String propertyString) {
+  public void setPropertyString(final String propertyString) {
     PropertyString = propertyString;
   }
 
@@ -62,7 +62,7 @@ public class EtAllPrim {
     return PropertyBoolean;
   }
 
-  public void setPropertyBoolean(boolean propertyBoolean) {
+  public void setPropertyBoolean(final boolean propertyBoolean) {
     PropertyBoolean = propertyBoolean;
   }
 
@@ -70,7 +70,7 @@ public class EtAllPrim {
     return PropertyByte;
   }
 
-  public void setPropertyByte(byte propertyByte) {
+  public void setPropertyByte(final byte propertyByte) {
     PropertyByte = propertyByte;
   }
 
@@ -78,7 +78,7 @@ public class EtAllPrim {
     return PropertySByte;
   }
 
-  public void setPropertySByte(byte propertySByte) {
+  public void setPropertySByte(final byte propertySByte) {
     PropertySByte = propertySByte;
   }
 
@@ -86,7 +86,7 @@ public class EtAllPrim {
     return PropertyInt32;
   }
 
-  public void setPropertyInt32(int propertyInt32) {
+  public void setPropertyInt32(final int propertyInt32) {
     PropertyInt32 = propertyInt32;
   }
 
@@ -94,7 +94,7 @@ public class EtAllPrim {
     return PropertyInt64;
   }
 
-  public void setPropertyInt64(int propertyInt64) {
+  public void setPropertyInt64(final int propertyInt64) {
     PropertyInt64 = propertyInt64;
   }
 
@@ -102,7 +102,7 @@ public class EtAllPrim {
     return PropertySingle;
   }
 
-  public void setPropertySingle(long propertySingle) {
+  public void setPropertySingle(final long propertySingle) {
     PropertySingle = propertySingle;
   }
 
@@ -110,7 +110,7 @@ public class EtAllPrim {
     return PropertyDouble;
   }
 
-  public void setPropertyDouble(double propertyDouble) {
+  public void setPropertyDouble(final double propertyDouble) {
     PropertyDouble = propertyDouble;
   }
 
@@ -118,7 +118,7 @@ public class EtAllPrim {
     return PropertyDecimal;
   }
 
-  public void setPropertyDecimal(double propertyDecimal) {
+  public void setPropertyDecimal(final double propertyDecimal) {
     PropertyDecimal = propertyDecimal;
   }
 
@@ -126,7 +126,7 @@ public class EtAllPrim {
     return PropertyBinary;
   }
 
-  public void setPropertyBinary(byte[] propertyBinary) {
+  public void setPropertyBinary(final byte[] propertyBinary) {
     PropertyBinary = propertyBinary;
   }
 
@@ -134,7 +134,7 @@ public class EtAllPrim {
     return PropertyDate;
   }
 
-  public void setPropertyDate(String propertyDate) {
+  public void setPropertyDate(final String propertyDate) {
     PropertyDate = propertyDate;
   }
 
@@ -142,7 +142,7 @@ public class EtAllPrim {
     return PropertyDateTimeOffset;
   }
 
-  public void setPropertyDateTimeOffset(String propertyDateTimeOffset) {
+  public void setPropertyDateTimeOffset(final String propertyDateTimeOffset) {
     PropertyDateTimeOffset = propertyDateTimeOffset;
   }
 
@@ -150,7 +150,7 @@ public class EtAllPrim {
     return PropertyDuration;
   }
 
-  public void setPropertyDuration(String propertyDuration) {
+  public void setPropertyDuration(final String propertyDuration) {
     PropertyDuration = propertyDuration;
   }
 
@@ -158,7 +158,7 @@ public class EtAllPrim {
     return PropertyGuid;
   }
 
-  public void setPropertyGuid(String propertyGuid) {
+  public void setPropertyGuid(final String propertyGuid) {
     PropertyGuid = propertyGuid;
   }
 
@@ -166,7 +166,7 @@ public class EtAllPrim {
     return PropertyTimeOfDay;
   }
 
-  public void setPropertyTimeOfDay(String propertyTimeOfDay) {
+  public void setPropertyTimeOfDay(final String propertyTimeOfDay) {
     PropertyTimeOfDay = propertyTimeOfDay;
   }
 
@@ -174,7 +174,7 @@ public class EtAllPrim {
     return NavPropertyETTwoPrimOne;
   }
 
-  public void setNavPropertyETTwoPrimOne(EtTwoPrim navPropertyETTwoPrimOne) {
+  public void setNavPropertyETTwoPrimOne(final EtTwoPrim navPropertyETTwoPrimOne) {
     NavPropertyETTwoPrimOne = navPropertyETTwoPrimOne;
   }
 
@@ -182,7 +182,7 @@ public class EtAllPrim {
     return NavPropertyETTwoPrimMany;
   }
 
-  public void setNavPropertyETTwoPrimMany(List<EtTwoPrim> navPropertyETTwoPrimMany) {
+  public void setNavPropertyETTwoPrimMany(final List<EtTwoPrim> navPropertyETTwoPrimMany) {
     NavPropertyETTwoPrimMany = navPropertyETTwoPrimMany;
   }
 }

@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import javax.ws.rs.NotFoundException;
 
 public class MetadataLinkInfo {
@@ -47,7 +48,7 @@ public class MetadataLinkInfo {
   }
 
   public void addLink(
-          final String entitySetName, final String linkName, final String targetName, final boolean isFeed) {
+      final String entitySetName, final String linkName, final String targetName, final boolean isFeed) {
     final EntitySet entitySet;
     if (entitySets.containsKey(entitySetName)) {
       entitySet = entitySets.get(entitySetName);
@@ -111,14 +112,6 @@ public class MetadataLinkInfo {
       links.add(new NavigationLink(linkName, targetName, isFeed));
     }
 
-    public String getName() {
-      return name;
-    }
-
-    public void setName(final String name) {
-      this.name = name;
-    }
-
     public Set<NavigationLink> getLinks() {
       return links;
     }
@@ -141,19 +134,11 @@ public class MetadataLinkInfo {
       }
     }
 
-    public void setLinks(final Set<NavigationLink> links) {
-      this.links = links;
-    }
-
-    public EntitySet(boolean singleton) {
-      this.singleton = singleton;
-    }
-
     public boolean isSingleton() {
       return singleton;
     }
 
-    public void setSingleton(boolean singleton) {
+    public void setSingleton(final boolean singleton) {
       this.singleton = singleton;
     }
 

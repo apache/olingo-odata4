@@ -42,8 +42,8 @@ public class ContainerProvider {
 
   private EdmTechProvider prov;
 
-  public ContainerProvider(EdmTechProvider edmTechProvider) {
-    this.prov = edmTechProvider;
+  public ContainerProvider(final EdmTechProvider edmTechProvider) {
+    prov = edmTechProvider;
   }
 
   public EntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName) throws ODataException {

@@ -19,6 +19,7 @@
 package org.apache.olingo.server.api;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,22 +45,34 @@ public class ODataRequest {
   }
 
   /**
-   * Add header to request where name handled as case insensitive key.
+   * Add header to request where name handled as case insensitive key. If a header already exists then the list of
+   * values will just be extended.
    * @param name case insensitive header name
    * @param values
    */
-  public void addHeader(String name, List<String> values) {
-    headers.put(name.toUpperCase(), values);
+  public void addHeader(final String name, final List<String> values) {
+    String key = name.toUpperCase();
+    if (headers.containsKey(key)) {
+      List<String> oldValues = headers.get(key);
+
+      List<String> newValues = new ArrayList<String>();
+      newValues.addAll(oldValues);
+      newValues.addAll(values);
+
+      headers.put(name.toUpperCase(), newValues);
+    } else {
+      headers.put(name.toUpperCase(), values);
+    }
   }
-  
+
   /**
    * Returns header value for name where name is a case insensitive key.
    * @return the header value or null if not found
    */
-  public List<String> getHeader(String name) {
+  public List<String> getHeader(final String name) {
     return headers.get(name.toUpperCase());
   }
-  
+
   public InputStream getBody() {
     return body;
   }
@@ -72,7 +85,7 @@ public class ODataRequest {
     return rawQueryPath;
   }
 
-  public void setRawQueryPath(String rawQueryPath) {
+  public void setRawQueryPath(final String rawQueryPath) {
     this.rawQueryPath = rawQueryPath;
   }
 
@@ -88,16 +101,16 @@ public class ODataRequest {
     return rawODataPath;
   }
 
-  public void setRawRequestUri(String rawRequestUri) {
+  public void setRawRequestUri(final String rawRequestUri) {
     this.rawRequestUri = rawRequestUri;
   }
 
-  public void setRawODataPath(String rawODataPath) {
+  public void setRawODataPath(final String rawODataPath) {
     this.rawODataPath = rawODataPath;
-    
+
   }
 
-  public void setRawBaseUri(String rawBaseUri) {
+  public void setRawBaseUri(final String rawBaseUri) {
     this.rawBaseUri = rawBaseUri;
   }
 
@@ -105,7 +118,7 @@ public class ODataRequest {
     return rawServiceResolutionUri;
   }
 
-  public void setRawServiceResolutionUri(String rawServiceResolutionUri) {
+  public void setRawServiceResolutionUri(final String rawServiceResolutionUri) {
     this.rawServiceResolutionUri = rawServiceResolutionUri;
   }
 }

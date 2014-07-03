@@ -30,7 +30,6 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -40,60 +39,60 @@ import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.processor.CollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
-import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor {
-    private static final Logger LOG = LoggerFactory.getLogger(SampleJsonProcessor.class);
+public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor {
+  private static final Logger LOG = LoggerFactory.getLogger(SampleJsonProcessor.class);
 
-    private OData odata;
-    private Edm edm;
+  private OData odata;
+  private Edm edm;
 
-    @Override
-    public void init(OData odata, Edm edm) {
-      this.odata = odata;
-      this.edm = edm;
-    }
+  @Override
+  public void init(OData odata, Edm edm) {
+    this.odata = odata;
+    this.edm = edm;
+  }
 
-    @Override
-    public void readEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
-      long time = System.nanoTime();
+  @Override
+  public void readCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
+    long time = System.nanoTime();
 
-      LOG.info((System.nanoTime() - time) / 1000 + " microseconds");
-      time = System.nanoTime();
-      ODataSerializer serializer = odata.createSerializer(ODataFormat.JSON);
-      EdmEntitySet edmEntitySet = getEntitySet(uriInfo);
-      ContextURL contextUrl = getContextUrl(request, edmEntitySet.getEntityType());
-      EntitySet entitySet = createEntitySet(edmEntitySet.getEntityType(), contextUrl.getURI().toASCIIString());
-      response.setContent(serializer.entitySet(edmEntitySet, entitySet, contextUrl));
-      LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
+    LOG.info((System.nanoTime() - time) / 1000 + " microseconds");
+    time = System.nanoTime();
+    ODataSerializer serializer = odata.createSerializer(ODataFormat.JSON);
+    EdmEntitySet edmEntitySet = getEntitySet(uriInfo);
+    ContextURL contextUrl = getContextUrl(request, edmEntitySet.getEntityType());
+    EntitySet entitySet = createEntitySet(edmEntitySet.getEntityType(), contextUrl.getURI().toASCIIString());
+    response.setContent(serializer.entitySet(edmEntitySet, entitySet, contextUrl));
+    LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
-      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
-    }
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
+  }
 
-    @Override
-    public void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
-      long time = System.nanoTime();
+  @Override
+  public void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
+    long time = System.nanoTime();
 
-      LOG.info((System.nanoTime() - time) / 1000 + " microseconds");
-      time = System.nanoTime();
-      ODataSerializer serializer = odata.createSerializer(ODataFormat.JSON);
-      EdmEntityType entityType = getEntityType(uriInfo);
-      Entity entity = createEntity(entityType);
+    LOG.info((System.nanoTime() - time) / 1000 + " microseconds");
+    time = System.nanoTime();
+    ODataSerializer serializer = odata.createSerializer(ODataFormat.JSON);
+    EdmEntityType entityType = getEntityType(uriInfo);
+    Entity entity = createEntity(entityType);
 
-      response.setContent(serializer.entity(entityType, entity,
-              getContextUrl(request, entityType)));
-      LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
+    response.setContent(serializer.entity(entityType, entity,
+            getContextUrl(request, entityType)));
+    LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
-      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
-    }
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
+  }
 
   private ContextURL getContextUrl(ODataRequest request, EdmEntityType entityType) {
     return ContextURL.getInstance(URI.create(request.getRawBaseUri() + "/" + entityType.getName()));
@@ -216,7 +215,6 @@ public class SampleJsonProcessor implements EntitySetProcessor, EntityProcessor 
     return new PropertyImpl("com.sap.odata.test1.ETCompAllPrim", "PropertyComplex", ValueType.COMPLEX,
             Arrays.asList(properties, properties2));
   }
-
 
   protected EntitySet createEntitySet(EdmEntityType edmEntityType, String baseUri) {
     EntitySet entitySet = new EntitySetImpl();

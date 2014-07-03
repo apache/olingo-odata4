@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -37,6 +38,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -55,14 +57,14 @@ public class V3OpenType extends V3Services {
 
   public V3OpenType() throws Exception {
     super(new Metadata(FSManager.instance(ODataServiceVersion.V30).
-            readRes("openType" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)),
+        readRes("openType" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)),
             Accept.XML), ODataServiceVersion.V30));
   }
 
   private Response replaceServiceName(final Response response) {
     try {
       final String content = IOUtils.toString((InputStream) response.getEntity(), Constants.ENCODING).
-              replaceAll("Static\\.svc", "OpenType.svc");
+          replaceAll("Static\\.svc", "OpenType.svc");
 
       final Response.ResponseBuilder builder = Response.status(response.getStatus());
       for (String headerName : response.getHeaders().keySet()) {
@@ -87,7 +89,7 @@ public class V3OpenType extends V3Services {
 
   /**
    * Provide sample large metadata.
-   *
+   * 
    * @return metadata.
    */
   @GET
@@ -96,39 +98,39 @@ public class V3OpenType extends V3Services {
   @Override
   public Response getMetadata() {
     return super.getMetadata("openType" + StringUtils.capitalize(
-            Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)));
+        Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)));
   }
 
   @GET
   @Path("/{entitySetName}({entityId})")
   @Override
   public Response getEntity(
-          @Context UriInfo uriInfo,
-          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-          @PathParam("entitySetName") String entitySetName,
-          @PathParam("entityId") String entityId,
-          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
-          @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) String expand,
-          @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) String select) {
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @PathParam("entitySetName") final String entitySetName,
+      @PathParam("entityId") final String entityId,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+      @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) final String expand,
+      @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) final String select) {
 
     final Matcher matcher = GUID.matcher(entityId);
     return replaceServiceName(super.getEntityInternal(
-            uriInfo.getRequestUri().toASCIIString(), accept, entitySetName,
-            matcher.matches() ? matcher.group(1) : entityId, format, expand, select, false));
+        uriInfo.getRequestUri().toASCIIString(), accept, entitySetName,
+        matcher.matches() ? matcher.group(1) : entityId, format, expand, select, false));
   }
 
   @POST
   @Path("/{entitySetName}")
-  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
-  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
+  @Consumes({ MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM })
   @Override
   public Response postNewEntity(
-          @Context UriInfo uriInfo,
-          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
-          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
-          @PathParam("entitySetName") final String entitySetName,
-          final String entity) {
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
+      @PathParam("entitySetName") final String entitySetName,
+      final String entity) {
 
     return replaceServiceName(super.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entity));
   }
@@ -137,11 +139,11 @@ public class V3OpenType extends V3Services {
   @Path("/{entitySetName}({entityId})")
   @Override
   public Response removeEntity(
-          @PathParam("entitySetName") String entitySetName,
-          @PathParam("entityId") String entityId) {
+      @PathParam("entitySetName") final String entitySetName,
+      @PathParam("entityId") final String entityId) {
 
     final Matcher matcher = GUID.matcher(entityId);
     return replaceServiceName(super.removeEntity(entitySetName,
-            matcher.matches() ? matcher.group(1) : entityId));
+        matcher.matches() ? matcher.group(1) : entityId));
   }
 }

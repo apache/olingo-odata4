@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -81,7 +81,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc/V40/Static.svc";
 
     edmClient = ODataClientFactory.getEdmEnabledV4(testStaticServiceRootURL);
-    
+
     edmClient.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     client.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
   }
@@ -109,36 +109,36 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
   protected void createAndDeleteOrder(final ODataFormat format, final int id) {
     final ODataEntity order = new ODataEntityImpl(
-            new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));
+        new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));
 
     final ODataProperty orderId = getClient().getObjectFactory().newPrimitiveProperty("OrderID",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id));
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id));
     order.getProperties().add(orderId);
 
     Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     dateTime.set(2011, 2, 4, 16, 3, 57);
     final ODataProperty orderDate = getClient().getObjectFactory().newPrimitiveProperty("OrderDate",
-            getClient().getObjectFactory().newPrimitiveValueBuilder()
+        getClient().getObjectFactory().newPrimitiveValueBuilder()
             .setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(dateTime).build());
     order.getProperties().add(orderDate);
 
     final ODataProperty shelfLife = getClient().getObjectFactory().newPrimitiveProperty("ShelfLife",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().
+        getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Duration).setValue(BigDecimal.TEN.scaleByPowerOfTen(7)).build());
     order.getProperties().add(shelfLife);
 
     final ODataCollectionValue<ODataValue> orderShelfLifesValue = getClient().getObjectFactory().
-            newCollectionValue("Collection(Duration)");
+        newCollectionValue("Collection(Duration)");
     orderShelfLifesValue.add(getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000001")).build());
+        setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000001")).build());
     orderShelfLifesValue.add(getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build());
+        setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build());
     final ODataProperty orderShelfLifes = getClient().getObjectFactory().
-            newCollectionProperty("OrderShelfLifes", orderShelfLifesValue);
+        newCollectionProperty("OrderShelfLifes", orderShelfLifesValue);
     order.getProperties().add(orderShelfLifes);
 
     final ODataEntityCreateRequest<ODataEntity> req = getClient().getCUDRequestFactory().getEntityCreateRequest(
-            getClient().newURIBuilder(testStaticServiceRootURL).
+        getClient().newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Orders").build(), order);
     req.setFormat(format);
     final ODataEntity created = req.execute().getBody();
@@ -146,9 +146,9 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     assertEquals(2, created.getProperty("OrderShelfLifes").getCollectionValue().size());
 
     final URI deleteURI = created.getEditLink() == null
-            ? getClient().newURIBuilder(testStaticServiceRootURL).
+        ? getClient().newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Orders").appendKeySegment(id).build()
-            : created.getEditLink();
+        : created.getEditLink();
     final ODataDeleteRequest deleteReq = getClient().getCUDRequestFactory().getDeleteRequest(deleteURI);
     final ODataDeleteResponse deleteRes = deleteReq.execute();
     assertEquals(204, deleteRes.getStatusCode());

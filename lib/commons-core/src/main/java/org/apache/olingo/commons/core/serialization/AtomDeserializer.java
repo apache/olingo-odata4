@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -86,7 +86,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
 
   public AtomDeserializer(final ODataServiceVersion version) {
     super(version);
-    this.geoDeserializer = new AtomGeoValueDeserializer();
+    geoDeserializer = new AtomGeoValueDeserializer();
   }
 
   private Object fromPrimitive(final XMLEventReader reader, final StartElement start,
@@ -108,7 +108,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
           && (typeInfo == null || !typeInfo.getPrimitiveTypeKind().isGeospatial())) {
 
         final String stringValue = event.asCharacters().getData();
-        value = typeInfo == null ? stringValue :  // TODO: add facets
+        value = typeInfo == null ? stringValue : // TODO: add facets
             ((EdmPrimitiveType) typeInfo.getType()).valueOfString(stringValue, true, null,
                 Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, true,
                 ((EdmPrimitiveType) typeInfo.getType()).getDefaultType());
@@ -185,7 +185,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     return value;
   }
 
-  private void fromCollection(Valuable valuable, final XMLEventReader reader, final StartElement start,
+  private void fromCollection(final Valuable valuable, final XMLEventReader reader, final StartElement start,
       final EdmTypeInfo typeInfo) throws XMLStreamException, EdmPrimitiveTypeException {
 
     List<Object> values = new ArrayList<Object>();
@@ -288,12 +288,12 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     return property;
   }
 
-  private void valuable(Valuable valuable, final XMLEventReader reader, final StartElement start)
+  private void valuable(final Valuable valuable, final XMLEventReader reader, final StartElement start)
       throws XMLStreamException, EdmPrimitiveTypeException {
 
-    final Attribute nullAttr = start.getAttributeByName(this.nullQName);
+    final Attribute nullAttr = start.getAttributeByName(nullQName);
 
-    final Attribute typeAttr = start.getAttributeByName(this.typeQName);
+    final Attribute typeAttr = start.getAttributeByName(typeQName);
     final String typeAttrValue = typeAttr == null ? null : typeAttr.getValue();
 
     final EdmTypeInfo typeInfo = StringUtils.isBlank(typeAttrValue) ? null :
@@ -335,10 +335,10 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       }
     } else {
       valuable.setValue(propType == ODataPropertyType.PRIMITIVE ? ValueType.PRIMITIVE :
-        propType == ODataPropertyType.ENUM ? ValueType.ENUM :
-        propType == ODataPropertyType.COMPLEX ? ValueType.COMPLEX :
-        propType == ODataPropertyType.COLLECTION ? ValueType.COLLECTION_PRIMITIVE : ValueType.PRIMITIVE,
-        null);
+          propType == ODataPropertyType.ENUM ? ValueType.ENUM :
+              propType == ODataPropertyType.COMPLEX ? ValueType.COMPLEX :
+                  propType == ODataPropertyType.COLLECTION ? ValueType.COLLECTION_PRIMITIVE : ValueType.PRIMITIVE,
+          null);
     }
   }
 

@@ -1,24 +1,25 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.commons.api.domain;
 
 import java.net.URI;
+
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 /**
@@ -28,14 +29,14 @@ public interface CommonODataObjectFactory {
 
   /**
    * Instantiates a new entity set.
-   *
+   * 
    * @return entity set.
    */
   CommonODataEntitySet newEntitySet();
 
   /**
    * Instantiates a new entity set.
-   *
+   * 
    * @param next next link.
    * @return entity set.
    */
@@ -43,7 +44,7 @@ public interface CommonODataObjectFactory {
 
   /**
    * Instantiates a new entity.
-   *
+   * 
    * @param typeName OData entity type name.
    * @return entity.
    */
@@ -51,7 +52,7 @@ public interface CommonODataObjectFactory {
 
   /**
    * Instantiates a new entity.
-   *
+   * 
    * @param typeName OData entity type name.
    * @param link self link.
    * @return entity.
@@ -60,7 +61,7 @@ public interface CommonODataObjectFactory {
 
   /**
    * Instantiates a new entity set (for deep insert).
-   *
+   * 
    * @param name name.
    * @param entitySet entity set.
    * @return in-line entity set.
@@ -69,7 +70,7 @@ public interface CommonODataObjectFactory {
 
   /**
    * Instantiates a new entity (for deep insert).
-   *
+   * 
    * @param name name.
    * @param entity entity.
    * @return in-line entity.
@@ -78,7 +79,7 @@ public interface CommonODataObjectFactory {
 
   /**
    * Instantiates a new entity set navigation link.
-   *
+   * 
    * @param name name.
    * @param link link.
    * @return entity set navigation link.
@@ -87,7 +88,7 @@ public interface CommonODataObjectFactory {
 
   /**
    * Instantiates a new entity navigation link.
-   *
+   * 
    * @param name name.
    * @param link link.
    * @return entity navigation link.
@@ -106,7 +107,7 @@ public interface CommonODataObjectFactory {
 
   /**
    * Instantiates a new primitive property.
-   *
+   * 
    * @param name name.
    * @param value primitive value.
    * @return primitive property.
@@ -115,7 +116,7 @@ public interface CommonODataObjectFactory {
 
   /**
    * Instantiates a new complex property.
-   *
+   * 
    * @param name name.
    * @param value value.
    * @return complex property.
@@ -124,7 +125,7 @@ public interface CommonODataObjectFactory {
 
   /**
    * Instantiates a new collection property.
-   *
+   * 
    * @param name name.
    * @param value value.
    * @return collection property.

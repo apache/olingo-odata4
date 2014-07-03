@@ -26,11 +26,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.processor.SampleJsonProcessor;
-import org.apache.olingo.server.tecsvc.processor.TechnicalProcessor;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,36 +42,27 @@ public class TechnicalServlet extends HttpServlet {
   private DataProvider dataProvider;
 
   @Override
-  protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    LOG.debug("ReferenceServlet:service() called");
+  protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException,
+      IOException {
+    try {
+      if (dataProvider == null) {
+        dataProvider = new DataProvider();
+      }
 
-    if(dataProvider == null){
-      dataProvider = new DataProvider();
-    }
-    
-    dataProvider.reset();
-    
-    OData odata = OData.newInstance();
-    Edm edm = odata.createEdm(new EdmTechProvider());
+      dataProvider.reset();
 
-    ODataHttpHandler handler = odata.createHandler(edm);
-    
+      OData odata = OData.newInstance();
+      Edm edm = odata.createEdm(new EdmTechProvider());
+
+      ODataHttpHandler handler = odata.createHandler(edm);
+
 //    handler.register(new TechnicalProcessor(dataProvider));
-    handler.register(new SampleJsonProcessor());
+      handler.register(new SampleJsonProcessor());
 
-    handler.process(req, resp);
+      handler.process(req, resp);
+    } catch (Exception e) {
+      LOG.error("Server Error", e);
+      throw new ServletException(e);
+    }
   }
-
-  public void bla(HttpServletRequest hr, HttpServletResponse hres) {
-//    ODataServer s = ODataServer.newInstance();
-//
-//    ODataRequest r = s.createRequest(hr);
-//
-//    Edm edm = server.createEdm(new EdmTechProvider());
-//    
-//    ODataResponse res = r.dispatch();
-//    
-//    s.sendResponse(res, hres);
-  }
-
 }

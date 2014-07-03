@@ -1,200 +1,170 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
-import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
-import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.EntityType;
-import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
+import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
-import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
-import org.apache.olingo.ext.proxy.api.annotations.Property;
-import org.apache.olingo.ext.proxy.api.annotations.Operation;
-import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.ext.proxy.api.Annotatable;
-import org.apache.olingo.ext.proxy.api.AbstractOpenType;
-import org.apache.olingo.ext.proxy.api.OperationType;
-import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
-
-import org.apache.olingo.commons.api.edm.geo.Geospatial;
-import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
-import org.apache.olingo.commons.api.edm.geo.LineString;
-import org.apache.olingo.commons.api.edm.geo.MultiLineString;
-import org.apache.olingo.commons.api.edm.geo.MultiPoint;
-import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
-import org.apache.olingo.commons.api.edm.geo.Point;
-import org.apache.olingo.commons.api.edm.geo.Polygon;
 
 @KeyRef(ProductReviewKey.class)
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "ProductReview",
-        openType = false,
-        hasStream = false,
-        isAbstract = false)
-public interface ProductReview 
-  extends Annotatable,java.io.Serializable {
+    openType = false,
+    hasStream = false,
+    isAbstract = false)
+public interface ProductReview
+    extends Annotatable, java.io.Serializable {
 
-            
-    @Key
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductId", 
-                type = "Edm.Int32", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.Integer getProductId();
+  @Key
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductId",
+      type = "Edm.Int32",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.Integer getProductId();
 
-    void setProductId(java.lang.Integer _productId);    
-    
-    @Key
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ReviewId", 
-                type = "Edm.Int32", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.Integer getReviewId();
+  void setProductId(java.lang.Integer _productId);
 
-    void setReviewId(java.lang.Integer _reviewId);    
-    
-    
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Review", 
-                type = "Edm.String", 
-                nullable = true,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.String getReview();
+  @Key
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ReviewId",
+      type = "Edm.Int32",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.Integer getReviewId();
 
-    void setReview(java.lang.String _review);    
-    
-    @Key
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "RevisionId", 
-                type = "Edm.String", 
-                nullable = false,
-                defaultValue = "",
-                maxLenght = Integer.MAX_VALUE,
-                fixedLenght = false,
-                precision = 0,
-                scale = 0,
-                unicode = true,
-                collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    java.lang.String getRevisionId();
+  void setReviewId(java.lang.Integer _reviewId);
 
-    void setRevisionId(java.lang.String _revisionId);    
-    
-    
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Review",
+      type = "Edm.String",
+      nullable = true,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.String getReview();
 
-    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Product", 
-                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product", 
-                targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
-                targetContainer = "DefaultContainer", 
-                targetEntitySet = "Product",
-                containsTarget = false)
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product getProduct();
+  void setReview(java.lang.String _review);
 
-    void setProduct(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product _product);
-    
+  @Key
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "RevisionId",
+      type = "Edm.String",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "",
+      concurrencyMode = ConcurrencyMode.None,
+      fcSourcePath = "",
+      fcTargetPath = "",
+      fcContentKind = EdmContentKind.text,
+      fcNSPrefix = "",
+      fcNSURI = "",
+      fcKeepInContent = false)
+  java.lang.String getRevisionId();
 
+  void setRevisionId(java.lang.String _revisionId);
 
-    ComplexFactory factory();
+  @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Product",
+      type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product",
+      targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService",
+      targetContainer = "DefaultContainer",
+      targetEntitySet = "Product",
+      containsTarget = false)
+  org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product
+      getProduct();
 
-    interface ComplexFactory {
-    }
+      void
+      setProduct(
+          org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product _product);
 
-    Annotations annotations();
+  ComplexFactory factory();
 
-    interface Annotations {
+  interface ComplexFactory {}
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ProductId",
-                   type = "Edm.Int32")
-        Annotatable getProductIdAnnotations();
+  Annotations annotations();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ReviewId",
-                   type = "Edm.Int32")
-        Annotatable getReviewIdAnnotations();
+  interface Annotations {
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Review",
-                   type = "Edm.String")
-        Annotatable getReviewAnnotations();
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ProductId",
+        type = "Edm.Int32")
+    Annotatable getProductIdAnnotations();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "RevisionId",
-                   type = "Edm.String")
-        Annotatable getRevisionIdAnnotations();
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ReviewId",
+        type = "Edm.Int32")
+    Annotatable getReviewIdAnnotations();
 
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Review",
+        type = "Edm.String")
+    Annotatable getReviewAnnotations();
 
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "RevisionId",
+        type = "Edm.String")
+    Annotatable getRevisionIdAnnotations();
 
-        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Product", 
-                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product")
-        Annotatable getProductAnnotations();
-    }
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Product",
+        type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product")
+    Annotatable getProductAnnotations();
+  }
 
 }

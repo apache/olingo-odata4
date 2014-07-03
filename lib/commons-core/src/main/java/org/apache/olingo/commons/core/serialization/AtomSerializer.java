@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -68,13 +68,13 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
 
   public AtomSerializer(final ODataServiceVersion version, final boolean serverMode) {
     super(version);
-    this.geoSerializer = new AtomGeoValueSerializer();
+    geoSerializer = new AtomGeoValueSerializer();
     this.serverMode = serverMode;
   }
 
   private void collection(final XMLStreamWriter writer,
       final ValueType valueType, final EdmPrimitiveTypeKind kind, final List<?> value)
-          throws XMLStreamException, EdmPrimitiveTypeException {
+      throws XMLStreamException, EdmPrimitiveTypeException {
     for (Object item : value) {
       if (version.compareTo(ODataServiceVersion.V40) < 0) {
         writer.writeStartElement(Constants.PREFIX_DATASERVICES, Constants.ELEM_ELEMENT,
@@ -91,7 +91,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
   @SuppressWarnings("unchecked")
   private void value(final XMLStreamWriter writer,
       final ValueType valueType, final EdmPrimitiveTypeKind kind, final Object value)
-          throws XMLStreamException, EdmPrimitiveTypeException {
+      throws XMLStreamException, EdmPrimitiveTypeException {
     if (value == null) {
       writer.writeAttribute(Constants.PREFIX_METADATA, version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
           Constants.ATTR_NULL, Boolean.TRUE.toString());
@@ -100,14 +100,14 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     switch (valueType) {
     case PRIMITIVE:
       writer.writeCharacters(kind == null ? value.toString() :
-          EdmPrimitiveTypeFactory.getInstance(kind)  // TODO: add facets
+          EdmPrimitiveTypeFactory.getInstance(kind) // TODO: add facets
               .valueToString(value, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null));
       break;
     case ENUM:
       writer.writeCharacters(value.toString());
       break;
     case GEOSPATIAL:
-      this.geoSerializer.serialize(writer, (Geospatial) value);
+      geoSerializer.serialize(writer, (Geospatial) value);
       break;
     case COLLECTION_PRIMITIVE:
     case COLLECTION_GEOSPATIAL:
@@ -148,7 +148,8 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     if (StringUtils.isNotBlank(property.getType())) {
       typeInfo = new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
       if (!EdmPrimitiveTypeKind.String.getFullQualifiedName().toString().equals(typeInfo.internal())) {
-        writer.writeAttribute(Constants.PREFIX_METADATA, version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
+        writer.writeAttribute(Constants.PREFIX_METADATA,
+            version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
             Constants.ATTR_TYPE, typeInfo.external(version));
       }
     }
@@ -269,7 +270,8 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     if (StringUtils.isNotBlank(annotation.getType())) {
       typeInfo = new EdmTypeInfo.Builder().setTypeExpression(annotation.getType()).build();
       if (!EdmPrimitiveTypeKind.String.getFullQualifiedName().toString().equals(typeInfo.internal())) {
-        writer.writeAttribute(Constants.PREFIX_METADATA, version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
+        writer.writeAttribute(Constants.PREFIX_METADATA,
+            version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
             Constants.ATTR_TYPE, typeInfo.external(version));
       }
     }
@@ -515,6 +517,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     writer.flush();
   }
 
+  @Override
   public <T> void write(final Writer writer, final T obj) throws ODataSerializerException {
     try {
       if (obj instanceof EntitySet) {
@@ -533,6 +536,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     }
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public <T> void write(final Writer writer, final ResWrap<T> container) throws ODataSerializerException {
     final T obj = container == null ? null : container.getPayload();

@@ -31,7 +31,7 @@ public class EtTwoPrim {
     return PropertyInt16;
   }
 
-  public void setPropertyInt16(int propertyInt16) {
+  public void setPropertyInt16(final int propertyInt16) {
     PropertyInt16 = propertyInt16;
   }
 
@@ -39,7 +39,7 @@ public class EtTwoPrim {
     return PropertyString;
   }
 
-  public void setPropertyString(String propertyString) {
+  public void setPropertyString(final String propertyString) {
     PropertyString = propertyString;
   }
 
@@ -47,7 +47,7 @@ public class EtTwoPrim {
     return NavPropertyETAllPrimOne;
   }
 
-  public void setNavPropertyETAllPrimOne(EtAllPrim navPropertyETAllPrimOne) {
+  public void setNavPropertyETAllPrimOne(final EtAllPrim navPropertyETAllPrimOne) {
     NavPropertyETAllPrimOne = navPropertyETAllPrimOne;
   }
 
@@ -55,7 +55,7 @@ public class EtTwoPrim {
     return NavPropertyETAllPrimMany;
   }
 
-  public void setNavPropertyETAllPrimMany(List<EtAllPrim> navPropertyETAllPrimMany) {
+  public void setNavPropertyETAllPrimMany(final List<EtAllPrim> navPropertyETAllPrimMany) {
     NavPropertyETAllPrimMany = navPropertyETAllPrimMany;
   }
 

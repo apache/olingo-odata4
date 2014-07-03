@@ -16,30 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api;
+package org.apache.olingo.server.api.processor;
 
-import static org.junit.Assert.assertEquals;
+import java.util.List;
 
-import java.util.Arrays;
+public interface CustomContentTypeSupport {
 
-import org.junit.Test;
+  public List<FormatContentTypeMapping> modifySupportedContentTypes(
+      List<FormatContentTypeMapping> supportedContentTypes, Class<? extends Processor> processorClass);
 
-public class ODataRequestTest {
-  
-  @Test
-  public void testHeader() {
-    ODataRequest r = new ODataRequest();
-    
-    r.addHeader("aa", Arrays.asList("cc"));
-    
-    assertEquals("cc", r.getHeader("aa").get(0));
-    assertEquals("cc", r.getHeader("aA").get(0));
-    assertEquals("cc", r.getHeader("AA").get(0));
-    
-    r.addHeader("AA", Arrays.asList("dd"));
-    
-    assertEquals("dd", r.getHeader("aa").get(0));
-    assertEquals("dd", r.getHeader("aA").get(0));
-    assertEquals("dd", r.getHeader("AA").get(0));   
-  }
 }

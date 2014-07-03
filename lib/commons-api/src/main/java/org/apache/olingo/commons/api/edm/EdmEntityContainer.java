@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * A CSDL EntityContainer element.
- *
+ * 
  * <br/>
  * EdmEntityContainer hold the information of EntitySets, Singletons, ActionImports and FunctionImports contained
  */
@@ -42,14 +42,14 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
    * Returns whether this container is the default container in the current schema.
    * <br/>
    * According to CSDL specifications, this method will always return <tt>true</tt> for OData 4.0.
-   *
+   * 
    * @return whether this container is the default container in the current schema, always <tt>true</tt> for OData 4.0
    */
   boolean isDefault();
 
   /**
    * Get contained Singleton by name.
-   *
+   * 
    * @param name
    * @return {@link EdmSingleton}
    */
@@ -57,7 +57,7 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
 
   /**
    * Get contained EntitySet by name.
-   *
+   * 
    * @param name
    * @return {@link EdmEntitySet}
    */
@@ -65,7 +65,7 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
 
   /**
    * Get contained ActionImport by name.
-   *
+   * 
    * @param name
    * @return {@link EdmActionImport}
    */
@@ -73,7 +73,7 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
 
   /**
    * Get contained FunctionImport by name.
-   *
+   * 
    * @param name
    * @return {@link EdmFunctionImport}
    */
@@ -81,28 +81,28 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
 
   /**
    * This method <b>DOES NOT</b> support lazy loading
-   *
+   * 
    * @return returns all entity sets for this container.
    */
   List<EdmEntitySet> getEntitySets();
 
   /**
    * This method <b>DOES NOT</b> support lazy loading
-   *
+   * 
    * @return returns all function imports for this container.
    */
   List<EdmFunctionImport> getFunctionImports();
 
   /**
    * This method <b>DOES NOT</b> support lazy loading
-   *
+   * 
    * @return returns all singletons for this container.
    */
   List<EdmSingleton> getSingletons();
 
   /**
    * This method <b>DOES NOT</b> support lazy loading
-   *
+   * 
    * @return returns all action imports for this container.
    */
   List<EdmActionImport> getActionImports();

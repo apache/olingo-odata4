@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -45,8 +45,8 @@ public final class EdmDate extends SingletonPrimitiveType {
 
   @Override
   protected <T> T internalValueOfString(final String value,
-          final Boolean isNullable, final Integer maxLength, final Integer precision,
-          final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+      final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
 
     final Calendar dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     dateTimeValue.clear();
@@ -57,25 +57,25 @@ public final class EdmDate extends SingletonPrimitiveType {
     }
 
     dateTimeValue.set(
-            Integer.parseInt(matcher.group(1)),
-            Byte.parseByte(matcher.group(2)) - 1, // month is zero-based
-            Byte.parseByte(matcher.group(3)));
+        Integer.parseInt(matcher.group(1)),
+        Byte.parseByte(matcher.group(2)) - 1, // month is zero-based
+        Byte.parseByte(matcher.group(3)));
 
     try {
       return EdmDateTimeOffset.convertDateTime(dateTimeValue, 0, returnType);
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
+          "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
     } catch (final ClassCastException e) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)", e);
+          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)", e);
     }
   }
 
   @Override
   protected <T> String internalValueToString(final T value,
-          final Boolean isNullable, final Integer maxLength, final Integer precision,
-          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     final Calendar dateTimeValue = EdmDateTimeOffset.createDateTime(value);
 

@@ -1,24 +1,25 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.commons.core.domain.v3;
 
 import java.net.URI;
+
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
@@ -26,9 +27,9 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataObjectFactory;
-import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -70,25 +71,25 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
   @Override
   public ODataLink newEntityNavigationLink(final String name, final URI link) {
     return new ODataLink.Builder().setVersion(version).setURI(link).
-            setType(ODataLinkType.ENTITY_NAVIGATION).setTitle(name).build();
+        setType(ODataLinkType.ENTITY_NAVIGATION).setTitle(name).build();
   }
 
   @Override
   public ODataLink newEntitySetNavigationLink(final String name, final URI link) {
     return new ODataLink.Builder().setVersion(version).setURI(link).
-            setType(ODataLinkType.ENTITY_SET_NAVIGATION).setTitle(name).build();
+        setType(ODataLinkType.ENTITY_SET_NAVIGATION).setTitle(name).build();
   }
 
   @Override
   public ODataLink newAssociationLink(final String name, final URI link) {
     return new ODataLink.Builder().setVersion(version).setURI(link).
-            setType(ODataLinkType.ASSOCIATION).setTitle(name).build();
+        setType(ODataLinkType.ASSOCIATION).setTitle(name).build();
   }
 
   @Override
   public ODataLink newMediaEditLink(final String name, final URI link) {
     return new ODataLink.Builder().setVersion(version).setURI(link).
-            setType(ODataLinkType.MEDIA_EDIT).setTitle(name).build();
+        setType(ODataLinkType.MEDIA_EDIT).setTitle(name).build();
   }
 
   @Override
@@ -113,14 +114,14 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
 
   @Override
   public ODataProperty newComplexProperty(final String name,
-          final ODataComplexValue<? extends CommonODataProperty> value) {
+      final ODataComplexValue<? extends CommonODataProperty> value) {
 
     return new ODataPropertyImpl(name, value);
   }
 
   @Override
   public ODataProperty newCollectionProperty(final String name,
-          final ODataCollectionValue<? extends ODataValue> value) {
+      final ODataCollectionValue<? extends ODataValue> value) {
 
     return new ODataPropertyImpl(name, value);
   }

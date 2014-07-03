@@ -23,19 +23,27 @@ import static org.junit.Assert.assertEquals;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PingITCase {
 
-  private static final String REF_SERVICE = "http://localhost:9080/tecsvc/odata.svc/";
-  private static final String REDIRECT_URL = "http://localhost:9080/tecsvc/odata.svc";
+  private static final Logger LOG = LoggerFactory.getLogger(PingITCase.class);
+
+  private static final String REF_SERVICE = TecSvcConst.BASE_URL + "/";
+  private static final String REDIRECT_URL = TecSvcConst.BASE_URL;
 
   @Test
   public void ping() throws Exception {
     URL url = new URL(REF_SERVICE);
 
+    LOG.debug("ping request: " + REF_SERVICE);
+
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json");
     connection.connect();
 
     int code = connection.getResponseCode();
@@ -47,8 +55,11 @@ public class PingITCase {
 
     URL url = new URL(REDIRECT_URL);
 
+    LOG.debug("redirect request: " + REDIRECT_URL);
+
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json");
     connection.connect();
 
     int code = connection.getResponseCode();

@@ -46,12 +46,12 @@ public abstract class AbstractEdm implements Edm {
   protected List<EdmSchema> schemaList;
 
   private final Map<FullQualifiedName, EdmEntityContainer> entityContainers =
-          new HashMap<FullQualifiedName, EdmEntityContainer>();
+      new HashMap<FullQualifiedName, EdmEntityContainer>();
 
   private final Map<FullQualifiedName, EdmEnumType> enumTypes = new HashMap<FullQualifiedName, EdmEnumType>();
 
   private final Map<FullQualifiedName, EdmTypeDefinition> typeDefinitions =
-          new HashMap<FullQualifiedName, EdmTypeDefinition>();
+      new HashMap<FullQualifiedName, EdmTypeDefinition>();
 
   private final Map<FullQualifiedName, EdmEntityType> entityTypes = new HashMap<FullQualifiedName, EdmEntityType>();
 
@@ -60,7 +60,7 @@ public abstract class AbstractEdm implements Edm {
   private final Map<FullQualifiedName, EdmAction> unboundActions = new HashMap<FullQualifiedName, EdmAction>();
 
   private final Map<FullQualifiedName, List<EdmFunction>> unboundFunctionsByName =
-          new HashMap<FullQualifiedName, List<EdmFunction>>();
+      new HashMap<FullQualifiedName, List<EdmFunction>>();
 
   private final Map<FunctionMapKey, EdmFunction> unboundFunctionsByKey = new HashMap<FunctionMapKey, EdmFunction>();
 
@@ -71,10 +71,10 @@ public abstract class AbstractEdm implements Edm {
   private final Map<FullQualifiedName, EdmTerm> terms = new HashMap<FullQualifiedName, EdmTerm>();
 
   private final Map<FullQualifiedName, EdmAnnotations> annotationGroups =
-          new HashMap<FullQualifiedName, EdmAnnotations>();
+      new HashMap<FullQualifiedName, EdmAnnotations>();
 
   private final Map<FullQualifiedName, List<EdmAnnotation>> annotations =
-          new HashMap<FullQualifiedName, List<EdmAnnotation>>();
+      new HashMap<FullQualifiedName, List<EdmAnnotation>>();
 
   private EdmServiceMetadata serviceMetadata;
 
@@ -149,7 +149,7 @@ public abstract class AbstractEdm implements Edm {
               final FullQualifiedName name = new FullQualifiedName(namespace, action.getName());
               if (action.isBound()) {
                 final ActionMapKey key = new ActionMapKey(name,
-                        action.getBindingParameterTypeFqn(), action.isBindingParameterTypeCollection());
+                    action.getBindingParameterTypeFqn(), action.isBindingParameterTypeCollection());
                 boundActions.put(key, action);
               } else {
                 unboundActions.put(name, action);
@@ -162,8 +162,8 @@ public abstract class AbstractEdm implements Edm {
             for (EdmFunction function : localFunctions) {
               final FullQualifiedName name = new FullQualifiedName(namespace, function.getName());
               final FunctionMapKey key = new FunctionMapKey(name,
-                      function.getBindingParameterTypeFqn(), function.isBindingParameterTypeCollection(),
-                      function.getParameterNames());
+                  function.getBindingParameterTypeFqn(), function.isBindingParameterTypeCollection(),
+                  function.getParameterNames());
 
               if (function.isBound()) {
                 boundFunctions.put(key, function);
@@ -273,7 +273,7 @@ public abstract class AbstractEdm implements Edm {
 
   @Override
   public EdmAction getBoundAction(final FullQualifiedName actionName,
-          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
+      final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
 
     final FullQualifiedName actionFqn = resolvePossibleAlias(actionName);
     final FullQualifiedName bindingParameterTypeFqn = resolvePossibleAlias(bindingParameterTypeName);
@@ -301,10 +301,10 @@ public abstract class AbstractEdm implements Edm {
 
         for (EdmFunction unbound : functions) {
           final FunctionMapKey key = new FunctionMapKey(
-                  new FullQualifiedName(unbound.getNamespace(), unbound.getName()),
-                  unbound.getBindingParameterTypeFqn(),
-                  unbound.isBindingParameterTypeCollection(),
-                  unbound.getParameterNames());
+              new FullQualifiedName(unbound.getNamespace(), unbound.getName()),
+              unbound.getBindingParameterTypeFqn(),
+              unbound.isBindingParameterTypeCollection(),
+              unbound.getParameterNames());
           unboundFunctionsByKey.put(key, unbound);
         }
       }
@@ -331,17 +331,17 @@ public abstract class AbstractEdm implements Edm {
 
   @Override
   public EdmFunction getBoundFunction(final FullQualifiedName functionName,
-          final FullQualifiedName bindingParameterTypeName,
-          final Boolean isBindingParameterCollection, final List<String> parameterNames) {
+      final FullQualifiedName bindingParameterTypeName,
+      final Boolean isBindingParameterCollection, final List<String> parameterNames) {
 
     final FullQualifiedName functionFqn = resolvePossibleAlias(functionName);
     final FullQualifiedName bindingParameterTypeFqn = resolvePossibleAlias(bindingParameterTypeName);
     final FunctionMapKey key =
-            new FunctionMapKey(functionFqn, bindingParameterTypeFqn, isBindingParameterCollection, parameterNames);
+        new FunctionMapKey(functionFqn, bindingParameterTypeFqn, isBindingParameterCollection, parameterNames);
     EdmFunction function = boundFunctions.get(key);
     if (function == null) {
       function = createBoundFunction(functionFqn, bindingParameterTypeFqn, isBindingParameterCollection,
-              parameterNames);
+          parameterNames);
       if (function != null) {
         boundFunctions.put(key, function);
       }
@@ -448,12 +448,12 @@ public abstract class AbstractEdm implements Edm {
   protected abstract EdmFunction createUnboundFunction(FullQualifiedName functionName, List<String> parameterNames);
 
   protected abstract EdmAction createBoundAction(FullQualifiedName actionName,
-          FullQualifiedName bindingParameterTypeName,
-          Boolean isBindingParameterCollection);
+      FullQualifiedName bindingParameterTypeName,
+      Boolean isBindingParameterCollection);
 
   protected abstract EdmFunction createBoundFunction(FullQualifiedName functionName,
-          FullQualifiedName bindingParameterTypeName, Boolean isBindingParameterCollection,
-          List<String> parameterNames);
+      FullQualifiedName bindingParameterTypeName, Boolean isBindingParameterCollection,
+      List<String> parameterNames);
 
   protected abstract EdmServiceMetadata createServiceMetadata();
 

@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -97,7 +98,7 @@ public abstract class AbstractUtilities {
   public AbstractUtilities(final ODataServiceVersion version, final Metadata metadata) throws Exception {
     this.version = version;
     this.metadata = metadata;
-    this.fsManager = FSManager.instance(version);
+    fsManager = FSManager.instance(version);
     atomDeserializer = new FITAtomDeserializer(version);
     jsonDeserializer = new JsonDeserializer(version, true);
     atomSerializer = new AtomSerializer(version, true);
@@ -110,7 +111,7 @@ public abstract class AbstractUtilities {
 
   /**
    * Add links to the given entity.
-   *
+   * 
    * @param entitySetName
    * @param entitykey
    * @param is
@@ -123,17 +124,17 @@ public abstract class AbstractUtilities {
 
   /**
    * Retrieve all entity link names.
-   *
+   * 
    * @param is
    * @return
    * @throws IOException
-   * @throws XMLStreamException 
+   * @throws XMLStreamException
    */
   protected abstract Set<String> retrieveAllLinkNames(final InputStream is) throws Exception;
 
   /**
    * Retrieve entity links and inlines.
-   *
+   * 
    * @param entitySetName
    * @param is
    * @return
@@ -143,7 +144,7 @@ public abstract class AbstractUtilities {
 
   /**
    * Normalize navigation info and add edit link if missing.
-   *
+   * 
    * @param entitySetName
    * @param entityKey
    * @param is
@@ -276,7 +277,7 @@ public abstract class AbstractUtilities {
 
     // -----------------------------------------
     // 4. Create links file and provided inlines
-    // -----------------------------------------  
+    // -----------------------------------------
     for (Map.Entry<String, List<String>> link : links.getLinks()) {
       putLinksInMemory(path, entitySetName, entityKey, link.getKey(), link.getValue());
     }
@@ -727,7 +728,7 @@ public abstract class AbstractUtilities {
 
   /**
    * Retrieves entity links about the given link name.
-   *
+   * 
    * @param entitySetName entity set name.
    * @param entityId entity id.
    * @param linkName link name.
@@ -736,7 +737,7 @@ public abstract class AbstractUtilities {
    */
   public LinkInfo readLinks(
       final String entitySetName, final String entityId, final String linkName, final Accept accept)
-          throws Exception {
+      throws Exception {
 
     final String basePath = getLinksBasePath(entitySetName, entityId);
 
@@ -795,7 +796,7 @@ public abstract class AbstractUtilities {
       throws Exception {
 
     // --------------------------------
-    // 0. Retrieve all 'linkName' navigation link uris (NotFoundException if missing) 
+    // 0. Retrieve all 'linkName' navigation link uris (NotFoundException if missing)
     // --------------------------------
     final Map.Entry<String, List<String>> links = extractLinkURIs(entitySetName, entityId, linkName);
     // --------------------------------
@@ -854,7 +855,7 @@ public abstract class AbstractUtilities {
 
   protected abstract InputStream replaceLink(
       final InputStream toBeChanged, final String linkName, final InputStream replacement)
-          throws Exception;
+      throws Exception;
 
   public abstract InputStream selectEntity(final InputStream entity, final String[] propertyNames)
       throws Exception;
@@ -882,5 +883,5 @@ public abstract class AbstractUtilities {
 
   public abstract Map.Entry<String, List<String>> extractLinkURIs(
       final String entitySetName, final String entityId, final String linkName)
-          throws Exception;
+      throws Exception;
 }

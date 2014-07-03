@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -30,6 +31,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,8 +56,8 @@ public class Metadata extends AbstractMetadataElement {
 
   public Metadata(final InputStream is, final ODataServiceVersion version) {
     this.version = version;
-    this.DEF_NS = Constants.get(version, ConstantKey.EDM_NS);
-    this.schemas = new HashMap<String, Schema>();
+    DEF_NS = Constants.get(version, ConstantKey.EDM_NS);
+    schemas = new HashMap<String, Schema>();
 
     try {
       final XMLInputFactory ifactory = XMLInputFactory.newInstance();
@@ -87,14 +89,14 @@ public class Metadata extends AbstractMetadataElement {
           if (StringUtils.isNotBlank(property.getReleationship())) {
             // V3 ...
             final Association association = schemaEntry.getValue().getAssociation(
-                    property.getReleationship().replaceAll(schemaEntry.getKey() + "\\.", ""));
+                property.getReleationship().replaceAll(schemaEntry.getKey() + "\\.", ""));
             final Association.Role role = association.getRole(property.getToRole());
             property.setFeed(role.getMultiplicity().equals("*"));
             property.setType(property.isEntitySet() ? "Collection(" + role.getType() + ")" : role.getType());
 
             // let me assume that it will be just a single container
             final AssociationSet associationSet = schemaEntry.getValue().getContainers().iterator().next().
-                    getAssociationSet(property.getReleationship());
+                getAssociationSet(property.getReleationship());
 
             final AssociationSet.Role associationSetRole = associationSet.getRole(property.getToRole());
             property.setTarget(associationSetRole.getEntitySet());
@@ -103,7 +105,7 @@ public class Metadata extends AbstractMetadataElement {
             property.setFeed(property.getType().startsWith("Collection("));
 
             final Collection<EntitySet> entitySets = schemaEntry.getValue().getContainers().iterator().next().
-                    getEntitySets(schemaEntry.getKey(), entityType.getName());
+                getEntitySets(schemaEntry.getKey(), entityType.getName());
 
             final Iterator<EntitySet> iter = entitySets.iterator();
             boolean found = false;
@@ -204,11 +206,11 @@ public class Metadata extends AbstractMetadataElement {
       XMLEvent event = reader.nextEvent();
 
       if (event.isStartElement() && event.asStartElement().getName().equals(new QName(DEF_NS, "EntityType"))
-              || event.isStartElement() && event.asStartElement().getName().equals(new QName(DEF_NS, "ComplexType"))) {
+          || event.isStartElement() && event.asStartElement().getName().equals(new QName(DEF_NS, "ComplexType"))) {
         final EntityType entityType = getEntityType(event.asStartElement(), reader);
         schema.addEntityType(entityType.getName(), entityType);
       } else if (event.isStartElement()
-              && event.asStartElement().getName().equals(new QName(DEF_NS, "EntityContainer"))) {
+          && event.asStartElement().getName().equals(new QName(DEF_NS, "EntityContainer"))) {
         final org.apache.olingo.fit.metadata.Container container = getContainer(event.asStartElement(), reader);
         schema.addContainer(container.getName(), container);
       } else if (event.isStartElement() && event.asStartElement().getName().equals(new QName(DEF_NS, "Association"))) {
@@ -224,9 +226,9 @@ public class Metadata extends AbstractMetadataElement {
   }
 
   private org.apache.olingo.fit.metadata.Container getContainer(
-          final StartElement start, final XMLEventReader reader) throws XMLStreamException {
+      final StartElement start, final XMLEventReader reader) throws XMLStreamException {
     final org.apache.olingo.fit.metadata.Container container =
-            new org.apache.olingo.fit.metadata.Container(start.getAttributeByName(new QName("Name")).getValue());
+        new org.apache.olingo.fit.metadata.Container(start.getAttributeByName(new QName("Name")).getValue());
 
     boolean completed = false;
 
@@ -234,12 +236,12 @@ public class Metadata extends AbstractMetadataElement {
       XMLEvent event = reader.nextEvent();
 
       if (event.isStartElement()
-              && (event.asStartElement().getName().equals(new QName(DEF_NS, "EntitySet"))
-              || event.asStartElement().getName().equals(new QName(DEF_NS, "Singleton")))) {
+          && (event.asStartElement().getName().equals(new QName(DEF_NS, "EntitySet"))
+          || event.asStartElement().getName().equals(new QName(DEF_NS, "Singleton")))) {
         final EntitySet entitySet = getEntitySet(event.asStartElement(), reader);
         container.addEntitySet(entitySet.getName(), entitySet);
       } else if (event.isStartElement()
-              && event.asStartElement().getName().equals(new QName(DEF_NS, "AssociationSet"))) {
+          && event.asStartElement().getName().equals(new QName(DEF_NS, "AssociationSet"))) {
         // just for V3
         final AssociationSet associationSet = getAssociationSet(event.asStartElement(), reader);
         container.addAssociationSet(associationSet.getAssociation(), associationSet);
@@ -252,7 +254,7 @@ public class Metadata extends AbstractMetadataElement {
   }
 
   private Association getAssociation(
-          final StartElement start, final XMLEventReader reader) throws XMLStreamException {
+      final StartElement start, final XMLEventReader reader) throws XMLStreamException {
     final Association association = new Association(start.getAttributeByName(new QName("Name")).getValue());
 
     boolean completed = false;
@@ -264,7 +266,7 @@ public class Metadata extends AbstractMetadataElement {
         final String role = event.asStartElement().getAttributeByName(new QName("Role")).getValue();
         final String type = event.asStartElement().getAttributeByName(new QName("Type")).getValue();
         final String multiplicity =
-                event.asStartElement().getAttributeByName(new QName("Multiplicity")).getValue();
+            event.asStartElement().getAttributeByName(new QName("Multiplicity")).getValue();
         association.addRole(role, type, multiplicity);
       } else if (event.isEndElement() && event.asEndElement().getName().equals(start.getName())) {
         completed = true;
@@ -275,10 +277,10 @@ public class Metadata extends AbstractMetadataElement {
   }
 
   private AssociationSet getAssociationSet(
-          final StartElement start, final XMLEventReader reader) throws XMLStreamException {
+      final StartElement start, final XMLEventReader reader) throws XMLStreamException {
     final AssociationSet associationSet = new AssociationSet(
-            start.getAttributeByName(new QName("Name")).getValue(),
-            start.getAttributeByName(new QName("Association")).getValue());
+        start.getAttributeByName(new QName("Name")).getValue(),
+        start.getAttributeByName(new QName("Association")).getValue());
 
     boolean completed = false;
 
@@ -317,7 +319,7 @@ public class Metadata extends AbstractMetadataElement {
         final org.apache.olingo.fit.metadata.Property property = getProperty(event.asStartElement());
         entityType.addProperty(property.getName(), property);
       } else if (event.isStartElement()
-              && event.asStartElement().getName().equals(new QName(DEF_NS, "NavigationProperty"))) {
+          && event.asStartElement().getName().equals(new QName(DEF_NS, "NavigationProperty"))) {
         final NavigationProperty property = getNavigationProperty(event.asStartElement());
         entityType.addNavigationProperty(property.getName(), property);
       } else if (event.isEndElement() && event.asEndElement().getName().equals(start.getName())) {
@@ -330,7 +332,7 @@ public class Metadata extends AbstractMetadataElement {
 
   private org.apache.olingo.fit.metadata.Property getProperty(final StartElement start) throws XMLStreamException {
     final org.apache.olingo.fit.metadata.Property property =
-            new org.apache.olingo.fit.metadata.Property(start.getAttributeByName(new QName("Name")).getValue());
+        new org.apache.olingo.fit.metadata.Property(start.getAttributeByName(new QName("Name")).getValue());
 
     final Attribute type = start.getAttributeByName(new QName("Type"));
     property.setType(type == null ? "Edm.String" : type.getValue());
@@ -343,7 +345,7 @@ public class Metadata extends AbstractMetadataElement {
 
   private NavigationProperty getNavigationProperty(final StartElement start) throws XMLStreamException {
     final NavigationProperty property =
-            new NavigationProperty(start.getAttributeByName(new QName("Name")).getValue());
+        new NavigationProperty(start.getAttributeByName(new QName("Name")).getValue());
 
     final Attribute type = start.getAttributeByName(new QName("Type"));
     if (type != null) {
@@ -365,8 +367,8 @@ public class Metadata extends AbstractMetadataElement {
 
   private EntitySet getEntitySet(final StartElement start, final XMLEventReader reader) throws XMLStreamException {
     final EntitySet entitySet = "Singleton".equals(start.getName().getLocalPart())
-            ? new EntitySet(start.getAttributeByName(new QName("Name")).getValue(), true)
-            : new EntitySet(start.getAttributeByName(new QName("Name")).getValue());
+        ? new EntitySet(start.getAttributeByName(new QName("Name")).getValue(), true)
+        : new EntitySet(start.getAttributeByName(new QName("Name")).getValue());
 
     Attribute type = start.getAttributeByName(new QName("EntityType"));
     if (type == null) {
@@ -382,7 +384,7 @@ public class Metadata extends AbstractMetadataElement {
       XMLEvent event = reader.nextEvent();
 
       if (event.isStartElement()
-              && event.asStartElement().getName().equals(new QName(DEF_NS, "NavigationPropertyBinding"))) {
+          && event.asStartElement().getName().equals(new QName(DEF_NS, "NavigationPropertyBinding"))) {
         final String path = event.asStartElement().getAttributeByName(new QName("Path")).getValue();
         final String target = event.asStartElement().getAttributeByName(new QName("Target")).getValue();
         entitySet.addBinding(path, target);

@@ -92,7 +92,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  private ODataRequest createODataRequest(final HttpServletRequest httpRequest, int split) {
+  private ODataRequest createODataRequest(final HttpServletRequest httpRequest, final int split) {
     try {
       ODataRequest odRequest = new ODataRequest();
 
@@ -107,13 +107,13 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  static void extractMethod(ODataRequest odRequest, HttpServletRequest httpRequest) {
+  static void extractMethod(final ODataRequest odRequest, final HttpServletRequest httpRequest) {
     try {
 
       HttpMethod httpRequestMethod = HttpMethod.valueOf(httpRequest.getMethod());
 
       if (httpRequestMethod == HttpMethod.POST) {
-        String xHttpMethod = httpRequest.getHeader(HttpHeader.X_HTTP_METHOD); 
+        String xHttpMethod = httpRequest.getHeader(HttpHeader.X_HTTP_METHOD);
         String xHttpMethodOverride = httpRequest.getHeader(HttpHeader.X_HTTP_METHOD_OVERRIDE);
 
         if (xHttpMethod == null && xHttpMethodOverride == null) {
@@ -136,7 +136,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  static void extractUri(ODataRequest odRequest, final HttpServletRequest httpRequest, int split) {
+  static void extractUri(final ODataRequest odRequest, final HttpServletRequest httpRequest, final int split) {
 
     String rawRequestUri = httpRequest.getRequestURL().toString();
 
@@ -182,7 +182,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     odRequest.setRawServiceResolutionUri(rawServiceResolutionUri);
   }
 
-  private void extractHeaders(ODataRequest odRequest, final HttpServletRequest req) {
+  static void extractHeaders(final ODataRequest odRequest, final HttpServletRequest req) {
     for (Enumeration<?> headerNames = req.getHeaderNames(); headerNames.hasMoreElements();) {
       String headerName = (String) headerNames.nextElement();
       List<String> headerValues = new ArrayList<String>();
@@ -195,7 +195,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   }
 
   @Override
-  public void register(Processor processor) {
+  public void register(final Processor processor) {
     handler.register(processor);
   }
 }

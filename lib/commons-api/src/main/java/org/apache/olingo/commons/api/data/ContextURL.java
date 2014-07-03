@@ -1,31 +1,32 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.commons.api.data;
 
 import java.net.URI;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 
 /**
  * High-level representation of a context URL, built from the string value returned by a service; provides access to the
  * various components of the context URL, defined in the protocol specification.
- *
+ * 
  * {@link http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html#_Toc372793655}
  */
 public class ContextURL {
@@ -60,7 +61,7 @@ public class ContextURL {
 
     instance.entity = contextURLasString.endsWith("/$entity") || contextURLasString.endsWith("/@Element");
     contextURLasString = contextURLasString.
-            replace("/$entity", StringUtils.EMPTY).replace("/@Element", StringUtils.EMPTY);
+        replace("/$entity", StringUtils.EMPTY).replace("/@Element", StringUtils.EMPTY);
 
     instance.delta = contextURLasString.endsWith("/$delta");
     contextURLasString = contextURLasString.replace("/$delta", StringUtils.EMPTY);
@@ -177,7 +178,7 @@ public class ContextURL {
       return false;
     }
     final ContextURL other = (ContextURL) obj;
-    if (this.uri != other.uri && (this.uri == null || !this.uri.equals(other.uri))) {
+    if (uri != other.uri && (uri == null || !uri.equals(other.uri))) {
       return false;
     }
     return true;
@@ -185,12 +186,12 @@ public class ContextURL {
 
   @Override
   public int hashCode() {
-    return this.uri.hashCode();
+    return uri.hashCode();
   }
 
   @Override
   public String toString() {
-    return this.uri.toString();
+    return uri.toString();
   }
 
 }

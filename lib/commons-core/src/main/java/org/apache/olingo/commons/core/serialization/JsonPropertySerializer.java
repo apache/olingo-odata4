@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -47,7 +47,7 @@ public class JsonPropertySerializer extends JsonSerializer {
   }
 
   protected void doContainerSerialize(final ResWrap<Property> container, final JsonGenerator jgen)
-          throws IOException, EdmPrimitiveTypeException {
+      throws IOException, EdmPrimitiveTypeException {
 
     final Property property = container.getPayload();
 
@@ -55,13 +55,13 @@ public class JsonPropertySerializer extends JsonSerializer {
 
     if (serverMode && container.getContextURL() != null) {
       jgen.writeStringField(version.compareTo(ODataServiceVersion.V40) >= 0
-              ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
-              container.getContextURL().getURI().toASCIIString());
+          ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
+          container.getContextURL().getURI().toASCIIString());
     }
 
     if (StringUtils.isNotBlank(property.getType())) {
       jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE),
-              new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build().external(version));
+          new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build().external(version));
     }
 
     for (Annotation annotation : property.getAnnotations()) {
@@ -72,8 +72,8 @@ public class JsonPropertySerializer extends JsonSerializer {
       jgen.writeBooleanField(Constants.JSON_NULL, true);
     } else if (property.isPrimitive()) {
       final EdmTypeInfo typeInfo = property.getType() == null
-              ? null
-              : new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
+          ? null
+          : new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
 
       jgen.writeFieldName(Constants.VALUE);
       primitiveValue(jgen, typeInfo, property.asPrimitive());

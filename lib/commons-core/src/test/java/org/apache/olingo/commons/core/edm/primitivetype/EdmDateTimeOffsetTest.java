@@ -1,27 +1,27 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import java.sql.Timestamp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -63,13 +63,13 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
     assertEquals("2012-02-29T01:02:03+11:00", instance.valueToString(dateTime, null, null, null, null, null));
 
     dateTime.set(Calendar.MILLISECOND, 503);
-    assertEquals("2012-02-29T01:02:03.503+11:00", instance.valueToString(dateTime, null, null, 3, null, null));    
-    
+    assertEquals("2012-02-29T01:02:03.503+11:00", instance.valueToString(dateTime, null, null, 3, null, null));
+
     dateTime.set(Calendar.MILLISECOND, 530);
-    assertEquals("2012-02-29T01:02:03.53+11:00", instance.valueToString(dateTime, null, null, 3, null, null));    
+    assertEquals("2012-02-29T01:02:03.53+11:00", instance.valueToString(dateTime, null, null, 3, null, null));
 
     dateTime.set(Calendar.MILLISECOND, 53);
-    assertEquals("2012-02-29T01:02:03.053+11:00", instance.valueToString(dateTime, null, null, 3, null, null));    
+    assertEquals("2012-02-29T01:02:03.053+11:00", instance.valueToString(dateTime, null, null, 3, null, null));
 
     final Long millis = 1330558323007L;
     assertEquals("2012-02-29T23:32:03.007Z", instance.valueToString(millis, null, null, 3, null, null));

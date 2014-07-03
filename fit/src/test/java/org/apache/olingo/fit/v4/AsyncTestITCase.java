@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -48,9 +48,9 @@ public class AsyncTestITCase extends AbstractTestITCase {
   @Test
   public void clientAsync() throws InterruptedException, ExecutionException {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Customers");
+        appendEntitySetSegment("Customers");
     final Future<ODataRetrieveResponse<ODataEntitySet>> futureRes =
-            client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).asyncExecute();
+        client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).asyncExecute();
     assertNotNull(futureRes);
 
     while (!futureRes.isDone()) {
@@ -65,13 +65,13 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   private void withInlineEntry(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
+        appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
 
     final AsyncRequestWrapper<ODataRetrieveResponse<ODataEntity>> async =
-            client.getAsyncRequestFactory().<ODataRetrieveResponse<ODataEntity>>getAsyncRequestWrapper(req);
+        client.getAsyncRequestFactory().<ODataRetrieveResponse<ODataEntity>> getAsyncRequestWrapper(req);
 
     final AsyncResponseWrapper<ODataRetrieveResponse<ODataEntity>> responseWrapper = async.execute();
 
@@ -102,15 +102,15 @@ public class AsyncTestITCase extends AbstractTestITCase {
         assertEquals(5, properties.size());
 
         assertTrue(properties.get(0).getName().equals("CompanyID")
-                || properties.get(1).getName().equals("CompanyID")
-                || properties.get(2).getName().equals("CompanyID")
-                || properties.get(3).getName().equals("CompanyID")
-                || properties.get(4).getName().equals("CompanyID"));
+            || properties.get(1).getName().equals("CompanyID")
+            || properties.get(2).getName().equals("CompanyID")
+            || properties.get(3).getName().equals("CompanyID")
+            || properties.get(4).getName().equals("CompanyID"));
         assertTrue(properties.get(0).getValue().toString().equals("0")
-                || properties.get(1).getValue().toString().equals("0")
-                || properties.get(2).getValue().toString().equals("0")
-                || properties.get(3).getValue().toString().equals("0")
-                || properties.get(4).getValue().toString().equals("0"));
+            || properties.get(1).getValue().toString().equals("0")
+            || properties.get(2).getValue().toString().equals("0")
+            || properties.get(3).getValue().toString().equals("0")
+            || properties.get(4).getValue().toString().equals("0"));
 
         found = true;
       }
@@ -132,14 +132,14 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   private void asyncOrders(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("async").appendEntitySetSegment("Orders");
+        appendEntitySetSegment("async").appendEntitySetSegment("Orders");
 
     final ODataEntitySetRequest<ODataEntitySet> req =
-            client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
+        client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
     req.setFormat(format);
 
     final AsyncRequestWrapper<ODataRetrieveResponse<ODataEntitySet>> async =
-            client.getAsyncRequestFactory().<ODataRetrieveResponse<ODataEntitySet>>getAsyncRequestWrapper(req);
+        client.getAsyncRequestFactory().<ODataRetrieveResponse<ODataEntitySet>> getAsyncRequestWrapper(req);
     async.callback(URI.create("http://client.service.it/callback/endpoint"));
 
     final AsyncResponseWrapper<ODataRetrieveResponse<ODataEntitySet>> responseWrapper = async.execute();

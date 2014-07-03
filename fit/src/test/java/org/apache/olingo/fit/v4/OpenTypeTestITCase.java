@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -45,7 +45,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   @Test
   public void checkOpenTypeEntityTypesExist() {
     final Edm metadata = getClient().getRetrieveRequestFactory().
-            getMetadataRequest(testOpenTypeServiceRootURL).execute().getBody();
+        getMetadataRequest(testOpenTypeServiceRootURL).execute().getBody();
 
     final EdmSchema schema = metadata.getSchemas().get(0);
 
@@ -56,7 +56,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 
   private ODataEntity readRow(final ODataFormat format, final String uuid) {
     final URIBuilder builder = getClient().newURIBuilder(testOpenTypeServiceRootURL).
-            appendEntitySetSegment("Row").appendKeySegment(UUID.fromString(uuid));
+        appendEntitySetSegment("Row").appendKeySegment(UUID.fromString(uuid));
     return read(format, builder.build());
   }
 
@@ -83,84 +83,84 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     final Integer id = 1426;
 
     ODataEntity rowIndex = getClient().getObjectFactory().newEntity(
-            new FullQualifiedName("Microsoft.Test.OData.Services.OpenTypesServiceV4.RowIndex"));
+        new FullQualifiedName("Microsoft.Test.OData.Services.OpenTypesServiceV4.RowIndex"));
     getClient().getBinder().add(rowIndex,
-            getClient().getObjectFactory().newPrimitiveProperty("Id",
-                    getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
+        getClient().getObjectFactory().newPrimitiveProperty("Id",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
     getClient().getBinder().add(rowIndex,
-            getClient().getObjectFactory().newPrimitiveProperty("aString",
-                    getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("string")));
+        getClient().getObjectFactory().newPrimitiveProperty("aString",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("string")));
     getClient().getBinder().add(rowIndex,
-            getClient().getObjectFactory().newPrimitiveProperty("aBoolean",
-                    getClient().getObjectFactory().newPrimitiveValueBuilder().buildBoolean(true)));
+        getClient().getObjectFactory().newPrimitiveProperty("aBoolean",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildBoolean(true)));
     getClient().getBinder().add(rowIndex,
-            getClient().getObjectFactory().newPrimitiveProperty("aDouble",
-                    getClient().getObjectFactory().newPrimitiveValueBuilder().buildDouble(1.5D)));
+        getClient().getObjectFactory().newPrimitiveProperty("aDouble",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildDouble(1.5D)));
     getClient().getBinder().add(rowIndex,
-            getClient().getObjectFactory().newPrimitiveProperty("aByte",
-                    getClient().getObjectFactory().newPrimitiveValueBuilder().
-                    setType(EdmPrimitiveTypeKind.SByte).setValue(Byte.MAX_VALUE).
-                    build()));
+        getClient().getObjectFactory().newPrimitiveProperty("aByte",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().
+                setType(EdmPrimitiveTypeKind.SByte).setValue(Byte.MAX_VALUE).
+                build()));
     getClient().getBinder().add(rowIndex,
-            getClient().getObjectFactory().newPrimitiveProperty("aDate",
-                    getClient().getObjectFactory().newPrimitiveValueBuilder().
-                    setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).
-                    build()));
+        getClient().getObjectFactory().newPrimitiveProperty("aDate",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().
+                setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).
+                build()));
     getClient().getBinder().add(rowIndex,
-            getClient().getObjectFactory().newPrimitiveProperty("aDate",
-                    getClient().getObjectFactory().newPrimitiveValueBuilder().
-                    setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).
-                    build()));
+        getClient().getObjectFactory().newPrimitiveProperty("aDate",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().
+                setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).
+                build()));
     getClient().getBinder().add(rowIndex,
-            getClient().getObjectFactory().newEnumProperty("aColor", getClient().getObjectFactory().
-                    newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.Color", "Blue")));
+        getClient().getObjectFactory().newEnumProperty("aColor", getClient().getObjectFactory().
+            newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.Color", "Blue")));
 
     final ODataComplexValue<ODataProperty> contactDetails = getClient().getObjectFactory().newComplexValue(
-            "Microsoft.Test.OData.Services.OpenTypesServiceV4.ContactDetails");
+        "Microsoft.Test.OData.Services.OpenTypesServiceV4.ContactDetails");
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("FirstContacted",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildBinary("text".getBytes())));
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildBinary("text".getBytes())));
     Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+00:01"));
     dateTime.set(2014, 3, 5, 5, 5, 5);
     dateTime.set(Calendar.MILLISECOND, 1);
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("LastContacted",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().
+        getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(dateTime).build()));
     Calendar date = Calendar.getInstance();
     date.set(2001, 3, 5);
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("Contacted",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().
+        getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Date).setValue(date).build()));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("GUID",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildGuid(UUID.randomUUID())));
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildGuid(UUID.randomUUID())));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("PreferedContactTime",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().
+        getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Duration).setValue(0).build()));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("Byte",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().
+        getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Byte).setValue(24).build()));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("SignedByte",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().
+        getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.SByte).setValue(Byte.MAX_VALUE).build()));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("Double",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildDouble(Double.MAX_VALUE)));
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildDouble(Double.MAX_VALUE)));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("Single",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildSingle(Float.MAX_VALUE)));
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildSingle(Float.MAX_VALUE)));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("Short",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16(Short.MAX_VALUE)));
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16(Short.MAX_VALUE)));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("Int",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(Integer.MAX_VALUE)));
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(Integer.MAX_VALUE)));
     getClient().getBinder().add(rowIndex,
-            getClient().getObjectFactory().newComplexProperty("aContact", contactDetails));
+        getClient().getObjectFactory().newComplexProperty("aContact", contactDetails));
 
     final ODataEntityCreateRequest<ODataEntity> createReq = getClient().getCUDRequestFactory().
-            getEntityCreateRequest(getClient().newURIBuilder(testOpenTypeServiceRootURL).
-                    appendEntitySetSegment("RowIndex").build(), rowIndex);
+        getEntityCreateRequest(getClient().newURIBuilder(testOpenTypeServiceRootURL).
+            appendEntitySetSegment("RowIndex").build(), rowIndex);
     createReq.setFormat(format);
     final ODataEntityCreateResponse<ODataEntity> createRes = createReq.execute();
     assertEquals(201, createRes.getStatusCode());
 
     final URIBuilder builder = getClient().newURIBuilder(testOpenTypeServiceRootURL).
-            appendEntitySetSegment("RowIndex").appendKeySegment(id);
+        appendEntitySetSegment("RowIndex").appendKeySegment(id);
     rowIndex = read(format, builder.build());
     assertNotNull(rowIndex);
     assertEquals(EdmPrimitiveTypeKind.Int32, rowIndex.getProperty("Id").getPrimitiveValue().getTypeKind());
@@ -174,7 +174,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertTrue(rowIndex.getProperty("aContact").getComplexValue().get("SignedByte").hasPrimitiveValue());
 
     final ODataDeleteResponse deleteRes = getClient().getCUDRequestFactory().
-            getDeleteRequest(rowIndex.getEditLink()).execute();
+        getDeleteRequest(rowIndex.getEditLink()).execute();
     assertEquals(204, deleteRes.getStatusCode());
   }
 

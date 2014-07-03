@@ -531,7 +531,8 @@ public class MetadataDocumentXmlSerializer {
   private void appendReference(final XMLStreamWriter writer) throws XMLStreamException {
     writer.writeStartElement(NS_EDMX, "Reference");
     // TODO: Where is this value comming from?
-    writer.writeAttribute("Uri", "http://localhost:9080/tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml");
+    writer.writeAttribute("Uri",
+        "http://localhost:9080/olingo-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml");
     writer.writeEmptyElement(NS_EDMX, "Include");
     // TODO: Where is this value comming from?
     writer.writeAttribute(XML_NAMESPACE, "Org.OData.Core.V1");

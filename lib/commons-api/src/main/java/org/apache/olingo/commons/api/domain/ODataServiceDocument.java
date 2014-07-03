@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -39,7 +39,7 @@ public class ODataServiceDocument {
 
   /**
    * Gets entity set names.
-   *
+   * 
    * @return entity set names.
    */
   public Collection<String> getEntitySetNames() {
@@ -48,7 +48,7 @@ public class ODataServiceDocument {
 
   /**
    * Gets entity set URIs.
-   *
+   * 
    * @return entity set URIs.
    */
   public Collection<URI> getEntitySetURIs() {
@@ -57,7 +57,7 @@ public class ODataServiceDocument {
 
   /**
    * Gets URI about the given entity set.
-   *
+   * 
    * @param name name.
    * @return URI.
    */
@@ -71,7 +71,7 @@ public class ODataServiceDocument {
 
   /**
    * Gets function import names.
-   *
+   * 
    * @return function import names.
    */
   public Collection<String> getFunctionImportNames() {
@@ -80,7 +80,7 @@ public class ODataServiceDocument {
 
   /**
    * Gets function import URIs.
-   *
+   * 
    * @return function import URIs.
    */
   public Collection<URI> getFunctionImportURIs() {
@@ -89,7 +89,7 @@ public class ODataServiceDocument {
 
   /**
    * Gets URI of the given function import.
-   *
+   * 
    * @param name name.
    * @return URI.
    */
@@ -103,7 +103,7 @@ public class ODataServiceDocument {
 
   /**
    * Gets singleton names.
-   *
+   * 
    * @return singleton names.
    */
   public Collection<String> getSingletonNames() {
@@ -112,7 +112,7 @@ public class ODataServiceDocument {
 
   /**
    * Gets singleton URIs.
-   *
+   * 
    * @return singleton URIs.
    */
   public Collection<URI> getSingletonURIs() {
@@ -121,7 +121,7 @@ public class ODataServiceDocument {
 
   /**
    * Gets URI of the given singleton.
-   *
+   * 
    * @param name name.
    * @return URI.
    */
@@ -135,7 +135,7 @@ public class ODataServiceDocument {
 
   /**
    * Gets related service documents names.
-   *
+   * 
    * @return related service documents names.
    */
   public Collection<String> getRelatedServiceDocumentsNames() {
@@ -144,7 +144,7 @@ public class ODataServiceDocument {
 
   /**
    * Gets related service documents URIs.
-   *
+   * 
    * @return related service documents URIs.
    */
   public Collection<URI> getRelatedServiceDocumentsURIs() {
@@ -153,7 +153,7 @@ public class ODataServiceDocument {
 
   /**
    * Gets URI of the given related service documents.
-   *
+   * 
    * @param name name.
    * @return URI.
    */

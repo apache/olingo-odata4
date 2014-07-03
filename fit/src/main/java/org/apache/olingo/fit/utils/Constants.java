@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -23,6 +23,7 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.util.EnumMap;
 import java.util.Map;
+
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class Constants {
@@ -34,7 +35,7 @@ public class Constants {
   /**
    * CR/LF.
    */
-  public static final byte[] CRLF = {13, 10};
+  public static final byte[] CRLF = { 13, 10 };
 
   public static final Charset ENCODING = Charset.forName("UTF-8");
 
@@ -59,8 +60,8 @@ public class Constants {
     v4constants.put(ConstantKey.ATOM_LINK_REL, "http://docs.oasis-open.org/odata/ns/related/");
     v4constants.put(ConstantKey.ODATA_SERVICE_VERSION, "OData-Version");
     v4constants.put(ConstantKey.DEFAULT_SERVICE_URL, "http://localhost:9080/stub/StaticService/V40/Static.svc/");
-    v4constants.put(ConstantKey.ODATA_METADATA_PREFIX, 
-            "http://localhost:9080/stub/StaticService/V40/Static.svc/$metadata#");
+    v4constants.put(ConstantKey.ODATA_METADATA_PREFIX,
+        "http://localhost:9080/stub/StaticService/V40/Static.svc/$metadata#");
     v4constants.put(ConstantKey.ODATA_METADATA_ENTITY_SUFFIX, "/$entity");
     // -----------------------------
 
@@ -71,7 +72,7 @@ public class Constants {
     constants.put(ConstantKey.DEFAULT_SERVICE_URL, "http://localhost:9080/stub/StaticService/V30/Static.svc/");
     constants.put(ConstantKey.ODATA_COUNT_NAME, "odata.count");
     constants.put(ConstantKey.ODATA_METADATA_PREFIX,
-            "http://localhost:9080/stub/StaticService/V30/Static.svc/$metadata#");
+        "http://localhost:9080/stub/StaticService/V30/Static.svc/$metadata#");
     constants.put(ConstantKey.ODATA_METADATA_ENTITY_SUFFIX, "/@Element");
     constants.put(ConstantKey.ATOM_DEF_TYPE, "Edm.String");
     constants.put(ConstantKey.ATOM_PROPERTY_PREFIX, "d:");
@@ -124,6 +125,6 @@ public class Constants {
 
   public static String get(final ODataServiceVersion version, final ConstantKey key) {
     return (version == null || version.compareTo(ODataServiceVersion.V30) <= 0 || !v4constants.containsKey(key)
-            ? constants : v4constants).get(key);
+        ? constants : v4constants).get(key);
   }
 }

@@ -1,12 +1,12 @@
 /*
  * Copyright 2014 The Apache Software Foundation.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -96,15 +96,15 @@ public class AuthBatchTestITCase extends AbstractTestITCase {
     final URI editLink = targetURI.build();
 
     final ODataEntity patch = client.getObjectFactory().newEntity(
-            new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
+        new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
     patch.setEditLink(editLink);
 
     patch.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
-            "LastName",
-            client.getObjectFactory().newPrimitiveValueBuilder().buildString("new last name")));
+        "LastName",
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("new last name")));
 
     final ODataEntityUpdateRequest<ODataEntity> changeReq =
-            client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patch);
+        client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patch);
     changeReq.setFormat(ODataFormat.JSON_FULL_METADATA);
 
     changeset.addRequest(changeReq);

@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -272,7 +272,7 @@ public class JsonDeserializer implements ODataDeserializer {
 
   protected void populate(final Annotatable annotatable, final List<Property> properties,
       final ObjectNode tree, final ObjectCodec codec)
-          throws IOException, EdmPrimitiveTypeException {
+      throws IOException, EdmPrimitiveTypeException {
 
     String type = null;
     Annotation annotation = null;
@@ -346,7 +346,7 @@ public class JsonDeserializer implements ODataDeserializer {
     }
   }
 
-  private void fromCollection(Valuable valuable, final Iterator<JsonNode> nodeItor, final EdmTypeInfo typeInfo,
+  private void fromCollection(final Valuable valuable, final Iterator<JsonNode> nodeItor, final EdmTypeInfo typeInfo,
       final ObjectCodec codec) throws IOException, EdmPrimitiveTypeException {
 
     List<Object> values = new ArrayList<Object>();
@@ -429,7 +429,7 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   @Override
-  public ResWrap<EntitySet> toEntitySet(InputStream input) throws ODataDeserializerException {
+  public ResWrap<EntitySet> toEntitySet(final InputStream input) throws ODataDeserializerException {
     try {
       parser = new JsonFactory(new ObjectMapper()).createParser(input);
       return new JsonEntitySetDeserializer(version, serverMode).doDeserialize(parser);
@@ -439,7 +439,7 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   @Override
-  public ResWrap<Entity> toEntity(InputStream input) throws ODataDeserializerException {
+  public ResWrap<Entity> toEntity(final InputStream input) throws ODataDeserializerException {
     try {
       parser = new JsonFactory(new ObjectMapper()).createParser(input);
       return new JsonEntityDeserializer(version, serverMode).doDeserialize(parser);
@@ -449,7 +449,7 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   @Override
-  public ResWrap<Property> toProperty(InputStream input) throws ODataDeserializerException {
+  public ResWrap<Property> toProperty(final InputStream input) throws ODataDeserializerException {
     try {
       parser = new JsonFactory(new ObjectMapper()).createParser(input);
       return new JsonPropertyDeserializer(version, serverMode).doDeserialize(parser);
@@ -459,7 +459,7 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   @Override
-  public ODataError toError(InputStream input) throws ODataDeserializerException {
+  public ODataError toError(final InputStream input) throws ODataDeserializerException {
     try {
       parser = new JsonFactory(new ObjectMapper()).createParser(input);
       return new JsonODataErrorDeserializer(version, serverMode).doDeserialize(parser);
