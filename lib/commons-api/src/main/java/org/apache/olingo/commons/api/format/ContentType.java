@@ -24,7 +24,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -46,36 +45,28 @@ import java.util.TreeMap;
  */
 public class ContentType {
 
-  private static final char WHITESPACE_CHAR = ' ';
-  private static final String PARAMETER_SEPARATOR = ";";
-  private static final String PARAMETER_KEY_VALUE_SEPARATOR = "=";
-  private static final String TYPE_SUBTYPE_SEPARATOR = "/";
-
-  public static final String PARAMETER_TYPE = "type";
-  public static final String PARAMETER_CHARSET = "charset";
-  public static final String CHARSET_UTF_8 = "UTF-8";
 
   public static final ContentType APPLICATION_XML = create("application", "xml");
-  public static final ContentType APPLICATION_XML_CS_UTF_8 = create(APPLICATION_XML, PARAMETER_CHARSET,
-      CHARSET_UTF_8);
+  public static final ContentType APPLICATION_XML_CS_UTF_8 = create(APPLICATION_XML, TypeUtil.PARAMETER_CHARSET,
+      TypeUtil.CHARSET_UTF_8);
   public static final ContentType APPLICATION_ATOM_XML = create("application", "atom+xml");
   public static final ContentType APPLICATION_ATOM_XML_CS_UTF_8 = create(APPLICATION_ATOM_XML,
-      PARAMETER_CHARSET, CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_XML_ENTRY = create(APPLICATION_ATOM_XML, PARAMETER_TYPE, "entry");
+      TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
+  public static final ContentType APPLICATION_ATOM_XML_ENTRY = create(APPLICATION_ATOM_XML,TypeUtil. PARAMETER_TYPE, "entry");
   public static final ContentType APPLICATION_ATOM_XML_ENTRY_CS_UTF_8 = create(APPLICATION_ATOM_XML_ENTRY,
-      PARAMETER_CHARSET, CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_XML_FEED = create(APPLICATION_ATOM_XML, PARAMETER_TYPE, "feed");
+      TypeUtil.  PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
+  public static final ContentType APPLICATION_ATOM_XML_FEED = create(APPLICATION_ATOM_XML,TypeUtil. PARAMETER_TYPE, "feed");
   public static final ContentType APPLICATION_ATOM_XML_FEED_CS_UTF_8 = create(APPLICATION_ATOM_XML_FEED,
-      PARAMETER_CHARSET, CHARSET_UTF_8);
+      TypeUtil.  PARAMETER_CHARSET,TypeUtil.CHARSET_UTF_8);
   public static final ContentType APPLICATION_ATOM_SVC = create("application", "atomsvc+xml");
   public static final ContentType APPLICATION_ATOM_SVC_CS_UTF_8 = create(APPLICATION_ATOM_SVC,
-      PARAMETER_CHARSET, CHARSET_UTF_8);
+      TypeUtil. PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
   public static final ContentType APPLICATION_JSON = create("application", "json");
   public static final ContentType APPLICATION_JSON_CS_UTF_8 = create(APPLICATION_JSON,
-      PARAMETER_CHARSET, CHARSET_UTF_8);
+      TypeUtil.  PARAMETER_CHARSET,TypeUtil. CHARSET_UTF_8);
   public static final ContentType APPLICATION_OCTET_STREAM = create("application", "octet-stream");
   public static final ContentType TEXT_PLAIN = create("text", "plain");
-  public static final ContentType TEXT_PLAIN_CS_UTF_8 = create(TEXT_PLAIN, PARAMETER_CHARSET, CHARSET_UTF_8);
+  public static final ContentType TEXT_PLAIN_CS_UTF_8 = create(TEXT_PLAIN, TypeUtil.PARAMETER_CHARSET,TypeUtil. CHARSET_UTF_8);
   public static final ContentType MULTIPART_MIXED = create("multipart", "mixed");
 
   public static final ContentType APPLICATION_XHTML_XML = create("application", "xhtml+xml");
@@ -118,7 +109,7 @@ public class ContentType {
     }
     int len = type.length();
     for (int i = 0; i < len; i++) {
-      if (type.charAt(i) == WHITESPACE_CHAR) {
+      if (type.charAt(i) == TypeUtil.WHITESPACE_CHAR) {
         throw new IllegalArgumentException("Illegal whitespace found for type '" + type + "'.");
       }
     }
@@ -196,14 +187,14 @@ public class ContentType {
     }
   }
 
-  protected static void
+  private static void
       parse(final String format, final List<String> typeSubtype, final Map<String, String> parameters) {
-    final String[] typesAndParameters = format.split(PARAMETER_SEPARATOR, 2);
+    final String[] typesAndParameters = format.split(TypeUtil.PARAMETER_SEPARATOR, 2);
     final String types = typesAndParameters[0];
     final String params = (typesAndParameters.length > 1 ? typesAndParameters[1] : null);
 
-    if (types.contains(TYPE_SUBTYPE_SEPARATOR)) {
-      String[] tokens = types.split(TYPE_SUBTYPE_SEPARATOR);
+    if (types.contains(TypeUtil.TYPE_SUBTYPE_SEPARATOR)) {
+      String[] tokens = types.split(TypeUtil.TYPE_SUBTYPE_SEPARATOR);
       if (tokens.length == 2) {
         if (tokens[0] == null || tokens[0].isEmpty()) {
           throw new IllegalArgumentException("No type found in format '" + format + "'.");
@@ -214,45 +205,14 @@ public class ContentType {
           typeSubtype.add(tokens[1]);
         }
       } else {
-        throw new IllegalArgumentException("Too many '" + TYPE_SUBTYPE_SEPARATOR + "' in format '" + format + "'.");
+        throw new IllegalArgumentException("Too many '" +TypeUtil.TYPE_SUBTYPE_SEPARATOR + "' in format '" + format + "'.");
       }
     } else {
-      throw new IllegalArgumentException("No separator '" + TYPE_SUBTYPE_SEPARATOR
+      throw new IllegalArgumentException("No separator '" +TypeUtil.TYPE_SUBTYPE_SEPARATOR
           + "' was found in format '" + format + "'.");
     }
 
-    parseParameters(params, parameters);
-  }
-
-  /**
-   * Valid input are <code>;</code> separated <code>key=value</code> pairs
-   * without spaces between key and value.
-   * <p>
-   * See RFC 7231:
-   * The type, subtype, and parameter name tokens are case-insensitive.
-   * Parameter values might or might not be case-sensitive, depending on
-   * the semantics of the parameter name. The presence or absence of a
-   * parameter might be significant to the processing of a media-type,
-   * depending on its definition within the media type registry.
-   * </p>
-   * 
-   * @param parameters
-   * @param parameterMap
-   */
-  private static void parseParameters(final String parameters, final Map<String, String> parameterMap) {
-    if (parameters != null) {
-      String[] splittedParameters = parameters.split(PARAMETER_SEPARATOR);
-      for (String parameter : splittedParameters) {
-        String[] keyValue = parameter.split(PARAMETER_KEY_VALUE_SEPARATOR);
-        String key = keyValue[0].trim().toLowerCase(Locale.ENGLISH);
-        String value = keyValue.length > 1 ? keyValue[1] : null;
-        if (value != null && Character.isWhitespace(value.charAt(0))) {
-          throw new IllegalArgumentException(
-              "Value of parameter '" + key + "' starts with whitespace ('" + parameters + "').");
-        }
-        parameterMap.put(key, value);
-      }
-    }
+    TypeUtil.parseParameters(params, parameters);
   }
 
   public String getType() {
@@ -406,7 +366,7 @@ public class ContentType {
   public String toContentTypeString() {
     StringBuilder sb = new StringBuilder();
 
-    sb.append(type).append(TYPE_SUBTYPE_SEPARATOR).append(subtype);
+    sb.append(type).append(TypeUtil.TYPE_SUBTYPE_SEPARATOR).append(subtype);
 
     for (String key : parameters.keySet()) {
       sb.append(";").append(key).append("=").append(parameters.get(key));

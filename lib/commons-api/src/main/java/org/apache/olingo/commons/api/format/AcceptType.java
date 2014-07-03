@@ -46,11 +46,8 @@ import java.util.regex.Pattern;
  */
 public class AcceptType {
 
-  private static final String MEDIA_TYPE_WILDCARD = "*";
-  private static final String PARAMETER_Q = "q";
-  private static final Pattern Q_PARAMETER_VALUE_PATTERN = Pattern.compile("1|0|1\\.0{1,3}|0\\.\\d{1,3}");
-
-  public static final AcceptType WILDCARD = create(MEDIA_TYPE_WILDCARD, MEDIA_TYPE_WILDCARD, createParameterMap(), 1F);
+  public static final AcceptType WILDCARD = create(TypeUtil.MEDIA_TYPE_WILDCARD, TypeUtil.MEDIA_TYPE_WILDCARD,
+      createParameterMap(), 1F);
 
   private final String type;
   private final String subtype;
@@ -81,23 +78,49 @@ public class AcceptType {
     }
     List<String> typeSubtype = new ArrayList<String>();
     parameters = createParameterMap();
-    ContentType.parse(type, typeSubtype, parameters);
+    parse(type, typeSubtype, parameters);
     this.type = typeSubtype.get(0);
     subtype = typeSubtype.get(1);
-    if (MEDIA_TYPE_WILDCARD.equals(this.type) && !MEDIA_TYPE_WILDCARD.equals(subtype)) {
+    if (TypeUtil.MEDIA_TYPE_WILDCARD.equals(this.type) && !TypeUtil.MEDIA_TYPE_WILDCARD.equals(subtype)) {
       throw new IllegalArgumentException("Illegal combination of WILDCARD type with NONE WILDCARD subtype.");
     }
-    final String q = parameters.get(PARAMETER_Q);
+    final String q = parameters.get(TypeUtil.PARAMETER_Q);
     if (q == null) {
       quality = 1F;
     } else {
-      if (Q_PARAMETER_VALUE_PATTERN.matcher(q).matches()) {
+      try {
         quality = Float.valueOf(q);
-      } else {
-        throw new IllegalArgumentException("Illegal quality parameter.");
+      } catch (IllegalArgumentException e) {
+        throw new IllegalArgumentException("Illegal quality parameter.", e);
       }
-      parameters.remove(PARAMETER_Q);
     }
+  }
+
+  private static void
+      parse(final String format, final List<String> typeSubtype, final Map<String, String> parameters) {
+    final String[] typesAndParameters = format.split(TypeUtil.PARAMETER_SEPARATOR, 2);
+    final String types = typesAndParameters[0];
+    final String params = (typesAndParameters.length > 1 ? typesAndParameters[1] : null);
+
+    String[] tokens = types.split(TypeUtil.TYPE_SUBTYPE_SEPARATOR);
+    if (tokens.length == 1) {
+      typeSubtype.add(tokens[0]);
+      typeSubtype.add(TypeUtil.MEDIA_TYPE_WILDCARD);
+    } else if (tokens.length == 2) {
+      if (tokens[0] == null || tokens[0].isEmpty()) {
+        throw new IllegalArgumentException("No type found in format '" + format + "'.");
+      } else if (tokens[1] == null || tokens[1].isEmpty()) {
+        throw new IllegalArgumentException("No subtype found in format '" + format + "'.");
+      } else {
+        typeSubtype.add(tokens[0]);
+        typeSubtype.add(tokens[1]);
+      }
+    } else {
+      throw new IllegalArgumentException("Too many '" + TypeUtil.TYPE_SUBTYPE_SEPARATOR + "' in format '" + format
+          + "'.");
+    }
+
+    TypeUtil.parseParameters(params, parameters);
   }
 
   /**
@@ -172,7 +195,7 @@ public class AcceptType {
       result.append(';').append(key).append('=').append(parameters.get(key));
     }
     if (quality < 1F) {
-      result.append(';').append(PARAMETER_Q).append('=').append(quality);
+      result.append(';').append(TypeUtil.PARAMETER_Q).append('=').append(quality);
     }
     return result.toString();
   }
@@ -189,13 +212,13 @@ public class AcceptType {
    * @return whether this accept type matches the given content type
    */
   public boolean matches(final ContentType contentType) {
-    if (type.equals(MEDIA_TYPE_WILDCARD)) {
+    if (type.equals(TypeUtil.MEDIA_TYPE_WILDCARD)) {
       return true;
     }
     if (!type.equalsIgnoreCase(contentType.getType())) {
       return false;
     }
-    if (subtype.equals(MEDIA_TYPE_WILDCARD)) {
+    if (subtype.equals(TypeUtil.MEDIA_TYPE_WILDCARD)) {
       return true;
     }
     if (!subtype.equalsIgnoreCase(contentType.getSubtype())) {
@@ -246,13 +269,13 @@ public class AcceptType {
             if (compare != 0) {
               return compare;
             }
-            compare = (a1.getType().equals(MEDIA_TYPE_WILDCARD) ? 1 : 0)
-                - (a2.getType().equals(MEDIA_TYPE_WILDCARD) ? 1 : 0);
+            compare = (a1.getType().equals(TypeUtil.MEDIA_TYPE_WILDCARD) ? 1 : 0)
+                - (a2.getType().equals(TypeUtil.MEDIA_TYPE_WILDCARD) ? 1 : 0);
             if (compare != 0) {
               return compare;
             }
-            compare = (a1.getSubtype().equals(MEDIA_TYPE_WILDCARD) ? 1 : 0)
-                - (a2.getSubtype().equals(MEDIA_TYPE_WILDCARD) ? 1 : 0);
+            compare = (a1.getSubtype().equals(TypeUtil.MEDIA_TYPE_WILDCARD) ? 1 : 0)
+                - (a2.getSubtype().equals(TypeUtil.MEDIA_TYPE_WILDCARD) ? 1 : 0);
             if (compare != 0) {
               return compare;
             }
