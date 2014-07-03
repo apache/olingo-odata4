@@ -18,12 +18,13 @@
  */
 package org.apache.olingo.server.api.processor;
 
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 public interface CollectionProcessor extends Processor {
 
-  void readCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format);
+  void readCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestedContentType);
 
 }

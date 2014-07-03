@@ -21,6 +21,8 @@ package org.apache.olingo.server.tecsvc.processor;
 import java.io.ByteArrayInputStream;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -38,15 +40,17 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
 
   @Override
   public void readEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-      final String format) {
+      final ContentType requestedContentType) {
     response.setContent(new ByteArrayInputStream("Entity".getBytes()));
     response.setStatusCode(200);
+    response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
   }
 
   @Override
   public void readCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-      final String format) {
+      final ContentType requestedContentType) {
     response.setContent(new ByteArrayInputStream("EntitySet".getBytes()));
     response.setStatusCode(200);
+    response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
   }
 }

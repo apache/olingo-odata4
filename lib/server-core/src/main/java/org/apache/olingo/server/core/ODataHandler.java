@@ -84,7 +84,7 @@ public class ODataHandler {
         requestedContentType =
             ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, mp, MetadataProcessor.class);
 
-        mp.readMetadata(request, response, uriInfo, requestedContentType.toContentTypeString());
+        mp.readMetadata(request, response, uriInfo, requestedContentType);
         break;
       case service:
         if ("".equals(request.getRawODataPath())) {
@@ -97,7 +97,7 @@ public class ODataHandler {
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, sdp,
                   ServiceDocumentProcessor.class);
 
-          sdp.readServiceDocument(request, response, uriInfo, requestedContentType.toContentTypeString());
+          sdp.readServiceDocument(request, response, uriInfo, requestedContentType);
         }
         break;
       case resource:
@@ -129,7 +129,7 @@ public class ODataHandler {
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp, CollectionProcessor.class);
 
-          cp.readCollection(request, response, uriInfo, requestedContentType.toContentTypeString());
+          cp.readCollection(request, response, uriInfo, requestedContentType);
         } else {
           throw new ODataRuntimeException("not implemented");
         }
@@ -140,7 +140,7 @@ public class ODataHandler {
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
 
-          ep.readEntity(request, response, uriInfo, requestedContentType.toContentTypeString());
+          ep.readEntity(request, response, uriInfo, requestedContentType);
         } else {
           throw new ODataRuntimeException("not implemented");
         }
@@ -154,7 +154,7 @@ public class ODataHandler {
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp, CollectionProcessor.class);
 
-          cp.readCollection(request, response, uriInfo, requestedContentType.toContentTypeString());
+          cp.readCollection(request, response, uriInfo, requestedContentType);
         } else {
           throw new ODataRuntimeException("not implemented");
         }
@@ -165,7 +165,7 @@ public class ODataHandler {
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
 
-          ep.readEntity(request, response, uriInfo, requestedContentType.toContentTypeString());
+          ep.readEntity(request, response, uriInfo, requestedContentType);
         } else {
           throw new ODataRuntimeException("not implemented");
         }

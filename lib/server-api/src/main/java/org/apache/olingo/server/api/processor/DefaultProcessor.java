@@ -21,8 +21,8 @@ package org.apache.olingo.server.api.processor;
 import java.io.InputStream;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
@@ -43,7 +43,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
 
   @Override
   public void readServiceDocument(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-      final String format) {
+      final ContentType requestedContentType) {
     ODataSerializer serializer;
     InputStream responseEntity;
 
@@ -51,22 +51,22 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
     responseEntity = serializer.serviceDocument(edm, request.getRawBaseUri());
 
     response.setStatusCode(200);
-    response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.APPLICATION_JSON);
     response.setContent(responseEntity);
+    response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
 
   }
 
   @Override
   public void readMetadata(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-      final String format) {
+      final ContentType requestedContentType) {
     ODataSerializer serializer;
     InputStream responseEntity;
 
     serializer = odata.createSerializer(ODataFormat.XML);
     responseEntity = serializer.metadataDocument(edm);
     response.setStatusCode(200);
-    response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.APPLICATION_XML);
     response.setContent(responseEntity);
+    response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
   }
 
 }

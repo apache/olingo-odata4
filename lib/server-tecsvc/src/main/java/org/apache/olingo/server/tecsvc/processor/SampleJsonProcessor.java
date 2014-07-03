@@ -30,6 +30,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
@@ -58,7 +59,7 @@ public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor
 
   @Override
   public void readCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-      final String format) {
+      final ContentType requestedContentType) {
     long time = System.nanoTime();
 
     EntitySet entitySet = createEntitySet();
@@ -74,12 +75,12 @@ public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor
     LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-    response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
+    response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
   }
 
   @Override
   public void readEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-      final String format) {
+      final ContentType requestedContentType) {
     long time = System.nanoTime();
     Entity entity = createEntity();
 
@@ -94,7 +95,7 @@ public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor
     LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-    response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
+    response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
   }
 
   protected Entity createEntity() {

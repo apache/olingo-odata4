@@ -18,11 +18,13 @@
  */
 package org.apache.olingo.server.api.processor;
 
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 public interface EntityProcessor extends Processor {
 
-  void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format);
+  void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format);
+  
 }

@@ -214,20 +214,20 @@ public class ContentNegotiatorTest {
 
     @Override
     public void readServiceDocument(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-        final String format) {
-      response.setHeader(HttpHeader.CONTENT_TYPE, format);
+        final ContentType format) {
+      response.setHeader(HttpHeader.CONTENT_TYPE, format.toContentTypeString());
     }
 
     @Override
     public void readCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-        final String format) {
-      response.setHeader(HttpHeader.CONTENT_TYPE, format);
+        final ContentType requestedContentType) {
+      response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     }
 
     @Override
     public void readMetadata(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-        final String format) {
-      response.setHeader(HttpHeader.CONTENT_TYPE, format);
+        final ContentType requestedContentType) {
+      response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     }
   }
 }
