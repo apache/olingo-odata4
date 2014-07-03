@@ -18,36 +18,40 @@
  */
 package org.apache.olingo.server.api.processor;
 
+/**
+ * Mapping between an uri $format option value and a content types. For instance the $format option "xml" maps to
+ * content type "application/xml".
+ */
 public class FormatContentTypeMapping {
 
-  private String formatAlias;
-  private String contentType;
+  private String formatOptionValue;
+  private String contentTypeValue;
 
-  public FormatContentTypeMapping(final String formatAlias, final String contentType) {
+  public FormatContentTypeMapping(final String formatOptionValue, final String contentTypeValue) {
     super();
-    this.formatAlias = formatAlias;
-    this.contentType = contentType;
+    this.formatOptionValue = formatOptionValue;
+    this.contentTypeValue = contentTypeValue;
   }
 
   public String getFormatAlias() {
-    return formatAlias;
+    return formatOptionValue;
   }
 
   public String getContentType() {
-    return contentType;
+    return contentTypeValue;
   }
 
-  public void setFormatAlias(final String formatAlias) {
-    this.formatAlias = formatAlias;
+  public void setFormatAlias(final String formatOptionValue) {
+    this.formatOptionValue = formatOptionValue;
   }
 
-  public void setContentType(final String contentType) {
-    this.contentType = contentType;
+  public void setContentType(final String contentTypeValue) {
+    this.contentTypeValue = contentTypeValue;
   }
 
   @Override
   public String toString() {
-    return "('" + formatAlias + "', '" + contentType + "')";
+    return "('" + formatOptionValue + "', '" + contentTypeValue + "')";
   }
 
 }

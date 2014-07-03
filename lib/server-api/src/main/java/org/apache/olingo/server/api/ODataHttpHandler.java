@@ -23,10 +23,23 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.olingo.server.api.processor.Processor;
 
+/**
+ * Handels http requests as OData requests.
+ */
 public interface ODataHttpHandler {
 
+  /**
+   * Process an OData request. This includes uri parsing, content negotiation, dispatching the request to a specific
+   * custom processor implementation for handling data and creating the serialized content for the response object.
+   * @param request - must be a http OData request
+   * @param response - http OData response
+   */
   void process(HttpServletRequest request, HttpServletResponse response);
 
+  /**
+   * Register additional custom processor implementations for handling OData requests. If a request processing requires
+   * a processor which is not registered then an not implemented exception will happen.
+   */
   void register(Processor processor);
 
 }

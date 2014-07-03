@@ -21,8 +21,17 @@ package org.apache.olingo.server.api.processor;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.server.api.OData;
 
+/**
+ * Base interface for all processor types. Processors are responsible to read and write data and marshaling content
+ * within a request - response cycle.
+ */
 public interface Processor {
 
+  /**
+   * Initialize processor for each http request - response cycle.
+   * @param odata - Olingos root object which acts as a factory for various object types
+   * @param edm - the edm which needs to be created before the OData request handling takes place
+   */
   void init(OData odata, Edm edm);
 
 }

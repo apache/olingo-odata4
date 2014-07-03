@@ -30,6 +30,10 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.uri.UriInfo;
 
+/**
+ * Processor implementation for handling of metadata and service document. This implementation is registerd in the 
+ * ODataHandler by default. The default can be replaced by re-registering an custom implementation.
+ */
 public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProcessor {
 
   private OData odata;
@@ -47,7 +51,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
     ODataSerializer serializer;
     InputStream responseEntity;
 
-    serializer = odata.createSerializer(ODataFormat.JSON);
+    serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
     responseEntity = serializer.serviceDocument(edm, request.getRawBaseUri());
 
     response.setStatusCode(200);
@@ -62,7 +66,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
     ODataSerializer serializer;
     InputStream responseEntity;
 
-    serializer = odata.createSerializer(ODataFormat.XML);
+    serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
     responseEntity = serializer.metadataDocument(edm);
     response.setStatusCode(200);
     response.setContent(responseEntity);
