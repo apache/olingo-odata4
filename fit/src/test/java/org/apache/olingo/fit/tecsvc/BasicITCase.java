@@ -18,14 +18,17 @@
  */
 package org.apache.olingo.fit.tecsvc;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
+import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,7 +46,7 @@ public class BasicITCase {
   @Test
   public void readServiceDocument() {
     ODataServiceDocumentRequest request =
-        odata.getRetrieveRequestFactory().getServiceDocumentRequest(REF_SERVICE);
+            odata.getRetrieveRequestFactory().getServiceDocumentRequest(REF_SERVICE);
     request.setAccept("application/json;odata.metadata=minimal");
     assertNotNull(request);
     ODataServiceDocument serviceDocument = request.execute().getBody();
@@ -54,7 +57,14 @@ public class BasicITCase {
   public void readMetadata() {
     EdmMetadataRequest request = odata.getRetrieveRequestFactory().getMetadataRequest(REF_SERVICE);
     assertNotNull(request);
-    Edm edm = request.execute().getBody();
+
+    ODataRetrieveResponse<Edm> response = request.execute();
+    assertEquals(200, response.getStatusCode());
+
+    Edm edm = response.getBody();
     assertNotNull(edm);
+    assertEquals("com.sap.odata.test1", edm.getSchema("com.sap.odata.test1").getNamespace());
+    assertEquals("Namespace1_Alias", edm.getSchema("com.sap.odata.test1").getAlias());
+    assertNotNull(edm.getTerm(new FullQualifiedName("Core.Description")));
   }
 }

@@ -58,6 +58,16 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
       }
 
       @Override
+      public int getStatusCode() {
+        return xmlMetadataResponse.getStatusCode();
+      }
+
+      @Override
+      public String getStatusMessage() {
+        return xmlMetadataResponse.getStatusMessage();
+      }
+
+      @Override
       public Edm getBody() {
         if (metadata == null) {
           try {

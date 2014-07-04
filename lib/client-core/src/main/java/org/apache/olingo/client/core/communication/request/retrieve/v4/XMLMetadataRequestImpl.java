@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.edm.xml.Schema;
@@ -50,7 +52,7 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
     final SingleXMLMetadatRequestImpl rootReq = new SingleXMLMetadatRequestImpl((ODataClient) odataClient, uri);
     final ODataRetrieveResponse<XMLMetadata> rootRes = rootReq.execute();
 
-    final XMLMetadataResponseImpl response = new XMLMetadataResponseImpl();
+    final XMLMetadataResponseImpl response = new XMLMetadataResponseImpl(httpClient, rootReq.getHttpResponse());
 
     final XMLMetadata rootMetadata = rootRes.getBody();
     for (Schema schema : rootMetadata.getSchemas()) {
@@ -87,7 +89,7 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
 
           // process all edm:Annotations in each schema of the included document
           for (Annotations annotationGroup : ((SchemaImpl) schema).getAnnotationGroups()) {
-              // take into account only when (TargetNamespace was either not provided or matches) and
+            // take into account only when (TargetNamespace was either not provided or matches) and
             // (Qualifier was either not provided or matches)
             if ((StringUtils.isBlank(include.getTargetNamespace())
                     || include.getTargetNamespace().equals(
@@ -123,13 +125,20 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
 
   private class SingleXMLMetadatRequestImpl extends AbstractMetadataRequestImpl<XMLMetadata> {
 
+    private HttpResponse httpResponse;
+
     public SingleXMLMetadatRequestImpl(final ODataClient odataClient, final URI uri) {
       super(odataClient, uri);
     }
 
+    public HttpResponse getHttpResponse() {
+      return httpResponse;
+    }
+
     @Override
     public ODataRetrieveResponse<XMLMetadata> execute() {
-      return new AbstractODataRetrieveResponse(httpClient, doExecute()) {
+      httpResponse = doExecute();
+      return new AbstractODataRetrieveResponse(httpClient, httpResponse) {
 
         @Override
         public XMLMetadata getBody() {
@@ -147,13 +156,8 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
 
     private final Map<String, Schema> schemas = new HashMap<String, Schema>();
 
-    /**
-     * Constructor.
-     * <br/>
-     * Just to create response templates to be initialized from batch.
-     */
-    private XMLMetadataResponseImpl() {
-      super();
+    private XMLMetadataResponseImpl(final HttpClient client, final HttpResponse res) {
+      super(client, res);
     }
 
     @Override

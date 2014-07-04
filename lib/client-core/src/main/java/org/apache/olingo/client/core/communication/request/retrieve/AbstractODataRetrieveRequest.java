@@ -62,7 +62,7 @@ public abstract class AbstractODataRetrieveRequest<T>
    * Response abstract class about an ODataRetrieveRequest.
    */
   protected abstract class AbstractODataRetrieveResponse
-      extends AbstractODataResponse implements ODataRetrieveResponse<T> {
+          extends AbstractODataResponse implements ODataRetrieveResponse<T> {
 
     /**
      * Constructor.
@@ -81,10 +81,6 @@ public abstract class AbstractODataRetrieveRequest<T>
      */
     protected AbstractODataRetrieveResponse(final HttpClient client, final HttpResponse res) {
       super(client, res);
-    }
-
-    protected HttpResponse getHttpResponse() {
-      return res;
     }
 
     @Override
