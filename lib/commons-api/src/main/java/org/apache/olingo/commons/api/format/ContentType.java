@@ -52,10 +52,12 @@ public class ContentType {
   public static final ContentType APPLICATION_ATOM_XML = create("application", "atom+xml");
   public static final ContentType APPLICATION_ATOM_XML_CS_UTF_8 = create(APPLICATION_ATOM_XML,
       TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_XML_ENTRY = create(APPLICATION_ATOM_XML,TypeUtil. PARAMETER_TYPE, "entry");
+  public static final ContentType APPLICATION_ATOM_XML_ENTRY = 
+      create(APPLICATION_ATOM_XML,TypeUtil. PARAMETER_TYPE, "entry");
   public static final ContentType APPLICATION_ATOM_XML_ENTRY_CS_UTF_8 = create(APPLICATION_ATOM_XML_ENTRY,
       TypeUtil.  PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_XML_FEED = create(APPLICATION_ATOM_XML,TypeUtil. PARAMETER_TYPE, "feed");
+  public static final ContentType APPLICATION_ATOM_XML_FEED = 
+      create(APPLICATION_ATOM_XML,TypeUtil. PARAMETER_TYPE, "feed");
   public static final ContentType APPLICATION_ATOM_XML_FEED_CS_UTF_8 = create(APPLICATION_ATOM_XML_FEED,
       TypeUtil.  PARAMETER_CHARSET,TypeUtil.CHARSET_UTF_8);
   public static final ContentType APPLICATION_ATOM_SVC = create("application", "atomsvc+xml");
@@ -66,7 +68,8 @@ public class ContentType {
       TypeUtil.  PARAMETER_CHARSET,TypeUtil. CHARSET_UTF_8);
   public static final ContentType APPLICATION_OCTET_STREAM = create("application", "octet-stream");
   public static final ContentType TEXT_PLAIN = create("text", "plain");
-  public static final ContentType TEXT_PLAIN_CS_UTF_8 = create(TEXT_PLAIN, TypeUtil.PARAMETER_CHARSET,TypeUtil. CHARSET_UTF_8);
+  public static final ContentType TEXT_PLAIN_CS_UTF_8 = 
+      create(TEXT_PLAIN, TypeUtil.PARAMETER_CHARSET,TypeUtil. CHARSET_UTF_8);
   public static final ContentType MULTIPART_MIXED = create("multipart", "mixed");
 
   public static final ContentType APPLICATION_XHTML_XML = create("application", "xhtml+xml");
@@ -205,7 +208,8 @@ public class ContentType {
           typeSubtype.add(tokens[1]);
         }
       } else {
-        throw new IllegalArgumentException("Too many '" +TypeUtil.TYPE_SUBTYPE_SEPARATOR + "' in format '" + format + "'.");
+        throw new IllegalArgumentException(
+          "Too many '" +TypeUtil.TYPE_SUBTYPE_SEPARATOR + "' in format '" + format + "'.");
       }
     } else {
       throw new IllegalArgumentException("No separator '" +TypeUtil.TYPE_SUBTYPE_SEPARATOR
