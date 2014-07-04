@@ -64,9 +64,9 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType 
     } else {
       this.underlyingType = EdmPrimitiveTypeFactory.getInstance(
               EdmPrimitiveTypeKind.valueOfFQN(version, xmlEnumType.getUnderlyingType()));
-      if (!ArrayUtils.contains(VALID_UNDERLYING_TYPES, this.underlyingType.getKind())) {
-        throw new EdmException("Not allowed as underlying type: " + this.underlyingType.getKind());
-      }
+//      if (!ArrayUtils.contains(VALID_UNDERLYING_TYPES, this.underlyingType.getKind())) {
+//        throw new EdmException("Not allowed as underlying type: " + this.underlyingType.getKind());
+//      }
     }
 
     final List<? extends Member> xmlMembers = xmlEnumType.getMembers();

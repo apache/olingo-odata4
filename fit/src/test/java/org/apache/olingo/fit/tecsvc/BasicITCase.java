@@ -18,14 +18,18 @@
  */
 package org.apache.olingo.fit.tecsvc;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
+import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,23 +42,40 @@ public class BasicITCase {
   @Before
   public void before() {
     odata = ODataClientFactory.getV4();
+    odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
   }
 
   @Test
   public void readServiceDocument() {
     ODataServiceDocumentRequest request =
         odata.getRetrieveRequestFactory().getServiceDocumentRequest(REF_SERVICE);
-    request.setAccept("application/json;odata.metadata=minimal");
     assertNotNull(request);
-    ODataServiceDocument serviceDocument = request.execute().getBody();
+
+    ODataRetrieveResponse<ODataServiceDocument> response = request.execute();
+
+    assertEquals(200, response.getStatusCode());
+
+    ODataServiceDocument serviceDocument = response.getBody();
     assertNotNull(serviceDocument);
+
+    assertTrue(serviceDocument.getEntitySetNames().contains("ESAllPrim"));
+    assertTrue(serviceDocument.getFunctionImportNames().contains("FICRTCollCTTwoPrim"));
+    assertTrue(serviceDocument.getSingletonNames().contains("SIMedia"));
   }
 
   @Test
   public void readMetadata() {
     EdmMetadataRequest request = odata.getRetrieveRequestFactory().getMetadataRequest(REF_SERVICE);
     assertNotNull(request);
-    Edm edm = request.execute().getBody();
+    ODataRetrieveResponse<Edm> response = request.execute();
+
+//    assertEquals(200, response.getStatusCode());
+//    assertEquals("application/xml", response.getContentType());
+
+    Edm edm = response.getBody();
     assertNotNull(edm);
+
+    assertEquals(2, edm.getSchemas().size());
+
   }
 }
