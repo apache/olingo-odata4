@@ -20,6 +20,7 @@ package org.apache.olingo.fit.tecsvc;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
@@ -41,6 +42,7 @@ public class BasicITCase {
   @Before
   public void before() {
     odata = ODataClientFactory.getV4();
+    odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
   }
 
   @Test
@@ -49,8 +51,17 @@ public class BasicITCase {
             odata.getRetrieveRequestFactory().getServiceDocumentRequest(REF_SERVICE);
     request.setAccept("application/json;odata.metadata=minimal");
     assertNotNull(request);
-    ODataServiceDocument serviceDocument = request.execute().getBody();
+
+    ODataRetrieveResponse<ODataServiceDocument> response = request.execute();
+
+    assertEquals(200, response.getStatusCode());
+
+    ODataServiceDocument serviceDocument = response.getBody();
     assertNotNull(serviceDocument);
+
+    assertTrue(serviceDocument.getEntitySetNames().contains("ESAllPrim"));
+    assertTrue(serviceDocument.getFunctionImportNames().contains("FICRTCollCTTwoPrim"));
+    assertTrue(serviceDocument.getSingletonNames().contains("SIMedia"));
   }
 
   @Test
@@ -66,5 +77,6 @@ public class BasicITCase {
     assertEquals("com.sap.odata.test1", edm.getSchema("com.sap.odata.test1").getNamespace());
     assertEquals("Namespace1_Alias", edm.getSchema("com.sap.odata.test1").getAlias());
     assertNotNull(edm.getTerm(new FullQualifiedName("Core.Description")));
+    assertEquals(2, edm.getSchemas().size());
   }
 }
