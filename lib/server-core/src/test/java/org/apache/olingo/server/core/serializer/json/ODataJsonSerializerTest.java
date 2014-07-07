@@ -337,7 +337,7 @@ public class ODataJsonSerializerTest {
         "\"PropertyDecimal\":4711.1174," +
         "\"PropertyBinary\":\"BAcBAQ==\"," +
         "\"PropertyDate\":\"2014-03-19\"," +
-        "\"PropertyDateTimeOffset\":\"2014-03-19T11:12:00+01:00\"," +
+        "\"PropertyDateTimeOffset\":\"2014-03-19T10:12:00Z\"," +
         "\"PropertyDuration\":\"P16148425DT0S\"," +
         "\"PropertyGuid\":\"0000aaaa-00bb-00cc-00dd-000000ffffff\"," +
         "\"PropertyTimeOfDay\":\"10:12:00\"" +
@@ -396,7 +396,7 @@ public class ODataJsonSerializerTest {
         "\"CollPropertyDecimal\":[4711.1174,1174.4711]," +
         "\"CollPropertyBinary\":[\"BAcBAQ==\",\"dGVzdA==\"]," +
         "\"CollPropertyDate\":[\"2014-03-19\",\"2014-07-02\"]," +
-        "\"CollPropertyDateTimeOffset\":[\"2014-03-19T11:12:00+01:00\",\"2014-07-02T15:30:00+02:00\"]," +
+        "\"CollPropertyDateTimeOffset\":[\"2014-03-19T10:12:00Z\",\"2014-07-02T13:30:00Z\"]," +
         "\"CollPropertyDuration\":[\"P16148425DT0S\",\"P16253562DT12H0S\"]," +
         "\"CollPropertyGuid\":[\"0000aaaa-00bb-00cc-00dd-000000ffffff\",\"0000ffff-00dd-00cc-00bb-000000aaaaaa\"]," +
         "\"CollPropertyTimeOfDay\":[\"10:12:00\",\"13:30:00\"]" +
@@ -433,7 +433,7 @@ public class ODataJsonSerializerTest {
         "\"PropertyDecimal\":4711.1174," +
         "\"PropertyBinary\":\"BAcBAQ==\"," +
         "\"PropertyDate\":\"2014-03-19\"," +
-        "\"PropertyDateTimeOffset\":\"2014-03-19T11:12:00+01:00\"," +
+        "\"PropertyDateTimeOffset\":\"2014-03-19T10:12:00Z\"," +
         "\"PropertyDuration\":\"P16148425DT0S\"," +
         "\"PropertyGuid\":\"0000aaaa-00bb-00cc-00dd-000000ffffff\"," +
         "\"PropertyTimeOfDay\":\"10:12:00\"" +
@@ -489,7 +489,7 @@ public class ODataJsonSerializerTest {
     entity.addProperty(createProperty("Collection(Edm.Date)", TecSvcSimpleProperty.Collection_Date,
             ValueType.COLLECTION_PRIMITIVE, date, date2));
     entity.addProperty(createProperty("Collection(Edm.DateTimeOffset)", TecSvcSimpleProperty.Collection_DateTimeOffset,
-            ValueType.COLLECTION_PRIMITIVE, date.getTime(), date2.getTime()));
+            ValueType.COLLECTION_PRIMITIVE, date, date2));
     entity.addProperty(createProperty("Collection(Edm.Duration)", TecSvcSimpleProperty.Collection_Duration,
             ValueType.COLLECTION_PRIMITIVE, date.getTimeInMillis(), date2.getTimeInMillis()));
     entity.addProperty(createProperty("Collection(Edm.Guid)", TecSvcSimpleProperty.Collection_Guid,
@@ -522,7 +522,7 @@ public class ODataJsonSerializerTest {
         new byte[]{0x04, 0x07, 0x01, 0x01}));
     entity.addProperty(createProperty("Edm.Date", TecSvcSimpleProperty.Date, ValueType.PRIMITIVE, date));
     entity.addProperty(createProperty("Edm.DateTimeOffset", TecSvcSimpleProperty.DateTimeOffset, ValueType.PRIMITIVE,
-        date.getTime()));
+        date));
     entity.addProperty(createProperty("Edm.Duration", TecSvcSimpleProperty.Duration, ValueType.PRIMITIVE,
         date.getTimeInMillis()));
     entity.addProperty(createProperty("Edm.Guid", TecSvcSimpleProperty.Guid, ValueType.PRIMITIVE,
@@ -532,7 +532,9 @@ public class ODataJsonSerializerTest {
   }
 
   private Calendar createCalendarInstance() {
-    return Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.ENGLISH);
+    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.ENGLISH);
+    cal.set(Calendar.ZONE_OFFSET, 0);
+    return cal;
   }
 
   private String streamToString(InputStream result) throws IOException {
