@@ -193,9 +193,6 @@ public class AcceptType {
     for (final String key : parameters.keySet()) {
       result.append(';').append(key).append('=').append(parameters.get(key));
     }
-    if (quality < 1F) {
-      result.append(';').append(TypeUtil.PARAMETER_Q).append('=').append(quality);
-    }
     return result.toString();
   }
 
@@ -225,8 +222,9 @@ public class AcceptType {
     }
     Map<String, String> compareParameters = contentType.getParameters();
     for (final String key : parameters.keySet()) {
-      if (compareParameters.containsKey(key)) {
-        if (!parameters.get(key).equalsIgnoreCase(compareParameters.get(key))) {
+      if (compareParameters.containsKey(key) || TypeUtil.PARAMETER_Q.equalsIgnoreCase(key)) {
+        if (!parameters.get(key).equalsIgnoreCase(compareParameters.get(key))
+            && !TypeUtil.PARAMETER_Q.equalsIgnoreCase(key)) {
           return false;
         }
       } else {

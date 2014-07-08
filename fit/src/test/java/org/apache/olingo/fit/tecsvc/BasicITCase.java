@@ -30,6 +30,7 @@ import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -49,7 +50,6 @@ public class BasicITCase {
   public void readServiceDocument() {
     ODataServiceDocumentRequest request =
             odata.getRetrieveRequestFactory().getServiceDocumentRequest(REF_SERVICE);
-    request.setAccept("application/json;odata.metadata=minimal");
     assertNotNull(request);
 
     ODataRetrieveResponse<ODataServiceDocument> response = request.execute();
@@ -73,6 +73,7 @@ public class BasicITCase {
     assertEquals(200, response.getStatusCode());
 
     Edm edm = response.getBody();
+
     assertNotNull(edm);
     assertEquals("com.sap.odata.test1", edm.getSchema("com.sap.odata.test1").getNamespace());
     assertEquals("Namespace1_Alias", edm.getSchema("com.sap.odata.test1").getAlias());

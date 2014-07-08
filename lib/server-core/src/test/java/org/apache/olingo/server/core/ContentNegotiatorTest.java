@@ -104,7 +104,7 @@ public class ContentNegotiatorTest {
 
   @Test
   public void testServiceDocumentSingleCase() {
-    String[] useCase = { ACCEPT_CASE_FULL, null, ACCEPT_CASE_FULL, "dummy", ACCEPT_CASE_FULL };
+    String[] useCase = { "application/json", null, ACCEPT_CASE_JSON, null, null };
 
     testContentNegotiation(useCase, ServiceDocumentProcessor.class);
   }

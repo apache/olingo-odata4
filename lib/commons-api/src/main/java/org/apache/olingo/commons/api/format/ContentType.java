@@ -45,31 +45,30 @@ import java.util.TreeMap;
  */
 public class ContentType {
 
-
   public static final ContentType APPLICATION_XML = create("application", "xml");
   public static final ContentType APPLICATION_XML_CS_UTF_8 = create(APPLICATION_XML, TypeUtil.PARAMETER_CHARSET,
       TypeUtil.CHARSET_UTF_8);
   public static final ContentType APPLICATION_ATOM_XML = create("application", "atom+xml");
   public static final ContentType APPLICATION_ATOM_XML_CS_UTF_8 = create(APPLICATION_ATOM_XML,
       TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_XML_ENTRY = 
-      create(APPLICATION_ATOM_XML,TypeUtil. PARAMETER_TYPE, "entry");
+  public static final ContentType APPLICATION_ATOM_XML_ENTRY =
+      create(APPLICATION_ATOM_XML, TypeUtil.PARAMETER_TYPE, "entry");
   public static final ContentType APPLICATION_ATOM_XML_ENTRY_CS_UTF_8 = create(APPLICATION_ATOM_XML_ENTRY,
-      TypeUtil.  PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_XML_FEED = 
-      create(APPLICATION_ATOM_XML,TypeUtil. PARAMETER_TYPE, "feed");
+      TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
+  public static final ContentType APPLICATION_ATOM_XML_FEED =
+      create(APPLICATION_ATOM_XML, TypeUtil.PARAMETER_TYPE, "feed");
   public static final ContentType APPLICATION_ATOM_XML_FEED_CS_UTF_8 = create(APPLICATION_ATOM_XML_FEED,
-      TypeUtil.  PARAMETER_CHARSET,TypeUtil.CHARSET_UTF_8);
+      TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
   public static final ContentType APPLICATION_ATOM_SVC = create("application", "atomsvc+xml");
   public static final ContentType APPLICATION_ATOM_SVC_CS_UTF_8 = create(APPLICATION_ATOM_SVC,
-      TypeUtil. PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
+      TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
   public static final ContentType APPLICATION_JSON = create("application", "json");
   public static final ContentType APPLICATION_JSON_CS_UTF_8 = create(APPLICATION_JSON,
-      TypeUtil.  PARAMETER_CHARSET,TypeUtil. CHARSET_UTF_8);
+      TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
   public static final ContentType APPLICATION_OCTET_STREAM = create("application", "octet-stream");
   public static final ContentType TEXT_PLAIN = create("text", "plain");
-  public static final ContentType TEXT_PLAIN_CS_UTF_8 = 
-      create(TEXT_PLAIN, TypeUtil.PARAMETER_CHARSET,TypeUtil. CHARSET_UTF_8);
+  public static final ContentType TEXT_PLAIN_CS_UTF_8 =
+      create(TEXT_PLAIN, TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
   public static final ContentType MULTIPART_MIXED = create("multipart", "mixed");
 
   public static final ContentType APPLICATION_XHTML_XML = create("application", "xhtml+xml");
@@ -209,10 +208,10 @@ public class ContentType {
         }
       } else {
         throw new IllegalArgumentException(
-          "Too many '" +TypeUtil.TYPE_SUBTYPE_SEPARATOR + "' in format '" + format + "'.");
+            "Too many '" + TypeUtil.TYPE_SUBTYPE_SEPARATOR + "' in format '" + format + "'.");
       }
     } else {
-      throw new IllegalArgumentException("No separator '" +TypeUtil.TYPE_SUBTYPE_SEPARATOR
+      throw new IllegalArgumentException("No separator '" + TypeUtil.TYPE_SUBTYPE_SEPARATOR
           + "' was found in format '" + format + "'.");
     }
 
@@ -305,7 +304,7 @@ public class ContentType {
     }
     return compatible.booleanValue();
   }
-  
+
   /**
    * Check equal without parameters.
    * It is possible that no decision about <code>equal/none equal</code> can be determined a <code>NULL</code> is
