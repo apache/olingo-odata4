@@ -83,7 +83,7 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
         LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-        response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
+        response.setHeader("Content-Type", requestedContentType.toContentTypeString());
       }
     } catch (DataProvider.DataProviderException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
@@ -109,7 +109,7 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
         LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-        response.setHeader("Content-Type", ContentType.APPLICATION_JSON.toContentTypeString());
+        response.setHeader("Content-Type", requestedContentType.toContentTypeString());
       }
     } catch (DataProvider.DataProviderException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
