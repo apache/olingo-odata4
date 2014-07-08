@@ -33,8 +33,8 @@ public class PropertyImpl extends AbstractValuable implements Property {
     this.type = type;
   }
 
-  public PropertyImpl(final String type, final String name, final ValueType valueType, final Object value) {
-    this(name, type);
+  public PropertyImpl(String type, String name, ValueType valueType, Object value) {
+    this(type, name);
     setValue(valueType, value);
   }
 
