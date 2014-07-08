@@ -82,7 +82,10 @@ public class ODataHandlerTest {
 
     assertNotNull(response);
     assertEquals(200, response.getStatusCode());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getHeaders().get(HttpHeader.CONTENT_TYPE));
+
+    String ct = response.getHeaders().get(HttpHeader.CONTENT_TYPE);
+    assertTrue(ct.contains("application/json"));
+    assertTrue(ct.contains("odata.metadata=minimal"));
 
     assertNotNull(response.getContent());
     String doc = IOUtils.toString(response.getContent());
