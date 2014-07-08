@@ -60,7 +60,7 @@ public class UriParameterImpl implements UriParameter {
   }
 
   @Override
-  public Expression getExression() {
+  public Expression getExpression() {
     return expression;
   }
 
@@ -70,7 +70,7 @@ public class UriParameterImpl implements UriParameter {
   }
 
   @Override
-  public String getRefencedProperty() {
+  public String getReferencedProperty() {
     return referencedProperty;
   }
 

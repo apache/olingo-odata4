@@ -128,7 +128,7 @@ public class ResourceValidator implements TestValidator {
 
     return new FilterValidator()
         .setEdm(edm)
-        .setExpression(function.getParameters().get(index).getExression())
+        .setExpression(function.getParameters().get(index).getExpression())
         .setValidator(this);
   }
 
@@ -368,7 +368,7 @@ public class ResourceValidator implements TestValidator {
     UriResourceWithKeysImpl info = (UriResourceWithKeysImpl) uriPathInfo;
     List<UriParameter> keyPredicates = info.getKeyPredicates();
     assertEquals(name, keyPredicates.get(index).getName());
-    assertEquals(refencedProperty, keyPredicates.get(index).getRefencedProperty());
+    assertEquals(refencedProperty, keyPredicates.get(index).getReferencedProperty());
     return this;
 
   }

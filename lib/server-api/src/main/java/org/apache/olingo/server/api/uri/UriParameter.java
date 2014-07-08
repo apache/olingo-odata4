@@ -38,7 +38,7 @@ public interface UriParameter {
   /**
    * @return If the parameters value is a expression and expression is returned, otherwise null
    */
-  public Expression getExression();
+  public Expression getExpression();
 
   /**
    * @return Name of the parameter
@@ -48,6 +48,6 @@ public interface UriParameter {
   /**
    * @return Name of the referenced property when referential constrains are used
    */
-  public String getRefencedProperty();
+  public String getReferencedProperty();
 
 }

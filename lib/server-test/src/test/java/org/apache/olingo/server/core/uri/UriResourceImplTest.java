@@ -66,7 +66,7 @@ public class UriResourceImplTest {
     assertEquals("Text", impl.getText());
     assertEquals("A", impl.getName());
     assertEquals("@A", impl.getAlias());
-    assertEquals(expression, impl.getExression());
+    assertEquals(expression, impl.getExpression());
   }
 
   @Test
