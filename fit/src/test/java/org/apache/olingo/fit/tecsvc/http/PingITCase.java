@@ -16,13 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.tecsvc;
+package org.apache.olingo.fit.tecsvc.http;
 
 import static org.junit.Assert.assertEquals;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,14 +32,14 @@ public class PingITCase {
 
   private static final Logger LOG = LoggerFactory.getLogger(PingITCase.class);
 
-  private static final String REF_SERVICE = TecSvcConst.BASE_URL + "/";
-  private static final String REDIRECT_URL = TecSvcConst.BASE_URL;
+  private static final String SERVICE_URI = TecSvcConst.BASE_URI + "/";
+  private static final String REDIRECT_URI = TecSvcConst.BASE_URI;
 
   @Test
   public void ping() throws Exception {
-    URL url = new URL(REF_SERVICE);
+    URL url = new URL(SERVICE_URI);
 
-    LOG.debug("ping request: " + REF_SERVICE);
+    LOG.debug("ping request: " + SERVICE_URI);
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");
@@ -51,9 +52,9 @@ public class PingITCase {
   @Test
   public void redirect() throws Exception {
 
-    URL url = new URL(REDIRECT_URL);
+    URL url = new URL(REDIRECT_URI);
 
-    LOG.debug("redirect request: " + REDIRECT_URL);
+    LOG.debug("redirect request: " + REDIRECT_URI);
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");

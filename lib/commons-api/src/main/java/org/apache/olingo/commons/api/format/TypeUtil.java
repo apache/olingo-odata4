@@ -35,7 +35,7 @@ class TypeUtil {
   static final String PARAMETER_TYPE = "type";
   static final String PARAMETER_CHARSET = "charset";
   static final String CHARSET_UTF_8 = "UTF-8";
-
+ 
   /**
    * Valid input are <code>;</code> separated <code>key=value</code> pairs
    * without spaces between key and value.

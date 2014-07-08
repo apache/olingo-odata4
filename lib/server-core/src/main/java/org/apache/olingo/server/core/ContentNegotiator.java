@@ -33,6 +33,8 @@ import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.dataformat.xml.util.TypeUtil;
+
 public class ContentNegotiator {
 
   private final static Logger LOG = LoggerFactory.getLogger(ContentNegotiator.class);
@@ -46,7 +48,7 @@ public class ContentNegotiator {
     if (processorClass == MetadataProcessor.class) {
       defaults.add(new FormatContentTypeMapping("xml", ContentType.APPLICATION_XML.toContentTypeString()));
     } else {
-      defaults.add(new FormatContentTypeMapping("json", ContentType.APPLICATION_JSON.toContentTypeString()));
+//      defaults.add(new FormatContentTypeMapping("json", ContentType.APPLICATION_JSON.toContentTypeString()));
       defaults.add(new FormatContentTypeMapping("json", ContentType.APPLICATION_JSON.toContentTypeString()
           + ";odata.metadata=minimal"));
     }
@@ -81,7 +83,7 @@ public class ContentNegotiator {
     if (formatOption != null) {
 
       if ("json".equalsIgnoreCase(formatOption.getText().trim())) {
-        requestedContentType = ContentType.APPLICATION_JSON;
+        requestedContentType = ContentType.APPLICATION_JSON_MIN;
         for (FormatContentTypeMapping entry : supportedContentTypes) {
           if (requestedContentType.isCompatible(ContentType.create(entry.getContentType().trim()))) {
             supported = true;
@@ -115,7 +117,15 @@ public class ContentNegotiator {
 
       for (AcceptType acceptedType : acceptedContentTypes) {
         for (FormatContentTypeMapping supportedType : supportedContentTypes) {
+
           ContentType ct = ContentType.create(supportedType.getContentType());
+          if (acceptedType.getParameters().containsKey("charset")) {
+            String value = acceptedType.getParameters().get("charset");
+            if ("utf8".equalsIgnoreCase(value) || "utf-8".equalsIgnoreCase(value)) {
+              ct = ContentType.create(ct, "charset", "UTF-8");
+            }
+          }
+
           if (acceptedType.matches(ct)) {
             requestedContentType = ct;
             supported = true;
@@ -136,7 +146,7 @@ public class ContentNegotiator {
       if (processorClass == MetadataProcessor.class) {
         requestedContentType = ContentType.APPLICATION_XML;
       } else {
-        requestedContentType = ContentType.APPLICATION_JSON;
+        requestedContentType = ContentType.APPLICATION_JSON_MIN;
       }
 
       for (FormatContentTypeMapping entry : supportedContentTypes) {

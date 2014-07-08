@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.tecsvc;
+package org.apache.olingo.fit.tecsvc.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -31,12 +31,13 @@ import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Before;
 import org.junit.Test;
 
 public class BasicITCase {
 
-  private static final String REF_SERVICE = TecSvcConst.BASE_URL;
+  private static final String SERVICE_URI = TecSvcConst.BASE_URI;
 
   private ODataClient odata;
 
@@ -49,7 +50,7 @@ public class BasicITCase {
   @Test
   public void readServiceDocument() {
     ODataServiceDocumentRequest request =
-            odata.getRetrieveRequestFactory().getServiceDocumentRequest(REF_SERVICE);
+            odata.getRetrieveRequestFactory().getServiceDocumentRequest(SERVICE_URI);
     assertNotNull(request);
 
     ODataRetrieveResponse<ODataServiceDocument> response = request.execute();
@@ -66,7 +67,7 @@ public class BasicITCase {
 
   @Test
   public void readMetadata() {
-    EdmMetadataRequest request = odata.getRetrieveRequestFactory().getMetadataRequest(REF_SERVICE);
+    EdmMetadataRequest request = odata.getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
     assertNotNull(request);
 
     ODataRetrieveResponse<Edm> response = request.execute();

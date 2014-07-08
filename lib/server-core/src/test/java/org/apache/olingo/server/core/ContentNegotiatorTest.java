@@ -51,8 +51,9 @@ import org.slf4j.LoggerFactory;
 public class ContentNegotiatorTest {
 
   static final private String ACCEPT_CASE_MIN = "application/json;odata.metadata=minimal";
+  static final private String ACCEPT_CASE_MIN_UTF8 = "application/json;charset=UTF-8;odata.metadata=minimal";
   static final private String ACCEPT_CASE_FULL = "application/json;odata.metadata=full";
-  static final private String ACCEPT_CASE_JSON = "application/json;q=0.2";
+  static final private String ACCEPT_CASE_JSONQ = "application/json;q=0.2";
   static final private String ACCEPT_CASE_XML = "application/xml";
   static final private String ACCEPT_CASE_WILDCARD1 = "*/*";
   static final private String ACCEPT_CASE_WILDCARD2 = "application/*";
@@ -62,18 +63,19 @@ public class ContentNegotiatorTest {
 
   String[][] casesServiceDocument = {
       /* expected               $format           accept                 alias        ct mapping    */
-      { "application/json",     null,             null,                  null         ,null             },
-      { "application/json",     "json",           null,                  null         ,null             },
-      { "application/json",     "json",           ACCEPT_CASE_JSON,      null         ,null             },
+      { ACCEPT_CASE_MIN,        null,             null,                  null         ,null             },
+      { ACCEPT_CASE_MIN,        "json",           null,                  null         ,null             },
+      { ACCEPT_CASE_MIN,        "json",           ACCEPT_CASE_JSONQ,     null         ,null             },
       { "a/a",                  "a",              null,                  "a"          ,"a/a"            },
-      { "application/json",     null,             ACCEPT_CASE_JSON,      null         ,null             },
-      { "application/json",     null,             ACCEPT_CASE_WILDCARD1, null         ,null             },
-      { "application/json",     null,             ACCEPT_CASE_WILDCARD2, null         ,null             },
+      { ACCEPT_CASE_MIN,        null,             ACCEPT_CASE_JSONQ,     null         ,null             },
+      { ACCEPT_CASE_MIN,        null,             ACCEPT_CASE_WILDCARD1, null         ,null             },
+      { ACCEPT_CASE_MIN,        null,             ACCEPT_CASE_WILDCARD2, null         ,null             },
       { "a/a",                  "a",              null,                  "a, b"       ,"a/a,b/b"        },
       { "a/a",                  " a ",            null,                  " a , b"     ," a/a , b/b "    },
       { "a/a;x=y",              "a",              ACCEPT_CASE_WILDCARD1, "a"          ,"a/a;x=y"        },
-      { "application/json",     "json",           ACCEPT_CASE_MIN,       null         ,null             },
+      { ACCEPT_CASE_MIN,        "json",           ACCEPT_CASE_MIN,       null         ,null             },
       { ACCEPT_CASE_FULL,       null,             ACCEPT_CASE_FULL,      "dummy"     ,ACCEPT_CASE_FULL  }, 
+      { ACCEPT_CASE_MIN_UTF8,   null,             ACCEPT_CASE_MIN_UTF8,  null         ,null             },
   };                                                                                          
 
   String[][] casesMetadata = {                                                                 
@@ -94,7 +96,7 @@ public class ContentNegotiatorTest {
       /* expected               $format           accept                 alias        ct mapping    */
       { "application/xml",      "xxx",            null,                  null         ,null             },
       { "a/a",                  "a",              null,                  "b"          ,"b/b"            },
-      { "application/xml",      null,             ACCEPT_CASE_JSON,      null         ,null             },
+      { "application/xml",      null,             ACCEPT_CASE_JSONQ,     null         ,null             },
       { "application/json",     null,             ACCEPT_CASE_FULL,      null         ,null             }, // not jet supported
   };
   //CHECKSTYLE:ON
@@ -104,7 +106,7 @@ public class ContentNegotiatorTest {
 
   @Test
   public void testServiceDocumentSingleCase() {
-    String[] useCase = { "application/json", null, ACCEPT_CASE_JSON, null, null };
+    String[] useCase = { ACCEPT_CASE_MIN_UTF8, null, ACCEPT_CASE_MIN_UTF8, null, null };
 
     testContentNegotiation(useCase, ServiceDocumentProcessor.class);
   }

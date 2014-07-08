@@ -61,10 +61,16 @@ public class ContentType {
       TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
   public static final ContentType APPLICATION_ATOM_SVC = create("application", "atomsvc+xml");
   public static final ContentType APPLICATION_ATOM_SVC_CS_UTF_8 = create(APPLICATION_ATOM_SVC,
+
       TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
   public static final ContentType APPLICATION_JSON = create("application", "json");
   public static final ContentType APPLICATION_JSON_CS_UTF_8 = create(APPLICATION_JSON,
       TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
+
+  public static final ContentType APPLICATION_JSON_MIN = create("application/json;odata.metadata=minimal");
+  public static final ContentType APPLICATION_JSON_MIN_CS_UTF_8 =
+      create("application/json;odata.metadata=minimal;charset=UTF-8");
+
   public static final ContentType APPLICATION_OCTET_STREAM = create("application", "octet-stream");
   public static final ContentType TEXT_PLAIN = create("text", "plain");
   public static final ContentType TEXT_PLAIN_CS_UTF_8 =
