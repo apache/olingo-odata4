@@ -284,6 +284,7 @@ public class PropertyProvider {
 
   public static final Property propertyDateTimeOffset = new Property()
       .setName("PropertyDateTimeOffset")
+      .setPrecision(20)
       .setType(nameDateTimeOffset);
 
   public static final Property propertyDateTimeOffset_NotNullable = new Property()
@@ -298,6 +299,7 @@ public class PropertyProvider {
 
   public static final Property propertyDecimal = new Property()
       .setName("PropertyDecimal")
+      .setScale(10)
       .setType(nameDecimal);
 
   public static final Property propertyDecimal_NotNullable = new Property()
@@ -438,6 +440,7 @@ public class PropertyProvider {
 
   public static final Property propertyTimeOfDay = new Property()
       .setName("PropertyTimeOfDay")
+      .setPrecision(10)
       .setType(nameTimeOfDay);
 
   public static final Property propertyTimeOfDay_NotNullable = new Property()

@@ -18,21 +18,21 @@
  */
 package org.apache.olingo.server.tecsvc;
 
-import java.io.IOException;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataHttpHandler;
+import org.apache.olingo.server.tecsvc.data.DataProvider;
+import org.apache.olingo.server.tecsvc.data.JefDataProvider;
+import org.apache.olingo.server.tecsvc.processor.TechnicalProcessor;
+import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.ODataHttpHandler;
-import org.apache.olingo.server.tecsvc.data.DataProvider;
-import org.apache.olingo.server.tecsvc.processor.SampleJsonProcessor;
-import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
 
 public class TechnicalServlet extends HttpServlet {
 
@@ -45,19 +45,18 @@ public class TechnicalServlet extends HttpServlet {
   protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException,
       IOException {
     try {
-      if (dataProvider == null) {
-        dataProvider = new DataProvider();
-      }
-
-      dataProvider.reset();
-
       OData odata = OData.newInstance();
       Edm edm = odata.createEdm(new EdmTechProvider());
 
+      if (dataProvider == null) {
+        dataProvider = new JefDataProvider(edm);
+      }
+      dataProvider.reset();
+
+
       ODataHttpHandler handler = odata.createHandler(edm);
 
-//    handler.register(new TechnicalProcessor(dataProvider));
-      handler.register(new SampleJsonProcessor());
+      handler.register(new TechnicalProcessor(dataProvider));
 
       handler.process(req, resp);
     } catch (Exception e) {
