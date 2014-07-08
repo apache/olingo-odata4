@@ -16,26 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.tecsvc.data;
+package org.apache.olingo.server.core.serializer.json;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.core.serialization.JsonDeserializer;
+import org.junit.Test;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
-public interface DataProvider {
-  void reset() throws DataProviderException;
-
-  EntitySet readAll(String entitySetName) throws DataProviderException;
-
-  Entity read(String entitySetName, Object ... keys) throws DataProviderException;
-
-  static class DataProviderException extends Exception {
-    public DataProviderException(String message, Throwable throwable) {
-      super(message, throwable);
+/**
+ */
+public class JsonDataProvider {
+  @Test
+  public void testMe() throws Exception {
+    FileInputStream fis = new FileInputStream("/tmp/ESAllPrim.json");
+    ResWrap<EntitySet> wrapper = new JsonDeserializer(ODataServiceVersion.V40, true).toEntitySet(fis);
+    EntitySet es = wrapper.getPayload();
+    for (Entity entity : es.getEntities()) {
+      System.out.println(entity);
     }
 
-    public DataProviderException(String message) {
-      super(message);
-    }
+    ODataJsonSerializer serializer = new ODataJsonSerializer();
   }
 }

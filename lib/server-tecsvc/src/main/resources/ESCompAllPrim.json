@@ -1,0 +1,65 @@
+{"@odata.context": "$metadata#ESCompAllPrim", "value": [
+    {
+        "PropertyInt16": 32767,
+        "PropertyComp": {
+            "PropertyString": "First Resource - first",
+            "PropertyBinary": "ASNFZ4mrze8=",
+            "PropertyBoolean": true,
+            "PropertyByte": 255,
+            "PropertyDate": "2012-10-03",
+            "PropertyDateTimeOffset": "2012-10-03T07:16:23.1234567Z",
+            "PropertyDecimal": 34.27,
+            "PropertySingle": 1.79000000E+20,
+            "PropertyDouble": -1.7900000000000000E+19,
+            "PropertyDuration": "P0DT0H0M6S",
+            "PropertyGuid": "01234567-89ab-cdef-0123-456789abcdef",
+            "PropertyInt16": 32767,
+            "PropertyInt32": 2147483647,
+            "PropertyInt64": 9223372036854775807,
+            "PropertySByte": 127,
+            "PropertyTimeOfDay": "01:00:01"
+        }
+    },
+    {
+        "PropertyInt16": 7,
+        "PropertyComp": {
+            "PropertyString": "Second Resource - second",
+            "PropertyBinary": "ASNFZ4mrze8=",
+            "PropertyBoolean": true,
+            "PropertyByte": 255,
+            "PropertyDate": "2013-11-04",
+            "PropertyDateTimeOffset": "2013-11-04T07:16:23Z",
+            "PropertyDecimal": 34.27,
+            "PropertySingle": 1.79000000E+20,
+            "PropertyDouble": -1.7900000000000000E+02,
+            "PropertyDuration": "P0DT0H0M6S",
+            "PropertyGuid": "01234567-89ab-cdef-0123-456789abcdef",
+            "PropertyInt16": 25,
+            "PropertyInt32": 2147483647,
+            "PropertyInt64": 9223372036854775807,
+            "PropertySByte": 127,
+            "PropertyTimeOfDay": "07:45:12.7654321"
+        }
+    },
+    {
+        "PropertyInt16": 0,
+        "PropertyComp": {
+            "PropertyString": "Third Resource - third",
+            "PropertyBinary": "ASNFZ4mrze8=",
+            "PropertyBoolean": true,
+            "PropertyByte": 255,
+            "PropertyDate": "2014-12-05",
+            "PropertyDateTimeOffset": "2014-12-05T08:17:45.1234567Z",
+            "PropertyDecimal": 17.98,
+            "PropertySingle": 1.79000000E+20,
+            "PropertyDouble": -1.7900000000000000E+02,
+            "PropertyDuration": "P0DT0H0M6S",
+            "PropertyGuid": "01234567-89ab-cdef-0123-456789abcdef",
+            "PropertyInt16": -25,
+            "PropertyInt32": 2147483647,
+            "PropertyInt64": 9223372036854775807,
+            "PropertySByte": 127,
+            "PropertyTimeOfDay": "13:27:45"
+        }
+    }
+]}
