@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -61,7 +61,8 @@ public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor
   }
 
   @Override
-  public void readCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
+  public void readCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
+      final ContentType requestedContentType) {
     long time = System.nanoTime();
 
     LOG.info((System.nanoTime() - time) / 1000 + " microseconds");
@@ -78,7 +79,8 @@ public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor
   }
 
   @Override
-  public void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, String format) {
+  public void readEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
+      final ContentType requestedContentType) {
     long time = System.nanoTime();
 
     LOG.info((System.nanoTime() - time) / 1000 + " microseconds");
@@ -88,7 +90,7 @@ public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor
     Entity entity = createEntity(entityType);
 
     response.setContent(serializer.entity(entityType, entity,
-            getContextUrl(request, entityType)));
+        getContextUrl(request, entityType)));
     LOG.info("Finished in " + (System.nanoTime() - time) / 1000 + " microseconds");
 
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -105,17 +107,17 @@ public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor
 
   public EdmEntitySet getEntitySet(UriInfo uriInfo) {
     List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
-    if(resourcePaths.isEmpty()) {
+    if (resourcePaths.isEmpty()) {
       throw new RuntimeException("Invalid resource path.");
     }
-    String entitySetName = resourcePaths.get(resourcePaths.size()-1).toString();
+    String entitySetName = resourcePaths.get(resourcePaths.size() - 1).toString();
     return edm.getEntityContainer(new FullQualifiedName("com.sap.odata.test1", "Container"))
-            .getEntitySet(entitySetName);
+        .getEntitySet(entitySetName);
   }
 
   protected Entity createEntity(EdmEntityType entityType) {
     boolean complex = (entityType.getName().contains("Comp"));
-    if(entityType.getName().contains("Coll")) {
+    if (entityType.getName().contains("Coll")) {
       return createEntityWithCollection(complex);
     }
     return createEntity(complex);
@@ -136,7 +138,7 @@ public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor
     propertyGuid.setValue(ValueType.PRIMITIVE, UUID.randomUUID());
     entity.getProperties().add(propertyGuid);
 
-    if(complex) {
+    if (complex) {
       entity.addProperty(createComplexProperty());
     }
 
@@ -158,7 +160,7 @@ public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor
     propertyGuid.setValue(ValueType.COLLECTION_PRIMITIVE, Arrays.asList(UUID.randomUUID(), UUID.randomUUID()));
     entity.getProperties().add(propertyGuid);
 
-    if(complex) {
+    if (complex) {
       entity.addProperty(createCollectionOfComplexProperty());
     }
 
@@ -181,7 +183,7 @@ public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor
     properties.add(propertyGuid);
 
     return new PropertyImpl("com.sap.odata.test1.ETCompAllPrim", "PropertyComplex", ValueType.COMPLEX,
-            properties);
+        properties);
   }
 
   protected Property createCollectionOfComplexProperty() {
@@ -214,7 +216,7 @@ public class SampleJsonProcessor implements CollectionProcessor, EntityProcessor
     properties2.add(property2Guid);
 
     return new PropertyImpl("com.sap.odata.test1.ETCompAllPrim", "PropertyComplex", ValueType.COMPLEX,
-            Arrays.asList(properties, properties2));
+        Arrays.asList(properties, properties2));
   }
 
   protected EntitySet createEntitySet(EdmEntityType edmEntityType, String baseUri) {

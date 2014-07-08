@@ -193,6 +193,9 @@ public class AcceptType {
     for (final String key : parameters.keySet()) {
       result.append(';').append(key).append('=').append(parameters.get(key));
     }
+    if (quality < 1F) {
+      result.append(';').append(TypeUtil.PARAMETER_Q).append('=').append(quality);
+    }
     return result.toString();
   }
 
