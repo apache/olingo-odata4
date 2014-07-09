@@ -167,7 +167,7 @@ public class ContentNegotiatorTest {
     ContentType requestedContentType = ContentNegotiator.doContentNegotiation(fo, request, p, processorClass);
 
     assertNotNull(requestedContentType);
-    assertEquals(useCase[0], requestedContentType.toContentTypeString());
+    assertEquals(ContentType.create(useCase[0]), requestedContentType);
   }
 
   private List<FormatContentTypeMapping> createCustomContentTypeMapping(final String formatString,

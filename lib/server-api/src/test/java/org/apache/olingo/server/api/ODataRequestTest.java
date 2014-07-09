@@ -32,9 +32,13 @@ public class ODataRequestTest {
 
     r.addHeader("aa", Arrays.asList("cc"));
 
-    assertEquals("cc", r.getHeader("aa").get(0));
-    assertEquals("cc", r.getHeader("aA").get(0));
-    assertEquals("cc", r.getHeader("AA").get(0));
+    assertEquals("cc", r.getHeaders("aa").get(0));
+    assertEquals("cc", r.getHeaders("aA").get(0));
+    assertEquals("cc", r.getHeaders("AA").get(0));
+
+    assertEquals("cc", r.getHeader("aa"));
+    assertEquals("cc", r.getHeader("aA"));
+    assertEquals("cc", r.getHeader("AA"));
 
   }
 
@@ -43,9 +47,9 @@ public class ODataRequestTest {
     ODataRequest r = new ODataRequest();
     r.addHeader("AA", Arrays.asList("dd"));
 
-    assertEquals("dd", r.getHeader("aa").get(0));
-    assertEquals("dd", r.getHeader("aA").get(0));
-    assertEquals("dd", r.getHeader("AA").get(0));
+    assertEquals("dd", r.getHeaders("aa").get(0));
+    assertEquals("dd", r.getHeaders("aA").get(0));
+    assertEquals("dd", r.getHeaders("AA").get(0));
   }
 
   @Test
@@ -54,13 +58,13 @@ public class ODataRequestTest {
 
     r.addHeader("aa", Arrays.asList("a", "b"));
 
-    assertEquals("a", r.getHeader("aa").get(0));
-    assertEquals("b", r.getHeader("aA").get(1));
+    assertEquals("a", r.getHeaders("aa").get(0));
+    assertEquals("b", r.getHeaders("aA").get(1));
 
     r.addHeader("Aa", Arrays.asList("c"));
 
-    assertEquals("a", r.getHeader("aa").get(0));
-    assertEquals("b", r.getHeader("aA").get(1));
-    assertEquals("c", r.getHeader("aA").get(2));
+    assertEquals("a", r.getHeaders("aa").get(0));
+    assertEquals("b", r.getHeaders("aA").get(1));
+    assertEquals("c", r.getHeaders("aA").get(2));
   }
 }

@@ -45,44 +45,23 @@ import java.util.TreeMap;
  */
 public class ContentType {
 
-  public static final ContentType APPLICATION_XML = create("application", "xml");
-  public static final ContentType APPLICATION_XML_CS_UTF_8 = create(APPLICATION_XML, TypeUtil.PARAMETER_CHARSET,
-      TypeUtil.CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_XML = create("application", "atom+xml");
-  public static final ContentType APPLICATION_ATOM_XML_CS_UTF_8 = create(APPLICATION_ATOM_XML,
-      TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_XML_ENTRY =
-      create(APPLICATION_ATOM_XML, TypeUtil.PARAMETER_TYPE, "entry");
-  public static final ContentType APPLICATION_ATOM_XML_ENTRY_CS_UTF_8 = create(APPLICATION_ATOM_XML_ENTRY,
-      TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_XML_FEED =
-      create(APPLICATION_ATOM_XML, TypeUtil.PARAMETER_TYPE, "feed");
-  public static final ContentType APPLICATION_ATOM_XML_FEED_CS_UTF_8 = create(APPLICATION_ATOM_XML_FEED,
-      TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_SVC = create("application", "atomsvc+xml");
-  public static final ContentType APPLICATION_ATOM_SVC_CS_UTF_8 = create(APPLICATION_ATOM_SVC,
+  public static final ContentType APPLICATION_XML = create("application/xml");
+  public static final ContentType APPLICATION_ATOM_XML = create("application/atom+xml");
+  public static final ContentType APPLICATION_ATOM_XML_ENTRY = create(APPLICATION_ATOM_XML, "type=entry");
+  public static final ContentType APPLICATION_ATOM_XML_FEED = create(APPLICATION_ATOM_XML, "type=feed");
+  public static final ContentType APPLICATION_ATOM_SVC = create("application/atomsvc+xml");
+  public static final ContentType APPLICATION_JSON = create("application/json");
+  public static final ContentType APPLICATION_OCTET_STREAM = create("application/octet-stream");
+  public static final ContentType TEXT_PLAIN = create("text/plain");
+  public static final ContentType MULTIPART_MIXED = create("multipart/mixed");
+  public static final ContentType APPLICATION_XHTML_XML = create("application/xhtml+xml");
+  public static final ContentType APPLICATION_SVG_XML = create("application/svg+xml");
+  public static final ContentType APPLICATION_FORM_URLENCODED = create("application/x-www-form-urlencoded");
+  public static final ContentType MULTIPART_FORM_DATA = create("multipart/form-data");
+  public static final ContentType TEXT_XML = create("text/xml");
+  public static final ContentType TEXT_HTML = create("text/html");
 
-      TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
-  public static final ContentType APPLICATION_JSON = create("application", "json");
-  public static final ContentType APPLICATION_JSON_CS_UTF_8 = create(APPLICATION_JSON,
-      TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
-
-  public static final ContentType APPLICATION_JSON_MIN = create("application/json;odata.metadata=minimal");
-  public static final ContentType APPLICATION_JSON_MIN_CS_UTF_8 =
-      create("application/json;odata.metadata=minimal;charset=UTF-8");
-
-  public static final ContentType APPLICATION_OCTET_STREAM = create("application", "octet-stream");
-  public static final ContentType TEXT_PLAIN = create("text", "plain");
-  public static final ContentType TEXT_PLAIN_CS_UTF_8 =
-      create(TEXT_PLAIN, TypeUtil.PARAMETER_CHARSET, TypeUtil.CHARSET_UTF_8);
-  public static final ContentType MULTIPART_MIXED = create("multipart", "mixed");
-
-  public static final ContentType APPLICATION_XHTML_XML = create("application", "xhtml+xml");
-  public static final ContentType APPLICATION_SVG_XML = create("application", "svg+xml");
-  public static final ContentType APPLICATION_FORM_URLENCODED = create("application", "x-www-form-urlencoded");
-  public static final ContentType MULTIPART_FORM_DATA = create("multipart", "form-data");
-  public static final ContentType TEXT_XML = create("text", "xml");
-  public static final ContentType TEXT_HTML = create("text", "html");
+  public static final String PARAMETER_CHARSET_UTF8 = "charset=utf-8";
 
   private final String type;
   private final String subtype;
@@ -138,27 +117,37 @@ public class ContentType {
   }
 
   /**
-   * Creates a content type from type and subtype.
-   * @param type
-   * @param subtype
+   * Creates a content type from format and key-value pairs for parameters
+   * @param format for example "application/json"
+   * @param parameters for example "a=b", "c=d"
    * @return a new <code>ContentType</code> object
    */
-  public static ContentType create(final String type, final String subtype) {
-    return new ContentType(type, subtype, null);
+  public static ContentType create(final String format, final String... parameters) {
+    ContentType ct = parse(format);
+
+    for (String p : parameters) {
+      String[] keyvalue = p.split("=");
+      ct.parameters.put(keyvalue[0], keyvalue[1]);
+    }
+
+    return ct;
   }
 
   /**
-   * 
-   * @param contentType
-   * @param parameterKey
-   * @param parameterValue
+   * Creates a content type from format and key-value pairs for parameters
+   * @param format for example "application/json"
+   * @param parameters for example "a=b", "c=d"
    * @return a new <code>ContentType</code> object
    */
-  public static ContentType create(final ContentType contentType,
-      final String parameterKey, final String parameterValue) {
-    ContentType newContentType = new ContentType(contentType.type, contentType.subtype, contentType.parameters);
-    newContentType.parameters.put(parameterKey, parameterValue);
-    return newContentType;
+  public static ContentType create(final ContentType contentType, final String... parameters) {
+    ContentType ct = new ContentType(contentType.type, contentType.subtype, contentType.parameters);
+
+    for (String p : parameters) {
+      String[] keyvalue = p.split("=");
+      ct.parameters.put(keyvalue[0], keyvalue[1]);
+    }
+
+    return ct;
   }
 
   /**
@@ -339,7 +328,7 @@ public class ContentType {
       if (other.subtype != null) {
         return false;
       }
-    } else if (!subtype.equals(other.subtype)) {
+    } else if (!subtype.equalsIgnoreCase(other.subtype)) {
       return false;
     }
 
@@ -348,7 +337,7 @@ public class ContentType {
       if (other.type != null) {
         return false;
       }
-    } else if (!type.equals(other.type)) {
+    } else if (!type.equalsIgnoreCase(other.type)) {
       return false;
     }
 

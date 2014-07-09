@@ -62,20 +62,20 @@ public enum ODataFormat {
   static {
     final Map<ODataFormat, ContentType> v3 = new HashMap<ODataFormat, ContentType>();
     v3.put(ODataFormat.JSON_NO_METADATA, ContentType.create(
-        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V3, "nometadata"));
+        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V3 + "=nometadata"));
     v3.put(ODataFormat.JSON, ContentType.create(
-        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V3, "minimalmetadata"));
+        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V3 + "=minimalmetadata"));
     v3.put(ODataFormat.JSON_FULL_METADATA, ContentType.create(
-        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V3, "fullmetadata"));
+        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V3 + "=fullmetadata"));
     FORMAT_PER_VERSION.put(ODataServiceVersion.V30, v3);
 
     final Map<ODataFormat, ContentType> v4 = new HashMap<ODataFormat, ContentType>();
     v4.put(ODataFormat.JSON_NO_METADATA, ContentType.create(
-        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V4, "none"));
+        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V4 + "=none"));
     v4.put(ODataFormat.JSON, ContentType.create(
-        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V4, "minimal"));
+        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V4 + "=minimal"));
     v4.put(ODataFormat.JSON_FULL_METADATA, ContentType.create(
-        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V4, "full"));
+        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V4 + "=full"));
     FORMAT_PER_VERSION.put(ODataServiceVersion.V40, v4);
   }
 

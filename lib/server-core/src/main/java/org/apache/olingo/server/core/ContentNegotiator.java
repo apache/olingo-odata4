@@ -21,6 +21,7 @@ package org.apache.olingo.server.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.AcceptType;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -76,14 +77,14 @@ public class ContentNegotiator {
 
     List<FormatContentTypeMapping> supportedContentTypes = getSupportedContentTypes(processor, processorClass);
 
-    List<String> acceptHeaderValues = request.getHeader(HttpHeader.ACCEPT);
+    String acceptHeaderValue = request.getHeader(HttpHeader.ACCEPT);
 
     boolean supported = false;
 
     if (formatOption != null) {
 
       if ("json".equalsIgnoreCase(formatOption.getText().trim())) {
-        requestedContentType = ContentType.APPLICATION_JSON_MIN;
+        requestedContentType = ContentType.create(ContentType.APPLICATION_JSON, "odata.metadata=minimal");
         for (FormatContentTypeMapping entry : supportedContentTypes) {
           if (requestedContentType.isCompatible(ContentType.create(entry.getContentType().trim()))) {
             supported = true;
@@ -107,13 +108,8 @@ public class ContentNegotiator {
           }
         }
       }
-    } else if (acceptHeaderValues != null) {
-      List<AcceptType> acceptedContentTypes = new ArrayList<AcceptType>();
-
-      for (String acceptHeaderValue : acceptHeaderValues) {
-        acceptedContentTypes.addAll((AcceptType.create(acceptHeaderValue)));
-      }
-      AcceptType.sort(acceptedContentTypes);
+    } else if (acceptHeaderValue != null) {
+      List<AcceptType> acceptedContentTypes = AcceptType.create(acceptHeaderValue);
 
       for (AcceptType acceptedType : acceptedContentTypes) {
         for (FormatContentTypeMapping supportedType : supportedContentTypes) {
@@ -122,7 +118,9 @@ public class ContentNegotiator {
           if (acceptedType.getParameters().containsKey("charset")) {
             String value = acceptedType.getParameters().get("charset");
             if ("utf8".equalsIgnoreCase(value) || "utf-8".equalsIgnoreCase(value)) {
-              ct = ContentType.create(ct, "charset", "UTF-8");
+              ct = ContentType.create(ct, ContentType.PARAMETER_CHARSET_UTF8);
+            } else {
+              throw new ODataRuntimeException("charset in accept header not supported: " + acceptHeaderValue);
             }
           }
 
@@ -146,7 +144,7 @@ public class ContentNegotiator {
       if (processorClass == MetadataProcessor.class) {
         requestedContentType = ContentType.APPLICATION_XML;
       } else {
-        requestedContentType = ContentType.APPLICATION_JSON_MIN;
+        requestedContentType = ContentType.create(ContentType.APPLICATION_JSON, "odata.metadata=minimal");
       }
 
       for (FormatContentTypeMapping entry : supportedContentTypes) {

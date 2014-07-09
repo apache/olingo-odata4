@@ -45,8 +45,8 @@ import java.util.TreeMap;
  */
 public class AcceptType {
 
-  public static final AcceptType WILDCARD = create(TypeUtil.MEDIA_TYPE_WILDCARD, TypeUtil.MEDIA_TYPE_WILDCARD,
-      createParameterMap(), 1F);
+//  public static final AcceptType WILDCARD = new AcceptType(TypeUtil.MEDIA_TYPE_WILDCARD, TypeUtil.MEDIA_TYPE_WILDCARD,
+//      createParameterMap(), 1.0F);
 
   private final String type;
   private final String subtype;
@@ -77,12 +77,15 @@ public class AcceptType {
     }
     List<String> typeSubtype = new ArrayList<String>();
     parameters = createParameterMap();
+    
     parse(type, typeSubtype, parameters);
     this.type = typeSubtype.get(0);
     subtype = typeSubtype.get(1);
+    
     if (TypeUtil.MEDIA_TYPE_WILDCARD.equals(this.type) && !TypeUtil.MEDIA_TYPE_WILDCARD.equals(subtype)) {
       throw new IllegalArgumentException("Illegal combination of WILDCARD type with NONE WILDCARD subtype.");
     }
+    
     final String q = parameters.get(TypeUtil.PARAMETER_Q);
     if (q == null) {
       quality = 1F;
@@ -97,6 +100,7 @@ public class AcceptType {
 
   private static void
       parse(final String format, final List<String> typeSubtype, final Map<String, String> parameters) {
+    
     final String[] typesAndParameters = format.split(TypeUtil.PARAMETER_SEPARATOR, 2);
     final String types = typesAndParameters[0];
     final String params = (typesAndParameters.length > 1 ? typesAndParameters[1] : null);
@@ -123,23 +127,6 @@ public class AcceptType {
   }
 
   /**
-   * Creates an accept type.
-   * @param type
-   * @param subtype
-   * @param parameters
-   * @param quality
-   * @return a new <code>AcceptType</code> object
-   */
-  public static AcceptType create(final String type, final String subtype, final Map<String, String> parameters,
-      final Float quality) {
-    return new AcceptType(type, subtype, parameters, quality);
-  }
-
-  public static AcceptType create(final ContentType contentType) {
-    return create(contentType.getType(), contentType.getSubtype(), contentType.getParameters(), 1F);
-  }
-
-  /**
    * Create an {@link AcceptType} based on given input string (<code>format</code>).
    * @param format
    * @return a new <code>AcceptType</code> object
@@ -153,21 +140,9 @@ public class AcceptType {
       result.add(new AcceptType(value.trim()));
     }
 
+    sort(result);
+    
     return result;
-  }
-
-  /**
-   * Parses the given input string (<code>format</code>) and returns created {@link AcceptType} if input was valid or
-   * return <code>NULL</code> if input was not parseable.
-   * @param format
-   * @return a new <code>ContentType</code> object
-   */
-  public static List<AcceptType> parse(final String format) {
-    try {
-      return AcceptType.create(format);
-    } catch (IllegalArgumentException e) {
-      return null;
-    }
   }
 
   public String getType() {
@@ -193,9 +168,7 @@ public class AcceptType {
     for (final String key : parameters.keySet()) {
       result.append(';').append(key).append('=').append(parameters.get(key));
     }
-//    if (quality < 1F) {
-//      result.append(';').append(TypeUtil.PARAMETER_Q).append('=').append(quality);
-//    }
+
     return result.toString();
   }
 
@@ -238,34 +211,17 @@ public class AcceptType {
   }
 
   /**
-   * Create a list of {@link AcceptType} based on given input strings (<code>contentTypes</code>).
-   * 
-   * If one of the given strings can not be parsed an exception is thrown (hence no list is returned with the parseable
-   * strings).
-   * @param acceptTypeStrings a list of strings
-   * @return a list of new <code>AcceptType</code> objects
-   * @throws IllegalArgumentException if one of the given input string is not parseable this exceptions is thrown
-   */
-  public static List<AcceptType> create(final List<String> acceptTypeStrings) {
-    List<AcceptType> acceptTypes = new ArrayList<AcceptType>(acceptTypeStrings.size());
-    for (String contentTypeString : acceptTypeStrings) {
-      acceptTypes.addAll(create(contentTypeString));
-    }
-    return acceptTypes;
-  }
-
-  /**
    * Sort given list of Accept types
    * according to their quality-parameter values and their specificity
    * as defined in RFC 7231, chapters 3.1.1.1, 5.3.1, and 5.3.2.
    * @param toSort list which is sorted and hence re-arranged
    */
-  public static void sort(final List<AcceptType> toSort) {
+  private static void sort(final List<AcceptType> toSort) {
     Collections.sort(toSort,
         new Comparator<AcceptType>() {
           @Override
           public int compare(final AcceptType a1, final AcceptType a2) {
-            int compare = a1.getQuality().compareTo(a2.getQuality());
+            int compare = a2.getQuality().compareTo(a1.getQuality());
             if (compare != 0) {
               return compare;
             }

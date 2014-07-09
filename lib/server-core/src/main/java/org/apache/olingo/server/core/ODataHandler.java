@@ -177,11 +177,11 @@ public class ODataHandler {
   }
 
   private void validateODataVersion(final ODataRequest request, final ODataResponse response) {
-    List<String> maxVersionHeader = request.getHeader(HttpHeader.ODATA_MAX_VERSION);
+    String maxVersion = request.getHeader(HttpHeader.ODATA_MAX_VERSION);
 
-    if (maxVersionHeader != null && maxVersionHeader.size() > 0) {
-      if (ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersionHeader.get(0))) {
-        throw new ODataRuntimeException("400 Bad Request - ODataVersion not supported: " + maxVersionHeader.get(0));
+    if (maxVersion != null) {
+      if (ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersion)) {
+        throw new ODataRuntimeException("400 Bad Request - ODataVersion not supported: " + maxVersion);
       }
     }
 

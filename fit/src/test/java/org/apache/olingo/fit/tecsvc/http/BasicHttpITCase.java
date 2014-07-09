@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class BasicHttpITCase {
     int code = connection.getResponseCode();
     assertEquals(200, code);
     String ct = connection.getHeaderField(HttpHeader.CONTENT_TYPE);
-    assertEquals("application/json;odata.metadata=minimal", ct);
+    assertEquals(ContentType.create("application/json;odata.metadata=minimal"), ContentType.create(ct));
   }
 
   @Test
@@ -59,7 +60,7 @@ public class BasicHttpITCase {
     int code = connection.getResponseCode();
     assertEquals(200, code);
     String ct = connection.getHeaderField(HttpHeader.CONTENT_TYPE);
-    assertEquals("application/json;odata.metadata=minimal", ct);
+    assertEquals(ContentType.create("application/json;odata.metadata=minimal"), ContentType.create(ct));
   }
 
   @Test
@@ -76,7 +77,7 @@ public class BasicHttpITCase {
     int code = connection.getResponseCode();
     assertEquals(200, code);
     String ct = connection.getHeaderField(HttpHeader.CONTENT_TYPE);
-    assertEquals("application/json;odata.metadata=minimal", ct);
+    assertEquals(ContentType.create("application/json;odata.metadata=minimal"), ContentType.create(ct));
   }
 
   @Test
@@ -93,7 +94,7 @@ public class BasicHttpITCase {
     int code = connection.getResponseCode();
     assertEquals(200, code);
     String ct = connection.getHeaderField(HttpHeader.CONTENT_TYPE);
-    assertEquals("application/json;odata.metadata=minimal;charset=UTF-8", ct);
+    assertEquals(ContentType.create("application/json;odata.metadata=minimal;charset=utf-8"), ContentType.create(ct));
   }
 
   @Test

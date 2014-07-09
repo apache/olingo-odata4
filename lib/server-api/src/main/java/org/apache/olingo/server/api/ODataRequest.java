@@ -75,8 +75,17 @@ public class ODataRequest {
    * Returns header value for name where name is a case insensitive key.
    * @return the header value or null if not found
    */
-  public List<String> getHeader(final String name) {
+  public List<String> getHeaders(final String name) {
     return headers.get(name.toUpperCase());
+  }
+
+  /**
+   * Returns first header value for name where name is a case insensitive key.
+   * @return the header value or null if not found
+   */
+  public String getHeader(final String name) {
+    List<String> values = getHeaders(name);
+    return values != null ? values.get(0) : null;
   }
 
   /**
