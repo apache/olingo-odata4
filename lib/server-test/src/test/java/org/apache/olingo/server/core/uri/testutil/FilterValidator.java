@@ -151,7 +151,7 @@ public class FilterValidator implements TestValidator {
   }
 
   public FilterValidator runOnCTTwoPrim(final String filter) throws UriParserException {
-    String uri = "SINav/PropertyComplexTwoPrim?$filter=" + filter.trim();
+    String uri = "SINav/PropertyCompTwoPrim?$filter=" + filter.trim();
     return runUri(uri);
   }
 

@@ -48,11 +48,11 @@ public class UriValidatorTest {
   private static final String URI_MEDIA_STREAM = "/ESMedia(1)/$value";
   private static final String URI_REFERENCES = "/ESAllPrim/$ref";
   private static final String URI_REFERENCE = "/ESAllPrim(1)/$ref";
-  private static final String URI_PROPERTY_COMPLEX = "/ESCompComp(1)/PropertyComplex";
+  private static final String URI_PROPERTY_COMPLEX = "/ESCompComp(1)/PropertyComp";
   private static final String URI_PROPERTY_COMPLEX_COLLECTION =
-      "/ESCompCollComp(1)/PropertyComplex/CollPropertyComplex";
+      "/ESCompCollComp(1)/PropertyComp/CollPropertyComp";
   private static final String URI_PROPERTY_COMPLEX_COLLECTION_COUNT =
-      "/ESCompCollComp(1)/PropertyComplex/CollPropertyComplex/$count";
+      "/ESCompCollComp(1)/PropertyComp/CollPropertyComp/$count";
   private static final String URI_PROPERTY_PRIMITIVE = "/ESAllPrim(1)/PropertyString";
   private static final String URI_PROPERTY_PRIMITIVE_COLLECTION = "/ESCollAllPrim/CollPropertyString";
   private static final String URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT =

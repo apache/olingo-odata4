@@ -94,14 +94,14 @@ public class ComplexTypeProvider {
       return new ComplexType()
           .setName("CTCompNav")
           .setProperties(Arrays.asList(PropertyProvider.propertyString,
-              PropertyProvider.propertyComplex_CTNavFiveProp));
+              PropertyProvider.propertyComp_CTNavFiveProp));
 
     } else if (complexTypeName.equals(nameCTMixPrimCollComp)) {
       return new ComplexType()
           .setName("CTMixPrimCollComp")
           .setProperties(
               Arrays.asList(PropertyProvider.propertyInt16, PropertyProvider.collPropertyString,
-                  PropertyProvider.propertyComplex_CTTwoPrim, PropertyProvider.collPropertyComplex_CTTwoPrim));
+                  PropertyProvider.propertyComp_CTTwoPrim, PropertyProvider.collPropertyComp_CTTwoPrim));
 
     } else if (complexTypeName.equals(nameCTBase)) {
       return new ComplexType()
@@ -120,17 +120,17 @@ public class ComplexTypeProvider {
     } else if (complexTypeName.equals(nameCTCompComp)) {
       return new ComplexType()
           .setName("CTCompComp")
-          .setProperties(Arrays.asList(PropertyProvider.propertyComplex_CTTwoPrim));
+          .setProperties(Arrays.asList(PropertyProvider.propertyComp_CTTwoPrim));
 
     } else if (complexTypeName.equals(nameCTCompCollComp)) {
       return new ComplexType()
           .setName("CTCompCollComp")
-          .setProperties(Arrays.asList(PropertyProvider.collPropertyComplex_CTTwoPrim));
+          .setProperties(Arrays.asList(PropertyProvider.collPropertyComp_CTTwoPrim));
 
     } else if (complexTypeName.equals(nameCTPrimComp)) {
       return new ComplexType()
           .setName("CTPrimComp")
-          .setProperties(Arrays.asList(PropertyProvider.propertyInt16, PropertyProvider.propertyComplex_CTAllPrim));
+          .setProperties(Arrays.asList(PropertyProvider.propertyInt16, PropertyProvider.propertyComp_CTAllPrim));
 
     } else if (complexTypeName.equals(nameCTNavFiveProp)) {
       return new ComplexType()

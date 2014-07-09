@@ -207,7 +207,7 @@ public class TestUriParserImpl {
         .isUriPathInfoKind(UriResourceKind.count);
 
     // count on collection of complex
-    testRes.run("ESKeyNav(1)/CollPropertyComplex/$count")
+    testRes.run("ESKeyNav(1)/CollPropertyComp/$count")
         .at(0)
         .isType(EntityTypeProvider.nameETKeyNav)
         .at(1)
@@ -488,20 +488,20 @@ public class TestUriParserImpl {
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     // with complex property
-    testRes.run("ESCompAllPrim(1)/PropertyComplex")
+    testRes.run("ESCompAllPrim(1)/PropertyComp")
         .at(0)
         .isEntitySet("ESCompAllPrim")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .at(1)
-        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTAllPrim, false);
+        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false);
 
     // with two properties
-    testRes.run("ESCompAllPrim(1)/PropertyComplex/PropertyString")
+    testRes.run("ESCompAllPrim(1)/PropertyComp/PropertyString")
         .at(0)
         .isEntitySet("ESCompAllPrim")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .at(1)
-        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTAllPrim, false)
+        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
         .at(2)
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
   }
@@ -969,20 +969,20 @@ public class TestUriParserImpl {
         .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     // with complex property
-    testRes.run("SINav/PropertyComplex")
+    testRes.run("SINav/PropertyComp")
         .at(0)
         .isSingleton("SINav")
         .isType(EntityTypeProvider.nameETTwoKeyNav)
         .at(1)
-        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTPrimComp, false);
+        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false);
 
     // with two properties
-    testRes.run("SINav/PropertyComplex/PropertyInt16")
+    testRes.run("SINav/PropertyComp/PropertyInt16")
         .at(0)
         .isSingleton("SINav")
         .isType(EntityTypeProvider.nameETTwoKeyNav)
         .at(1)
-        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTPrimComp, false)
+        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
         .at(2)
         .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
@@ -1053,13 +1053,13 @@ public class TestUriParserImpl {
 
   @Test
   public void testLambda() {
-    testUri.run("ESTwoKeyNav?$filter=CollPropertyComplex/all( l : true )")
-        .goFilter().is("<CollPropertyComplex/<ALL;<true>>>");
+    testUri.run("ESTwoKeyNav?$filter=CollPropertyComp/all( l : true )")
+        .goFilter().is("<CollPropertyComp/<ALL;<true>>>");
 
-    testUri.run("ESTwoKeyNav?$filter=CollPropertyComplex/any( l : true )")
-        .goFilter().is("<CollPropertyComplex/<ANY;<true>>>");
-    testUri.run("ESTwoKeyNav?$filter=CollPropertyComplex/any( )")
-        .goFilter().is("<CollPropertyComplex/<ANY;>>");
+    testUri.run("ESTwoKeyNav?$filter=CollPropertyComp/any( l : true )")
+        .goFilter().is("<CollPropertyComp/<ANY;<true>>>");
+    testUri.run("ESTwoKeyNav?$filter=CollPropertyComp/any( )")
+        .goFilter().is("<CollPropertyComp/<ANY;>>");
 
     testUri.run("ESTwoKeyNav?$filter=all( l : true )")
         .goFilter().is("<<ALL;<true>>>");
@@ -1102,33 +1102,33 @@ public class TestUriParserImpl {
     testUri.run("ESTwoKeyNav?$select=PropertyString")
         .goSelectItemPath(0).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testUri.run("ESTwoKeyNav?$select=PropertyComplex")
-        .goSelectItemPath(0).isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTPrimComp, false);
+    testUri.run("ESTwoKeyNav?$select=PropertyComp")
+        .goSelectItemPath(0).isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false);
 
-    testUri.run("ESTwoKeyNav?$select=PropertyComplex/PropertyInt16")
+    testUri.run("ESTwoKeyNav?$select=PropertyComp/PropertyInt16")
         .goSelectItemPath(0)
         .first()
-        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTPrimComp, false)
+        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
         .n()
         .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
-    testUri.run("ESTwoKeyNav?$select=PropertyComplex/PropertyComplex")
+    testUri.run("ESTwoKeyNav?$select=PropertyComp/PropertyComp")
         .goSelectItemPath(0)
         .first()
-        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTPrimComp, false)
+        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
         .n()
-        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTAllPrim, false);
+        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false);
 
     testUri.run("ESTwoKeyNav?$select=com.sap.odata.test1.ETBaseTwoKeyNav")
         .isSelectStartType(0, EntityTypeProvider.nameETBaseTwoKeyNav);
 
-    testUri.run("ESTwoKeyNav/PropertyComplexNav?$select=com.sap.odata.test1.CTTwoBasePrimCompNav")
+    testUri.run("ESTwoKeyNav/PropertyCompNav?$select=com.sap.odata.test1.CTTwoBasePrimCompNav")
         .isSelectStartType(0, ComplexTypeProvider.nameCTTwoBasePrimCompNav);
 
-    testUri.run("ESTwoKeyNav?$select=PropertyComplexNav/com.sap.odata.test1.CTTwoBasePrimCompNav")
+    testUri.run("ESTwoKeyNav?$select=PropertyCompNav/com.sap.odata.test1.CTTwoBasePrimCompNav")
         .goSelectItemPath(0)
         .first()
-        .isComplexProperty("PropertyComplexNav", ComplexTypeProvider.nameCTBasePrimCompNav, false)
+        .isComplexProperty("PropertyCompNav", ComplexTypeProvider.nameCTBasePrimCompNav, false)
         .n()
         .isTypeFilterOnCollection(ComplexTypeProvider.nameCTTwoBasePrimCompNav);
     ;

@@ -461,60 +461,60 @@ public class PropertyProvider {
    */
 
   // Complex Properties ----------------------------------------------------------------------------------------------
-  public static final Property collPropertyComplex_CTPrimComp = new Property()
-      .setName("CollPropertyComplex")
+  public static final Property collPropertyComp_CTPrimComp = new Property()
+      .setName("CollPropertyComp")
       .setType(ComplexTypeProvider.nameCTPrimComp)
       .setCollection(true);
 
-  public static final Property collPropertyComplex_CTTwoPrim = new Property()
-      .setName("CollPropertyComplex")
+  public static final Property collPropertyComp_CTTwoPrim = new Property()
+      .setName("CollPropertyComp")
       .setType(ComplexTypeProvider.nameCTTwoPrim)
       .setCollection(true);
 
-  public static final Property propertyComplex_CTAllPrim = new Property()
-      .setName("PropertyComplex")
+  public static final Property propertyComp_CTAllPrim = new Property()
+      .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTAllPrim);
 
-  public static final Property propertyComplex_CTCollAllPrim = new Property()
-      .setName("PropertyComplex")
+  public static final Property propertyComp_CTCollAllPrim = new Property()
+      .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTCollAllPrim);
 
-  public static final Property propertyComplex_CTCompCollComp = new Property()
-      .setName("PropertyComplex")
+  public static final Property propertyComp_CTCompCollComp = new Property()
+      .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTCompCollComp);
 
-  public static final Property propertyComplex_CTCompComp = new Property()
-      .setName("PropertyComplex")
+  public static final Property propertyComp_CTCompComp = new Property()
+      .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTCompComp);
 
-  public static final Property propertyComplex_CTNavFiveProp = new Property()
-      .setName("PropertyComplex")
+  public static final Property propertyComp_CTNavFiveProp = new Property()
+      .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTNavFiveProp);
 
-  public static final Property propertyComplex_CTPrimComp_NotNullable = new Property()
-      .setName("PropertyComplex")
+  public static final Property propertyComp_CTPrimComp_NotNullable = new Property()
+      .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTPrimComp)
       .setNullable(false);
 
-  public static final Property propertyComplex_CTTwoPrim = new Property()
-      .setName("PropertyComplex")
+  public static final Property propertyComp_CTTwoPrim = new Property()
+      .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTTwoPrim);
 
-  public static final Property propertyComplexAllPrim_CTAllPrim = new Property()
-      .setName("PropertyComplexAllPrim")
+  public static final Property propertyCompAllPrim_CTAllPrim = new Property()
+      .setName("PropertyCompAllPrim")
       .setType(ComplexTypeProvider.nameCTAllPrim);
 
-  public static final Property propertyComplexComplex_CTCompComp = new Property()
-      .setName("PropertyComplexComplex")
+  public static final Property propertyCompComp_CTCompComp = new Property()
+      .setName("PropertyCompComp")
       .setType(ComplexTypeProvider.nameCTCompComp);
 
-  public static final Property propertyComplexEnum_CTPrimEnum_NotNullable = new Property()
-      .setName("PropertyComplexEnum")
+  public static final Property propertyCompEnum_CTPrimEnum_NotNullable = new Property()
+      .setName("PropertyCompEnum")
       .setType(ComplexTypeProvider.nameCTPrimEnum)
       .setNullable(false);
 
-  public static final Property propertyComplexTwoPrim_CTTwoPrim = new Property()
-      .setName("PropertyComplexTwoPrim")
+  public static final Property propertyCompTwoPrim_CTTwoPrim = new Property()
+      .setName("PropertyCompTwoPrim")
       .setType(ComplexTypeProvider.nameCTTwoPrim);
 
   public static final Property propertyMixedPrimCollComp_CTMixPrimCollComp = new Property()

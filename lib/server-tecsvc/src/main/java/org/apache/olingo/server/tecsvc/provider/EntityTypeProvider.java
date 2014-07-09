@@ -123,7 +123,7 @@ public class EntityTypeProvider {
           .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
           .setProperties(Arrays.asList(
               PropertyProvider.propertyInt16_NotNullable, PropertyProvider.collPropertyString,
-              PropertyProvider.propertyComplex_CTTwoPrim, PropertyProvider.collPropertyComplex_CTTwoPrim));
+              PropertyProvider.propertyComp_CTTwoPrim, PropertyProvider.collPropertyComp_CTTwoPrim));
 
     } else if (entityTypeName.equals(nameETTwoKeyTwoPrim)) {
       return new EntityType()
@@ -194,7 +194,7 @@ public class EntityTypeProvider {
           .setName("ETCompAllPrim")
           .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
           .setProperties(
-              Arrays.asList(PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComplex_CTAllPrim));
+              Arrays.asList(PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComp_CTAllPrim));
 
     } else if (entityTypeName.equals(nameETCompCollAllPrim)) {
       return new EntityType()
@@ -203,14 +203,14 @@ public class EntityTypeProvider {
 
           .setProperties(
               Arrays.asList(PropertyProvider.propertyInt16_NotNullable,
-                  PropertyProvider.propertyComplex_CTCollAllPrim));
+                  PropertyProvider.propertyComp_CTCollAllPrim));
 
     } else if (entityTypeName.equals(nameETCompComp)) {
       return new EntityType()
           .setName("ETCompComp")
           .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
           .setProperties(
-              Arrays.asList(PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComplex_CTCompComp));
+              Arrays.asList(PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComp_CTCompComp));
 
     } else if (entityTypeName.equals(nameETCompCollComp)) {
       return new EntityType()
@@ -218,7 +218,7 @@ public class EntityTypeProvider {
           .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
           .setProperties(
               Arrays
-                  .asList(PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComplex_CTCompCollComp));
+                  .asList(PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComp_CTCompCollComp));
 
     } else if (entityTypeName.equals(nameETMedia)) {
       return new EntityType()
@@ -234,18 +234,18 @@ public class EntityTypeProvider {
               new PropertyRef()
                   .setPropertyName("PropertyInt16"),
               new PropertyRef()
-                  .setPropertyName("PropertyComplex/PropertyInt16")
+                  .setPropertyName("PropertyComp/PropertyInt16")
                   .setAlias("KeyAlias1"),
               new PropertyRef()
-                  .setPropertyName("PropertyComplex/PropertyString")
+                  .setPropertyName("PropertyComp/PropertyString")
                   .setAlias("KeyAlias2"),
               new PropertyRef()
-                  .setPropertyName("PropertyComplexComplex/PropertyComplex/PropertyString")
+                  .setPropertyName("PropertyCompComp/PropertyComp/PropertyString")
                   .setAlias("KeyAlias3")))
           .setProperties(
               Arrays.asList(
-                  PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComplex_CTTwoPrim,
-                  PropertyProvider.propertyComplexComplex_CTCompComp));
+                  PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComp_CTTwoPrim,
+                  PropertyProvider.propertyCompComp_CTCompComp));
 
     } else if (entityTypeName.equals(nameETServerSidePaging)) {
       return new EntityType()
@@ -295,12 +295,12 @@ public class EntityTypeProvider {
           .setProperties(
               Arrays.asList(
                   PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString_NotNullable,
-                  PropertyProvider.propertyComplex_CTNavFiveProp,
-                  PropertyProvider.propertyComplexAllPrim_CTAllPrim, PropertyProvider.propertyComplexTwoPrim_CTTwoPrim,
+                  PropertyProvider.propertyComp_CTNavFiveProp,
+                  PropertyProvider.propertyCompAllPrim_CTAllPrim, PropertyProvider.propertyCompTwoPrim_CTTwoPrim,
                   PropertyProvider.collPropertyString, PropertyProvider.collPropertyInt16,
-                  PropertyProvider.collPropertyComplex_CTPrimComp,
+                  PropertyProvider.collPropertyComp_CTPrimComp,
                   new Property()
-                      .setName("PropertyComplexComplex").setType(ComplexTypeProvider.nameCTCompNav)
+                      .setName("PropertyCompComp").setType(ComplexTypeProvider.nameCTCompNav)
                   ))
           .setNavigationProperties(
               Arrays.asList(
@@ -330,14 +330,14 @@ public class EntityTypeProvider {
           .setProperties(
               Arrays.asList(
                   PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString_NotNullable,
-                  PropertyProvider.propertyComplex_CTPrimComp_NotNullable,
-                  new Property().setName("PropertyComplexNav").setType(ComplexTypeProvider.nameCTBasePrimCompNav)
+                  PropertyProvider.propertyComp_CTPrimComp_NotNullable,
+                  new Property().setName("PropertyCompNav").setType(ComplexTypeProvider.nameCTBasePrimCompNav)
                       .setNullable(false),
-                  PropertyProvider.propertyComplexEnum_CTPrimEnum_NotNullable,
-                  PropertyProvider.collPropertyComplex_CTPrimComp,
-                  new Property().setName("CollPropertyComplexNav").setType(ComplexTypeProvider.nameCTNavFiveProp)
+                  PropertyProvider.propertyCompEnum_CTPrimEnum_NotNullable,
+                  PropertyProvider.collPropertyComp_CTPrimComp,
+                  new Property().setName("CollPropertyCompNav").setType(ComplexTypeProvider.nameCTNavFiveProp)
                       .setCollection(true),
-                  PropertyProvider.collPropertyString, PropertyProvider.propertyComplexTwoPrim_CTTwoPrim,
+                  PropertyProvider.collPropertyString, PropertyProvider.propertyCompTwoPrim_CTTwoPrim,
                   PropertyProvider.propertyEnumString_ENString
                   ))
           .setNavigationProperties(Arrays.asList(
@@ -384,14 +384,14 @@ public class EntityTypeProvider {
           .setKey(
               Arrays.asList(
                   new PropertyRef().setPropertyName("PropertyInt16"),
-                  new PropertyRef().setPath("PropertyComplex/PropertyInt16").setPropertyName("PropertyInt16").setAlias(
+                  new PropertyRef().setPath("PropertyComp/PropertyInt16").setPropertyName("PropertyInt16").setAlias(
                       "KeyAlias1"),
-                  new PropertyRef().setPath("PropertyComplex/PropertyString").setPropertyName("PropertyString")
+                  new PropertyRef().setPath("PropertyComp/PropertyString").setPropertyName("PropertyString")
                       .setAlias("KeyAlias2"),
-                  new PropertyRef().setPath("PropertyComplexComplex/PropertyComplex/PropertyString").setPropertyName(
+                  new PropertyRef().setPath("PropertyCompComp/PropertyComp/PropertyString").setPropertyName(
                       "PropertyString").setAlias("KeyAlias3"))).setProperties(
-              Arrays.asList(PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComplex_CTTwoPrim,
-                  PropertyProvider.propertyComplexComplex_CTCompComp));
+              Arrays.asList(PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComp_CTTwoPrim,
+                  PropertyProvider.propertyCompComp_CTCompComp));
     } else if (entityTypeName.equals(nameETCompMixPrimCollComp)) {
       return new EntityType()
           .setName("ETCompMixPrimCollComp")

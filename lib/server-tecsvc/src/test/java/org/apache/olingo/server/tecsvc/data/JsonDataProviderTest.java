@@ -26,10 +26,12 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmElement;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
@@ -44,19 +46,34 @@ import java.util.List;
  */
 public class JsonDataProviderTest {
 
+  private final Edm edm = OData.newInstance().createEdm(new EdmTechProvider());
+  private final EdmEntityContainer entityContainer = edm.getEntityContainer(
+          new FullQualifiedName("com.sap.odata.test1", "Container"));
+
+  private final EdmEntitySet esAllPrim;
+  private final EdmEntitySet esCompAllPrim;
+  private final EdmEntitySet esCollAllPrim;
+  private final EdmEntitySet esMixPrimCollAllPrim;
+
+  public JsonDataProviderTest() {
+    esAllPrim = entityContainer.getEntitySet("ESAllPrim");
+    esCompAllPrim = entityContainer.getEntitySet("ESCompAllPrim");
+    esCollAllPrim = entityContainer.getEntitySet("ESCollAllPrim");
+    esMixPrimCollAllPrim = entityContainer.getEntitySet("ESMixPrimCollComp");
+  }
+
   @Test
   public void doRoundTrip() throws Exception {
-    doRoundTrip("ESAllPrim", 1405);
-    doRoundTrip("ESCompAllPrim", 1597);
-    doRoundTrip("ESCollAllPrim", 2858);
-    doRoundTrip("ESMixPrimCollComp", 1050);
+    doRoundTrip(entityContainer.getEntitySet("ESAllPrim"), 1401);
+    doRoundTrip(entityContainer.getEntitySet("ESCompAllPrim"), 1592);
+    doRoundTrip(entityContainer.getEntitySet("ESCollAllPrim"), 2855);
+    doRoundTrip(entityContainer.getEntitySet("ESMixPrimCollComp"), 1032);
   }
 
   @Test
   public void esAllPrimEntity() throws Exception {
     DataProvider jdp = getDataProvider();
-    jdp.reset();
-    Entity first = jdp.read("ESAllPrim", Integer.valueOf(0));
+    Entity first = jdp.readAll(esAllPrim).getEntities().get(0);
 
     Assert.assertEquals(16, first.getProperties().size());
   }
@@ -64,7 +81,7 @@ public class JsonDataProviderTest {
   @Test
   public void esAllPrim() throws Exception {
     DataProvider jdp = getDataProvider();
-    EntitySet outSet = jdp.readAll("ESAllPrim");
+    EntitySet outSet = jdp.readAll(esAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
     Entity first = outSet.getEntities().get(0);
@@ -76,7 +93,7 @@ public class JsonDataProviderTest {
   @Test
   public void esCollAllPrim() throws Exception {
     DataProvider jdp = getDataProvider();
-    EntitySet outSet = jdp.readAll("ESCollAllPrim");
+    EntitySet outSet = jdp.readAll(esCollAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
     Assert.assertEquals(17, outSet.getEntities().get(0).getProperties().size());
@@ -90,7 +107,7 @@ public class JsonDataProviderTest {
   @Test
   public void esCompAllPrim() throws Exception {
     DataProvider jdp = getDataProvider();
-    EntitySet outSet = jdp.readAll("ESCompAllPrim");
+    EntitySet outSet = jdp.readAll(esCompAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
     Assert.assertEquals(2, outSet.getEntities().get(0).getProperties().size());
@@ -104,7 +121,7 @@ public class JsonDataProviderTest {
   @Test
   public void esMixPrimCollComp() throws Exception {
     DataProvider jdp = getDataProvider();
-    EntitySet outSet = jdp.readAll("ESMixPrimCollComp");
+    EntitySet outSet = jdp.readAll(esMixPrimCollAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
     Assert.assertEquals(4, outSet.getEntities().get(0).getProperties().size());
@@ -119,7 +136,7 @@ public class JsonDataProviderTest {
     Assert.assertEquals(2, linkedComplexValue.getValue().size());
     Property lcProp = linkedComplexValue.getValue().get(0);
     Assert.assertFalse(lcProp.isCollection());
-    Assert.assertEquals(Short.valueOf("123"), lcProp.getValue());
+    Assert.assertEquals(Integer.valueOf("123"), lcProp.getValue());
     //
     Assert.assertEquals(4, outSet.getEntities().get(1).getProperties().size());
     Assert.assertEquals(4, outSet.getEntities().get(2).getProperties().size());
@@ -128,7 +145,7 @@ public class JsonDataProviderTest {
   private DataProvider getDataProvider() throws DataProvider.DataProviderException {
     OData odata = OData.newInstance();
     Edm edm = odata.createEdm(new EdmTechProvider());
-    return new JefDataProvider(edm);
+    return new DataProvider(edm);
   }
 
   @Test
@@ -162,24 +179,20 @@ public class JsonDataProviderTest {
     }
   }
 
-  private void doRoundTrip(String name, int expectedLength) throws Exception {
-    OData odata = OData.newInstance();
-    Edm edm = odata.createEdm(new EdmTechProvider());
-    EdmEntitySet edmEntitySet = edm.getEntityContainer(ContainerProvider.nameContainer).getEntitySet(name);
-
-    DataProvider jdp = new JefDataProvider(edm);
-    EntitySet outSet = jdp.readAll(name);
+  private void doRoundTrip(EdmEntitySet entitySet, int expectedLength) throws Exception {
+    DataProvider jdp = new DataProvider(edm);
+    EntitySet outSet = jdp.readAll(entitySet);
 
 
     ODataJsonSerializer serializer = new ODataJsonSerializer();
     ContextURL contextUrl = null;
-    InputStream is = serializer.entitySet(edmEntitySet, outSet, contextUrl);
+    InputStream is = serializer.entitySet(entitySet, outSet, contextUrl);
 
     StringHelper.Stream stream = StringHelper.toStream(is);
 
-    System.out.println("========== " + name + " =================");
-    stream.print();
-    System.out.println("\n========== " + name + " =================");
+//    System.out.println("========== " + entitySet.getName() + " =================");
+//    stream.print();
+//    System.out.println("\n========== " + entitySet.getName() + " =================");
 
     Assert.assertEquals(expectedLength, stream.asString().length());
   }

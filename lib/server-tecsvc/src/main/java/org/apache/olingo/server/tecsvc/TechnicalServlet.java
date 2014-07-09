@@ -18,29 +18,27 @@
  */
 package org.apache.olingo.server.tecsvc;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.ODataHttpHandler;
-import org.apache.olingo.server.tecsvc.data.DataProvider;
-import org.apache.olingo.server.tecsvc.data.JefDataProvider;
-import org.apache.olingo.server.tecsvc.processor.TechnicalProcessor;
-import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
+
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataHttpHandler;
+import org.apache.olingo.server.tecsvc.data.DataProvider;
+import org.apache.olingo.server.tecsvc.processor.TechnicalProcessor;
+import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TechnicalServlet extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
-
   private static final Logger LOG = LoggerFactory.getLogger(TechnicalServlet.class);
-//  private DataProvider dataProvider;
 
   @Override
   protected void service(final HttpServletRequest req, final HttpServletResponse resp)
@@ -52,15 +50,13 @@ public class TechnicalServlet extends HttpServlet {
       HttpSession session = req.getSession(true);
       DataProvider dataProvider = (DataProvider) session.getAttribute(DataProvider.class.getName());
       if (dataProvider == null) {
-        dataProvider = new JefDataProvider(edm);
+        dataProvider = new DataProvider(edm);
         session.setAttribute(DataProvider.class.getName(), dataProvider);
         LOG.info("Created new data provider.");
       }
 
       ODataHttpHandler handler = odata.createHandler(edm);
-
       handler.register(new TechnicalProcessor(dataProvider));
-
       handler.process(req, resp);
     } catch (Exception e) {
       LOG.error("Server Error", e);
