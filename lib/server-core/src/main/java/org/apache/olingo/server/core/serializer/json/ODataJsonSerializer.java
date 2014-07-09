@@ -26,6 +26,7 @@ import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.data.*;
 import org.apache.olingo.commons.api.edm.*;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.server.api.serializer.ODataError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.slf4j.Logger;
@@ -172,13 +173,14 @@ public class ODataJsonSerializer implements ODataSerializer {
         writePrimitive(edmProperty, property, json);
       } else if (property.isLinkedComplex()) {
         writeComplexValue(edmProperty, property.asLinkedComplex().getValue(), json);
-      } else if(property.isComplex()) {
+      } else if (property.isComplex()) {
         writeComplexValue(edmProperty, property.asComplex(), json);
       } else {
         throw new ODataRuntimeException("Property type not yet supported!");
       }
     }
   }
+
 
   private void writeCollection(EdmProperty edmProperty, Property property, JsonGenerator json)
           throws IOException, EdmPrimitiveTypeException {
@@ -243,7 +245,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   private void writeComplexValue(final EdmProperty edmProperty, final List<Property> properties,
-                                       JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
+      JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
     final EdmComplexType type = (EdmComplexType) edmProperty.getType();
     json.writeStartObject();
     for (final String propertyName : type.getPropertyNames()) {
@@ -260,5 +262,19 @@ public class ODataJsonSerializer implements ODataSerializer {
       }
     }
     return null;
+  }
+
+  @Override
+  public InputStream error(ODataError error, List<ODataError> details) {
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    try {
+      JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
+      ODataErrorSerializer ser = new ODataErrorSerializer();
+      ser.writeErrorDocument(json, error, details);
+      json.close();
+    } catch (final IOException e) {
+      throw new ODataRuntimeException(e);
+    }
+    return buffer.getInputStream();
   }
 }

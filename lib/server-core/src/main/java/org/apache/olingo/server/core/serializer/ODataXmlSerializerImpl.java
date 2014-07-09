@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.serializer;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -31,6 +32,7 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.server.api.serializer.ODataError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.xml.MetadataDocumentXmlSerializer;
@@ -84,6 +86,11 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   public InputStream entitySet(final EdmEntitySet edmEntitySet, final EntitySet entitySet,
       final ContextURL contextURL) {
     throw new ODataRuntimeException("Entityset serialization not implemented for XML format");
+  }
+
+  @Override
+  public InputStream error(ODataError error, List<ODataError> details) {
+    throw new ODataRuntimeException("error serialization not implemented for XML format");
   }
 
 }

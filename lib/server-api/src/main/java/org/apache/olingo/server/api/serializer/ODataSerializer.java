@@ -19,6 +19,7 @@
 package org.apache.olingo.server.api.serializer;
 
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
@@ -38,4 +39,12 @@ public interface ODataSerializer {
   InputStream entity(EdmEntityType edmEntityType, Entity entity, ContextURL contextURL);
 
   InputStream entitySet(EdmEntitySet edmEntitySet, EntitySet entitySet, ContextURL contextURL);
+
+  /**
+   * Writes an ODataError into an InputStream
+   * @param error the main error
+   * @param details a list of details. MAY be null or empty.
+   * @return inputStream containing the OData formatted error
+   */
+  InputStream error(ODataError error, List<ODataError> details);
 }
