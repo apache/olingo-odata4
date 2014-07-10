@@ -88,6 +88,37 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   @Override
+  public InputStream entitySet(final EdmEntitySet edmEntitySet, final EntitySet entitySet,
+      final ContextURL contextURL) {
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    try {
+      JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
+      json.writeStartObject();
+      if (contextURL != null) {
+        json.writeStringField(Constants.JSON_CONTEXT, contextURL.getURI().toASCIIString());
+      }
+      if (entitySet.getCount() != null) {
+        json.writeNumberField("@odata.count", entitySet.getCount());
+      }
+      json.writeFieldName(Constants.VALUE);
+      json.writeStartArray();
+      for (Entity entity : entitySet.getEntities()) {
+        writeEntity(edmEntitySet.getEntityType(), entity, null, json);
+      }
+      json.writeEndArray();
+      if (entitySet.getNext() != null) {
+        json.writeStringField("@odata.nextLink", entitySet.getNext().toASCIIString());
+      }
+      json.close();
+    } catch (final IOException e) {
+      throw new ODataRuntimeException(e);
+    } catch (final EdmPrimitiveTypeException e) {
+      throw new ODataRuntimeException(e);
+    }
+    return buffer.getInputStream();
+  }
+
+  @Override
   public InputStream entity(final EdmEntityType edmEntityType, final Entity entity, final ContextURL contextURL) {
     CircleStreamBuffer buffer = new CircleStreamBuffer();
     try {
@@ -136,9 +167,9 @@ public class ODataJsonSerializer implements ODataSerializer {
       }
     } else {
       if (edmProperty.isCollection()) {
-        handleCollection(edmProperty, property, json);
+        writeCollection(edmProperty, property, json);
       } else if (edmProperty.isPrimitive()) {
-        handlePrimitive(edmProperty, property, json);
+        writePrimitive(edmProperty, property, json);
       } else if (property.isLinkedComplex()) {
         writeComplexValue(edmProperty, property.asLinkedComplex().getValue(), json);
       } else if(property.isComplex()) {
@@ -149,7 +180,7 @@ public class ODataJsonSerializer implements ODataSerializer {
     }
   }
 
-  private void handleCollection(EdmProperty edmProperty, Property property, JsonGenerator json)
+  private void writeCollection(EdmProperty edmProperty, Property property, JsonGenerator json)
           throws IOException, EdmPrimitiveTypeException {
     json.writeStartArray();
     for (Object value : property.asCollection()) {
@@ -175,14 +206,14 @@ public class ODataJsonSerializer implements ODataSerializer {
     json.writeEndArray();
   }
 
-  private void handlePrimitive(EdmProperty edmProperty, Property property, JsonGenerator json)
+  private void writePrimitive(EdmProperty edmProperty, Property property, JsonGenerator json)
           throws EdmPrimitiveTypeException, IOException {
     if (property.isPrimitive()) {
       writePrimitiveValue(edmProperty, property.asPrimitive(), json);
     } else if (property.isGeospatial()) {
       throw new ODataRuntimeException("Property type not yet supported!");
     } else if (property.isEnum()) {
-      json.writeString(property.asEnum().toString());
+      writePrimitiveValue(edmProperty, property.asEnum(), json);
     } else {
       throw new ODataRuntimeException("Inconsistent property type!");
     }
@@ -229,36 +260,5 @@ public class ODataJsonSerializer implements ODataSerializer {
       }
     }
     return null;
-  }
-
-  @Override
-  public InputStream entitySet(final EdmEntitySet edmEntitySet, final EntitySet entitySet,
-      final ContextURL contextURL) {
-    CircleStreamBuffer buffer = new CircleStreamBuffer();
-    try {
-      JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
-      json.writeStartObject();
-      if (contextURL != null) {
-        json.writeStringField(Constants.JSON_CONTEXT, contextURL.getURI().toASCIIString());
-      }
-      if (entitySet.getCount() != null) {
-        json.writeNumberField("@odata.count", entitySet.getCount());
-      }
-      json.writeFieldName(Constants.VALUE);
-      json.writeStartArray();
-      for (Entity entity : entitySet.getEntities()) {
-        writeEntity(edmEntitySet.getEntityType(), entity, null, json);
-      }
-      json.writeEndArray();
-      if (entitySet.getNext() != null) {
-        json.writeStringField("@odata.nextLink", entitySet.getNext().toASCIIString());
-      }
-      json.close();
-    } catch (final IOException e) {
-      throw new ODataRuntimeException(e);
-    } catch (final EdmPrimitiveTypeException e) {
-      throw new ODataRuntimeException(e);
-    }
-    return buffer.getInputStream();
   }
 }

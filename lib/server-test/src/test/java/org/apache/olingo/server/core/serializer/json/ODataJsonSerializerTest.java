@@ -161,6 +161,25 @@ public class ODataJsonSerializerTest {
     Assert.assertEquals(expectedResult, resultString);
   }
 
+  @Test
+  public void entityMixPrimCollComp() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    InputStream result = serializer.entity(edmEntitySet.getEntityType(), entity,
+        ContextURL.getInstance(URI.create("$metadata#ESMixPrimCollComp/$entity")));
+    final String resultString = streamToString(result);
+    final String expectedResult = "{"
+        + "\"@odata.context\":\"$metadata#ESMixPrimCollComp/$entity\","
+        + "\"PropertyInt16\":32767,"
+        + "\"CollPropertyString\":[\"spiderman@comic.com\",\"spidermaus@comic.com\",\"spidergirl@comic.com\"],"
+        + "\"PropertyComp\":{\"PropertyInt16\":111,\"PropertyString\":\"TEST A\"},"
+        + "\"CollPropertyComp\":["
+        + "{\"PropertyInt16\":123,\"PropertyString\":\"TEST 1\"},"
+        + "{\"PropertyInt16\":456,\"PropertyString\":\"TEST 2\"},"
+        + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+
   private String streamToString(InputStream input) throws IOException {
     byte[] buffer = new byte[8192];
     StringBuilder result = new StringBuilder();

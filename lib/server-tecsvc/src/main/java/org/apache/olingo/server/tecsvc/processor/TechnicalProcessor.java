@@ -38,9 +38,9 @@ import org.apache.olingo.server.api.processor.CollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
-import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
 public class TechnicalProcessor implements CollectionProcessor, EntityProcessor {
@@ -62,8 +62,12 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
   @Override
   public void readCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) {
+    if (!validateOptions(uriInfo.asUriInfoResource())) {
+      response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
+      return;
+    }
     ODataSerializer serializer = odata.createSerializer(ODataFormat.JSON);
-    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
+    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
     try {
       final EntitySet entitySet = readEntitySetInternal(edmEntitySet, request.getRawBaseUri());
       if (entitySet == null) {
@@ -82,10 +86,14 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
   @Override
   public void readEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) {
+    if (!validateOptions(uriInfo.asUriInfoResource())) {
+      response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
+      return;
+    }
     ODataSerializer serializer = odata.createSerializer(ODataFormat.JSON);
-    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
+    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
     try {
-      final Entity entity = readEntityInternal(uriInfo, edmEntitySet);
+      final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
       if (entity == null) {
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
@@ -99,23 +107,6 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
     }
   }
 
-  private Entity readEntityInternal(final UriInfo uriInfo, final EdmEntitySet entitySet)
-      throws DataProvider.DataProviderException {
-    final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
-    if (!resourcePaths.isEmpty()) {
-      UriResource res = resourcePaths.get(resourcePaths.size() - 1);
-      if (res.getKind() == UriResourceKind.entitySet) {
-        UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) res;
-        return dataProvider.read(entitySet, resourceEntitySet.getKeyPredicates());
-      }
-    }
-    throw new RuntimeException("Invalid resource paths.. " + resourcePaths);
-  }
-
-  private ContextURL getContextUrl(final ODataRequest request, final EdmEntityType entityType) {
-    return ContextURL.getInstance(URI.create(request.getRawBaseUri() + "/" + entityType.getName()));
-  }
-
   private EntitySet readEntitySetInternal(final EdmEntitySet edmEntitySet, final String serviceRoot)
       throws DataProvider.DataProviderException {
     EntitySet entitySet = dataProvider.readAll(edmEntitySet);
@@ -123,13 +114,42 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
     return entitySet;
   }
 
-  private EdmEntitySet getEdmEntitySet(final UriInfo uriInfo) {
+  private Entity readEntityInternal(final UriInfoResource uriInfo, final EdmEntitySet entitySet)
+      throws DataProvider.DataProviderException {
+    final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
+    return dataProvider.read(entitySet, resourceEntitySet.getKeyPredicates());
+  }
+
+  private boolean validateOptions(final UriInfoResource uriInfo) {
+    return uriInfo.getCountOption() == null
+        && uriInfo.getCustomQueryOptions().isEmpty()
+        && uriInfo.getExpandOption() == null
+        && uriInfo.getFilterOption() == null
+        && uriInfo.getIdOption() == null
+        && uriInfo.getOrderByOption() == null
+        && uriInfo.getSearchOption() == null
+        && uriInfo.getSelectOption() == null
+        && uriInfo.getSkipOption() == null
+        && uriInfo.getSkipTokenOption() == null
+        && uriInfo.getTopOption() == null;
+  }
+
+  private EdmEntitySet getEdmEntitySet(final UriInfoResource uriInfo) {
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
-    if (resourcePaths.isEmpty()) {
+    if (resourcePaths.size() != 1) {
       throw new RuntimeException("Invalid resource path.");
     }
-    final UriResource uriResource = resourcePaths.get(resourcePaths.size() - 1);
-    return uriResource instanceof UriResourceEntitySet ?
-        ((UriResourceEntitySet) uriResource).getEntitySet() : null;
+    if (!(resourcePaths.get(0) instanceof UriResourceEntitySet)) {
+      throw new RuntimeException("Invalid resource type.");
+    }
+    final UriResourceEntitySet uriResource = (UriResourceEntitySet) resourcePaths.get(0);
+    if (uriResource.getTypeFilterOnCollection() != null || uriResource.getTypeFilterOnEntry() != null) {
+      throw new RuntimeException("Type filters are not supported.");
+    }
+    return uriResource.getEntitySet();
+  }
+
+  private ContextURL getContextUrl(final ODataRequest request, final EdmEntityType entityType) {
+    return ContextURL.getInstance(URI.create(request.getRawBaseUri() + "/" + entityType.getName()));
   }
 }
