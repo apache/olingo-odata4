@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.edm.xml.Schema;
@@ -52,7 +51,7 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
     final SingleXMLMetadatRequestImpl rootReq = new SingleXMLMetadatRequestImpl((ODataClient) odataClient, uri);
     final ODataRetrieveResponse<XMLMetadata> rootRes = rootReq.execute();
 
-    final XMLMetadataResponseImpl response = new XMLMetadataResponseImpl(httpClient, rootReq.getHttpResponse());
+    final XMLMetadataResponseImpl response = new XMLMetadataResponseImpl(rootReq.getHttpResponse());
 
     final XMLMetadata rootMetadata = rootRes.getBody();
     for (Schema schema : rootMetadata.getSchemas()) {
@@ -156,8 +155,13 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
 
     private final Map<String, Schema> schemas = new HashMap<String, Schema>();
 
-    private XMLMetadataResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+    private XMLMetadataResponseImpl(final HttpResponse res) {
+      super();
+
+      statusCode = res.getStatusLine().getStatusCode();
+      statusMessage = res.getStatusLine().getReasonPhrase();
+
+      hasBeenInitialized = true;
     }
 
     @Override
