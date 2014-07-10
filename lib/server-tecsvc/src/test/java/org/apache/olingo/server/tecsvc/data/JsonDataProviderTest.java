@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.server.tecsvc.data;
 
+import java.io.InputStream;
+import java.util.List;
+
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
@@ -38,9 +41,6 @@ import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.InputStream;
-import java.util.List;
 
 /**
  */

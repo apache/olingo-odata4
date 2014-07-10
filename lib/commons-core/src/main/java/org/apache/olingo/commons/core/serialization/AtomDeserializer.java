@@ -66,7 +66,6 @@ import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
-import org.apache.olingo.commons.core.data.ODataErrorImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.data.v3.LinkCollectionImpl;
 import org.apache.olingo.commons.core.data.v4.DeltaImpl;
@@ -849,7 +848,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
   }
 
   private ODataError error(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
-    final ODataErrorImpl error = new ODataErrorImpl();
+    final ODataError error = new ODataError();
 
     boolean setCode = false;
     boolean codeSet = false;

@@ -18,24 +18,37 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.util.List;
+
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.data.*;
-import org.apache.olingo.commons.api.edm.*;
+import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.LinkedComplexValue;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.util.List;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 public class ODataJsonSerializer implements ODataSerializer {
 
@@ -172,13 +185,14 @@ public class ODataJsonSerializer implements ODataSerializer {
         writePrimitive(edmProperty, property, json);
       } else if (property.isLinkedComplex()) {
         writeComplexValue(edmProperty, property.asLinkedComplex().getValue(), json);
-      } else if(property.isComplex()) {
+      } else if (property.isComplex()) {
         writeComplexValue(edmProperty, property.asComplex(), json);
       } else {
         throw new ODataRuntimeException("Property type not yet supported!");
       }
     }
   }
+
 
   private void writeCollection(EdmProperty edmProperty, Property property, JsonGenerator json)
           throws IOException, EdmPrimitiveTypeException {
@@ -243,7 +257,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   private void writeComplexValue(final EdmProperty edmProperty, final List<Property> properties,
-                                       JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
+      JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
     final EdmComplexType type = (EdmComplexType) edmProperty.getType();
     json.writeStartObject();
     for (final String propertyName : type.getPropertyNames()) {
@@ -260,5 +274,19 @@ public class ODataJsonSerializer implements ODataSerializer {
       }
     }
     return null;
+  }
+
+  @Override
+  public InputStream error(ODataError error) {
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    try {
+      JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
+      ODataErrorSerializer ser = new ODataErrorSerializer();
+      ser.writeErrorDocument(json, error);
+      json.close();
+    } catch (final IOException e) {
+      throw new ODataRuntimeException(e);
+    }
+    return buffer.getInputStream();
   }
 }

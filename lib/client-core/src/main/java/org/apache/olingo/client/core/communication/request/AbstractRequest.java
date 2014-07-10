@@ -28,7 +28,6 @@ import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-import org.apache.olingo.commons.core.data.ODataErrorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +39,7 @@ public abstract class AbstractRequest {
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractRequest.class);
 
   private ODataError getGenericError(final int code, final String errorMsg) {
-    final ODataErrorImpl error = new ODataErrorImpl();
+    final ODataError error = new ODataError();
     error.setCode(String.valueOf(code));
     error.setMessage(errorMsg);
     return error;
