@@ -40,6 +40,7 @@ import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
+import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 
 public class TestUriValidator implements TestValidator {
@@ -55,18 +56,13 @@ public class TestUriValidator implements TestValidator {
   }
 
   // Execution
-  public TestUriValidator run(final String uri) {
+  public TestUriValidator run(final String uri) throws UriParserException, UriValidationException {
     Parser parser = new Parser();
     UriValidator validator = new UriValidator();
 
     uriInfo = null;
-    try {
-      uriInfo = (UriInfoImpl) parser.parseUri(uri, edm);
-      validator.validate(uriInfo, HttpMethod.GET);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-
+    uriInfo = (UriInfoImpl) parser.parseUri(uri, edm);
+    validator.validate(uriInfo, HttpMethod.GET);
     return this;
   }
 

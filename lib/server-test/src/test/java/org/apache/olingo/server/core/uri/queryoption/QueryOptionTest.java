@@ -51,7 +51,7 @@ public class QueryOptionTest {
   }
 
   @Test
-  public void testExandItemImpl() {
+  public void testExpandItemImpl() {
     ExpandItemImpl option = new ExpandItemImpl();
 
     // input options
