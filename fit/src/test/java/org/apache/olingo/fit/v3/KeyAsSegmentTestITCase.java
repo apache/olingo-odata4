@@ -27,6 +27,7 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import static org.apache.olingo.fit.v3.AbstractTestITCase.client;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,9 +39,14 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
     client.getConfiguration().setKeyAsSegment(true);
   }
 
+  @AfterClass
+  public static void disableKeyAsSegment() {
+    client.getConfiguration().setKeyAsSegment(false);
+  }
+
   private void read(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testKeyAsSegmentServiceRootURL).
-        appendEntitySetSegment("Customer").appendKeySegment(-10);
+            appendEntitySetSegment("Customer").appendKeySegment(-10);
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
@@ -91,7 +97,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   public void replaceODataEntityAsAtom() {
     final ODataFormat format = ODataFormat.ATOM;
     final ODataEntity changes = read(format, client.newURIBuilder(testKeyAsSegmentServiceRootURL).
-        appendEntitySetSegment("Car").appendKeySegment(14).build());
+            appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
   }
 
@@ -99,12 +105,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   public void replaceODataEntityAsJSON() {
     final ODataFormat format = ODataFormat.JSON_FULL_METADATA;
     final ODataEntity changes = read(format, client.newURIBuilder(testKeyAsSegmentServiceRootURL).
-        appendEntitySetSegment("Car").appendKeySegment(14).build());
+            appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
-  }
-
-  @AfterClass
-  public static void disableKeyAsSegment() {
-    client.getConfiguration().setKeyAsSegment(false);
   }
 }

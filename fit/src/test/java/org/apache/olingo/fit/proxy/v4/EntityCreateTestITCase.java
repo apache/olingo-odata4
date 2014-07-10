@@ -66,7 +66,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void createAndDelete() {
-    createAndDeleteOrder(getContainer(), getContainerFactory());
+    createPatchAndDeleteOrder(getContainer(), getContainerFactory());
   }
 
   @Test

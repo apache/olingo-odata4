@@ -58,7 +58,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   private static final long serialVersionUID = 2629912294765040037L;
 
-  private final URI entityURI;
+  protected URI entityURI;
 
   protected final Map<String, Object> propertyChanges = new HashMap<String, Object>();
 
@@ -130,6 +130,11 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
             getUUID().getEntitySetURI(),
             getUUID().getType(),
             CoreUtils.getKey(getClient(), this, typeRef, entity));
+
+    // fix for OLINGO-353
+    if (this.entityURI == null) {
+      this.entityURI = entity.getEditLink();
+    }
 
     this.streamedPropertyChanges.clear();
     this.propertyChanges.clear();
@@ -321,7 +326,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
             && contentSource != null) {
 
       final ODataMediaRequest retrieveReq = getClient().getRetrieveRequestFactory()
-          .getMediaEntityRequest(contentSource);
+              .getMediaEntityRequest(contentSource);
       if (StringUtils.isNotBlank(getEntity().getMediaContentType())) {
         retrieveReq.setFormat(ODataFormat.fromString(getEntity().getMediaContentType()));
       }

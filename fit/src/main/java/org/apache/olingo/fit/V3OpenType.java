@@ -116,7 +116,7 @@ public class V3OpenType extends V3Services {
     final Matcher matcher = GUID.matcher(entityId);
     return replaceServiceName(super.getEntityInternal(
         uriInfo.getRequestUri().toASCIIString(), accept, entitySetName,
-        matcher.matches() ? matcher.group(1) : entityId, format, expand, select, false));
+        matcher.matches() ? matcher.group(1) : entityId, format, expand, select));
   }
 
   @POST

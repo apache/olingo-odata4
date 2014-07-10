@@ -106,7 +106,7 @@ public class V4Demo extends V4Services {
       @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) final String select) {
 
     return replaceServiceName(super.getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-        accept, entitySetName, entityId, format, expand, select, false));
+        accept, entitySetName, entityId, format, expand, select));
   }
 
   @GET

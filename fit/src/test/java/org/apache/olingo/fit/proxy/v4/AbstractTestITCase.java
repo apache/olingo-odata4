@@ -90,9 +90,10 @@ public abstract class AbstractTestITCase {
     return customer;
   }
 
-  protected void createAndDeleteOrder(
-      final InMemoryEntities container, final EntityContainerFactory<EdmEnabledODataClient> containerFactory) {
+  protected void createPatchAndDeleteOrder(
+          final InMemoryEntities container, final EntityContainerFactory<EdmEnabledODataClient> containerFactory) {
 
+    // Create order ....
     final Order order = container.getOrders().newOrder();
     order.setOrderID(105);
 
@@ -101,9 +102,13 @@ public abstract class AbstractTestITCase {
     orderDate.set(2011, 3, 4, 16, 3, 57);
     order.setOrderDate(orderDate);
 
-    order.setShelfLife(BigDecimal.TEN);
-    order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] { BigDecimal.TEN.negate(), BigDecimal.TEN }));
+    order.setShelfLife(BigDecimal.ZERO);
+    order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] {BigDecimal.TEN.negate(), BigDecimal.TEN}));
 
+    container.flush();
+
+    // Patch order ... (test for OLINGO-353)
+    order.setShelfLife(BigDecimal.TEN);
     container.flush();
 
     Order actual = container.getOrders().get(105);
@@ -112,6 +117,7 @@ public abstract class AbstractTestITCase {
     assertEquals(BigDecimal.TEN, actual.getShelfLife());
     assertEquals(2, actual.getOrderShelfLifes().size());
 
+    // Delete order ...
     container.getOrders().delete(105);
     actual = container.getOrders().get(105);
     assertNull(actual);

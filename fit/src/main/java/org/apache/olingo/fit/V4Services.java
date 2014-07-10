@@ -371,7 +371,7 @@ public class V4Services extends AbstractServices {
     return StringUtils.isBlank(filter) && StringUtils.isBlank(search)
         ? NumberUtils.isNumber(type)
             ? super.getEntityInternal(
-                uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null, true)
+                uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null)
             : super.getEntitySet(accept, "People", type)
         : super.getEntitySet(uriInfo, accept, "People", top, skip, format, count, filter, orderby, skiptoken);
   }
@@ -384,7 +384,7 @@ public class V4Services extends AbstractServices {
       @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
-        uriInfo.getRequestUri().toASCIIString(), accept, "Boss", StringUtils.EMPTY, format, null, null, false);
+        uriInfo.getRequestUri().toASCIIString(), accept, "Boss", StringUtils.EMPTY, format, null, null);
   }
 
   @GET
@@ -395,7 +395,7 @@ public class V4Services extends AbstractServices {
       @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
-        uriInfo.getRequestUri().toASCIIString(), accept, "Company", StringUtils.EMPTY, format, null, null, false);
+        uriInfo.getRequestUri().toASCIIString(), accept, "Company", StringUtils.EMPTY, format, null, null);
   }
 
   @PATCH
@@ -626,7 +626,7 @@ public class V4Services extends AbstractServices {
       assert entry.getProperty("index") != null;
 
       return getEntityInternal(
-          uriInfo.getRequestUri().toASCIIString(), accept, "Customers", personId, format, null, null, false);
+          uriInfo.getRequestUri().toASCIIString(), accept, "Customers", personId, format, null, null);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -642,7 +642,7 @@ public class V4Services extends AbstractServices {
       @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
-        uriInfo.getRequestUri().toASCIIString(), accept, "Products", productId, format, null, null, false);
+        uriInfo.getRequestUri().toASCIIString(), accept, "Products", productId, format, null, null);
   }
 
   @POST
@@ -767,7 +767,7 @@ public class V4Services extends AbstractServices {
 
     final Response response =
         getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-            accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
+            accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY);
     return response.getStatus() >= 400
         ? postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
         : super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
@@ -785,7 +785,7 @@ public class V4Services extends AbstractServices {
 
     try {
       getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-          accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
+          accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY);
       return super.replaceEntity(uriInfo, accept, contentType, prefer, entitySetName, entityId, entity);
     } catch (NotFoundException e) {
       return postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entityId);
@@ -1117,7 +1117,7 @@ public class V4Services extends AbstractServices {
       @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
-        uriInfo.getRequestUri().toASCIIString(), accept, "Customers", "1", format, null, null, false);
+        uriInfo.getRequestUri().toASCIIString(), accept, "Customers", "1", format, null, null);
   }
 
   @GET
@@ -1128,7 +1128,7 @@ public class V4Services extends AbstractServices {
       @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
-        uriInfo.getRequestUri().toASCIIString(), accept, "Customers", "1", format, null, null, false);
+        uriInfo.getRequestUri().toASCIIString(), accept, "Customers", "1", format, null, null);
   }
 
   @GET

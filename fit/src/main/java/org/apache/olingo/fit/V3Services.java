@@ -213,7 +213,7 @@ public class V3Services extends AbstractServices {
   }
 
   @GET
-  @Path("/Car/{type:.*}")
+  @Path("/Car/{type:[a-zA-Z].*}")
   public Response filterCar(
       @Context final UriInfo uriInfo,
       @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
@@ -239,7 +239,7 @@ public class V3Services extends AbstractServices {
       @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) final String select) {
 
     return super.getEntityInternal(uriInfo.getRequestUri().toASCIIString(), accept,
-        "Login", StringUtils.remove(entityId, "'"), format, expand, select, false);
+        "Login", StringUtils.remove(entityId, "'"), format, expand, select);
   }
 
   @POST

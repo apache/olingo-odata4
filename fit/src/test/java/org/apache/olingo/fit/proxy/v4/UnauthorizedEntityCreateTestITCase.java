@@ -44,7 +44,7 @@ public class UnauthorizedEntityCreateTestITCase extends AbstractTestITCase {
 
   @Test(expected = HttpClientException.class)
   public void unauthorizedCreate() {
-    createAndDeleteOrder(getContainer(), getContainerFactory());
+    createPatchAndDeleteOrder(getContainer(), getContainerFactory());
   }
 
   protected InMemoryEntities getContainer() {
