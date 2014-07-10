@@ -19,10 +19,10 @@
 package org.apache.olingo.server.core.serializer.json;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.server.api.serializer.ODataError;
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.domain.ODataErrorDetail;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -35,7 +35,7 @@ public class ODataErrorSerializer {
   private static final String TARGET = "target";
   private static final String DETAILS = "details";
 
-  public void writeErrorDocument(JsonGenerator json, ODataError error, List<ODataError> details) throws IOException {
+  public void writeErrorDocument(JsonGenerator json, ODataError error) throws IOException {
     if (error == null) {
       throw new ODataRuntimeException("ODataError object MUST NOT be null!");
     }
@@ -43,13 +43,13 @@ public class ODataErrorSerializer {
     json.writeFieldName(ERROR);
 
     json.writeStartObject();
-    writeODataError(json, error);
-    
-    if(details != null){
+    writeODataError(json, error.getCode(), error.getMessage(), error.getTarget());
+
+    if (error.getDetails() != null) {
       json.writeArrayFieldStart(DETAILS);
-      for(ODataError detailedError : details){
+      for (ODataErrorDetail detail : error.getDetails()) {
         json.writeStartObject();
-        writeODataError(json, detailedError);
+        writeODataError(json, detail.getCode(), detail.getMessage(), detail.getTarget());
         json.writeEndObject();
       }
       json.writeEndArray();
@@ -59,20 +59,21 @@ public class ODataErrorSerializer {
     json.writeEndObject();
   }
 
-  private void writeODataError(JsonGenerator json, ODataError error) throws IOException, JsonGenerationException {
-    if (error.getCode() == null) {
+  private void writeODataError(JsonGenerator json, String code, String message, String target) throws IOException,
+      JsonGenerationException {
+    if (code == null) {
       json.writeNullField(CODE);
     } else {
-      json.writeStringField(CODE, error.getCode());
+      json.writeStringField(CODE, code);
     }
-    if (error.getMessage() == null) {
+    if (message == null) {
       json.writeNullField(MESSAGE);
     } else {
-      json.writeStringField(MESSAGE, error.getMessage());
+      json.writeStringField(MESSAGE, message);
     }
 
-    if (error.getTarget() != null) {
-      json.writeStringField(TARGET, error.getTarget());
+    if (target != null) {
+      json.writeStringField(TARGET, target);
     }
   }
 }

@@ -18,25 +18,37 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.data.*;
-import org.apache.olingo.commons.api.edm.*;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.server.api.serializer.ODataError;
-import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.List;
+
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.LinkedComplexValue;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.server.api.serializer.ODataSerializer;
+import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 public class ODataJsonSerializer implements ODataSerializer {
 
@@ -265,12 +277,12 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   @Override
-  public InputStream error(ODataError error, List<ODataError> details) {
+  public InputStream error(ODataError error) {
     CircleStreamBuffer buffer = new CircleStreamBuffer();
     try {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       ODataErrorSerializer ser = new ODataErrorSerializer();
-      ser.writeErrorDocument(json, error, details);
+      ser.writeErrorDocument(json, error);
       json.close();
     } catch (final IOException e) {
       throw new ODataRuntimeException(e);

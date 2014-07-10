@@ -23,26 +23,51 @@ package org.apache.olingo.commons.api.domain;
  * {"code": "301","target": "$search" ,"message": "$search query option not supported"}
  * ],...}}</tt>.
  */
-public interface ODataErrorDetail {
+public class ODataErrorDetail {
+
+  private String code;
+  private String message;
+  private String target;
 
   /**
    * Gets error code.
    * 
    * @return error code.
    */
-  String getCode();
+  public String getCode() {
+    return code;
+  }
+
+  public ODataErrorDetail setCode(final String code) {
+    this.code = code;
+    return this;
+  }
 
   /**
    * Gets error message.
    * 
    * @return error message.
    */
-  String getMessage();
+  public String getMessage() {
+    return message;
+  }
+
+  public ODataErrorDetail setMessage(final String message) {
+    this.message = message;
+    return this;
+  }
 
   /**
    * Gets error target.
    * 
    * @return error message.
    */
-  String getTarget();
+  public String getTarget() {
+    return target;
+  }
+
+  public ODataErrorDetail setTarget(final String target) {
+    this.target = target;
+    return this;
+  }
 }

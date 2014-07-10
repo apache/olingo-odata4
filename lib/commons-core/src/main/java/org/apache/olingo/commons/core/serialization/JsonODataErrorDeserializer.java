@@ -20,6 +20,7 @@ package org.apache.olingo.commons.core.serialization;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,7 +28,6 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataErrorDetail;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.data.ODataErrorImpl;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -41,7 +41,7 @@ public class JsonODataErrorDeserializer extends JsonDeserializer {
 
   protected ODataError doDeserialize(final JsonParser parser) throws IOException {
 
-    final ODataErrorImpl error = new ODataErrorImpl();
+    final ODataError error = new ODataError();
 
     final ObjectNode tree = parser.getCodec().readTree(parser);
     if (tree.has(jsonError)) {
@@ -73,12 +73,14 @@ public class JsonODataErrorDeserializer extends JsonDeserializer {
         error.setDetails(details);
       }
       if (errorNode.hasNonNull(Constants.ERROR_INNERERROR)) {
+        HashMap<String, String> innerErrorMap = new HashMap<String, String>();
         final JsonNode innerError = errorNode.get(Constants.ERROR_INNERERROR);
         for (final Iterator<String> itor = innerError.fieldNames(); itor.hasNext();) {
           final String keyTmp = itor.next();
           final String val = innerError.get(keyTmp).toString();
-          error.getInnerError().put(keyTmp, val);
+          innerErrorMap.put(keyTmp, val);
         }
+        error.setInnerError(innerErrorMap);
       }
     }
 
