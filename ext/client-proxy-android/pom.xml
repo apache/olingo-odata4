@@ -62,16 +62,12 @@
                 <include>org.apache.olingo:olingo-client-core-android</include>
                 <include>org.apache.olingo:olingo-client-core</include>
                 <include>org.apache.olingo:olingo-client-api</include>
+                <include>org.apache.olingo:olingo-commons-core</include>
                 <include>org.apache.olingo:olingo-commons-api</include>
                 <include>org.apache.commons:commons-lang3</include>
                 <include>org.slf4j:slf4j-api</include>
                 <include>commons-io:commons-io</include>
-                <include>commons-beanutils:commons-beanutils</include>
-                <include>org.apache.httpcomponents:httpclient</include>
                 <include>org.apache.httpcomponents:httpcore</include>
-                <include>commons-logging:commons-logging</include>
-                <include>org.apache.olingo:olingo-commons-core</include>
-                <include>commons-codec:commons-codec</include>
                 <include>com.fasterxml.jackson.core:jackson-core</include>
                 <include>com.fasterxml.jackson.core:jackson-databind</include>
                 <include>com.fasterxml.jackson.core:jackson-annotations</include>
