@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.core.uri.validator;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -29,9 +28,9 @@ import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
+import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class UriValidatorTest {
@@ -66,7 +65,7 @@ public class UriValidatorTest {
   private static final String QO_FORMAT = "$format=bla";
   private static final String QO_EXPAND = "$expand=*";
   private static final String QO_ID = "$id=Products(0)";
-  private static final String QO_COUNT = "$count";
+  private static final String QO_COUNT = "$count=true";
   private static final String QO_ORDERBY = "$orderby=true";
 //  private static final String QO_SEARCH = "$search='bla'";
   private static final String QO_SELECT = "$select=*";
@@ -293,11 +292,25 @@ public class UriValidatorTest {
     }
   }
 
-  @Test(expected = UriValidationException.class)
-  @Ignore("uri parser doen't support orderby yet")
+  @Test(expected = UriParserSemanticException.class)
   public void validateOrderByInvalid() throws Exception {
-    String uri = "/ESAllPrim(1)?$orderBy=XXXX";
+    String uri = "/ESAllPrim(1)?$orderby=XXXX";
     parseAndValidate(uri, HttpMethod.GET);
+  }
+
+  @Test(expected = UriParserSemanticException.class)
+  public void validateCountInvalid() throws Exception {
+    parseAndValidate("ESAllPrim?$count=foo", HttpMethod.GET);
+  }
+
+  @Test(expected = UriParserSemanticException.class)
+  public void validateTopInvalid() throws Exception {
+    parseAndValidate("ESAllPrim?$top=foo", HttpMethod.GET);
+  }
+
+  @Test(expected = UriParserSemanticException.class)
+  public void validateSkipInvalid() throws Exception {
+    parseAndValidate("ESAllPrim?$skip=foo", HttpMethod.GET);
   }
 
   @Test(expected = UriValidationException.class)
@@ -325,8 +338,10 @@ public class UriValidatorTest {
     for (String uri : uris) {
       try {
         parseAndValidate(uri, HttpMethod.GET);
-      } catch (Exception e) {
-        throw new Exception("Faild for uri: " + uri, e);
+      } catch (final UriParserException e) {
+        fail("Failed for uri: " + uri);
+      } catch (final UriValidationException e) {
+        fail("Failed for uri: " + uri);
       }
     }
   }
@@ -339,8 +354,8 @@ public class UriValidatorTest {
       try {
         parseAndValidate(uri, HttpMethod.GET);
         fail("Validation Exception not thrown: " + uri);
+      } catch (UriParserSemanticException e) {
       } catch (UriValidationException e) {
-        assertTrue(e instanceof UriValidationException);
       }
     }
   }
@@ -363,12 +378,10 @@ public class UriValidatorTest {
     return uris.toArray(new String[0]);
   }
 
-  private void parseAndValidate(final String uri, final HttpMethod method) throws UriParserException,
-      UriValidationException {
+  private void parseAndValidate(final String uri, final HttpMethod method)
+      throws UriParserException, UriValidationException {
     UriInfo uriInfo = parser.parseUri(uri.trim(), edm);
-    UriValidator validator = new UriValidator();
-
-    validator.validate(uriInfo, method);
+    new UriValidator().validate(uriInfo, method);
   }
 
 }

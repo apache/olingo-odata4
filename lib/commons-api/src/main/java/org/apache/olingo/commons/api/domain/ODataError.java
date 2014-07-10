@@ -24,40 +24,109 @@ import java.util.Map;
 /**
  * OData error.
  */
-public interface ODataError {
+public class ODataError {
+
+  private String code;
+  private String message;
+  private String target;
+  private List<ODataErrorDetail> details;
+  private Map<String, String> innerError;
 
   /**
-   * Gets error code.
-   * 
-   * @return error code.
+   * The value for the code name/value pair is a language-independent string. Its value is a service-defined error code.
+   * This code serves as a sub-status for the HTTP error code specified in the response. MAY be null.
+   * @return the error code as a string
    */
-  String getCode();
+  public String getCode() {
+    return code;
+  }
 
   /**
-   * Gets error message.
-   * 
-   * @return error message.
+   * The value for the code name/value pair is a language-independent string. Its value is a service-defined error code.
+   * This code serves as a sub-status for the HTTP error code specified in the response. MAY be null.
+   * @param code
+   * @return this for method chaining
    */
-  String getMessage();
+  public ODataError setCode(String code) {
+    this.code = code;
+    return this;
+  }
 
   /**
-   * Gets error target.
-   * 
-   * @return error message.
+   * The value for the message name/value pair MUST be a human-readable, language-dependent representation of the error.
+   * MUST not be null
+   * @return the message string
    */
-  String getTarget();
+  public String getMessage() {
+    return message;
+  }
+
+  /**
+   * The value for the message name/value pair MUST be a human-readable, language-dependent representation of the error.
+   * MUST not be null
+   * @param message
+   * @return this for method chaining
+   */
+  public ODataError setMessage(String message) {
+    this.message = message;
+    return this;
+  }
+
+  /**
+   * The value for the target name/value pair is the target of the particular error (for example, the name of the
+   * property in error). MAY be null.
+   * @return the target string
+   */
+  public String getTarget() {
+    return target;
+  }
+
+  /**
+   * The value for the target name/value pair is the target of the particular error (for example, the name of the
+   * property in error). MAY be null.
+   * @param target
+   * @return this for method chaining
+   */
+  public ODataError setTarget(String target) {
+    this.target = target;
+    return this;
+  }
 
   /**
    * Gets error details.
    * 
    * @return ODataErrorDetail list.
    */
-  List<ODataErrorDetail> getDetails();
+  public List<ODataErrorDetail> getDetails() {
+    return details;
+  }
+
+  /**
+   * Sets error details.
+   * 
+   * @return this for method chaining.
+   */
+  public ODataError setDetails(List<ODataErrorDetail> details) {
+    this.details = details;
+    return this;
+  }
 
   /**
    * Gets server defined key-value pairs for debug environment only.
    * 
-   * @return a pair representing server defined object.
+   * @return a pair representing server defined object. MAY be null.
    */
-  Map<String, String> getInnerError();
+  public Map<String, String> getInnerError() {
+    return innerError;
+  }
+
+  /**
+   * Sets server defined key-value pairs for debug environment only.
+   * 
+   * @return this for method chaining.
+   */
+  public ODataError setInnerError(Map<String, String> innerError) {
+    this.innerError = innerError;
+    return this;
+  }
 }

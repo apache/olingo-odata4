@@ -35,7 +35,6 @@ import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
-import org.apache.olingo.server.core.uri.UriResourceImpl;
 import org.apache.olingo.server.core.uri.antlr.UriLexer;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.AllEOFContext;
@@ -72,8 +71,7 @@ public class Parser {
     return this;
   }
 
-  public UriInfo parseUri(final String input, final Edm edm)
-      throws UriParserException {
+  public UriInfo parseUri(final String input, final Edm edm) throws UriParserException {
 
     boolean readQueryParameter = false;
     boolean readFragment = false;
@@ -148,7 +146,7 @@ public class Parser {
         if (lastSegment instanceof UriResourcePartTyped) {
           UriResourcePartTyped typed = (UriResourcePartTyped) lastSegment;
 
-          UriParseTreeVisitor.TypeInformation myType = uriParseTreeVisitor.getTypeInformation((UriResourceImpl) typed);
+          UriParseTreeVisitor.TypeInformation myType = uriParseTreeVisitor.getTypeInformation(typed);
           UriParseTreeVisitor.TypeInformation typeInfo =
               uriParseTreeVisitor.new TypeInformation(myType.type, typed.isCollection());
           context.contextTypes.push(typeInfo);
@@ -220,7 +218,11 @@ public class Parser {
             SkipOptionImpl inlineCountOption = new SkipOptionImpl();
             inlineCountOption.setName(option.name);
             inlineCountOption.setText(option.value);
-            inlineCountOption.setValue(Integer.parseInt(option.value));
+            try {
+              inlineCountOption.setValue(Integer.parseInt(option.value));
+            } catch (final NumberFormatException e) {
+              throw new UriParserSemanticException("Illegal value of $skip option!", e);
+            }
             context.contextUriInfo.setSystemQueryOption(inlineCountOption);
           } else if (option.name.equals("$skiptoken")) {
             SkipTokenOptionImpl inlineCountOption = new SkipTokenOptionImpl();
@@ -232,14 +234,22 @@ public class Parser {
             TopOptionImpl inlineCountOption = new TopOptionImpl();
             inlineCountOption.setName(option.name);
             inlineCountOption.setText(option.value);
-            inlineCountOption.setValue(Integer.parseInt(option.value));
+            try {
+              inlineCountOption.setValue(Integer.parseInt(option.value));
+            } catch (final NumberFormatException e) {
+              throw new UriParserSemanticException("Illegal value of $top option!", e);
+            }
             context.contextUriInfo.setSystemQueryOption(inlineCountOption);
           } else if (option.name.equals("$count")) {
             // todo create CountOption
             CountOptionImpl inlineCountOption = new CountOptionImpl();
             inlineCountOption.setName(option.name);
             inlineCountOption.setText(option.value);
-            inlineCountOption.setValue(option.value.equals("true") ? true : false);
+            if (option.value.equals("true") || option.value.equals("false")) {
+              inlineCountOption.setValue(Boolean.parseBoolean(option.value));
+            } else {
+              throw new UriParserSemanticException("Illegal value of $count option!");
+            }
             context.contextUriInfo.setSystemQueryOption(inlineCountOption);
           }
         }

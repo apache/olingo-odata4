@@ -100,8 +100,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
    * Constructor.
    */
   public AbstractODataResponse() {
-    this.client = null;
-    this.res = null;
+    this(null, null);
   }
 
   /**
@@ -113,7 +112,9 @@ public abstract class AbstractODataResponse implements ODataResponse {
   public AbstractODataResponse(final HttpClient client, final HttpResponse res) {
     this.client = client;
     this.res = res;
-    initFromHttpResponse(res);
+    if (res != null) {
+      initFromHttpResponse(res);
+    }
   }
 
   /**
@@ -205,7 +206,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
     statusCode = res.getStatusLine().getStatusCode();
     statusMessage = res.getStatusLine().getReasonPhrase();
 
-    this.hasBeenInitialized = true;
+    hasBeenInitialized = true;
     return this;
   }
 

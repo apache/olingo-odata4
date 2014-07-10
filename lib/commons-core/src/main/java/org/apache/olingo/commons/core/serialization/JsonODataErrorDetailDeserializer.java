@@ -25,7 +25,6 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataErrorDetail;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.data.ODataErrorDetailImpl;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,7 +37,7 @@ public class JsonODataErrorDetailDeserializer extends JsonDeserializer {
 
   protected ResWrap<ODataErrorDetail> doDeserialize(final JsonParser parser) throws IOException {
 
-    final ODataErrorDetailImpl error = new ODataErrorDetailImpl();
+    final ODataErrorDetail error = new ODataErrorDetail();
     final JsonNode errorNode = parser.getCodec().readTree(parser);
     if (errorNode.has(Constants.ERROR_CODE)) {
       error.setCode(errorNode.get(Constants.ERROR_CODE).textValue());

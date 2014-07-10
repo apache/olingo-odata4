@@ -33,6 +33,7 @@ import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
+import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
@@ -68,11 +69,6 @@ public class TestUriParserImpl {
     testUri = new TestUriValidator().setEdm(edm);
     testRes = new ResourceValidator().setEdm(edm);
     testFilter = new FilterValidator().setEdm(edm);
-  }
-
-  @Test
-  public void test() throws UriParserException, UnsupportedEncodingException {
-
   }
 
   @Test
@@ -224,7 +220,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void runCrossJoin() {
+  public void runCrossJoin() throws Exception {
     testUri.run("$crossjoin(ESAllKey)")
         .isKind(UriInfoKind.crossjoin)
         .isCrossJoinEntityList(Arrays.asList("ESAllKey"));
@@ -234,16 +230,16 @@ public class TestUriParserImpl {
         .isCrossJoinEntityList(Arrays.asList("ESAllKey", "ESTwoPrim"));
   }
 
-  @Test(expected = Exception.class)
-  public void testEntityFailOnValidation1() {
+  @Test(expected = UriValidationException.class)
+  public void testEntityFailOnValidation1() throws Exception {
     // simple entity set; with qualifiedentityTypeName; with filter
     testUri.run("$entity/com.sap.odata.test1.ETTwoPrim?$filter=PropertyInt16 eq 123&$id=ESAllKey")
         .isIdText("ESAllKey")
         .goFilter().is("<<PropertyInt16> eq <123>>");
   }
 
-  @Test(expected = Exception.class)
-  public void testEntityFailOnValidation2() {
+  @Test(expected = UriValidationException.class)
+  public void testEntityFailOnValidation2() throws Exception {
     // simple entity set; with qualifiedentityTypeName; with 2xformat(before and after), expand, filter
     testUri.run("$entity/com.sap.odata.test1.ETTwoPrim?"
         + "$format=xml&$expand=*&abc=123&$id=ESBase&xyz=987&$filter=PropertyInt16 eq 123&$format=atom&$select=*")
@@ -255,7 +251,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testEntity() {
+  public void testEntity() throws Exception {
 
     // simple entity set
     testUri.run("$entity?$id=ESAllPrim").isKind(UriInfoKind.entityId)
@@ -703,7 +699,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testMetaData() {
+  public void testMetaData() throws Exception {
 
     // Parsing the fragment may be used if a uri has to be parsed on the consumer side.
     // On the producer side this feature is currently not supported, so the context fragment
@@ -866,7 +862,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testRef() {
+  public void testRef() throws Exception {
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne/$ref");
   }
 
@@ -989,12 +985,12 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testValue() {
+  public void testValue() throws Exception {
     testUri.run("ESAllPrim(1)/PropertyString/$value");
   }
 
-  @Test(expected = Exception.class)
-  public void testMemberStartingWithCastFailOnValidation1() {
+  @Test(expected = UriValidationException.class)
+  public void testMemberStartingWithCastFailOnValidation1() throws Exception {
     // on EntityType entry
     testUri.run("ESTwoKeyNav(ParameterInt16=1,PropertyString='ABC')?"
         + "$filter=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate")
@@ -1007,8 +1003,8 @@ public class TestUriParserImpl {
         .at(0).isType(PropertyProvider.nameDate);
   }
 
-  @Test(expected = Exception.class)
-  public void testMemberStartingWithCastFailOnValidation2() {
+  @Test(expected = UriValidationException.class)
+  public void testMemberStartingWithCastFailOnValidation2() throws Exception {
     testUri.run("FICRTCTTwoPrimParam(ParameterInt16=1,ParameterString='2')?"
         + "$filter=com.sap.odata.test1.CTBase/AdditionalPropString")
         .goFilter().root().isMember()
@@ -1021,7 +1017,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testMemberStartingWithCast() {
+  public void testMemberStartingWithCast() throws Exception {
 
     // on EntityType collection
     testUri.run("ESTwoKeyNav?$filter=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate")
@@ -1047,12 +1043,12 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testComplexTypeCastFollowingAsCollection() {
+  public void testComplexTypeCastFollowingAsCollection() throws Exception {
     testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')/com.sap.odata.test1.CTBase");
   }
 
   @Test
-  public void testLambda() {
+  public void testLambda() throws Exception {
     testUri.run("ESTwoKeyNav?$filter=CollPropertyComp/all( l : true )")
         .goFilter().is("<CollPropertyComp/<ALL;<true>>>");
 
@@ -1070,7 +1066,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testCustomQueryOption() {
+  public void testCustomQueryOption() throws Exception {
     testUri.run("ESTwoKeyNav?custom")
         .isCustomParameter(0, "custom", "");
     testUri.run("ESTwoKeyNav?custom=ABC")
@@ -1092,7 +1088,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testSelect() {
+  public void testSelect() throws Exception {
     testUri.run("ESTwoKeyNav?$select=*")
         .isSelectItemStar(0);
 
