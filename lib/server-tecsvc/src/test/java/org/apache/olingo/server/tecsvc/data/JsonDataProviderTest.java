@@ -35,6 +35,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
@@ -184,15 +185,11 @@ public class JsonDataProviderTest {
     EntitySet outSet = jdp.readAll(entitySet);
 
 
-    ODataJsonSerializer serializer = new ODataJsonSerializer();
+    ODataJsonSerializer serializer = new ODataJsonSerializer(ODataFormat.JSON);
     ContextURL contextUrl = null;
     InputStream is = serializer.entitySet(entitySet, outSet, contextUrl);
 
     StringHelper.Stream stream = StringHelper.toStream(is);
-
-//    System.out.println("========== " + entitySet.getName() + " =================");
-//    stream.print();
-//    System.out.println("\n========== " + entitySet.getName() + " =================");
 
     Assert.assertEquals(expectedLength, stream.asString().length());
   }

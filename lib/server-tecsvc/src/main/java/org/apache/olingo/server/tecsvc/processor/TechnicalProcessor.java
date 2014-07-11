@@ -66,7 +66,7 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
       response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
       return;
     }
-    ODataSerializer serializer = odata.createSerializer(ODataFormat.JSON);
+    ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
     try {
       final EntitySet entitySet = readEntitySetInternal(edmEntitySet, request.getRawBaseUri());
@@ -90,7 +90,7 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
       response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
       return;
     }
-    ODataSerializer serializer = odata.createSerializer(ODataFormat.JSON);
+    ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
     try {
       final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);

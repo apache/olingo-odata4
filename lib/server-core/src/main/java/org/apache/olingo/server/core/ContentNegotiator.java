@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.AcceptType;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.processor.CustomContentTypeSupportProcessor;
@@ -33,8 +35,6 @@ import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.dataformat.xml.util.TypeUtil;
 
 public class ContentNegotiator {
 
@@ -49,9 +49,8 @@ public class ContentNegotiator {
     if (processorClass == MetadataProcessor.class) {
       defaults.add(new FormatContentTypeMapping("xml", ContentType.APPLICATION_XML.toContentTypeString()));
     } else {
-//      defaults.add(new FormatContentTypeMapping("json", ContentType.APPLICATION_JSON.toContentTypeString()));
-      defaults.add(new FormatContentTypeMapping("json", ContentType.APPLICATION_JSON.toContentTypeString()
-          + ";odata.metadata=minimal"));
+      defaults.add(new FormatContentTypeMapping("json",
+          ODataFormat.JSON.getContentType(ODataServiceVersion.V40).toContentTypeString()));
     }
 
     return defaults;
@@ -84,7 +83,7 @@ public class ContentNegotiator {
     if (formatOption != null) {
 
       if ("json".equalsIgnoreCase(formatOption.getText().trim())) {
-        requestedContentType = ContentType.create(ContentType.APPLICATION_JSON, "odata.metadata=minimal");
+        requestedContentType = ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
         for (FormatContentTypeMapping entry : supportedContentTypes) {
           if (requestedContentType.isCompatible(ContentType.create(entry.getContentType().trim()))) {
             supported = true;
@@ -136,7 +135,7 @@ public class ContentNegotiator {
       }
 
       if (requestedContentType == null) {
-        throw new RuntimeException("unsupported accept content type: " + acceptedContentTypes + " != "
+        throw new ODataRuntimeException("unsupported accept content type: " + acceptedContentTypes + " != "
             + supportedContentTypes);
       }
     } else {
@@ -144,7 +143,7 @@ public class ContentNegotiator {
       if (processorClass == MetadataProcessor.class) {
         requestedContentType = ContentType.APPLICATION_XML;
       } else {
-        requestedContentType = ContentType.create(ContentType.APPLICATION_JSON, "odata.metadata=minimal");
+        requestedContentType = ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
       }
 
       for (FormatContentTypeMapping entry : supportedContentTypes) {
@@ -156,7 +155,7 @@ public class ContentNegotiator {
     }
 
     if (!supported) {
-      throw new RuntimeException("unsupported accept content type: " + requestedContentType + " != "
+      throw new ODataRuntimeException("unsupported accept content type: " + requestedContentType + " != "
           + supportedContentTypes);
     }
 
