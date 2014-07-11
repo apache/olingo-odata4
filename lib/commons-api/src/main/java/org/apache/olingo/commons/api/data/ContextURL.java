@@ -72,8 +72,8 @@ public class ContextURL {
     instance.deltaLink = contextURLasString.endsWith("/$link");
     contextURLasString = contextURLasString.replace("/$link", StringUtils.EMPTY);
 
-    instance.deltaDeletedLink = contextURLasString.endsWith("$deletedLink");
-    contextURLasString = contextURLasString.replace("$deletedLink", StringUtils.EMPTY);
+    instance.deltaDeletedLink = contextURLasString.endsWith("/$deletedLink");
+    contextURLasString = contextURLasString.replace("/$deletedLink", StringUtils.EMPTY);
 
     instance.serviceRoot = URI.create(StringUtils.substringBefore(contextURLasString, Constants.METADATA));
 
@@ -109,7 +109,7 @@ public class ContextURL {
 
     if (!firstToken.equals(rest)) {
       final String[] pathElems = StringUtils.substringAfter(rest, "/").split("/");
-      if (pathElems.length > 0) {
+      if (pathElems.length > 0 && pathElems[0].length() > 0) {
         if (pathElems[0].indexOf('.') == -1) {
           instance.navOrPropertyPath = pathElems[0];
         } else {
