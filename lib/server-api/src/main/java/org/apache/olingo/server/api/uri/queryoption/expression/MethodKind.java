@@ -74,7 +74,7 @@ public enum MethodKind {
 
   /**
    * URI syntax to enumeration value
-   * @param Syntax used in the URI
+   * @param method  Method in the syntax used in the URI
    * @return Method kind which represents the given syntax
    */
   public static MethodKind get(final String method) {

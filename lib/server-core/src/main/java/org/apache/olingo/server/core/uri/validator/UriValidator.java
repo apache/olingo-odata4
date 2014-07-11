@@ -265,7 +265,7 @@ public class UriValidator {
 
     switch (lastPathSegment.getKind()) {
     case count:
-      idx = rowIndexForCount(uriInfo, lastPathSegment);
+      idx = rowIndexForCount(uriInfo);
       break;
     case action:
       idx = rowIndexForAction(lastPathSegment);
@@ -502,8 +502,7 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndexForUriType rowIndexForCount(final UriInfo uriInfo, final UriResource lastPathSegment)
-      throws UriValidationException {
+  private RowIndexForUriType rowIndexForCount(final UriInfo uriInfo) throws UriValidationException {
 
     RowIndexForUriType idx;
     int secondLastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 2;

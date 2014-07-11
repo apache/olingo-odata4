@@ -22,13 +22,13 @@ package org.apache.olingo.server.api.uri.queryoption.expression;
  * Represents a binary expression node in the expression tree
  * <br>
  * A binary expression node is inserted in the expression tree for any valid
- * ODATA binary operator in {@link BinaryOperatorKind}
+ * ODATA binary operator in {@link BinaryOperatorKind}.
  */
 public interface Binary extends Expression {
 
   /**
    * @return binary operator kind
-   * @see {@link BinaryOperatorKind}
+   * @see BinaryOperatorKind
    */
   public BinaryOperatorKind getOperator();
 

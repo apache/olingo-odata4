@@ -28,7 +28,7 @@ public interface Unary extends Expression {
 
   /**
    * @return The used binary operator
-   * @see {@link UnaryOperatorKind}
+   * @see UnaryOperatorKind
    */
   public Expression getOperand();
 

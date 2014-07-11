@@ -24,9 +24,8 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.Unary;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.VisitableExression;
 
-public class UnaryImpl extends ExpressionImpl implements Unary, VisitableExression {
+public class UnaryImpl extends ExpressionImpl implements Unary {
 
   private UnaryOperatorKind operator;
   private ExpressionImpl expression;

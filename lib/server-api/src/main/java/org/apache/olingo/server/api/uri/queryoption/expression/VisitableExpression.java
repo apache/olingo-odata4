@@ -23,7 +23,7 @@ import org.apache.olingo.commons.api.ODataApplicationException;
 /**
  * Marks an expression node a visitable by an expression visitor
  */
-public interface VisitableExression {
+public interface VisitableExpression {
 
   /**
    * Method {@link #accept(ExpressionVisitor)} is called when traversing the expression tree. This method is invoked on

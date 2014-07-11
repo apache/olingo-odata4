@@ -636,7 +636,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     UriContext.LambdaVariables var = new UriContext.LambdaVariables();
     var.name = ctx.vLV.getText();
-    var.type = getTypeInformation((UriResourceImpl) obj).type;
+    var.type = getTypeInformation(obj).type;
     var.isCollection = false;
 
     all.setLamdaVariable(ctx.vLV.getText());
@@ -1169,7 +1169,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       } else {
         // use the type of the last ''expand'' path segement
         UriInfoImpl info = (UriInfoImpl) context.contextExpandItemPath.getResourcePath();
-        targetType = getTypeInformation((UriResourceImpl) info.getLastResourcePart()).type;
+        targetType = getTypeInformation(info.getLastResourcePart()).type;
         isColl = ((UriResourcePartTyped) info.getLastResourcePart()).isCollection();
       }
     }
@@ -1705,7 +1705,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     UriResourceRootImpl pathInfoRoot = new UriResourceRootImpl();
     pathInfoRoot.setCollection(lastType.isCollection());
-    pathInfoRoot.setType(getTypeInformation((UriResourceImpl) lastType).type);
+    pathInfoRoot.setType(getTypeInformation(lastType).type);
 
     UriInfoImpl uriInfoImplpath = new UriInfoImpl().setKind(UriInfoKind.resource);
     uriInfoImplpath.addResourcePart(pathInfoRoot);
@@ -1880,7 +1880,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         if (prevType instanceof EdmComplexType) {
           EdmComplexType ct = edm.getComplexType(fullName);
           if (ct != null) {
-            if ((ct.compatibleTo((EdmStructuredType) prevType))) {
+            if ((ct.compatibleTo(prevType))) {
               UriResourceStartingTypeFilterImpl resourcePart = new UriResourceStartingTypeFilterImpl();
               resourcePart.setCollectionTypeFilter(ct);
 
@@ -1899,7 +1899,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         } else if (prevType instanceof EdmEntityType) {
           EdmEntityType et = edm.getEntityType(fullName);
           if (et != null) {
-            if ((et.compatibleTo((EdmStructuredType) prevType))) {
+            if ((et.compatibleTo(prevType))) {
               UriResourceStartingTypeFilterImpl resourcePart = new UriResourceStartingTypeFilterImpl();
               resourcePart.setCollectionTypeFilter(et);
 
@@ -1925,12 +1925,12 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         if (!(last instanceof UriResourceTypedImpl)) {
           throw wrap(new UriParserSemanticException("prev segement typed"));
         }
-        EdmType prevType = getTypeInformation((UriResourceTypedImpl) last).type;
+        EdmType prevType = getTypeInformation(last).type;
 
         if (prevType instanceof EdmComplexType) {
           EdmComplexType ct = edm.getComplexType(fullName);
           if (ct != null) {
-            if ((ct.compatibleTo((EdmStructuredType) prevType))) {
+            if ((ct.compatibleTo(prevType))) {
               UriResourceStartingTypeFilterImpl resourcePart = new UriResourceStartingTypeFilterImpl();
               resourcePart.setCollectionTypeFilter(ct);
 
@@ -1966,7 +1966,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         if (!(last instanceof UriResourceTypedImpl)) {
           throw wrap(new UriParserSemanticException("prev segement typed"));
         }
-        prevType = getTypeInformation((UriResourceTypedImpl) last).type;
+        prevType = getTypeInformation(last).type;
       }
 
       FullQualifiedName finalTypeName = new FullQualifiedName(prevType.getNamespace(), prevType.getName());

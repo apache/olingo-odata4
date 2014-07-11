@@ -22,9 +22,8 @@ import org.apache.olingo.commons.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.LambdaRef;
-import org.apache.olingo.server.api.uri.queryoption.expression.VisitableExression;
 
-public class LambdaRefImpl extends ExpressionImpl implements LambdaRef, VisitableExression {
+public class LambdaRefImpl extends ExpressionImpl implements LambdaRef {
 
   private String variableText;
 

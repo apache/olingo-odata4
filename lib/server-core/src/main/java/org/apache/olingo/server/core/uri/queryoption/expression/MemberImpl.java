@@ -24,13 +24,12 @@ import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.Member;
-import org.apache.olingo.server.api.uri.queryoption.expression.VisitableExression;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
 import org.apache.olingo.server.core.uri.UriResourceImpl;
 import org.apache.olingo.server.core.uri.UriResourceTypedImpl;
 import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
 
-public class MemberImpl extends ExpressionImpl implements Member, VisitableExression {
+public class MemberImpl extends ExpressionImpl implements Member {
 
   private UriInfoResource path;
   private EdmType startTypeFilter;
