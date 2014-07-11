@@ -87,6 +87,7 @@
     <sl4j.version>1.7.7</sl4j.version>
 
     <log.directory>${project.build.directory}/log</log.directory>
+    <aalto-xml.version>0.9.9</aalto-xml.version>
 
     <cargo.servlet.port>9080</cargo.servlet.port>
     <cargo.tomcat.ajp.port>9889</cargo.tomcat.ajp.port>
@@ -162,7 +163,7 @@
       <dependency>
         <groupId>com.fasterxml</groupId>
         <artifactId>aalto-xml</artifactId>
-        <version>0.9.9</version>
+        <version>${aalto-xml.version}</version>
       </dependency>
 
       <dependency>
