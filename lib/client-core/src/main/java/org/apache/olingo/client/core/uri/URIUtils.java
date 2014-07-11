@@ -55,7 +55,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmBinary;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTime;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
@@ -65,7 +64,6 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmSingle;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmTime;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmTimeOfDay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,47 +211,26 @@ public final class URIUtils {
     return version.compareTo(ODataServiceVersion.V40) < 0
             ? prefix(version, EdmPrimitiveTypeKind.DateTime)
             + URLEncoder.encode(EdmDateTime.getInstance().
-            valueToString(timestamp, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-            Constants.UTF8)
+                    valueToString(timestamp, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
+                    Constants.UTF8)
             + suffix(version, EdmPrimitiveTypeKind.DateTime)
             : URLEncoder.encode(EdmDateTimeOffset.getInstance().
-            valueToString(timestamp, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-            Constants.UTF8);
+                    valueToString(timestamp, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
+                    Constants.UTF8);
   }
 
   private static String calendar(final ODataServiceVersion version, final Calendar calendar)
           throws UnsupportedEncodingException, EdmPrimitiveTypeException {
 
-    String result;
-    if (calendar.get(Calendar.ZONE_OFFSET) == 0) {
-      if (version.compareTo(ODataServiceVersion.V40) < 0) {
-        result = prefix(version, EdmPrimitiveTypeKind.DateTime)
-                + URLEncoder.encode(EdmDateTime.getInstance().
-                valueToString(calendar, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-                Constants.UTF8)
-                + suffix(version, EdmPrimitiveTypeKind.DateTime);
-      } else {
-        if (calendar.get(Calendar.YEAR) == 0 && calendar.get(Calendar.MONTH) == 0
-                && calendar.get(Calendar.DAY_OF_MONTH) == 0) {
-
-          result = URLEncoder.encode(EdmTimeOfDay.getInstance().
-                  valueToString(calendar, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-                  Constants.UTF8);
-        } else {
-          result = URLEncoder.encode(EdmDate.getInstance().
-                  valueToString(calendar, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-                  Constants.UTF8);
-        }
-      }
-    } else {
-      result = prefix(version, EdmPrimitiveTypeKind.DateTimeOffset)
-              + URLEncoder.encode(EdmDateTimeOffset.getInstance().
-              valueToString(calendar, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-              Constants.UTF8)
-              + suffix(version, EdmPrimitiveTypeKind.DateTimeOffset);
-    }
-
-    return result;
+    return version.compareTo(ODataServiceVersion.V40) < 0
+            ? prefix(version, EdmPrimitiveTypeKind.DateTime)
+            + URLEncoder.encode(EdmDateTime.getInstance().
+                    valueToString(calendar, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
+                    Constants.UTF8)
+            + suffix(version, EdmPrimitiveTypeKind.DateTime)
+            : URLEncoder.encode(EdmDateTimeOffset.getInstance().
+                    valueToString(calendar, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
+                    Constants.UTF8);
   }
 
   private static String duration(final ODataServiceVersion version, final Duration duration)
@@ -261,11 +238,11 @@ public final class URIUtils {
 
     return version.compareTo(ODataServiceVersion.V40) < 0
             ? EdmTime.getInstance().toUriLiteral(URLEncoder.encode(EdmTime.getInstance().
-            valueToString(duration, null, null,
-            Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null), Constants.UTF8))
+                            valueToString(duration, null, null,
+                                    Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null), Constants.UTF8))
             : EdmDuration.getInstance().toUriLiteral(URLEncoder.encode(EdmDuration.getInstance().
-            valueToString(duration, null, null,
-            Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null), Constants.UTF8));
+                            valueToString(duration, null, null,
+                                    Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null), Constants.UTF8));
   }
 
   private static String quoteString(final String string, final boolean singleQuoteEscape)
@@ -343,24 +320,24 @@ public final class URIUtils {
                 ? duration(version, (Duration) obj)
                 : (obj instanceof BigDecimal)
                 ? EdmDecimal.getInstance().valueToString(obj, null, null,
-                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
+                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
                 + suffix(version, EdmPrimitiveTypeKind.Decimal)
                 : (obj instanceof Double)
                 ? EdmDouble.getInstance().valueToString(obj, null, null,
-                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
+                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
                 + suffix(version, EdmPrimitiveTypeKind.Double)
                 : (obj instanceof Float)
                 ? EdmSingle.getInstance().valueToString(obj, null, null,
-                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
+                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
                 + suffix(version, EdmPrimitiveTypeKind.Single)
                 : (obj instanceof Long)
                 ? EdmInt64.getInstance().valueToString(obj, null, null,
-                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
+                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
                 + suffix(version, EdmPrimitiveTypeKind.Int64)
                 : (obj instanceof Geospatial)
                 ? URLEncoder.encode(EdmPrimitiveTypeFactory.getInstance(((Geospatial) obj).getEdmPrimitiveTypeKind()).
-                valueToString(obj, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-                Constants.UTF8)
+                        valueToString(obj, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
+                        Constants.UTF8)
                 : (obj instanceof String)
                 ? quoteString((String) obj, singleQuoteEscape)
                 : obj.toString();
