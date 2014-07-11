@@ -550,7 +550,7 @@
                 </goals>
                 <configuration>
                   <excludePackageNames>
-                    org.apache.olingo.commons.core:org.apache.olingo.commons.core.*:org.apache.olingo.client.core:org.apache.olingo.client.core.*:org.apache.olingo.server.core:org.apache.olingo.server.core.*
+                    org.apache.olingo.commons.core:org.apache.olingo.commons.core.*:org.apache.olingo.client.core:org.apache.olingo.client.core.*:org.apache.olingo.server.core:org.apache.olingo.server.core.*:org.apache.olingo.fit:org.apache.olingo.fit.*
                   </excludePackageNames>
                   <additionalJOptions>
                     <additionalJOption>-quiet</additionalJOption>
