@@ -27,7 +27,7 @@ public interface Method extends Expression {
 
   /**
    * @return The used method
-   * @see {@link MethodKind}
+   * @see MethodKind
    */
   public MethodKind getMethod();
 

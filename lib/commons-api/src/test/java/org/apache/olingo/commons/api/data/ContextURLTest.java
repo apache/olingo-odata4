@@ -205,14 +205,26 @@ public class ContextURLTest {
   public void delta() {
     ContextURL contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$delta"));
     assertTrue(contextURL.isDelta());
+    assertNull(contextURL.getSelectList());
+    assertNull(contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
 
     contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$deletedLink"));
     assertTrue(contextURL.isDeltaDeletedLink());
+    assertNull(contextURL.getSelectList());
+    assertNull(contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
 
     contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$link"));
     assertTrue(contextURL.isDeltaLink());
+    assertNull(contextURL.getSelectList());
+    assertNull(contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
 
     contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$deletedEntity"));
     assertTrue(contextURL.isDeltaDeletedEntity());
+    assertNull(contextURL.getSelectList());
+    assertNull(contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
   }
 }

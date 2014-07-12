@@ -23,9 +23,8 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.TypeLiteral;
-import org.apache.olingo.server.api.uri.queryoption.expression.VisitableExression;
 
-public class TypeLiteralImpl extends ExpressionImpl implements TypeLiteral, VisitableExression {
+public class TypeLiteralImpl extends ExpressionImpl implements TypeLiteral {
 
   private EdmType type;
 

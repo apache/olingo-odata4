@@ -36,7 +36,9 @@ public class ODataImpl extends OData {
     ODataSerializer serializer;
     switch (format) {
     case JSON:
-      serializer = new ODataJsonSerializer();
+    case JSON_NO_METADATA:
+    case JSON_FULL_METADATA:
+      serializer = new ODataJsonSerializer(format);
       break;
     case XML:
       serializer = new ODataXmlSerializerImpl();

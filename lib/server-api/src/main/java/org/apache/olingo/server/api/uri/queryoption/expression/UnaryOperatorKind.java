@@ -54,7 +54,7 @@ public enum UnaryOperatorKind {
 
   /**
    * URI syntax to enumeration value
-   * @param Syntax used in the URI
+   * @param operator Operator in the syntax used in the URI
    * @return Operator kind which represents the given syntax
    */
   public static UnaryOperatorKind get(final String operator) {

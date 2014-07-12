@@ -27,9 +27,8 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.Method;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.VisitableExression;
 
-public class MethodImpl extends ExpressionImpl implements Method, VisitableExression {
+public class MethodImpl extends ExpressionImpl implements Method {
 
   private MethodKind method;
   private List<ExpressionImpl> parameters = new ArrayList<ExpressionImpl>();
