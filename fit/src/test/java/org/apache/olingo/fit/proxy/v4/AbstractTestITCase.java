@@ -21,9 +21,11 @@ package org.apache.olingo.fit.proxy.v4;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -83,7 +85,7 @@ public abstract class AbstractTestITCase {
   }
 
   protected Customer readCustomer(final InMemoryEntities container, final int id) {
-    final Customer customer = container.getCustomers().get(id);
+    final Customer customer = container.getCustomers().get(id).load();
     assertNotNull(customer);
     assertEquals(id, customer.getPersonID(), 0);
 
@@ -100,7 +102,7 @@ public abstract class AbstractTestITCase {
     final Calendar orderDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     orderDate.clear();
     orderDate.set(2011, 3, 4, 16, 3, 57);
-    order.setOrderDate(orderDate);
+    order.setOrderDate(new Timestamp(orderDate.getTimeInMillis()));
 
     order.setShelfLife(BigDecimal.ZERO);
     order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] {BigDecimal.TEN.negate(), BigDecimal.TEN}));
@@ -111,9 +113,9 @@ public abstract class AbstractTestITCase {
     order.setShelfLife(BigDecimal.TEN);
     container.flush();
 
-    Order actual = container.getOrders().get(105);
+    Order actual = container.getOrders().get(105).load();
     assertEquals(105, actual.getOrderID(), 0);
-    assertEquals(orderDate.getTimeInMillis(), actual.getOrderDate().getTimeInMillis());
+    assertEquals(orderDate.getTimeInMillis(), actual.getOrderDate().getTime());
     assertEquals(BigDecimal.TEN, actual.getShelfLife());
     assertEquals(2, actual.getOrderShelfLifes().size());
 
@@ -133,7 +135,10 @@ public abstract class AbstractTestITCase {
     container.flush();
 
     containerFactory.getContext().detachAll();
-    actual = container.getOrders().get(105);
-    assertNull(actual);
+    try {
+      container.getOrders().get(105).load();
+      fail();
+    } catch (IllegalArgumentException e) {
+    }
   }
 }

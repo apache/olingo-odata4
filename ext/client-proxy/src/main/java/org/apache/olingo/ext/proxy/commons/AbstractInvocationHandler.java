@@ -110,8 +110,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     final List<Object> items = new ArrayList<Object>();
 
     for (CommonODataEntity entityFromSet : entitySet.getEntities()) {
-      items.add(getEntityProxy(
-              entityFromSet.getEditLink(), entityFromSet, entityContainerName, null, typeRef, null, checkInTheContext));
+      items.add(getEntityProxy(entityFromSet, entityContainerName, null, typeRef, null, checkInTheContext));
     }
 
     return Proxy.newProxyInstance(
@@ -131,7 +130,6 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
   }
 
   protected Object getEntityProxy(
-          final URI entityURI,
           final CommonODataEntity entity,
           final String entityContainerName,
           final URI entitySetURI,
@@ -139,8 +137,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
           final String eTag,
           final boolean checkInTheContext) {
 
-    EntityInvocationHandler handler =
-            EntityInvocationHandler.getInstance(entityURI, entity, entitySetURI, type, containerHandler);
+    EntityInvocationHandler handler = EntityInvocationHandler.getInstance(entity, entitySetURI, type, containerHandler);
 
     if (StringUtils.isNotBlank(eTag)) {
       // override ETag into the wrapped object.
@@ -242,7 +239,6 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
                 false);
       } else {
         return getEntityProxy(
-                ((CommonODataEntity) result).getEditLink(),
                 (CommonODataEntity) result,
                 null,
                 null,
@@ -255,7 +251,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
       return property == null || property.hasNullValue()
               ? null
               : CoreUtils.getObjectFromODataValue(
-                      getClient(), property.getValue(), method.getGenericReturnType(), null);
+              getClient(), property.getValue(), method.getGenericReturnType(), null);
     }
   }
 

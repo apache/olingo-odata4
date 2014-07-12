@@ -94,7 +94,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
       }
     };
 
-    assertEquals("AsyncTest#updateEntity " + random, futureProd.get().getDescription());
+    assertEquals("AsyncTest#updateEntity " + random, futureProd.get().load().getDescription());
   }
 
   @Test

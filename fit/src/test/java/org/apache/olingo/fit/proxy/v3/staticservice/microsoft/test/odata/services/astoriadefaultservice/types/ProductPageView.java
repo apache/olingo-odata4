@@ -1,270 +1,284 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.ext.proxy.api.Annotatable;
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
+
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "ProductPageView",
-    openType = false,
-    hasStream = false,
-    isAbstract = false,
-    baseType = "Microsoft.Test.OData.Services.AstoriaDefaultService.PageView")
-public interface ProductPageView
-    extends Annotatable,
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PageView {
+        openType = false,
+        hasStream = false,
+        isAbstract = false,
+        baseType = "Microsoft.Test.OData.Services.AstoriaDefaultService.PageView")
+public interface ProductPageView 
+  extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PageView {
 
   @Override
-  @Key
-  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PageViewId",
-      type = "Edm.Int32",
-      nullable = false,
-      defaultValue = "",
-      maxLenght = Integer.MAX_VALUE,
-      fixedLenght = false,
-      precision = 0,
-      scale = 0,
-      unicode = true,
-      collation = "",
-      srid = "",
-      concurrencyMode = ConcurrencyMode.None,
-      fcSourcePath = "",
-      fcTargetPath = "",
-      fcContentKind = EdmContentKind.text,
-      fcNSPrefix = "",
-      fcNSURI = "",
-      fcKeepInContent = false)
-  java.lang.Integer getPageViewId();
+  ProductPageView load();
 
-  @Override
-  void setPageViewId(java.lang.Integer _pageViewId);
+    
+    @Key
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PageViewId", 
+                type = "Edm.Int32", 
+                nullable = false,
+                defaultValue = "",
+                maxLenght = Integer.MAX_VALUE,
+                fixedLenght = false,
+                precision = 0,
+                scale = 0,
+                unicode = true,
+                collation = "",
+                srid = "",
+                concurrencyMode = ConcurrencyMode.None,
+                fcSourcePath = "",
+                fcTargetPath = "",
+                fcContentKind = EdmContentKind.text,
+                fcNSPrefix = "",
+                fcNSURI = "",
+                fcKeepInContent = false)
+    java.lang.Integer getPageViewId();
 
-  @Override
-  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Username",
-      type = "Edm.String",
-      nullable = true,
-      defaultValue = "",
-      maxLenght = Integer.MAX_VALUE,
-      fixedLenght = false,
-      precision = 0,
-      scale = 0,
-      unicode = true,
-      collation = "",
-      srid = "",
-      concurrencyMode = ConcurrencyMode.None,
-      fcSourcePath = "",
-      fcTargetPath = "",
-      fcContentKind = EdmContentKind.text,
-      fcNSPrefix = "",
-      fcNSURI = "",
-      fcKeepInContent = false)
-  java.lang.String getUsername();
+    void setPageViewId(java.lang.Integer _pageViewId);    
+    
+    
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Username", 
+                type = "Edm.String", 
+                nullable = true,
+                defaultValue = "",
+                maxLenght = Integer.MAX_VALUE,
+                fixedLenght = false,
+                precision = 0,
+                scale = 0,
+                unicode = true,
+                collation = "",
+                srid = "",
+                concurrencyMode = ConcurrencyMode.None,
+                fcSourcePath = "",
+                fcTargetPath = "",
+                fcContentKind = EdmContentKind.text,
+                fcNSPrefix = "",
+                fcNSURI = "",
+                fcKeepInContent = false)
+    java.lang.String getUsername();
 
-  @Override
-  void setUsername(java.lang.String _username);
+    void setUsername(java.lang.String _username);    
+    
+    
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Viewed", 
+                type = "Edm.DateTimeOffset", 
+                nullable = false,
+                defaultValue = "",
+                maxLenght = Integer.MAX_VALUE,
+                fixedLenght = false,
+                precision = 0,
+                scale = 0,
+                unicode = true,
+                collation = "",
+                srid = "",
+                concurrencyMode = ConcurrencyMode.None,
+                fcSourcePath = "",
+                fcTargetPath = "",
+                fcContentKind = EdmContentKind.text,
+                fcNSPrefix = "",
+                fcNSURI = "",
+                fcKeepInContent = false)
+    java.sql.Timestamp getViewed();
 
-  @Override
-  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Viewed",
-      type = "Edm.DateTimeOffset",
-      nullable = false,
-      defaultValue = "",
-      maxLenght = Integer.MAX_VALUE,
-      fixedLenght = false,
-      precision = 0,
-      scale = 0,
-      unicode = true,
-      collation = "",
-      srid = "",
-      concurrencyMode = ConcurrencyMode.None,
-      fcSourcePath = "",
-      fcTargetPath = "",
-      fcContentKind = EdmContentKind.text,
-      fcNSPrefix = "",
-      fcNSURI = "",
-      fcKeepInContent = false)
-  java.util.Calendar getViewed();
+    void setViewed(java.sql.Timestamp _viewed);    
+    
+    
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "TimeSpentOnPage", 
+                type = "Edm.Time", 
+                nullable = false,
+                defaultValue = "",
+                maxLenght = Integer.MAX_VALUE,
+                fixedLenght = false,
+                precision = 0,
+                scale = 0,
+                unicode = true,
+                collation = "",
+                srid = "",
+                concurrencyMode = ConcurrencyMode.None,
+                fcSourcePath = "",
+                fcTargetPath = "",
+                fcContentKind = EdmContentKind.text,
+                fcNSPrefix = "",
+                fcNSURI = "",
+                fcKeepInContent = false)
+    java.math.BigDecimal getTimeSpentOnPage();
 
-  @Override
-  void setViewed(java.util.Calendar _viewed);
+    void setTimeSpentOnPage(java.math.BigDecimal _timeSpentOnPage);    
+    
+    
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PageUrl", 
+                type = "Edm.String", 
+                nullable = true,
+                defaultValue = "",
+                maxLenght = Integer.MAX_VALUE,
+                fixedLenght = false,
+                precision = 0,
+                scale = 0,
+                unicode = true,
+                collation = "",
+                srid = "",
+                concurrencyMode = ConcurrencyMode.None,
+                fcSourcePath = "",
+                fcTargetPath = "",
+                fcContentKind = EdmContentKind.text,
+                fcNSPrefix = "",
+                fcNSURI = "",
+                fcKeepInContent = false)
+    java.lang.String getPageUrl();
 
-  @Override
-  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "TimeSpentOnPage",
-      type = "Edm.Time",
-      nullable = false,
-      defaultValue = "",
-      maxLenght = Integer.MAX_VALUE,
-      fixedLenght = false,
-      precision = 0,
-      scale = 0,
-      unicode = true,
-      collation = "",
-      srid = "",
-      concurrencyMode = ConcurrencyMode.None,
-      fcSourcePath = "",
-      fcTargetPath = "",
-      fcContentKind = EdmContentKind.text,
-      fcNSPrefix = "",
-      fcNSURI = "",
-      fcKeepInContent = false)
-  java.math.BigDecimal getTimeSpentOnPage();
+    void setPageUrl(java.lang.String _pageUrl);    
+    
+    
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductId", 
+                type = "Edm.Int32", 
+                nullable = false,
+                defaultValue = "",
+                maxLenght = Integer.MAX_VALUE,
+                fixedLenght = false,
+                precision = 0,
+                scale = 0,
+                unicode = true,
+                collation = "",
+                srid = "",
+                concurrencyMode = ConcurrencyMode.None,
+                fcSourcePath = "",
+                fcTargetPath = "",
+                fcContentKind = EdmContentKind.text,
+                fcNSPrefix = "",
+                fcNSURI = "",
+                fcKeepInContent = false)
+    java.lang.Integer getProductId();
 
-  @Override
-  void setTimeSpentOnPage(java.math.BigDecimal _timeSpentOnPage);
+    void setProductId(java.lang.Integer _productId);    
+    
+    
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ConcurrencyToken", 
+                type = "Edm.String", 
+                nullable = true,
+                defaultValue = "",
+                maxLenght = Integer.MAX_VALUE,
+                fixedLenght = false,
+                precision = 0,
+                scale = 0,
+                unicode = true,
+                collation = "",
+                srid = "",
+                concurrencyMode = ConcurrencyMode.None,
+                fcSourcePath = "",
+                fcTargetPath = "",
+                fcContentKind = EdmContentKind.text,
+                fcNSPrefix = "",
+                fcNSURI = "",
+                fcKeepInContent = false)
+    java.lang.String getConcurrencyToken();
 
-  @Override
-  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PageUrl",
-      type = "Edm.String",
-      nullable = true,
-      defaultValue = "",
-      maxLenght = Integer.MAX_VALUE,
-      fixedLenght = false,
-      precision = 0,
-      scale = 0,
-      unicode = true,
-      collation = "",
-      srid = "",
-      concurrencyMode = ConcurrencyMode.None,
-      fcSourcePath = "",
-      fcTargetPath = "",
-      fcContentKind = EdmContentKind.text,
-      fcNSPrefix = "",
-      fcNSURI = "",
-      fcKeepInContent = false)
-  java.lang.String getPageUrl();
+    void setConcurrencyToken(java.lang.String _concurrencyToken);    
+    
+    
 
-  @Override
-  void setPageUrl(java.lang.String _pageUrl);
+    @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Login", 
+                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Login", 
+                targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService", 
+                targetContainer = "DefaultContainer", 
+                targetEntitySet = "Login",
+                containsTarget = false)
+    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login getLogin();
 
-  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductId",
-      type = "Edm.Int32",
-      nullable = false,
-      defaultValue = "",
-      maxLenght = Integer.MAX_VALUE,
-      fixedLenght = false,
-      precision = 0,
-      scale = 0,
-      unicode = true,
-      collation = "",
-      srid = "",
-      concurrencyMode = ConcurrencyMode.None,
-      fcSourcePath = "",
-      fcTargetPath = "",
-      fcContentKind = EdmContentKind.text,
-      fcNSPrefix = "",
-      fcNSURI = "",
-      fcKeepInContent = false)
-  java.lang.Integer getProductId();
+    void setLogin(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login _login);
+    
 
-  void setProductId(java.lang.Integer _productId);
 
-  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ConcurrencyToken",
-      type = "Edm.String",
-      nullable = true,
-      defaultValue = "",
-      maxLenght = Integer.MAX_VALUE,
-      fixedLenght = false,
-      precision = 0,
-      scale = 0,
-      unicode = true,
-      collation = "",
-      srid = "",
-      concurrencyMode = ConcurrencyMode.None,
-      fcSourcePath = "",
-      fcTargetPath = "",
-      fcContentKind = EdmContentKind.text,
-      fcNSPrefix = "",
-      fcNSURI = "",
-      fcKeepInContent = false)
-  java.lang.String getConcurrencyToken();
+    ComplexFactory factory();
 
-  void setConcurrencyToken(java.lang.String _concurrencyToken);
+    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PageView.ComplexFactory{
+    }
 
-  @Override
-  @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Login",
-      type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Login",
-      targetSchema = "Microsoft.Test.OData.Services.AstoriaDefaultService",
-      targetContainer = "DefaultContainer",
-      targetEntitySet = "Login",
-      containsTarget = false)
-  org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login
-      getLogin();
+    Annotations annotations();
 
-  @Override
-      void
-      setLogin(
-          org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login _login);
+    interface Annotations            extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PageView.Annotations{
 
-  @Override
-  ComplexFactory factory();
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PageViewId",
+                   type = "Edm.Int32")
+        org.apache.olingo.ext.proxy.api.Annotatable getPageViewIdAnnotations();
 
-  interface ComplexFactory
-      extends
-      org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PageView.ComplexFactory {}
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Username",
+                   type = "Edm.String")
+        org.apache.olingo.ext.proxy.api.Annotatable getUsernameAnnotations();
 
-  @Override
-  Annotations annotations();
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Viewed",
+                   type = "Edm.DateTimeOffset")
+        org.apache.olingo.ext.proxy.api.Annotatable getViewedAnnotations();
 
-  interface Annotations
-      extends
-      org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PageView.Annotations {
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "TimeSpentOnPage",
+                   type = "Edm.Time")
+        org.apache.olingo.ext.proxy.api.Annotatable getTimeSpentOnPageAnnotations();
 
-    @Override
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PageViewId",
-        type = "Edm.Int32")
-    Annotatable getPageViewIdAnnotations();
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PageUrl",
+                   type = "Edm.String")
+        org.apache.olingo.ext.proxy.api.Annotatable getPageUrlAnnotations();
 
-    @Override
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Username",
-        type = "Edm.String")
-    Annotatable getUsernameAnnotations();
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ProductId",
+                   type = "Edm.Int32")
+        org.apache.olingo.ext.proxy.api.Annotatable getProductIdAnnotations();
 
-    @Override
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Viewed",
-        type = "Edm.DateTimeOffset")
-    Annotatable getViewedAnnotations();
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ConcurrencyToken",
+                   type = "Edm.String")
+        org.apache.olingo.ext.proxy.api.Annotatable getConcurrencyTokenAnnotations();
 
-    @Override
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "TimeSpentOnPage",
-        type = "Edm.Time")
-    Annotatable getTimeSpentOnPageAnnotations();
 
-    @Override
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PageUrl",
-        type = "Edm.String")
-    Annotatable getPageUrlAnnotations();
 
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ProductId",
-        type = "Edm.Int32")
-    Annotatable getProductIdAnnotations();
-
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "ConcurrencyToken",
-        type = "Edm.String")
-    Annotatable getConcurrencyTokenAnnotations();
-
-    @Override
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Login",
-        type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Login")
-    Annotatable getLoginAnnotations();
-  }
+        @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Login", 
+                  type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Login")
+        org.apache.olingo.ext.proxy.api.Annotatable getLoginAnnotations();
+    }
 
 }

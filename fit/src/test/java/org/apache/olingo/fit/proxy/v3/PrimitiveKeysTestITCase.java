@@ -48,52 +48,42 @@ public class PrimitiveKeysTestITCase extends AbstractTestITCase {
   @Test
   public void readPrimitiveKeys() {
     final EntityContainerFactory<EdmEnabledODataClient> testContainerFactory =
-        EntityContainerFactory.getV3(testPrimitiveKeysServiceRootURL);
+            EntityContainerFactory.getV3(testPrimitiveKeysServiceRootURL);
     testContainerFactory.getClient().getConfiguration().
-        setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+            setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     final TestContext testContainer = testContainerFactory.getEntityContainer(TestContext.class);
     assertNotNull(testContainer);
 
-    final EdmBoolean edmBooleanSet = testContainer.getEdmBooleanSet().get(Boolean.TRUE);
-    assertNotNull(edmBooleanSet);
+    final EdmBoolean edmBooleanSet = testContainer.getEdmBooleanSet().get(Boolean.TRUE).load();
     assertEquals(Boolean.TRUE, edmBooleanSet.getId());
 
-    final EdmByte edmByteSet = testContainer.getEdmByteSet().get(Short.valueOf("255"));
-    assertNotNull(edmByteSet);
+    final EdmByte edmByteSet = testContainer.getEdmByteSet().get(Short.valueOf("255")).load();
     assertEquals(Short.valueOf("255"), edmByteSet.getId());
 
     final EdmDecimal edmDecimalSet =
-        testContainer.getEdmDecimalSet().get(new BigDecimal("79228162514264337593543950335"));
-    assertNotNull(edmDecimalSet);
+            testContainer.getEdmDecimalSet().get(new BigDecimal("79228162514264337593543950335")).load();
     assertEquals(new BigDecimal("79228162514264337593543950335"), edmDecimalSet.getId());
 
-    final EdmDouble edmDoubleSet = testContainer.getEdmDoubleSet().get(1.7976931348623157E+308D);
-    assertNotNull(edmDoubleSet);
+    final EdmDouble edmDoubleSet = testContainer.getEdmDoubleSet().get(1.7976931348623157E+308D).load();
     assertEquals(1.7976931348623157E+308D, edmDoubleSet.getId(), 0);
 
-    final EdmSingle edmSingleSet = testContainer.getEdmSingleSet().get(3.4028235E+38F);
-    assertNotNull(edmSingleSet);
+    final EdmSingle edmSingleSet = testContainer.getEdmSingleSet().get(3.4028235E+38F).load();
     assertEquals(3.4028235E+38F, edmSingleSet.getId(), 0);
 
     final EdmGuid edmGuidSet =
-        testContainer.getEdmGuidSet().get(UUID.fromString("00000000-0000-0000-0000-000000000000"));
-    assertNotNull(edmGuidSet);
+            testContainer.getEdmGuidSet().get(UUID.fromString("00000000-0000-0000-0000-000000000000")).load();
     assertEquals(UUID.fromString("00000000-0000-0000-0000-000000000000"), edmGuidSet.getId());
 
-    final EdmInt16 edmInt16Set = testContainer.getEdmInt16Set().get(Short.valueOf("32767"));
-    assertNotNull(edmInt16Set);
+    final EdmInt16 edmInt16Set = testContainer.getEdmInt16Set().get(Short.valueOf("32767")).load();
     assertEquals(Short.valueOf("32767"), edmInt16Set.getId(), 0);
 
-    final EdmInt32 edmInt32Set = testContainer.getEdmInt32Set().get(-2147483648);
-    assertNotNull(edmInt32Set);
+    final EdmInt32 edmInt32Set = testContainer.getEdmInt32Set().get(-2147483648).load();
     assertEquals(-2147483648, edmInt32Set.getId(), 0);
 
-    final EdmInt64 edmInt64Set = testContainer.getEdmInt64Set().get(9223372036854775807L);
-    assertNotNull(edmInt64Set);
+    final EdmInt64 edmInt64Set = testContainer.getEdmInt64Set().get(9223372036854775807L).load();
     assertEquals(9223372036854775807L, edmInt64Set.getId(), 0);
 
-    final EdmString edmStringSet = testContainer.getEdmStringSet().get("$");
-    assertNotNull(edmStringSet);
+    final EdmString edmStringSet = testContainer.getEdmStringSet().get("$").load();
     assertEquals("$", edmStringSet.getId());
   }
 }

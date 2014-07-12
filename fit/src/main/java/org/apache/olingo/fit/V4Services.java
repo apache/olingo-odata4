@@ -63,6 +63,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.ValueType;
@@ -70,6 +71,7 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
+import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.fit.metadata.Metadata;
@@ -87,18 +89,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Path("/V40/Static.svc")
-@InInterceptors(classes = { XHTTPMethodInterceptor.class, ResolvingReferencesInterceptor.class })
+@InInterceptors(classes = {XHTTPMethodInterceptor.class, ResolvingReferencesInterceptor.class})
 public class V4Services extends AbstractServices {
 
   /**
    * CR/LF.
    */
-  protected static final byte[] CRLF = { 13, 10 };
+  protected static final byte[] CRLF = {13, 10};
 
   protected static final Pattern RELENTITY_SELECT_PATTERN = Pattern.compile("^.*\\(\\$select=.*\\)$");
 
   protected static final Pattern CROSSJOIN_PATTERN = Pattern.compile(
-      "^\\$crossjoin\\(.*\\)\\?\\$filter=\\([a-zA-Z/]+ eq [a-zA-Z/]+\\)$");
+          "^\\$crossjoin\\(.*\\)\\?\\$filter=\\([a-zA-Z/]+ eq [a-zA-Z/]+\\)$");
 
   private final Map<String, String> providedAsync = new HashMap<String, String>();
 
@@ -113,18 +115,18 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/redirect/{name}({id})")
   public Response conformanceRedirect(
-      @Context final UriInfo uriInfo,
-      @PathParam("name") final String name,
-      @PathParam("id") final String id) {
+          @Context final UriInfo uriInfo,
+          @PathParam("name") final String name,
+          @PathParam("id") final String id) {
     return Response.temporaryRedirect(
-        URI.create(uriInfo.getRequestUri().toASCIIString().replace("/redirect", ""))).build();
+            URI.create(uriInfo.getRequestUri().toASCIIString().replace("/redirect", ""))).build();
   }
 
   @GET
   @Path("/$crossjoin({elements:.*})")
   public Response crossjoin(
-      @PathParam("elements") final String elements,
-      @QueryParam("$filter") final String filter) {
+          @PathParam("elements") final String elements,
+          @QueryParam("$filter") final String filter) {
 
     try {
       if (CROSSJOIN_PATTERN.matcher("$crossjoin(" + elements + ")?$filter=" + filter).matches()) {
@@ -142,8 +144,8 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/relatedEntitySelect/{path:.*}")
   public Response relatedEntitySelect(
-      @PathParam("path") final String path,
-      @QueryParam("$expand") final String expand) {
+          @PathParam("path") final String path,
+          @QueryParam("$expand") final String expand) {
 
     if (RELENTITY_SELECT_PATTERN.matcher(expand).matches()) {
       return xml.createResponse(null, null, Accept.JSON_FULLMETA);
@@ -177,9 +179,9 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/async/$batch")
   public Response async(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
-      final @Multipart MultipartBody attachment) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
+          final @Multipart MultipartBody attachment) {
 
     try {
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -216,7 +218,7 @@ public class V4Services extends AbstractServices {
       bos.close();
 
       return xml.createAsyncResponse(
-          uriInfo.getRequestUri().toASCIIString().replace("async/$batch", "") + "monitor/" + uuid.toString());
+              uriInfo.getRequestUri().toASCIIString().replace("async/$batch", "") + "monitor/" + uuid.toString());
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.JSON.toString(), e);
     }
@@ -225,9 +227,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/async/{name}")
   public Response async(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @PathParam("name") final String name) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("name") final String name) {
 
     try {
       final Accept acceptType = Accept.parse(accept, version);
@@ -239,8 +241,8 @@ public class V4Services extends AbstractServices {
       final StringBuilder path = new StringBuilder(basePath);
 
       path.append(metadata.getEntitySet(name).isSingleton()
-          ? Constants.get(version, ConstantKey.ENTITY)
-          : Constants.get(version, ConstantKey.FEED));
+              ? Constants.get(version, ConstantKey.ENTITY)
+              : Constants.get(version, ConstantKey.FEED));
 
       final InputStream feed = FSManager.instance(version).readFile(path.toString(), acceptType);
 
@@ -254,7 +256,7 @@ public class V4Services extends AbstractServices {
       providedAsync.put(uuid.toString(), builder.toString());
 
       return xml.createAsyncResponse(
-          uriInfo.getRequestUri().toASCIIString().replaceAll("async/" + name, "") + "monitor/" + uuid.toString());
+              uriInfo.getRequestUri().toASCIIString().replaceAll("async/" + name, "") + "monitor/" + uuid.toString());
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -269,8 +271,8 @@ public class V4Services extends AbstractServices {
 
   @Override
   public InputStream exploreMultipart(
-      final List<Attachment> attachments, final String boundary, final boolean continueOnError)
-      throws IOException {
+          final List<Attachment> attachments, final String boundary, final boolean continueOnError)
+          throws IOException {
 
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -356,59 +358,59 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/People/{type:.*}")
   public Response getPeople(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @PathParam("type") final String type,
-      @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) final String top,
-      @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) final String skip,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) final String count,
-      @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) final String filter,
-      @QueryParam("$search") @DefaultValue(StringUtils.EMPTY) final String search,
-      @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) final String orderby,
-      @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) final String skiptoken) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("type") final String type,
+          @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) final String top,
+          @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) final String skip,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) final String count,
+          @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) final String filter,
+          @QueryParam("$search") @DefaultValue(StringUtils.EMPTY) final String search,
+          @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) final String orderby,
+          @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) final String skiptoken) {
 
     return StringUtils.isBlank(filter) && StringUtils.isBlank(search)
-        ? NumberUtils.isNumber(type)
+            ? NumberUtils.isNumber(type)
             ? super.getEntityInternal(
-                uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null)
+            uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null)
             : super.getEntitySet(accept, "People", type)
-        : super.getEntitySet(uriInfo, accept, "People", top, skip, format, count, filter, orderby, skiptoken);
+            : super.getEntitySet(uriInfo, accept, "People", top, skip, format, count, filter, orderby, skiptoken);
   }
 
   @GET
   @Path("/Boss")
   public Response getSingletonBoss(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
-        uriInfo.getRequestUri().toASCIIString(), accept, "Boss", StringUtils.EMPTY, format, null, null);
+            uriInfo.getRequestUri().toASCIIString(), accept, "Boss", StringUtils.EMPTY, format, null, null);
   }
 
   @GET
   @Path("/Company")
   public Response getSingletonCompany(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
-        uriInfo.getRequestUri().toASCIIString(), accept, "Company", StringUtils.EMPTY, format, null, null);
+            uriInfo.getRequestUri().toASCIIString(), accept, "Company", StringUtils.EMPTY, format, null, null);
   }
 
   @PATCH
   @Path("/Company")
-  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
-  @Consumes({ MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   public Response patchSingletonCompany(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
-      @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) final String ifMatch,
-      final String changes) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
+          @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) final String ifMatch,
+          final String changes) {
 
     return super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, "Company", StringUtils.EMPTY, changes);
   }
@@ -416,11 +418,11 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Customers")
   public Response getCustomers(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
-      @QueryParam("$deltatoken") @DefaultValue(StringUtils.EMPTY) final String deltatoken) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
+          @QueryParam("$deltatoken") @DefaultValue(StringUtils.EMPTY) final String deltatoken) {
 
     try {
       final Accept acceptType;
@@ -433,7 +435,7 @@ public class V4Services extends AbstractServices {
       final InputStream output;
       if (StringUtils.isBlank(deltatoken)) {
         final InputStream input = (InputStream) getEntitySet(
-            uriInfo, accept, "Customers", null, null, format, null, null, null, null).getEntity();
+                uriInfo, accept, "Customers", null, null, format, null, null, null, null).getEntity();
         final EntitySet entitySet = xml.readEntitySet(acceptType, input);
 
         boolean trackChanges = prefer.contains("odata.track-changes");
@@ -442,20 +444,20 @@ public class V4Services extends AbstractServices {
         }
 
         output = xml.writeEntitySet(acceptType, new ResWrap<EntitySet>(
-            URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + "Customers"),
-            null,
-            entitySet));
+                URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + "Customers"),
+                null,
+                entitySet));
       } else {
         output = FSManager.instance(version).readFile("delta", acceptType);
       }
 
       final Response response = xml.createResponse(
-          null,
-          output,
-          null,
-          acceptType);
+              null,
+              output,
+              null,
+              acceptType);
       if (StringUtils.isNotBlank(prefer)) {
-        response.getHeaders().put("Preference-Applied", Collections.<Object> singletonList(prefer));
+        response.getHeaders().put("Preference-Applied", Collections.<Object>singletonList(prefer));
       }
       return response;
     } catch (Exception e) {
@@ -466,8 +468,8 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Company/Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount{paren:[\\(\\)]*}")
   public Response functionGetEmployeesCount(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Accept acceptType;
@@ -481,14 +483,14 @@ public class V4Services extends AbstractServices {
       property.setType("Edm.Int32");
       property.setValue(ValueType.PRIMITIVE, 2);
       final ResWrap<Property> container = new ResWrap<Property>(
-          URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
-          property);
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
+              property);
 
       return xml.createResponse(
-          null,
-          xml.writeProperty(acceptType, container),
-          null,
-          acceptType);
+              null,
+              xml.writeProperty(acceptType, container),
+              null,
+              acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -497,10 +499,10 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/Company/Microsoft.Test.OData.Services.ODataWCFService.IncreaseRevenue{paren:[\\(\\)]*}")
   public Response actionIncreaseRevenue(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      final String param) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          final String param) {
 
     try {
       final Accept acceptType;
@@ -514,10 +516,10 @@ public class V4Services extends AbstractServices {
       final Entity entry = xml.readEntity(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
 
       return xml.createResponse(
-          null,
-          xml.writeProperty(acceptType, entry.getProperty("IncreaseValue")),
-          null,
-          acceptType);
+              null,
+              xml.writeProperty(acceptType, entry.getProperty("IncreaseValue")),
+              null,
+              acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -526,9 +528,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Products({entityId})/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails({param:.*})")
   public Response functionGetProductDetails(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @PathParam("entityId") final String entityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("entityId") final String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Accept acceptType;
@@ -551,18 +553,25 @@ public class V4Services extends AbstractServices {
       productDetailId.setValue(ValueType.PRIMITIVE, 2);
       entry.getProperties().add(productDetailId);
 
+      final Link link = new LinkImpl();
+      link.setRel("edit");
+      link.setHref(URI.create(
+              Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) 
+              + "ProductDetails(ProductID=6,ProductDetailID=1)").toASCIIString());
+      entry.setEditLink(link);
+
       final EntitySetImpl feed = new EntitySetImpl();
       feed.getEntities().add(entry);
 
       final ResWrap<EntitySet> container = new ResWrap<EntitySet>(
-          URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + "ProductDetail"), null,
-          feed);
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + "ProductDetail"), null,
+              feed);
 
       return xml.createResponse(
-          null,
-          xml.writeEntitySet(acceptType, container),
-          null,
-          acceptType);
+              null,
+              xml.writeEntitySet(acceptType, container),
+              null,
+              acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -571,10 +580,10 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/Products({entityId})/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight{paren:[\\(\\)]*}")
   public Response actionAddAccessRight(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      final String param) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          final String param) {
 
     try {
       final Accept acceptType;
@@ -594,28 +603,28 @@ public class V4Services extends AbstractServices {
       property.setType("Microsoft.Test.OData.Services.ODataWCFService.AccessLevel");
 
       final ResWrap<Property> result = new ResWrap<Property>(
-          URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()),
-          null, property);
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()),
+              null, property);
 
       return xml.createResponse(
-          null,
-          xml.writeProperty(acceptType, result),
-          null,
-          acceptType);
+              null,
+              xml.writeProperty(acceptType, result),
+              null,
+              acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
   }
 
   @POST
-  @Path("/Customers(PersonID={personId})/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress{paren:[\\(\\)]*}")
+  @Path("/Customers({personId})/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress{paren:[\\(\\)]*}")
   public Response actionResetAddress(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @PathParam("personId") final String personId,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      final String param) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("personId") final String personId,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          final String param) {
 
     try {
       final Accept contentTypeValue = Accept.parse(contentType, version);
@@ -626,7 +635,7 @@ public class V4Services extends AbstractServices {
       assert entry.getProperty("index") != null;
 
       return getEntityInternal(
-          uriInfo.getRequestUri().toASCIIString(), accept, "Customers", personId, format, null, null);
+              uriInfo.getRequestUri().toASCIIString(), accept, "Customers", personId, format, null, null);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -634,26 +643,26 @@ public class V4Services extends AbstractServices {
 
   @GET
   @Path("/ProductDetails(ProductID={productId},ProductDetailID={productDetailId})"
-      + "/Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct{paren:[\\(\\)]*}")
+          + "/Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct{paren:[\\(\\)]*}")
   public Response functionGetRelatedProduct(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @PathParam("productId") final String productId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("productId") final String productId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
-        uriInfo.getRequestUri().toASCIIString(), accept, "Products", productId, format, null, null);
+            uriInfo.getRequestUri().toASCIIString(), accept, "Products", productId, format, null, null);
   }
 
   @POST
   @Path("/Accounts({entityId})/Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI{paren:[\\(\\)]*}")
   public Response actionRefreshDefaultPI(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @PathParam("entityId") final String entityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      final String param) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @PathParam("entityId") final String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          final String param) {
 
     try {
       final Accept contentTypeValue = Accept.parse(contentType, version);
@@ -671,9 +680,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Accounts({entityId})/Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI{paren:[\\(\\)]*}")
   public Response functionGetDefaultPI(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @PathParam("entityId") final String entityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("entityId") final String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getContainedEntity(accept, entityId, "MyPaymentInstruments", entityId + "901", format);
   }
@@ -681,9 +690,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Accounts({entityId})/Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo{paren:[\\(\\)]*}")
   public Response functionGetAccountInfo(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @PathParam("entityId") final String entityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("entityId") final String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getPath(accept, "Accounts", entityId, "AccountInfo", format);
   }
@@ -691,9 +700,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Accounts({entityId})/MyGiftCard/Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount({param:.*})")
   public Response functionGetActualAmount(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @PathParam("entityId") final String entityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("entityId") final String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Accept acceptType;
@@ -710,10 +719,10 @@ public class V4Services extends AbstractServices {
       final ResWrap<Property> container = new ResWrap<Property>((URI) null, null, property);
 
       return xml.createResponse(
-          null,
-          xml.writeProperty(acceptType, container),
-          null,
-          acceptType);
+              null,
+              xml.writeProperty(acceptType, container),
+              null,
+              acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -721,7 +730,7 @@ public class V4Services extends AbstractServices {
 
   /**
    * Retrieve entity reference sample.
-   * 
+   *
    * @param accept Accept header.
    * @param path path.
    * @param format format query option.
@@ -730,9 +739,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/{path:.*}/$ref")
   public Response getEntityReference(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @PathParam("path") final String path,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("path") final String path,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
@@ -744,10 +753,10 @@ public class V4Services extends AbstractServices {
       final String filename = Base64.encodeBase64String(path.getBytes("UTF-8"));
 
       return utils.getValue().createResponse(
-          FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
+              FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
               + File.separatorChar + filename, utils.getKey()),
-          null,
-          utils.getKey());
+              null,
+              utils.getKey());
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
       return xml.createFaultResponse(accept, e);
@@ -756,36 +765,36 @@ public class V4Services extends AbstractServices {
 
   @Override
   public Response patchEntity(
-      final UriInfo uriInfo,
-      final String accept,
-      final String contentType,
-      final String prefer,
-      final String ifMatch,
-      final String entitySetName,
-      final String entityId,
-      final String changes) {
+          final UriInfo uriInfo,
+          final String accept,
+          final String contentType,
+          final String prefer,
+          final String ifMatch,
+          final String entitySetName,
+          final String entityId,
+          final String changes) {
 
     final Response response =
-        getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
+            getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
             accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY);
     return response.getStatus() >= 400
-        ? postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
-        : super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
+            ? postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
+            : super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
   }
 
   @Override
   public Response replaceEntity(
-      final UriInfo uriInfo,
-      final String accept,
-      final String contentType,
-      final String prefer,
-      final String entitySetName,
-      final String entityId,
-      final String entity) {
+          final UriInfo uriInfo,
+          final String accept,
+          final String contentType,
+          final String prefer,
+          final String entitySetName,
+          final String entityId,
+          final String entity) {
 
     try {
       getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-          accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY);
+              accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY);
       return super.replaceEntity(uriInfo, accept, contentType, prefer, entitySetName, entityId, entity);
     } catch (NotFoundException e) {
       return postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entityId);
@@ -794,19 +803,19 @@ public class V4Services extends AbstractServices {
 
   private StringBuilder containedPath(final String entityId, final String containedEntitySetName) {
     return new StringBuilder("Accounts").append(File.separatorChar).
-        append(entityId).append(File.separatorChar).
-        append("links").append(File.separatorChar).
-        append(containedEntitySetName);
+            append(entityId).append(File.separatorChar).
+            append("links").append(File.separatorChar).
+            append(containedEntitySetName);
   }
 
   @GET
   @Path("/Accounts({entityId})/{containedEntitySetName}({containedEntityId})")
   public Response getContainedEntity(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @PathParam("entityId") final String entityId,
-      @PathParam("containedEntitySetName") final String containedEntitySetName,
-      @PathParam("containedEntityId") final String containedEntityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("entityId") final String entityId,
+          @PathParam("containedEntitySetName") final String containedEntitySetName,
+          @PathParam("containedEntityId") final String containedEntityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Accept acceptType;
@@ -828,10 +837,10 @@ public class V4Services extends AbstractServices {
       final ResWrap<Entity> container = atomDeserializer.toEntity(entry);
 
       return xml.createResponse(
-          null,
-          xml.writeEntity(acceptType, container),
-          null,
-          acceptType);
+              null,
+              xml.writeEntity(acceptType, container),
+              null,
+              acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -840,12 +849,12 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/Accounts({entityId})/{containedEntitySetName:.*}")
   public Response postContainedEntity(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @PathParam("entityId") final String entityId,
-      @PathParam("containedEntitySetName") final String containedEntitySetName,
-      final String entity) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @PathParam("entityId") final String entityId,
+          @PathParam("containedEntitySetName") final String containedEntitySetName,
+          final String entity) {
 
     try {
       final Accept acceptType = Accept.parse(accept, version);
@@ -864,26 +873,26 @@ public class V4Services extends AbstractServices {
         entry = entryContainer.getPayload();
       } else {
         final ResWrap<Entity> jcontainer = jsonDeserializer.toEntity(
-            IOUtils.toInputStream(entity, Constants.ENCODING));
+                IOUtils.toInputStream(entity, Constants.ENCODING));
         entry = jcontainer.getPayload();
 
         entryContainer = new ResWrap<Entity>(
-            jcontainer.getContextURL(),
-            jcontainer.getMetadataETag(),
-            entry);
+                jcontainer.getContextURL(),
+                jcontainer.getMetadataETag(),
+                entry);
       }
 
       final EdmTypeInfo contained = new EdmTypeInfo.Builder().setTypeExpression(metadata.
-          getNavigationProperties("Accounts").get(containedEntitySetName).getType()).build();
+              getNavigationProperties("Accounts").get(containedEntitySetName).getType()).build();
       final String entityKey = getUtilities(contentTypeValue).
-          getDefaultEntryKey(contained.getFullQualifiedName().getName(), entry);
+              getDefaultEntryKey(contained.getFullQualifiedName().getName(), entry);
 
       // 2. Store the new entity
       final String atomEntryRelativePath = containedPath(entityId, containedEntitySetName).
-          append('(').append(entityKey).append(')').toString();
+              append('(').append(entityKey).append(')').toString();
       FSManager.instance(version).putInMemory(
-          utils.writeEntity(Accept.ATOM, entryContainer),
-          FSManager.instance(version).getAbsolutePath(atomEntryRelativePath, Accept.ATOM));
+              utils.writeEntity(Accept.ATOM, entryContainer),
+              FSManager.instance(version).getAbsolutePath(atomEntryRelativePath, Accept.ATOM));
 
       // 3. Update the contained entity set
       final String atomFeedRelativePath = containedPath(entityId, containedEntitySetName).toString();
@@ -898,16 +907,16 @@ public class V4Services extends AbstractServices {
       writer.close();
 
       FSManager.instance(version).putInMemory(
-          new ByteArrayInputStream(content.toByteArray()),
-          FSManager.instance(version).getAbsolutePath(atomFeedRelativePath, Accept.ATOM));
+              new ByteArrayInputStream(content.toByteArray()),
+              FSManager.instance(version).getAbsolutePath(atomFeedRelativePath, Accept.ATOM));
 
       // Finally, return
       return utils.createResponse(
-          uriInfo.getRequestUri().toASCIIString() + "(" + entityKey + ")",
-          utils.writeEntity(acceptType, entryContainer),
-          null,
-          acceptType,
-          Response.Status.CREATED);
+              uriInfo.getRequestUri().toASCIIString() + "(" + entityKey + ")",
+              utils.writeEntity(acceptType, entryContainer),
+              null,
+              acceptType,
+              Response.Status.CREATED);
     } catch (Exception e) {
       LOG.error("While creating new contained entity", e);
       return xml.createFaultResponse(accept, e);
@@ -917,14 +926,14 @@ public class V4Services extends AbstractServices {
   @PATCH
   @Path("/{entitySetName}({entityId})/{containedEntitySetName}({containedEntityId})")
   public Response patchContainedEntity(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @PathParam("entitySetName") final String entitySetName,
-      @PathParam("entityId") final String entityId,
-      @PathParam("containedEntitySetName") final String containedEntitySetName,
-      @PathParam("containedEntityId") final String containedEntityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      final String changes) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @PathParam("entitySetName") final String entitySetName,
+          @PathParam("entityId") final String entityId,
+          @PathParam("containedEntitySetName") final String containedEntitySetName,
+          @PathParam("containedEntityId") final String containedEntityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          final String changes) {
 
     try {
       final Accept acceptType;
@@ -944,7 +953,7 @@ public class V4Services extends AbstractServices {
       contentTypeValue = Accept.parse(contentType, version);
 
       final LinkInfo links = xml.readLinks(
-          entitySetName, entityId, containedEntitySetName + "(" + containedEntityId + ")", Accept.ATOM);
+              entitySetName, entityId, containedEntitySetName + "(" + containedEntityId + ")", Accept.ATOM);
 
       ResWrap<Entity> container = atomDeserializer.toEntity(links.getLinks());
       final Entity original = container.getPayload();
@@ -956,11 +965,11 @@ public class V4Services extends AbstractServices {
       } else {
         final String entityType = metadata.getEntitySet(entitySetName).getType();
         final String containedType = metadata.getEntityOrComplexType(entityType).
-            getNavigationProperty(containedEntitySetName).getType();
+                getNavigationProperty(containedEntitySetName).getType();
         final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setTypeExpression(containedType).build();
 
         final ResWrap<Entity> jsonContainer = jsonDeserializer.toEntity(
-            IOUtils.toInputStream(changes, Constants.ENCODING));
+                IOUtils.toInputStream(changes, Constants.ENCODING));
         jsonContainer.getPayload().setType(typeInfo.getFullQualifiedName().toString());
         entryChanges = jsonContainer.getPayload();
       }
@@ -974,7 +983,7 @@ public class V4Services extends AbstractServices {
       }
 
       FSManager.instance(version).putInMemory(new ResWrap<Entity>((URI) null, null, original),
-          xml.getLinksBasePath(entitySetName, entityId) + containedEntitySetName + "(" + containedEntityId + ")");
+              xml.getLinksBasePath(entitySetName, entityId) + containedEntitySetName + "(" + containedEntityId + ")");
 
       return xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -985,20 +994,20 @@ public class V4Services extends AbstractServices {
   @DELETE
   @Path("/Accounts({entityId})/{containedEntitySetName}({containedEntityId})")
   public Response removeContainedEntity(
-      @PathParam("entityId") final String entityId,
-      @PathParam("containedEntitySetName") final String containedEntitySetName,
-      @PathParam("containedEntityId") final String containedEntityId) {
+          @PathParam("entityId") final String entityId,
+          @PathParam("containedEntitySetName") final String containedEntitySetName,
+          @PathParam("containedEntityId") final String containedEntityId) {
 
     try {
       // 1. Fetch the contained entity to be removed
       final InputStream entry = FSManager.instance(version).
-          readFile(containedPath(entityId, containedEntitySetName).
+              readFile(containedPath(entityId, containedEntitySetName).
               append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
       final ResWrap<Entity> container = atomDeserializer.toEntity(entry);
 
       // 2. Remove the contained entity
       final String atomEntryRelativePath = containedPath(entityId, containedEntitySetName).
-          append('(').append(containedEntityId).append(')').toString();
+              append('(').append(containedEntityId).append(')').toString();
       FSManager.instance(version).deleteFile(atomEntryRelativePath);
 
       // 3. Update the contained entity set
@@ -1014,8 +1023,8 @@ public class V4Services extends AbstractServices {
       writer.close();
 
       FSManager.instance(version).putInMemory(
-          new ByteArrayInputStream(content.toByteArray()),
-          FSManager.instance(version).getAbsolutePath(atomFeedRelativePath, Accept.ATOM));
+              new ByteArrayInputStream(content.toByteArray()),
+              FSManager.instance(version).getAbsolutePath(atomFeedRelativePath, Accept.ATOM));
 
       return xml.createResponse(null, null, null, null, Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -1026,10 +1035,10 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/Accounts({entityId})/{containedEntitySetName:.*}")
   public Response getContainedEntitySet(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @PathParam("entityId") final String entityId,
-      @PathParam("containedEntitySetName") String containedEntitySetName,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("entityId") final String entityId,
+          @PathParam("containedEntitySetName") String containedEntitySetName,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     if ("MyGiftCard".equals(containedEntitySetName)) {
       return getContainedEntity(accept, entityId, containedEntitySetName, null, format);
@@ -1054,7 +1063,7 @@ public class V4Services extends AbstractServices {
       }
 
       final InputStream feed = FSManager.instance(version).
-          readFile(containedPath(entityId, containedEntitySetName).toString(), Accept.ATOM);
+              readFile(containedPath(entityId, containedEntitySetName).toString(), Accept.ATOM);
 
       final ResWrap<EntitySet> container = atomDeserializer.toEntitySet(feed);
 
@@ -1069,10 +1078,10 @@ public class V4Services extends AbstractServices {
       }
 
       return xml.createResponse(
-          null,
-          xml.writeEntitySet(acceptType, container),
-          null,
-          acceptType);
+              null,
+              xml.writeEntitySet(acceptType, container),
+              null,
+              acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -1081,8 +1090,8 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/GetDefaultColor()")
   public Response functionGetDefaultColor(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Accept acceptType;
@@ -1096,14 +1105,14 @@ public class V4Services extends AbstractServices {
       property.setType("Microsoft.Test.OData.Services.ODataWCFService.Color");
       property.setValue(ValueType.ENUM, "Red");
       final ResWrap<Property> container = new ResWrap<Property>(
-          URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
-          property);
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
+              property);
 
       return xml.createResponse(
-          null,
-          xml.writeProperty(acceptType, container),
-          null,
-          acceptType);
+              null,
+              xml.writeProperty(acceptType, container),
+              null,
+              acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -1112,31 +1121,31 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/GetPerson2({param:.*})")
   public Response functionGetPerson2(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
-        uriInfo.getRequestUri().toASCIIString(), accept, "Customers", "1", format, null, null);
+            uriInfo.getRequestUri().toASCIIString(), accept, "Customers", "1", format, null, null);
   }
 
   @GET
   @Path("/GetPerson({param:.*})")
   public Response functionGetPerson(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntityInternal(
-        uriInfo.getRequestUri().toASCIIString(), accept, "Customers", "1", format, null, null);
+            uriInfo.getRequestUri().toASCIIString(), accept, "Customers", "1", format, null, null);
   }
 
   @GET
   @Path("/GetAllProducts()")
   public Response functionGetAllProducts(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     return getEntitySet(uriInfo, accept, "Products", null, null, format, null, null, null, null);
   }
@@ -1144,9 +1153,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/GetProductsByAccessLevel({param:.*})")
   public Response functionGetProductsByAccessLevel(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Accept acceptType;
@@ -1161,14 +1170,14 @@ public class V4Services extends AbstractServices {
       final List<String> value = Arrays.asList("Cheetos", "Mushrooms", "Apple", "Car", "Computer");
       property.setValue(ValueType.COLLECTION_PRIMITIVE, value);
       final ResWrap<Property> container = new ResWrap<Property>(
-          URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
-          property);
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
+              property);
 
       return xml.createResponse(
-          null,
-          xml.writeProperty(acceptType, container),
-          null,
-          acceptType);
+              null,
+              xml.writeProperty(acceptType, container),
+              null,
+              acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -1177,9 +1186,9 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/GetBossEmails({param:.*})")
   public Response functionGetBossEmails(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     try {
       final Accept acceptType;
@@ -1192,10 +1201,10 @@ public class V4Services extends AbstractServices {
       final PropertyImpl property = new PropertyImpl();
       property.setType("Collection(Edm.String)");
       property.setValue(ValueType.COLLECTION_PRIMITIVE,
-          Arrays.asList("first@olingo.apache.org", "second@olingo.apache.org"));
+              Arrays.asList("first@olingo.apache.org", "second@olingo.apache.org"));
       final ResWrap<Property> container = new ResWrap<Property>(
-          URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
-          property);
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
+              property);
 
       return xml.createResponse(null, xml.writeProperty(acceptType, container), null, acceptType);
     } catch (Exception e) {
@@ -1206,10 +1215,10 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/Discount()")
   public Response actionDiscount(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      final String param) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          final String param) {
 
     try {
       final Accept acceptType;
@@ -1223,11 +1232,11 @@ public class V4Services extends AbstractServices {
       Property property;
       if (contentTypeValue == Accept.ATOM) {
         final ResWrap<Property> paramContainer = atomDeserializer.toProperty(
-            IOUtils.toInputStream(param, Constants.ENCODING));
+                IOUtils.toInputStream(param, Constants.ENCODING));
         property = paramContainer.getPayload();
       } else {
         final ResWrap<Property> paramContainer = jsonDeserializer.toProperty(
-            IOUtils.toInputStream(param, Constants.ENCODING));
+                IOUtils.toInputStream(param, Constants.ENCODING));
         property = paramContainer.getPayload();
       }
 
@@ -1246,10 +1255,10 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/ResetBossAddress()")
   public Response actionResetBossAddress(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      final String param) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          final String param) {
 
     try {
       final Accept acceptType;
@@ -1266,16 +1275,16 @@ public class V4Services extends AbstractServices {
       assert entity.getProperty("address").isComplex();
 
       final ResWrap<Property> result = new ResWrap<Property>(
-          URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
               + "Microsoft.Test.OData.Services.ODataWCFService.Address"),
-          null,
-          entity.getProperty("address"));
+              null,
+              entity.getProperty("address"));
 
       return xml.createResponse(
-          null,
-          xml.writeProperty(acceptType, result),
-          null,
-          acceptType);
+              null,
+              xml.writeProperty(acceptType, result),
+              null,
+              acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -1284,10 +1293,10 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/ResetBossEmail()")
   public Response actionResetBossEmail(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      final String param) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          final String param) {
 
     try {
       final Accept acceptType;
@@ -1305,10 +1314,10 @@ public class V4Services extends AbstractServices {
       assert entry.getProperty("emails").isCollection();
 
       return xml.createResponse(
-          null,
-          xml.writeProperty(acceptType, entry.getProperty("emails")),
-          null,
-          acceptType);
+              null,
+              xml.writeProperty(acceptType, entry.getProperty("emails")),
+              null,
+              acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -1317,10 +1326,10 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/Products({productId})/Categories/$ref")
   public Response createLinked(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      final String entity) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          final String entity) {
 
     return xml.createResponse(null, null, null, Status.NO_CONTENT);
   }
@@ -1328,10 +1337,10 @@ public class V4Services extends AbstractServices {
   @DELETE
   @Path("/Products({productId})/Categories({categoryId})/$ref")
   public Response deleteLinked(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      final String entity) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          final String entity) {
 
     return xml.createResponse(null, null, null, Status.NO_CONTENT);
   }

@@ -19,7 +19,12 @@
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("$namespace")
 @org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "$complexType.Name")
 public interface $utility.capitalize($complexType.Name) 
-    extends #if($complexType.getBaseType())$utility.getJavaType($complexType.getBaseType().getFullQualifiedName().toString())#{else}java.io.Serializable#end {
+    extends org.apache.olingo.ext.proxy.api.StructuredType,#if($complexType.getBaseType())$utility.getJavaType($complexType.getBaseType().getFullQualifiedName().toString())#{else}org.apache.olingo.ext.proxy.api.SingleQuery<$utility.capitalize($complexType.Name)>#end {
+
+#if( $entityType.getBaseType() )
+  @Override
+  $utility.capitalize($complexType.Name) load();
+#end
 
 #set( $complexProps = [] )
 #foreach($propertyName in $complexType.PropertyNames)

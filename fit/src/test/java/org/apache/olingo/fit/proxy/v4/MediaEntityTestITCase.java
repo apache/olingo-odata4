@@ -20,10 +20,11 @@ package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.UUID;
 
@@ -64,7 +65,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   public void read() throws IOException {
     final UUID uuid = UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7");
 
-    final Advertisement adv = getContainer().getAdvertisements().get(uuid);
+    final Advertisement adv = getContainer().getAdvertisements().get(uuid).load();
     assertNotNull(adv.getAirDate());
 
     final InputStream is = adv.getStream();
@@ -76,8 +77,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   public void update() throws IOException {
     final UUID uuid = UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7");
 
-    final Advertisement adv = getContainer().getAdvertisements().get(uuid);
-    assertNotNull(adv);
+    final Advertisement adv = getContainer().getAdvertisements().get(uuid).load();
 
     final String random = RandomStringUtils.random(124, "abcdefghijklmnopqrstuvwxyz");
 
@@ -85,7 +85,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
     getContainer().flush();
 
-    assertEquals(random, IOUtils.toString(getContainer().getAdvertisements().get(uuid).getStream()));
+    assertEquals(random, IOUtils.toString(getContainer().getAdvertisements().get(uuid).load().getStream()));
   }
 
   @Test
@@ -94,20 +94,24 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
     final Advertisement adv = getContainer().getAdvertisements().newAdvertisement();
     adv.setStream(IOUtils.toInputStream(random));
-    adv.setAirDate(Calendar.getInstance());
+    adv.setAirDate(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 
     getContainer().flush();
 
     final UUID uuid = adv.getID();
     getContainerFactory().getContext().detachAll();
 
-    assertEquals(random, IOUtils.toString(getContainer().getAdvertisements().get(uuid).getStream()));
+    assertEquals(random, IOUtils.toString(getContainer().getAdvertisements().get(uuid).load().getStream()));
 
     getContainerFactory().getContext().detachAll();
 
     getContainer().getAdvertisements().delete(uuid);
     getContainer().flush();
 
-    assertNull(getContainer().getAdvertisements().get(uuid));
+    try {
+      getContainer().getAdvertisements().get(uuid).load();
+      fail();
+    } catch (IllegalArgumentException e) {
+    }
   }
 }

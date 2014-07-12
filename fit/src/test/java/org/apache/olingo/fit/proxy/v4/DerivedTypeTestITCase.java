@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collections;
 
@@ -75,13 +76,13 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
     final Calendar birthday = Calendar.getInstance();
     birthday.clear();
     birthday.set(1977, 8, 8);
-    customer.setBirthday(birthday);
+    customer.setBirthday(new Timestamp(birthday.getTimeInMillis()));
 
     customer.setTimeBetweenLastTwoOrders(BigDecimal.valueOf(0.0000002));
 
     container.flush();
 
-    final Person actual = container.getPeople().get(976, Customer.class);
+    final Person actual = container.getPeople().get(976, Customer.class).load();
     assertTrue(actual instanceof Customer);
     assertTrue(actual.getHomeAddress() instanceof CompanyAddress);
 

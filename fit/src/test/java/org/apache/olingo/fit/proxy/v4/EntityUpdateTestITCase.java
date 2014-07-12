@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.UUID;
@@ -61,14 +62,14 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void update() {
-    Person person = getContainer().getPeople().get(1);
+    Person person = getContainer().getPeople().get(1).load();
 
     final Address address = person.getHomeAddress();
     address.setCity("XXX");
 
     getContainer().flush();
 
-    person = getContainer().getPeople().get(1);
+    person = getContainer().getPeople().get(1).load();
     assertEquals("XXX", person.getHomeAddress().getCity());
   }
 
@@ -78,7 +79,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     orderDetailKey.setOrderID(7);
     orderDetailKey.setProductID(5);
 
-    OrderDetail orderDetail = getContainer().getOrderDetails().get(orderDetailKey);
+    OrderDetail orderDetail = getContainer().getOrderDetails().get(orderDetailKey).load();
     assertNotNull(orderDetail);
     assertEquals(7, orderDetail.getOrderID(), 0);
     assertEquals(5, orderDetail.getProductID(), 0);
@@ -87,8 +88,8 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
     getContainer().flush();
 
-    orderDetail = getContainer().getOrderDetails().get(orderDetailKey);
-    orderDetail.setQuantity(5);
+    orderDetail = getContainer().getOrderDetails().get(orderDetailKey).load();
+    assertEquals(5, orderDetail.getQuantity(), 0);
   }
 
   @Test
@@ -112,7 +113,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     final Calendar birthday = Calendar.getInstance();
     birthday.clear();
     birthday.set(1977, 8, 8);
-    customer.setBirthday(birthday);
+    customer.setBirthday(new Timestamp(birthday.getTimeInMillis()));
 
     customer.setTimeBetweenLastTwoOrders(BigDecimal.valueOf(0.0000002));
 
@@ -131,7 +132,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     getContainer().flush();
 
     // 3. check everything after flush
-    order = getContainer().getOrders().get(orderId);
+    order = getContainer().getOrders().get(orderId).load();
     assertEquals(orderId, order.getOrderID(), 0);
 
     customer = getContainer().getCustomers().get(977);
@@ -156,7 +157,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void concurrentModification() {
-    Order order = getContainer().getOrders().get(8);
+    Order order = getContainer().getOrders().get(8).load();
     final String etag = ((EntityInvocationHandler) Proxy.getInvocationHandler(order)).getETag();
     assertTrue(StringUtils.isNotBlank(etag));
 
@@ -164,7 +165,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
     getContainer().flush();
 
-    order = getContainer().getOrders().get(8);
+    order = getContainer().getOrders().get(8).load();
     assertEquals(BigDecimal.TEN, order.getShelfLife());
   }
 
@@ -177,7 +178,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
     getContainer().flush();
 
-    instrument = getContainer().getAccounts().get(101).getMyPaymentInstruments().get(101901);
+    instrument = getContainer().getAccounts().get(101).getMyPaymentInstruments().get(101901).load();
     assertEquals(newName, instrument.getFriendlyName());
   }
 }

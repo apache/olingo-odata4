@@ -117,6 +117,9 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
+    } else if ("load".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
+      load();
+      return proxy;
     } else if ("operations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       final Class<?> returnType = method.getReturnType();
 
@@ -216,9 +219,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     final Class<?> type = getter.getReturnType();
     final Class<?> collItemType;
     if (AbstractEntityCollection.class.isAssignableFrom(type)) {
-      final Type[] entityCollectionParams =
-              ((ParameterizedType) type.getGenericInterfaces()[0]).getActualTypeArguments();
-      collItemType = (Class<?>) entityCollectionParams[0];
+      final Type[] eCollParams = ((ParameterizedType) type.getGenericInterfaces()[0]).getActualTypeArguments();
+      collItemType = (Class<?>) eCollParams[0];
     } else {
       collItemType = type;
     }
@@ -229,7 +231,6 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     if (link instanceof ODataInlineEntity) {
       // return entity
       navPropValue = getEntityProxy(
-              null,
               ((ODataInlineEntity) link).getEntity(),
               property.targetContainer(),
               getClient().newURIBuilder().appendEntitySetSegment(property.targetEntitySet()).build(),
@@ -247,7 +248,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
               false);
     } else {
       // navigate
-      final URI uri = URIUtils.getURI(getClient().getServiceRoot(), link.getLink().toASCIIString());
+      final URI uri = URIUtils.getURI(getEntityHandler().getEntityURI(), property.name());
 
       if (AbstractEntityCollection.class.isAssignableFrom(type)) {
         navPropValue = getEntityCollectionProxy(
@@ -268,7 +269,6 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
         final ODataRetrieveResponse<CommonODataEntity> res = req.execute();
 
         navPropValue = getEntityProxy(
-                null,
                 res.getBody(),
                 property.targetContainer(),
                 getClient().newURIBuilder().appendEntitySetSegment(property.targetEntitySet()).build(),
@@ -331,6 +331,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   public void putNavPropAnnotatableHandler(final String navPropName, final AnnotatableInvocationHandler handler) {
     navPropAnnotatableHandlers.put(navPropName, handler);
   }
+
+  protected abstract void load();
 
   protected abstract void setPropertyValue(final Property property, final Object value);
 

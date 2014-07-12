@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Proxy;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collection;
 
@@ -116,8 +117,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void navigate() {
-    final Order order = getContainer().getOrder().get(-9);
-    assertNotNull(order);
+    final Order order = getContainer().getOrder().get(-9).load();
     assertEquals(-9, order.getOrderId(), 0);
 
     final ConcurrencyInfo concurrency = order.getConcurrency();
@@ -126,13 +126,13 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     actual.clear();
     actual.set(2012, 1, 12, 11, 32, 50);
     actual.set(Calendar.MILLISECOND, 507);
-    assertEquals(actual.getTimeInMillis(), concurrency.getQueriedDateTime().getTimeInMillis());
+    assertEquals(actual.getTimeInMillis(), concurrency.getQueriedDateTime().getTime());
     assertEquals(78, order.getCustomerId(), 0);
   }
 
   @Test
   public void withGeospatial() {
-    final AllSpatialTypes allSpatialTypes = getContainer().getAllGeoTypesSet().get(-10);
+    final AllSpatialTypes allSpatialTypes = getContainer().getAllGeoTypesSet().get(-10).load();
     assertNotNull(allSpatialTypes);
     assertEquals(-10, allSpatialTypes.getId(), 0);
 
@@ -167,12 +167,12 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void withActions() {
-    final ComputerDetail computerDetail = getContainer().getComputerDetail().get(-10);
+    final ComputerDetail computerDetail = getContainer().getComputerDetail().get(-10).load();
     assertEquals(-10, computerDetail.getComputerDetailId(), 0);
 
     try {
       assertNotNull(computerDetail.operations().getClass().getMethod(
-          "resetComputerDetailsSpecifications", Collection.class, Calendar.class));
+          "resetComputerDetailsSpecifications", Collection.class, Timestamp.class));
     } catch (Exception e) {
       fail();
     }
@@ -184,14 +184,13 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     messageKey.setFromUsername("1");
     messageKey.setMessageId(-10);
 
-    final Message message = getContainer().getMessage().get(messageKey);
-    assertNotNull(message);
+    final Message message = getContainer().getMessage().get(messageKey).load();
     assertEquals("1", message.getFromUsername());
   }
 
   @Test
   public void checkForETag() {
-    Product product = getContainer().getProduct().get(-10);
+    Product product = getContainer().getProduct().get(-10).load();
     assertTrue(StringUtils.isNotBlank(
         ((EntityInvocationHandler) Proxy.getInvocationHandler(product)).getETag()));
   }

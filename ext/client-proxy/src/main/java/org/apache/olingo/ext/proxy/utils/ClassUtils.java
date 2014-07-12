@@ -46,10 +46,27 @@ public final class ClassUtils {
     // Empty private constructor for static utility classes
   }
 
-  @SuppressWarnings("unchecked")
-  public static Class<?> extractTypeArg(final Class<?> paramType) {
-    final Type[] params = ((ParameterizedType) paramType.getGenericInterfaces()[0]).getActualTypeArguments();
-    return (Class<?>) params[0];
+  public static Type[] extractGenericType(final Class<?> paramType, final Class<?>... references) {
+    if (paramType.getGenericInterfaces().length > 0) {
+      if (references == null || references.length == 0) {
+        return ((ParameterizedType) paramType.getGenericInterfaces()[0]).getActualTypeArguments();
+      } else {
+        for (Type type : paramType.getGenericInterfaces()) {
+          final Class<?> typeClass = getTypeClass(type);
+          for (Class<?> reference : references) {
+            if (reference.isAssignableFrom(typeClass)) {
+              return ((ParameterizedType) type).getActualTypeArguments();
+            }
+          }
+        }
+      }
+    }
+
+    throw new IllegalArgumentException("Invalid type argument " + paramType);
+  }
+
+  public static Class<?> extractTypeArg(final Class<?> paramType, final Class<?>... references) {
+    return Class.class.cast(extractGenericType(paramType, references)[0]);
   }
 
   public static Method findGetterByAnnotatedName(
@@ -137,5 +154,15 @@ public final class ClassUtils {
     final Constructor<Void> voidConstructor = Void.class.getDeclaredConstructor();
     voidConstructor.setAccessible(true);
     return voidConstructor.newInstance();
+  }
+
+  public static Class<?> getTypeClass(final Type type) {
+    if (type instanceof ParameterizedType) {
+      return getTypeClass(ParameterizedType.class.cast(type).getRawType());
+    } else if (type instanceof Class) {
+      return Class.class.cast(type);
+    } else {
+      return null;
+    }
   }
 }

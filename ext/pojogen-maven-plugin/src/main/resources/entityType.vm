@@ -31,7 +31,6 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
@@ -60,7 +59,12 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
         isAbstract = $entityType.Abstract#if($entityType.getBaseType()),
         baseType = "$entityType.getBaseType().getFullQualifiedName().toString()"#end)
 public interface $utility.capitalize($entityType.Name) 
-  extends Annotatable,#if( $entityType.getBaseType() )$utility.getJavaType($entityType.getBaseType())#{elseif}( $entityType.isOpenType() )AbstractOpenType#{else}java.io.Serializable#end {
+  extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.Annotatable,#if( $entityType.getBaseType() )$utility.getJavaType($entityType.getBaseType())#{else}org.apache.olingo.ext.proxy.api.SingleQuery<$utility.capitalize($entityType.Name)>#end#{if}( $entityType.isOpenType() ),AbstractOpenType#end {
+
+#if( $entityType.getBaseType() )
+  @Override
+  $utility.capitalize($entityType.Name) load();
+#end
 
 #set( $keys = [] )
 #foreach($key in $entityType.KeyPropertyRefs)
@@ -200,7 +204,7 @@ public interface $utility.capitalize($entityType.Name)
     #set($property = $entityType.getProperty($propertyName))
         @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "$property.Name",
                    type = "$property.Type.FullQualifiedName.toString()")
-        Annotatable get$utility.capitalize($property.Name)Annotations();
+        org.apache.olingo.ext.proxy.api.Annotatable get$utility.capitalize($property.Name)Annotations();
 
 #end
 
@@ -210,7 +214,7 @@ public interface $utility.capitalize($entityType.Name)
 
         @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "$property.Name", 
                   type = "$type")
-        Annotatable get$utility.capitalize($property.Name)Annotations();
+        org.apache.olingo.ext.proxy.api.Annotatable get$utility.capitalize($property.Name)Annotations();
 #end
     }
 

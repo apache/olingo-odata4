@@ -96,7 +96,6 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
 
     return new ComplexInvocationHandler(client, complex, typeRef, handler);
   }
-
   private final CommonEdmEnabledODataClient<?> client;
 
   private ComplexInvocationHandler(
@@ -220,5 +219,9 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   @Override
   public boolean isChanged() {
     return getEntityHandler() == null ? false : getEntityHandler().isChanged();
+  }
+
+  @Override
+  protected void load() {
   }
 }

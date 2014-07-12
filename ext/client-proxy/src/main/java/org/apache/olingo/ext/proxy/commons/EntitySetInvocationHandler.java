@@ -19,23 +19,16 @@
 package org.apache.olingo.ext.proxy.commons;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -55,14 +48,12 @@ import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
 import org.apache.olingo.ext.proxy.api.Filter;
 import org.apache.olingo.ext.proxy.api.Search;
-import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
-import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
+import org.apache.olingo.ext.proxy.api.SingleQuery;
 import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
-import org.apache.olingo.ext.proxy.utils.CoreUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,9 +71,9 @@ class EntitySetInvocationHandler<
 
   private final boolean isSingleton;
 
-  private final Class<T> typeRef;
+  private Class<T> typeRef = null;
 
-  private final Class<EC> collTypeRef;
+  private Class<EC> collTypeRef = null;
 
   private final URI uri;
 
@@ -121,8 +112,7 @@ class EntitySetInvocationHandler<
 
     this.isSingleton = AbstractSingleton.class.isAssignableFrom(ref);
 
-    final Type[] entitySetParams = ((ParameterizedType) ref.getGenericInterfaces()[0]).getActualTypeArguments();
-
+    final Type[] entitySetParams = ClassUtils.extractGenericType(ref, AbstractEntitySet.class, AbstractSingleton.class);
     this.typeRef = (Class<T>) entitySetParams[0];
     this.collTypeRef = (Class<EC>) entitySetParams[2];
 
@@ -162,7 +152,7 @@ class EntitySetInvocationHandler<
             new FullQualifiedName(containerHandler.getSchemaName(), ClassUtils.getEntityTypeName(reference)));
 
     final EntityInvocationHandler handler =
-            EntityInvocationHandler.getInstance(null, entity, uri, reference, containerHandler);
+            EntityInvocationHandler.getInstance(entity, uri, reference, containerHandler);
     getContext().entityContext().attachNew(handler);
 
     return (NE) Proxy.newProxyInstance(
@@ -189,39 +179,13 @@ class EntitySetInvocationHandler<
 
   @Override
   public Boolean exists(final KEY key) throws IllegalArgumentException {
-    boolean result = false;
-
     try {
-      result = get(key) != null;
+      SingleQuery.class.cast(get(key)).load();
+      return true;
     } catch (Exception e) {
       LOG.error("Could not check existence of {}({})", this.uri, key, e);
+      return false;
     }
-
-    return result;
-  }
-
-  private Map<String, Object> getCompoundKey(final Object key) {
-    final Set<CompoundKeyElementWrapper> elements = new TreeSet<CompoundKeyElementWrapper>();
-
-    for (Method method : key.getClass().getMethods()) {
-      final Annotation annotation = method.getAnnotation(CompoundKeyElement.class);
-      if (annotation instanceof CompoundKeyElement) {
-        elements.add(new CompoundKeyElementWrapper(
-                ((CompoundKeyElement) annotation).name(), method, ((CompoundKeyElement) annotation).position()));
-      }
-    }
-
-    final LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-
-    for (CompoundKeyElementWrapper element : elements) {
-      try {
-        map.put(element.getName(), element.getMethod().invoke(key));
-      } catch (Exception e) {
-        LOG.warn("Error retrieving compound key element '{}' value", element.getName(), e);
-      }
-    }
-
-    return map;
   }
 
   @Override
@@ -242,44 +206,11 @@ class EntitySetInvocationHandler<
     EntityInvocationHandler handler = getContext().entityContext().getEntity(uuid);
 
     if (handler == null) {
-      // not yet attached: search against the service
-      try {
-        LOG.debug("Search for '{}({})' into the service", typeRef.getSimpleName(), key);
-        final CommonURIBuilder<?> uriBuilder = getClient().newURIBuilder(this.uri.toASCIIString());
+      final CommonODataEntity entity = getClient().getObjectFactory().newEntity(
+              new FullQualifiedName(containerHandler.getSchemaName(), ClassUtils.getEntityTypeName(typeRef)));
 
-        if (key.getClass().getAnnotation(CompoundKey.class) == null) {
-          LOG.debug("Append key segment '{}'", key);
-          uriBuilder.appendKeySegment(key);
-        } else {
-          LOG.debug("Append compound key segment '{}'", key);
-          uriBuilder.appendKeySegment(getCompoundKey(key));
-        }
+      handler = EntityInvocationHandler.getInstance(key, entity, uri, typeRef, containerHandler);
 
-        LOG.debug("GET {}", uriBuilder.toString());
-
-        final ODataEntityRequest<CommonODataEntity> req =
-                getClient().getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-        if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) > 0) {
-          req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
-        }
-
-        final ODataRetrieveResponse<CommonODataEntity> res = req.execute();
-
-        final String etag = res.getETag();
-        final CommonODataEntity entity = res.getBody();
-        if (entity == null) {
-          throw new IllegalArgumentException("Invalid " + typeRef.getSimpleName() + "(" + key + ")");
-        }
-
-        handler = EntityInvocationHandler.getInstance(uriBuilder.build(), entity, this, typeRef);
-        handler.setETag(etag);
-
-        if (!key.equals(CoreUtils.getKey(getClient(), handler, typeRef, entity))) {
-          throw new IllegalArgumentException("Invalid " + typeRef.getSimpleName() + "(" + key + ")");
-        }
-      } catch (Exception e) {
-        LOG.info("Entity '" + uuid + "' not found", e);
-      }
     } else if (isDeleted(handler)) {
       // object deleted
       LOG.debug("Object '{}({})' has been deleted", typeRef.getSimpleName(), uuid);
@@ -293,8 +224,8 @@ class EntitySetInvocationHandler<
   }
 
   @SuppressWarnings("unchecked")
-  public <S extends T> Triple<List<S>, URI, List<ODataAnnotation>>
-          fetchPartialEntitySet(final URI uri, final Class<S> typeRef) {
+  public <S extends T> Triple<List<S>, URI, List<ODataAnnotation>> fetchPartialEntitySet(
+          final URI uri, final Class<S> typeRef) {
 
     final List<CommonODataEntity> entities = new ArrayList<CommonODataEntity>();
     final URI next;
@@ -326,8 +257,7 @@ class EntitySetInvocationHandler<
     final List<S> items = new ArrayList<S>(entities.size());
 
     for (CommonODataEntity entity : entities) {
-      final EntityInvocationHandler handler =
-              EntityInvocationHandler.getInstance(entity.getEditLink(), entity, this, typeRef);
+      final EntityInvocationHandler handler = EntityInvocationHandler.getInstance(entity, this, typeRef);
 
       final EntityInvocationHandler handlerInTheContext = getContext().entityContext().getEntity(handler.getUUID());
 
@@ -373,7 +303,8 @@ class EntitySetInvocationHandler<
   @SuppressWarnings("unchecked")
   @Override
   public <S extends T, SEC extends AbstractEntityCollection<S>> SEC getAll(final Class<SEC> collTypeRef) {
-    final Class<S> ref = (Class<S>) ClassUtils.extractTypeArg(collTypeRef);
+    final Class<S> ref = (Class<S>) ClassUtils.extractTypeArg(collTypeRef,
+            AbstractEntitySet.class, AbstractSingleton.class, AbstractEntityCollection.class);
     final Class<S> oref = (Class<S>) ClassUtils.extractTypeArg(this.collTypeRef);
 
     final CommonURIBuilder<?> uriBuilder = getClient().newURIBuilder(this.uri.toASCIIString());

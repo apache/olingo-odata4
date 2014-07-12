@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -95,7 +96,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     container.flush();
 
-    employee = container.getPerson().get(id, Employee.class);
+    employee = container.getPerson().get(id, Employee.class).load();
     assertNotNull(employee);
     assertEquals(id, employee.getPersonId());
 
@@ -104,7 +105,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
       employee.operations().sack();
 
       // 2. check that invoked action has effectively run
-      employee = container.getPerson().get(id, Employee.class);
+      employee = container.getPerson().get(id, Employee.class).load();
       assertEquals(0, employee.getSalary(), 0);
       assertTrue(employee.getTitle().endsWith("[Sacked]"));
     } catch (Exception e) {
@@ -152,7 +153,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     container.flush();
 
-    product = container.getProduct().get(id);
+    product = container.getProduct().get(id).load();
     assertNotNull(product);
     assertEquals(id, product.getProductId());
     assertEquals(BigDecimal.ZERO, product.getDimensions().getDepth());
@@ -169,7 +170,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
       product.operations().changeProductDimensions(newDimensions);
 
       // 2. check that invoked action has effectively run
-      product = container.getProduct().get(id);
+      product = container.getProduct().get(id).load();
       assertEquals(BigDecimal.ONE, product.getDimensions().getDepth());
       assertEquals(BigDecimal.ONE, product.getDimensions().getHeight());
       assertEquals(BigDecimal.ONE, product.getDimensions().getWidth());
@@ -196,29 +197,29 @@ public class InvokeTestITCase extends AbstractTestITCase {
     ComputerDetail computerDetail = container.getComputerDetail().newComputerDetail();
     computerDetail.setComputerDetailId(id);
     computerDetail.setSpecificationsBag(Collections.singleton("First spec"));
-    computerDetail.setPurchaseDate(purchaseDate);
+    computerDetail.setPurchaseDate(new Timestamp(purchaseDate.getTimeInMillis()));
 
     container.flush();
 
-    computerDetail = container.getComputerDetail().get(id);
+    computerDetail = container.getComputerDetail().get(id).load();
     assertNotNull(computerDetail);
     assertEquals(id, computerDetail.getComputerDetailId());
     assertEquals(1, computerDetail.getSpecificationsBag().size());
     assertTrue(computerDetail.getSpecificationsBag().contains("First spec"));
-    assertEquals(purchaseDate.getTimeInMillis(), computerDetail.getPurchaseDate().getTimeInMillis());
+    assertEquals(purchaseDate.getTimeInMillis(), computerDetail.getPurchaseDate().getTime());
 
     try {
       // 1. invoke action bound to the computer detail just created
       computerDetail.operations().resetComputerDetailsSpecifications(
-          Collections.singleton("Second spec"), Calendar.getInstance());
+          Collections.singleton("Second spec"), new Timestamp(Calendar.getInstance().getTimeInMillis()));
 
       // 2. check that invoked action has effectively run
-      computerDetail = container.getComputerDetail().get(id);
+      computerDetail = container.getComputerDetail().get(id).load();
       assertNotNull(computerDetail);
       assertEquals(id, computerDetail.getComputerDetailId());
       assertEquals(1, computerDetail.getSpecificationsBag().size());
       assertTrue(computerDetail.getSpecificationsBag().contains("Second spec"));
-      assertNotEquals(purchaseDate.getTimeInMillis(), computerDetail.getPurchaseDate().getTimeInMillis());
+      assertNotEquals(purchaseDate.getTimeInMillis(), computerDetail.getPurchaseDate());
     } catch (Exception e) {
       fail("Should never get here");
     } finally {

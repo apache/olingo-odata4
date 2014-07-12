@@ -30,26 +30,35 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
+import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.Annotatable;
+import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
+import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Term;
+import static org.apache.olingo.ext.proxy.commons.AbstractStructuredInvocationHandler.LOG;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
@@ -78,13 +87,12 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   private EntityUUID uuid;
 
   static EntityInvocationHandler getInstance(
-          final URI entityURI,
           final CommonODataEntity entity,
           final EntitySetInvocationHandler<?, ?, ?> entitySet,
           final Class<?> typeRef) {
 
-    return getInstance(
-            entityURI,
+    return new EntityInvocationHandler(
+            null,
             entity,
             entitySet.getEntitySetURI(),
             typeRef,
@@ -92,17 +100,26 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   static EntityInvocationHandler getInstance(
-          final URI entityURI,
+          final Object key,
           final CommonODataEntity entity,
           final URI entitySetURI,
           final Class<?> typeRef,
           final EntityContainerInvocationHandler containerHandler) {
 
-    return new EntityInvocationHandler(entityURI, entity, entitySetURI, typeRef, containerHandler);
+    return new EntityInvocationHandler(key, entity, entitySetURI, typeRef, containerHandler);
+  }
+
+  static EntityInvocationHandler getInstance(
+          final CommonODataEntity entity,
+          final URI entitySetURI,
+          final Class<?> typeRef,
+          final EntityContainerInvocationHandler containerHandler) {
+
+    return new EntityInvocationHandler(null, entity, entitySetURI, typeRef, containerHandler);
   }
 
   private EntityInvocationHandler(
-          final URI entityURI,
+          final Object entityKey,
           final CommonODataEntity entity,
           final URI entitySetURI,
           final Class<?> typeRef,
@@ -110,7 +127,24 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
     super(typeRef, entity, containerHandler);
 
-    this.entityURI = entityURI;
+    final Object key = entityKey == null ? CoreUtils.getKey(getClient(), this, typeRef, entity) : entityKey;
+    if (key!=null && entity.getEditLink() == null) {
+      final CommonURIBuilder<?> uriBuilder = containerHandler.getClient().newURIBuilder(entitySetURI.toASCIIString());
+
+      if (key.getClass().getAnnotation(CompoundKey.class) == null) {
+        LOG.debug("Append key segment '{}'", key);
+        uriBuilder.appendKeySegment(key);
+      } else {
+        LOG.debug("Append compound key segment '{}'", key);
+        uriBuilder.appendKeySegment(getCompoundKey(key));
+      }
+
+      this.entityURI = uriBuilder.build();
+      entity.setEditLink(entityURI);
+    } else {
+      this.entityURI = entity.getEditLink();
+    }
+
     this.internal = entity;
     getEntity().setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
 
@@ -118,7 +152,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
             containerHandler.getEntityContainerName(),
             entitySetURI,
             typeRef,
-            CoreUtils.getKey(getClient(), this, typeRef, entity));
+            key);
   }
 
   public void setEntity(final CommonODataEntity entity) {
@@ -471,6 +505,65 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return getEntity() instanceof ODataEntity
             ? CoreUtils.getAnnotationTerms(((ODataEntity) getEntity()).getAnnotations())
             : Collections.<Class<? extends AbstractTerm>>emptyList();
+  }
+
+  @Override
+  protected void load() {
+    // Search against the service
+    final Object key = uuid.getKey();
+
+    try {
+      final ODataEntityRequest<CommonODataEntity> req =
+              getClient().getRetrieveRequestFactory().getEntityRequest(entityURI);
+      if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) > 0) {
+        req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
+      }
+
+      final ODataRetrieveResponse<CommonODataEntity> res = req.execute();
+
+      final String etag = res.getETag();
+      final CommonODataEntity entity = res.getBody();
+      if (entity == null) {
+        throw new IllegalArgumentException("Invalid " + typeRef.getSimpleName() + "(" + key + ")");
+      }
+
+      setEntity(entity);
+      setETag(etag);
+
+      if (!key.equals(CoreUtils.getKey(getClient(), this, typeRef, entity))) {
+        throw new IllegalArgumentException("Invalid " + typeRef.getSimpleName() + "(" + key + ")");
+      }
+    } catch (IllegalArgumentException e) {
+      LOG.warn("Entity '" + uuid + "' not found", e);
+      throw e;
+    } catch (Exception e) {
+      LOG.warn("Error retrieving entity '" + uuid + "'", e);
+      throw new IllegalArgumentException("Error retrieving " + typeRef.getSimpleName() + "(" + key + ")", e);
+    }
+  }
+
+  private Map<String, Object> getCompoundKey(final Object key) {
+    final Set<CompoundKeyElementWrapper> elements = new TreeSet<CompoundKeyElementWrapper>();
+
+    for (Method method : key.getClass().getMethods()) {
+      final Annotation annotation = method.getAnnotation(CompoundKeyElement.class);
+      if (annotation instanceof CompoundKeyElement) {
+        elements.add(new CompoundKeyElementWrapper(
+                ((CompoundKeyElement) annotation).name(), method, ((CompoundKeyElement) annotation).position()));
+      }
+    }
+
+    final LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+
+    for (CompoundKeyElementWrapper element : elements) {
+      try {
+        map.put(element.getName(), element.getMethod().invoke(key));
+      } catch (Exception e) {
+        LOG.warn("Error retrieving compound key element '{}' value", element.getName(), e);
+      }
+    }
+
+    return map;
   }
 
   @Override

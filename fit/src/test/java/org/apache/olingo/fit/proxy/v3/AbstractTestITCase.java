@@ -139,7 +139,7 @@ public abstract class AbstractTestITCase {
   }
 
   protected Customer readCustomer(final DefaultContainer container, final int id) {
-    final Customer customer = container.getCustomer().get(id);
+    final Customer customer = container.getCustomer().get(id).load();
     assertNotNull(customer);
     assertEquals(Integer.valueOf(id), customer.getCustomerId());
 

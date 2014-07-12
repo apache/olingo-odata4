@@ -153,7 +153,7 @@ public class V3ActionOverloading extends V3Services {
   }
 
   @POST
-  @Path("/Product({entityId})/RetrieveProduct")
+  @Path("/Product({entityId})/{path:.*RetrieveProduct}")
   public Response productBoundRetrieveProduct(
       @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
       @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
@@ -197,7 +197,7 @@ public class V3ActionOverloading extends V3Services {
   }
 
   @POST
-  @Path("/OrderLine(OrderId={orderId},ProductId={productId})/RetrieveProduct")
+  @Path("/OrderLine(OrderId={orderId},ProductId={productId})/{path:.*RetrieveProduct}")
   public Response orderLineBoundRetrieveProduct(
       @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
       @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,

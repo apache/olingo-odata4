@@ -161,30 +161,43 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
     if (boundOp == null) {
       boundOp = entity.getOperation(new FullQualifiedName(targetFQN.getNamespace(), operation.name()).toString());
     }
+
     boolean useOperationFQN = this.getClient().getConfiguration().isUseUrlOperationFQN();
-    if (boundOp == null) {
-    	// json minimal/none metadata doesn't return operations for entity, so here try creating it from Edm: 
-    	EdmAction action = this.getClient().getEdm(null).getBoundAction(
-          new FullQualifiedName(targetFQN.getNamespace(), operation.name()), targetFQN, false);
-    	if(action!=null){
-    		boundOp = new ODataOperation();
-    		boundOp.setMetadataAnchor(action.getFullQualifiedName().toString());
-    		boundOp.setTitle(boundOp.getMetadataAnchor());
-    		boundOp.setTarget(URI.create(entity.getEditLink().toString() + "/" 
-                  + (useOperationFQN ? action.getFullQualifiedName().toString() : operation.name())));
-    	}
+
+    EdmEntityType entityType = getClient().getCachedEdm().getEntityType(entity.getTypeName());
+    EdmEntityType baseType = entityType;
+    while (boundOp == null && baseType != null) {
+      // json minimal/none metadata doesn't return operations for entity, so here try creating it from Edm: 
+      EdmAction action = this.getClient().getCachedEdm().getBoundAction(
+              new FullQualifiedName(targetFQN.getNamespace(), operation.name()), baseType.getFullQualifiedName(), false);
+
+      if (action != null) {
+        boundOp = new ODataOperation();
+        boundOp.setMetadataAnchor(action.getFullQualifiedName().toString());
+        boundOp.setTitle(boundOp.getMetadataAnchor());
+        boundOp.setTarget(URI.create(entity.getEditLink().toString() + "/"
+                + (useOperationFQN ? action.getFullQualifiedName().toString() : operation.name())));
+      } else {
+        baseType = baseType.getBaseType();
+      }
     }
-    if (boundOp == null) {
-    	// json minimal/none metadata doesn't return operations for entity, so here try creating it from Edm: 
-    	EdmFunction func = this.getClient().getEdm(null).getBoundFunction(
-          new FullQualifiedName(targetFQN.getNamespace(), operation.name()), targetFQN, false, parameterNames);
-    	if(func!=null){
-    		boundOp = new ODataOperation();
-    		boundOp.setMetadataAnchor(func.getFullQualifiedName().toString());
-    		boundOp.setTitle(boundOp.getMetadataAnchor());
-    		boundOp.setTarget(URI.create(entity.getEditLink().toString() + "/" 
-                  + (useOperationFQN ? func.getFullQualifiedName().toString() : operation.name())));
-    	}
+
+    baseType = entityType;
+    while (boundOp == null && baseType != null) {
+      // json minimal/none metadata doesn't return operations for entity, so here try creating it from Edm: 
+      EdmFunction func = this.getClient().getCachedEdm().getBoundFunction(
+              new FullQualifiedName(targetFQN.getNamespace(), operation.name()), baseType.getFullQualifiedName(),
+              false, parameterNames);
+
+      if (func != null) {
+        boundOp = new ODataOperation();
+        boundOp.setMetadataAnchor(func.getFullQualifiedName().toString());
+        boundOp.setTitle(boundOp.getMetadataAnchor());
+        boundOp.setTarget(URI.create(entity.getEditLink().toString() + "/"
+                + (useOperationFQN ? func.getFullQualifiedName().toString() : operation.name())));
+      } else {
+        baseType = baseType.getBaseType();
+      }
     }
     if (boundOp == null) {
       throw new IllegalArgumentException(String.format("Could not find any matching operation '%s' bound to %s",
@@ -195,18 +208,18 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
             ? new FullQualifiedName(targetFQN.getNamespace(), boundOp.getTitle())
             : new FullQualifiedName(boundOp.getTitle());
 
-    EdmEntityType entityType = getClient().getCachedEdm().getEntityType(entity.getTypeName());
     EdmOperation edmOperation = null;
     while (edmOperation == null && entityType != null) {
       edmOperation = operation.type() == OperationType.FUNCTION
               ? getClient().getCachedEdm().getBoundFunction(
-                      operationFQN, entityType.getFullQualifiedName(), false, parameterNames)
+              operationFQN, entityType.getFullQualifiedName(), false, parameterNames)
               : getClient().getCachedEdm().getBoundAction(
-                      operationFQN, entityType.getFullQualifiedName(), false);
+              operationFQN, entityType.getFullQualifiedName(), false);
       if (entityType.getBaseType() != null) {
         entityType = entityType.getBaseType();
       }
     }
+    
     if (edmOperation == null) {
       throw new IllegalArgumentException(String.format("Could not find any matching operation '%s' bound to %s",
               operation.name(), entity.getTypeName()));
@@ -230,6 +243,6 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
 
     return new AbstractMap.SimpleEntry<URI, EdmOperation>(
             URI.create(((EntityCollectionInvocationHandler<?>) target).getURI().toASCIIString()
-                    + "/" + edmOperation.getName()), edmOperation);
+            + "/" + edmOperation.getName()), edmOperation);
   }
 }

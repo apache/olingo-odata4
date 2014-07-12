@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
+import java.sql.Timestamp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -106,7 +107,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void refreshDefaultPI() {
-    final PaymentInstrument pi = container.getAccounts().get(101).operations().refreshDefaultPI(Calendar.getInstance());
+    final PaymentInstrument pi = container.getAccounts().get(101).operations().
+            refreshDefaultPI(new Timestamp(Calendar.getInstance().getTimeInMillis()));
     assertEquals(101901, pi.getPaymentInstrumentID(), 0);
   }
 }

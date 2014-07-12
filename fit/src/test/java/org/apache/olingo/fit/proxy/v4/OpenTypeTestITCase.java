@@ -20,10 +20,11 @@ package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -55,7 +56,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   public static void initContainer() {
     otcontainerFactory = EntityContainerFactory.getV4(testOpenTypeServiceRootURL);
     otcontainerFactory.getClient().getConfiguration().
-        setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+            setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     otcontainer = otcontainerFactory.getEntityContainer(DefaultContainer.class);
     assertNotNull(otcontainer);
   }
@@ -63,21 +64,21 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   @Test
   public void checkOpenTypeEntityTypesExist() {
     assertTrue(otcontainer.getRow().newRow().getClass().getInterfaces()[0].
-        getAnnotation(EntityType.class).openType());
+            getAnnotation(EntityType.class).openType());
     assertTrue(otcontainer.getRowIndex().newRowIndex().getClass().getInterfaces()[0].
-        getAnnotation(EntityType.class).openType());
+            getAnnotation(EntityType.class).openType());
     assertTrue(otcontainer.getRow().newIndexedRow().getClass().getInterfaces()[0].
-        getAnnotation(EntityType.class).openType());
+            getAnnotation(EntityType.class).openType());
     otcontainerFactory.getContext().detachAll();
   }
 
   @Test
   public void read() {
-    Row row = otcontainer.getRow().get(UUID.fromString("71f7d0dc-ede4-45eb-b421-555a2aa1e58f"));
+    Row row = otcontainer.getRow().get(UUID.fromString("71f7d0dc-ede4-45eb-b421-555a2aa1e58f")).load();
     assertEquals(Double.class, row.getAdditionalProperty("Double").getClass());
     assertEquals("71f7d0dc-ede4-45eb-b421-555a2aa1e58f", row.getId().toString());
 
-    row = otcontainer.getRow().get(UUID.fromString("672b8250-1e6e-4785-80cf-b94b572e42b3"));
+    row = otcontainer.getRow().get(UUID.fromString("672b8250-1e6e-4785-80cf-b94b572e42b3")).load();
     assertEquals(BigDecimal.class, row.getAdditionalProperty("Decimal").getClass());
   }
 
@@ -100,7 +101,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     cal.clear();
     cal.setTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse("2001-04-05T05:05:05.001"));
 
-    contact.setLastContacted(cal);
+    contact.setLastContacted(new Timestamp(cal.getTimeInMillis()));
 
     cal = Calendar.getInstance();
     cal.clear();
@@ -126,7 +127,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 
     otcontainer.flush();
 
-    rowIndex = otcontainer.getRowIndex().get(id);
+    rowIndex = otcontainer.getRowIndex().get(id).load();
     assertEquals(String.class, rowIndex.getAdditionalProperty("aString").getClass());
     assertEquals(Boolean.class, rowIndex.getAdditionalProperty("aBoolean").getClass());
     assertEquals(Double.class, rowIndex.getAdditionalProperty("aDouble").getClass());
@@ -139,13 +140,17 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertEquals("Fabio", AccountInfo.class.cast(rowIndex.getAdditionalProperty("info")).getFirstName());
     assertEquals("Martelli", AccountInfo.class.cast(rowIndex.getAdditionalProperty("info")).getLastName());
     assertEquals("fabio.martelli@tirasa.net", AccountInfo.class.cast(rowIndex.getAdditionalProperty("info")).
-        getAdditionalProperty("email"));
+            getAdditionalProperty("email"));
 
     otcontainerFactory.getContext().detachAll();
 
     otcontainer.getRowIndex().delete(id);
     otcontainer.flush();
 
-    assertNull(otcontainer.getRowIndex().get(id));
+    try {
+      otcontainer.getRowIndex().get(id).load();
+      fail();
+    } catch (IllegalArgumentException e) {
+    }
   }
 }

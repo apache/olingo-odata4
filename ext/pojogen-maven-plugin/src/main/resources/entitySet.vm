@@ -52,9 +52,11 @@ import javax.xml.datatype.Duration;
   #set( $type = "" )
 #end
 
+#set ( $javaEntityType = $utility.getJavaType($entitySet.EntityType) )
+
 @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "$entitySet.Name")
 public interface $utility.capitalize($entitySet.Name) 
-  extends AbstractEntitySet<$utility.getJavaType($entitySet.EntityType), $type, $utility.getJavaType($entitySet.EntityType)Collection> {
+  extends org.apache.olingo.ext.proxy.api.CollectionQuery<$javaEntityType, ${javaEntityType}Collection>, AbstractEntitySet<$javaEntityType, $type, ${javaEntityType}Collection> {
 
 #foreach( $dos in $utility.getDescendantsOrSelf($utility.getEdmType($entitySet)) )
     #set( $djt = $utility.getJavaType($dos) )

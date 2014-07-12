@@ -28,7 +28,6 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -282,7 +281,7 @@ public final class CoreUtils {
         } else if (target.isAssignableFrom(clazz)) {
           bckCandidate = kind;
         } else if (target == Timestamp.class
-            && (kind == EdmPrimitiveTypeKind.DateTime || kind == EdmPrimitiveTypeKind.DateTimeOffset)) {
+                && (kind == EdmPrimitiveTypeKind.DateTime || kind == EdmPrimitiveTypeKind.DateTimeOffset)) {
           bckCandidate = kind;
         }
       }
@@ -341,9 +340,7 @@ public final class CoreUtils {
     Object obj;
 
     try {
-      obj = value.toValue() instanceof Timestamp
-              ? value.toCastValue(Calendar.class)
-              : reference == null
+      obj = reference == null
               ? value.toValue()
               : value.toCastValue(reference);
     } catch (EdmPrimitiveTypeException e) {
@@ -458,7 +455,7 @@ public final class CoreUtils {
                       Thread.currentThread().getContextClassLoader(),
                       new Class<?>[] {getter.getReturnType()},
                       ComplexInvocationHandler.getInstance(
-                              client, property.getName(), getter.getReturnType(), typeHandler));
+                      client, property.getName(), getter.getReturnType(), typeHandler));
 
               populate(client, typeHandler, complex, Property.class, property.getValue().asComplex().iterator());
               setPropertyValue(bean, getter, complex);
@@ -483,7 +480,7 @@ public final class CoreUtils {
                           Thread.currentThread().getContextClassLoader(),
                           new Class<?>[] {collItemClass},
                           ComplexInvocationHandler.getInstance(
-                                  client, property.getName(), collItemClass, typeHandler));
+                          client, property.getName(), collItemClass, typeHandler));
 
                   populate(client, typeHandler, collItem, Property.class, value.asComplex().iterator());
                   collection.add(collItem);
@@ -527,7 +524,7 @@ public final class CoreUtils {
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {internalRef},
               ComplexInvocationHandler.getInstance(
-                      client, value.asComplex(), internalRef, entityHandler));
+              client, value.asComplex(), internalRef, entityHandler));
     } else if (value.isCollection()) {
       final ArrayList<Object> collection = new ArrayList<Object>();
 
@@ -542,7 +539,7 @@ public final class CoreUtils {
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {internalRef},
                   ComplexInvocationHandler.getInstance(
-                          client, itemValue.asComplex(), internalRef, entityHandler));
+                  client, itemValue.asComplex(), internalRef, entityHandler));
 
           collection.add(collItem);
         }
@@ -625,8 +622,8 @@ public final class CoreUtils {
         if (ns != null && ann != null
                 && value.getTypeName().replaceAll("^Collection\\(", "").replaceAll("\\)$", "").
                 equals(new FullQualifiedName(ns.value(), annType.isAssignableFrom(EnumType.class)
-                                ? EnumType.class.cast(ann).name()
-                                : ComplexType.class.cast(ann).name()).toString())) {
+                ? EnumType.class.cast(ann).name()
+                : ComplexType.class.cast(ann).name()).toString())) {
           return clazz;
         }
       }

@@ -448,7 +448,7 @@ public class XMLUtilities extends AbstractUtilities {
     XMLEventWriter writer = getEventWriter(bos);
 
     final String editLinkElement = String.format("<link rel=\"edit\" title=\"%s\" href=\"%s\" />", title, href);
-    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA replace with " + editLinkElement);
+    
     try {
       // check edit link existence
       extractElement(reader, writer, Collections.<String>singletonList(Constants.get(version, ConstantKey.LINK)),

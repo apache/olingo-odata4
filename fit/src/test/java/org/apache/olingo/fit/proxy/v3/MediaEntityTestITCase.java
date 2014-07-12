@@ -20,8 +20,8 @@ package org.apache.olingo.fit.proxy.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -38,7 +38,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void read() throws IOException {
-    final InputStream is = container.getCar().get(12).getStream();
+    final InputStream is = container.getCar().get(12).load().getStream();
     assertNotNull(is);
     IOUtils.closeQuietly(is);
   }
@@ -48,12 +48,12 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final String TO_BE_UPDATED = "buffered stream sample (" + System.currentTimeMillis() + ")";
     final InputStream input = new ByteArrayInputStream(TO_BE_UPDATED.getBytes());
 
-    Car car = container.getCar().get(12);
+    Car car = container.getCar().get(12).load();
     car.setPhoto(input);
 
     container.flush();
 
-    car = container.getCar().get(12);
+    car = container.getCar().get(12).load();
     final InputStream is = car.getPhoto();
     assertEquals(TO_BE_UPDATED, IOUtils.toString(is));
     IOUtils.closeQuietly(is);
@@ -71,7 +71,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
     container.flush();
 
-    input = container.getCar().get(14).getStream();
+    input = container.getCar().get(14).load().getStream();
     assertEquals(TO_BE_UPDATED, IOUtils.toString(input));
     IOUtils.closeQuietly(input);
   }
@@ -94,7 +94,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
     containerFactory.getContext().detachAll();
 
-    car = container.getCar().get(key);
+    car = container.getCar().get(key).load();
     assertEquals(DESC, car.getDescription());
     input = car.getStream();
     assertEquals(TO_BE_UPDATED, IOUtils.toString(input));
@@ -103,6 +103,10 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     container.getCar().delete(key);
     container.flush();
 
-    assertNull(container.getCar().get(key));
+    try {
+      container.getCar().get(key).load();
+      fail();
+    } catch (IllegalArgumentException e) {
+    }
   }
 }

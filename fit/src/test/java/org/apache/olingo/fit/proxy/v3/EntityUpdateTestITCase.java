@@ -19,7 +19,6 @@
 package org.apache.olingo.fit.proxy.v3;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Proxy;
@@ -44,14 +43,14 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void update() {
-    Order order = container.getOrder().get(-9);
+    Order order = container.getOrder().get(-9).load();
 
     final ConcurrencyInfo ci = order.getConcurrency();
     ci.setToken("XXX");
 
     container.flush();
 
-    order = container.getOrder().get(-9);
+    order = container.getOrder().get(-9).load();
     assertEquals("XXX", order.getConcurrency().getToken());
   }
 
@@ -62,14 +61,12 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     key.setMessageId(-10);
 
     Message message = container.getMessage().get(key);
-    assertNotNull(message);
 
     message.setBody("XXX");
 
     container.flush();
 
-    message = container.getMessage().get(key);
-    assertNotNull(message);
+    message = container.getMessage().get(key).load();
     assertEquals("XXX", message.getBody());
   }
 
@@ -88,7 +85,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
     container.flush();
 
-    order = container.getOrder().get(400);
+    order = container.getOrder().get(400).load();
     assertEquals(400, order.getOrderId().intValue());
     assertEquals(-9, order.getCustomerId().intValue());
 
@@ -108,7 +105,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void concurrentModification() {
-    Product product = container.getProduct().get(-10);
+    Product product = container.getProduct().get(-10).load();
     final String etag = ((EntityInvocationHandler) Proxy.getInvocationHandler(product)).getETag();
     assertTrue(StringUtils.isNotBlank(etag));
 
@@ -117,7 +114,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
     container.flush();
 
-    product = container.getProduct().get(-10);
+    product = container.getProduct().get(-10).load();
     assertEquals(baseConcurrency, product.getBaseConcurrency());
   }
 }
