@@ -43,7 +43,7 @@ import org.apache.olingo.commons.api.serialization.ODataSerializerException;
  * This class implements an OData update entity property request.
  */
 public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<ODataPropertyUpdateResponse>
-    implements ODataPropertyUpdateRequest {
+        implements ODataPropertyUpdateRequest {
 
   /**
    * Value to be created.
@@ -77,7 +77,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
     ((HttpEntityEnclosingRequestBase) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 
     try {
-      return new ODataPropertyUpdateResponseImpl(httpClient, doExecute());
+      return new ODataPropertyUpdateResponseImpl(odataClient, httpClient, doExecute());
     } finally {
       IOUtils.closeQuietly(input);
     }
@@ -99,30 +99,18 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
 
     private CommonODataProperty property = null;
 
-    /**
-     * Constructor.
-     * <p>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataPropertyUpdateResponseImpl() {
-    }
+    private ODataPropertyUpdateResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataPropertyUpdateResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     @Override
     public CommonODataProperty getBody() {
       if (property == null) {
         try {
-          final ResWrap<Property> resource = odataClient.getDeserializer(ODataFormat.fromString(getAccept()))
-                  .toProperty(getRawResponse());
+          final ResWrap<Property> resource = odataClient.getDeserializer(ODataFormat.fromString(getAccept())).
+                  toProperty(getRawResponse());
 
           property = odataClient.getBinder().getODataProperty(resource);
         } catch (final ODataDeserializerException e) {

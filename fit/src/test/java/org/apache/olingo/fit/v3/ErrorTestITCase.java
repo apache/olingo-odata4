@@ -51,7 +51,7 @@ import org.junit.Test;
 public class ErrorTestITCase extends AbstractTestITCase {
 
   private class ErrorGeneratingRequest
-      extends AbstractODataBasicRequest<ODataEntityCreateResponse<ODataEntity>> {
+          extends AbstractODataBasicRequest<ODataEntityCreateResponse<ODataEntity>> {
 
     public ErrorGeneratingRequest(final HttpMethod method, final URI uri) {
       super(client, method, uri);
@@ -75,16 +75,13 @@ public class ErrorTestITCase extends AbstractTestITCase {
 
     private class ErrorResponseImpl extends AbstractODataResponse implements ODataEntityCreateResponse<ODataEntity> {
 
-      private final ODataClient odataClient;
-
       public ErrorResponseImpl(final ODataClient odataClient, final HttpClient client, final HttpResponse res) {
-        super(client, res);
-        this.odataClient = odataClient;
+        super(odataClient, client, res);
       }
 
       @Override
       public ODataEntity getBody() {
-        return odataClient.getObjectFactory().newEntity(new FullQualifiedName("Invalid.Invalid"));
+        return ((ODataClient) odataClient).getObjectFactory().newEntity(new FullQualifiedName("Invalid.Invalid"));
       }
     }
   }
@@ -146,9 +143,9 @@ public class ErrorTestITCase extends AbstractTestITCase {
 
   private void instreamError(final ODataFormat format) {
     final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).
-        appendOperationCallSegment("InStreamErrorGetCustomer");
+            appendOperationCallSegment("InStreamErrorGetCustomer");
     final ODataInvokeRequest<ODataEntitySet> req =
-        client.getInvokeRequestFactory().getFunctionInvokeRequest(builder.build(), ODataEntitySet.class);
+            client.getInvokeRequestFactory().getFunctionInvokeRequest(builder.build(), ODataEntitySet.class);
     req.setFormat(format);
 
     final ODataInvokeResponse<ODataEntitySet> res = req.execute();

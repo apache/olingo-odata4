@@ -24,21 +24,15 @@ import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIt
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchController;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
-/**
- * Abstract representation of an OData response.
- */
 public class ODataBatchErrorResponse extends AbstractODataResponse {
 
-  /**
-   * Constructor.
-   */
   public ODataBatchErrorResponse(
           final Map.Entry<Integer, String> responseLine,
           final Map<String, Collection<String>> headers,
           final ODataBatchLineIterator batchLineIterator,
           final String boundary) {
 
-    super();
+    super(null, null, null);
 
     if (hasBeenInitialized) {
       throw new IllegalStateException("Request already initialized");

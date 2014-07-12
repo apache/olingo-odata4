@@ -41,7 +41,7 @@ import org.apache.olingo.commons.api.format.ODataFormat;
  * This class implements an OData update entity property value request.
  */
 public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<ODataValueUpdateResponse>
-    implements ODataValueUpdateRequest {
+        implements ODataValueUpdateRequest {
 
   /**
    * Value to be created.
@@ -75,7 +75,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
     ((HttpEntityEnclosingRequestBase) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 
     try {
-      return new ODataValueUpdateResponseImpl(httpClient, doExecute());
+      return new ODataValueUpdateResponseImpl(odataClient, httpClient, doExecute());
     } finally {
       IOUtils.closeQuietly(input);
     }
@@ -96,23 +96,10 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
 
     private ODataPrimitiveValue value = null;
 
-    /**
-     * Constructor.
-     * <p>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataValueUpdateResponseImpl() {
-      super();
-    }
+    private ODataValueUpdateResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataValueUpdateResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     @Override
@@ -123,7 +110,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
         try {
           value = odataClient.getObjectFactory().newPrimitiveValueBuilder().
                   setType(format == ODataFormat.TEXT_PLAIN
-                  ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
+                          ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                   setValue(getRawResponse()).
                   build();
         } catch (Exception e) {

@@ -37,7 +37,7 @@ import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
  * This class implements an OData entity property query request.
  */
 public class ODataPropertyRequestImpl<T extends CommonODataProperty>
-    extends AbstractODataRetrieveRequest<T> implements ODataPropertyRequest<T> {
+        extends AbstractODataRetrieveRequest<T> implements ODataPropertyRequest<T> {
 
   /**
    * Private constructor.
@@ -57,29 +57,17 @@ public class ODataPropertyRequestImpl<T extends CommonODataProperty>
   @Override
   public ODataRetrieveResponse<T> execute() {
     final HttpResponse res = doExecute();
-    return new ODataPropertyResponseImpl(httpClient, res);
+    return new ODataPropertyResponseImpl(odataClient, httpClient, res);
   }
 
   protected class ODataPropertyResponseImpl extends AbstractODataRetrieveResponse {
 
     private T property = null;
 
-    /**
-     * Constructor.
-     * <p>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataPropertyResponseImpl() {
-    }
+    private ODataPropertyResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataPropertyResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     @Override
@@ -88,7 +76,7 @@ public class ODataPropertyRequestImpl<T extends CommonODataProperty>
       if (property == null) {
         try {
           final ResWrap<Property> resource = odataClient.getDeserializer(ODataFormat.fromString(getContentType()))
-              .toProperty(res.getEntity().getContent());
+                  .toProperty(res.getEntity().getContent());
 
           property = (T) odataClient.getBinder().getODataProperty(resource);
         } catch (IOException e) {

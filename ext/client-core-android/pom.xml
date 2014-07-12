@@ -39,7 +39,12 @@
       <groupId>org.apache.olingo</groupId>
       <artifactId>olingo-client-core</artifactId>
       <version>${project.version}</version>
-      <optional>true</optional>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.google.android</groupId>
+      <artifactId>android</artifactId>
     </dependency>
   </dependencies>
   
@@ -65,7 +70,6 @@
                 <include>org.apache.commons:commons-lang3</include>
                 <include>org.slf4j:slf4j-api</include>
                 <include>commons-io:commons-io</include>
-                <include>org.apache.httpcomponents:httpcore</include>
                 <include>com.fasterxml.jackson.core:jackson-core</include>
                 <include>com.fasterxml.jackson.core:jackson-databind</include>
                 <include>com.fasterxml.jackson.core:jackson-annotations</include>

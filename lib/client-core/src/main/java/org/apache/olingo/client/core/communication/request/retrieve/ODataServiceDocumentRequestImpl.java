@@ -35,7 +35,7 @@ import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
  * This class implements an OData service document request.
  */
 public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveRequest<ODataServiceDocument>
-    implements ODataServiceDocumentRequest {
+        implements ODataServiceDocumentRequest {
 
   /**
    * Constructor.
@@ -55,7 +55,7 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
   @Override
   public ODataRetrieveResponse<ODataServiceDocument> execute() {
     final HttpResponse res = doExecute();
-    return new ODataServiceResponseImpl(httpClient, res);
+    return new ODataServiceResponseImpl(odataClient, httpClient, res);
   }
 
   /**
@@ -65,30 +65,18 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
 
     private ODataServiceDocument serviceDocument = null;
 
-    /**
-     * Constructor.
-     * <p>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataServiceResponseImpl() {}
+    private ODataServiceResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataServiceResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     @Override
     public ODataServiceDocument getBody() {
       if (serviceDocument == null) {
         try {
-          final ResWrap<ServiceDocument> resource =
-              odataClient.getDeserializer(ODataFormat.fromString(getContentType()))
-                  .toServiceDocument(getRawResponse());
+          final ResWrap<ServiceDocument> resource = odataClient.
+                  getDeserializer(ODataFormat.fromString(getContentType())).toServiceDocument(getRawResponse());
 
           serviceDocument = odataClient.getBinder().getODataServiceDocument(resource.getPayload());
         } catch (final ODataDeserializerException e) {

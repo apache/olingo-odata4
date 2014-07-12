@@ -33,6 +33,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
@@ -55,10 +56,12 @@ public abstract class AbstractODataResponse implements ODataResponse {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(ODataResponse.class);
 
+  protected final CommonODataClient<?> odataClient;
+
   /**
    * HTTP client.
    */
-  protected final HttpClient client;
+  protected final HttpClient httpClient;
 
   /**
    * HTTP response.
@@ -96,21 +99,11 @@ public abstract class AbstractODataResponse implements ODataResponse {
    */
   protected ODataBatchController batchInfo = null;
 
-  /**
-   * Constructor.
-   */
-  public AbstractODataResponse() {
-    this(null, null);
-  }
+  public AbstractODataResponse(
+          final CommonODataClient<?> odataClient, final HttpClient httpclient, final HttpResponse res) {
 
-  /**
-   * Constructor.
-   *
-   * @param client HTTP client.
-   * @param res HTTP response.
-   */
-  public AbstractODataResponse(final HttpClient client, final HttpResponse res) {
-    this.client = client;
+    this.odataClient = odataClient;
+    this.httpClient = httpclient;
     this.res = res;
     if (res != null) {
       initFromHttpResponse(res);
@@ -285,11 +278,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
    */
   @Override
   public void close() {
-    if (client == null) {
-      IOUtils.closeQuietly(payload);
-    } else {
-      this.client.getConnectionManager().shutdown();
-    }
+    odataClient.getConfiguration().getHttpClientFactory().close(httpClient);
 
     if (batchInfo != null) {
       batchInfo.setValidBatch(false);

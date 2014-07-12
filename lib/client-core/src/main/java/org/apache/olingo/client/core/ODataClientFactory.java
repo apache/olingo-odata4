@@ -20,7 +20,6 @@ package org.apache.olingo.client.core;
 
 import org.apache.olingo.commons.api.format.ODataFormat;
 
-
 public final class ODataClientFactory {
 
   public static org.apache.olingo.client.api.v3.ODataClient getV3() {

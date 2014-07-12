@@ -23,13 +23,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.apache.olingo.client.api.CommonConfiguration;
+import org.apache.olingo.client.api.Configuration;
 
 public abstract class AsyncCall<V> implements Future<V> {
 
   private final Future<V> future;
 
-  public AsyncCall(final CommonConfiguration configuration) {
+  public AsyncCall(final Configuration configuration) {
     this.future = configuration.getExecutor().submit(new Callable<V>() {
 
       @Override

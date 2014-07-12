@@ -1,21 +1,21 @@
-/*******************************************************************************
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- ******************************************************************************/
+ */
 package org.apache.olingo.commons.api.format;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ import java.util.TreeMap;
 
 /**
  * Internally used {@link ContentType} for OData library.
- * 
+ *
  * For more details on format and content of a {@link ContentType} see
  * <em>Media Type</em> format as defined in
  * <a href="http://www.ietf.org/rfc/rfc7231.txt">RFC 7231</a>, chapter 3.1.1.1.
@@ -40,35 +40,52 @@ import java.util.TreeMap;
  * subtype = token
  * OWS = *( SP / HTAB ) ; optional whitespace
  * </pre>
- * 
+ *
  * Once created a {@link ContentType} is <b>IMMUTABLE</b>.
  */
-public class ContentType {
+public final class ContentType {
 
   public static final ContentType APPLICATION_XML = create("application/xml");
+
   public static final ContentType APPLICATION_ATOM_XML = create("application/atom+xml");
+
   public static final ContentType APPLICATION_ATOM_XML_ENTRY = create(APPLICATION_ATOM_XML, "type=entry");
+
   public static final ContentType APPLICATION_ATOM_XML_FEED = create(APPLICATION_ATOM_XML, "type=feed");
+
   public static final ContentType APPLICATION_ATOM_SVC = create("application/atomsvc+xml");
+
   public static final ContentType APPLICATION_JSON = create("application/json");
+
   public static final ContentType APPLICATION_OCTET_STREAM = create("application/octet-stream");
+
   public static final ContentType TEXT_PLAIN = create("text/plain");
+
   public static final ContentType MULTIPART_MIXED = create("multipart/mixed");
+
   public static final ContentType APPLICATION_XHTML_XML = create("application/xhtml+xml");
+
   public static final ContentType APPLICATION_SVG_XML = create("application/svg+xml");
+
   public static final ContentType APPLICATION_FORM_URLENCODED = create("application/x-www-form-urlencoded");
+
   public static final ContentType MULTIPART_FORM_DATA = create("multipart/form-data");
+
   public static final ContentType TEXT_XML = create("text/xml");
+
   public static final ContentType TEXT_HTML = create("text/html");
 
   public static final String PARAMETER_CHARSET_UTF8 = "charset=utf-8";
 
   private final String type;
+
   private final String subtype;
+
   private final Map<String, String> parameters;
 
   /**
    * Creates a content type from type, subtype, and parameters.
+   *
    * @param type
    * @param subtype
    * @param parameters
@@ -105,6 +122,7 @@ public class ContentType {
 
   /**
    * Validates if given <code>format</code> is parseable and can be used as input for {@link #create(String)} method.
+   *
    * @param format to be validated string
    * @return <code>true</code> if format is parseable otherwise <code>false</code>
    */
@@ -118,6 +136,7 @@ public class ContentType {
 
   /**
    * Creates a content type from format and key-value pairs for parameters
+   *
    * @param format for example "application/json"
    * @param parameters for example "a=b", "c=d"
    * @return a new <code>ContentType</code> object
@@ -126,7 +145,7 @@ public class ContentType {
     ContentType ct = parse(format);
 
     for (String p : parameters) {
-      String[] keyvalue = p.split("=");
+      final String[] keyvalue = p.split("=");
       ct.parameters.put(keyvalue[0], keyvalue[1]);
     }
 
@@ -135,7 +154,8 @@ public class ContentType {
 
   /**
    * Creates a content type from format and key-value pairs for parameters
-   * @param format for example "application/json"
+   *
+   * @param contentType for example "application/json"
    * @param parameters for example "a=b", "c=d"
    * @return a new <code>ContentType</code> object
    */
@@ -151,8 +171,9 @@ public class ContentType {
   }
 
   /**
-   * Creates a {@link ContentType} based on given input string (<code>format</code>).
-   * Supported format is <code>Media Type</code> format as defined in RFC 7231, chapter 3.1.1.1.
+   * Creates a {@link ContentType} based on given input string (<code>format</code>). Supported format is
+   * <code>Media Type</code> format as defined in RFC 7231, chapter 3.1.1.1.
+   *
    * @param format a string in format as defined in RFC 7231, chapter 3.1.1.1
    * @return a new <code>ContentType</code> object
    * @throws IllegalArgumentException if input string is not parseable
@@ -161,8 +182,8 @@ public class ContentType {
     if (format == null) {
       throw new IllegalArgumentException("Parameter format MUST NOT be NULL.");
     }
-    List<String> typeSubtype = new ArrayList<String>();
-    Map<String, String> parameters = new HashMap<String, String>();
+    final List<String> typeSubtype = new ArrayList<String>();
+    final Map<String, String> parameters = new HashMap<String, String>();
     parse(format, typeSubtype, parameters);
     return new ContentType(typeSubtype.get(0), typeSubtype.get(1), parameters);
   }
@@ -170,9 +191,9 @@ public class ContentType {
   /**
    * Parses the given input string (<code>format</code>) and returns created {@link ContentType} if input was valid or
    * return <code>NULL</code> if input was not parseable.
-   * 
+   *
    * For the definition of the supported format see {@link #create(String)}.
-   * 
+   *
    * @param format a string in format as defined in RFC 7231, chapter 3.1.1.1
    * @return a new <code>ContentType</code> object
    */
@@ -184,14 +205,13 @@ public class ContentType {
     }
   }
 
-  private static void
-      parse(final String format, final List<String> typeSubtype, final Map<String, String> parameters) {
+  private static void parse(final String format, final List<String> typeSubtype, final Map<String, String> parameters) {
     final String[] typesAndParameters = format.split(TypeUtil.PARAMETER_SEPARATOR, 2);
     final String types = typesAndParameters[0];
     final String params = (typesAndParameters.length > 1 ? typesAndParameters[1] : null);
 
     if (types.contains(TypeUtil.TYPE_SUBTYPE_SEPARATOR)) {
-      String[] tokens = types.split(TypeUtil.TYPE_SUBTYPE_SEPARATOR);
+      final String[] tokens = types.split(TypeUtil.TYPE_SUBTYPE_SEPARATOR);
       if (tokens.length == 2) {
         if (tokens[0] == null || tokens[0].isEmpty()) {
           throw new IllegalArgumentException("No type found in format '" + format + "'.");
@@ -203,11 +223,11 @@ public class ContentType {
         }
       } else {
         throw new IllegalArgumentException(
-            "Too many '" + TypeUtil.TYPE_SUBTYPE_SEPARATOR + "' in format '" + format + "'.");
+                "Too many '" + TypeUtil.TYPE_SUBTYPE_SEPARATOR + "' in format '" + format + "'.");
       }
     } else {
       throw new IllegalArgumentException("No separator '" + TypeUtil.TYPE_SUBTYPE_SEPARATOR
-          + "' was found in format '" + format + "'.");
+              + "' was found in format '" + format + "'.");
     }
 
     TypeUtil.parseParameters(params, parameters);
@@ -222,7 +242,7 @@ public class ContentType {
   }
 
   /**
-   * 
+   *
    * @return parameters of this {@link ContentType} as unmodifiable map.
    */
   public Map<String, String> getParameters() {
@@ -241,13 +261,13 @@ public class ContentType {
    * <li>if <code>type</code> and/or <code>subtype</code> is set to "*" (in such a case the <code>parameters</code> are
    * ignored).</li>
    * </ul>
-   * 
+   *
    * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code>.
    */
   @Override
   public boolean equals(final Object obj) {
     // NULL validation is done in method 'isEqualWithoutParameters(obj)'
-    Boolean compatible = isEqualWithoutParameters(obj);
+   final Boolean compatible = isEqualWithoutParameters(obj);
 
     if (compatible == null) {
       ContentType other = (ContentType) obj;
@@ -258,11 +278,11 @@ public class ContentType {
           return false;
         }
       } else if (parameters.size() == other.parameters.size()) {
-        Iterator<Entry<String, String>> entries = parameters.entrySet().iterator();
-        Iterator<Entry<String, String>> otherEntries = other.parameters.entrySet().iterator();
+        final Iterator<Entry<String, String>> entries = parameters.entrySet().iterator();
+        final Iterator<Entry<String, String>> otherEntries = other.parameters.entrySet().iterator();
         while (entries.hasNext()) {
-          Entry<String, String> e = entries.next();
-          Entry<String, String> oe = otherEntries.next();
+          final Entry<String, String> e = entries.next();
+          final Entry<String, String> oe = otherEntries.next();
 
           if (!areEqual(e.getKey(), oe.getKey())) {
             return false;
@@ -289,7 +309,7 @@ public class ContentType {
    * </ul>
    * The set <code>parameters</code> are <b>always</b> ignored (for compare with parameters see {@link #equals(Object)}
    * ).
-   * 
+   *
    * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code>.
    */
   public boolean isCompatible(final ContentType obj) {
@@ -301,13 +321,12 @@ public class ContentType {
   }
 
   /**
-   * Check equal without parameters.
-   * It is possible that no decision about <code>equal/none equal</code> can be determined a <code>NULL</code> is
-   * returned.
-   * 
+   * Check equal without parameters. It is possible that no decision about <code>equal/none equal</code> can be
+   * determined a <code>NULL</code> is returned.
+   *
    * @param obj to checked object
-   * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code>
-   * or <code>NULL</code> if no decision about <code>equal/none equal</code> could be determined.
+   * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code> or
+   * <code>NULL</code> if no decision about <code>equal/none equal</code> could be determined.
    */
   private Boolean isEqualWithoutParameters(final Object obj) {
     // basic checks
@@ -346,7 +365,7 @@ public class ContentType {
 
   /**
    * Check whether both string are equal ignoring the case of the strings.
-   * 
+   *
    * @param first first string
    * @param second second string
    * @return <code>true</code> if both strings are equal (by ignoring the case), otherwise <code>false</code> is
@@ -357,12 +376,13 @@ public class ContentType {
   }
 
   /**
-   * Get {@link ContentType} as string as defined in RFC 7231
-   * (http://www.ietf.org/rfc/rfc7231.txt, chapter 3.1.1.1: Media Type)
+   * Get {@link ContentType} as string as defined in RFC 7231 (http://www.ietf.org/rfc/rfc7231.txt, chapter 3.1.1.1:
+   * Media Type)
+   *
    * @return string representation of <code>ContentType</code> object
    */
   public String toContentTypeString() {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
 
     sb.append(type).append(TypeUtil.TYPE_SUBTYPE_SEPARATOR).append(subtype);
 

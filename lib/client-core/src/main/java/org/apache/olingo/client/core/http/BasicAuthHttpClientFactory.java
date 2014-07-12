@@ -42,8 +42,8 @@ public class BasicAuthHttpClientFactory extends DefaultHttpClientFactory {
   }
 
   @Override
-  public DefaultHttpClient createHttpClient(final HttpMethod method, final URI uri) {
-    final DefaultHttpClient httpclient = super.createHttpClient(method, uri);
+  public DefaultHttpClient create(final HttpMethod method, final URI uri) {
+    final DefaultHttpClient httpclient = super.create(method, uri);
 
     httpclient.getCredentialsProvider().setCredentials(
             new AuthScope(uri.getHost(), uri.getPort()),

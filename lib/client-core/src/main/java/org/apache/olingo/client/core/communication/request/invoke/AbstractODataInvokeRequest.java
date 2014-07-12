@@ -171,7 +171,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
     }
 
     try {
-      return new ODataInvokeResponseImpl(httpClient, doExecute());
+      return new ODataInvokeResponseImpl(odataClient, httpClient, doExecute());
     } finally {
       IOUtils.closeQuietly(input);
     }
@@ -184,23 +184,10 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
 
     private T invokeResult = null;
 
-    /**
-     * Constructor.
-     * <p>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataInvokeResponseImpl() {
-      super();
-    }
+    private ODataInvokeResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataInvokeResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     /**
@@ -213,19 +200,19 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
           if (ODataNoContent.class.isAssignableFrom(reference)) {
             invokeResult = reference.cast(new ODataNoContent());
           } else {
-             // avoid getContent() twice:IllegalStateException: Content has been consumed
-             InputStream responseStream = this.payload == null ? res.getEntity().getContent() : this.payload;
-             if (CommonODataEntitySet.class.isAssignableFrom(reference)) {
-	        invokeResult = reference.cast(odataClient.getReader().readEntitySet(responseStream,
-	            ODataFormat.fromString(getContentType())));
-	      } else if (CommonODataEntity.class.isAssignableFrom(reference)) {
-	        invokeResult = reference.cast(odataClient.getReader().readEntity(responseStream,
-	            ODataFormat.fromString(getContentType())));
-	      } else if (CommonODataProperty.class.isAssignableFrom(reference)) {
-	        invokeResult = reference.cast(odataClient.getReader().readProperty(responseStream,
-	            ODataFormat.fromString(getContentType())));
-	      }
-           }
+            // avoid getContent() twice:IllegalStateException: Content has been consumed
+            final InputStream responseStream = this.payload == null ? res.getEntity().getContent() : this.payload;
+            if (CommonODataEntitySet.class.isAssignableFrom(reference)) {
+              invokeResult = reference.cast(odataClient.getReader().readEntitySet(responseStream,
+                      ODataFormat.fromString(getContentType())));
+            } else if (CommonODataEntity.class.isAssignableFrom(reference)) {
+              invokeResult = reference.cast(odataClient.getReader().readEntity(responseStream,
+                      ODataFormat.fromString(getContentType())));
+            } else if (CommonODataProperty.class.isAssignableFrom(reference)) {
+              invokeResult = reference.cast(odataClient.getReader().readProperty(responseStream,
+                      ODataFormat.fromString(getContentType())));
+            }
+          }
         } catch (IOException e) {
           throw new HttpClientException(e);
         } catch (final ODataDeserializerException e) {

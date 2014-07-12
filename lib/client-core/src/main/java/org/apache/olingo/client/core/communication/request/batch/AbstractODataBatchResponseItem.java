@@ -72,7 +72,7 @@ public abstract class AbstractODataBatchResponseItem implements ODataBatchRespon
    */
   protected ODataResponse current;
 
-  protected boolean breakingitem = false;
+  protected boolean breaking = false;
 
   /**
    * Constructor.
@@ -143,15 +143,15 @@ public abstract class AbstractODataBatchResponseItem implements ODataBatchRespon
       expectedItemsIterator = responses.values().iterator();
     }
 
-    return !breakingitem && expectedItemsIterator.hasNext();
+    return !breaking && expectedItemsIterator.hasNext();
   }
 
   /**
    * {@inheritDoc }
    */
   @Override
-  public boolean isBreakingitem() {
-    return breakingitem;
+  public boolean isBreaking() {
+    return breaking;
   }
 
   /**

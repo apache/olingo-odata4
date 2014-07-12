@@ -40,7 +40,7 @@ import org.apache.olingo.commons.api.serialization.ODataSerializerException;
  * This class implements an update link OData request.
  */
 public class ODataLinkUpdateRequestImpl extends AbstractODataBasicRequest<ODataLinkOperationResponse>
-    implements ODataLinkUpdateRequest {
+        implements ODataLinkUpdateRequest {
 
   /**
    * Entity to be linked.
@@ -73,7 +73,7 @@ public class ODataLinkUpdateRequestImpl extends AbstractODataBasicRequest<ODataL
     ((HttpEntityEnclosingRequestBase) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 
     try {
-      return new ODataLinkUpdateResponseImpl(httpClient, doExecute());
+      return new ODataLinkUpdateResponseImpl(odataClient, httpClient, doExecute());
     } finally {
       IOUtils.closeQuietly(input);
     }
@@ -93,14 +93,10 @@ public class ODataLinkUpdateRequestImpl extends AbstractODataBasicRequest<ODataL
    */
   public class ODataLinkUpdateResponseImpl extends AbstractODataResponse implements ODataLinkOperationResponse {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    public ODataLinkUpdateResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+    public ODataLinkUpdateResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
+
+      super(odataClient, httpClient, res);
     }
   }
 }

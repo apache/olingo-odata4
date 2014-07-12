@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.uri.v4.SearchFactory;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.AbstractODataClient;
-import org.apache.olingo.client.core.Configuration;
 import org.apache.olingo.client.core.communication.header.ODataHeadersImpl;
 import org.apache.olingo.client.core.communication.request.batch.v4.BatchRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.cud.v4.CUDRequestFactoryImpl;
@@ -55,8 +54,6 @@ import org.apache.olingo.commons.core.serialization.AtomSerializer;
 import org.apache.olingo.commons.core.serialization.JsonSerializer;
 
 public class ODataClientImpl extends AbstractODataClient<UpdateType> implements ODataClient {
-
-  protected final Configuration configuration = new Configuration();
 
   private final FilterFactory filterFactory = new FilterFactoryImpl(getServiceVersion());
 
@@ -92,11 +89,6 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   }
 
   @Override
-  public Configuration getConfiguration() {
-    return configuration;
-  }
-
-  @Override
   public URIBuilder newURIBuilder(final String serviceRoot) {
     return new URIBuilderImpl(getServiceVersion(), getConfiguration(), serviceRoot);
   }
@@ -118,8 +110,8 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
 
   @Override
   public ODataSerializer getSerializer(final ODataFormat format) {
-    return format == ODataFormat.ATOM || format == ODataFormat.XML ?
-        new AtomSerializer(getServiceVersion()) : new JsonSerializer(getServiceVersion(), false);
+    return format == ODataFormat.ATOM || format == ODataFormat.XML
+            ? new AtomSerializer(getServiceVersion()) : new JsonSerializer(getServiceVersion(), false);
   }
 
   @Override

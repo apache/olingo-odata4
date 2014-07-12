@@ -61,7 +61,7 @@ public class ODataMediaRequestImpl extends AbstractODataRetrieveRequest<InputStr
   @Override
   public ODataRetrieveResponse<InputStream> execute() {
     final HttpResponse res = doExecute();
-    return new ODataMediaResponseImpl(httpClient, res);
+    return new ODataMediaResponseImpl(odataClient, httpClient, res);
   }
 
   /**
@@ -71,23 +71,10 @@ public class ODataMediaRequestImpl extends AbstractODataRetrieveRequest<InputStr
 
     private InputStream input = null;
 
-    /**
-     * Constructor.
-     * <p>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataMediaResponseImpl() {
-      super();
-    }
+    private ODataMediaResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataMediaResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     /**

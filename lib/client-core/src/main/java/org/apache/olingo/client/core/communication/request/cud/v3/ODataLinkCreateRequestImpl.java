@@ -71,7 +71,7 @@ public class ODataLinkCreateRequestImpl extends AbstractODataBasicRequest<ODataL
     ((HttpPost) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 
     try {
-      return new ODataLinkCreateResponseImpl(httpClient, doExecute());
+      return new ODataLinkCreateResponseImpl(odataClient, httpClient, doExecute());
     } finally {
       IOUtils.closeQuietly(input);
     }
@@ -91,22 +91,10 @@ public class ODataLinkCreateRequestImpl extends AbstractODataBasicRequest<ODataL
    */
   private class ODataLinkCreateResponseImpl extends AbstractODataResponse implements ODataLinkOperationResponse {
 
-    /**
-     * Constructor.
-     * <p>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataLinkCreateResponseImpl() {
-    }
+    private ODataLinkCreateResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataLinkCreateResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
   }
 }

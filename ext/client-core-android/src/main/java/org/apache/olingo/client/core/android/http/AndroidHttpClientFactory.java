@@ -16,11 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.olingo.client.core.android.http;
 
-package org.apache.olingo.client.api.v4;
+import android.net.http.AndroidHttpClient;
+import java.net.URI;
+import org.apache.http.client.HttpClient;
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.client.core.http.AbstractHttpClientFactory;
 
-import org.apache.olingo.client.api.CommonConfiguration;
+public class AndroidHttpClientFactory extends AbstractHttpClientFactory {
 
-public interface Configuration extends CommonConfiguration {
-  
+    private static final long serialVersionUID = -5224104561624556177L;
+
+    @Override
+    public HttpClient create(final HttpMethod method, final URI uri) {
+        return AndroidHttpClient.newInstance(USER_AGENT);
+    }
+
+    @Override
+    public void close(final HttpClient httpClient) {
+        if (httpClient instanceof AndroidHttpClient) {
+            ((AndroidHttpClient) httpClient).close();
+        }
+    }
+
 }

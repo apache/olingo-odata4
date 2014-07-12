@@ -38,7 +38,6 @@ import java.util.regex.Pattern;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;

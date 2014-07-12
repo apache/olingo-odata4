@@ -63,29 +63,17 @@ public class ODataRawRequestImpl extends AbstractODataRequest implements ODataRa
 
   @Override
   public ODataRawResponse execute() {
-    return new ODataRawResponseImpl(httpClient, doExecute());
+    return new ODataRawResponseImpl(odataClient, httpClient, doExecute());
   }
 
   private class ODataRawResponseImpl extends AbstractODataResponse implements ODataRawResponse {
 
     private byte[] obj = null;
 
-    /**
-     * Constructor.
-     * <br/>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataRawResponseImpl() {
-    }
+    private ODataRawResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataRawResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     @Override
@@ -101,8 +89,7 @@ public class ODataRawRequestImpl extends AbstractODataRequest implements ODataRa
       }
 
       try {
-        return odataClient.getReader().
-                read(new ByteArrayInputStream(obj), getContentType(), reference);
+        return odataClient.getReader().read(new ByteArrayInputStream(obj), getContentType(), reference);
       } catch (final ODataDeserializerException e) {
         throw new IllegalArgumentException(e);
       }

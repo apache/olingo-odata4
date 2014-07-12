@@ -84,6 +84,8 @@
 
     <antlr.version>4.1</antlr.version>
 
+    <android.platform.version>4.1.1.4</android.platform.version>
+
     <sl4j.version>1.7.7</sl4j.version>
 
     <log.directory>${project.build.directory}/log</log.directory>
@@ -163,6 +165,13 @@
         <groupId>com.fasterxml</groupId>
         <artifactId>aalto-xml</artifactId>
         <version>0.9.9</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.android</groupId>
+        <artifactId>android</artifactId>
+        <version>${android.platform.version}</version>
+        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -248,9 +257,9 @@
     <pluginManagement>
       <plugins>
         <plugin>
-            <groupId>com.keyboardsamurais.maven</groupId>
-            <artifactId>maven-timestamp-plugin</artifactId>
-            <version>1.0</version>
+          <groupId>com.keyboardsamurais.maven</groupId>
+          <artifactId>maven-timestamp-plugin</artifactId>
+          <version>1.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.rat</groupId>
@@ -344,11 +353,17 @@
             </delimiters>
           </configuration>
         </plugin>
+        
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>1.8</version>
+        </plugin>
 
         <plugin>
           <groupId>org.sonatype.plugins</groupId>
           <artifactId>jarjar-maven-plugin</artifactId>
-          <version>1.8</version>
+          <version>1.9</version>
         </plugin>
 
         <plugin>

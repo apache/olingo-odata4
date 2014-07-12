@@ -26,5 +26,5 @@ import org.apache.http.client.methods.HttpUriRequest;
  */
 public interface HttpUriRequestFactory {
 
-  HttpUriRequest createHttpUriRequest(HttpMethod method, URI uri);
+  HttpUriRequest create(HttpMethod method, URI uri);
 }

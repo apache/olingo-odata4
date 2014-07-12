@@ -26,5 +26,7 @@ import org.apache.http.client.HttpClient;
  */
 public interface HttpClientFactory {
 
-  HttpClient createHttpClient(HttpMethod method, URI uri);
+  HttpClient create(HttpMethod method, URI uri);
+
+  void close(HttpClient httpClient);
 }

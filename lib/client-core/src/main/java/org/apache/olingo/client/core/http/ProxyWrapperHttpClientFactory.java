@@ -68,9 +68,9 @@ public class ProxyWrapperHttpClientFactory implements HttpClientFactory {
   }
 
   @Override
-  public HttpClient createHttpClient(final HttpMethod method, final URI uri) {
+  public HttpClient create(final HttpMethod method, final URI uri) {
     // Use wrapped factory to obtain an httpclient instance for given method and uri
-    final DefaultHttpClient httpclient = (DefaultHttpClient) wrapped.createHttpClient(method, uri);
+    final DefaultHttpClient httpclient = (DefaultHttpClient) wrapped.create(method, uri);
 
     final HttpHost proxyHost = new HttpHost(proxy.getHost(), proxy.getPort());
 
@@ -85,6 +85,11 @@ public class ProxyWrapperHttpClientFactory implements HttpClientFactory {
     }
 
     return httpclient;
+  }
+
+  @Override
+  public void close(final HttpClient httpClient) {
+    wrapped.close(httpClient);
   }
 
 }

@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import static org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchResponseItem.LOG;
 import org.apache.olingo.client.core.communication.response.batch.ODataBatchErrorResponse;
 import org.apache.olingo.client.core.communication.response.v4.AsyncResponseImpl;
 
@@ -62,11 +61,11 @@ public class ODataSingleResponseItem extends AbstractODataBatchResponseItem {
     if (responseLine.getKey() == 202) {
       // generate async response
       current = new AsyncResponseImpl(responseLine, headers, batchLineIterator, boundary);
-      breakingitem = true;
+      breaking = true;
     } else if (responseLine.getKey() >= 400) {
       // generate error response
       current = new ODataBatchErrorResponse(responseLine, headers, batchLineIterator, boundary);
-      breakingitem = true;
+      breaking = true;
     } else {
       if (!hasNext()) {
         throw new NoSuchElementException("No item found");

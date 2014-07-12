@@ -35,7 +35,7 @@ import org.apache.olingo.commons.api.format.ODataFormat;
  * This class implements an OData entity property value query request.
  */
 public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPrimitiveValue>
-    implements ODataValueRequest {
+        implements ODataValueRequest {
 
   /**
    * Private constructor.
@@ -55,7 +55,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPri
   @Override
   public ODataRetrieveResponse<ODataPrimitiveValue> execute() {
     final HttpResponse res = doExecute();
-    return new ODataValueResponseImpl(httpClient, res);
+    return new ODataValueResponseImpl(odataClient, httpClient, res);
   }
 
   /**
@@ -65,23 +65,10 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPri
 
     private ODataPrimitiveValue value = null;
 
-    /**
-     * Constructor.
-     * <p>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataValueResponseImpl() {
-      super();
-    }
+    private ODataValueResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataValueResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     @Override
@@ -91,8 +78,8 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPri
 
         try {
           value = odataClient.getObjectFactory().newPrimitiveValueBuilder().
-                  setType(format == ODataFormat.TEXT_PLAIN ?
-                      EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
+                  setType(format == ODataFormat.TEXT_PLAIN
+                          ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                   setValue(IOUtils.toString(getRawResponse())).build();
         } catch (Exception e) {
           throw new HttpClientException(e);

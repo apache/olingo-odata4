@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.olingo.client.api.CommonConfiguration;
+import org.apache.olingo.client.api.Configuration;
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.HttpUriRequestFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
@@ -31,7 +31,7 @@ import org.apache.olingo.client.core.http.DefaultHttpUriRequestFactory;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
-public class Configuration implements CommonConfiguration {
+public class ConfigurationImpl implements Configuration {
 
   private static final String DEFAULT_PUB_FORMAT = "pubFormat";
 
@@ -48,7 +48,7 @@ public class Configuration implements CommonConfiguration {
   private static final String USE_XHTTP_METHOD = "useHTTPMethod";
 
   private static final String KEY_AS_SEGMENT = "keyAsSegment";
-  
+
   private static final String ADDRESS_DERIVED_TYPE = "addressDerivedType";
 
   private static final String USE_OPERATION_FQN_IN_URL = "useOperationFqnInUrl";
@@ -198,7 +198,7 @@ public class Configuration implements CommonConfiguration {
   public void setAddressingDerivedTypes(final boolean value) {
     setProperty(ADDRESS_DERIVED_TYPE, value);
   }
-  
+
   @Override
   public boolean isUseUrlOperationFQN() {
     return (Boolean) getProperty(USE_OPERATION_FQN_IN_URL, true);
@@ -208,7 +208,7 @@ public class Configuration implements CommonConfiguration {
   public void setUseUrlOperationFQN(final boolean value) {
     setProperty(USE_OPERATION_FQN_IN_URL, value);
   }
-  
+
   @Override
   public ExecutorService getExecutor() {
     return executor;

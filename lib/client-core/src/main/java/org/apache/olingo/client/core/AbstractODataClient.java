@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core;
 
 import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.Configuration;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.cud.CommonUpdateType;
 import org.apache.olingo.client.api.serialization.ODataWriter;
@@ -26,7 +27,14 @@ import org.apache.olingo.client.core.serialization.ODataWriterImpl;
 
 public abstract class AbstractODataClient<UT extends CommonUpdateType> implements CommonODataClient<UT> {
 
+  protected final Configuration configuration = new ConfigurationImpl();
+
   private final ODataWriter writer = new ODataWriterImpl(this);
+
+  @Override
+  public Configuration getConfiguration() {
+    return configuration;
+  }
 
   @Override
   public ODataPreferences newPreferences() {

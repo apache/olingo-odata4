@@ -85,7 +85,7 @@ public class ODataStreamUpdateRequestImpl
     @Override
     protected ODataStreamUpdateResponse getResponse(final long timeout, final TimeUnit unit) {
       finalizeBody();
-      return new ODataStreamUpdateResponseImpl(httpClient, getHttpResponse(timeout, unit));
+      return new ODataStreamUpdateResponseImpl(odataClient, httpClient, getHttpResponse(timeout, unit));
     }
   }
 
@@ -96,22 +96,10 @@ public class ODataStreamUpdateRequestImpl
 
     private InputStream input = null;
 
-    /**
-     * Constructor.
-     * <p>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataStreamUpdateResponseImpl() {
-    }
+    private ODataStreamUpdateResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataStreamUpdateResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     /**

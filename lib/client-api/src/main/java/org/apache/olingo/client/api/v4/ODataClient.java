@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.api.v4;
 
-import org.apache.olingo.client.api.CommonConfiguration;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.batch.v4.BatchRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFactory;
@@ -35,9 +34,6 @@ import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 public interface ODataClient extends CommonODataClient<UpdateType> {
-
-  @Override
-  CommonConfiguration getConfiguration();
 
   @Override
   ODataDeserializer getDeserializer(ODataFormat format);

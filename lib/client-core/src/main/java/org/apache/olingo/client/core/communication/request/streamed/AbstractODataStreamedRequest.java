@@ -28,7 +28,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.entity.ContentType;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
@@ -40,6 +39,7 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.request.Wrapper;
 import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
@@ -73,8 +73,8 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
           final HttpMethod method, final URI uri) {
 
     super(odataClient, method, uri);
-    setAccept(ContentType.APPLICATION_OCTET_STREAM.getMimeType());
-    setContentType(ContentType.APPLICATION_OCTET_STREAM.getMimeType());
+    setAccept(ContentType.APPLICATION_OCTET_STREAM.toContentTypeString());
+    setContentType(ContentType.APPLICATION_OCTET_STREAM.toContentTypeString());
   }
 
   @Override

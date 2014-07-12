@@ -57,7 +57,7 @@ public class ODataEntitySetIteratorRequestImpl<ES extends CommonODataEntitySet, 
   @Override
   public ODataRetrieveResponse<ODataEntitySetIterator<ES, E>> execute() {
     final HttpResponse res = doExecute();
-    return new ODataEntitySetIteratorResponseImpl(httpClient, res);
+    return new ODataEntitySetIteratorResponseImpl(odataClient, httpClient, res);
   }
 
   /**
@@ -65,14 +65,10 @@ public class ODataEntitySetIteratorRequestImpl<ES extends CommonODataEntitySet, 
    */
   protected class ODataEntitySetIteratorResponseImpl extends AbstractODataRetrieveResponse {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataEntitySetIteratorResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+    private ODataEntitySetIteratorResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
+
+      super(odataClient, httpClient, res);
     }
 
     @Override
