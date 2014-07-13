@@ -29,7 +29,7 @@ public class AndroidHttpClientFactory extends AbstractHttpClientFactory {
     private static final long serialVersionUID = -5224104561624556177L;
 
     @Override
-    public HttpClient create(final HttpMethod method, final URI uri) {
+    public AndroidHttpClient create(final HttpMethod method, final URI uri) {
         return AndroidHttpClient.newInstance(USER_AGENT);
     }
 
