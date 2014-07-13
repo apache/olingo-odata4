@@ -43,7 +43,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
           @Override
           public CustomerCollection call() {
-            return container.getCustomers().getAll();
+            return container.getCustomers().execute();
           }
         };
     assertNotNull(futureCustomers);
@@ -64,7 +64,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
   public void updateEntity() throws InterruptedException {
     final String randomFirstName = RandomStringUtils.random(10, "abcedfghijklmnopqrstuvwxyz");
 
-    Person person = container.getPeople().get(1);
+    Person person = container.getPeople().getByKey(1);
     person.setFirstName(randomFirstName);
 
     final Future<Void> futureFlush = new AsyncCall<Void>(containerFactory.getClient().getConfiguration()) {
@@ -85,7 +85,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
       @Override
       public Person call() {
-        return container.getPeople().get(1);
+        return container.getPeople().getByKey(1);
       }
     };
 

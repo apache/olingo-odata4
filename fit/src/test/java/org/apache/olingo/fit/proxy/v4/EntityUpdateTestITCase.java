@@ -32,7 +32,7 @@ import java.util.UUID;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
@@ -52,7 +52,7 @@ import org.junit.Test;
  */
 public class EntityUpdateTestITCase extends AbstractTestITCase {
 
-  protected EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
+  protected Service<EdmEnabledODataClient> getContainerFactory() {
     return containerFactory;
   }
 
@@ -62,14 +62,14 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void update() {
-    Person person = getContainer().getPeople().get(1).load();
+    Person person = getContainer().getPeople().getByKey(1).load();
 
     final Address address = person.getHomeAddress();
     address.setCity("XXX");
 
     getContainer().flush();
 
-    person = getContainer().getPeople().get(1).load();
+    person = getContainer().getPeople().getByKey(1).load();
     assertEquals("XXX", person.getHomeAddress().getCity());
   }
 
@@ -79,7 +79,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     orderDetailKey.setOrderID(7);
     orderDetailKey.setProductID(5);
 
-    OrderDetail orderDetail = getContainer().getOrderDetails().get(orderDetailKey).load();
+    OrderDetail orderDetail = getContainer().getOrderDetails().getByKey(orderDetailKey).load();
     assertNotNull(orderDetail);
     assertEquals(7, orderDetail.getOrderID(), 0);
     assertEquals(5, orderDetail.getProductID(), 0);
@@ -88,7 +88,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
     getContainer().flush();
 
-    orderDetail = getContainer().getOrderDetails().get(orderDetailKey).load();
+    orderDetail = getContainer().getOrderDetails().getByKey(orderDetailKey).load();
     assertEquals(5, orderDetail.getQuantity(), 0);
   }
 
@@ -132,10 +132,10 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     getContainer().flush();
 
     // 3. check everything after flush
-    order = getContainer().getOrders().get(orderId).load();
+    order = getContainer().getOrders().getByKey(orderId).load();
     assertEquals(orderId, order.getOrderID(), 0);
 
-    customer = getContainer().getCustomers().get(977);
+    customer = getContainer().getCustomers().getByKey(977);
 
     // assertEquals(1, customer.getOrders().size());
 
@@ -157,7 +157,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void concurrentModification() {
-    Order order = getContainer().getOrders().get(8).load();
+    Order order = getContainer().getOrders().getByKey(8).load();
     final String etag = ((EntityInvocationHandler) Proxy.getInvocationHandler(order)).getETag();
     assertTrue(StringUtils.isNotBlank(etag));
 
@@ -165,20 +165,21 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
     getContainer().flush();
 
-    order = getContainer().getOrders().get(8).load();
+    order = getContainer().getOrders().getByKey(8).load();
     assertEquals(BigDecimal.TEN, order.getShelfLife());
   }
 
   @Test
   public void contained() {
-    PaymentInstrument instrument = getContainer().getAccounts().get(101).getMyPaymentInstruments().get(101901);
+    PaymentInstrument instrument = 
+            getContainer().getAccounts().getByKey(101).getMyPaymentInstruments().getByKey(101901);
 
     final String newName = UUID.randomUUID().toString();
     instrument.setFriendlyName(newName);
 
     getContainer().flush();
 
-    instrument = getContainer().getAccounts().get(101).getMyPaymentInstruments().get(101901).load();
+    instrument = getContainer().getAccounts().getByKey(101).getMyPaymentInstruments().getByKey(101901).load();
     assertEquals(newName, instrument.getFriendlyName());
   }
 }

@@ -38,7 +38,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void read() throws IOException {
-    final InputStream is = container.getCar().get(12).load().getStream();
+    final InputStream is = container.getCar().getByKey(12).load().getStream();
     assertNotNull(is);
     IOUtils.closeQuietly(is);
   }
@@ -48,12 +48,12 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final String TO_BE_UPDATED = "buffered stream sample (" + System.currentTimeMillis() + ")";
     final InputStream input = new ByteArrayInputStream(TO_BE_UPDATED.getBytes());
 
-    Car car = container.getCar().get(12).load();
+    Car car = container.getCar().getByKey(12).load();
     car.setPhoto(input);
 
     container.flush();
 
-    car = container.getCar().get(12).load();
+    car = container.getCar().getByKey(12).load();
     final InputStream is = car.getPhoto();
     assertEquals(TO_BE_UPDATED, IOUtils.toString(is));
     IOUtils.closeQuietly(is);
@@ -61,7 +61,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void update() throws IOException {
-    final Car car = container.getCar().get(14);
+    final Car car = container.getCar().getByKey(14);
     assertNotNull(car);
 
     final String TO_BE_UPDATED = "buffered stream sample (" + System.currentTimeMillis() + ")";
@@ -71,7 +71,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
     container.flush();
 
-    input = container.getCar().get(14).load().getStream();
+    input = container.getCar().getByKey(14).load().getStream();
     assertEquals(TO_BE_UPDATED, IOUtils.toString(input));
     IOUtils.closeQuietly(input);
   }
@@ -92,9 +92,9 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     int key = car.getVIN();
     assertTrue(key > 0);
 
-    containerFactory.getContext().detachAll();
+    service.getContext().detachAll();
 
-    car = container.getCar().get(key).load();
+    car = container.getCar().getByKey(key).load();
     assertEquals(DESC, car.getDescription());
     input = car.getStream();
     assertEquals(TO_BE_UPDATED, IOUtils.toString(input));
@@ -104,7 +104,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     container.flush();
 
     try {
-      container.getCar().get(key).load();
+      container.getCar().getByKey(key).load();
       fail();
     } catch (IllegalArgumentException e) {
     }

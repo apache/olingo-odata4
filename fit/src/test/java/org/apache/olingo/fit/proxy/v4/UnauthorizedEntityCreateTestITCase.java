@@ -22,19 +22,19 @@ import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.junit.Test;
 
 public class UnauthorizedEntityCreateTestITCase extends AbstractTestITCase {
 
-  private EntityContainerFactory<EdmEnabledODataClient> ecf;
+  private Service<EdmEnabledODataClient> ecf;
 
   private InMemoryEntities ime;
 
-  public EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
+  public Service<EdmEnabledODataClient> getContainerFactory() {
     if (ecf == null) {
-      ecf = EntityContainerFactory.getV4(testAuthServiceRootURL);
+      ecf = Service.getV4(testAuthServiceRootURL);
       ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
       ecf.getClient().getConfiguration().
           setHttpClientFactory(new BasicAuthHttpClientFactory("not_auth", "not_auth"));

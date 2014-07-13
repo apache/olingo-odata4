@@ -32,7 +32,7 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.ext.proxy.Service;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
@@ -57,7 +57,7 @@ import org.junit.Test;
  */
 public class EntityCreateTestITCase extends AbstractTestITCase {
 
-  protected EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
+  protected Service<EdmEnabledODataClient> getContainerFactory() {
     return containerFactory;
   }
 
@@ -92,13 +92,13 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     getContainer().flush();
 
-    Employee actual = getContainer().getPeople().get(id, Employee.class).load();
+    Employee actual = getContainer().getPeople().getByKey(id, Employee.class).load();
     assertNotNull(actual);
     assertEquals(id, actual.getPersonID());
     assertEquals(homeAddress.getCity(), actual.getHomeAddress().getCity());
 
     getContainerFactory().getContext().detachAll();
-    actual = getContainer().getPeople().get(id, Employee.class).load();
+    actual = getContainer().getPeople().getByKey(id, Employee.class).load();
     assertNotNull(actual);
     assertEquals(id, actual.getPersonID());
     assertEquals(homeAddress.getCity(), actual.getHomeAddress().getCity());
@@ -107,14 +107,14 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     getContainer().flush();
 
     try {
-      getContainer().getPeople().get(id, Employee.class).load();
+      getContainer().getPeople().getByKey(id, Employee.class).load();
       fail();
     } catch (IllegalArgumentException e) {
     }
 
     getContainerFactory().getContext().detachAll();
     try {
-      getContainer().getPeople().get(id, Employee.class).load();
+      getContainer().getPeople().getByKey(id, Employee.class).load();
       fail();
     } catch (IllegalArgumentException e) {
     }
@@ -139,7 +139,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     customer.setNumbers(Arrays.asList(new String[] {"3204725072", "08569930"}));
 
     final OrderCollection orders = getContainer().getOrders().newOrderCollection();
-    orders.add(getContainer().getOrders().get(8));
+    orders.add(getContainer().getOrders().getByKey(8));
     customer.setOrders(orders);
 
     getContainer().flush();
@@ -153,7 +153,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     getContainer().flush();
 
     try {
-      getContainer().getCustomers().get(id).load();
+      getContainer().getCustomers().getByKey(id).load();
       fail();
     } catch (IllegalArgumentException e) {
     }
@@ -216,7 +216,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     assertEquals(1, actual.getOrders().size());
     assertEquals(id, actual.getOrders().iterator().next().getOrderID());
 
-    order = getContainer().getOrders().get(id);
+    order = getContainer().getOrders().getByKey(id);
     assertNotNull(order);
     assertEquals(id, order.getCustomerForOrder().getPersonID());
 
@@ -224,7 +224,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     getContainer().flush();
 
     try {
-      getContainer().getOrders().get(id).load();
+      getContainer().getOrders().getByKey(id).load();
       fail();
     } catch (IllegalArgumentException e) {
     }
@@ -236,7 +236,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     getContainer().flush();
 
     try {
-      getContainer().getCustomers().get(id).load();
+      getContainer().getCustomers().getByKey(id).load();
       fail();
     } catch (IllegalArgumentException e) {
     }
@@ -256,7 +256,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     key.setOrderID(8);
     key.setProductID(1);
 
-    details = getContainer().getOrderDetails().get(key).load();
+    details = getContainer().getOrderDetails().getByKey(key).load();
     assertNotNull(details);
     assertEquals(Integer.valueOf(100), details.getQuantity());
     assertEquals(8, details.getOrderID(), 0);
@@ -267,7 +267,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     getContainer().flush();
 
     try {
-      getContainer().getOrderDetails().get(key).load();
+      getContainer().getOrderDetails().getByKey(key).load();
       fail();
     } catch (IllegalArgumentException e) {
     }
@@ -299,17 +299,18 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     getContainer().flush();
 
-    product = getContainer().getProducts().get(12).load();
+    product = getContainer().getProducts().getByKey(12).load();
     assertEquals("Latte", product.getName());
     assertEquals(12, product.getDetails().iterator().next().getProductDetailID(), 0);
   }
 
   @Test
   public void contained() {
-    PaymentInstrumentCollection instruments = getContainer().getAccounts().get(101).getMyPaymentInstruments().getAll();
+    PaymentInstrumentCollection instruments = 
+            getContainer().getAccounts().getByKey(101).getMyPaymentInstruments().execute();
     final int sizeBefore = instruments.size();
 
-    final PaymentInstrument instrument = getContainer().getAccounts().get(101).
+    final PaymentInstrument instrument = getContainer().getAccounts().getByKey(101).
             getMyPaymentInstruments().newPaymentInstrument();
 
     final int id = RandomUtils.nextInt(101999, 105000);
@@ -319,15 +320,15 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     getContainer().flush();
 
-    instruments = getContainer().getAccounts().get(101).getMyPaymentInstruments().getAll();
+    instruments = getContainer().getAccounts().getByKey(101).getMyPaymentInstruments().execute();
     final int sizeAfter = instruments.size();
     assertEquals(sizeBefore + 1, sizeAfter);
 
-    getContainer().getAccounts().get(101).getMyPaymentInstruments().delete(id);
+    getContainer().getAccounts().getByKey(101).getMyPaymentInstruments().delete(id);
 
     getContainer().flush();
 
-    instruments = getContainer().getAccounts().get(101).getMyPaymentInstruments().getAll();
+    instruments = getContainer().getAccounts().getByKey(101).getMyPaymentInstruments().execute();
     final int sizeEnd = instruments.size();
     assertEquals(sizeBefore, sizeEnd);
   }

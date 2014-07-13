@@ -20,19 +20,19 @@ package org.apache.olingo.fit.proxy.v4;
 
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
 
 public class NonTransactionalMediaEntityTestITCase extends MediaEntityTestITCase {
 
-  private EntityContainerFactory<EdmEnabledODataClient> ecf;
+  private Service<EdmEnabledODataClient> ecf;
 
   private DemoService ime;
 
   @Override
-  protected EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
+  protected Service<EdmEnabledODataClient> getContainerFactory() {
     if (ecf == null) {
-      ecf = EntityContainerFactory.getV4(testDemoServiceRootURL, false);
+      ecf = Service.getV4(testDemoServiceRootURL, false);
       ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     }
     return ecf;

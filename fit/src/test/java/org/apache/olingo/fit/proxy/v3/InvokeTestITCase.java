@@ -96,7 +96,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     container.flush();
 
-    employee = container.getPerson().get(id, Employee.class).load();
+    employee = container.getPerson().getByKey(id, Employee.class).load();
     assertNotNull(employee);
     assertEquals(id, employee.getPersonId());
 
@@ -105,7 +105,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
       employee.operations().sack();
 
       // 2. check that invoked action has effectively run
-      employee = container.getPerson().get(id, Employee.class).load();
+      employee = container.getPerson().getByKey(id, Employee.class).load();
       assertEquals(0, employee.getSalary(), 0);
       assertTrue(employee.getTitle().endsWith("[Sacked]"));
     } catch (Exception e) {
@@ -119,7 +119,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void entityCollectionBoundPostWithParam() {
-    EmployeeCollection employees = container.getPerson().getAll(EmployeeCollection.class);
+    EmployeeCollection employees = container.getPerson().execute(EmployeeCollection.class);
     assertFalse(employees.isEmpty());
     final Map<Integer, Integer> preSalaries = new HashMap<Integer, Integer>(employees.size());
     for (Employee employee : employees) {
@@ -129,7 +129,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     employees.operations().increaseSalaries(1);
 
-    employees = container.getPerson().getAll(EmployeeCollection.class);
+    employees = container.getPerson().execute(EmployeeCollection.class);
     assertFalse(employees.isEmpty());
     for (Employee employee : employees) {
       assertTrue(preSalaries.get(employee.getPersonId()) < employee.getSalary());
@@ -153,7 +153,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     container.flush();
 
-    product = container.getProduct().get(id).load();
+    product = container.getProduct().getByKey(id).load();
     assertNotNull(product);
     assertEquals(id, product.getProductId());
     assertEquals(BigDecimal.ZERO, product.getDimensions().getDepth());
@@ -170,7 +170,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
       product.operations().changeProductDimensions(newDimensions);
 
       // 2. check that invoked action has effectively run
-      product = container.getProduct().get(id).load();
+      product = container.getProduct().getByKey(id).load();
       assertEquals(BigDecimal.ONE, product.getDimensions().getDepth());
       assertEquals(BigDecimal.ONE, product.getDimensions().getHeight());
       assertEquals(BigDecimal.ONE, product.getDimensions().getWidth());
@@ -201,7 +201,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     container.flush();
 
-    computerDetail = container.getComputerDetail().get(id).load();
+    computerDetail = container.getComputerDetail().getByKey(id).load();
     assertNotNull(computerDetail);
     assertEquals(id, computerDetail.getComputerDetailId());
     assertEquals(1, computerDetail.getSpecificationsBag().size());
@@ -214,7 +214,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
           Collections.singleton("Second spec"), new Timestamp(Calendar.getInstance().getTimeInMillis()));
 
       // 2. check that invoked action has effectively run
-      computerDetail = container.getComputerDetail().get(id).load();
+      computerDetail = container.getComputerDetail().getByKey(id).load();
       assertNotNull(computerDetail);
       assertEquals(id, computerDetail.getComputerDetailId());
       assertEquals(1, computerDetail.getSpecificationsBag().size());

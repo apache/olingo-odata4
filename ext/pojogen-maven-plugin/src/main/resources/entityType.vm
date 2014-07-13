@@ -239,9 +239,11 @@ public interface $utility.capitalize($entityType.Name)
       #set( $type = "" )
     #end
 
+    #set ( $javaEntityType = $utility.getJavaType($property.Type) )
+
     @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "$property.Name", contained = true)
     interface $utility.capitalize($property.Name) 
-      extends AbstractEntitySet<$utility.getJavaType($property.Type), $type, $utility.getJavaType($property.Type)Collection> {
+      extends org.apache.olingo.ext.proxy.api.CollectionQuery<$javaEntityType, ${javaEntityType}Collection>, AbstractEntitySet<$javaEntityType, $type, ${javaEntityType}Collection> {
 
     #foreach( $dos in $utility.getDescendantsOrSelf($utility.getEdmType($property)) )
         #set( $djt = $utility.getJavaType($dos) )

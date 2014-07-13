@@ -33,6 +33,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.api.v4.ODataClient;
@@ -46,9 +47,10 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
-import org.apache.olingo.ext.proxy.api.Filter;
 import org.apache.olingo.ext.proxy.api.Search;
 import org.apache.olingo.ext.proxy.api.SingleQuery;
+import org.apache.olingo.ext.proxy.api.Sort;
+import org.apache.olingo.ext.proxy.api.StructuredType;
 import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityContext;
@@ -58,7 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class EntitySetInvocationHandler<
-        T extends Serializable, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
+        T extends StructuredType, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
         extends AbstractInvocationHandler
         implements AbstractEntitySet<T, KEY, EC> {
 
@@ -75,7 +77,9 @@ class EntitySetInvocationHandler<
 
   private Class<EC> collTypeRef = null;
 
-  private final URI uri;
+  private final URI baseURI;
+
+  private CommonURIBuilder<?> uri;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static EntitySetInvocationHandler getInstance(
@@ -91,14 +95,15 @@ class EntitySetInvocationHandler<
 
     uriBuilder.appendEntitySetSegment(entitySetSegment.toString());
 
-    return new EntitySetInvocationHandler(ref, containerHandler, entitySetName, uriBuilder.build());
+    return new EntitySetInvocationHandler(ref, containerHandler, entitySetName, uriBuilder);
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static EntitySetInvocationHandler getInstance(
-          final Class<?> ref, final EntityContainerInvocationHandler containerHandler, final URI uri) {
+          final Class<?> ref, final EntityContainerInvocationHandler containerHandler, final URI uri) {;
 
-    return new EntitySetInvocationHandler(ref, containerHandler, (ref.getAnnotation(EntitySet.class)).name(), uri);
+    return new EntitySetInvocationHandler(ref, containerHandler, (ref.getAnnotation(EntitySet.class)).name(),
+            containerHandler.getClient().newURIBuilder(uri.toASCIIString()));
   }
 
   @SuppressWarnings("unchecked")
@@ -106,17 +111,18 @@ class EntitySetInvocationHandler<
           final Class<?> ref,
           final EntityContainerInvocationHandler containerHandler,
           final String entitySetName,
-          final URI uri) {
+          final CommonURIBuilder<?> uri) {
 
     super(containerHandler);
+
+    this.uri = uri;
+    this.baseURI = uri.build();
 
     this.isSingleton = AbstractSingleton.class.isAssignableFrom(ref);
 
     final Type[] entitySetParams = ClassUtils.extractGenericType(ref, AbstractEntitySet.class, AbstractSingleton.class);
     this.typeRef = (Class<T>) entitySetParams[0];
     this.collTypeRef = (Class<EC>) entitySetParams[2];
-
-    this.uri = uri;
   }
 
   protected Class<T> getTypeRef() {
@@ -128,12 +134,20 @@ class EntitySetInvocationHandler<
   }
 
   protected URI getEntitySetURI() {
-    return uri;
+    return this.baseURI;
   }
 
   @Override
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-    if (isSelfMethod(method, args)) {
+    if ("filter".equals(method.getName())
+            || "orderBy".equals(method.getName())
+            || "top".equals(method.getName())
+            || "skip".equals(method.getName())
+            || "expand".equals(method.getName())
+            || "select".equals(method.getName())) {
+      invokeSelfMethod(method, args);
+      return proxy;
+    } else if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
     } else if (method.getName().startsWith("new") && ArrayUtils.isEmpty(args)) {
       if (method.getName().endsWith("Collection")) {
@@ -152,7 +166,7 @@ class EntitySetInvocationHandler<
             new FullQualifiedName(containerHandler.getSchemaName(), ClassUtils.getEntityTypeName(reference)));
 
     final EntityInvocationHandler handler =
-            EntityInvocationHandler.getInstance(entity, uri, reference, containerHandler);
+            EntityInvocationHandler.getInstance(entity, this.baseURI, reference, containerHandler);
     getContext().entityContext().attachNew(handler);
 
     return (NE) Proxy.newProxyInstance(
@@ -172,7 +186,7 @@ class EntitySetInvocationHandler<
   @Override
   public Long count() {
     final ODataValueRequest req = getClient().getRetrieveRequestFactory().
-            getValueRequest(getClient().newURIBuilder(this.uri.toASCIIString()).count().build());
+            getValueRequest(getClient().newURIBuilder(this.uri.build().toASCIIString()).count().build());
     req.setFormat(ODataFormat.TEXT_PLAIN);
     return Long.valueOf(req.execute().getBody().asPrimitive().toString());
   }
@@ -180,7 +194,7 @@ class EntitySetInvocationHandler<
   @Override
   public Boolean exists(final KEY key) throws IllegalArgumentException {
     try {
-      SingleQuery.class.cast(get(key)).load();
+      SingleQuery.class.cast(getByKey(key)).load();
       return true;
     } catch (Exception e) {
       LOG.error("Could not check existence of {}({})", this.uri, key, e);
@@ -189,18 +203,18 @@ class EntitySetInvocationHandler<
   }
 
   @Override
-  public T get(final KEY key) throws IllegalArgumentException {
-    return get(key, typeRef);
+  public T getByKey(final KEY key) throws IllegalArgumentException {
+    return getByKey(key, typeRef);
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public <S extends T> S get(final KEY key, final Class<S> typeRef) throws IllegalArgumentException {
+  public <S extends T> S getByKey(final KEY key, final Class<S> typeRef) throws IllegalArgumentException {
     if (key == null) {
       throw new IllegalArgumentException("Null key");
     }
 
-    final EntityUUID uuid = new EntityUUID(containerHandler.getEntityContainerName(), uri, typeRef, key);
+    final EntityUUID uuid = new EntityUUID(containerHandler.getEntityContainerName(), this.baseURI, typeRef, key);
     LOG.debug("Ask for '{}({})'", typeRef.getSimpleName(), key);
 
     EntityInvocationHandler handler = getContext().entityContext().getEntity(uuid);
@@ -209,7 +223,7 @@ class EntitySetInvocationHandler<
       final CommonODataEntity entity = getClient().getObjectFactory().newEntity(
               new FullQualifiedName(containerHandler.getSchemaName(), ClassUtils.getEntityTypeName(typeRef)));
 
-      handler = EntityInvocationHandler.getInstance(key, entity, uri, typeRef, containerHandler);
+      handler = EntityInvocationHandler.getInstance(key, entity, this.baseURI, typeRef, containerHandler);
 
     } else if (isDeleted(handler)) {
       // object deleted
@@ -295,19 +309,17 @@ class EntitySetInvocationHandler<
             entityCollectionHandler);
   }
 
-  @Override
-  public EC getAll() {
-    return getAll(collTypeRef);
+  public EC execute() {
+    return execute(collTypeRef);
   }
 
   @SuppressWarnings("unchecked")
-  @Override
-  public <S extends T, SEC extends AbstractEntityCollection<S>> SEC getAll(final Class<SEC> collTypeRef) {
+  public <S extends T, SEC extends AbstractEntityCollection<S>> SEC execute(final Class<SEC> collTypeRef) {
     final Class<S> ref = (Class<S>) ClassUtils.extractTypeArg(collTypeRef,
             AbstractEntitySet.class, AbstractSingleton.class, AbstractEntityCollection.class);
     final Class<S> oref = (Class<S>) ClassUtils.extractTypeArg(this.collTypeRef);
 
-    final CommonURIBuilder<?> uriBuilder = getClient().newURIBuilder(this.uri.toASCIIString());
+    final CommonURIBuilder<?> uriBuilder = getClient().newURIBuilder(this.uri.build().toASCIIString());
 
     final URI entitySetURI;
     if (oref.equals(ref)) {
@@ -321,24 +333,11 @@ class EntitySetInvocationHandler<
   }
 
   @Override
-  public Filter<T, EC> createFilter() {
-    return new FilterImpl<T, EC>(getClient(), this.collTypeRef, this.uri, this);
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
-  public <S extends T, SEC extends AbstractEntityCollection<S>> Filter<S, SEC> createFilter(
-          final Class<SEC> reference) {
-
-    return new FilterImpl<S, SEC>(getClient(), reference, this.uri, (EntitySetInvocationHandler<S, ?, SEC>) this);
-  }
-
-  @Override
   public Search<T, EC> createSearch() {
     if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
       throw new UnsupportedInV3Exception();
     }
-    return new SearchImpl<T, EC>((EdmEnabledODataClient) getClient(), this.collTypeRef, this.uri, this);
+    return new SearchImpl<T, EC>((EdmEnabledODataClient) getClient(), this.collTypeRef, this.baseURI, this);
   }
 
   @Override
@@ -350,7 +349,10 @@ class EntitySetInvocationHandler<
       throw new UnsupportedInV3Exception();
     }
     return new SearchImpl<S, SEC>(
-            (EdmEnabledODataClient) getClient(), reference, this.uri, (EntitySetInvocationHandler<S, ?, SEC>) this);
+            (EdmEnabledODataClient) getClient(),
+            reference,
+            baseURI,
+            (EntitySetInvocationHandler<S, ?, SEC>) this);
   }
 
   @Override
@@ -359,13 +361,13 @@ class EntitySetInvocationHandler<
 
     EntityInvocationHandler entity = entityContext.getEntity(new EntityUUID(
             containerHandler.getEntityContainerName(),
-            uri,
+            baseURI,
             typeRef,
             key));
 
     if (entity == null) {
       // search for entity
-      final T searched = get(key);
+      final T searched = getByKey(key);
       entity = (EntityInvocationHandler) Proxy.getInvocationHandler(searched);
       entityContext.attach(entity, AttachedEntityStatus.DELETED);
     } else {
@@ -393,6 +395,48 @@ class EntitySetInvocationHandler<
 
   @Override
   public EntitySetIterator<T, KEY, EC> iterator() {
-    return new EntitySetIterator<T, KEY, EC>(getClient().newURIBuilder(this.uri.toASCIIString()).build(), this);
+    return new EntitySetIterator<T, KEY, EC>(getClient().newURIBuilder(this.uri.build().toASCIIString()).build(), this);
+  }
+
+  public void filter(final String filter) {
+    this.uri.filter(filter);
+  }
+
+  public void filter(final URIFilter filter) {
+    this.uri.filter(filter);
+  }
+
+  public void orderBy(final Sort... sort) {
+    final StringBuilder builder = new StringBuilder();
+    for (Sort sortClause : sort) {
+      builder.append(sortClause.getKey()).append(' ').append(sortClause.getValue()).append(',');
+    }
+    builder.deleteCharAt(builder.length() - 1);
+
+    this.uri.orderBy(builder.toString());
+  }
+
+  public void orderBy(final String orderBy) {
+    this.uri.orderBy(orderBy);
+  }
+
+  public void top(final int top) throws IllegalArgumentException {
+    this.uri.top(top);
+  }
+
+  public void skip(final int skip) throws IllegalArgumentException {
+    this.uri.skip(skip);
+  }
+
+  public void expand(final String... expand) {
+    this.uri.expand(expand);
+  }
+
+  public void select(final String... select) {
+    this.uri.select(select);
+  }
+
+  public void clear() {
+    this.uri = getClient().newURIBuilder(baseURI.toASCIIString());
   }
 }

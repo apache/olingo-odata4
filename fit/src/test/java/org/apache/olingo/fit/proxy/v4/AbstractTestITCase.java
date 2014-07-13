@@ -32,7 +32,7 @@ import java.util.TimeZone;
 
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
@@ -63,7 +63,7 @@ public abstract class AbstractTestITCase {
 
   protected static String testAuthServiceRootURL;
 
-  protected static EntityContainerFactory<EdmEnabledODataClient> containerFactory;
+  protected static Service<EdmEnabledODataClient> containerFactory;
 
   protected static InMemoryEntities container;
 
@@ -77,7 +77,7 @@ public abstract class AbstractTestITCase {
     testLargeModelServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Static.svc/large";
     testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc/V40/Static.svc";
 
-    containerFactory = EntityContainerFactory.getV4(testStaticServiceRootURL);
+    containerFactory = Service.getV4(testStaticServiceRootURL);
     containerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     container = containerFactory.getEntityContainer(InMemoryEntities.class);
     assertNotNull(container);
@@ -85,7 +85,7 @@ public abstract class AbstractTestITCase {
   }
 
   protected Customer readCustomer(final InMemoryEntities container, final int id) {
-    final Customer customer = container.getCustomers().get(id).load();
+    final Customer customer = container.getCustomers().getByKey(id).load();
     assertNotNull(customer);
     assertEquals(id, customer.getPersonID(), 0);
 
@@ -93,7 +93,7 @@ public abstract class AbstractTestITCase {
   }
 
   protected void createPatchAndDeleteOrder(
-          final InMemoryEntities container, final EntityContainerFactory<EdmEnabledODataClient> containerFactory) {
+          final InMemoryEntities container, final Service<EdmEnabledODataClient> containerFactory) {
 
     // Create order ....
     final Order order = container.getOrders().newOrder();
@@ -113,7 +113,7 @@ public abstract class AbstractTestITCase {
     order.setShelfLife(BigDecimal.TEN);
     container.flush();
 
-    Order actual = container.getOrders().get(105).load();
+    Order actual = container.getOrders().getByKey(105).load();
     assertEquals(105, actual.getOrderID(), 0);
     assertEquals(orderDate.getTimeInMillis(), actual.getOrderDate().getTime());
     assertEquals(BigDecimal.TEN, actual.getShelfLife());
@@ -121,22 +121,22 @@ public abstract class AbstractTestITCase {
 
     // Delete order ...
     container.getOrders().delete(105);
-    actual = container.getOrders().get(105);
+    actual = container.getOrders().getByKey(105);
     assertNull(actual);
 
     containerFactory.getContext().detachAll();
-    actual = container.getOrders().get(105);
+    actual = container.getOrders().getByKey(105);
     assertNotNull(actual);
 
     container.getOrders().delete(105);
-    actual = container.getOrders().get(105);
+    actual = container.getOrders().getByKey(105);
     assertNull(actual);
 
     container.flush();
 
     containerFactory.getContext().detachAll();
     try {
-      container.getOrders().get(105).load();
+      container.getOrders().getByKey(105).load();
       fail();
     } catch (IllegalArgumentException e) {
     }

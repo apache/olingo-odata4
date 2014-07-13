@@ -29,7 +29,7 @@ import java.util.Collections;
 
 import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.ext.proxy.Service;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.DefaultContainer;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Aliases;
@@ -62,7 +62,7 @@ public abstract class AbstractTestITCase {
 
   protected static String testLargeModelServiceRootURL;
 
-  protected static EntityContainerFactory<EdmEnabledODataClient> containerFactory;
+  protected static Service<EdmEnabledODataClient> service;
 
   protected static DefaultContainer container;
 
@@ -75,11 +75,11 @@ public abstract class AbstractTestITCase {
     testOpenTypeServiceRootURL = "http://localhost:9080/stub/StaticService/V30/OpenType.svc";
     testLargeModelServiceRootURL = "http://localhost:9080/stub/StaticService/V30/Static.svc/large";
 
-    containerFactory = EntityContainerFactory.getV3(testStaticServiceRootURL);
-    containerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
-    container = containerFactory.getEntityContainer(DefaultContainer.class);
+    service = Service.getV3(testStaticServiceRootURL);
+    service.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    container = service.getEntityContainer(DefaultContainer.class);
     assertNotNull(container);
-    containerFactory.getContext().detachAll();
+    service.getContext().detachAll();
   }
 
   protected Customer getSampleCustomerProfile(
@@ -139,7 +139,7 @@ public abstract class AbstractTestITCase {
   }
 
   protected Customer readCustomer(final DefaultContainer container, final int id) {
-    final Customer customer = container.getCustomer().get(id).load();
+    final Customer customer = container.getCustomer().getByKey(id).load();
     assertNotNull(customer);
     assertEquals(Integer.valueOf(id), customer.getCustomerId());
 

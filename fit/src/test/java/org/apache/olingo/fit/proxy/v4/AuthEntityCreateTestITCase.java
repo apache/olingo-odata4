@@ -21,19 +21,19 @@ package org.apache.olingo.fit.proxy.v4;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 
 public class AuthEntityCreateTestITCase extends EntityCreateTestITCase {
 
-  private EntityContainerFactory<EdmEnabledODataClient> ecf;
+  private Service<EdmEnabledODataClient> ecf;
 
   private InMemoryEntities ime;
 
   @Override
-  protected EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
+  protected Service<EdmEnabledODataClient> getContainerFactory() {
     if (ecf == null) {
-      ecf = EntityContainerFactory.getV4(testAuthServiceRootURL);
+      ecf = Service.getV4(testAuthServiceRootURL);
       ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
       ecf.getClient().getConfiguration().
           setHttpClientFactory(new BasicAuthHttpClientFactory("odatajclient", "odatajclient"));

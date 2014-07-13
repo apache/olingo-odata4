@@ -42,7 +42,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void create() {
-    container.getCustomer().get(-10);
+    container.getCustomer().getByKey(-10);
     final String sampleName = "sample customer from proxy";
     final Integer id = 100;
 
@@ -53,25 +53,25 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     checkSampleCustomerProfile(actual, id, sampleName);
 
     container.getCustomer().delete(actual.getCustomerId());
-    actual = container.getCustomer().get(id);
+    actual = container.getCustomer().getByKey(id);
     assertNull(actual);
 
-    containerFactory.getContext().detachAll();
-    actual = container.getCustomer().get(id).load();
+    service.getContext().detachAll();
+    actual = container.getCustomer().getByKey(id).load();
 
     container.getCustomer().delete(actual.getCustomerId());
     container.flush();
 
     try {
-      container.getCustomer().get(id).load();
+      container.getCustomer().getByKey(id).load();
       fail();
     } catch (IllegalArgumentException e) {
     }
 
-    containerFactory.getContext().detachAll();
+    service.getContext().detachAll();
 
     try {
-      container.getCustomer().get(id).load();
+      container.getCustomer().getByKey(id).load();
       fail();
     } catch (IllegalArgumentException e) {
     }
@@ -90,27 +90,27 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     container.flush();
 
-    Employee actual = container.getPerson().get(id, Employee.class).load();
+    Employee actual = container.getPerson().getByKey(id, Employee.class).load();
     assertNotNull(actual);
     assertEquals(id, actual.getPersonId());
 
-    containerFactory.getContext().detachAll();
-    actual = container.getPerson().get(id, Employee.class).load();
+    service.getContext().detachAll();
+    actual = container.getPerson().getByKey(id, Employee.class).load();
     assertNotNull(actual);
 
     container.getPerson().delete(actual.getPersonId());
     container.flush();
 
     try {
-      container.getPerson().get(id, Employee.class).load();
+      container.getPerson().getByKey(id, Employee.class).load();
       fail();
     } catch (IllegalArgumentException e) {
     }
 
-    containerFactory.getContext().detachAll();
+    service.getContext().detachAll();
 
     try {
-      container.getPerson().get(id, Employee.class).load();
+      container.getPerson().getByKey(id, Employee.class).load();
       fail();
     } catch (IllegalArgumentException e) {
     }
@@ -122,7 +122,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     final Integer id = 101;
 
     final Customer original = getSampleCustomerProfile(id, sampleName, container);
-    original.setInfo(container.getCustomerInfo().get(16));
+    original.setInfo(container.getCustomerInfo().getByKey(16));
     container.flush();
 
     Customer actual = readCustomer(container, id);
@@ -133,7 +133,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     container.flush();
 
     try {
-      container.getCustomer().get(id).load();
+      container.getCustomer().getByKey(id).load();
       fail();
     } catch (IllegalArgumentException e) {
     }
@@ -167,7 +167,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     assertEquals(id, actual.getOrders().iterator().next().getOrderId());
     assertEquals(id, actual.getOrders().iterator().next().getCustomerId());
 
-    order = container.getOrder().get(id);
+    order = container.getOrder().getByKey(id);
     assertNotNull(order);
     assertEquals(id, order.getCustomer().getCustomerId());
 
@@ -175,7 +175,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     container.flush();
 
     try {
-      container.getOrder().get(id).load();
+      container.getOrder().getByKey(id).load();
       fail();
     } catch (IllegalArgumentException e) {
     }
@@ -187,7 +187,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     container.flush();
 
     try {
-      container.getCustomer().get(id).load();
+      container.getCustomer().getByKey(id).load();
       fail();
     } catch (IllegalArgumentException e) {
     }
@@ -209,7 +209,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     key.setFromUsername("fromusername");
     key.setMessageId(100);
 
-    message = container.getMessage().get(key).load();
+    message = container.getMessage().getByKey(key).load();
     assertNotNull(message);
     assertEquals(Integer.valueOf(100), message.getMessageId());
     assertEquals("fromusername", message.getFromUsername());
@@ -221,7 +221,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     container.flush();
 
     try {
-      container.getMessage().get(key).load();
+      container.getMessage().getByKey(key).load();
       fail();
     } catch (IllegalArgumentException e) {
     }

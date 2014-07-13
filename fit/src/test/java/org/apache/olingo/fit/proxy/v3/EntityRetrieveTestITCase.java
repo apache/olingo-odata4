@@ -82,14 +82,14 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void getAll() {
-    final PersonCollection all = getContainer().getPerson().getAll();
+    final PersonCollection all = getContainer().getPerson().execute();
     assertNotNull(all);
     assertFalse(all.isEmpty());
     for (Person person : all) {
       assertNotNull(person);
     }
 
-    final EmployeeCollection employees = getContainer().getPerson().getAll(EmployeeCollection.class);
+    final EmployeeCollection employees = getContainer().getPerson().execute(EmployeeCollection.class);
     assertNotNull(employees);
     assertFalse(employees.isEmpty());
     for (Employee employee : employees) {
@@ -97,14 +97,14 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     }
 
     final SpecialEmployeeCollection specialEmployees =
-        getContainer().getPerson().getAll(SpecialEmployeeCollection.class);
+        getContainer().getPerson().execute(SpecialEmployeeCollection.class);
     assertNotNull(specialEmployees);
     assertFalse(specialEmployees.isEmpty());
     for (SpecialEmployee employee : specialEmployees) {
       assertNotNull(employee);
     }
 
-    final ContractorCollection contractors = getContainer().getPerson().getAll(ContractorCollection.class);
+    final ContractorCollection contractors = getContainer().getPerson().execute(ContractorCollection.class);
     assertNotNull(contractors);
     assertFalse(contractors.isEmpty());
     for (Contractor contractor : contractors) {
@@ -117,7 +117,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void navigate() {
-    final Order order = getContainer().getOrder().get(-9).load();
+    final Order order = getContainer().getOrder().getByKey(-9).load();
     assertEquals(-9, order.getOrderId(), 0);
 
     final ConcurrencyInfo concurrency = order.getConcurrency();
@@ -132,7 +132,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void withGeospatial() {
-    final AllSpatialTypes allSpatialTypes = getContainer().getAllGeoTypesSet().get(-10).load();
+    final AllSpatialTypes allSpatialTypes = getContainer().getAllGeoTypesSet().getByKey(-10).load();
     assertNotNull(allSpatialTypes);
     assertEquals(-10, allSpatialTypes.getId(), 0);
 
@@ -167,7 +167,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void withActions() {
-    final ComputerDetail computerDetail = getContainer().getComputerDetail().get(-10).load();
+    final ComputerDetail computerDetail = getContainer().getComputerDetail().getByKey(-10).load();
     assertEquals(-10, computerDetail.getComputerDetailId(), 0);
 
     try {
@@ -184,13 +184,13 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     messageKey.setFromUsername("1");
     messageKey.setMessageId(-10);
 
-    final Message message = getContainer().getMessage().get(messageKey).load();
+    final Message message = getContainer().getMessage().getByKey(messageKey).load();
     assertEquals("1", message.getFromUsername());
   }
 
   @Test
   public void checkForETag() {
-    Product product = getContainer().getProduct().get(-10).load();
+    Product product = getContainer().getProduct().getByKey(-10).load();
     assertTrue(StringUtils.isNotBlank(
         ((EntityInvocationHandler) Proxy.getInvocationHandler(product)).getETag()));
   }

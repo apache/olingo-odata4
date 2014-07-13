@@ -24,7 +24,7 @@ import java.io.Serializable;
  * Interface for synchronous CRUD operations on an EntitySet.
  */
 public interface AbstractEntitySet<
-        T extends Serializable, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
+        T extends StructuredType, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
         extends Iterable<T>, Serializable {
 
   /**
@@ -43,7 +43,7 @@ public interface AbstractEntitySet<
    * @return the entity with the given id or null if none found
    * @throws IllegalArgumentException in case the given key is null
    */
-  T get(KEY key) throws IllegalArgumentException;
+  T getByKey(KEY key) throws IllegalArgumentException;
 
   /**
    * Retrieves an entity by its key, considering polymorphism.
@@ -54,7 +54,7 @@ public interface AbstractEntitySet<
    * @return the entity with the given id or null if none found
    * @throws IllegalArgumentException in case the given key is null
    */
-  <S extends T> S get(KEY key, Class<S> reference) throws IllegalArgumentException;
+  <S extends T> S getByKey(KEY key, Class<S> reference) throws IllegalArgumentException;
 
   /**
    * Returns the number of entities available.
@@ -62,23 +62,6 @@ public interface AbstractEntitySet<
    * @return the number of entities
    */
   Long count();
-
-  /**
-   * Returns all instances.
-   *
-   * @return all entities
-   */
-  EC getAll();
-
-  /**
-   * Returns all instances of the given subtype.
-   *
-   * @param <S>
-   * @param <SEC>
-   * @param reference entity collection class to be returned
-   * @return all entities of the given subtype
-   */
-  <S extends T, SEC extends AbstractEntityCollection<S>> SEC getAll(Class<SEC> reference);
 
   /**
    * Deletes the entity with the given key.
@@ -95,23 +78,6 @@ public interface AbstractEntitySet<
    * @param entities to be deleted
    */
   <S extends T> void delete(Iterable<S> entities);
-
-  /**
-   * Create an instance of <tt>Filter</tt>.
-   *
-   * @return the new filter instance
-   */
-  Filter<T, EC> createFilter();
-
-  /**
-   * Create an instance of <tt>Filter</tt>.
-   *
-   * @param <S>
-   * @param <SEC>
-   * @param reference
-   * @return the new filter instance
-   */
-  <S extends T, SEC extends AbstractEntityCollection<S>> Filter<S, SEC> createFilter(Class<SEC> reference);
 
   /**
    * Create an instance of <tt>Search</tt>.

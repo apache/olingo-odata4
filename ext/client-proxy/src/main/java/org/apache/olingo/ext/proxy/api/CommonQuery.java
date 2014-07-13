@@ -18,9 +18,28 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-import java.io.Serializable;
+public interface CommonQuery<T> {
 
-public interface AbstractSingleton<
-        T extends Serializable, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
-        extends Serializable {
+  /**
+   * Sets <tt>$expand</tt> expression.
+   *
+   * @param expand <tt>$expand</tt> expression items.
+   * @return the same query instance.
+   */
+  T expand(String... expand);
+
+  /**
+   * Sets <tt>$select</tt> expression.
+   *
+   * @param select <tt>$select</tt> expression items.
+   * @return the same query instance.
+   */
+  T select(String... select);
+
+  /**
+   * Remove all query options.
+   *
+   * @return the same query instance.
+   */
+  T clear();
 }

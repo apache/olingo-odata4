@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-public interface SingleQuery<T extends StructuredType> {
+public interface SingleQuery<T extends StructuredType> extends CommonQuery<T> {
 
   /**
-   * 
+   *
    * @return structured type.
    */
   T load();

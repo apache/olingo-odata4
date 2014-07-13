@@ -18,13 +18,78 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-import java.io.Serializable;
+import org.apache.olingo.client.api.uri.URIFilter;
 
-public interface CollectionQuery<T extends Serializable, EC extends AbstractEntityCollection<T>> {
+public interface CollectionQuery<T extends StructuredType, EC extends AbstractEntityCollection<T>>
+        extends CommonQuery<CollectionQuery<T, EC>> {
 
   /**
+   * Returns all instances.
    *
-   * @return structured type.
+   * @return all entities
    */
   EC execute();
+
+  /**
+   * Returns all instances of the given subtype.
+   *
+   * @param <S>
+   * @param <SEC>
+   * @param reference entity collection class to be returned
+   * @return all entities of the given subtype
+   */
+  <S extends T, SEC extends AbstractEntityCollection<S>> SEC execute(Class<SEC> reference);
+
+  /**
+   * Sets the <tt>$filter</tt> expression.
+   * <br/>
+   * Any of available operators and functions can be embodied here.
+   *
+   * @param filter the <tt>$filter</tt> expression.
+   * @return the same query instance.
+   */
+  CollectionQuery<T, EC> filter(String filter);
+
+  /**
+   * Sets the filter generating the <tt>$filter</tt> expression.
+   *
+   * @param filter filter instance (to be obtained via factory): note that <tt>build()</tt> method will be immediately
+   * invoked.
+   * @return the same query instance.
+   */
+  CollectionQuery<T, EC> filter(URIFilter filter);
+
+  /**
+   * Sets the <tt>$orderBy</tt> expression.
+   *
+   * @param sort sort options.
+   * @return the same query instance.
+   */
+  CollectionQuery<T, EC> orderBy(Sort... sort);
+
+  /**
+   * Sets the <tt>$orderBy</tt> expression.
+   *
+   * @param orderBy the <tt>$orderBy</tt> expression.
+   * @return the same query instance.
+   */
+  CollectionQuery<T, EC> orderBy(String orderBy);
+
+  /**
+   * Sets the maximum number of results to retrieve (<tt>$top</tt>).
+   *
+   * @param top maximum number of results to retrieve
+   * @return the same query instance.
+   * @throws IllegalArgumentException if the argument is negative
+   */
+  CollectionQuery<T, EC> top(int top) throws IllegalArgumentException;
+
+  /**
+   * Sets the position of the first result to retrieve (<tt>$skip</tt>).
+   *
+   * @param skip position of the first result, numbered from 0
+   * @return the same query instance.
+   * @throws IllegalArgumentException if the argument is negative
+   */
+  CollectionQuery<T, EC> skip(int skip) throws IllegalArgumentException;
 }

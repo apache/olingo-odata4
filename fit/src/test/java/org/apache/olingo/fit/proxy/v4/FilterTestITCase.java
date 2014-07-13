@@ -18,17 +18,20 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.ext.proxy.api.Filter;
 import org.apache.olingo.ext.proxy.api.Search;
 import org.apache.olingo.ext.proxy.api.Sort;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.People;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
@@ -39,11 +42,12 @@ public class FilterTestITCase extends AbstractTestITCase {
 
   @Test
   public void filterOrderby() {
-    final Filter<Person, PersonCollection> filter = container.getPeople().createFilter().setFilter(
-        containerFactory.getClient().getFilterFactory().lt("PersonID", 3));
+    final People people = container.getPeople();
+
+    PersonCollection result =
+            people.filter(containerFactory.getClient().getFilterFactory().lt("PersonID", 3)).execute();
 
     // 1. check that result looks as expected
-    PersonCollection result = filter.getResult();
     assertEquals(2, result.size());
 
     // 2. extract PersonID values - sorted ASC by default
@@ -55,7 +59,7 @@ public class FilterTestITCase extends AbstractTestITCase {
     }
 
     // 3. add orderby clause to filter above
-    result = filter.setOrderBy(new Sort("PersonID", Sort.Direction.DESC)).getResult();
+    result = people.orderBy(new Sort("PersonID", Sort.Direction.DESC)).execute();
     assertEquals(2, result.size());
 
     // 4. extract again VIN value - now they were required to be sorted DESC
@@ -74,11 +78,41 @@ public class FilterTestITCase extends AbstractTestITCase {
   @Test
   public void search() {
     final Search<Person, PersonCollection> search = container.getPeople().createSearch().setSearch(
-        containerFactory.getClient().getSearchFactory().or(
+            containerFactory.getClient().getSearchFactory().or(
             containerFactory.getClient().getSearchFactory().literal("Bob"),
             containerFactory.getClient().getSearchFactory().literal("Jill")));
 
     final PersonCollection result = search.getResult();
     assertFalse(result.isEmpty());
+  }
+
+  @Test
+  public void loadWithSelect() {
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order order =
+            container.getOrders().getByKey(8);
+    assertNull(order.getOrderID());
+    assertNull(order.getOrderDate());
+
+    order.select("OrderID");
+    order.load();
+
+    assertNull(order.getOrderDate());
+    assertNotNull(order.getOrderID());
+
+    order.clear();
+    order.load();
+    assertNotNull(order.getOrderDate());
+    assertNotNull(order.getOrderID());
+  }
+
+  @Test
+  public void loadWithSelectAndExpand() {
+    final Customer customer = container.getCustomers().getByKey(1);
+
+//    customer.expand("Orders");
+    customer.select("Orders", "PersonID");
+
+    customer.load();
+    assertEquals(1, customer.getOrders().size());
   }
 }

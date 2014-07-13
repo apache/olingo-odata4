@@ -46,7 +46,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   @Test
   public void getAll() {
     int count = 0;
-    for (Customer customer : container.getCustomer().getAll()) {
+    for (Customer customer : container.getCustomer().execute()) {
       assertNotNull(customer);
       count++;
     }
@@ -56,7 +56,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   @Test
   public void readEntitySetWithNextLink() {
     int count = 0;
-    for (Customer customer : container.getCustomer().getAll()) {
+    for (Customer customer : container.getCustomer().execute()) {
       assertNotNull(customer);
       count++;
     }
@@ -74,7 +74,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   public void readODataEntitySet() throws IOException {
     assertTrue(container.getCar().count() >= 10);
 
-    final Iterable<Car> car = container.getCar().getAll();
+    final Iterable<Car> car = container.getCar().execute();
     assertNotNull(car);
 
     final Iterator<Car> itor = car.iterator();

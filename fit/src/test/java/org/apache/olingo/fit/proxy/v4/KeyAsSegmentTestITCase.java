@@ -23,20 +23,20 @@ import static org.junit.Assert.assertNotNull;
 
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.junit.Test;
 
 public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
-  private EntityContainerFactory<EdmEnabledODataClient> ecf;
+  private Service<EdmEnabledODataClient> ecf;
 
   private InMemoryEntities ime;
 
-  protected EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
+  protected Service<EdmEnabledODataClient> getContainerFactory() {
     if (ecf == null) {
-      ecf = EntityContainerFactory.getV4(testKeyAsSegmentServiceRootURL);
+      ecf = Service.getV4(testKeyAsSegmentServiceRootURL);
       ecf.getClient().getConfiguration().setKeyAsSegment(true);
       ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     }
@@ -52,7 +52,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   @Test
   public void read() {
-    assertNotNull(getContainer().getAccounts().get(101));
+    assertNotNull(getContainer().getAccounts().getByKey(101));
   }
 
   @Test
@@ -62,12 +62,12 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   @Test
   public void update() {
-    Person person = getContainer().getPeople().get(5);
+    Person person = getContainer().getPeople().getByKey(5);
     person.setMiddleName("middleN");
 
     container.flush();
 
-    person = getContainer().getPeople().get(5);
+    person = getContainer().getPeople().getByKey(5);
     assertEquals("middleN", person.getMiddleName());
   }
 }

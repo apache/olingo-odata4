@@ -27,8 +27,9 @@ import java.util.NoSuchElementException;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
+import org.apache.olingo.ext.proxy.api.StructuredType;
 
-class EntitySetIterator<T extends Serializable, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
+class EntitySetIterator<T extends StructuredType, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
         implements Iterator<T> {
 
   private final EntitySetInvocationHandler<T, KEY, EC> esi;

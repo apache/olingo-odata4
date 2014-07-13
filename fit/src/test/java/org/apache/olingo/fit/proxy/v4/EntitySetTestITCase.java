@@ -39,7 +39,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   @Test
   public void getAll() {
     int count = 0;
-    for (Customer customer : container.getCustomers().getAll()) {
+    for (Customer customer : container.getCustomers().execute()) {
       assertNotNull(customer);
       count++;
     }
@@ -59,7 +59,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   @Test
   public void readEntitySetWithNextLink() {
     int count = 0;
-    for (Person people : container.getPeople().getAll()) {
+    for (Person people : container.getPeople().execute()) {
       assertNotNull(people);
       count++;
     }

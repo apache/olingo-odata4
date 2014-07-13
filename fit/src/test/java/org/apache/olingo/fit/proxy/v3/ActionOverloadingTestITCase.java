@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.ext.proxy.Service;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.DefaultContainer;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Employee;
@@ -41,8 +41,8 @@ import org.junit.Test;
 public class ActionOverloadingTestITCase extends AbstractTestITCase {
 
   private DefaultContainer getContainer() {
-    final EntityContainerFactory<EdmEnabledODataClient> ecf =
-        EntityContainerFactory.getV3(testActionOverloadingServiceRootURL);
+    final Service<EdmEnabledODataClient> ecf =
+        Service.getV3(testActionOverloadingServiceRootURL);
     ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     return ecf.getEntityContainer(DefaultContainer.class);
   }
@@ -54,18 +54,18 @@ public class ActionOverloadingTestITCase extends AbstractTestITCase {
     int res = aocontainer.operations().retrieveProduct();
     assertEquals(-10, res);
 
-    containerFactory.getContext().detachAll();
+    service.getContext().detachAll();
 
-    res = aocontainer.getProduct().get(-10).operations().retrieveProduct();
+    res = aocontainer.getProduct().getByKey(-10).operations().retrieveProduct();
     assertEquals(-10, res);
 
-    containerFactory.getContext().detachAll();
+    service.getContext().detachAll();
 
     final OrderLineKey key = new OrderLineKey();
     key.setOrderId(-10);
     key.setProductId(-10);
 
-    res = aocontainer.getOrderLine().get(key).operations().retrieveProduct();
+    res = aocontainer.getOrderLine().getByKey(key).operations().retrieveProduct();
     assertEquals(-10, res);
   }
 
@@ -73,7 +73,7 @@ public class ActionOverloadingTestITCase extends AbstractTestITCase {
   public void increaseSalaries() {
     final DefaultContainer aocontainer = getContainer();
 
-    EmployeeCollection ecoll = aocontainer.getPerson().getAll(EmployeeCollection.class);
+    EmployeeCollection ecoll = aocontainer.getPerson().execute(EmployeeCollection.class);
     assertFalse(ecoll.isEmpty());
 
     Employee empl = ecoll.iterator().next();
@@ -85,13 +85,13 @@ public class ActionOverloadingTestITCase extends AbstractTestITCase {
     ecoll.operations().increaseSalaries(5);
 
     // the invoke above changed the local entities, re-read
-    containerFactory.getContext().detachAll();
-    ecoll = aocontainer.getPerson().getAll(EmployeeCollection.class);
+    service.getContext().detachAll();
+    ecoll = aocontainer.getPerson().execute(EmployeeCollection.class);
     empl = ecoll.iterator().next();
 
     assertEquals(salary + 5, empl.getSalary(), 0);
 
-    SpecialEmployeeCollection secoll = aocontainer.getPerson().getAll(SpecialEmployeeCollection.class);
+    SpecialEmployeeCollection secoll = aocontainer.getPerson().execute(SpecialEmployeeCollection.class);
     assertFalse(secoll.isEmpty());
 
     SpecialEmployee sempl = secoll.toArray(new SpecialEmployee[secoll.size()])[1];
@@ -103,8 +103,8 @@ public class ActionOverloadingTestITCase extends AbstractTestITCase {
     secoll.operations().increaseSalaries(5);
 
     // the invoke above changed the local entities, re-read
-    containerFactory.getContext().detachAll();
-    secoll = aocontainer.getPerson().getAll(SpecialEmployeeCollection.class);
+    service.getContext().detachAll();
+    secoll = aocontainer.getPerson().execute(SpecialEmployeeCollection.class);
     sempl = secoll.toArray(new SpecialEmployee[secoll.size()])[1];
 
     assertEquals(salary + 5, sempl.getSalary(), 0);

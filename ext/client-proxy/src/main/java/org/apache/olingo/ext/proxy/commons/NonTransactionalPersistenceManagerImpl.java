@@ -24,7 +24,7 @@ import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.ext.proxy.Service;
 
 /**
  * {@link org.apache.olingo.ext.proxy.api.PersistenceManager} implementation not using OData batch requests: any
@@ -35,7 +35,7 @@ public class NonTransactionalPersistenceManagerImpl extends AbstractPersistenceM
 
   private static final long serialVersionUID = 5082907388513308752L;
 
-  public NonTransactionalPersistenceManagerImpl(final EntityContainerFactory<?> factory) {
+  public NonTransactionalPersistenceManagerImpl(final Service<?> factory) {
     super(factory);
   }
 

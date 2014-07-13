@@ -28,13 +28,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.olingo.ext.proxy.api.AsyncCall;
-import org.apache.olingo.ext.proxy.api.Filter;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.Person;
 //CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Employee;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.EmployeeCollection;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductCollection;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployee;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployeeCollection;
 //CHECKSTYLE:ON (Maven checkstyle)
 import org.junit.Test;
@@ -44,13 +42,12 @@ public class AsyncTestITCase extends AbstractTestITCase {
   @Test
   public void retrieveEntitySet() throws InterruptedException, ExecutionException {
     final Future<ProductCollection> futureProds =
-        new AsyncCall<ProductCollection>(containerFactory.getClient().getConfiguration()) {
-
-          @Override
-          public ProductCollection call() {
-            return container.getProduct().getAll();
-          }
-        };
+            new AsyncCall<ProductCollection>(service.getClient().getConfiguration()) {
+      @Override
+      public ProductCollection call() {
+        return container.getProduct().execute();
+      }
+    };
     assertNotNull(futureProds);
 
     while (!futureProds.isDone()) {
@@ -69,11 +66,10 @@ public class AsyncTestITCase extends AbstractTestITCase {
   public void updateEntity() throws InterruptedException, ExecutionException {
     final String random = UUID.randomUUID().toString();
 
-    final Product product = container.getProduct().get(-10);
+    final Product product = container.getProduct().getByKey(-10);
     product.setDescription("AsyncTest#updateEntity " + random);
 
-    final Future<Void> futureFlush = new AsyncCall<Void>(containerFactory.getClient().getConfiguration()) {
-
+    final Future<Void> futureFlush = new AsyncCall<Void>(service.getClient().getConfiguration()) {
       @Override
       public Void call() {
         container.flush();
@@ -86,11 +82,10 @@ public class AsyncTestITCase extends AbstractTestITCase {
       Thread.sleep(1000L);
     }
 
-    final Future<Product> futureProd = new AsyncCall<Product>(containerFactory.getClient().getConfiguration()) {
-
+    final Future<Product> futureProd = new AsyncCall<Product>(service.getClient().getConfiguration()) {
       @Override
       public Product call() {
-        return container.getProduct().get(-10);
+        return container.getProduct().getByKey(-10);
       }
     };
 
@@ -99,28 +94,24 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   @Test
   public void polymorphQuery() throws Exception {
-    final Future<Filter<Employee, EmployeeCollection>> queryEmployee =
-        new AsyncCall<Filter<Employee, EmployeeCollection>>(containerFactory.getClient().getConfiguration()) {
+    final Future<Person> queryEmployee = new AsyncCall<Person>(service.getClient().getConfiguration()) {
+      @Override
+      public Person call() {
+        return container.getPerson();
+      }
+    };
+    assertFalse(queryEmployee.get().execute(EmployeeCollection.class).isEmpty());
 
-          @Override
-          public Filter<Employee, EmployeeCollection> call() {
-            return container.getPerson().createFilter(EmployeeCollection.class);
-          }
-        };
-    assertFalse(queryEmployee.get().getResult().isEmpty());
+    final Future<Person> querySpecialEmployee = new AsyncCall<Person>(service.getClient().getConfiguration()) {
+      @Override
+      public Person call() {
+        return container.getPerson();
+      }
+    };
+    assertFalse(querySpecialEmployee.get().execute(SpecialEmployeeCollection.class).isEmpty());
 
-    final Future<Filter<SpecialEmployee, SpecialEmployeeCollection>> querySpecialEmployee =
-        new AsyncCall<Filter<SpecialEmployee, SpecialEmployeeCollection>>(
-            containerFactory.getClient().getConfiguration()) {
-
-          @Override
-          public Filter<SpecialEmployee, SpecialEmployeeCollection> call() {
-            return container.getPerson().createFilter(SpecialEmployeeCollection.class);
-          }
-        };
-    assertFalse(querySpecialEmployee.get().getResult().isEmpty());
-
-    assertTrue(container.getPerson().getAll().size()
-    > queryEmployee.get().getResult().size() + querySpecialEmployee.get().getResult().size());
+    assertTrue(container.getPerson().execute().size()
+            > container.getPerson().execute(EmployeeCollection.class).size()
+            + container.getPerson().execute(SpecialEmployeeCollection.class).size());
   }
 }

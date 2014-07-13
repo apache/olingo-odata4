@@ -32,7 +32,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement;
 import org.junit.Test;
@@ -42,13 +42,13 @@ import org.junit.Test;
  */
 public class MediaEntityTestITCase extends AbstractTestITCase {
 
-  private EntityContainerFactory<EdmEnabledODataClient> ecf;
+  private Service<EdmEnabledODataClient> ecf;
 
   private DemoService ime;
 
-  protected EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
+  protected Service<EdmEnabledODataClient> getContainerFactory() {
     if (ecf == null) {
-      ecf = EntityContainerFactory.getV4(testDemoServiceRootURL);
+      ecf = Service.getV4(testDemoServiceRootURL);
       ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     }
     return ecf;
@@ -65,7 +65,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   public void read() throws IOException {
     final UUID uuid = UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7");
 
-    final Advertisement adv = getContainer().getAdvertisements().get(uuid).load();
+    final Advertisement adv = getContainer().getAdvertisements().getByKey(uuid).load();
     assertNotNull(adv.getAirDate());
 
     final InputStream is = adv.getStream();
@@ -77,7 +77,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   public void update() throws IOException {
     final UUID uuid = UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7");
 
-    final Advertisement adv = getContainer().getAdvertisements().get(uuid).load();
+    final Advertisement adv = getContainer().getAdvertisements().getByKey(uuid).load();
 
     final String random = RandomStringUtils.random(124, "abcdefghijklmnopqrstuvwxyz");
 
@@ -85,7 +85,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
     getContainer().flush();
 
-    assertEquals(random, IOUtils.toString(getContainer().getAdvertisements().get(uuid).load().getStream()));
+    assertEquals(random, IOUtils.toString(getContainer().getAdvertisements().getByKey(uuid).load().getStream()));
   }
 
   @Test
@@ -101,7 +101,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final UUID uuid = adv.getID();
     getContainerFactory().getContext().detachAll();
 
-    assertEquals(random, IOUtils.toString(getContainer().getAdvertisements().get(uuid).load().getStream()));
+    assertEquals(random, IOUtils.toString(getContainer().getAdvertisements().getByKey(uuid).load().getStream()));
 
     getContainerFactory().getContext().detachAll();
 
@@ -109,7 +109,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     getContainer().flush();
 
     try {
-      getContainer().getAdvertisements().get(uuid).load();
+      getContainer().getAdvertisements().getByKey(uuid).load();
       fail();
     } catch (IllegalArgumentException e) {
     }

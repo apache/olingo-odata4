@@ -43,14 +43,14 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void update() {
-    Order order = container.getOrder().get(-9).load();
+    Order order = container.getOrder().getByKey(-9).load();
 
     final ConcurrencyInfo ci = order.getConcurrency();
     ci.setToken("XXX");
 
     container.flush();
 
-    order = container.getOrder().get(-9).load();
+    order = container.getOrder().getByKey(-9).load();
     assertEquals("XXX", order.getConcurrency().getToken());
   }
 
@@ -60,13 +60,13 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     key.setFromUsername("1");
     key.setMessageId(-10);
 
-    Message message = container.getMessage().get(key);
+    Message message = container.getMessage().getByKey(key);
 
     message.setBody("XXX");
 
     container.flush();
 
-    message = container.getMessage().get(key).load();
+    message = container.getMessage().getByKey(key).load();
     assertEquals("XXX", message.getBody());
   }
 
@@ -79,17 +79,17 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     OrderCollection orders = container.getOrder().newOrderCollection();
     orders.add(order);
 
-    Customer customer = container.getCustomer().get(-9);
+    Customer customer = container.getCustomer().getByKey(-9);
     customer.setOrders(orders);
     order.setCustomer(customer);
 
     container.flush();
 
-    order = container.getOrder().get(400).load();
+    order = container.getOrder().getByKey(400).load();
     assertEquals(400, order.getOrderId().intValue());
     assertEquals(-9, order.getCustomerId().intValue());
 
-    customer = container.getCustomer().get(-9);
+    customer = container.getCustomer().getByKey(-9);
 
     assertEquals(2, customer.getOrders().size());
 
@@ -105,7 +105,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void concurrentModification() {
-    Product product = container.getProduct().get(-10).load();
+    Product product = container.getProduct().getByKey(-10).load();
     final String etag = ((EntityInvocationHandler) Proxy.getInvocationHandler(product)).getETag();
     assertTrue(StringUtils.isNotBlank(etag));
 
@@ -114,7 +114,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
     container.flush();
 
-    product = container.getProduct().get(-10).load();
+    product = container.getProduct().getByKey(-10).load();
     assertEquals(baseConcurrency, product.getBaseConcurrency());
   }
 }

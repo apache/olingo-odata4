@@ -36,7 +36,6 @@ public class SingletonInvocationHandler<
 
     return new SingletonInvocationHandler(ref, containerHandler, singletonName);
   }
-
   private final EntitySetInvocationHandler<?, ?, ?> entitySetHandler;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
@@ -56,9 +55,8 @@ public class SingletonInvocationHandler<
     }
   }
 
-  @Override
   @SuppressWarnings("unchecked")
-  public T get() {
-    return (T) this.entitySetHandler.getAll().iterator().next();
+  public T load() {
+    return (T) this.entitySetHandler.execute().iterator().next();
   }
 }

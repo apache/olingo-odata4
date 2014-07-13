@@ -20,23 +20,21 @@ package org.apache.olingo.fit.proxy.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.olingo.ext.proxy.api.Filter;
-import org.apache.olingo.ext.proxy.api.NonUniqueResultException;
 import org.apache.olingo.ext.proxy.api.Sort;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.Person;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Car;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CarCollection;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Employee;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.EmployeeCollection;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployee;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Order;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployeeCollection;
 //CHECKSTYLE:ON (Maven checkstyle)
 import org.junit.Test;
@@ -45,10 +43,10 @@ public class FilterTestITCase extends AbstractTestITCase {
 
   @Test
   public void filterOrderby() {
-    final Filter<Car, CarCollection> filter = container.getCar().createFilter().
-        setFilter(containerFactory.getClient().getFilterFactory().lt("VIN", 16));
-    CarCollection result = filter.getResult();
-    assertNotNull(result);
+    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.Car cars =
+            container.getCar();
+
+    CarCollection result = cars.filter(service.getClient().getFilterFactory().lt("VIN", 16)).execute();
 
     // 1. check that filtered entity set looks as expected
     assertEquals(5, result.size());
@@ -61,7 +59,7 @@ public class FilterTestITCase extends AbstractTestITCase {
     }
 
     // 3. add orderby clause to filter above
-    result = filter.setOrderBy(new Sort("VIN", Sort.Direction.DESC)).getResult();
+    result = cars.orderBy(new Sort("VIN", Sort.Direction.DESC)).execute();
     assertNotNull(result);
     assertEquals(5, result.size());
 
@@ -79,34 +77,49 @@ public class FilterTestITCase extends AbstractTestITCase {
 
   @Test
   public void single() {
-    final Filter<Car, CarCollection> filter = container.getCar().createFilter().
-        setFilter(containerFactory.getClient().getFilterFactory().lt("VIN", 16));
+    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.Car cars =
+            container.getCar();
 
-    Exception exception = null;
-    try {
-      filter.getSingleResult();
-      fail();
-    } catch (NonUniqueResultException e) {
-      exception = e;
-    }
-    assertNotNull(exception);
-
-    filter.setFilter(containerFactory.getClient().getFilterFactory().eq("VIN", 16));
-    final Car result = filter.getSingleResult();
-    assertNotNull(result);
+    assertEquals(1, cars.filter(service.getClient().getFilterFactory().eq("VIN", 16)).execute().size());
   }
 
   @Test
   public void derived() {
-    final Filter<Employee, EmployeeCollection> filterEmployee =
-        container.getPerson().createFilter(EmployeeCollection.class);
-    assertFalse(filterEmployee.getResult().isEmpty());
+    final Person person = container.getPerson();
+    final EmployeeCollection employee = person.execute(EmployeeCollection.class);
+    final SpecialEmployeeCollection specialEmployee = person.execute(SpecialEmployeeCollection.class);
 
-    final Filter<SpecialEmployee, SpecialEmployeeCollection> filterSpecialEmployee =
-        container.getPerson().createFilter(SpecialEmployeeCollection.class);
-    assertFalse(filterSpecialEmployee.getResult().isEmpty());
+    assertFalse(employee.isEmpty());
+    assertFalse(specialEmployee.isEmpty());
 
-    assertTrue(container.getPerson().getAll().size()
-    > filterEmployee.getResult().size() + filterSpecialEmployee.getResult().size());
+    assertTrue(person.execute().size() > employee.size() + specialEmployee.size());
+  }
+
+  @Test
+  public void loadWithSelect() {
+    final Order order = container.getOrder().getByKey(-9);
+    assertNull(order.getCustomerId());
+    assertNull(order.getOrderId());
+
+    order.select("OrderId");
+    order.load();
+
+    assertNull(order.getCustomerId());
+    assertNotNull(order.getOrderId());
+
+    order.clear();
+    order.load();
+    assertNotNull(order.getCustomerId());
+    assertNotNull(order.getOrderId());
+  }
+
+  @Test
+  public void loadWithSelectAndExpand() {
+    final Customer customer = container.getCustomer().getByKey(-10);
+    customer.expand("Info");
+    customer.select("Info", "CustomerId");
+
+    customer.load();
+    assertEquals(11, customer.getInfo().getCustomerInfoId(), 0);
   }
 }

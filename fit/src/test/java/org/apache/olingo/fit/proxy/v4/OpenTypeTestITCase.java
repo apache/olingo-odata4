@@ -32,7 +32,7 @@ import java.util.UUID;
 
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.DefaultContainer;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.AccountInfo;
@@ -48,13 +48,13 @@ import org.junit.Test;
  */
 public class OpenTypeTestITCase extends AbstractTestITCase {
 
-  private static EntityContainerFactory<EdmEnabledODataClient> otcontainerFactory;
+  private static Service<EdmEnabledODataClient> otcontainerFactory;
 
   private static DefaultContainer otcontainer;
 
   @BeforeClass
   public static void initContainer() {
-    otcontainerFactory = EntityContainerFactory.getV4(testOpenTypeServiceRootURL);
+    otcontainerFactory = Service.getV4(testOpenTypeServiceRootURL);
     otcontainerFactory.getClient().getConfiguration().
             setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     otcontainer = otcontainerFactory.getEntityContainer(DefaultContainer.class);
@@ -74,11 +74,11 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void read() {
-    Row row = otcontainer.getRow().get(UUID.fromString("71f7d0dc-ede4-45eb-b421-555a2aa1e58f")).load();
+    Row row = otcontainer.getRow().getByKey(UUID.fromString("71f7d0dc-ede4-45eb-b421-555a2aa1e58f")).load();
     assertEquals(Double.class, row.getAdditionalProperty("Double").getClass());
     assertEquals("71f7d0dc-ede4-45eb-b421-555a2aa1e58f", row.getId().toString());
 
-    row = otcontainer.getRow().get(UUID.fromString("672b8250-1e6e-4785-80cf-b94b572e42b3")).load();
+    row = otcontainer.getRow().getByKey(UUID.fromString("672b8250-1e6e-4785-80cf-b94b572e42b3")).load();
     assertEquals(BigDecimal.class, row.getAdditionalProperty("Decimal").getClass());
   }
 
@@ -127,7 +127,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 
     otcontainer.flush();
 
-    rowIndex = otcontainer.getRowIndex().get(id).load();
+    rowIndex = otcontainer.getRowIndex().getByKey(id).load();
     assertEquals(String.class, rowIndex.getAdditionalProperty("aString").getClass());
     assertEquals(Boolean.class, rowIndex.getAdditionalProperty("aBoolean").getClass());
     assertEquals(Double.class, rowIndex.getAdditionalProperty("aDouble").getClass());
@@ -148,7 +148,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     otcontainer.flush();
 
     try {
-      otcontainer.getRowIndex().get(id).load();
+      otcontainer.getRowIndex().getByKey(id).load();
       fail();
     } catch (IllegalArgumentException e) {
     }

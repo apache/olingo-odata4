@@ -32,16 +32,16 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   @Test
   public void nullNullableProperty() {
-    final Customer customer = container.getCustomers().get(1);
+    final Customer customer = container.getCustomers().getByKey(1);
     customer.setFirstName(null);
     container.flush();
 
-    assertNull(container.getCustomers().get(1).getFirstName());
+    assertNull(container.getCustomers().getByKey(1).getFirstName());
   }
 
   @Test
   public void nullNonNullableProperty() {
-    final StoredPI storedPI = container.getStoredPIs().get(1000);
+    final StoredPI storedPI = container.getStoredPIs().getByKey(1000);
     storedPI.setPIName(null);
 
     try {

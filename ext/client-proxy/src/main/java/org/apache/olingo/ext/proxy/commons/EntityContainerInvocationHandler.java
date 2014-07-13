@@ -22,7 +22,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Singleton;
@@ -39,14 +39,14 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
   private final boolean defaultEC;
 
   public static EntityContainerInvocationHandler getInstance(
-          final Class<?> ref, final EntityContainerFactory<?> factory) {
+          final Class<?> ref, final Service<?> factory) {
 
     final EntityContainerInvocationHandler instance = new EntityContainerInvocationHandler(ref, factory);
     instance.containerHandler = instance;
     return instance;
   }
 
-  private EntityContainerInvocationHandler(final Class<?> ref, final EntityContainerFactory<?> factory) {
+  private EntityContainerInvocationHandler(final Class<?> ref, final Service<?> factory) {
     super(factory);
 
     final Annotation annotation = ref.getAnnotation(EntityContainer.class);
@@ -60,7 +60,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
     this.namespace = ((EntityContainer) annotation).namespace();
   }
 
-  protected EntityContainerFactory<?> getFactory() {
+  protected Service<?> getFactory() {
     return factory;
   }
 

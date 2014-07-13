@@ -33,27 +33,27 @@ public class SingletonTestITCase extends AbstractTestITCase {
 
   @Test
   public void read() {
-    final Company company = container.getCompany().get();
+    final Company company = container.getCompany().load();
     assertEquals(0, company.getCompanyID(), 0);
     assertEquals(CompanyCategory.IT, company.getCompanyCategory());
   }
 
   @Test
   public void update() {
-    final Company company = container.getCompany().get();
+    final Company company = container.getCompany().load();
     company.setRevenue(132520L);
 
     container.flush();
 
-    assertEquals(132520L, container.getCompany().get().getRevenue(), 0);
+    assertEquals(132520L, container.getCompany().load().getRevenue(), 0);
   }
 
   @Test
   public void readWithAnnotations() {
-    final Company company = container.getCompany().get();
+    final Company company = container.getCompany().load();
     assertTrue(company.getAnnotationTerms().isEmpty());
 
-    final Person boss = container.getBoss().get();
+    final Person boss = container.getBoss().load();
     assertEquals(2, boss.getPersonID(), 0);
 
     assertEquals(1, boss.getAnnotationTerms().size());

@@ -47,7 +47,7 @@ import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
@@ -60,11 +60,11 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
   private static final long serialVersionUID = 358520026931462958L;
 
-  protected EntityContainerFactory<?> factory;
+  protected Service<?> factory;
 
   protected EntityContainerInvocationHandler containerHandler;
 
-  protected AbstractInvocationHandler(final EntityContainerFactory<?> factory) {
+  protected AbstractInvocationHandler(final Service<?> factory) {
     this.factory = factory;
   }
 

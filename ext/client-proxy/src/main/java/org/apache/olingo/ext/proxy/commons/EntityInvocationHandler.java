@@ -67,7 +67,9 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   private static final long serialVersionUID = 2629912294765040037L;
 
-  protected URI entityURI;
+  private URI baseURI;
+
+  private CommonURIBuilder<?> uri;
 
   protected final Map<String, Object> propertyChanges = new HashMap<String, Object>();
 
@@ -109,7 +111,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return new EntityInvocationHandler(key, entity, entitySetURI, typeRef, containerHandler);
   }
 
-  static EntityInvocationHandler getInstance(
+  public static EntityInvocationHandler getInstance(
           final CommonODataEntity entity,
           final URI entitySetURI,
           final Class<?> typeRef,
@@ -128,8 +130,12 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     super(typeRef, entity, containerHandler);
 
     final Object key = entityKey == null ? CoreUtils.getKey(getClient(), this, typeRef, entity) : entityKey;
-    if (key!=null && entity.getEditLink() == null) {
-      final CommonURIBuilder<?> uriBuilder = containerHandler.getClient().newURIBuilder(entitySetURI.toASCIIString());
+    
+    if (entity.getEditLink() != null) {
+      this.baseURI = entity.getEditLink();
+      this.uri = getClient().newURIBuilder(baseURI.toASCIIString());
+    } else if (key != null) {
+      final CommonURIBuilder<?> uriBuilder = getClient().newURIBuilder(entitySetURI.toASCIIString());
 
       if (key.getClass().getAnnotation(CompoundKey.class) == null) {
         LOG.debug("Append key segment '{}'", key);
@@ -139,10 +145,12 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
         uriBuilder.appendKeySegment(getCompoundKey(key));
       }
 
-      this.entityURI = uriBuilder.build();
-      entity.setEditLink(entityURI);
+      this.uri = uriBuilder;
+      this.baseURI = this.uri.build();
+      entity.setEditLink(this.baseURI);
     } else {
-      this.entityURI = entity.getEditLink();
+      this.baseURI = null;
+      this.uri = null;
     }
 
     this.internal = entity;
@@ -166,8 +174,9 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
             CoreUtils.getKey(getClient(), this, typeRef, entity));
 
     // fix for OLINGO-353
-    if (this.entityURI == null) {
-      this.entityURI = entity.getEditLink();
+    if (this.uri == null) {
+      this.baseURI = entity.getEditLink();
+      this.uri = this.baseURI == null ? null : getClient().newURIBuilder(this.baseURI.toASCIIString());
     }
 
     this.streamedPropertyChanges.clear();
@@ -195,7 +204,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   public URI getEntityURI() {
-    return entityURI;
+    return this.baseURI;
   }
 
   /**
@@ -514,7 +523,8 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
     try {
       final ODataEntityRequest<CommonODataEntity> req =
-              getClient().getRetrieveRequestFactory().getEntityRequest(entityURI);
+              getClient().getRetrieveRequestFactory().getEntityRequest(uri.build());
+
       if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) > 0) {
         req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
       }
@@ -564,6 +574,18 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     }
 
     return map;
+  }
+
+  public void expand(final String... expand) {
+    this.uri.expand(expand);
+  }
+
+  public void select(final String... select) {
+    this.uri.select(select);
+  }
+
+  public void clear() {
+    this.uri = getClient().newURIBuilder(baseURI.toASCIIString());
   }
 
   @Override

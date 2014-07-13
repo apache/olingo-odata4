@@ -32,16 +32,16 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   @Test
   public void nullNullableProperty() {
-    Order order = container.getOrder().get(-8);
+    Order order = container.getOrder().getByKey(-8);
     order.setCustomerId(null);
     container.flush();
 
-    assertNull(container.getOrder().get(-8).getCustomerId());
+    assertNull(container.getOrder().getByKey(-8).getCustomerId());
   }
 
   @Test
   public void nullNonNullableProperty() {
-    Driver driver = container.getDriver().get("2");
+    Driver driver = container.getDriver().getByKey("2");
     driver.setBirthDate(null);
 
     try {
@@ -49,7 +49,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
       fail();
     } catch (IllegalStateException e) {
       // ignore and detach all
-      containerFactory.getContext().detachAll();
+      service.getContext().detachAll();
     }
   }
 }

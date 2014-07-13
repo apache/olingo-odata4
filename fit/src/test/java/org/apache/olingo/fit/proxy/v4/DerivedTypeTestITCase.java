@@ -41,15 +41,15 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void read() {
-    final CustomerCollection customers = container.getPeople().getAll(CustomerCollection.class);
+    final CustomerCollection customers = container.getPeople().execute(CustomerCollection.class);
     assertNotNull(customers);
 
     for (Customer customer : customers) {
       assertTrue(customer instanceof Customer);
     }
 
-    final CreditCardPICollection creditCards = container.getAccounts().get(101).
-        getMyPaymentInstruments().getAll(CreditCardPICollection.class);
+    final CreditCardPICollection creditCards = container.getAccounts().getByKey(101).
+        getMyPaymentInstruments().execute(CreditCardPICollection.class);
     assertNotNull(creditCards);
     for (CreditCardPI creditCard : creditCards) {
       assertTrue(creditCard instanceof CreditCardPI);
@@ -82,7 +82,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
 
     container.flush();
 
-    final Person actual = container.getPeople().get(976, Customer.class).load();
+    final Person actual = container.getPeople().getByKey(976, Customer.class).load();
     assertTrue(actual instanceof Customer);
     assertTrue(actual.getHomeAddress() instanceof CompanyAddress);
 
