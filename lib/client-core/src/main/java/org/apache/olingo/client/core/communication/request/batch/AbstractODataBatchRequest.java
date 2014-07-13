@@ -49,10 +49,6 @@ public abstract class AbstractODataBatchRequest<V extends ODataResponse, T exten
    */
   protected final List<ODataBatchResponseItem> expectedResItems = new ArrayList<ODataBatchResponseItem>();
 
-  protected void addExpectedResItem(ODataBatchResponseItem item) {
-    expectedResItems.add(item);
-  }
-
   /**
    * Constructor.
    *
@@ -69,6 +65,10 @@ public abstract class AbstractODataBatchRequest<V extends ODataResponse, T exten
     setContentType(ContentType.MULTIPART_MIXED + ";" + ODataBatchConstants.BOUNDARY + "=" + boundary);
   }
 
+  protected void addExpectedResItem(final ODataBatchResponseItem item) {
+    expectedResItems.add(item);
+  }
+
   /**
    * {@inheritDoc }
    */
@@ -78,11 +78,11 @@ public abstract class AbstractODataBatchRequest<V extends ODataResponse, T exten
 
   /**
    * {@inheritDoc}
-   * <p>
+   * <br/>
    * This operation is unsupported by a batch request.
    */
   @Override
-  public void batch(CommonODataBatchRequest req) {
+  public void batch(final CommonODataBatchRequest req) {
     throw new UnsupportedOperationException("A batch request is not batchable");
   }
 }

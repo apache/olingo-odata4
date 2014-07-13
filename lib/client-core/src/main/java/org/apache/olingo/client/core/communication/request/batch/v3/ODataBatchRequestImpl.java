@@ -121,5 +121,13 @@ public class ODataBatchRequestImpl
     public Iterator<ODataBatchResponseItem> getBody() {
       return new ODataBatchResponseManager(this, expectedResItems);
     }
+
+    @Override
+    public void close() {
+      for (ODataBatchResponseItem resItem : expectedResItems) {
+        resItem.close();
+      }
+      super.close();
+    }
   }
 }

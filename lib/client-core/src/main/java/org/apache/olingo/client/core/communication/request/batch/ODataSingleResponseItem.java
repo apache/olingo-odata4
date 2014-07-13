@@ -83,4 +83,13 @@ public class ODataSingleResponseItem extends AbstractODataBatchResponseItem {
   public void remove() {
     throw new UnsupportedOperationException("Operation not supported.");
   }
+
+  @Override
+  public void close() {
+    super.close();
+    if (current != null && !(current instanceof AsyncResponseImpl) && !(current instanceof ODataBatchErrorResponse)) {
+      current.close();
+    }
+  }
+
 }
