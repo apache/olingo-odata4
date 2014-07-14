@@ -109,7 +109,7 @@ public class FilterTestITCase extends AbstractTestITCase {
   public void loadWithSelectAndExpand() {
     final Customer customer = container.getCustomers().getByKey(1);
 
-//    customer.expand("Orders");
+    customer.expand("Orders");
     customer.select("Orders", "PersonID");
 
     customer.load();

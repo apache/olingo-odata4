@@ -83,7 +83,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
     if (contextURL != null) {
       entity.setBaseURI(StringUtils.substringBefore(contextURL.toASCIIString(), Constants.METADATA));
     }
-
+    
     final String metadataETag;
     if (tree.hasNonNull(Constants.JSON_METADATA_ETAG)) {
       metadataETag = tree.get(Constants.JSON_METADATA_ETAG).textValue();

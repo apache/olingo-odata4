@@ -25,7 +25,7 @@ import org.apache.olingo.commons.api.Constants;
 
 /**
  * High-level representation of a context URL, built from the string value returned by a service; provides access to the
- * various components of the context URL, defined in the  <a
+ * various components of the context URL, defined in the <a
  * href="http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html#_Toc372793655">
  * protocol specification</a>.
  */
@@ -53,6 +53,9 @@ public class ContextURL {
 
   private boolean deltaDeletedLink;
 
+  private ContextURL() {
+  }
+
   public static ContextURL getInstance(final URI contextURL) {
     final ContextURL instance = new ContextURL();
     instance.uri = contextURL;
@@ -61,7 +64,7 @@ public class ContextURL {
 
     instance.entity = contextURLasString.endsWith("/$entity") || contextURLasString.endsWith("/@Element");
     contextURLasString = contextURLasString.
-        replace("/$entity", StringUtils.EMPTY).replace("/@Element", StringUtils.EMPTY);
+            replace("/$entity", StringUtils.EMPTY).replace("/@Element", StringUtils.EMPTY);
 
     instance.delta = contextURLasString.endsWith("/$delta");
     contextURLasString = contextURLasString.replace("/$delta", StringUtils.EMPTY);
@@ -193,5 +196,4 @@ public class ContextURL {
   public String toString() {
     return uri.toString();
   }
-
 }

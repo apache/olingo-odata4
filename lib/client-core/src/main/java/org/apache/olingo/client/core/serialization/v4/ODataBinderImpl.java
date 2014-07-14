@@ -129,28 +129,28 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     if (odataValuable.hasPrimitiveValue()) {
       propertyResource.setType(odataValuable.getPrimitiveValue().getTypeName());
       propertyResource.setValue(
-          propertyValue instanceof Geospatial ? ValueType.GEOSPATIAL : ValueType.PRIMITIVE,
-          propertyValue);
+              propertyValue instanceof Geospatial ? ValueType.GEOSPATIAL : ValueType.PRIMITIVE,
+              propertyValue);
     } else if (odataValuable.hasEnumValue()) {
       propertyResource.setType(odataValuable.getEnumValue().getTypeName());
       propertyResource.setValue(ValueType.ENUM, propertyValue);
     } else if (odataValuable.hasComplexValue()) {
       propertyResource.setType(odataValuable.getComplexValue().getTypeName());
       propertyResource.setValue(
-          propertyValue instanceof LinkedComplexValue ? ValueType.LINKED_COMPLEX : ValueType.COMPLEX,
-          propertyValue);
+              propertyValue instanceof LinkedComplexValue ? ValueType.LINKED_COMPLEX : ValueType.COMPLEX,
+              propertyValue);
     } else if (odataValuable.hasCollectionValue()) {
       final ODataCollectionValue<org.apache.olingo.commons.api.domain.v4.ODataValue> collectionValue =
-          odataValuable.getCollectionValue();
+              odataValuable.getCollectionValue();
       propertyResource.setType(collectionValue.getTypeName());
       final org.apache.olingo.commons.api.domain.v4.ODataValue value =
-          collectionValue.iterator().hasNext() ? collectionValue.iterator().next() : null;
+              collectionValue.iterator().hasNext() ? collectionValue.iterator().next() : null;
       ValueType valueType = ValueType.COLLECTION_PRIMITIVE;
       if (value == null) {
         valueType = ValueType.COLLECTION_PRIMITIVE;
-      } else if (value.isPrimitive()) { 
-        valueType = value.asPrimitive().toValue() instanceof Geospatial ?
-            ValueType.COLLECTION_GEOSPATIAL : ValueType.COLLECTION_PRIMITIVE;
+      } else if (value.isPrimitive()) {
+        valueType = value.asPrimitive().toValue() instanceof Geospatial
+                ? ValueType.COLLECTION_GEOSPATIAL : ValueType.COLLECTION_PRIMITIVE;
       } else if (value.isEnum()) {
         valueType = ValueType.COLLECTION_ENUM;
       } else if (value.isLinkedComplex()) {
@@ -308,10 +308,10 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   public ODataProperty getODataProperty(final ResWrap<Property> resource) {
     final Property payload = resource.getPayload();
     final EdmTypeInfo typeInfo = buildTypeInfo(resource.getContextURL(), resource.getMetadataETag(),
-        payload.getName(), payload.getType());
+            payload.getName(), payload.getType());
 
     final ODataProperty property = new ODataPropertyImpl(payload.getName(),
-        getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
+            getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
             payload, resource.getContextURL(), resource.getMetadataETag()));
     odataAnnotations(payload, property);
 
@@ -323,7 +323,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     final EdmTypeInfo typeInfo = buildTypeInfo(type == null ? null : type.getFullQualifiedName(), resource.getType());
 
     final ODataProperty property = new ODataPropertyImpl(resource.getName(),
-        getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
+            getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
             resource, null, null));
     odataAnnotations(resource, property);
 
