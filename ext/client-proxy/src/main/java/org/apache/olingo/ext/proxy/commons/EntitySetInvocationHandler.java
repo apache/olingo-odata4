@@ -376,16 +376,21 @@ class EntitySetInvocationHandler<
   }
 
   @Override
-  public <S extends T> void delete(final Iterable<S> entities) {
+  public <S extends T> void delete(final S entity) {
     final EntityContext entityContext = getContext().entityContext();
 
-    for (T en : entities) {
-      final EntityInvocationHandler entity = (EntityInvocationHandler) Proxy.getInvocationHandler(en);
-      if (entityContext.isAttached(entity)) {
-        entityContext.setStatus(entity, AttachedEntityStatus.DELETED);
-      } else {
-        entityContext.attach(entity, AttachedEntityStatus.DELETED);
-      }
+    final EntityInvocationHandler handler = (EntityInvocationHandler) Proxy.getInvocationHandler(entity);
+    if (entityContext.isAttached(handler)) {
+      entityContext.setStatus(handler, AttachedEntityStatus.DELETED);
+    } else {
+      entityContext.attach(handler, AttachedEntityStatus.DELETED);
+    }
+  }
+
+  @Override
+  public <S extends T> void delete(final Iterable<S> entities) {
+    for (S en : entities) {
+      delete(en);
     }
   }
 

@@ -72,6 +72,14 @@ public interface AbstractEntitySet<
   void delete(KEY key) throws IllegalArgumentException;
 
   /**
+   * Deletes the given entity in a batch.
+   *
+   * @param <S>
+   * @param entity to be deleted
+   */
+  <S extends T> void delete(S entities);
+
+  /**
    * Deletes the given entities in a batch.
    *
    * @param <S>
