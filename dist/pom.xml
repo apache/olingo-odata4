@@ -37,6 +37,7 @@
   </parent>
 
   <modules>
+    <module>client-lib</module>
     <module>server-lib</module>
     <module>javadoc</module>
   </modules>
