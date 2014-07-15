@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.server.core.uri.queryoption.expression;
 
-import org.apache.olingo.commons.api.ODataApplicationException;
 import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.TypeLiteral;
