@@ -23,10 +23,8 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <scope>compile</scope>
             <includes>
-                <include>org.apache.olingo:olingo-commons-api</include>
-                <include>org.apache.olingo:olingo-commons-core</include>
-                <include>org.apache.olingo:olingo-server-api</include>
-                <include>org.apache.olingo:olingo-server-core</include>
+                <include>org.apache.olingo:olingo-client-core-android</include>
+                <include>org.apache.olingo:olingo-client-proxy-android</include>
             </includes>
         </dependencySet>
     </dependencySets>

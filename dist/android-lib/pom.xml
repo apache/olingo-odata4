@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.olingo</groupId>
-  <artifactId>olingo-dist-server-lib</artifactId>
+  <artifactId>olingo-dist-android-lib</artifactId>
   <packaging>pom</packaging>
 
   <name>${project.artifactId}</name>
@@ -88,28 +88,16 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-commons-api</artifactId>
+      <artifactId>olingo-client-core-android</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-commons-core</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-server-api</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-server-core</artifactId>
+      <artifactId>olingo-client-proxy-android</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
+
 </project>

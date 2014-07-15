@@ -37,6 +37,8 @@
   </parent>
 
   <modules>
+    <module>android-lib</module>
+    <module>client-lib</module>
     <module>server-lib</module>
     <module>javadoc</module>
   </modules>
