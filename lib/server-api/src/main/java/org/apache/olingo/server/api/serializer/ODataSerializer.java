@@ -26,7 +26,6 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
 
 public interface ODataSerializer {
 
@@ -36,12 +35,12 @@ public interface ODataSerializer {
 
   InputStream metadataDocument(Edm edm);
 
-  InputStream entity(EdmEntityType edmEntityType, Entity entity, ContextURL contextURL);
+  InputStream entity(EdmEntitySet edmEntitySet, Entity entity, ContextURL contextURL);
 
   InputStream entitySet(EdmEntitySet edmEntitySet, EntitySet entitySet, ContextURL contextURL);
 
   /**
-   * Writes an ODataError into an InputStream
+   * Writes an ODataError into an InputStream.
    * @param error the main error
    * @return inputStream containing the OData formatted error
    */

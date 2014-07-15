@@ -27,6 +27,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.LinkedComplexValue;
@@ -123,24 +124,27 @@ public class ODataJsonSerializer implements ODataSerializer {
   @Override
   public InputStream entitySet(final EdmEntitySet edmEntitySet, final EntitySet entitySet,
       final ContextURL contextURL) {
+    final ContextURL entitySetContextURL = contextURL == null ?
+        ContextURL.create().entitySet(edmEntitySet).build() :
+        contextURL;
     CircleStreamBuffer buffer = new CircleStreamBuffer();
     try {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
-      if (contextURL != null && format != ODataFormat.JSON_NO_METADATA) {
-        json.writeStringField(Constants.JSON_CONTEXT, contextURL.getURI().toASCIIString());
+      if (entitySetContextURL != null && format != ODataFormat.JSON_NO_METADATA) {
+        json.writeStringField(Constants.JSON_CONTEXT, entitySetContextURL.getURI().toASCIIString());
       }
       if (entitySet.getCount() != null) {
-        json.writeNumberField("@odata.count", entitySet.getCount());
+        json.writeNumberField(Constants.JSON_COUNT, entitySet.getCount());
       }
       json.writeFieldName(Constants.VALUE);
       json.writeStartArray();
       for (Entity entity : entitySet.getEntities()) {
-        writeEntity(edmEntitySet.getEntityType(), entity, null, json);
+        writeEntity(edmEntitySet, entity, null, json);
       }
       json.writeEndArray();
       if (entitySet.getNext() != null) {
-        json.writeStringField("@odata.nextLink", entitySet.getNext().toASCIIString());
+        json.writeStringField(Constants.JSON_NEXT_LINK, entitySet.getNext().toASCIIString());
       }
       json.close();
     } catch (final IOException e) {
@@ -152,11 +156,14 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   @Override
-  public InputStream entity(final EdmEntityType edmEntityType, final Entity entity, final ContextURL contextURL) {
+  public InputStream entity(final EdmEntitySet edmEntitySet, final Entity entity, final ContextURL contextURL) {
+    final ContextURL entityContextURL = contextURL == null ?
+        ContextURL.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build() :
+        contextURL;
     CircleStreamBuffer buffer = new CircleStreamBuffer();
     try {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
-      writeEntity(edmEntityType, entity, contextURL, json);
+      writeEntity(edmEntitySet, entity, entityContextURL, json);
       json.close();
     } catch (final IOException e) {
       throw new ODataRuntimeException(e);
@@ -166,7 +173,7 @@ public class ODataJsonSerializer implements ODataSerializer {
     return buffer.getInputStream();
   }
 
-  protected void writeEntity(final EdmEntityType entityType, final Entity entity, final ContextURL contextURL,
+  protected void writeEntity(final EdmEntitySet entitySet, final Entity entity, final ContextURL contextURL,
       final JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
     json.writeStartObject();
     if (format != ODataFormat.JSON_NO_METADATA) {
@@ -174,15 +181,16 @@ public class ODataJsonSerializer implements ODataSerializer {
         json.writeStringField(Constants.JSON_CONTEXT, contextURL.getURI().toASCIIString());
       }
       if (entity.getETag() != null) {
-        json.writeStringField("@odata.etag", entity.getETag());
+        json.writeStringField(Constants.JSON_ETAG, entity.getETag());
       }
       if (entity.getMediaETag() != null) {
-        json.writeStringField("@odata.mediaEtag", entity.getMediaETag());
+        json.writeStringField(Constants.JSON_MEDIA_ETAG, entity.getMediaETag());
       }
       if (entity.getMediaContentType() != null) {
-        json.writeStringField("@odata.mediaContentType", entity.getMediaContentType());
+        json.writeStringField(Constants.JSON_MEDIA_CONTENT_TYPE, entity.getMediaContentType());
       }
     }
+    final EdmEntityType entityType = entitySet.getEntityType();
     for (final String propertyName : entityType.getPropertyNames()) {
       final EdmProperty edmProperty = (EdmProperty) entityType.getProperty(propertyName);
       final Property property = entity.getProperty(propertyName);

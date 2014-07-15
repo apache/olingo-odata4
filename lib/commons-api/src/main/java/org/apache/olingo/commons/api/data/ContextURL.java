@@ -22,6 +22,8 @@ import java.net.URI;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
 
 /**
  * High-level representation of a context URL, built from the string value returned by a service; provides access to the
@@ -34,24 +36,31 @@ public class ContextURL {
   private URI uri;
 
   private URI serviceRoot;
-
   private String entitySetOrSingletonOrType;
-
   private String derivedEntity;
-
   private String selectList;
-
   private String navOrPropertyPath;
 
-  private boolean entity;
+  public enum Suffix {
+    ENTITY("$entity"),
+    REFERENCE("$ref"),
+    DELTA("$delta"),
+    DELTA_DELETED_ENTITY("$deletedEntity"),
+    DELTA_LINK("$link"),
+    DELTA_DELETED_LINK("$deletedLink");
 
-  private boolean delta;
+    private final String representation;
+    private Suffix(final String representation) {
+      this.representation = representation;
+    }
+    public String getRepresentation() {
+      return representation;
+    }
+  }
 
-  private boolean deltaDeletedEntity;
+  private Suffix suffix;
 
-  private boolean deltaLink;
-
-  private boolean deltaDeletedLink;
+  private ContextURL() {}
 
   public static ContextURL getInstance(final URI contextURL) {
     final ContextURL instance = new ContextURL();
@@ -59,21 +68,31 @@ public class ContextURL {
 
     String contextURLasString = instance.uri.toASCIIString();
 
-    instance.entity = contextURLasString.endsWith("/$entity") || contextURLasString.endsWith("/@Element");
-    contextURLasString = contextURLasString.
-        replace("/$entity", StringUtils.EMPTY).replace("/@Element", StringUtils.EMPTY);
+    if (contextURLasString.endsWith("/$entity") || contextURLasString.endsWith("/@Element")) {
+      instance.suffix = Suffix.ENTITY;
+      contextURLasString = contextURLasString.replace("/$entity", StringUtils.EMPTY)
+          .replace("/@Element", StringUtils.EMPTY);
 
-    instance.delta = contextURLasString.endsWith("/$delta");
-    contextURLasString = contextURLasString.replace("/$delta", StringUtils.EMPTY);
+    } else if (contextURLasString.endsWith("/$ref")) {
+      instance.suffix = Suffix.REFERENCE;
+      contextURLasString = contextURLasString.replace("/$ref", StringUtils.EMPTY);
 
-    instance.deltaDeletedEntity = contextURLasString.endsWith("/$deletedEntity");
-    contextURLasString = contextURLasString.replace("/$deletedEntity", StringUtils.EMPTY);
+    } else if (contextURLasString.endsWith("/$delta")) {
+      instance.suffix = Suffix.DELTA;
+      contextURLasString = contextURLasString.replace("/$delta", StringUtils.EMPTY);
 
-    instance.deltaLink = contextURLasString.endsWith("/$link");
-    contextURLasString = contextURLasString.replace("/$link", StringUtils.EMPTY);
+    } else if (contextURLasString.endsWith("/$deletedEntity")) {
+      instance.suffix = Suffix.DELTA_DELETED_ENTITY;
+      contextURLasString = contextURLasString.replace("/$deletedEntity", StringUtils.EMPTY);
 
-    instance.deltaDeletedLink = contextURLasString.endsWith("/$deletedLink");
-    contextURLasString = contextURLasString.replace("/$deletedLink", StringUtils.EMPTY);
+    } else if (contextURLasString.endsWith("/$link")) {
+      instance.suffix = Suffix.DELTA_LINK;
+      contextURLasString = contextURLasString.replace("/$link", StringUtils.EMPTY);
+
+    } else if (contextURLasString.endsWith("/$deletedLink")) {
+      instance.suffix = Suffix.DELTA_DELETED_LINK;
+      contextURLasString = contextURLasString.replace("/$deletedLink", StringUtils.EMPTY);
+    }
 
     instance.serviceRoot = URI.create(StringUtils.substringBefore(contextURLasString, Constants.METADATA));
 
@@ -150,23 +169,87 @@ public class ContextURL {
   }
 
   public boolean isEntity() {
-    return entity;
+    return suffix == Suffix.ENTITY;
+  }
+
+  public boolean isReference() {
+    return suffix == Suffix.REFERENCE;
   }
 
   public boolean isDelta() {
-    return delta;
+    return suffix == Suffix.DELTA;
   }
 
   public boolean isDeltaDeletedEntity() {
-    return deltaDeletedEntity;
+    return suffix == Suffix.DELTA_DELETED_ENTITY;
   }
 
   public boolean isDeltaLink() {
-    return deltaLink;
+    return suffix == Suffix.DELTA_LINK;
   }
 
   public boolean isDeltaDeletedLink() {
-    return deltaDeletedLink;
+    return suffix == Suffix.DELTA_DELETED_LINK;
+  }
+
+  public static final class ContextURLBuilder {
+    private ContextURL contextURL = new ContextURL();
+
+    private ContextURLBuilder() {}
+
+    public ContextURLBuilder serviceRoot(final URI serviceRoot) {
+      contextURL.serviceRoot = serviceRoot;
+      return this;
+    }
+
+    public ContextURLBuilder entitySet(final EdmEntitySet entitySet) {
+      contextURL.entitySetOrSingletonOrType = entitySet.getName();
+      return this;
+    }
+
+    public ContextURLBuilder derived(final EdmEntityType derivedType) {
+      contextURL.derivedEntity = derivedType.getFullQualifiedName().getFullQualifiedNameAsString();
+      return this;
+    }
+
+    public ContextURLBuilder suffix(final Suffix suffix) {
+      contextURL.suffix = suffix;
+      return this;
+    }
+
+    public ContextURL build() {
+      StringBuilder result = new StringBuilder();
+      if (contextURL.serviceRoot != null) {
+        result.append(contextURL.serviceRoot);
+      }
+      result.append(Constants.METADATA);
+      if (contextURL.entitySetOrSingletonOrType != null) {
+        result.append('#').append(contextURL.entitySetOrSingletonOrType);
+      }
+      if (contextURL.derivedEntity != null) {
+        if (contextURL.entitySetOrSingletonOrType == null) {
+          throw new IllegalArgumentException("ContextURL: Derived Type without anything to derive from!");
+        }
+        result.append('/').append(contextURL.derivedEntity);
+      }
+      if (contextURL.suffix == Suffix.REFERENCE) {
+        if (contextURL.entitySetOrSingletonOrType != null) {
+          throw new IllegalArgumentException("ContextURL: $ref with Entity Set");
+        }
+        result.append('#').append(contextURL.suffix.getRepresentation());
+      } else if (contextURL.suffix != null) {
+        if (contextURL.entitySetOrSingletonOrType == null) {
+          throw new IllegalArgumentException("ContextURL: Suffix without preceding Entity Set!");
+        }
+        result.append('/').append(contextURL.suffix.getRepresentation());
+      }
+      contextURL.uri = URI.create(result.toString());
+      return contextURL;
+    }
+  }
+
+  public static final ContextURLBuilder create() {
+    return new ContextURLBuilder();
   }
 
   @Override
