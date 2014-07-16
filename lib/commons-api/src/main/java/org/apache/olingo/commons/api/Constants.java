@@ -163,11 +163,23 @@ public interface Constants {
   // JSON stuff
   public final static String JSON_METADATA = "odata.metadata";
 
+  public final static String JSON_TYPE = "@odata.type";
+  public final static String JSON_ID = "@odata.id";
+  public final static String JSON_READ_LINK = "@odata.readLink";
+  public final static String JSON_EDIT_LINK = "@odata.editLink";
   public final static String JSON_CONTEXT = "@odata.context";
-
+  public final static String JSON_ETAG = "@odata.etag";
+  public final static String JSON_MEDIA_ETAG = "@odata.mediaEtag";
+  public final static String JSON_MEDIA_CONTENT_TYPE = "@odata.mediaContentType";
+  public final static String JSON_MEDIA_READ_LINK = "@odata.mediaReadLink";
+  public final static String JSON_MEDIA_EDIT_LINK = "@odata.mediaEditLink";
   public final static String JSON_METADATA_ETAG = "@odata.metadataEtag";
-
   public final static String JSON_BIND_LINK_SUFFIX = "@odata.bind";
+  public final static String JSON_ASSOCIATION_LINK = "@odata.associationLink";
+  public final static String JSON_NAVIGATION_LINK = "@odata.navigationLink";
+  public final static String JSON_COUNT = "@odata.count";
+  public final static String JSON_NEXT_LINK = "@odata.nextLink";
+  public final static String JSON_DELTA_LINK = "@odata.deltaLink";
 
   public final static String JSON_NULL = "odata.null";
 

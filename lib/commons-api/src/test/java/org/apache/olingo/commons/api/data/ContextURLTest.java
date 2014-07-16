@@ -25,7 +25,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 
+import org.apache.olingo.commons.api.data.ContextURL.Suffix;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class ContextURLTest {
 
@@ -202,6 +207,16 @@ public class ContextURLTest {
   }
 
   @Test
+  public void reference() {
+    ContextURL contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$ref"));
+    assertTrue(contextURL.isReference());
+    assertNull(contextURL.getSelectList());
+    assertNull(contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
+    assertFalse(contextURL.isDelta());
+  }
+
+  @Test
   public void delta() {
     ContextURL contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$delta"));
     assertTrue(contextURL.isDelta());
@@ -226,5 +241,80 @@ public class ContextURLTest {
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
     assertFalse(contextURL.isEntity());
+  }
+
+  @Test
+  public void buildServiceDocument() {
+    ContextURL contextURL = ContextURL.create().serviceRoot(URI.create("http://host/service/")).build();
+    assertEquals("http://host/service/$metadata", contextURL.getURI().toASCIIString());
+  }
+
+  @Test
+  public void buildRelative() {
+    ContextURL contextURL = ContextURL.create().build();
+    assertEquals("$metadata", contextURL.getURI().toASCIIString());
+  }
+
+  @Test
+  public void buildEntitySet() {
+    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(entitySet.getName()).thenReturn("Customers");
+    ContextURL contextURL = ContextURL.create().serviceRoot(URI.create("http://host/service/"))
+        .entitySet(entitySet)
+        .build();
+    assertEquals("http://host/service/$metadata#Customers", contextURL.getURI().toASCIIString());
+  }
+
+  @Test
+  public void buildDerivedEntitySet() {
+    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(entitySet.getName()).thenReturn("Customers");
+    EdmEntityType derivedType = Mockito.mock(EdmEntityType.class);
+    Mockito.when(derivedType.getFullQualifiedName()).thenReturn(new FullQualifiedName("Model", "VipCustomer"));
+    ContextURL contextURL = ContextURL.create().serviceRoot(URI.create("http://host/service/"))
+        .entitySet(entitySet)
+        .derived(derivedType)
+        .build();
+    assertEquals("http://host/service/$metadata#Customers/Model.VipCustomer", contextURL.getURI().toASCIIString());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void buildDerivedEntitySetWithoutEntitySet() {
+    EdmEntityType derivedType = Mockito.mock(EdmEntityType.class);
+    Mockito.when(derivedType.getFullQualifiedName()).thenReturn(new FullQualifiedName("Model", "VipCustomer"));
+    ContextURL.create().derived(derivedType).build();
+  }
+
+  @Test
+  public void buildDerivedEntity() {
+    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(entitySet.getName()).thenReturn("Customers");
+    EdmEntityType derivedType = Mockito.mock(EdmEntityType.class);
+    Mockito.when(derivedType.getFullQualifiedName()).thenReturn(new FullQualifiedName("Model", "VipCustomer"));
+    ContextURL contextURL = ContextURL.create().serviceRoot(URI.create("http://host/service/"))
+        .entitySet(entitySet)
+        .derived(derivedType)
+        .suffix(Suffix.ENTITY)
+        .build();
+    assertEquals("http://host/service/$metadata#Customers/Model.VipCustomer/$entity",
+        contextURL.getURI().toASCIIString());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void buildSuffixWithoutEntitySet() {
+    ContextURL.create().suffix(Suffix.ENTITY).build();
+  }
+
+  @Test
+  public void buildReference() {
+    ContextURL contextURL = ContextURL.create().suffix(Suffix.REFERENCE).build();
+    assertEquals("$metadata#$ref", contextURL.getURI().toASCIIString());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void buildReferenceWithEntitySet() {
+    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(entitySet.getName()).thenReturn("Customers");
+    ContextURL.create().entitySet(entitySet).suffix(Suffix.REFERENCE).build();
   }
 }

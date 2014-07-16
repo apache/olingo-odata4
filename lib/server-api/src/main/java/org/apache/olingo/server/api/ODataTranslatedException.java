@@ -16,22 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api;
+package org.apache.olingo.server.api;
 
-public class ODataApplicationException extends Exception {
+public class ODataTranslatedException extends Exception{
 
-  private static final long serialVersionUID = 5358683245923127425L;
-
-  public ODataApplicationException(final String msg) {
-    super(msg);
-  }
-
-  public ODataApplicationException(final String msg, final Throwable cause) {
-    super(msg, cause);
-  }
-
-  public ODataApplicationException(final Throwable cause) {
-    super(cause);
-  }
+  private static final long serialVersionUID = -1210541002198287561L;
 
 }
