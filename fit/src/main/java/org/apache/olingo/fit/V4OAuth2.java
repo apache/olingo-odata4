@@ -19,26 +19,19 @@
 package org.apache.olingo.fit;
 
 import java.io.IOException;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
 
+import javax.ws.rs.Path;
 import org.apache.cxf.interceptor.InInterceptors;
-import org.apache.olingo.fit.utils.ConstantKey;
-import org.apache.olingo.fit.utils.Constants;
-import org.apache.olingo.fit.rest.XHTTPMethodInterceptor;
+import org.apache.olingo.fit.rest.OAuth2InInterceptor;
 import org.springframework.stereotype.Service;
 
 @Service
-@Path("/V40/NorthWind.svc")
-@InInterceptors(classes = XHTTPMethodInterceptor.class)
-public class V4NorthWind extends V4Services {
+@Path("/V40/OAuth2.svc")
+@InInterceptors(classes = {OAuth2InInterceptor.class})
+public class V4OAuth2 extends V4Services {
 
-  public V4NorthWind() throws IOException {
+  public V4OAuth2() throws IOException {
     super();
   }
 
-  @Override
-  public Response getMetadata() {
-    return getMetadata("northwind-" + Constants.get(version, ConstantKey.METADATA));
-  }
 }

@@ -46,6 +46,9 @@
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
       </resource>
+      <resource>
+        <directory>target/maven-shared-archive-resources</directory>
+      </resource>
     </resources>
 
     <plugins>

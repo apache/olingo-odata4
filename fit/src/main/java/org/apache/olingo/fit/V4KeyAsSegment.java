@@ -20,6 +20,7 @@ package org.apache.olingo.fit;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.ws.rs.Consumes;
@@ -49,14 +50,14 @@ public class V4KeyAsSegment extends V4Services {
   @Context
   private UriInfo uriInfo;
 
-  public V4KeyAsSegment() throws Exception {
+  public V4KeyAsSegment() throws IOException {
     super();
   }
 
   private Response replaceServiceName(final Response response) {
     try {
       final String content = IOUtils.toString((InputStream) response.getEntity(), Constants.ENCODING).
-          replaceAll("Static\\.svc", "KeyAsSegment.svc");
+              replaceAll("Static\\.svc", "KeyAsSegment.svc");
 
       final Response.ResponseBuilder builder = Response.status(response.getStatus());
       for (String headerName : response.getHeaders().keySet()) {
@@ -82,68 +83,69 @@ public class V4KeyAsSegment extends V4Services {
   @Override
   public Response getEntitySet(final String accept, final String name, final String type) {
     return replaceServiceName(super.getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-        accept, name, type, null, null, null, true));
+            accept, name, type, null, null, null, true));
   }
 
   @DELETE
   @Path("/{entitySetName}/{entityId}")
   @Override
   public Response removeEntity(
-      @PathParam("entitySetName") final String entitySetName,
-      @PathParam("entityId") final String entityId) {
+          @PathParam("entitySetName") final String entitySetName,
+          @PathParam("entityId") final String entityId) {
 
     return replaceServiceName(super.removeEntity(entitySetName, entityId));
   }
 
   @PATCH
   @Path("/{entitySetName}/{entityId}")
-  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
-  @Consumes({ MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Override
   public Response patchEntity(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
-      @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) final String ifMatch,
-      @PathParam("entitySetName") final String entitySetName,
-      @PathParam("entityId") final String entityId,
-      final String changes) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
+          @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) final String ifMatch,
+          @PathParam("entitySetName") final String entitySetName,
+          @PathParam("entityId") final String entityId,
+          final String changes) {
 
-    return replaceServiceName(super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId,
-        changes));
+    return replaceServiceName(
+            super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes));
   }
 
   @PUT
   @Path("/{entitySetName}/{entityId}")
-  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
-  @Consumes({ MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   public Response putNewEntity(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
-      @PathParam("entitySetName") final String entitySetName,
-      @PathParam("entityId") final String entityId,
-      final String entity) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
+          @PathParam("entitySetName") final String entitySetName,
+          @PathParam("entityId") final String entityId,
+          final String entity) {
 
-    return replaceServiceName(super
-        .replaceEntity(uriInfo, accept, contentType, prefer, entitySetName, entityId, entity));
+    return replaceServiceName(
+            super.replaceEntity(uriInfo, accept, contentType, prefer, entitySetName, entityId, entity));
   }
 
   @POST
   @Path("/{entitySetName}")
-  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
-  @Consumes({ MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM })
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
   @Override
   public Response postNewEntity(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
-      @PathParam("entitySetName") final String entitySetName,
-      final String entity) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
+          @PathParam("entitySetName") final String entitySetName,
+          final String entity) {
 
-    return replaceServiceName(super.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entity));
+    return replaceServiceName(
+            super.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entity));
   }
 }

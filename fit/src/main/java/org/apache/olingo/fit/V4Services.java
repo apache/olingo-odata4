@@ -81,8 +81,8 @@ import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
 import org.apache.olingo.fit.utils.FSManager;
 import org.apache.olingo.fit.utils.LinkInfo;
-import org.apache.olingo.fit.utils.ResolvingReferencesInterceptor;
-import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
+import org.apache.olingo.fit.rest.ResolvingReferencesInterceptor;
+import org.apache.olingo.fit.rest.XHTTPMethodInterceptor;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -102,11 +102,11 @@ public class V4Services extends AbstractServices {
 
   private final Map<String, String> providedAsync = new HashMap<String, String>();
 
-  public V4Services() throws Exception {
+  public V4Services() throws IOException {
     super(ODataServiceVersion.V40, Commons.getMetadata(ODataServiceVersion.V40));
   }
 
-  protected V4Services(final Metadata metadata) throws Exception {
+  protected V4Services(final Metadata metadata) throws IOException {
     super(ODataServiceVersion.V40, metadata);
   }
 

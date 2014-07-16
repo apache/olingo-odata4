@@ -94,7 +94,7 @@ public abstract class AbstractUtilities {
   protected final ODataSerializer atomSerializer;
   protected final ODataSerializer jsonSerializer;
 
-  public AbstractUtilities(final ODataServiceVersion version, final Metadata metadata) throws Exception {
+  public AbstractUtilities(final ODataServiceVersion version, final Metadata metadata) throws IOException {
     this.version = version;
     this.metadata = metadata;
     fsManager = FSManager.instance(version);

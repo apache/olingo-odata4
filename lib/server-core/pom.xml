@@ -81,7 +81,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.7</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -97,9 +96,8 @@
         </executions>
       </plugin>
       <plugin>
-      <groupId>org.antlr</groupId>
+        <groupId>org.antlr</groupId>
         <artifactId>antlr4-maven-plugin</artifactId>
-        <version>${antlr.version}</version>
         <executions>
           <execution>
             <goals>

@@ -23,15 +23,15 @@ public class UnsupportedMediaTypeException extends RuntimeException {
   private static final long serialVersionUID = 9076398602010056960L;
 
   /**
-   * Creates a new instance of
-   * <code>UnsupportedMediaTypeException</code> without detail message.
+   * Creates a new instance of <code>UnsupportedMediaTypeException</code> without detail message.
    */
-  public UnsupportedMediaTypeException() {}
+  public UnsupportedMediaTypeException() {
+    super();
+  }
 
   /**
-   * Constructs an instance of
-   * <code>UnsupportedMediaTypeException</code> with the specified detail message.
-   * 
+   * Constructs an instance of <code>UnsupportedMediaTypeException</code> with the specified detail message.
+   *
    * @param msg the detail message.
    */
   public UnsupportedMediaTypeException(final String msg) {

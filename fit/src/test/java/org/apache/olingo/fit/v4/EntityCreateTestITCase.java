@@ -42,12 +42,12 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomCreateAndDelete() {
-    createAndDeleteOrder(ODataFormat.ATOM, 1000);
+    createAndDeleteOrder(testStaticServiceRootURL, ODataFormat.ATOM, 1000);
   }
 
   @Test
   public void jsonCreateAndDelete() {
-    createAndDeleteOrder(ODataFormat.JSON, 1001);
+    createAndDeleteOrder(testStaticServiceRootURL, ODataFormat.JSON, 1001);
   }
 
   private void onContained(final ODataFormat format) {

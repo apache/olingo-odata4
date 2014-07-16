@@ -16,30 +16,44 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.utils;
+package org.apache.olingo.fit.rest;
 
-import java.util.List;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLDecoder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 
-public class XHTTPMethodInterceptor extends AbstractPhaseInterceptor<Message> {
+public class ResolvingReferencesInterceptor extends AbstractPhaseInterceptor<Message> {
 
-  public XHTTPMethodInterceptor() {
+  public ResolvingReferencesInterceptor() {
     super(Phase.PRE_PROTOCOL);
   }
 
   @Override
   public void handleMessage(final Message message) throws Fault {
-    @SuppressWarnings("unchecked")
-    final Map<String, List<String>> headers = (Map<String, List<String>>) message.get(Message.PROTOCOL_HEADERS);
+    final String path = (String) message.get(Message.PATH_INFO);
+    final String query = (String) message.get(Message.QUERY_STRING);
 
-    if (headers.containsKey(Constants.get(ConstantKey.XHTTP_HEADER_NAME))) {
-      message.put(Message.HTTP_REQUEST_METHOD, headers.get(Constants.get(ConstantKey.XHTTP_HEADER_NAME))
-          .iterator().next());
+    try {
+      if (path.endsWith("$entity") && StringUtils.isNotBlank(query)
+              && URLDecoder.decode(query, "UTF-8").contains("$id=")) {
+
+        final String id = URLDecoder.decode(query, "UTF-8");
+        final String newURL = id.substring(id.indexOf("$id=") + 4);
+
+        final URI uri = URI.create(newURL);
+
+        message.put(Message.REQUEST_URL, uri.toASCIIString());
+        message.put(Message.REQUEST_URI, uri.getPath());
+        message.put(Message.PATH_INFO, uri.getPath());
+      }
+    } catch (UnsupportedEncodingException ignore) {
+      // ignore
     }
   }
 }

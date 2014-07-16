@@ -313,7 +313,6 @@ public abstract class AbstractODataResponse implements ODataResponse {
             }
           }
         }).start();
-
       } catch (IOException e) {
         LOG.error("Error streaming payload response", e);
         throw new IllegalStateException(e);
