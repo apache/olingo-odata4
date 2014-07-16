@@ -26,6 +26,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.olingo.ext.proxy.api.StructuredType;
 
 public class EntityUUID implements Serializable {
 
@@ -60,7 +61,8 @@ public class EntityUUID implements Serializable {
     for (Class<?> clazz : ClassUtils.hierarchy(type, ClassUtils.Interfaces.INCLUDE)) {
       if (this.type == null
               && (clazz.getInterfaces().length == 0
-              || ArrayUtils.contains(clazz.getInterfaces(), Serializable.class))) {
+              || ArrayUtils.contains(clazz.getInterfaces(), Serializable.class)
+              || ArrayUtils.contains(clazz.getInterfaces(), StructuredType.class))) {
 
         this.type = clazz;
       }

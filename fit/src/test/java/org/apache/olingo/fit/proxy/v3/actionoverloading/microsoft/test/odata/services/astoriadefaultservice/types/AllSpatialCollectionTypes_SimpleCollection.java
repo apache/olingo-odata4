@@ -44,7 +44,9 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-public interface AllSpatialCollectionTypes_SimpleCollection extends AbstractEntityCollection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes_Simple> {
+
+public interface AllSpatialCollectionTypes_SimpleCollection extends 
+    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes_Simple, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes_SimpleCollection, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes_SimpleCollection>, AbstractEntityCollection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes_Simple> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

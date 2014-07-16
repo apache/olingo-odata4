@@ -54,6 +54,7 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
 
 #foreach($entitySet in $container.EntitySets)
     $utility.capitalize($entitySet.Name) get$utility.capitalize($entitySet.Name)();
+
 #end
 
 #parse( "${odataVersion}/container.vm" )

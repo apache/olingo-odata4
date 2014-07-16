@@ -51,12 +51,19 @@ import javax.xml.datatype.Duration;
 public interface DemoService extends PersistenceManager {
 
     Products getProducts();
+
     Advertisements getAdvertisements();
+
     Persons getPersons();
+
     Categories getCategories();
+
     PersonDetails getPersonDetails();
+
     Suppliers getSuppliers();
+
     ProductDetails getProductDetails();
+
 
 
 

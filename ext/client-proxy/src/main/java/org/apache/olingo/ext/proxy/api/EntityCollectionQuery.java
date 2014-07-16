@@ -18,28 +18,21 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-public interface CommonQuery<T> {
+public interface EntityCollectionQuery<
+        T extends StructuredType, EC extends AbstractEntityCollection<T>, CT extends EntityCollectionQuery<T, EC, ?>>
+        extends CollectionQuery<T, EC, CT> {
 
   /**
-   * Sets <tt>$expand</tt> expression.
+   * Explicit paging result handling.
    *
-   * @param expand <tt>$expand</tt> expression items.
-   * @return the same query instance.
+   * @return next page.
    */
-  T expand(String... expand);
+  CT nextPage();
 
   /**
-   * Sets <tt>$select</tt> expression.
+   * Checks for next page existence.
    *
-   * @param select <tt>$select</tt> expression items.
-   * @return the same query instance.
+   * @return <<tt>TRUE</tt> whether a next page exist; <tt>FALSE</tt> otherwise.
    */
-  T select(String... select);
-
-  /**
-   * Remove all query options.
-   *
-   * @return the same query instance.
-   */
-  T clearQueryOptions();
+  boolean hasNextPage();
 }

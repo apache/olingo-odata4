@@ -107,7 +107,7 @@ public class FilterTestITCase extends AbstractTestITCase {
     assertNull(order.getCustomerId());
     assertNotNull(order.getOrderId());
 
-    order.clear();
+    order.clearQueryOptions();
     order.load();
     assertNotNull(order.getCustomerId());
     assertNotNull(order.getOrderId());

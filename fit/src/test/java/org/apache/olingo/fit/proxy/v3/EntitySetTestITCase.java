@@ -44,13 +44,13 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void getAll() {
+  public void execute() {
     int count = 0;
     for (Customer customer : container.getCustomer().execute()) {
       assertNotNull(customer);
       count++;
     }
-    assertTrue(count >= 10);
+    assertTrue(count < 10);
   }
 
   @Test
@@ -60,14 +60,14 @@ public class EntitySetTestITCase extends AbstractTestITCase {
       assertNotNull(customer);
       count++;
     }
-    assertTrue(count >= 10);
+    assertEquals(2, count);
 
     int iterating = 0;
     for (Customer customer : container.getCustomer()) {
       assertNotNull(customer);
       iterating++;
     }
-    assertEquals(count, iterating);
+    assertTrue(count < iterating);
   }
 
   @Test

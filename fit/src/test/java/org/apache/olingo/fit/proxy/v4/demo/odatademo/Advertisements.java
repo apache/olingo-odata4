@@ -46,7 +46,7 @@ import javax.xml.datatype.Duration;
 
 @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Advertisements")
 public interface Advertisements 
-  extends org.apache.olingo.ext.proxy.api.CollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AdvertisementCollection>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement, java.util.UUID, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AdvertisementCollection> {
+  extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AdvertisementCollection, Advertisements>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement, java.util.UUID, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AdvertisementCollection> {
 
     org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement newAdvertisement();
     org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AdvertisementCollection newAdvertisementCollection();

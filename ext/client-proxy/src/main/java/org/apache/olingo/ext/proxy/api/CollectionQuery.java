@@ -20,8 +20,9 @@ package org.apache.olingo.ext.proxy.api;
 
 import org.apache.olingo.client.api.uri.URIFilter;
 
-public interface CollectionQuery<T extends StructuredType, EC extends AbstractEntityCollection<T>>
-        extends CommonQuery<CollectionQuery<T, EC>> {
+public interface CollectionQuery<
+        T extends StructuredType, EC extends AbstractEntityCollection<T>, CT extends CollectionQuery<T, EC, ?>>
+        extends CommonQuery<CollectionQuery<T, EC, CT>> {
 
   /**
    * Returns all instances.
@@ -31,16 +32,6 @@ public interface CollectionQuery<T extends StructuredType, EC extends AbstractEn
   EC execute();
 
   /**
-   * Returns all instances of the given subtype.
-   *
-   * @param <S>
-   * @param <SEC>
-   * @param reference entity collection class to be returned
-   * @return all entities of the given subtype
-   */
-  <S extends T, SEC extends AbstractEntityCollection<S>> SEC execute(Class<SEC> reference);
-
-  /**
    * Sets the <tt>$filter</tt> expression.
    * <br/>
    * Any of available operators and functions can be embodied here.
@@ -48,7 +39,7 @@ public interface CollectionQuery<T extends StructuredType, EC extends AbstractEn
    * @param filter the <tt>$filter</tt> expression.
    * @return the same query instance.
    */
-  CollectionQuery<T, EC> filter(String filter);
+  CT filter(String filter);
 
   /**
    * Sets the filter generating the <tt>$filter</tt> expression.
@@ -57,7 +48,7 @@ public interface CollectionQuery<T extends StructuredType, EC extends AbstractEn
    * invoked.
    * @return the same query instance.
    */
-  CollectionQuery<T, EC> filter(URIFilter filter);
+  CT filter(URIFilter filter);
 
   /**
    * Sets the <tt>$orderBy</tt> expression.
@@ -65,7 +56,7 @@ public interface CollectionQuery<T extends StructuredType, EC extends AbstractEn
    * @param sort sort options.
    * @return the same query instance.
    */
-  CollectionQuery<T, EC> orderBy(Sort... sort);
+  CT orderBy(Sort... sort);
 
   /**
    * Sets the <tt>$orderBy</tt> expression.
@@ -73,7 +64,7 @@ public interface CollectionQuery<T extends StructuredType, EC extends AbstractEn
    * @param orderBy the <tt>$orderBy</tt> expression.
    * @return the same query instance.
    */
-  CollectionQuery<T, EC> orderBy(String orderBy);
+  CT orderBy(String orderBy);
 
   /**
    * Sets the maximum number of results to retrieve (<tt>$top</tt>).
@@ -82,7 +73,7 @@ public interface CollectionQuery<T extends StructuredType, EC extends AbstractEn
    * @return the same query instance.
    * @throws IllegalArgumentException if the argument is negative
    */
-  CollectionQuery<T, EC> top(int top) throws IllegalArgumentException;
+  CT top(int top) throws IllegalArgumentException;
 
   /**
    * Sets the position of the first result to retrieve (<tt>$skip</tt>).
@@ -91,5 +82,5 @@ public interface CollectionQuery<T extends StructuredType, EC extends AbstractEn
    * @return the same query instance.
    * @throws IllegalArgumentException if the argument is negative
    */
-  CollectionQuery<T, EC> skip(int skip) throws IllegalArgumentException;
+  CT skip(int skip) throws IllegalArgumentException;
 }

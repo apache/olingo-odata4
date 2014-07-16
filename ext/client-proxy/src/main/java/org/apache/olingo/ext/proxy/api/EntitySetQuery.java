@@ -18,28 +18,17 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-public interface CommonQuery<T> {
+public interface EntitySetQuery<
+        T extends StructuredType, EC extends AbstractEntityCollection<T>, CT extends EntitySetQuery<T, EC, ?>>
+        extends CollectionQuery<T, EC, CT> {
 
   /**
-   * Sets <tt>$expand</tt> expression.
+   * Returns all instances of the given subtype.
    *
-   * @param expand <tt>$expand</tt> expression items.
-   * @return the same query instance.
+   * @param <S>
+   * @param <SEC>
+   * @param reference entity collection class to be returned
+   * @return all entities of the given subtype
    */
-  T expand(String... expand);
-
-  /**
-   * Sets <tt>$select</tt> expression.
-   *
-   * @param select <tt>$select</tt> expression items.
-   * @return the same query instance.
-   */
-  T select(String... select);
-
-  /**
-   * Remove all query options.
-   *
-   * @return the same query instance.
-   */
-  T clearQueryOptions();
+  <S extends T, SEC extends AbstractEntityCollection<S>> SEC execute(Class<SEC> reference);
 }

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
@@ -36,6 +37,7 @@ import static org.apache.olingo.fit.proxy.v4.AbstractTestITCase.container;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
 //CHECKSTYLE:ON (Maven checkstyle)
 import org.junit.Test;
 
@@ -62,6 +64,20 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
   }
 
   @Test
+  public void readWholeEntitySet() {
+    PersonCollection person = container.getPeople().execute();
+    assertEquals(5, person.size(), 0);
+
+    int pageCount = 1;
+    while (person.hasNextPage()) {
+      pageCount++;
+      assertFalse(person.nextPage().execute().isEmpty());
+    }
+
+    assertEquals(2, pageCount);
+  }
+
+  @Test
   public void loadWithSelect() {
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order order =
             container.getOrders().getByKey(8);
@@ -74,7 +90,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     assertNull(order.getOrderDate());
     assertNotNull(order.getOrderID());
 
-    order.clear();
+    order.clearQueryOptions();
     order.load();
     assertNotNull(order.getOrderDate());
     assertNotNull(order.getOrderID());

@@ -51,7 +51,9 @@ import javax.xml.datatype.Duration;
 public interface DefaultContainer extends PersistenceManager {
 
     Row getRow();
+
     RowIndex getRowIndex();
+
 
 
 

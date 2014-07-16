@@ -54,7 +54,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
       throw new IllegalArgumentException(
               ref.getName() + " is not annotated as @" + EntityContainer.class.getSimpleName());
     }
-    
+
     this.name = ((EntityContainer) annotation).name();
     this.defaultEC = ((EntityContainer) annotation).isDefaultEntityContainer();
     this.namespace = ((EntityContainer) annotation).namespace();

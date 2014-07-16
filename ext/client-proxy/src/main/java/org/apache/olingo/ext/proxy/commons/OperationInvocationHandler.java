@@ -169,8 +169,8 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
     while (boundOp == null && baseType != null) {
       // json minimal/none metadata doesn't return operations for entity, so here try creating it from Edm: 
       EdmAction action = this.getClient().getCachedEdm().getBoundAction(
-              new FullQualifiedName(targetFQN.getNamespace(), operation.name()), 
-              baseType.getFullQualifiedName(), 
+              new FullQualifiedName(targetFQN.getNamespace(), operation.name()),
+              baseType.getFullQualifiedName(),
               false);
 
       if (action != null) {
@@ -221,7 +221,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
         entityType = entityType.getBaseType();
       }
     }
-    
+
     if (edmOperation == null) {
       throw new IllegalArgumentException(String.format("Could not find any matching operation '%s' bound to %s",
               operation.name(), entity.getTypeName()));

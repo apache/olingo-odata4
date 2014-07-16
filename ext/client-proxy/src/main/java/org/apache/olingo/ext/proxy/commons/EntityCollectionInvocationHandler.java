@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URI;
@@ -29,23 +28,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Triple;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
+import org.apache.olingo.ext.proxy.api.StructuredType;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.Term;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
-public class EntityCollectionInvocationHandler<T extends Serializable>
-        extends AbstractInvocationHandler implements AbstractEntityCollection<T> {
+public class EntityCollectionInvocationHandler<T extends StructuredType>
+        extends AbstractEntityCollectionInvocationHandler<T, AbstractEntityCollection<T>>
+        implements AbstractEntityCollection<T> {
 
   private static final long serialVersionUID = 98078202642671726L;
 
-  private final Collection<T> items;
+  protected URI nextPageURI = null;
 
-  private final Class<?> itemRef;
-
-  private final URI uri;
+  private Collection<T> items;
 
   private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
 
@@ -53,19 +54,16 @@ public class EntityCollectionInvocationHandler<T extends Serializable>
           new HashMap<Class<? extends AbstractTerm>, Object>();
 
   public EntityCollectionInvocationHandler(final EntityContainerInvocationHandler containerHandler,
-          final Collection<T> items, final Class<?> itemRef) {
+          final Collection<T> items, final Class<T> itemRef) {
 
     this(containerHandler, items, itemRef, null);
   }
 
   public EntityCollectionInvocationHandler(final EntityContainerInvocationHandler containerHandler,
-          final Collection<T> items, final Class<?> itemRef, final URI uri) {
+          final Collection<T> items, final Class<T> itemRef, final CommonURIBuilder<?> uri) {
 
-    super(containerHandler);
-
+    super(itemRef, null, containerHandler, uri);
     this.items = items;
-    this.itemRef = itemRef;
-    this.uri = uri;
   }
 
   public void setAnnotations(final List<ODataAnnotation> annotations) {
@@ -78,13 +76,19 @@ public class EntityCollectionInvocationHandler<T extends Serializable>
     return itemRef;
   }
 
-  public URI getURI() {
-    return uri;
-  }
-
   @Override
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-    if (isSelfMethod(method, args)) {
+    if ("filter".equals(method.getName())
+            || "orderBy".equals(method.getName())
+            || "top".equals(method.getName())
+            || "skip".equals(method.getName())
+            || "expand".equals(method.getName())
+            || "select".equals(method.getName())
+            || "nextPage".equals(method.getName())
+            || "execute".equals(method.getName())) {
+      invokeSelfMethod(method, args);
+      return proxy;
+    } else if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
     } else if ("operations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       final Class<?> returnType = method.getReturnType();
@@ -96,6 +100,39 @@ public class EntityCollectionInvocationHandler<T extends Serializable>
     } else {
       throw new NoSuchMethodException(method.getName());
     }
+  }
+
+  public void nextPage() {
+    if (!hasNextPage()) {
+      throw new IllegalStateException("Next page URI not found");
+    }
+    this.uri = getClient().newURIBuilder(nextPageURI.toASCIIString());
+  }
+
+  public boolean hasNextPage() {
+    return this.nextPageURI != null;
+  }
+
+  void setNextPage(final URI next) {
+    this.nextPageURI = next;
+  }
+
+  @SuppressWarnings("unchecked")
+  public AbstractEntityCollection<T> execute() {
+    final Triple<List<T>, URI, List<ODataAnnotation>> entitySet = fetchPartialEntitySet(this.uri.build(), itemRef);
+    this.nextPageURI = entitySet.getMiddle();
+
+    if (items == null) {
+      items = entitySet.getLeft();
+    } else {
+      items.clear();
+      items.addAll(entitySet.getLeft());
+    }
+
+    annotations.clear();
+    annotations.addAll(entitySet.getRight());
+
+    return this;
   }
 
   @Override
@@ -194,5 +231,11 @@ public class EntityCollectionInvocationHandler<T extends Serializable>
 
   public Collection<Class<? extends AbstractTerm>> getAnnotationTerms() {
     return CoreUtils.getAnnotationTerms(annotations);
+  }
+
+  @Override
+  public void clearQueryOptions() {
+    super.clearQueryOptions();
+    this.nextPageURI = null;
   }
 }

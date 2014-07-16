@@ -51,17 +51,29 @@ import javax.xml.datatype.Duration;
 public interface InMemoryEntities extends PersistenceManager {
 
     Accounts getAccounts();
+
     StoredPIs getStoredPIs();
+
     Customers getCustomers();
+
     Products getProducts();
+
     OrderDetails getOrderDetails();
+
     Departments getDepartments();
+
     Employees getEmployees();
+
     Orders getOrders();
+
     People getPeople();
+
     SubscriptionTemplates getSubscriptionTemplates();
+
     ProductReviews getProductReviews();
+
     ProductDetails getProductDetails();
+
 
 
     PublicCompany getPublicCompany();

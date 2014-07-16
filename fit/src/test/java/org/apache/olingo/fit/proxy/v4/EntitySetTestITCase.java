@@ -63,13 +63,13 @@ public class EntitySetTestITCase extends AbstractTestITCase {
       assertNotNull(people);
       count++;
     }
-    assertEquals(6, count);
+    assertEquals(5, count);
 
     int iterating = 0;
     for (Person person : container.getPeople()) {
       assertNotNull(person);
       iterating++;
     }
-    assertEquals(count, iterating);
+    assertEquals(count + 1, iterating);
   }
 }

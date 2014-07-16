@@ -116,7 +116,8 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     return Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {typeCollectionRef},
-            new EntityCollectionInvocationHandler(containerHandler, items, typeRef, uri));
+            new EntityCollectionInvocationHandler(containerHandler, items, typeRef,
+            uri == null ? null : getClient().newURIBuilder(uri.toASCIIString())));
   }
 
   protected Object getEntitySetProxy(

@@ -44,7 +44,9 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-public interface CategoryCollection extends AbstractEntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category> {
+
+public interface CategoryCollection extends 
+    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection>, AbstractEntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

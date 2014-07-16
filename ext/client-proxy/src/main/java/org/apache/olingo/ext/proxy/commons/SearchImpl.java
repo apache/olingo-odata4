@@ -77,13 +77,12 @@ public class SearchImpl<T extends StructuredType, EC extends AbstractEntityColle
   public EC getResult() {
     final URIBuilder uriBuilder = client.newURIBuilder(this.baseURI.toASCIIString()).
             appendDerivedEntityTypeSegment(new FullQualifiedName(
-                    ClassUtils.getNamespace(typeRef), ClassUtils.getEntityTypeName(typeRef)).toString());
+            ClassUtils.getNamespace(typeRef), ClassUtils.getEntityTypeName(typeRef)).toString());
 
     if (StringUtils.isNotBlank(search)) {
       uriBuilder.search(search);
     }
 
-    return handler.fetchWholeEntitySet(uriBuilder.build(), typeRef, collTypeRef);
+    return handler.fetchWholeEntitySet(uriBuilder, typeRef, collTypeRef);
   }
-
 }

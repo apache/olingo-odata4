@@ -46,7 +46,7 @@ import javax.xml.datatype.Duration;
 
 @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Suppliers")
 public interface Suppliers 
-  extends org.apache.olingo.ext.proxy.api.CollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection> {
+  extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection, Suppliers>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection> {
 
     org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier newSupplier();
     org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection newSupplierCollection();

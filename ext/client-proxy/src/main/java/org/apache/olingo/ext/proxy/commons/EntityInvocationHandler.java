@@ -96,7 +96,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return new EntityInvocationHandler(
             null,
             entity,
-            entitySet.getEntitySetURI(),
+            entitySet.getURI(),
             typeRef,
             entitySet.containerHandler);
   }
@@ -128,7 +128,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
           final EntityContainerInvocationHandler containerHandler) {
 
     super(typeRef, entity, containerHandler);
-
+    
     final Object key = entityKey == null ? CoreUtils.getKey(getClient(), this, typeRef, entity) : entityKey;
     
     if (entity.getEditLink() != null) {
@@ -584,7 +584,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     this.uri.select(select);
   }
 
-  public void clear() {
+  public void clearQueryOptions() {
     this.uri = getClient().newURIBuilder(baseURI.toASCIIString());
   }
 

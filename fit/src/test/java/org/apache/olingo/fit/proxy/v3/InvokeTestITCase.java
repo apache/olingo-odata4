@@ -211,7 +211,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     try {
       // 1. invoke action bound to the computer detail just created
       computerDetail.operations().resetComputerDetailsSpecifications(
-          Collections.singleton("Second spec"), new Timestamp(Calendar.getInstance().getTimeInMillis()));
+              Collections.singleton("Second spec"), new Timestamp(Calendar.getInstance().getTimeInMillis()));
 
       // 2. check that invoked action has effectively run
       computerDetail = container.getComputerDetail().getByKey(id).load();

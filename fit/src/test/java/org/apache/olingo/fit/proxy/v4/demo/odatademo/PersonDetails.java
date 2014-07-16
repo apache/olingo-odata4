@@ -46,7 +46,7 @@ import javax.xml.datatype.Duration;
 
 @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "PersonDetails")
 public interface PersonDetails 
-  extends org.apache.olingo.ext.proxy.api.CollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetailCollection>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetailCollection> {
+  extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetailCollection, PersonDetails>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetailCollection> {
 
     org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail newPersonDetail();
     org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetailCollection newPersonDetailCollection();

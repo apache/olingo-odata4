@@ -51,29 +51,53 @@ import javax.xml.datatype.Duration;
 public interface DefaultContainer extends PersistenceManager {
 
     Customer getCustomer();
+
     Login getLogin();
+
     OrderLine getOrderLine();
+
     ComputerDetail getComputerDetail();
+
     Product getProduct();
+
     Message getMessage();
+
     ProductDetail getProductDetail();
+
     ProductPhoto getProductPhoto();
+
     Order getOrder();
+
     Computer getComputer();
+
     MappedEntityType getMappedEntityType();
+
     PageView getPageView();
+
     Driver getDriver();
+
     AllGeoCollectionTypesSet getAllGeoCollectionTypesSet();
+
     Car getCar();
+
     CustomerInfo getCustomerInfo();
+
     License getLicense();
+
     ProductReview getProductReview();
+
     LastLogin getLastLogin();
+
     MessageAttachment getMessageAttachment();
+
     AllGeoTypesSet getAllGeoTypesSet();
+
     PersonMetadata getPersonMetadata();
+
     RSAToken getRSAToken();
+
     Person getPerson();
+
 
 
 

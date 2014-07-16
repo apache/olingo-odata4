@@ -46,7 +46,7 @@ import javax.xml.datatype.Duration;
 
 @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Categories")
 public interface Categories 
-  extends org.apache.olingo.ext.proxy.api.CollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection> {
+  extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection, Categories>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection> {
 
     org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category newCategory();
     org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection newCategoryCollection();

@@ -51,20 +51,35 @@ import javax.xml.datatype.Duration;
 public interface TestContext extends PersistenceManager {
 
     EdmTimeSet getEdmTimeSet();
+
     EdmDoubleSet getEdmDoubleSet();
+
     EdmStringSet getEdmStringSet();
+
     EdmBooleanSet getEdmBooleanSet();
+
     EdmBinarySet getEdmBinarySet();
+
     EdmDecimalSet getEdmDecimalSet();
+
     EdmGuidSet getEdmGuidSet();
+
     EdmInt32Set getEdmInt32Set();
+
     EdmInt64Set getEdmInt64Set();
+
     EdmInt16Set getEdmInt16Set();
+
     EdmByteSet getEdmByteSet();
+
     EdmDateTimeSet getEdmDateTimeSet();
+
     Folders getFolders();
+
     EdmSingleSet getEdmSingleSet();
+
     EdmDateTimeOffsetSet getEdmDateTimeOffsetSet();
+
 
 
 
