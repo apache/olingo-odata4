@@ -155,7 +155,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
       if (field.getKey().endsWith(getJSONAnnotation(jsonMediaEditLink))) {
         final LinkImpl link = new LinkImpl();
         link.setTitle(getTitle(field));
-        link.setRel(version.getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL) + getTitle(field));
+        link.setRel(version.getNamespace(ODataServiceVersion.NamespaceKey.MEDIA_EDIT_LINK_REL) + getTitle(field));
         link.setHref(field.getValue().textValue());
         link.setType(ODataLinkType.MEDIA_EDIT.toString());
         entity.getMediaEditLinks().add(link);

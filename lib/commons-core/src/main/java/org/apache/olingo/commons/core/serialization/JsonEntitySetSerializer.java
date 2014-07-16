@@ -65,17 +65,17 @@ public class JsonEntitySetSerializer extends JsonSerializer {
     }
 
     if (entitySet.getId() != null) {
-      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entitySet.getId().toASCIIString());
+      jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.ID), entitySet.getId().toASCIIString());
     }
-    jgen.writeNumberField(version.getJSONMap().get(ODataServiceVersion.JSON_COUNT),
+    jgen.writeNumberField(version.getJsonName(ODataServiceVersion.JsonKey.COUNT),
         entitySet.getCount() == null ? entitySet.getEntities().size() : entitySet.getCount());
     if (serverMode) {
       if (entitySet.getNext() != null) {
-        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_NEXT_LINK),
+        jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.NEXT_LINK),
             entitySet.getNext().toASCIIString());
       }
       if (entitySet.getDeltaLink() != null) {
-        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_DELTA_LINK),
+        jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.DELTA_LINK),
             entitySet.getDeltaLink().toASCIIString());
       }
     }

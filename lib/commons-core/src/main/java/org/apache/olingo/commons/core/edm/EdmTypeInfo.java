@@ -30,12 +30,8 @@ import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EdmTypeInfo {
-
-  private static final Logger LOG = LoggerFactory.getLogger(EdmTypeInfo.class);
 
   public static class Builder {
 
@@ -127,8 +123,8 @@ public class EdmTypeInfo {
 
     try {
       primitiveType = EdmPrimitiveTypeKind.valueOf(fullQualifiedName.getName());
-    } catch (IllegalArgumentException e) {
-      LOG.debug("{} does not appear to refer to an Edm primitive type", fullQualifiedName);
+    } catch (final IllegalArgumentException e) {
+      primitiveType = null;
     }
     if (primitiveType == null && this.edm != null) {
       typeDefinition = this.edm.getTypeDefinition(fullQualifiedName);

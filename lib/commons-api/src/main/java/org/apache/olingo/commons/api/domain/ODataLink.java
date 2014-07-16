@@ -123,17 +123,17 @@ public class ODataLink extends ODataItem {
 
     switch (this.type) {
     case ASSOCIATION:
-      rel = version.getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL) + title;
+      rel = version.getNamespace(ODataServiceVersion.NamespaceKey.ASSOCIATION_LINK_REL) + title;
       break;
 
     case ENTITY_NAVIGATION:
     case ENTITY_SET_NAVIGATION:
-      rel = version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL) + title;
+      rel = version.getNamespace(ODataServiceVersion.NamespaceKey.NAVIGATION_LINK_REL) + title;
       break;
 
     case MEDIA_EDIT:
     default:
-      rel = version.getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL) + title;
+      rel = version.getNamespace(ODataServiceVersion.NamespaceKey.MEDIA_EDIT_LINK_REL) + title;
       break;
     }
   }

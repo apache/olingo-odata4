@@ -70,7 +70,7 @@ public enum ODataLinkType {
    */
   public static ODataLinkType fromString(final ODataServiceVersion version, final String rel, final String type) {
     if (StringUtils.isNotBlank(rel)
-        && rel.startsWith(version.getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL))) {
+        && rel.startsWith(version.getNamespace(ODataServiceVersion.NamespaceKey.MEDIA_EDIT_LINK_REL))) {
 
       return MEDIA_EDIT.setType(StringUtils.isBlank(type) ? "*/*" : type);
     }

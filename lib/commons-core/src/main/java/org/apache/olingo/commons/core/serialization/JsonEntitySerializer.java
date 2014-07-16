@@ -67,17 +67,17 @@ public class JsonEntitySerializer extends JsonSerializer {
       }
 
       if (StringUtils.isNotBlank(entity.getETag())) {
-        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ETAG), entity.getETag());
+        jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.ETAG), entity.getETag());
       }
     }
 
     if (StringUtils.isNotBlank(entity.getType())) {
-      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE),
+      jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.TYPE),
           new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external(version));
     }
 
     if (entity.getId() != null) {
-      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entity.getId().toASCIIString());
+      jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.ID), entity.getId().toASCIIString());
     }
 
     for (Annotation annotation : entity.getAnnotations()) {
@@ -89,11 +89,11 @@ public class JsonEntitySerializer extends JsonSerializer {
     }
 
     if (serverMode && entity.getEditLink() != null && StringUtils.isNotBlank(entity.getEditLink().getHref())) {
-      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK),
+      jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.EDIT_LINK),
           entity.getEditLink().getHref());
 
       if (entity.isMediaEntity()) {
-        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK),
+        jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_READ_LINK),
             entity.getEditLink().getHref() + "/$value");
       }
     }
@@ -102,7 +102,7 @@ public class JsonEntitySerializer extends JsonSerializer {
 
     for (Link link : entity.getMediaEditLinks()) {
       if (link.getTitle() == null) {
-        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK), link.getHref());
+        jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_EDIT_LINK), link.getHref());
       }
 
       if (link.getInlineEntity() != null) {

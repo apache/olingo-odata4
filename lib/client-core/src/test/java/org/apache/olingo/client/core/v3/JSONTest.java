@@ -50,47 +50,44 @@ public class JSONTest extends AtomTest {
   }
 
   private void cleanup(final ObjectNode node) {
+    final ODataServiceVersion version = getClient().getServiceVersion();
     if (node.has(Constants.JSON_METADATA)) {
       node.remove(Constants.JSON_METADATA);
     }
-    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_TYPE))) {
-      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_TYPE));
+    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.TYPE))) {
+      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.TYPE));
     }
-    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK))) {
-      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK));
+    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.EDIT_LINK))) {
+      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.EDIT_LINK));
     }
-    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_READ_LINK))) {
-      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_READ_LINK));
+    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.READ_LINK))) {
+      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.READ_LINK));
     }
-    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK))) {
-      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK));
+    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_EDIT_LINK))) {
+      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_EDIT_LINK));
     }
-    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK))) {
-      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK));
+    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_READ_LINK))) {
+      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_READ_LINK));
     }
-    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE))) {
-      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE));
+    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_CONTENT_TYPE))) {
+      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_CONTENT_TYPE));
     }
-    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_NEXT_LINK))) {
-      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_NEXT_LINK));
+    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.NEXT_LINK))) {
+      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.NEXT_LINK));
     }
     final List<String> toRemove = new ArrayList<String>();
     for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
 
-      if (field.getKey().charAt(0) == '#'
-              || field.getKey().endsWith(
-                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_TYPE))
-              || field.getKey().endsWith(
-                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK))
-              || field.getKey().endsWith(
-                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE))
-              || field.getKey().endsWith(
-                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK))
-              || field.getKey().endsWith(
-                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_ETAG))) {
+      final String key = field.getKey();
+      if (key.charAt(0) == '#'
+              || key.endsWith(version.getJsonName(ODataServiceVersion.JsonKey.TYPE))
+              || key.endsWith(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_EDIT_LINK))
+              || key.endsWith(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_CONTENT_TYPE))
+              || key.endsWith(version.getJsonName(ODataServiceVersion.JsonKey.ASSOCIATION_LINK))
+              || key.endsWith(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_ETAG))) {
 
-        toRemove.add(field.getKey());
+        toRemove.add(key);
       } else if (field.getValue().isObject()) {
         cleanup((ObjectNode) field.getValue());
       } else if (field.getValue().isArray()) {
@@ -107,12 +104,12 @@ public class JSONTest extends AtomTest {
 
   @Override
   protected void assertSimilar(final String filename, final String actual) throws Exception {
-    final JsonNode expected = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream(filename)).
-            replace("Categories" + getClient().getServiceVersion().getJSONMap().
-                    get(ODataServiceVersion.JSON_NAVIGATION_LINK),
-                    "Categories" + Constants.JSON_BIND_LINK_SUFFIX).
-            replace("\"Products(0)/Categories\"", "[\"Products(0)/Categories\"]").
-            replace(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK),
+    final JsonNode expected = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream(filename))
+        .replace("Categories"
+            + getClient().getServiceVersion().getJsonName(ODataServiceVersion.JsonKey.NAVIGATION_LINK),
+            "Categories" + Constants.JSON_BIND_LINK_SUFFIX)
+            .replace("\"Products(0)/Categories\"", "[\"Products(0)/Categories\"]")
+            .replace(getClient().getServiceVersion().getJsonName(ODataServiceVersion.JsonKey.NAVIGATION_LINK),
                     Constants.JSON_BIND_LINK_SUFFIX));
     cleanup((ObjectNode) expected);
     final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));

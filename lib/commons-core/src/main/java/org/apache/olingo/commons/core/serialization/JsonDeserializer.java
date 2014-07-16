@@ -97,21 +97,21 @@ public class JsonDeserializer implements ODataDeserializer {
     this.version = version;
     this.serverMode = serverMode;
 
-    jsonType = version.getJSONMap().get(ODataServiceVersion.JSON_TYPE);
-    jsonId = version.getJSONMap().get(ODataServiceVersion.JSON_ID);
-    jsonETag = version.getJSONMap().get(ODataServiceVersion.JSON_ETAG);
-    jsonReadLink = version.getJSONMap().get(ODataServiceVersion.JSON_READ_LINK);
-    jsonEditLink = version.getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK);
-    jsonMediaReadLink = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK);
-    jsonMediaEditLink = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK);
-    jsonMediaContentType = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE);
-    jsonMediaETag = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIA_ETAG);
-    jsonAssociationLink = version.getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK);
-    jsonNavigationLink = version.getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK);
-    jsonCount = version.getJSONMap().get(ODataServiceVersion.JSON_COUNT);
-    jsonNextLink = version.getJSONMap().get(ODataServiceVersion.JSON_NEXT_LINK);
-    jsonDeltaLink = version.getJSONMap().get(ODataServiceVersion.JSON_DELTA_LINK);
-    jsonError = version.getJSONMap().get(ODataServiceVersion.JSON_ERROR);
+    jsonType = version.getJsonName(ODataServiceVersion.JsonKey.TYPE);
+    jsonId = version.getJsonName(ODataServiceVersion.JsonKey.ID);
+    jsonETag = version.getJsonName(ODataServiceVersion.JsonKey.ETAG);
+    jsonReadLink = version.getJsonName(ODataServiceVersion.JsonKey.READ_LINK);
+    jsonEditLink = version.getJsonName(ODataServiceVersion.JsonKey.EDIT_LINK);
+    jsonMediaReadLink = version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_READ_LINK);
+    jsonMediaEditLink = version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_EDIT_LINK);
+    jsonMediaContentType = version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_CONTENT_TYPE);
+    jsonMediaETag = version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_ETAG);
+    jsonAssociationLink = version.getJsonName(ODataServiceVersion.JsonKey.ASSOCIATION_LINK);
+    jsonNavigationLink = version.getJsonName(ODataServiceVersion.JsonKey.NAVIGATION_LINK);
+    jsonCount = version.getJsonName(ODataServiceVersion.JsonKey.COUNT);
+    jsonNextLink = version.getJsonName(ODataServiceVersion.JsonKey.NEXT_LINK);
+    jsonDeltaLink = version.getJsonName(ODataServiceVersion.JsonKey.DELTA_LINK);
+    jsonError = version.getJsonName(ODataServiceVersion.JsonKey.ERROR);
   }
 
   private JsonGeoValueDeserializer getGeoDeserializer() {
@@ -172,7 +172,7 @@ public class JsonDeserializer implements ODataDeserializer {
     if (field.getKey().endsWith(jsonNavigationLink)) {
       final LinkImpl link = new LinkImpl();
       link.setTitle(getTitle(field));
-      link.setRel(version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL) + getTitle(field));
+      link.setRel(version.getNamespace(ODataServiceVersion.NamespaceKey.NAVIGATION_LINK_REL) + getTitle(field));
 
       if (field.getValue().isValueNode()) {
         link.setHref(field.getValue().textValue());
@@ -186,7 +186,7 @@ public class JsonDeserializer implements ODataDeserializer {
     } else if (field.getKey().endsWith(jsonAssociationLink)) {
       final LinkImpl link = new LinkImpl();
       link.setTitle(getTitle(field));
-      link.setRel(version.getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL) + getTitle(field));
+      link.setRel(version.getNamespace(ODataServiceVersion.NamespaceKey.ASSOCIATION_LINK_REL) + getTitle(field));
       link.setHref(field.getValue().textValue());
       link.setType(ODataLinkType.ASSOCIATION.toString());
       linked.getAssociationLinks().add(link);
@@ -206,7 +206,7 @@ public class JsonDeserializer implements ODataDeserializer {
 
         final LinkImpl link = new LinkImpl();
         link.setTitle(getTitle(field));
-        link.setRel(version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL) + getTitle(field));
+        link.setRel(version.getNamespace(ODataServiceVersion.NamespaceKey.NAVIGATION_LINK_REL) + getTitle(field));
         link.setHref(field.getValue().textValue());
         link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
         linked.getNavigationLinks().add(link);
@@ -218,7 +218,7 @@ public class JsonDeserializer implements ODataDeserializer {
 
           final LinkImpl link = new LinkImpl();
           link.setTitle(getTitle(field));
-          link.setRel(version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL) + getTitle(field));
+          link.setRel(version.getNamespace(ODataServiceVersion.NamespaceKey.NAVIGATION_LINK_REL) + getTitle(field));
           link.setHref(node.asText());
           link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
           linked.getNavigationLinks().add(link);

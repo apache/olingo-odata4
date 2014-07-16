@@ -54,6 +54,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion.NamespaceKey;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
@@ -157,12 +158,12 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
           }
 
           if (link.getRel().startsWith(
-              version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL))) {
+              version.getNamespace(ODataServiceVersion.NamespaceKey.NAVIGATION_LINK_REL))) {
 
             ((LinkedComplexValue) value).getNavigationLinks().add(link);
             inline(reader, event.asStartElement(), link);
           } else if (link.getRel().startsWith(
-              version.getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL))) {
+              version.getNamespace(ODataServiceVersion.NamespaceKey.ASSOCIATION_LINK_REL))) {
 
             ((Valuable) value).asLinkedComplex().getAssociationLinks().add(link);
           }
@@ -468,7 +469,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
                 delta.setNext(URI.create(href.getValue()));
               }
             }
-            if (Constants.DELTA_LINK_REL.equals(rel.getValue())) {
+            if (ODataServiceVersion.V40.getNamespace(NamespaceKey.DELTA_LINK_REL).equals(rel.getValue())) {
               final Attribute href = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_HREF));
               if (href != null) {
                 delta.setDeltaLink(URI.create(href.getValue()));
@@ -678,16 +679,16 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
                 entity.setMediaETag(mediaETag.getValue());
               }
             } else if (link.getRel().startsWith(
-                version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL))) {
+                version.getNamespace(ODataServiceVersion.NamespaceKey.NAVIGATION_LINK_REL))) {
 
               entity.getNavigationLinks().add(link);
               inline(reader, event.asStartElement(), link);
             } else if (link.getRel().startsWith(
-                version.getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL))) {
+                version.getNamespace(ODataServiceVersion.NamespaceKey.ASSOCIATION_LINK_REL))) {
 
               entity.getAssociationLinks().add(link);
             } else if (link.getRel().startsWith(
-                version.getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL))) {
+                version.getNamespace(ODataServiceVersion.NamespaceKey.MEDIA_EDIT_LINK_REL))) {
 
               final Attribute metag = event.asStartElement().getAttributeByName(etagQName);
               if (metag != null) {
@@ -810,7 +811,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
                 entitySet.setNext(URI.create(href.getValue()));
               }
             }
-            if (Constants.DELTA_LINK_REL.equals(rel.getValue())) {
+            if (ODataServiceVersion.V40.getNamespace(NamespaceKey.DELTA_LINK_REL).equals(rel.getValue())) {
               final Attribute href = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_HREF));
               if (href != null) {
                 entitySet.setDeltaLink(URI.create(href.getValue()));

@@ -192,7 +192,7 @@ public class JsonSerializer implements ODataSerializer {
         if (StringUtils.isNotBlank(link.getHref())) {
           jgen.writeStringField(
               link.getTitle() + StringUtils.prependIfMissing(
-                  version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK), "@"),
+                  version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_EDIT_LINK), "@"),
               link.getHref());
         }
       }
@@ -201,7 +201,7 @@ public class JsonSerializer implements ODataSerializer {
     for (Link link : linked.getAssociationLinks()) {
       if (StringUtils.isNotBlank(link.getHref())) {
         jgen.writeStringField(
-            link.getTitle() + version.getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK),
+            link.getTitle() + version.getJsonName(ODataServiceVersion.JsonKey.ASSOCIATION_LINK),
             link.getHref());
       }
     }
@@ -213,7 +213,7 @@ public class JsonSerializer implements ODataSerializer {
 
       if (StringUtils.isNotBlank(link.getHref())) {
         jgen.writeStringField(
-            link.getTitle() + version.getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK),
+            link.getTitle() + version.getJsonName(ODataServiceVersion.JsonKey.NAVIGATION_LINK),
             link.getHref());
       }
 
@@ -292,7 +292,7 @@ public class JsonSerializer implements ODataSerializer {
     jgen.writeStartObject();
 
     if (typeInfo != null) {
-      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE), typeInfo.external(version));
+      jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.TYPE), typeInfo.external(version));
     }
 
     for (Property property : value) {
@@ -337,7 +337,7 @@ public class JsonSerializer implements ODataSerializer {
       }
       if (StringUtils.isNotBlank(type)) {
         jgen.writeFieldName(
-            name + StringUtils.prependIfMissing(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE), "@"));
+            name + StringUtils.prependIfMissing(version.getJsonName(ODataServiceVersion.JsonKey.TYPE), "@"));
         jgen.writeString(new EdmTypeInfo.Builder().setTypeExpression(type).build().external(version));
       }
     }

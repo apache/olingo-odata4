@@ -60,7 +60,7 @@ public class JsonPropertySerializer extends JsonSerializer {
     }
 
     if (StringUtils.isNotBlank(property.getType())) {
-      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE),
+      jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.TYPE),
           new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build().external(version));
     }
 
