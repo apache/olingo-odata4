@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.client.core.data;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -29,6 +25,10 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.commons.api.Constants;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServiceDocumentImpl implements ServiceDocument {
 

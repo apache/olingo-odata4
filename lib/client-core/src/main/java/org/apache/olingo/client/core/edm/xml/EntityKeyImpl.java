@@ -19,12 +19,11 @@
 package org.apache.olingo.client.core.edm.xml;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.olingo.client.api.edm.xml.EntityKey;
+import org.apache.olingo.client.api.edm.xml.PropertyRef;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.olingo.client.api.edm.xml.EntityKey;
-import org.apache.olingo.client.api.edm.xml.PropertyRef;
 
 @JsonDeserialize(using = EntityKeyDeserializer.class)
 public class EntityKeyImpl extends AbstractEdmItem implements EntityKey {

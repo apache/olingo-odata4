@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.api.domain;
 
-import java.net.URI;
-
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+
+import java.net.URI;
 
 /**
  * Entry point for generating OData domain objects.

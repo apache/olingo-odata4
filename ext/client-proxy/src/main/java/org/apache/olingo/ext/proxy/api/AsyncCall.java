@@ -18,12 +18,13 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
+import org.apache.olingo.client.api.Configuration;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.apache.olingo.client.api.Configuration;
 
 public abstract class AsyncCall<V> implements Future<V> {
 

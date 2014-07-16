@@ -18,14 +18,14 @@
  ******************************************************************************/
 package org.apache.olingo.server.core.uri.parser;
 
-import java.util.BitSet;
-
 import org.antlr.v4.runtime.DiagnosticErrorListener;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
+
+import java.util.BitSet;
 
 class CheckFullContextListener extends DiagnosticErrorListener {
 

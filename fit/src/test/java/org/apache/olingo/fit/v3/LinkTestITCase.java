@@ -18,16 +18,6 @@
  */
 package org.apache.olingo.fit.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
@@ -39,6 +29,16 @@ import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This is the unit test class to check basic link operations.

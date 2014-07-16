@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.server.core.uri.validator;
 
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.uri.UriInfo;
@@ -32,6 +28,10 @@ import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+
+import static org.junit.Assert.fail;
 
 public class UriValidatorTest {
 

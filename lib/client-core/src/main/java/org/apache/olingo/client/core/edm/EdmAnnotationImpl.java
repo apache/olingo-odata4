@@ -18,15 +18,12 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.olingo.client.api.edm.xml.v4.Annotatable;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.AnnotationExpression;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.DynamicAnnotationExpression;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.PropertyValue;
 import org.apache.olingo.client.core.edm.v4.annotation.EdmCastImpl;
-import org.apache.olingo.commons.core.edm.annotation.EdmAnnotationPathImpl;
 import org.apache.olingo.client.core.edm.v4.annotation.EdmConstantAnnotationExpressionImpl;
 import org.apache.olingo.client.core.edm.v4.annotation.EdmIsOfImpl;
 import org.apache.olingo.client.core.edm.v4.annotation.EdmRecordImpl;
@@ -40,6 +37,7 @@ import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpressi
 import org.apache.olingo.commons.api.edm.annotation.EdmPropertyValue;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.annotation.EdmAndImpl;
+import org.apache.olingo.commons.core.edm.annotation.EdmAnnotationPathImpl;
 import org.apache.olingo.commons.core.edm.annotation.EdmApplyImpl;
 import org.apache.olingo.commons.core.edm.annotation.EdmCollectionImpl;
 import org.apache.olingo.commons.core.edm.annotation.EdmEqImpl;
@@ -59,6 +57,9 @@ import org.apache.olingo.commons.core.edm.annotation.EdmPathImpl;
 import org.apache.olingo.commons.core.edm.annotation.EdmPropertyPathImpl;
 import org.apache.olingo.commons.core.edm.annotation.EdmPropertyValueImpl;
 import org.apache.olingo.commons.core.edm.annotation.EdmUrlRefImpl;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EdmAnnotationImpl implements EdmAnnotation {
 

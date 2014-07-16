@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.fit.utils;
 
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.UnsupportedMediaTypeException;
+
+import java.util.regex.Pattern;
 
 public enum Accept {
 

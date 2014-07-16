@@ -18,15 +18,6 @@
  */
 package org.apache.olingo.fit.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.InputStream;
-import java.net.URI;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
@@ -40,6 +31,15 @@ import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.junit.Test;
+
+import java.io.InputStream;
+import java.net.URI;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class AsyncTestITCase extends AbstractTestITCase {
 

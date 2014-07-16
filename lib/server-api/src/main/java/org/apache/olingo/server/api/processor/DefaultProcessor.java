@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.server.api.processor;
 
-import java.io.InputStream;
-
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -29,6 +27,8 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.uri.UriInfo;
+
+import java.io.InputStream;
 
 /**
  * Processor implementation for handling of metadata and service document. This implementation is registerd in the 

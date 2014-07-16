@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.api.data;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
+
+import java.util.List;
 
 public interface Valuable {
 

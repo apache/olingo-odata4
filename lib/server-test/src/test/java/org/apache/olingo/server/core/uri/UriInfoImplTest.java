@@ -18,12 +18,6 @@
  */
 package org.apache.olingo.server.core.uri;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.server.api.uri.UriInfoAll;
@@ -53,6 +47,12 @@ import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
 import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class UriInfoImplTest {
 

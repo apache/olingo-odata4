@@ -18,14 +18,6 @@
  */
 package org.apache.olingo.client.core.uri;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.TimeZone;
 import org.apache.olingo.client.core.edm.EdmEnumTypeImpl;
 import org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl;
 import org.apache.olingo.commons.api.Constants;
@@ -35,6 +27,15 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.junit.Test;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.TimeZone;
+
+import static org.junit.Assert.assertEquals;
 
 public class URIEscapeTest {
 

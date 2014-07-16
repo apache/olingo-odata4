@@ -18,12 +18,13 @@
  */
 package org.apache.olingo.client.api.communication.request.invoke;
 
-import java.io.Serializable;
-import java.net.URI;
-import java.util.Map;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
+
+import java.io.Serializable;
+import java.net.URI;
+import java.util.Map;
 
 /**
  * OData request factory class.

@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.Annotations;
@@ -33,6 +31,9 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EdmAnnotationsImpl implements EdmAnnotations {
 

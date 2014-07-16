@@ -18,9 +18,7 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import java.io.IOException;
-import java.net.URI;
-
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
@@ -33,7 +31,8 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import java.io.IOException;
+import java.net.URI;
 
 /**
  * Writes out JSON string from an entity.

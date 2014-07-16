@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
 /**
  * Implementation of the EDM primitive type Date.

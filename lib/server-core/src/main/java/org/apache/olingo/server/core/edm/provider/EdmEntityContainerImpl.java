@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
@@ -38,6 +36,8 @@ import org.apache.olingo.server.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edm.provider.FunctionImport;
 import org.apache.olingo.server.api.edm.provider.Singleton;
+
+import java.util.List;
 
 public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 

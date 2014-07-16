@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.server.api.uri;
 
-import java.util.List;
-
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -32,6 +30,8 @@ import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipTokenOption;
 import org.apache.olingo.server.api.uri.queryoption.TopOption;
+
+import java.util.List;
 
 /**
  * Used for URI info kind {@link UriInfoKind#resource} to describe URIs like

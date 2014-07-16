@@ -18,8 +18,7 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import java.io.IOException;
-
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -35,7 +34,7 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import java.io.IOException;
 
 class JsonGeoValueSerializer {
 

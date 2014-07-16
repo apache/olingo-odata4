@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.fit;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.commons.api.data.Entity;
@@ -33,6 +29,10 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 
 public abstract class AbstractBaseTestITCase {
 

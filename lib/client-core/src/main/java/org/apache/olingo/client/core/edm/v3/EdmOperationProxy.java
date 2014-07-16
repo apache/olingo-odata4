@@ -18,16 +18,12 @@
  */
 package org.apache.olingo.client.core.edm.v3;
 
-import org.apache.olingo.client.core.edm.xml.v3.ReturnTypeProxy;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.olingo.client.api.edm.xml.CommonParameter;
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.client.api.edm.xml.v3.Parameter;
 import org.apache.olingo.client.core.edm.EdmParameterImpl;
 import org.apache.olingo.client.core.edm.EdmReturnTypeImpl;
+import org.apache.olingo.client.core.edm.xml.v3.ReturnTypeProxy;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmParameter;
@@ -35,6 +31,10 @@ import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.core.edm.AbstractEdmOperation;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class EdmOperationProxy extends AbstractEdmOperation {
 

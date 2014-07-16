@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.edm.xml.v3;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntityType;
@@ -31,6 +28,9 @@ import org.apache.olingo.client.api.edm.xml.v3.Association;
 import org.apache.olingo.client.api.edm.xml.v3.Using;
 import org.apache.olingo.client.api.edm.xml.v3.ValueTerm;
 import org.apache.olingo.client.core.edm.xml.AbstractSchema;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SchemaImpl extends AbstractSchema implements Schema {
 

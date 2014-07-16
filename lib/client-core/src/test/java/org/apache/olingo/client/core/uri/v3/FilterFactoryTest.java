@@ -18,15 +18,14 @@
  */
 package org.apache.olingo.client.core.uri.v3;
 
-import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.api.uri.v3.FilterArgFactory;
 import org.apache.olingo.client.api.uri.v3.FilterFactory;
+import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
 
 public class FilterFactoryTest extends AbstractTest {
 

@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import java.util.regex.Pattern;
-
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+
+import java.util.regex.Pattern;
 
 /**
  * Implementation of the EDM primitive type String.

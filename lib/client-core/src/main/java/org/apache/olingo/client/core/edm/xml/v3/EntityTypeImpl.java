@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.client.core.edm.xml.v3;
 
+import org.apache.olingo.client.core.edm.xml.AbstractEntityType;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.olingo.client.core.edm.xml.AbstractEntityType;
 
 public class EntityTypeImpl extends AbstractEntityType {
 

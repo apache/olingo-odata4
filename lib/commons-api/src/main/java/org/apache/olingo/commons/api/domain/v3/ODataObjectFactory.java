@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.commons.api.domain.v3;
 
-import java.net.URI;
-
 import org.apache.olingo.commons.api.domain.CommonODataObjectFactory;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
@@ -28,6 +26,8 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+
+import java.net.URI;
 
 public interface ODataObjectFactory extends CommonODataObjectFactory {
 

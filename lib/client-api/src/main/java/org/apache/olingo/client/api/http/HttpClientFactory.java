@@ -18,8 +18,9 @@
  */
 package org.apache.olingo.client.api.http;
 
-import java.net.URI;
 import org.apache.http.client.HttpClient;
+
+import java.net.URI;
 
 /**
  * Interface used by ODataRequest implementations to instantiate HttpClient.

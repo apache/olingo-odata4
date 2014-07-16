@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.commons.api.edm.constants;
 
+import org.apache.olingo.commons.api.Constants;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.olingo.commons.api.Constants;
 
 /**
  * This class is a container for the supported ODataServiceVersions.

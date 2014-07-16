@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.client.core.data;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
+import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.ResWrap;
@@ -29,10 +29,9 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.serialization.JsonDeserializer;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.dataformat.xml.XmlFactory;
-import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 
 public class XMLServiceDocumentDeserializer extends JsonDeserializer {
 

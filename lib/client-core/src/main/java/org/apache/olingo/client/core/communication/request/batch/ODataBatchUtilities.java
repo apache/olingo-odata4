@@ -18,6 +18,18 @@
  */
 package org.apache.olingo.client.core.communication.request.batch;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.api.ODataBatchConstants;
+import org.apache.olingo.client.api.communication.header.HeaderName;
+import org.apache.olingo.client.api.communication.request.ODataStreamer;
+import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,17 +41,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.LineIterator;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.client.api.ODataBatchConstants;
-import org.apache.olingo.client.api.communication.header.HeaderName;
-import org.apache.olingo.client.api.communication.request.ODataStreamer;
-import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
-import org.apache.olingo.commons.api.format.ContentType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for batch requests and responses.

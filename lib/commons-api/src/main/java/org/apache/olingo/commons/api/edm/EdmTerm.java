@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.geo.SRID;
+
+import java.util.List;
 
 /**
  * An {@link EdmTerm} defines a term in a vocabulary.

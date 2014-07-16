@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -30,6 +26,10 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaReq
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.format.ODataFormat;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 
 /**
  * This class implements an OData media query request.

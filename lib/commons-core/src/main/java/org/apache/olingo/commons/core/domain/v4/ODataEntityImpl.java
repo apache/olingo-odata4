@@ -18,16 +18,16 @@
  */
 package org.apache.olingo.commons.core.domain.v4;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.domain.AbstractODataEntity;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ODataEntityImpl extends AbstractODataEntity implements ODataEntity, ODataSingleton {
 

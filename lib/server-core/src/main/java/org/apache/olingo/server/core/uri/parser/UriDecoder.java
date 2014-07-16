@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
+import org.apache.olingo.commons.core.Decoder;
+import org.apache.olingo.server.core.uri.parser.RawUri.QueryOption;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.olingo.commons.core.Decoder;
-import org.apache.olingo.server.core.uri.parser.RawUri.QueryOption;
 
 public class UriDecoder {
 

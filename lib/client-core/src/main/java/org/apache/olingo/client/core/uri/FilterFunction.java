@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.client.core.uri;
 
-import org.apache.olingo.client.api.uri.FilterArg;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.api.uri.FilterArg;
 
 public class FilterFunction implements FilterArg {
 

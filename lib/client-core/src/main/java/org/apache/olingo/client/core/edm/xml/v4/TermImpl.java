@@ -19,12 +19,11 @@
 package org.apache.olingo.client.core.edm.xml.v4;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.olingo.client.api.edm.xml.v4.Term;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.olingo.client.api.edm.xml.v4.Term;
-import org.apache.olingo.commons.api.edm.geo.SRID;
 
 @JsonDeserialize(using = TermDeserializer.class)
 public class TermImpl extends AbstractAnnotatable implements Term {

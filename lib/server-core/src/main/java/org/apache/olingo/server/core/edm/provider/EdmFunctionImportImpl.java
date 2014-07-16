@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -27,6 +25,8 @@ import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.edm.provider.FunctionImport;
+
+import java.util.List;
 
 public class EdmFunctionImportImpl extends EdmOperationImportImpl implements EdmFunctionImport {
 

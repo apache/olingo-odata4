@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 abstract class AbstractAtomDealer {
 

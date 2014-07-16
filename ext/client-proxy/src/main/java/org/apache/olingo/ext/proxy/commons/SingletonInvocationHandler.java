@@ -18,10 +18,11 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
+
+import java.io.Serializable;
+import java.lang.reflect.Method;
 
 public class SingletonInvocationHandler<
         T extends Serializable, KEY extends Serializable, EC extends AbstractEntityCollection<T>>

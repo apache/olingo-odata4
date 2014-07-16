@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.client.core.edm.xml.v3;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.core.edm.xml.AbstractComplexType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ComplexTypeImpl extends AbstractComplexType implements ComplexType {
 

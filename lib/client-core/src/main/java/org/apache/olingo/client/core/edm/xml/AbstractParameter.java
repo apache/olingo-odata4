@@ -19,7 +19,6 @@
 package org.apache.olingo.client.core.edm.xml;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import org.apache.olingo.client.api.edm.xml.CommonParameter;
 
 @JsonDeserialize(using = ParameterDeserializer.class)

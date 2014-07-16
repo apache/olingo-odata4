@@ -19,7 +19,6 @@
 package org.apache.olingo.client.core.edm.xml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.apache.olingo.client.api.edm.xml.Member;
 
 public abstract class AbstractMember extends AbstractEdmItem implements Member {

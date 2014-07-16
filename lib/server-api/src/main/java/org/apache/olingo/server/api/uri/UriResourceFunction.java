@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.server.api.uri;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmType;
+
+import java.util.List;
 
 /**
  * Used to describe an function import or bound function used within an resource path

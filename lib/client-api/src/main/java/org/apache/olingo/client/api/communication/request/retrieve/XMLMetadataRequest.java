@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve;
 
-import java.util.Map;
-
 import org.apache.olingo.client.api.edm.xml.Schema;
+
+import java.util.Map;
 
 /**
  * This class implements an XML metadata request.

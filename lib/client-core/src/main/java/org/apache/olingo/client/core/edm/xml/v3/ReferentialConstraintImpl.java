@@ -20,7 +20,6 @@ package org.apache.olingo.client.core.edm.xml.v3;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.apache.olingo.client.api.edm.xml.v3.ReferentialConstraint;
 import org.apache.olingo.client.api.edm.xml.v3.ReferentialConstraintRole;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;

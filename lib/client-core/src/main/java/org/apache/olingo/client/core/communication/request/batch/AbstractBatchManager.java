@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.batch;
 
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
@@ -29,6 +27,9 @@ import org.apache.olingo.client.api.communication.request.batch.ODataSingleReque
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.request.Wrapper;
+
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Batch request payload management.

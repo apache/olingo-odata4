@@ -18,8 +18,9 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-import java.io.Serializable;
 import org.apache.olingo.client.api.uri.v4.URISearch;
+
+import java.io.Serializable;
 
 /**
  * Interface used to control search execution.

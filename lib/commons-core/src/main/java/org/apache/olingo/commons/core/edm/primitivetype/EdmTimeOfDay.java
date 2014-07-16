@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
 public final class EdmTimeOfDay extends SingletonPrimitiveType {
 

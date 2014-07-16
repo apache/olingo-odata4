@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LinkedComplexValueImpl implements LinkedComplexValue {
 

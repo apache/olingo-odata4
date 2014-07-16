@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.commons.core.edm;
 
+import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.olingo.commons.api.edm.EdmException;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 public class FunctionMapKey {
 

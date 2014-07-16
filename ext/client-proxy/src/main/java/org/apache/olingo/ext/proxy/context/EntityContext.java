@@ -18,13 +18,14 @@
  */
 package org.apache.olingo.ext.proxy.context;
 
+import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 
 /**
  * Entity context.

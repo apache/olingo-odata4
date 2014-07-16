@@ -18,15 +18,6 @@
  */
 package org.apache.olingo.fit.v4;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.Calendar;
-import java.util.TimeZone;
-
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
@@ -46,6 +37,15 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.domain.v4.ODataEntityImpl;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.junit.BeforeClass;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.util.Calendar;
+import java.util.TimeZone;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 

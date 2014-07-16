@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.commons.api.data;
 
-import java.net.URI;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+
+import java.net.URI;
 
 /**
  * High-level representation of a context URL, built from the string value returned by a service; provides access to the

@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm.geo;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+
+import java.util.List;
 
 public class MultiPolygon extends ComposedGeospatial<Polygon> {
 

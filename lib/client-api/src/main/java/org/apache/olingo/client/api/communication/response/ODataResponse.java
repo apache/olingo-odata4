@@ -18,12 +18,13 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Map;
 import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
+
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Abstract representation of an OData response.

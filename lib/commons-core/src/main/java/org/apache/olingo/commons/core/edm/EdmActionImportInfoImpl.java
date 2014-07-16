@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.core.edm;
 
-import java.net.URI;
-
 import org.apache.olingo.commons.api.edm.EdmActionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmException;
+
+import java.net.URI;
 
 public class EdmActionImportInfoImpl extends EdmOperationImportInfoImpl implements EdmActionImportInfo {
 

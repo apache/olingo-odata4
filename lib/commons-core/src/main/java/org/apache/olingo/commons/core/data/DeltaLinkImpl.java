@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import java.net.URI;
-
 import org.apache.olingo.commons.api.data.DeltaLink;
+
+import java.net.URI;
 
 public class DeltaLinkImpl extends AbstractAnnotatedObject implements DeltaLink {
 

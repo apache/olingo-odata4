@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.olingo.client.api.edm.xml.CommonNavigationProperty;
 import org.apache.olingo.client.api.edm.xml.CommonProperty;
 import org.apache.olingo.client.api.edm.xml.ComplexType;
@@ -33,6 +29,10 @@ import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
 

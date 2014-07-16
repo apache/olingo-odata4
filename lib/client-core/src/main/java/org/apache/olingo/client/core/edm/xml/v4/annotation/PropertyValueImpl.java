@@ -18,10 +18,9 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4.annotation;
 
-import org.apache.olingo.client.api.edm.xml.v4.annotation.PropertyValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import org.apache.olingo.client.api.edm.xml.v4.annotation.AnnotationExpression;
+import org.apache.olingo.client.api.edm.xml.v4.annotation.PropertyValue;
 
 @JsonDeserialize(using = PropertyValueDeserializer.class)
 public class PropertyValueImpl extends AbstractAnnotatableDynamicAnnotationExpression implements PropertyValue {

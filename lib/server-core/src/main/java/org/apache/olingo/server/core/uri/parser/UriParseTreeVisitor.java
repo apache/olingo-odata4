@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -178,6 +175,9 @@ import org.apache.olingo.server.core.uri.queryoption.expression.LiteralImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.TypeLiteralImpl;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * UriVisitor

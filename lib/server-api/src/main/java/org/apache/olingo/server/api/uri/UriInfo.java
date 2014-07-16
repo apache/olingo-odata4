@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.server.api.uri;
 
-import java.util.Collection;
-
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
+
+import java.util.Collection;
 
 /**
  * Object acting as general access to URI information extracted from the request URI. Depending on

@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import java.net.URI;
-
 import org.apache.olingo.commons.api.data.DeletedEntity;
+
+import java.net.URI;
 
 public class DeletedEntityImpl extends AbstractAnnotatedObject implements DeletedEntity {
 

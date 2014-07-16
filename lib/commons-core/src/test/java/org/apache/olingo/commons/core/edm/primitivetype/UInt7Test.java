@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class UInt7Test extends PrimitiveTypeBaseTest {
 

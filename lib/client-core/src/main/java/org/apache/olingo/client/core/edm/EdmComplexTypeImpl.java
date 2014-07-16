@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import java.util.List;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-import java.util.Map;
 import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -32,6 +29,10 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmComplexType;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+
+import java.util.List;
+import java.util.Map;
 
 public class EdmComplexTypeImpl extends AbstractEdmComplexType {
 

@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -34,6 +30,10 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URI;
 
 /**
  * This class implements a generic OData request.

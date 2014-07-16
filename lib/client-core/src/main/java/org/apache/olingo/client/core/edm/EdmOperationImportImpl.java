@@ -18,14 +18,15 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import java.util.Collections;
-import java.util.List;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.core.edm.AbstractEdmOperationImport;
+
+import java.util.Collections;
+import java.util.List;
 
 public abstract class EdmOperationImportImpl extends AbstractEdmOperationImport {
 

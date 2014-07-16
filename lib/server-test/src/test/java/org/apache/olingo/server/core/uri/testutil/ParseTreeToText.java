@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.server.core.uri.testutil;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.Nullable;
@@ -29,6 +26,9 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.tree.Tree;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ParseTreeToText {
 

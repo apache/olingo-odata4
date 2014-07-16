@@ -18,13 +18,14 @@
  */
 package org.apache.olingo.client.core.edm.v4.annotation;
 
-import java.util.List;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.annotation.EdmPropertyValue;
 import org.apache.olingo.commons.api.edm.annotation.EdmRecord;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.annotation.AbstractEdmAnnotatableDynamicAnnotationExpression;
+
+import java.util.List;
 
 public class EdmRecordImpl extends AbstractEdmAnnotatableDynamicAnnotationExpression implements EdmRecord {
 

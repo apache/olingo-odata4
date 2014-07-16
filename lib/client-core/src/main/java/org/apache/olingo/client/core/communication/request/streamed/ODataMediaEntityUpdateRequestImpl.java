@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.streamed;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -35,6 +31,10 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+
+import java.io.InputStream;
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class implements an OData Media Entity create request. Get instance by using ODataStreamedRequestFactory.

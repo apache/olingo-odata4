@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.client.api.serialization;
 
-import java.io.InputStream;
-import java.util.Collection;
-
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
+
+import java.io.InputStream;
+import java.util.Collection;
 
 /**
  * OData writer.

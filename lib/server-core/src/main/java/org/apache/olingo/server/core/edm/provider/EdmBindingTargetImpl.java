@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
@@ -29,6 +26,9 @@ import org.apache.olingo.commons.core.edm.AbstractEdmBindingTarget;
 import org.apache.olingo.commons.core.edm.EdmNavigationPropertyBindingImpl;
 import org.apache.olingo.server.api.edm.provider.BindingTarget;
 import org.apache.olingo.server.api.edm.provider.NavigationPropertyBinding;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class EdmBindingTargetImpl extends AbstractEdmBindingTarget {
 

@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.server.api.edm.provider.Action;
 import org.apache.olingo.server.api.edm.provider.ComplexType;
@@ -28,6 +25,9 @@ import org.apache.olingo.server.api.edm.provider.EntityType;
 import org.apache.olingo.server.api.edm.provider.EnumType;
 import org.apache.olingo.server.api.edm.provider.Function;
 import org.apache.olingo.server.api.edm.provider.Schema;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SchemaProvider {
 

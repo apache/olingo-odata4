@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.ext.proxy;
 
-import java.lang.reflect.Proxy;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -30,6 +26,10 @@ import org.apache.olingo.ext.proxy.commons.EntityContainerInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.NonTransactionalPersistenceManagerImpl;
 import org.apache.olingo.ext.proxy.commons.TransactionalPersistenceManagerImpl;
 import org.apache.olingo.ext.proxy.context.Context;
+
+import java.lang.reflect.Proxy;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Entry point for proxy mode, gives access to entity container instances.

@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.api.edm;
 
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+
 import java.io.InputStream;
 import java.util.List;
-
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * This interface gives access to the metadata of a service, the calculated Data Service Version and an info list of all

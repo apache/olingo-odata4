@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.core.domain.v4;
 
-import java.net.URI;
-
 import org.apache.olingo.commons.api.domain.ODataItem;
 import org.apache.olingo.commons.api.domain.v4.ODataDeletedEntity;
+
+import java.net.URI;
 
 public class ODataDeletedEntityImpl extends ODataItem implements ODataDeletedEntity {
 

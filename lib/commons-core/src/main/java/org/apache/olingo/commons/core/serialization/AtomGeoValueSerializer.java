@@ -18,12 +18,6 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import java.util.Collections;
-import java.util.Iterator;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -35,6 +29,11 @@ import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.util.Collections;
+import java.util.Iterator;
 
 class AtomGeoValueSerializer {
 

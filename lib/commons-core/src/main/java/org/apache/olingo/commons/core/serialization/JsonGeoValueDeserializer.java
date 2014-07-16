@@ -18,11 +18,7 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.GeoUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
@@ -40,7 +36,10 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 class JsonGeoValueDeserializer {
 

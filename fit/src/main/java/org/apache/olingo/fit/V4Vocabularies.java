@@ -18,14 +18,6 @@
  */
 package org.apache.olingo.fit;
 
-import java.io.IOException;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.utils.Accept;
@@ -34,6 +26,14 @@ import org.apache.olingo.fit.utils.Constants;
 import org.apache.olingo.fit.utils.FSManager;
 import org.apache.olingo.fit.utils.XMLUtilities;
 import org.springframework.stereotype.Service;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
 
 @Service
 @Path("/V40/Vocabularies.svc")

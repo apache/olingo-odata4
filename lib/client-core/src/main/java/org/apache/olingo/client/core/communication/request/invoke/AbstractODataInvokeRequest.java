@@ -18,12 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.invoke;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -48,6 +42,12 @@ import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This class implements an OData invoke operation request.

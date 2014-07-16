@@ -18,11 +18,12 @@
  */
 package org.apache.olingo.ext.proxy.api.annotations;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**
  * Mark Java enum as EDM enum type.

@@ -18,11 +18,12 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4.annotation;
 
-import org.apache.olingo.client.api.edm.xml.v4.annotation.Record;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.olingo.client.api.edm.xml.v4.annotation.PropertyValue;
+import org.apache.olingo.client.api.edm.xml.v4.annotation.Record;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.client.api.edm.xml.v4.annotation.PropertyValue;
 
 @JsonDeserialize(using = RecordDeserializer.class)
 public class RecordImpl extends AbstractAnnotatableDynamicAnnotationExpression implements Record {

@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -35,6 +31,10 @@ import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmEntitySetInfoImpl;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractEdmServiceMetadataImpl implements EdmServiceMetadata {
 

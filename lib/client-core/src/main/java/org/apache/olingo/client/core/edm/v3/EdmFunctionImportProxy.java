@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.client.core.edm.v3;
 
-import java.util.List;
-
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.client.core.edm.EdmOperationImportImpl;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -27,6 +25,8 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+
+import java.util.List;
 
 public class EdmFunctionImportProxy extends EdmOperationImportImpl implements EdmFunctionImport {
 

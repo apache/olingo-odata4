@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.batch.v3;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -36,10 +32,13 @@ import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.request.batch.AbstractBatchManager;
 import org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchRequest;
-import org.apache.olingo.client.core.communication.request.batch.v3.ODataBatchRequestImpl.BatchManagerImpl;
-import org.apache.olingo.client.core.communication.request.batch.v3.ODataBatchRequestImpl.ODataBatchResponseImpl;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.communication.response.batch.ODataBatchResponseManager;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class implements a batch request.

@@ -18,11 +18,12 @@
  */
 package org.apache.olingo.ext.proxy.api.annotations;
 
+import org.apache.olingo.ext.proxy.api.OperationType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.apache.olingo.ext.proxy.api.OperationType;
 
 /**
  * Mark method as EDM function import.

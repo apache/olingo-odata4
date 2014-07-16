@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.commons.core.edm;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmAnnotations;
@@ -33,6 +30,9 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+
+import java.util.Collections;
+import java.util.List;
 
 public abstract class AbstractEdmSchema implements EdmSchema {
 

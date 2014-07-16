@@ -19,14 +19,13 @@
 package org.apache.olingo.client.core.edm.xml.v4;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
 import org.apache.olingo.commons.api.edm.geo.SRID;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonDeserialize(using = TypeDefinitionDeserializer.class)
 public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinition {

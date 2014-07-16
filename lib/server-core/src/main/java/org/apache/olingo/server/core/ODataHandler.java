@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.server.core;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -44,6 +41,9 @@ import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ODataHandler {
 

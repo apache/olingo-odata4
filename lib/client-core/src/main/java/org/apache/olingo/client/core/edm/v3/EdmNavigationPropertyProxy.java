@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.edm.v3;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.v3.Association;
 import org.apache.olingo.client.api.edm.xml.v3.AssociationEnd;
@@ -37,6 +34,10 @@ import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmNavigationProperty;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class EdmNavigationPropertyProxy extends AbstractEdmNavigationProperty {
 

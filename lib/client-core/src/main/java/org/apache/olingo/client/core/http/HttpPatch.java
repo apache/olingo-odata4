@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.client.core.http;
 
-import java.net.URI;
 import org.apache.http.annotation.NotThreadSafe;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+
+import java.net.URI;
 
 /**
  * Class identifying PATCH HTTP method.

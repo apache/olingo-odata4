@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 
 public class PersistenceChanges {
 

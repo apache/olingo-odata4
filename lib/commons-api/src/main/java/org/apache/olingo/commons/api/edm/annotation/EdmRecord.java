@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.api.edm.annotation;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
+
+import java.util.List;
 
 public interface EdmRecord extends EdmDynamicAnnotationExpression, EdmAnnotatable {
 

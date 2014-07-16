@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.commons.core.domain.v4;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.domain.ODataItem;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataDeltaLink;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ODataDeltaLinkImpl extends ODataItem implements ODataDeltaLink {
 

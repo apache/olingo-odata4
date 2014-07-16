@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.api.format;
 
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * Available formats to be used in various contexts.

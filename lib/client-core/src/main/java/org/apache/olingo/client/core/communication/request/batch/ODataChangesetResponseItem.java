@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.client.core.communication.request.batch;
 
+import org.apache.olingo.client.api.ODataBatchConstants;
+import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.core.communication.response.batch.ODataBatchErrorResponse;
+import org.apache.olingo.client.core.communication.response.v4.AsyncResponseImpl;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import org.apache.olingo.client.api.ODataBatchConstants;
-import org.apache.olingo.client.api.communication.response.ODataResponse;
-import static org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchResponseItem.LOG;
-import org.apache.olingo.client.core.communication.response.batch.ODataBatchErrorResponse;
-import org.apache.olingo.client.core.communication.response.v4.AsyncResponseImpl;
 
 /**
  * Changeset wrapper for the corresponding batch item.

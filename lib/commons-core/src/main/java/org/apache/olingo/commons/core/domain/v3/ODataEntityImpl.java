@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.commons.core.domain.v3;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.domain.AbstractODataEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ODataEntityImpl extends AbstractODataEntity implements ODataEntity {
 

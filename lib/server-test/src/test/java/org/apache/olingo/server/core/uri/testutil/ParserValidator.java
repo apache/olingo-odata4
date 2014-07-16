@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.server.core.uri.testutil;
 
-import static org.junit.Assert.assertEquals;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser;
+import static org.junit.Assert.assertEquals;
 
 public class ParserValidator {
 

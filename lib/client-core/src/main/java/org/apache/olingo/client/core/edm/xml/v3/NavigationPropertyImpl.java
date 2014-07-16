@@ -19,7 +19,6 @@
 package org.apache.olingo.client.core.edm.xml.v3;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.apache.olingo.client.api.edm.xml.v3.NavigationProperty;
 import org.apache.olingo.client.core.edm.xml.AbstractNavigationProperty;
 

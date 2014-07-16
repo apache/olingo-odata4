@@ -18,9 +18,7 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import java.util.List;
 import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
@@ -29,6 +27,9 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+
+import java.util.List;
 
 public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmActionImport {
 

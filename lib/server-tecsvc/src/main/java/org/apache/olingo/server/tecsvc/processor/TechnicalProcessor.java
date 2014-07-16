@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
-import java.net.URI;
-import java.util.List;
-
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
@@ -41,6 +38,9 @@ import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
+
+import java.net.URI;
+import java.util.List;
 
 public class TechnicalProcessor implements CollectionProcessor, EntityProcessor {
 

@@ -18,11 +18,12 @@
  */
 package org.apache.olingo.client.core.communication.header;
 
+import org.apache.olingo.client.api.communication.header.HeaderName;
+import org.apache.olingo.client.api.communication.header.ODataHeaders;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
-import org.apache.olingo.client.api.communication.header.HeaderName;
-import org.apache.olingo.client.api.communication.header.ODataHeaders;
 
 public class ODataHeadersImpl implements ODataHeaders {
 

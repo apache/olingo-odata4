@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.client.core.serialization;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.data.ServiceDocument;
@@ -46,6 +42,10 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
 
 public abstract class AbstractODataReader implements CommonODataReader {
 

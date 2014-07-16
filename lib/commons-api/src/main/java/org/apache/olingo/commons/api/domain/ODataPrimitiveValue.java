@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.commons.api.domain;
 
-import java.util.UUID;
-
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmType;
+
+import java.util.UUID;
 
 public interface ODataPrimitiveValue extends ODataValue {
 

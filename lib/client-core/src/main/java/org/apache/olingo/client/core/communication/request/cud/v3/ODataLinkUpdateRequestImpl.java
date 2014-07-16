@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.cud.v3;
 
-import java.io.InputStream;
-import java.net.URI;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -35,6 +32,9 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
+
+import java.io.InputStream;
+import java.net.URI;
 
 /**
  * This class implements an update link OData request.

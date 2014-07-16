@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.commons.core.domain;
 
+import org.apache.olingo.commons.api.domain.AbstractODataValue;
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
+import org.apache.olingo.commons.api.domain.ODataValue;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.olingo.commons.api.domain.AbstractODataValue;
-import org.apache.olingo.commons.api.domain.ODataCollectionValue;
-import org.apache.olingo.commons.api.domain.ODataValue;
 
 /**
  * OData collection property value.

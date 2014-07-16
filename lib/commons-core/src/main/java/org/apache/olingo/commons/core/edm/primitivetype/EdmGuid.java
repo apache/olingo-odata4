@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import java.util.UUID;
-
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+
+import java.util.UUID;
 
 /**
  * Implementation of the EDM primitive type Guid.

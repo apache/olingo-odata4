@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.client.core;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ODataClientTest {
 

@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.server.core.uri;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceKind;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Covers Function imports and BoundFunction in URI

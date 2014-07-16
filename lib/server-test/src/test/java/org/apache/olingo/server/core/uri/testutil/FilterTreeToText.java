@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.server.core.uri.testutil;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -35,6 +33,8 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
+
+import java.util.List;
 
 public class FilterTreeToText implements ExpressionVisitor<String> {
 

@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.commons.api.serialization;
 
-import java.io.InputStream;
-
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataError;
+
+import java.io.InputStream;
 
 /**
  * Interface for de-serialization.

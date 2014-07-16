@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.server.api;
 
+import org.apache.olingo.commons.api.http.HttpMethod;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Request object carry http information optimized and required to handle OData requests only. 

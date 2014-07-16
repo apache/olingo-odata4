@@ -18,11 +18,6 @@
  */
 package org.apache.olingo.client.core.serialization;
 
-import java.io.StringWriter;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.data.ServiceDocument;
@@ -74,6 +69,11 @@ import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.StringWriter;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractODataBinder implements CommonODataBinder {
 

@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.fit.v4;
 
-import static org.junit.Assert.assertEquals;
-
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.api.uri.v4.FilterArgFactory;
@@ -29,6 +27,8 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class FilterFactoryTestITCase extends AbstractTestITCase {
 

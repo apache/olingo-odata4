@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMapping;
@@ -27,6 +25,8 @@ import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.AbstractEdmParameter;
 import org.apache.olingo.server.api.edm.provider.Parameter;
+
+import java.util.List;
 
 public class EdmParameterImpl extends AbstractEdmParameter {
 

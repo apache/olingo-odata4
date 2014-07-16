@@ -19,8 +19,6 @@
 
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.EnumType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 

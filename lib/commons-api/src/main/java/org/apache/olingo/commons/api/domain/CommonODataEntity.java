@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.api.domain;
 
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+
 import java.net.URI;
 import java.util.List;
-
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 /**
  * OData entity.

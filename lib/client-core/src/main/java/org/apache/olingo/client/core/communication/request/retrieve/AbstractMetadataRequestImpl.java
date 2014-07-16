@@ -18,11 +18,12 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
-import java.net.URI;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
+
+import java.net.URI;
 
 public abstract class AbstractMetadataRequestImpl<V> extends AbstractODataRetrieveRequest<V> {
 

@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.commons.core.domain.v4;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.core.domain.AbstractODataCollectionValue;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class ODataCollectionValueImpl extends AbstractODataCollectionValue<ODataValue> implements ODataValue {
 

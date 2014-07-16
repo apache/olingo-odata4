@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.fit.tecsvc.http;
 
-import static org.junit.Assert.assertEquals;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import static org.junit.Assert.assertEquals;
 
 public class PingITCase {
 

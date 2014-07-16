@@ -18,13 +18,14 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import java.util.List;
 import org.apache.olingo.client.api.edm.xml.v4.ReferentialConstraint;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.core.edm.AbstractEdmReferentialConstraint;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
+
+import java.util.List;
 
 public class EdmReferentialConstraintImpl extends AbstractEdmReferentialConstraint {
 

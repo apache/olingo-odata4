@@ -18,17 +18,18 @@
  */
 package org.apache.olingo.client.core.uri.v4;
 
-import static org.junit.Assert.assertEquals;
+import org.apache.olingo.client.api.uri.QueryOption;
+import org.apache.olingo.client.api.uri.v4.URIBuilder;
+import org.apache.olingo.client.api.v4.ODataClient;
+import org.apache.olingo.client.core.AbstractTest;
+import org.junit.Test;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import org.apache.olingo.client.api.uri.QueryOption;
-import org.apache.olingo.client.api.v4.ODataClient;
-import org.apache.olingo.client.api.uri.v4.URIBuilder;
-import org.apache.olingo.client.core.AbstractTest;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class URIBuilderTest extends AbstractTest {
 

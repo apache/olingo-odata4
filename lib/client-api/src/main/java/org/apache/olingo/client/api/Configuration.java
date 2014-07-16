@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.client.api;
 
-import java.util.concurrent.ExecutorService;
-
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.HttpUriRequestFactory;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
+
+import java.util.concurrent.ExecutorService;
 
 /**
  * Configuration wrapper.

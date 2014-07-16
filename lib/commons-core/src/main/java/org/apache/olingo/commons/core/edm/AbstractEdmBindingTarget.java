@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.commons.core.edm;
 
-import java.util.Iterator;
-
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -28,6 +26,8 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.Target;
+
+import java.util.Iterator;
 
 public abstract class AbstractEdmBindingTarget extends EdmNamedImpl implements EdmBindingTarget {
 

@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.api.data;
 
+import org.apache.olingo.commons.api.domain.ODataOperation;
+
 import java.net.URI;
 import java.util.List;
-
-import org.apache.olingo.commons.api.domain.ODataOperation;
 
 public interface Entity extends Linked, Annotatable {
 

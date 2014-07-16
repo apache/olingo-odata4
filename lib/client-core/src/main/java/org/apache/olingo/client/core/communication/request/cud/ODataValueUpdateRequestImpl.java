@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.cud;
 
-import java.io.InputStream;
-import java.net.URI;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -36,6 +33,9 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataFormat;
+
+import java.io.InputStream;
+import java.net.URI;
 
 /**
  * This class implements an OData update entity property value request.

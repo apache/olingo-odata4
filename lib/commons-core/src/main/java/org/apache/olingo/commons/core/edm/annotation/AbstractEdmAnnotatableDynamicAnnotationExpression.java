@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmTerm;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractEdmAnnotatableDynamicAnnotationExpression
     extends AbstractEdmDynamicAnnotationExpression implements EdmAnnotatable {

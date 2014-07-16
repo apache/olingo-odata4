@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.api.domain.v4;
 
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+
 import java.net.URI;
 import java.util.List;
-
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 
 public interface ODataEntitySet extends CommonODataEntitySet, ODataAnnotatable {
 

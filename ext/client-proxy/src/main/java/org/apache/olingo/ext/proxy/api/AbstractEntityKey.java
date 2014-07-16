@@ -18,11 +18,12 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.io.Serializable;
 
 public abstract class AbstractEntityKey implements Serializable {
 

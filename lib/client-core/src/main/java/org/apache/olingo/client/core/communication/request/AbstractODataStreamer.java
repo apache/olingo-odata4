@@ -18,12 +18,13 @@
  */
 package org.apache.olingo.client.core.communication.request;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PipedOutputStream;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PipedOutputStream;
 
 /**
  * Streamer utility object.

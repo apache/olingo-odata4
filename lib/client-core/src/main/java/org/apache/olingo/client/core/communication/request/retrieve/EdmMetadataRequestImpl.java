@@ -18,13 +18,14 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
-import java.net.URI;
-import java.util.Map;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.commons.api.edm.Edm;
+
+import java.net.URI;
+import java.util.Map;
 
 /**
  * This class implements a metadata query request.

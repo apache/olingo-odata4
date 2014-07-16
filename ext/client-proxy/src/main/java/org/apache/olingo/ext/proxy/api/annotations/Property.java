@@ -18,13 +18,14 @@
  */
 package org.apache.olingo.ext.proxy.api.annotations;
 
+import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.client.api.edm.StoreGeneratedPattern;
+import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.client.api.edm.StoreGeneratedPattern;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 
 /**
  * Bind POJO field to EDM property.

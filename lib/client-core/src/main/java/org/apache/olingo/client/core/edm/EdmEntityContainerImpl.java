@@ -18,11 +18,6 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import java.util.Collections;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-import java.util.List;
-
-import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntitySet;
@@ -30,6 +25,7 @@ import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
 import org.apache.olingo.client.api.edm.xml.v4.Singleton;
+import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.client.core.edm.v3.EdmActionImportProxy;
 import org.apache.olingo.client.core.edm.v3.EdmEntitySetProxy;
 import org.apache.olingo.client.core.edm.v3.EdmFunctionImportProxy;
@@ -44,6 +40,10 @@ import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmEntityContainer;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+
+import java.util.Collections;
+import java.util.List;
 
 public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 

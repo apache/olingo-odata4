@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.commons.api.edm;
 
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public enum EdmPrimitiveTypeKind {
 

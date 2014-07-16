@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.server.api;
 
+import org.apache.olingo.server.api.processor.Processor;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.olingo.server.api.processor.Processor;
 
 /**
  * Handels http requests as OData requests.

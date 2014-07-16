@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -32,6 +29,9 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractValuable implements Valuable, Annotatable {
 

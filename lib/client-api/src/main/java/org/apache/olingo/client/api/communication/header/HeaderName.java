@@ -18,10 +18,11 @@
  */
 package org.apache.olingo.client.api.communication.header;
 
-import java.util.Arrays;
-import java.util.List;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Major OData request/response header names.

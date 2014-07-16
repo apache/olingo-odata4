@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.ext.proxy.context;
 
-import java.io.Serializable;
-import java.net.URI;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -27,6 +25,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.ext.proxy.api.StructuredType;
+
+import java.io.Serializable;
+import java.net.URI;
 
 public class EntityUUID implements Serializable {
 

@@ -19,7 +19,6 @@
 package org.apache.olingo.client.core.edm.xml.v4;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.apache.olingo.client.api.edm.xml.v4.ReferentialConstraint;
 
 public class ReferentialConstraintImpl extends AbstractAnnotatable implements ReferentialConstraint {

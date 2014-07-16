@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.commons.core.data.v4;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.data.DeletedEntity;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.DeltaLink;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DeltaImpl extends EntitySetImpl implements Delta {
 

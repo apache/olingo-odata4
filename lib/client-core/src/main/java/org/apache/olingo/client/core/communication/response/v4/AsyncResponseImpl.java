@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.response.v4;
 
-import java.util.Collection;
-import java.util.Map;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -27,6 +25,9 @@ import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIt
 import org.apache.olingo.client.api.communication.response.v4.AsyncResponse;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchController;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Abstract representation of an OData response.

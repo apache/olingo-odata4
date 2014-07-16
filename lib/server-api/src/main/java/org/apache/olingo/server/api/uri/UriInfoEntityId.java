@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.server.api.uri;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 import org.apache.olingo.server.api.uri.queryoption.IdOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
+
+import java.util.List;
 
 /**
  * Used for URI info kind {@link UriInfoKind#entityId} to describe URIs like

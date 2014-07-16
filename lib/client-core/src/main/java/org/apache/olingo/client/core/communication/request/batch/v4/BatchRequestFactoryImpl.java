@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.client.core.communication.request.batch.v4;
 
-import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.api.communication.request.batch.v4.BatchRequestFactory;
 import org.apache.olingo.client.api.communication.request.batch.v4.ODataBatchRequest;
+import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.communication.request.batch.AbstractBatchRequestFactory;
 
 public class BatchRequestFactoryImpl extends AbstractBatchRequestFactory

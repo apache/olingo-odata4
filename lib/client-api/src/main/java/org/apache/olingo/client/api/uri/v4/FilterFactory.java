@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.client.api.uri.v4;
 
-import org.apache.olingo.client.api.uri.FilterArg;
 import org.apache.olingo.client.api.uri.CommonFilterFactory;
+import org.apache.olingo.client.api.uri.FilterArg;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 

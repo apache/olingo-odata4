@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.fit.rproxy;
 
-import java.io.IOException;
-import java.io.Writer;
-
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.esigate.Renderer;
+
+import java.io.IOException;
+import java.io.Writer;
 
 public class LinkRewriteRenderer implements Renderer {
 

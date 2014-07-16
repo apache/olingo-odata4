@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.server.core.uri.queryoption;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SelectOptionImpl extends SystemQueryOptionImpl implements SelectOption {
 

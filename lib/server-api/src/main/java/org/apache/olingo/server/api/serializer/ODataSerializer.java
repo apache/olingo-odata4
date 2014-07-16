@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.server.api.serializer;
 
-import java.io.InputStream;
-
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+
+import java.io.InputStream;
 
 public interface ODataSerializer {
 

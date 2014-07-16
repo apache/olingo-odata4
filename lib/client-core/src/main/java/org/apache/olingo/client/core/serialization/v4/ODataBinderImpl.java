@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.serialization.v4;
 
-import java.net.URI;
-import java.util.List;
-
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.client.api.serialization.v4.ODataBinder;
@@ -78,6 +75,9 @@ import org.apache.olingo.commons.core.domain.v4.ODataDeletedEntityImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataDeltaLinkImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataPropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+
+import java.net.URI;
+import java.util.List;
 
 public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder {
 

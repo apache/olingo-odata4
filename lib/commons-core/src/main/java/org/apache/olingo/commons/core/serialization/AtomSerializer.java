@@ -18,15 +18,7 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import java.io.Writer;
-import java.util.Collections;
-import java.util.List;
-
-import javax.xml.XMLConstants;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
+import com.fasterxml.aalto.stax.OutputFactoryImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
@@ -53,7 +45,13 @@ import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
-import com.fasterxml.aalto.stax.OutputFactoryImpl;
+import javax.xml.XMLConstants;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.Writer;
+import java.util.Collections;
+import java.util.List;
 
 public class AtomSerializer extends AbstractAtomDealer implements ODataSerializer {
 

@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.fit.v3;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.apache.olingo.commons.api.edm.Edm;
 import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
 
 public class MetadataTestITCase extends AbstractTestITCase {
 

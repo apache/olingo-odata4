@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.fit.rproxy;
 
-import java.util.Properties;
-
 import org.esigate.Driver;
 import org.esigate.DriverConfiguration;
 import org.esigate.events.Event;
@@ -29,6 +27,8 @@ import org.esigate.events.IEventListener;
 import org.esigate.events.impl.RenderEvent;
 import org.esigate.extension.Extension;
 import org.esigate.util.HttpRequestHelper;
+
+import java.util.Properties;
 
 public class LinkRewrite implements Extension, IEventListener {
 

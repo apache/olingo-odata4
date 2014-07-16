@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.server.core.uri.validator;
 
-import java.util.HashMap;
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -46,6 +43,9 @@ import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class UriValidator {
 

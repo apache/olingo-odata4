@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.EdmActionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmEntitySetInfo;
@@ -41,6 +37,10 @@ import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edm.provider.FunctionImport;
 import org.apache.olingo.server.api.edm.provider.Schema;
 import org.apache.olingo.server.api.edm.provider.Singleton;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EdmServiceMetadataImpl implements EdmServiceMetadata {
 

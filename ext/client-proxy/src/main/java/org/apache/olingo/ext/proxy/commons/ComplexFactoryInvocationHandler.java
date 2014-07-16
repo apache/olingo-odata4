@@ -18,11 +18,12 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import org.apache.olingo.ext.proxy.api.OperationExecutor;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implements OperationExecutor {
 

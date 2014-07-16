@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.commons.api.domain;
 
-import java.io.Serializable;
-import java.net.URI;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.net.URI;
 
 /**
  * Abstract representation of OData entities and links.

@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.v4;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -44,6 +40,11 @@ import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.request.AbstractRequest;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRequest
         implements AsyncRequestWrapper<R> {

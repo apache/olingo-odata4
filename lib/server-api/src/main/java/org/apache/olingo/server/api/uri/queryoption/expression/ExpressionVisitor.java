@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.server.api.uri.queryoption.expression;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriInfoResource;
+
+import java.util.List;
 
 /**
  * Generic interface to define expression visitors with arbitrary return types.

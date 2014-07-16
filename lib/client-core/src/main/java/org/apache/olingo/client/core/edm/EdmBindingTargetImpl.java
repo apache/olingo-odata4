@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.client.api.edm.xml.v4.BindingTarget;
 import org.apache.olingo.client.api.edm.xml.v4.NavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -32,6 +29,9 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmBindingTarget;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.EdmNavigationPropertyBindingImpl;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class EdmBindingTargetImpl extends AbstractEdmBindingTarget {
 

@@ -18,12 +18,11 @@
  */
 package org.apache.olingo.fit.utils;
 
+import javax.ws.rs.NotFoundException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import javax.ws.rs.NotFoundException;
 
 public class MetadataLinkInfo {
 

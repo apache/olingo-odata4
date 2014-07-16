@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.commons.api.edm.geo;
 
-import java.io.Serializable;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+
+import java.io.Serializable;
 
 /**
  * Base class for all geospatial info.

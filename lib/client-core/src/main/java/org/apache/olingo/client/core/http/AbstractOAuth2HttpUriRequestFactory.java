@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.client.core.http;
 
-import java.net.URI;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.olingo.client.api.http.HttpMethod;
+
+import java.net.URI;
 
 public abstract class AbstractOAuth2HttpUriRequestFactory extends DefaultHttpUriRequestFactory {
 

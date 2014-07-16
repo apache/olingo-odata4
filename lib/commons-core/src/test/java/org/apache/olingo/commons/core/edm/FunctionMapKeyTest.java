@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.commons.core.edm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 
 public class FunctionMapKeyTest {
 

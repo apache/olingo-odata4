@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4.annotation;
 
-import org.apache.olingo.client.api.edm.xml.v4.annotation.If;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.AnnotationExpression;
+import org.apache.olingo.client.api.edm.xml.v4.annotation.If;
 
 public class IfImpl extends AbstractAnnotatableDynamicAnnotationExpression implements If {
 

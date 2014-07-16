@@ -18,11 +18,12 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve;
 
-import java.io.Serializable;
-import java.net.URI;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+
+import java.io.Serializable;
+import java.net.URI;
 
 /**
  * OData request factory class.

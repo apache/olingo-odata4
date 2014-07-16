@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.api.serialization;
 
-import java.io.Writer;
-
 import org.apache.olingo.commons.api.data.ResWrap;
+
+import java.io.Writer;
 
 /**
  * Interface for serialization.

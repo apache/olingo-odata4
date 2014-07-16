@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.invoke;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Map;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.request.invoke.EdmEnabledInvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
@@ -34,6 +31,10 @@ import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Map;
 
 public abstract class AbstractEdmEnabledInvokeRequestFactory extends AbstractInvokeRequestFactory
         implements EdmEnabledInvokeRequestFactory {

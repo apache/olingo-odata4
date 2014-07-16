@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmCollection;
+
+import java.util.List;
 
 public class EdmCollectionImpl extends AbstractEdmDynamicAnnotationExpression implements EdmCollection {
 

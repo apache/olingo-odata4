@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import java.util.Iterator;
-import java.util.Map;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
@@ -33,6 +31,9 @@ import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResp
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
 import org.apache.olingo.ext.proxy.Service;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * {@link org.apache.olingo.ext.proxy.api.PersistenceManager} implementation using OData batch requests to implement

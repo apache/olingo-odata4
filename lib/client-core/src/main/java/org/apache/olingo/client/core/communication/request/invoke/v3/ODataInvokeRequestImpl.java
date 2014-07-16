@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.invoke.v3;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
-
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -30,6 +26,10 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
 
 public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends AbstractODataInvokeRequest<T> {
 

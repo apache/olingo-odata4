@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.core.edm;
 
-import java.util.Map;
-
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+
+import java.util.Map;
 
 public interface EdmStructuredTypeHelper {
 

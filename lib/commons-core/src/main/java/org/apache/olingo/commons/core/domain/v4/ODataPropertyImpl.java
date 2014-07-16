@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.commons.core.domain.v4;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
@@ -30,6 +27,9 @@ import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.core.domain.AbstractODataProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ODataPropertyImpl extends AbstractODataProperty implements ODataProperty {
 

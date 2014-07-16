@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.server.api.edm.provider;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmOnDelete;
+
+import java.util.List;
 
 public class NavigationProperty {
 

@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm.annotation;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
+
+import java.util.List;
 
 public interface EdmApply extends EdmDynamicAnnotationExpression, EdmAnnotatable {
 

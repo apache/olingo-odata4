@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import java.net.URI;
-
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+
+import java.net.URI;
 
 /**
  * Implementation of the EDM primitive type Stream as URI.

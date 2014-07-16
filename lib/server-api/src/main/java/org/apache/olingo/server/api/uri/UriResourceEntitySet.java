@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.server.api.uri;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmType;
+
+import java.util.List;
 
 /**
  * Used to describe an entity set used within an resource path

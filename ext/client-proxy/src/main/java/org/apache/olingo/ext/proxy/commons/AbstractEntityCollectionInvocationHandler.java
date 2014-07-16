@@ -18,11 +18,6 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import java.lang.reflect.Proxy;
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
@@ -41,6 +36,12 @@ import org.apache.olingo.ext.proxy.api.AbstractSingleton;
 import org.apache.olingo.ext.proxy.api.Sort;
 import org.apache.olingo.ext.proxy.api.StructuredType;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
+
+import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractEntityCollectionInvocationHandler<
         T extends StructuredType, EC extends AbstractEntityCollection<T>>

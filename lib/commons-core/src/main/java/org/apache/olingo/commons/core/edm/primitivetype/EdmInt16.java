@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import java.math.BigInteger;
-
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+
+import java.math.BigInteger;
 
 /**
  * Implementation of the EDM primitive type Int16.

@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.server.core.uri.testutil;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.List;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.Token;
 import org.apache.olingo.server.core.uri.antlr.UriLexer;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 //TODO extend to test also exception which can occure while paring
 public class TokenValidator {

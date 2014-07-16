@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
-import java.io.InputStream;
-import java.net.URI;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
@@ -37,6 +34,9 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.InputStream;
+import java.net.URI;
 
 public class ODataJsonSerializerTest {
 

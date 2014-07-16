@@ -19,7 +19,6 @@
 package org.apache.olingo.client.api.communication.request.retrieve;
 
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
-import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * This class implements an OData entity property query request.

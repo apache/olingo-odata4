@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.commons.core.domain;
 
-import java.util.UUID;
-
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.AbstractODataValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
@@ -30,6 +28,8 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+
+import java.util.UUID;
 
 public abstract class AbstractODataPrimitiveValue extends AbstractODataValue implements ODataPrimitiveValue {
 

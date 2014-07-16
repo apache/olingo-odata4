@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.edm.provider.Action;
@@ -39,6 +36,9 @@ import org.apache.olingo.server.api.edm.provider.Schema;
 import org.apache.olingo.server.api.edm.provider.Singleton;
 import org.apache.olingo.server.api.edm.provider.Term;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class EdmTechProvider extends EdmProvider {
 

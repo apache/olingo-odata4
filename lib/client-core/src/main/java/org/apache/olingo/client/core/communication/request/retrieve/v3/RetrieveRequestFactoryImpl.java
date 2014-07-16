@@ -18,15 +18,14 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve.v3;
 
-import java.net.URI;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
-import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.ODataLinkCollectionRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.RetrieveRequestFactory;
+import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.communication.request.retrieve.AbstractRetrieveRequestFactory;
 import org.apache.olingo.client.core.communication.request.retrieve.ODataEntityRequestImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.ODataEntitySetIteratorRequestImpl;
@@ -35,6 +34,8 @@ import org.apache.olingo.client.core.communication.request.retrieve.ODataPropert
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
+
+import java.net.URI;
 
 @SuppressWarnings("unchecked")
 public class RetrieveRequestFactoryImpl extends AbstractRetrieveRequestFactory

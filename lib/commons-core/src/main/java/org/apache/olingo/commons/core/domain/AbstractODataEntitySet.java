@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.core.domain;
 
-import java.net.URI;
-
 import org.apache.olingo.commons.api.domain.AbstractODataPayload;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+
+import java.net.URI;
 
 public abstract class AbstractODataEntitySet extends AbstractODataPayload implements CommonODataEntitySet {
 

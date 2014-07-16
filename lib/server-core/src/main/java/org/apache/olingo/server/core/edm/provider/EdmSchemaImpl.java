@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
@@ -43,6 +39,10 @@ import org.apache.olingo.server.api.edm.provider.EnumType;
 import org.apache.olingo.server.api.edm.provider.Function;
 import org.apache.olingo.server.api.edm.provider.Schema;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class EdmSchemaImpl extends AbstractEdmSchema {
 

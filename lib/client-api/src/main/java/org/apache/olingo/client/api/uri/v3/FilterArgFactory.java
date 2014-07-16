@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.client.api.uri.v3;
 
-import org.apache.olingo.client.api.uri.FilterArg;
 import org.apache.olingo.client.api.uri.CommonFilterArgFactory;
+import org.apache.olingo.client.api.uri.FilterArg;
 
 public interface FilterArgFactory extends CommonFilterArgFactory {
 

@@ -19,14 +19,13 @@
 package org.apache.olingo.client.core.edm.xml.v3;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.client.api.edm.xml.v3.Association;
 import org.apache.olingo.client.api.edm.xml.v3.AssociationEnd;
 import org.apache.olingo.client.api.edm.xml.v3.ReferentialConstraint;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonDeserialize(using = AssociationDeserializer.class)
 public class AssociationImpl extends AbstractEdmItem implements Association {

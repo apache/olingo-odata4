@@ -18,14 +18,15 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.olingo.client.api.edm.xml.v4.Annotatable;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EdmAnnotationHelperImpl implements EdmAnnotationHelper {
 

@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.client.core.serialization.v3;
 
-import java.io.InputStream;
-
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.serialization.v3.ODataDeserializer;
@@ -37,6 +33,9 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.serialization.AtomDeserializer;
 import org.apache.olingo.commons.core.serialization.JsonLinkCollectionDeserializer;
+
+import javax.xml.stream.XMLStreamException;
+import java.io.InputStream;
 
 public class ODataDeserializerImpl extends AbstractODataDeserializer implements ODataDeserializer {
 

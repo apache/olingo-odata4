@@ -18,14 +18,11 @@
  */
 package org.apache.olingo.client.core.edm.v3;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
+import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.client.core.edm.AbstractEdmServiceMetadataImpl;
 import org.apache.olingo.commons.api.edm.EdmActionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
@@ -33,6 +30,9 @@ import org.apache.olingo.commons.api.edm.EdmSingletonInfo;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmActionImportInfoImpl;
 import org.apache.olingo.commons.core.edm.EdmFunctionImportInfoImpl;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
 

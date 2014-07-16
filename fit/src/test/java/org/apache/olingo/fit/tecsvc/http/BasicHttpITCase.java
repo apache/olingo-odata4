@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.fit.tecsvc.http;
 
-import static org.junit.Assert.assertEquals;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import static org.junit.Assert.assertEquals;
 
 public class BasicHttpITCase {
 

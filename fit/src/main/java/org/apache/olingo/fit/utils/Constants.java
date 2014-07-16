@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.fit.utils;
 
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.util.EnumMap;
 import java.util.Map;
-
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class Constants {
 

@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.commons.core.data;
 
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
 
 public class EntitySetImpl extends AbstractODataObject implements EntitySet {
 

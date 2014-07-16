@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.commons.core.data.v3;
 
+import org.apache.olingo.commons.api.data.v3.LinkCollection;
+import org.apache.olingo.commons.core.data.AbstractAnnotatedObject;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.olingo.commons.api.data.v3.LinkCollection;
-import org.apache.olingo.commons.core.data.AbstractAnnotatedObject;
 
 public class LinkCollectionImpl extends AbstractAnnotatedObject implements LinkCollection {
 

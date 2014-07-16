@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import static org.junit.Assert.assertEquals;
-
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class EdmStringTest extends PrimitiveTypeBaseTest {
 

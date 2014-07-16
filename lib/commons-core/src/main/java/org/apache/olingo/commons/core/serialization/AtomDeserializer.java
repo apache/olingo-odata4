@@ -18,22 +18,7 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
-
+import com.fasterxml.aalto.stax.InputFactoryImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
@@ -72,7 +57,20 @@ import org.apache.olingo.commons.core.data.v3.LinkCollectionImpl;
 import org.apache.olingo.commons.core.data.v4.DeltaImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
-import com.fasterxml.aalto.stax.InputFactoryImpl;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+import java.io.InputStream;
+import java.net.URI;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AtomDeserializer extends AbstractAtomDealer implements ODataDeserializer {
 

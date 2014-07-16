@@ -19,12 +19,11 @@
 package org.apache.olingo.client.core.edm.xml.v3;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
+import org.apache.olingo.client.api.edm.xml.v3.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
-import org.apache.olingo.client.api.edm.xml.v3.Parameter;
 
 @JsonDeserialize(using = FunctionImportDeserializer.class)
 public class FunctionImportImpl implements FunctionImport {

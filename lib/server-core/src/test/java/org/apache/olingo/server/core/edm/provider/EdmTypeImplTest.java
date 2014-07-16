@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import static org.junit.Assert.assertEquals;
-
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.core.edm.EdmTypeImpl;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class EdmTypeImplTest {
 

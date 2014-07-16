@@ -19,15 +19,14 @@
 package org.apache.olingo.client.core.v3;
 
 import org.apache.olingo.client.api.v3.ODataClient;
+import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-import org.apache.olingo.client.core.AbstractTest;
+import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
 
 public class ServiceDocumentTest extends AbstractTest {
 

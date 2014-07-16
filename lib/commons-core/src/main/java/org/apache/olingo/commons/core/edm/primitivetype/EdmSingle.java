@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import java.math.BigDecimal;
-import java.util.regex.Pattern;
-
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+
+import java.math.BigDecimal;
+import java.util.regex.Pattern;
 
 /**
  * Implementation of the EDM primitive type Single.

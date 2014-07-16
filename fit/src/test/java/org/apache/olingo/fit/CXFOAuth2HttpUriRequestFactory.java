@@ -20,7 +20,6 @@ package org.apache.olingo.fit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import java.net.URI;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -36,6 +35,8 @@ import org.apache.http.util.EntityUtils;
 import org.apache.olingo.client.core.http.AbstractOAuth2HttpUriRequestFactory;
 import org.apache.olingo.client.core.http.OAuth2Exception;
 import org.apache.olingo.fit.rest.OAuth2Provider;
+
+import java.net.URI;
 
 public class CXFOAuth2HttpUriRequestFactory extends AbstractOAuth2HttpUriRequestFactory {
 

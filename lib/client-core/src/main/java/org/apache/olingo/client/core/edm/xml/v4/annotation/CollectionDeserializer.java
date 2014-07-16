@@ -22,10 +22,9 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
 import java.io.IOException;
-
-import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
 public class CollectionDeserializer extends AbstractEdmDeserializer<CollectionImpl> {
 

@@ -18,16 +18,16 @@
  */
 package org.apache.olingo.fit;
 
-import java.io.IOException;
+import org.apache.olingo.fit.utils.Accept;
+import org.apache.olingo.fit.utils.FSManager;
+import org.springframework.stereotype.Service;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.apache.olingo.fit.utils.Accept;
-import org.apache.olingo.fit.utils.FSManager;
-import org.springframework.stereotype.Service;
+import java.io.IOException;
 
 @Service
 @Path("/V30/PrimitiveKeys.svc")

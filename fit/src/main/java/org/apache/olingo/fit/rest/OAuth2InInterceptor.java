@@ -18,12 +18,6 @@
  */
 package org.apache.olingo.fit.rest;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
@@ -36,6 +30,13 @@ import org.apache.cxf.rs.security.oauth2.common.ClientAccessToken;
 import org.apache.cxf.rs.security.oauth2.grants.code.AuthorizationCodeGrant;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthServiceException;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 public class OAuth2InInterceptor extends AbstractPhaseInterceptor<Message> {
 

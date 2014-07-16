@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.server.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.AcceptType;
@@ -35,6 +32,9 @@ import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContentNegotiator {
 

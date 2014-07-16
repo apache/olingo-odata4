@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
-import java.net.URI;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -30,6 +28,8 @@ import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataFormat;
+
+import java.net.URI;
 
 /**
  * This class implements an OData entity property value query request.

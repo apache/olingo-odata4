@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.commons.core.domain.v4;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.core.domain.AbstractODataEntitySet;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ODataEntitySetImpl extends AbstractODataEntitySet implements ODataEntitySet {
 

@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.fit.rest;
 
-import java.util.Collections;
-import java.util.List;
 import org.apache.cxf.rs.security.oauth2.common.AccessTokenRegistration;
 import org.apache.cxf.rs.security.oauth2.common.Client;
 import org.apache.cxf.rs.security.oauth2.common.OAuthPermission;
@@ -30,6 +28,9 @@ import org.apache.cxf.rs.security.oauth2.grants.code.AuthorizationCodeRegistrati
 import org.apache.cxf.rs.security.oauth2.grants.code.ServerAuthorizationCodeGrant;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthServiceException;
 import org.apache.cxf.rs.security.oauth2.tokens.bearer.BearerAccessToken;
+
+import java.util.Collections;
+import java.util.List;
 
 public class OAuth2Provider implements AuthorizationCodeDataProvider {
 

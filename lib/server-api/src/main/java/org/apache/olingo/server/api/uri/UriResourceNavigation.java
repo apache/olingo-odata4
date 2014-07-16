@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.server.api.uri;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
+
+import java.util.List;
 
 /**
  * Used to describe an navigation property used within an resource path

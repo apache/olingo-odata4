@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve.v4;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -40,6 +36,10 @@ import org.apache.olingo.client.core.communication.request.retrieve.AbstractMeta
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationsImpl;
 import org.apache.olingo.client.core.edm.xml.v4.SchemaImpl;
 import org.apache.olingo.commons.api.format.ODataFormat;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<String, Schema>>
         implements XMLMetadataRequest {

@@ -18,8 +18,9 @@
  */
 package org.apache.olingo.client.api.communication.request.invoke;
 
-import java.io.Serializable;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
+
+import java.io.Serializable;
 
 /**
  * Marker class for invoke with no return type.

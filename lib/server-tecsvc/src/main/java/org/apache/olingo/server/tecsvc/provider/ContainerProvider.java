@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.Target;
@@ -32,6 +28,10 @@ import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edm.provider.FunctionImport;
 import org.apache.olingo.server.api.edm.provider.NavigationPropertyBinding;
 import org.apache.olingo.server.api.edm.provider.Singleton;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ContainerProvider {
 

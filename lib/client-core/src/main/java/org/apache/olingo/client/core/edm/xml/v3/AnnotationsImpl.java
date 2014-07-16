@@ -19,14 +19,13 @@
 package org.apache.olingo.client.core.edm.xml.v3;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.client.api.edm.xml.v3.Annotations;
 import org.apache.olingo.client.api.edm.xml.v3.TypeAnnotation;
 import org.apache.olingo.client.api.edm.xml.v3.ValueAnnotation;
 import org.apache.olingo.client.core.edm.xml.AbstractAnnotations;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonDeserialize(using = AnnotationsDeserializer.class)
 public class AnnotationsImpl extends AbstractAnnotations implements Annotations {

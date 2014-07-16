@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
-import java.util.Arrays;
-
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.edm.provider.EnumMember;
 import org.apache.olingo.server.api.edm.provider.EnumType;
+
+import java.util.Arrays;
 
 public class EnumTypeProvider {
 

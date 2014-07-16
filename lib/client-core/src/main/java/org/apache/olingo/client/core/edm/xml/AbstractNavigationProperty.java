@@ -19,7 +19,6 @@
 package org.apache.olingo.client.core.edm.xml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.apache.olingo.client.api.edm.xml.CommonNavigationProperty;
 
 public class AbstractNavigationProperty extends AbstractEdmItem implements CommonNavigationProperty {

@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.api.domain.v3;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
+
+import java.util.List;
 
 public interface ODataEntity extends CommonODataEntity {
 

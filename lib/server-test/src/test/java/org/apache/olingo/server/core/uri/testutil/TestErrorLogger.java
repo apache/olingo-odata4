@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.server.core.uri.testutil;
 
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.List;
-
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
@@ -29,6 +25,10 @@ import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.apache.olingo.server.core.uri.antlr.UriLexer;
+
+import java.util.BitSet;
+import java.util.Collections;
+import java.util.List;
 
 class TestErrorLogger implements ANTLRErrorListener {
 

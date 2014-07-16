@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.client.core.http;
 
-import java.net.URI;
-
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -27,6 +25,8 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.http.HttpUriRequestFactory;
+
+import java.net.URI;
 
 /**
  * Default implementation returning default HttpUriRequest implementations.

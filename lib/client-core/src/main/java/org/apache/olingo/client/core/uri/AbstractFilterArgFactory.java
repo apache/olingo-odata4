@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.client.core.uri;
 
-import org.apache.olingo.client.api.uri.FilterArg;
 import org.apache.olingo.client.api.uri.CommonFilterArgFactory;
+import org.apache.olingo.client.api.uri.FilterArg;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**

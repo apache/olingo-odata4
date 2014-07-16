@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.api.domain;
 
-import java.net.URI;
-
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+
+import java.net.URI;
 
 /**
  * OData in-line entity set.

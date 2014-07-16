@@ -18,8 +18,9 @@
  */
 package org.apache.olingo.client.api.edm.xml.v4.annotation;
 
-import java.util.List;
 import org.apache.olingo.client.api.edm.xml.v4.Annotatable;
+
+import java.util.List;
 
 public interface Record extends DynamicAnnotationExpression, Annotatable {
 

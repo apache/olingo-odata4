@@ -18,16 +18,10 @@
  */
 package org.apache.olingo.client.core.uri.v4;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Calendar;
-import java.util.TimeZone;
-import static org.junit.Assert.assertEquals;
-
-import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.api.uri.v4.FilterArgFactory;
 import org.apache.olingo.client.api.uri.v4.FilterFactory;
+import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.client.core.edm.EdmEnumTypeImpl;
 import org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl;
@@ -36,6 +30,13 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.junit.Test;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Calendar;
+import java.util.TimeZone;
+
+import static org.junit.Assert.assertEquals;
 
 public class FilterFactoryTest extends AbstractTest {
 

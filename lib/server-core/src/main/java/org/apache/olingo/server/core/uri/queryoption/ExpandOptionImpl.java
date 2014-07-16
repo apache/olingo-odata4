@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.server.core.uri.queryoption;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExpandOptionImpl extends SystemQueryOptionImpl implements ExpandOption {
 

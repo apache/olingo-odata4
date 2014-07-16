@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.client.api.communication.request;
 
+import org.apache.olingo.client.api.communication.response.ODataResponse;
+
 import java.io.InputStream;
 import java.util.concurrent.Future;
-import org.apache.olingo.client.api.communication.response.ODataResponse;
 
 /**
  * OData request payload management abstract class.

@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.commons.core.domain;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.domain.AbstractODataPayload;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
@@ -29,6 +25,10 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * OData entity.

@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.fit;
 
-import java.io.IOException;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
-
 import org.apache.cxf.interceptor.InInterceptors;
+import org.apache.olingo.fit.rest.XHTTPMethodInterceptor;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
-import org.apache.olingo.fit.rest.XHTTPMethodInterceptor;
 import org.springframework.stereotype.Service;
+
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
 
 @Service
 @Path("/V40/NorthWind.svc")

@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.fit.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.api.uri.v3.FilterArgFactory;
 import org.apache.olingo.client.api.uri.v3.FilterFactory;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class FilterFactoryTestITCase extends AbstractTestITCase {
 

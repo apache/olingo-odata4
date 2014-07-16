@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.server.api.uri.queryoption.expression;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmEnumType;
+
+import java.util.List;
 
 /**
  * Represents a enumeration expression node in the expression tree

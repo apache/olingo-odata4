@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.cud;
 
-import java.io.InputStream;
-import java.net.URI;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -30,6 +27,9 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.commons.api.format.ODataFormat;
+
+import java.io.InputStream;
+import java.net.URI;
 
 /**
  * This class implements an OData delete request.
