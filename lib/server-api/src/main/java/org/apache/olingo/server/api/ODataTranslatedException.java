@@ -16,18 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api;
+package org.apache.olingo.server.api;
 
-public class ODataNotImplementedException extends ODataException {
+public class ODataTranslatedException extends Exception{
 
-  private static final long serialVersionUID = 3921772210762644762L;
-
-  public ODataNotImplementedException(final String msg) {
-    super(msg);
-  }
-
-  public ODataNotImplementedException() {
-    super("Not implemented");
-  }
+  private static final long serialVersionUID = -1210541002198287561L;
 
 }

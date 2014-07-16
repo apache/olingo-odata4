@@ -24,6 +24,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.edm.xml.Schema;
@@ -51,7 +53,8 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
     final SingleXMLMetadatRequestImpl rootReq = new SingleXMLMetadatRequestImpl((ODataClient) odataClient, uri);
     final ODataRetrieveResponse<XMLMetadata> rootRes = rootReq.execute();
 
-    final XMLMetadataResponseImpl response = new XMLMetadataResponseImpl(rootReq.getHttpResponse());
+    final XMLMetadataResponseImpl response =
+            new XMLMetadataResponseImpl(odataClient, httpClient, rootReq.getHttpResponse());
 
     final XMLMetadata rootMetadata = rootRes.getBody();
     for (Schema schema : rootMetadata.getSchemas()) {
@@ -137,7 +140,7 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
     @Override
     public ODataRetrieveResponse<XMLMetadata> execute() {
       httpResponse = doExecute();
-      return new AbstractODataRetrieveResponse(httpClient, httpResponse) {
+      return new AbstractODataRetrieveResponse(odataClient, httpClient, httpResponse) {
 
         @Override
         public XMLMetadata getBody() {
@@ -155,18 +158,15 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
 
     private final Map<String, Schema> schemas = new HashMap<String, Schema>();
 
-    private XMLMetadataResponseImpl(final HttpResponse res) {
-      super();
+    private XMLMetadataResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
+
+      super(odataClient, httpClient, null);
 
       statusCode = res.getStatusLine().getStatusCode();
       statusMessage = res.getStatusLine().getReasonPhrase();
 
       hasBeenInitialized = true;
-    }
-
-    @Override
-    public void close() {
-      // just do nothing, this is a placeholder response
     }
 
     @Override

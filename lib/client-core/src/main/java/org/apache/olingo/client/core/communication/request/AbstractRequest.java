@@ -48,18 +48,18 @@ public abstract class AbstractRequest {
   protected void checkRequest(final CommonODataClient<?> odataClient, final HttpUriRequest request) {
     // If using and Edm enabled client, checks that the cached service root matches the request URI
     if (odataClient instanceof CommonEdmEnabledODataClient
-        && !request.getURI().toASCIIString().startsWith(
-            ((CommonEdmEnabledODataClient<?>) odataClient).getServiceRoot())) {
+            && !request.getURI().toASCIIString().startsWith(
+                    ((CommonEdmEnabledODataClient<?>) odataClient).getServiceRoot())) {
 
       throw new IllegalArgumentException(
-          String.format("The current request URI %s does not match the configured service root %s",
-              request.getURI().toASCIIString(),
-              ((CommonEdmEnabledODataClient<?>) odataClient).getServiceRoot()));
+              String.format("The current request URI %s does not match the configured service root %s",
+                      request.getURI().toASCIIString(),
+                      ((CommonEdmEnabledODataClient<?>) odataClient).getServiceRoot()));
     }
   }
 
   protected void checkResponse(
-      final CommonODataClient<?> odataClient, final HttpResponse response, final String accept) {
+          final CommonODataClient<?> odataClient, final HttpResponse response, final String accept) {
 
     if (response.getStatusLine().getStatusCode() >= 400) {
       try {
@@ -67,7 +67,7 @@ public abstract class AbstractRequest {
         if (httpEntity == null) {
           throw new ODataClientErrorException(response.getStatusLine());
         } else {
-          ODataFormat format = accept.contains("xml") ? ODataFormat.XML : ODataFormat.JSON;
+          final ODataFormat format = accept.contains("xml") ? ODataFormat.XML : ODataFormat.JSON;
 
           ODataError error;
           try {
@@ -75,13 +75,13 @@ public abstract class AbstractRequest {
           } catch (final RuntimeException e) {
             LOG.warn("Error deserializing error response", e);
             error = getGenericError(
-                response.getStatusLine().getStatusCode(),
-                response.getStatusLine().getReasonPhrase());
+                    response.getStatusLine().getStatusCode(),
+                    response.getStatusLine().getReasonPhrase());
           } catch (final ODataDeserializerException e) {
             LOG.warn("Error deserializing error response", e);
             error = getGenericError(
-                response.getStatusLine().getStatusCode(),
-                response.getStatusLine().getReasonPhrase());
+                    response.getStatusLine().getStatusCode(),
+                    response.getStatusLine().getReasonPhrase());
           }
 
           if (response.getStatusLine().getStatusCode() >= 500) {
@@ -92,7 +92,7 @@ public abstract class AbstractRequest {
         }
       } catch (IOException e) {
         throw new HttpClientException(
-            "Received '" + response.getStatusLine() + "' but could not extract error body", e);
+                "Received '" + response.getStatusLine() + "' but could not extract error body", e);
       }
     }
   }

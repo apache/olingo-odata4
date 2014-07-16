@@ -62,7 +62,7 @@ import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
 import org.apache.olingo.fit.utils.FSManager;
 import org.apache.olingo.fit.utils.LinkInfo;
-import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
+import org.apache.olingo.fit.rest.XHTTPMethodInterceptor;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -70,19 +70,19 @@ import org.springframework.stereotype.Service;
 @InInterceptors(classes = XHTTPMethodInterceptor.class)
 public class V3Services extends AbstractServices {
 
-  public V3Services() throws Exception {
+  public V3Services() throws IOException {
     super(ODataServiceVersion.V30, Commons.getMetadata(ODataServiceVersion.V30));
   }
 
-  protected V3Services(final Metadata metadata) throws Exception {
+  protected V3Services(final Metadata metadata) throws IOException {
     super(ODataServiceVersion.V30, metadata);
   }
 
   @GET
   @Path("/InStreamErrorGetCustomer")
   public Response instreamErrorGetCustomer(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     final Accept acceptType;
     if (StringUtils.isNotBlank(format)) {
@@ -95,9 +95,9 @@ public class V3Services extends AbstractServices {
       final InputStream error = FSManager.instance(version).readFile("InStreamErrorGetCustomer", acceptType);
 
       return Response.ok(error).
-          header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version + ";").
-          header("Content-Type", acceptType.toString(version)).
-          build();
+              header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version + ";").
+              header("Content-Type", acceptType.toString(version)).
+              build();
     } catch (Exception e) {
       if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
         throw new UnsupportedMediaTypeException("Unsupported media type");
@@ -109,7 +109,7 @@ public class V3Services extends AbstractServices {
 
   /**
    * Provide sample large metadata.
-   * 
+   *
    * @return metadata.
    */
   @GET
@@ -128,8 +128,9 @@ public class V3Services extends AbstractServices {
 
   @Override
   public InputStream exploreMultipart(
-      final List<Attachment> attachments, final String boundary, final boolean contineOnError)
-      throws IOException {
+          final List<Attachment> attachments, final String boundary, final boolean contineOnError)
+          throws IOException {
+
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
     Response res = null;
@@ -197,7 +198,6 @@ public class V3Services extends AbstractServices {
 
           addSingleBatchResponse(res, bos);
         }
-
       } catch (Exception e) {
         if (res == null || res.getStatus() < 400) {
           addErrorBatchResponse(e, bos);
@@ -215,15 +215,15 @@ public class V3Services extends AbstractServices {
   @GET
   @Path("/Car/{type:[a-zA-Z].*}")
   public Response filterCar(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) final String top,
-      @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) final String skip,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) final String count,
-      @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) final String filter,
-      @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) final String orderby,
-      @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) final String skiptoken) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) final String top,
+          @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) final String skip,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) final String count,
+          @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) final String filter,
+          @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) final String orderby,
+          @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) final String skiptoken) {
 
     return super.getEntitySet(uriInfo, accept, "Car", top, skip, format, count, filter, orderby, skiptoken);
   }
@@ -231,12 +231,12 @@ public class V3Services extends AbstractServices {
   @GET
   @Path("/Login({entityId})")
   public Response getLogin(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @PathParam("entityId") final String entityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) final String expand,
-      @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) final String select) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("entityId") final String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) final String expand,
+          @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) final String select) {
 
     return super.getEntityInternal(uriInfo.getRequestUri().toASCIIString(), accept,
         "Login", StringUtils.remove(entityId, "'"), format, expand, select);
@@ -244,14 +244,14 @@ public class V3Services extends AbstractServices {
 
   @POST
   @Path("/Login")
-  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
-  @Consumes({ MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM })
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
   public Response postLogin(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
-      final String entity) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
+          final String entity) {
 
     if ("{\"odata.type\":\"Microsoft.Test.OData.Services.AstoriaDefaultService.Login\"}".equals(entity)) {
       return xml.createFaultResponse(accept, new BadRequestException());
@@ -263,14 +263,14 @@ public class V3Services extends AbstractServices {
   @DELETE
   @Path("/Login({entityId})")
   public Response removeLogin(
-      @PathParam("entityId") final String entityId) {
+          @PathParam("entityId") final String entityId) {
 
     return super.removeEntity("Login", StringUtils.remove(entityId, "'"));
   }
 
   /**
    * Retrieve links sample.
-   * 
+   *
    * @param accept Accept header.
    * @param entitySetName Entity set name.
    * @param entityId entity id.
@@ -281,11 +281,11 @@ public class V3Services extends AbstractServices {
   @GET
   @Path("/{entitySetName}({entityId})/$links/{linkName}")
   public Response getLinks(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @PathParam("entitySetName") final String entitySetName,
-      @PathParam("entityId") final String entityId,
-      @PathParam("linkName") final String linkName,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("entitySetName") final String entitySetName,
+          @PathParam("entityId") final String entityId,
+          @PathParam("linkName") final String linkName,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
     try {
       final Accept acceptType;
       if (StringUtils.isNotBlank(format)) {
@@ -301,9 +301,9 @@ public class V3Services extends AbstractServices {
       final LinkInfo links = xml.readLinks(entitySetName, entityId, linkName, acceptType);
 
       return xml.createResponse(
-          links.getLinks(),
-          links.getEtag(),
-          acceptType);
+              links.getLinks(),
+              links.getEtag(),
+              acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -312,13 +312,13 @@ public class V3Services extends AbstractServices {
   @POST
   @Path("/{entitySetName}({entityId})/$links/{linkName}")
   public Response postLink(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @PathParam("entitySetName") final String entitySetName,
-      @PathParam("entityId") final String entityId,
-      @PathParam("linkName") final String linkName,
-      final String link,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @PathParam("entitySetName") final String entitySetName,
+          @PathParam("entityId") final String entityId,
+          @PathParam("linkName") final String linkName,
+          final String link,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
     try {
       final Accept acceptType;
       if (StringUtils.isNotBlank(format)) {
@@ -348,11 +348,11 @@ public class V3Services extends AbstractServices {
       }
 
       utils.putLinksInMemory(
-          Commons.getEntityBasePath(entitySetName, entityId),
-          entitySetName,
-          entityId,
-          linkName,
-          links);
+              Commons.getEntityBasePath(entitySetName, entityId),
+              entitySetName,
+              entityId,
+              linkName,
+              links);
 
       return xml.createResponse(null, null, null, Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -363,39 +363,39 @@ public class V3Services extends AbstractServices {
   @MERGE
   @Path("/{entitySetName}({entityId})/$links/{linkName}")
   public Response mergeLink(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @PathParam("entitySetName") final String entitySetName,
-      @PathParam("entityId") final String entityId,
-      @PathParam("linkName") final String linkName,
-      final String link,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @PathParam("entitySetName") final String entitySetName,
+          @PathParam("entityId") final String entityId,
+          @PathParam("linkName") final String linkName,
+          final String link,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
     return putLink(accept, contentType, entitySetName, entityId, linkName, link, format);
   }
 
   @PATCH
   @Path("/{entitySetName}({entityId})/$links/{linkName}")
   public Response patchLink(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @PathParam("entitySetName") final String entitySetName,
-      @PathParam("entityId") final String entityId,
-      @PathParam("linkName") final String linkName,
-      final String link,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @PathParam("entitySetName") final String entitySetName,
+          @PathParam("entityId") final String entityId,
+          @PathParam("linkName") final String linkName,
+          final String link,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
     return putLink(accept, contentType, entitySetName, entityId, linkName, link, format);
   }
 
   @PUT
   @Path("/{entitySetName}({entityId})/$links/{linkName}")
   public Response putLink(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @PathParam("entitySetName") final String entitySetName,
-      @PathParam("entityId") final String entityId,
-      @PathParam("linkName") final String linkName,
-      final String link,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @PathParam("entitySetName") final String entitySetName,
+          @PathParam("entityId") final String entityId,
+          @PathParam("linkName") final String linkName,
+          final String link,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
     try {
       final Accept acceptType;
       if (StringUtils.isNotBlank(format)) {
@@ -425,10 +425,10 @@ public class V3Services extends AbstractServices {
       }
 
       utils.putLinksInMemory(
-          Commons.getEntityBasePath(entitySetName, entityId),
-          entitySetName,
-          linkName,
-          links);
+              Commons.getEntityBasePath(entitySetName, entityId),
+              entitySetName,
+              linkName,
+              links);
 
       return xml.createResponse(null, null, null, Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -439,13 +439,13 @@ public class V3Services extends AbstractServices {
   @DELETE
   @Path("/{entitySetName}({entityId})/$links/{linkName}({linkId})")
   public Response deleteLink(
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @PathParam("entitySetName") final String entitySetName,
-      @PathParam("entityId") final String entityId,
-      @PathParam("linkName") final String linkName,
-      @PathParam("linkId") final String linkId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @PathParam("entitySetName") final String entitySetName,
+          @PathParam("entityId") final String entityId,
+          @PathParam("linkName") final String linkName,
+          @PathParam("linkId") final String linkId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
     try {
       final Accept acceptType;
       if (StringUtils.isNotBlank(format)) {
@@ -461,19 +461,19 @@ public class V3Services extends AbstractServices {
       final AbstractUtilities utils = getUtilities(acceptType);
 
       final Map.Entry<String, List<String>> currents = json.extractLinkURIs(utils.readLinks(
-          entitySetName, entityId, linkName, Accept.JSON_FULLMETA).getLinks());
+              entitySetName, entityId, linkName, Accept.JSON_FULLMETA).getLinks());
 
       final Map.Entry<String, List<String>> toBeRemoved = json.extractLinkURIs(utils.readLinks(
-          entitySetName, entityId, linkName + "(" + linkId + ")", Accept.JSON_FULLMETA).getLinks());
+              entitySetName, entityId, linkName + "(" + linkId + ")", Accept.JSON_FULLMETA).getLinks());
 
       final List<String> remains = currents.getValue();
       remains.removeAll(toBeRemoved.getValue());
 
       utils.putLinksInMemory(
-          Commons.getEntityBasePath(entitySetName, entityId),
-          entitySetName,
-          linkName,
-          remains);
+              Commons.getEntityBasePath(entitySetName, entityId),
+              entitySetName,
+              linkName,
+              remains);
 
       return xml.createResponse(null, null, null, Response.Status.NO_CONTENT);
     } catch (Exception e) {

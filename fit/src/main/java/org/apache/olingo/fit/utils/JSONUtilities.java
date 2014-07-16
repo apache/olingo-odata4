@@ -51,17 +51,17 @@ public class JSONUtilities extends AbstractUtilities {
 
   private final ObjectMapper mapper;
 
-  public JSONUtilities(final ODataServiceVersion version, final Metadata metadata) throws Exception {
+  public JSONUtilities(final ODataServiceVersion version, final Metadata metadata) throws IOException {
     super(version, metadata);
 
     mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    mapper.setInjectableValues(new InjectableValues.Std()
-            .addValue(Boolean.class, Boolean.TRUE)
-            .addValue(ODataServiceVersion.class, version));
+    mapper.setInjectableValues(new InjectableValues.Std().
+            addValue(Boolean.class, Boolean.TRUE).
+            addValue(ODataServiceVersion.class, version));
     mapper.setSerializerProvider(new InjectableSerializerProvider(mapper.getSerializerProvider(),
-            mapper.getSerializationConfig()
-            .withAttribute(ODataServiceVersion.class, version)
-            .withAttribute(Boolean.class, Boolean.TRUE),
+            mapper.getSerializationConfig().
+            withAttribute(ODataServiceVersion.class, version).
+            withAttribute(Boolean.class, Boolean.TRUE),
             mapper.getSerializerFactory()));
   }
 
@@ -183,7 +183,7 @@ public class JSONUtilities extends AbstractUtilities {
 
     srcNode.set(
             Constants.get(version, ConstantKey.JSON_EDITLINK_NAME), new TextNode(
-            Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "(" + entityKey + ")"));
+                    Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "(" + entityKey + ")"));
 
     return IOUtils.toInputStream(srcNode.toString(), Constants.ENCODING);
   }

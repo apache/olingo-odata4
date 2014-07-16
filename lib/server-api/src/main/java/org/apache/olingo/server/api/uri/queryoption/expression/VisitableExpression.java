@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.api.uri.queryoption.expression;
 
-import org.apache.olingo.commons.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataApplicationException;
 
 /**
  * Marks an expression node a visitable by an expression visitor

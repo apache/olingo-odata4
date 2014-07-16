@@ -27,8 +27,7 @@ import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 /**
  * Retrieve request wrapper for the corresponding batch item.
  */
-public class ODataSingleRequestImpl extends AbstractODataBatchRequestItem
-        implements ODataSingleRequest {
+public class ODataSingleRequestImpl extends AbstractODataBatchRequestItem implements ODataSingleRequest {
 
   private final ODataSingleResponseItem expectedResItem;
 

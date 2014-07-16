@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.olingo.client.api.CommonConfiguration;
+import org.apache.olingo.client.api.Configuration;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.SegmentType;
@@ -71,7 +71,7 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   private final ODataServiceVersion version;
 
-  private final CommonConfiguration configuration;
+  private final Configuration configuration;
 
   protected final List<Segment> segments = new ArrayList<Segment>();
 
@@ -92,7 +92,7 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
    * service.
    */
   protected AbstractURIBuilder(
-          final ODataServiceVersion version, final CommonConfiguration configuration, final String serviceRoot) {
+          final ODataServiceVersion version, final Configuration configuration, final String serviceRoot) {
 
     this.version = version;
     this.configuration = configuration;

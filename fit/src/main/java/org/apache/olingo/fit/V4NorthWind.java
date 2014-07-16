@@ -18,13 +18,14 @@
  */
 package org.apache.olingo.fit;
 
+import java.io.IOException;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
-import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
+import org.apache.olingo.fit.rest.XHTTPMethodInterceptor;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,7 +33,7 @@ import org.springframework.stereotype.Service;
 @InInterceptors(classes = XHTTPMethodInterceptor.class)
 public class V4NorthWind extends V4Services {
 
-  public V4NorthWind() throws Exception {
+  public V4NorthWind() throws IOException {
     super();
   }
 

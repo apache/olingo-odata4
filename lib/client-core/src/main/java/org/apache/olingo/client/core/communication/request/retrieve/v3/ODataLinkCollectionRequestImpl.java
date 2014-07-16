@@ -23,6 +23,7 @@ import java.net.URI;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.ODataLinkCollectionRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -36,7 +37,7 @@ import org.apache.olingo.client.core.communication.request.retrieve.AbstractODat
  * This class implements an OData link query request.
  */
 public class ODataLinkCollectionRequestImpl extends AbstractODataRetrieveRequest<ODataLinkCollection>
-    implements ODataLinkCollectionRequest {
+        implements ODataLinkCollectionRequest {
 
   /**
    * Private constructor.
@@ -47,7 +48,7 @@ public class ODataLinkCollectionRequestImpl extends AbstractODataRetrieveRequest
    */
   ODataLinkCollectionRequestImpl(final ODataClient odataClient, final URI targetURI, final String linkName) {
     super(odataClient,
-        odataClient.newURIBuilder(targetURI.toASCIIString()).appendLinksSegment(linkName).build());
+            odataClient.newURIBuilder(targetURI.toASCIIString()).appendLinksSegment(linkName).build());
   }
 
   @Override
@@ -57,29 +58,17 @@ public class ODataLinkCollectionRequestImpl extends AbstractODataRetrieveRequest
 
   @Override
   public ODataRetrieveResponse<ODataLinkCollection> execute() {
-    return new ODataLinkCollectionResponseImpl(httpClient, doExecute());
+    return new ODataLinkCollectionResponseImpl(odataClient, httpClient, doExecute());
   }
 
   protected class ODataLinkCollectionResponseImpl extends AbstractODataRetrieveResponse {
 
     private ODataLinkCollection links = null;
 
-    /**
-     * Constructor.
-     * <p>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataLinkCollectionResponseImpl() {
-    }
+    private ODataLinkCollectionResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataLinkCollectionResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     @Override

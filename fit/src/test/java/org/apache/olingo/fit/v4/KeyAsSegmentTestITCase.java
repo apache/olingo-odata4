@@ -52,7 +52,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   private void read(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testKeyAsSegmentServiceRootURL).
-        appendEntitySetSegment("Accounts").appendKeySegment(101);
+            appendEntitySetSegment("Accounts").appendKeySegment(101);
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
@@ -80,25 +80,25 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomCreateAndDelete() {
-    createAndDeleteOrder(ODataFormat.ATOM, 1000);
+    createAndDeleteOrder(testKeyAsSegmentServiceRootURL, ODataFormat.ATOM, 1000);
   }
 
   @Test
   public void jsonCreateAndDelete() {
-    createAndDeleteOrder(ODataFormat.JSON_FULL_METADATA, 1001);
+    createAndDeleteOrder(testKeyAsSegmentServiceRootURL, ODataFormat.JSON_FULL_METADATA, 1001);
   }
 
   private void update(final ODataFormat format) {
     final ODataEntity changes = getClient().getObjectFactory().newEntity(
-        new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
+            new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
     final ODataProperty middleName = getClient().getObjectFactory().newPrimitiveProperty("MiddleName",
-        getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("middle"));
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("middle"));
     changes.getProperties().add(middleName);
 
     final URI uri = getClient().newURIBuilder(testKeyAsSegmentServiceRootURL).
-        appendEntitySetSegment("People").appendKeySegment(5).build();
+            appendEntitySetSegment("People").appendKeySegment(5).build();
     final ODataEntityUpdateRequest<ODataEntity> req = getClient().getCUDRequestFactory().
-        getEntityUpdateRequest(uri, UpdateType.PATCH, changes);
+            getEntityUpdateRequest(uri, UpdateType.PATCH, changes);
     req.setFormat(format);
 
     final ODataEntityUpdateResponse<ODataEntity> res = req.execute();

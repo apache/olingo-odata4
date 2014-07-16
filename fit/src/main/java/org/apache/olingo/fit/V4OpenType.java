@@ -20,6 +20,7 @@ package org.apache.olingo.fit;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.ws.rs.Consumes;
@@ -51,16 +52,16 @@ import org.springframework.stereotype.Service;
 @Path("/V40/OpenType.svc")
 public class V4OpenType extends V4Services {
 
-  public V4OpenType() throws Exception {
+  public V4OpenType() throws IOException {
     super(new Metadata(FSManager.instance(ODataServiceVersion.V40).
-        readRes("openType" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)),
-            Accept.XML), ODataServiceVersion.V40));
+            readRes("openType" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)),
+                    Accept.XML), ODataServiceVersion.V40));
   }
 
   private Response replaceServiceName(final Response response) {
     try {
       final String content = IOUtils.toString((InputStream) response.getEntity(), Constants.ENCODING).
-          replaceAll("Static\\.svc", "OpenType.svc");
+              replaceAll("Static\\.svc", "OpenType.svc");
 
       final Response.ResponseBuilder builder = Response.status(response.getStatus());
       for (String headerName : response.getHeaders().keySet()) {
@@ -85,7 +86,7 @@ public class V4OpenType extends V4Services {
 
   /**
    * Provide sample large metadata.
-   * 
+   *
    * @return metadata.
    */
   @GET
@@ -94,20 +95,20 @@ public class V4OpenType extends V4Services {
   @Override
   public Response getMetadata() {
     return super.getMetadata("openType" + StringUtils.capitalize(
-        Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)));
+            Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)));
   }
 
   @GET
   @Path("/{entitySetName}({entityId})")
   @Override
   public Response getEntity(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @PathParam("entitySetName") final String entitySetName,
-      @PathParam("entityId") final String entityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) final String expand,
-      @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) final String select) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("entitySetName") final String entitySetName,
+          @PathParam("entityId") final String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) final String expand,
+          @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) final String select) {
 
     return replaceServiceName(super.getEntityInternal(
         uriInfo.getRequestUri().toASCIIString(), accept, entitySetName, entityId, format, expand, select));
@@ -115,16 +116,16 @@ public class V4OpenType extends V4Services {
 
   @POST
   @Path("/{entitySetName}")
-  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
-  @Consumes({ MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM })
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
   @Override
   public Response postNewEntity(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
-      @PathParam("entitySetName") final String entitySetName,
-      final String entity) {
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
+          @PathParam("entitySetName") final String entitySetName,
+          final String entity) {
 
     return replaceServiceName(super.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entity));
   }
@@ -133,8 +134,8 @@ public class V4OpenType extends V4Services {
   @Path("/{entitySetName}({entityId})")
   @Override
   public Response removeEntity(
-      @PathParam("entitySetName") final String entitySetName,
-      @PathParam("entityId") final String entityId) {
+          @PathParam("entitySetName") final String entitySetName,
+          @PathParam("entityId") final String entityId) {
 
     return replaceServiceName(super.removeEntity(entitySetName, entityId));
   }

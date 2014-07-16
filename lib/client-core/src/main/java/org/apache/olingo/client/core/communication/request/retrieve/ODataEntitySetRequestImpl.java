@@ -59,7 +59,7 @@ public class ODataEntitySetRequestImpl<ES extends CommonODataEntitySet>
   @Override
   public ODataRetrieveResponse<ES> execute() {
     final HttpResponse res = doExecute();
-    return new ODataEntitySetResponseImpl(httpClient, res);
+    return new ODataEntitySetResponseImpl(odataClient, httpClient, res);
   }
 
   /**
@@ -67,23 +67,10 @@ public class ODataEntitySetRequestImpl<ES extends CommonODataEntitySet>
    */
   protected class ODataEntitySetResponseImpl extends AbstractODataRetrieveResponse {
 
-    /**
-     * Constructor.
-     * <p>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataEntitySetResponseImpl() {
-      super();
-    }
+    private ODataEntitySetResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataEntitySetResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     @Override
@@ -91,8 +78,8 @@ public class ODataEntitySetRequestImpl<ES extends CommonODataEntitySet>
     public ES getBody() {
       if (entitySet == null) {
         try {
-          final ResWrap<EntitySet> resource = odataClient.getDeserializer(ODataFormat.fromString(getContentType()))
-              .toEntitySet(getRawResponse());
+          final ResWrap<EntitySet> resource = odataClient.getDeserializer(ODataFormat.fromString(getContentType())).
+                  toEntitySet(getRawResponse());
 
           entitySet = (ES) odataClient.getBinder().getODataEntitySet(resource);
         } catch (final ODataDeserializerException e) {

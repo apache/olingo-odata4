@@ -63,7 +63,7 @@ public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
     }
 
     if (unexpected) {
-      breakingitem = true;
+      breaking = true;
       return nextUnexpected();
     } else {
       return nextExpected();
@@ -107,7 +107,7 @@ public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
 
     if (current.getStatusCode() >= 400) {
       // found error .... 
-      breakingitem = true;
+      breaking = true;
     }
 
     return current;

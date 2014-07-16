@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.olingo.commons.api.Constants;
+
 /**
  * This class is a container for the supported ODataServiceVersions.
  */
@@ -133,20 +135,20 @@ public enum ODataServiceVersion {
     private static final long serialVersionUID = 3109256773218160485L;
 
     {
-      put(JSON_TYPE, "@odata.type");
-      put(JSON_ID, "@odata.id");
-      put(JSON_ETAG, "@odata.etag");
-      put(JSON_READ_LINK, "@odata.readLink");
-      put(JSON_EDIT_LINK, "@odata.editLink");
-      put(JSON_MEDIAREAD_LINK, "@odata.mediaReadLink");
-      put(JSON_MEDIAEDIT_LINK, "@odata.mediaEditLink");
-      put(JSON_MEDIA_CONTENT_TYPE, "@odata.mediaContentType");
-      put(JSON_MEDIA_ETAG, "@odata.mediaEtag");
-      put(JSON_ASSOCIATION_LINK, "@odata.associationLink");
-      put(JSON_NAVIGATION_LINK, "@odata.navigationLink");
-      put(JSON_COUNT, "@odata.count");
-      put(JSON_NEXT_LINK, "@odata.nextLink");
-      put(JSON_DELTA_LINK, "@odata.deltaLink");
+      put(JSON_TYPE, Constants.JSON_TYPE);
+      put(JSON_ID, Constants.JSON_ID);
+      put(JSON_ETAG, Constants.JSON_ETAG);
+      put(JSON_READ_LINK, Constants.JSON_READ_LINK);
+      put(JSON_EDIT_LINK, Constants.JSON_EDIT_LINK);
+      put(JSON_MEDIAREAD_LINK, Constants.JSON_MEDIA_READ_LINK);
+      put(JSON_MEDIAEDIT_LINK, Constants.JSON_MEDIA_EDIT_LINK);
+      put(JSON_MEDIA_CONTENT_TYPE, Constants.JSON_MEDIA_CONTENT_TYPE);
+      put(JSON_MEDIA_ETAG, Constants.JSON_MEDIA_ETAG);
+      put(JSON_ASSOCIATION_LINK, Constants.JSON_ASSOCIATION_LINK);
+      put(JSON_NAVIGATION_LINK, Constants.JSON_NAVIGATION_LINK);
+      put(JSON_COUNT, Constants.JSON_COUNT);
+      put(JSON_NEXT_LINK, Constants.JSON_NEXT_LINK);
+      put(JSON_DELTA_LINK, Constants.JSON_DELTA_LINK);
       put(JSON_ERROR, "error");
     }
   });

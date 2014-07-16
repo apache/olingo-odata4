@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
@@ -95,7 +96,7 @@ public class ODataBatchRequestImpl
 
     @Override
     protected ODataBatchResponse getResponseInstance(final long timeout, final TimeUnit unit) {
-      return new ODataBatchResponseImpl(httpClient, getHttpResponse(timeout, unit));
+      return new ODataBatchResponseImpl(odataClient, httpClient, getHttpResponse(timeout, unit));
     }
 
     @Override
@@ -110,17 +111,10 @@ public class ODataBatchRequestImpl
    */
   protected class ODataBatchResponseImpl extends AbstractODataResponse implements ODataBatchResponse {
 
-    private ODataBatchResponseImpl() {
-    }
+    protected ODataBatchResponseImpl(
+            final CommonODataClient<?> odataClient, final HttpClient httpClient, final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    protected ODataBatchResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     /**
@@ -130,5 +124,14 @@ public class ODataBatchRequestImpl
     public Iterator<ODataBatchResponseItem> getBody() {
       return new ODataBatchResponseManager(this, expectedResItems, continueOnError);
     }
+
+    @Override
+    public void close() {
+      for (ODataBatchResponseItem resItem : expectedResItems) {
+        resItem.close();
+      }
+      super.close();
+    }
+
   }
 }

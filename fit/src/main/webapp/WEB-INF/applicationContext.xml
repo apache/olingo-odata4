@@ -36,24 +36,33 @@
   <context:annotation-config/>
   <bean class="org.springframework.web.context.support.ServletContextPropertyPlaceholderConfigurer"/>
   <bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer"/>
-
-  <jaxrs:server id="services" address="/">
-    <jaxrs:serviceBeans>
-      <bean class="org.apache.olingo.fit.V3Services"/>
-      <bean class="org.apache.olingo.fit.V3KeyAsSegment"/>
-      <bean class="org.apache.olingo.fit.V3ActionOverloading"/>
-      <bean class="org.apache.olingo.fit.V3PrimitiveKeys"/>
-      <bean class="org.apache.olingo.fit.V3OpenType"/>
-      <bean class="org.apache.olingo.fit.V4Services"/>
-      <bean class="org.apache.olingo.fit.V4KeyAsSegment"/>
-      <bean class="org.apache.olingo.fit.V4NorthWind"/>
-      <bean class="org.apache.olingo.fit.V4NorthWindExt"/>
-      <bean class="org.apache.olingo.fit.V4OpenType"/>
-      <bean class="org.apache.olingo.fit.V4Vocabularies"/>
-      <bean class="org.apache.olingo.fit.V4Demo"/>
-    </jaxrs:serviceBeans>
+  
+  <jaxrs:server id="services" address="/" basePackages="org.apache.olingo.fit">
     <jaxrs:providers>
       <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
+      <bean class="org.apache.olingo.fit.rest.ServiceNameResponseFilter"/>
+    </jaxrs:providers>
+  </jaxrs:server>
+
+  <bean id="oauthProvider" class="org.apache.olingo.fit.rest.OAuth2Provider"/>    
+  <bean id="authorizationService" class="org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService">
+    <property name="dataProvider" ref="oauthProvider"/>
+  </bean>
+  <bean id="accessTokenService" class="org.apache.cxf.rs.security.oauth2.services.AccessTokenService">
+    <property name="dataProvider" ref="oauthProvider"/>
+  </bean>  
+  <bean id="oauthSecurityInterceptor" class="org.apache.olingo.fit.rest.StaticSecurityInterceptor"/>
+  <jaxrs:server id="oauthServer" address="/oauth">
+    <jaxrs:serviceBeans>
+      <ref bean="authorizationService"/>
+      <ref bean="accessTokenService"/>
+    </jaxrs:serviceBeans>
+    <jaxrs:inInterceptors>
+      <ref bean="oauthSecurityInterceptor"/>
+    </jaxrs:inInterceptors>
+    <jaxrs:providers>
+      <bean class="org.apache.cxf.jaxrs.provider.JAXBElementProvider"/>
+      <bean class="org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider"/>
     </jaxrs:providers>
   </jaxrs:server>
 

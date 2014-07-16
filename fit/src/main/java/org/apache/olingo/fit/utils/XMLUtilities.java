@@ -21,6 +21,7 @@ package org.apache.olingo.fit.utils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -65,7 +66,7 @@ public class XMLUtilities extends AbstractUtilities {
 
   protected static XMLOutputFactory ofactory = null;
 
-  public XMLUtilities(final ODataServiceVersion version, final Metadata metadata) throws Exception {
+  public XMLUtilities(final ODataServiceVersion version, final Metadata metadata) throws IOException {
     super(version, metadata);
   }
 

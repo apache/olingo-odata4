@@ -47,7 +47,7 @@ public interface CommonODataClient<UT extends CommonUpdateType> {
 
   ODataHeaders newVersionHeaders();
 
-  CommonConfiguration getConfiguration();
+  Configuration getConfiguration();
 
   ODataPreferences newPreferences();
 

@@ -20,7 +20,6 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 
 import java.io.InputStream;
 import java.net.URI;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -64,23 +63,10 @@ public abstract class AbstractODataRetrieveRequest<T>
   protected abstract class AbstractODataRetrieveResponse
           extends AbstractODataResponse implements ODataRetrieveResponse<T> {
 
-    /**
-     * Constructor.
-     * <p>
-     * Just to create response templates to be initialized from batch.
-     */
-    protected AbstractODataRetrieveResponse() {
-      super();
-    }
+    protected AbstractODataRetrieveResponse(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    protected AbstractODataRetrieveResponse(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     @Override

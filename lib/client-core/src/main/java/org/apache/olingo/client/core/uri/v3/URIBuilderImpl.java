@@ -19,7 +19,7 @@
 package org.apache.olingo.client.core.uri.v3;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.CommonConfiguration;
+import org.apache.olingo.client.api.Configuration;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements URIBuilder {
 
   public URIBuilderImpl(
-      final ODataServiceVersion version, final CommonConfiguration configuration, final String serviceRoot) {
+      final ODataServiceVersion version, final Configuration configuration, final String serviceRoot) {
     super(version, configuration, serviceRoot);
   }
 

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.fit;
 
+import java.io.IOException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -32,15 +33,10 @@ import org.springframework.stereotype.Service;
 @Path("/V30/PrimitiveKeys.svc")
 public class V3PrimitiveKeys extends V3Services {
 
-  public V3PrimitiveKeys() throws Exception {
+  public V3PrimitiveKeys() throws IOException {
     super();
   }
 
-  /**
-   * Provide sample large metadata.
-   * 
-   * @return metadata.
-   */
   @GET
   @Path("/$metadata")
   @Produces(MediaType.APPLICATION_XML)
@@ -48,7 +44,7 @@ public class V3PrimitiveKeys extends V3Services {
   public Response getMetadata() {
     try {
       return xml.createResponse(
-          null, FSManager.instance(version).readRes("primitiveKeysMetadata", Accept.XML), null, Accept.XML);
+              null, FSManager.instance(version).readRes("primitiveKeysMetadata", Accept.XML), null, Accept.XML);
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.XML.toString(version), e);
     }

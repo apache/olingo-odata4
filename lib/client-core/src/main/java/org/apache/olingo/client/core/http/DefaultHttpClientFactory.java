@@ -18,51 +18,29 @@
  */
 package org.apache.olingo.client.core.http;
 
-import java.io.InputStream;
-import java.io.Serializable;
 import java.net.URI;
-import java.util.Properties;
-import org.apache.commons.io.IOUtils;
-
+import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
-import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation returning HttpClients with default parameters.
  */
-public class DefaultHttpClientFactory implements HttpClientFactory, Serializable {
+public class DefaultHttpClientFactory extends AbstractHttpClientFactory {
 
   private static final long serialVersionUID = -2461355444507227332L;
 
-  private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpClientFactory.class);
-
-  private static final String USER_AGENT;
-
-  static {
-    final StringBuilder userAgent = new StringBuilder("Apache-Olingo");
-
-    final InputStream input = DefaultHttpClientFactory.class.getResourceAsStream("/client.properties");
-    try {
-      final Properties prop = new Properties();
-      prop.load(input);
-      userAgent.append('/').append(prop.getProperty("version"));
-    } catch (Exception e) {
-      LOG.warn("Could not get Apache Olingo version", e);
-    } finally {
-      IOUtils.closeQuietly(input);
-    }
-
-    USER_AGENT = userAgent.toString();
-  }
-
   @Override
-  public DefaultHttpClient createHttpClient(final HttpMethod method, final URI uri) {
+  public DefaultHttpClient create(final HttpMethod method, final URI uri) {
     final DefaultHttpClient client = new DefaultHttpClient();
     client.getParams().setParameter(CoreProtocolPNames.USER_AGENT, USER_AGENT);
     return client;
   }
+
+  @Override
+  public void close(final HttpClient httpClient) {
+    httpClient.getConnectionManager().shutdown();
+  }
+
 }

@@ -87,7 +87,7 @@ public class ODataMediaEntityCreateRequestImpl<E extends CommonODataEntity>
     @Override
     protected ODataMediaEntityCreateResponse<E> getResponse(final long timeout, final TimeUnit unit) {
       finalizeBody();
-      return new ODataMediaEntityCreateResponseImpl(httpClient, getHttpResponse(timeout, unit));
+      return new ODataMediaEntityCreateResponseImpl(odataClient, httpClient, getHttpResponse(timeout, unit));
     }
   }
 
@@ -99,22 +99,10 @@ public class ODataMediaEntityCreateRequestImpl<E extends CommonODataEntity>
 
     private E entity = null;
 
-    /**
-     * Constructor.
-     * <p>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataMediaEntityCreateResponseImpl() {
-    }
+    private ODataMediaEntityCreateResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataMediaEntityCreateResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     @Override
@@ -122,8 +110,7 @@ public class ODataMediaEntityCreateRequestImpl<E extends CommonODataEntity>
     public E getBody() {
       if (entity == null) {
         try {
-          final ResWrap<Entity> resource = odataClient.getDeserializer(getFormat())
-              .toEntity(getRawResponse());
+          final ResWrap<Entity> resource = odataClient.getDeserializer(getFormat()).toEntity(getRawResponse());
 
           entity = (E) odataClient.getBinder().getODataEntity(resource);
         } catch (final ODataDeserializerException e) {

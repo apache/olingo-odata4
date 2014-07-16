@@ -28,7 +28,7 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 /**
  * Configuration wrapper.
  */
-public interface CommonConfiguration {
+public interface Configuration {
 
   /**
    * Gets the configured default <tt>Accept</tt> header value format for a batch request.

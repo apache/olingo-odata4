@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Map;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.client.api.communication.response.v4.AsyncResponse;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchController;
@@ -32,23 +33,10 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
  */
 public class AsyncResponseImpl extends AbstractODataResponse implements AsyncResponse {
 
-  /**
-   * Constructor.
-   * <p>
-   * Just to create response templates to be initialized from batch.
-   */
-  public AsyncResponseImpl() {
-    super();
-  }
+  public AsyncResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+          final HttpResponse res) {
 
-  /**
-   * Constructor.
-   *
-   * @param client HTTP client.
-   * @param res HTTP response.
-   */
-  public AsyncResponseImpl(final HttpClient client, final HttpResponse res) {
-    super(client, res);
+    super(odataClient, httpClient, res);
   }
 
   /**
@@ -59,7 +47,8 @@ public class AsyncResponseImpl extends AbstractODataResponse implements AsyncRes
           final Map<String, Collection<String>> headers,
           final ODataBatchLineIterator batchLineIterator,
           final String boundary) {
-    super();
+
+    super(null, null, null);
 
     if (hasBeenInitialized) {
       throw new IllegalStateException("Request already initialized");

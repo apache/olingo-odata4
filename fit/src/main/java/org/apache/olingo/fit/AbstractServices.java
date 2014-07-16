@@ -127,7 +127,6 @@ public abstract class AbstractServices {
   protected static final String BOUNDARY = "batch_243234_25424_ef_892u748";
 
   protected static final String MULTIPART_MIXED = "multipart/mixed";
-  // ContentType.MULTIPART_MIXED.toContentTypeString();
 
   protected static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 
@@ -147,7 +146,7 @@ public abstract class AbstractServices {
 
   protected final JSONUtilities json;
 
-  public AbstractServices(final ODataServiceVersion version, final Metadata metadata) throws Exception {
+  public AbstractServices(final ODataServiceVersion version, final Metadata metadata) throws IOException {
     this.version = version;
     this.metadata = metadata;
 
@@ -264,7 +263,6 @@ public abstract class AbstractServices {
     return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(version), new Exception("Non nullable properties"));
   }
   // ----------------------------------------------
-
   protected Response bodyPartRequest(final MimeBodyPart body) throws Exception {
     return bodyPartRequest(body, Collections.<String, String>emptyMap());
   }
@@ -329,7 +327,8 @@ public abstract class AbstractServices {
         }
       }
 
-      client.close();
+      // When updating to CXF 3.0.1, uncomment the following line, see CXF-5865
+      //client.close();
     }
 
     return res;
@@ -636,8 +635,11 @@ public abstract class AbstractServices {
           prop.setName(id.getKey());
           prop.setType(id.getValue().toString());
           prop.setValue(ValueType.PRIMITIVE,
-                  id.getValue() == EdmPrimitiveTypeKind.Int32 ? Integer.parseInt(entityKey) : id.getValue()
-                  == EdmPrimitiveTypeKind.Guid ? UUID.fromString(entityKey) : entityKey);
+                  id.getValue() == EdmPrimitiveTypeKind.Int32
+                  ? Integer.parseInt(entityKey)
+                  : id.getValue() == EdmPrimitiveTypeKind.Guid
+                  ? UUID.fromString(entityKey)
+                  : entityKey);
           entry.getProperties().add(prop);
         }
 
@@ -677,7 +679,7 @@ public abstract class AbstractServices {
       ResWrap<Entity> result = atomDeserializer.toEntity(serialization);
       result = new ResWrap<Entity>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-              + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
+                      + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
               null, result.getPayload());
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
@@ -752,7 +754,7 @@ public abstract class AbstractServices {
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-              ConstantKey.ENTITY), Accept.ATOM));
+                              ConstantKey.ENTITY), Accept.ATOM));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -846,7 +848,7 @@ public abstract class AbstractServices {
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Product", entityId) + Constants.get(version,
-              ConstantKey.ENTITY), Accept.ATOM));
+                              ConstantKey.ENTITY), Accept.ATOM));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -884,7 +886,7 @@ public abstract class AbstractServices {
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("ComputerDetail", entityId) + Constants.get(version,
-              ConstantKey.ENTITY), Accept.ATOM));
+                              ConstantKey.ENTITY), Accept.ATOM));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {

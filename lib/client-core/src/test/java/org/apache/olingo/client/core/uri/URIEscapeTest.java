@@ -23,7 +23,9 @@ import static org.junit.Assert.assertEquals;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.TimeZone;
 import org.apache.olingo.client.core.edm.EdmEnumTypeImpl;
 import org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl;
 import org.apache.olingo.commons.api.Constants;
@@ -52,6 +54,16 @@ public class URIEscapeTest {
             null, new FullQualifiedName("Sales", "Pattern"), new EnumTypeImpl());
 
     assertEquals("Sales.Pattern'Yellow'", URIUtils.escape(ODataServiceVersion.V40, pattern.toUriLiteral("Yellow")));
+  }
+
+  @Test
+  public void datetimeoffset() throws UnsupportedEncodingException {
+    final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+1"));
+    calendar.clear();
+    calendar.set(2014, 6, 11, 12, 30, 04);
+
+    assertEquals(URLEncoder.encode("2014-07-11T12:30:04+01:00", Constants.UTF8), 
+            URIUtils.escape(ODataServiceVersion.V40, calendar));
   }
 
   @Test

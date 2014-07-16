@@ -16,22 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api;
+package org.apache.olingo.fit;
 
-public class ODataApplicationException extends Exception {
+import java.io.IOException;
 
-  private static final long serialVersionUID = 5358683245923127425L;
+import javax.ws.rs.Path;
+import org.apache.cxf.interceptor.InInterceptors;
+import org.apache.olingo.fit.rest.OAuth2InInterceptor;
+import org.springframework.stereotype.Service;
 
-  public ODataApplicationException(final String msg) {
-    super(msg);
-  }
+@Service
+@Path("/V40/OAuth2.svc")
+@InInterceptors(classes = {OAuth2InInterceptor.class})
+public class V4OAuth2 extends V4Services {
 
-  public ODataApplicationException(final String msg, final Throwable cause) {
-    super(msg, cause);
-  }
-
-  public ODataApplicationException(final Throwable cause) {
-    super(cause);
+  public V4OAuth2() throws IOException {
+    super();
   }
 
 }

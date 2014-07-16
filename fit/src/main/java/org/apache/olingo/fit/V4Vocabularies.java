@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.fit;
 
+import java.io.IOException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -42,10 +43,10 @@ public class V4Vocabularies {
 
   private final XMLUtilities xml;
 
-  public V4Vocabularies() throws Exception {
+  public V4Vocabularies() throws IOException {
     metadata = new Metadata(FSManager.instance(ODataServiceVersion.V40).readRes(
-        "vocabularies-" + Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA), Accept.XML),
-        ODataServiceVersion.V40);
+            "vocabularies-" + Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA), Accept.XML),
+            ODataServiceVersion.V40);
     xml = new XMLUtilities(ODataServiceVersion.V40, metadata);
   }
 
@@ -55,11 +56,11 @@ public class V4Vocabularies {
   public Response getMetadata() {
     try {
       return xml.createResponse(
-          null,
-          FSManager.instance(ODataServiceVersion.V40).readRes(
-              "vocabularies-" + Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA), Accept.XML),
-          null,
-          Accept.XML);
+              null,
+              FSManager.instance(ODataServiceVersion.V40).readRes(
+                      "vocabularies-" + Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA), Accept.XML),
+              null,
+              Accept.XML);
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.XML.toString(ODataServiceVersion.V40), e);
     }
@@ -71,10 +72,10 @@ public class V4Vocabularies {
   public Response getVocabulary(@PathParam("vocabulary") final String vocabulary) {
     try {
       return xml.createResponse(
-          null,
-          FSManager.instance(ODataServiceVersion.V40).readFile(vocabulary, null),
-          null,
-          Accept.XML);
+              null,
+              FSManager.instance(ODataServiceVersion.V40).readFile(vocabulary, null),
+              null,
+              Accept.XML);
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.XML.toString(ODataServiceVersion.V40), e);
     }

@@ -84,12 +84,13 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   /**
    * Constructor.
    *
-   * @param odataClient  client instance getting this request
-   * @param method       HTTP request method. If configured X-HTTP-METHOD header will be used.
-   * @param uri          OData request URI.
+   * @param odataClient client instance getting this request
+   * @param method HTTP request method. If configured X-HTTP-METHOD header will be used.
+   * @param uri OData request URI.
    */
   protected AbstractODataRequest(final CommonODataClient<?> odataClient, final HttpMethod method, final URI uri) {
-
+    super();
+    
     this.odataClient = odataClient;
     this.method = method;
 
@@ -99,15 +100,13 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
     // target uri
     this.uri = uri;
 
-    HttpClient _httpClient = odataClient.getConfiguration().getHttpClientFactory().
-            createHttpClient(this.method, this.uri);
+    HttpClient _httpClient = odataClient.getConfiguration().getHttpClientFactory().create(this.method, this.uri);
     if (odataClient.getConfiguration().isGzipCompression()) {
       _httpClient = new DecompressingHttpClient(_httpClient);
     }
     this.httpClient = _httpClient;
 
-    this.request = odataClient.getConfiguration().getHttpUriRequestFactory().
-            createHttpUriRequest(this.method, this.uri);
+    this.request = odataClient.getConfiguration().getHttpUriRequestFactory().create(this.method, this.uri);
   }
 
   public abstract ODataFormat getDefaultFormat();
@@ -184,9 +183,9 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   @Override
   public String getAccept() {
     final String acceptHead = odataHeaders.getHeader(HeaderName.accept);
-    return StringUtils.isBlank(acceptHead) ?
-        getDefaultFormat().getContentType(odataClient.getServiceVersion()).toContentTypeString() :
-        acceptHead;
+    return StringUtils.isBlank(acceptHead)
+            ? getDefaultFormat().getContentType(odataClient.getServiceVersion()).toContentTypeString()
+            : acceptHead;
   }
 
   @Override
@@ -207,9 +206,9 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   @Override
   public String getContentType() {
     final String contentTypeHead = odataHeaders.getHeader(HeaderName.contentType);
-    return StringUtils.isBlank(contentTypeHead) ?
-        getDefaultFormat().getContentType(odataClient.getServiceVersion()).toContentTypeString() :
-        contentTypeHead;
+    return StringUtils.isBlank(contentTypeHead)
+            ? getDefaultFormat().getContentType(odataClient.getServiceVersion()).toContentTypeString()
+            : contentTypeHead;
   }
 
   @Override
@@ -326,21 +325,21 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
 
   /**
    * Gets an empty response that can be initialized by a stream.
-   * <p>
+   * <br/>
    * This method has to be used to build response items about a batch request.
    *
-   * @param <V> ODataResppnse type.
+   * @param <V> ODataResponse type.
    * @return empty OData response instance.
    */
   @SuppressWarnings("unchecked")
   public <V extends ODataResponse> V getResponseTemplate() {
-
     for (Class<?> clazz : this.getClass().getDeclaredClasses()) {
       if (ODataResponse.class.isAssignableFrom(clazz)) {
         try {
-          final Constructor<?> constructor = clazz.getDeclaredConstructor(this.getClass());
+          final Constructor<?> constructor = clazz.getDeclaredConstructor(
+                  this.getClass(), CommonODataClient.class, HttpClient.class, HttpResponse.class);
           constructor.setAccessible(true);
-          return (V) constructor.newInstance(this);
+          return (V) constructor.newInstance(this, odataClient, httpClient, null);
         } catch (Exception e) {
           LOG.error("Error retrieving response class template instance", e);
         }

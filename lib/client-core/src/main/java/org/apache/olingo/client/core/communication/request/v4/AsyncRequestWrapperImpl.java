@@ -85,13 +85,13 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     // target uri
     this.uri = odataRequest.getURI();
 
-    HttpClient _httpClient = odataClient.getConfiguration().getHttpClientFactory().createHttpClient(method, this.uri);
+    HttpClient _httpClient = odataClient.getConfiguration().getHttpClientFactory().create(method, this.uri);
     if (odataClient.getConfiguration().isGzipCompression()) {
       _httpClient = new DecompressingHttpClient(_httpClient);
     }
     this.httpClient = _httpClient;
 
-    this.request = odataClient.getConfiguration().getHttpUriRequestFactory().createHttpUriRequest(method, this.uri);
+    this.request = odataClient.getConfiguration().getHttpUriRequestFactory().create(method, this.uri);
   }
 
   @Override
@@ -292,7 +292,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     }
 
     final HttpUriRequest monitor = odataClient.getConfiguration().getHttpUriRequestFactory().
-            createHttpUriRequest(HttpMethod.GET, location);
+            create(HttpMethod.GET, location);
 
     return executeHttpRequest(httpClient, monitor);
   }

@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.olingo.client.api.CommonConfiguration;
+import org.apache.olingo.client.api.Configuration;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
@@ -35,7 +35,7 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements URIBuilder {
 
   public URIBuilderImpl(
-      final ODataServiceVersion version, final CommonConfiguration configuration, final String serviceRoot) {
+      final ODataServiceVersion version, final Configuration configuration, final String serviceRoot) {
     super(version, configuration, serviceRoot);
   }
 

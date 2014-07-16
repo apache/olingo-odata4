@@ -26,7 +26,6 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -73,8 +72,7 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
       if (entitySet == null) {
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
-        response.setContent(serializer.entitySet(edmEntitySet, entitySet,
-            getContextUrl(request, edmEntitySet.getEntityType())));
+        response.setContent(serializer.entitySet(edmEntitySet, entitySet, getContextUrl(edmEntitySet)));
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
         response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
       }
@@ -97,8 +95,7 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
       if (entity == null) {
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
-        response.setContent(serializer.entity(edmEntitySet.getEntityType(), entity,
-            getContextUrl(request, edmEntitySet.getEntityType())));
+        response.setContent(serializer.entity(edmEntitySet, entity, getContextUrl(edmEntitySet)));
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
         response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
       }
@@ -149,7 +146,7 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
     return uriResource.getEntitySet();
   }
 
-  private ContextURL getContextUrl(final ODataRequest request, final EdmEntityType entityType) {
-    return ContextURL.getInstance(URI.create(request.getRawBaseUri() + "/" + entityType.getName()));
+  private ContextURL getContextUrl(final EdmEntitySet entitySet) {
+    return ContextURL.create().entitySet(entitySet).build();
   }
 }

@@ -50,11 +50,11 @@ public interface ODataBatchResponseItem extends Iterator<ODataResponse> {
   boolean isChangeset();
 
   /**
-   * Checks if the current item is a braking item like as error item or asynchronous response part.
+   * Checks if the current item is a breaking item like as error item or asynchronous response part.
    *
    * @return 'TRUE' if breaking; 'FALSE' otherwise.
    */
-  boolean isBreakingitem();
+  boolean isBreaking();
 
   /**
    * Closes the current batch responses item including all wrapped OData responses.

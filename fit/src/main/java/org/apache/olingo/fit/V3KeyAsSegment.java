@@ -20,6 +20,7 @@ package org.apache.olingo.fit;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.ws.rs.Consumes;
@@ -49,7 +50,7 @@ import org.springframework.stereotype.Service;
 @Path("/V30/KeyAsSegment.svc")
 public class V3KeyAsSegment extends V3Services {
 
-  public V3KeyAsSegment() throws Exception {
+  public V3KeyAsSegment() throws IOException {
     super();
   }
 
@@ -109,6 +110,7 @@ public class V3KeyAsSegment extends V3Services {
   @Path("/{entitySetName}/{entityId}")
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+
   @Override
   public Response mergeEntity(
           @Context final UriInfo uriInfo,
@@ -128,6 +130,7 @@ public class V3KeyAsSegment extends V3Services {
   @Path("/{entitySetName}/{entityId}")
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+
   @Override
   public Response patchEntity(
           @Context final UriInfo uriInfo,
@@ -164,6 +167,7 @@ public class V3KeyAsSegment extends V3Services {
   @Path("/{entitySetName}")
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
+
   @Override
   public Response postNewEntity(
           @Context final UriInfo uriInfo,

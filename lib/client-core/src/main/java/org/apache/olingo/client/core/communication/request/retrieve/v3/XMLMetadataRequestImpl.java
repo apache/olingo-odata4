@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.edm.xml.Schema;
@@ -42,30 +43,17 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
 
   @Override
   public ODataRetrieveResponse<Map<String, Schema>> execute() {
-    return new XMLMetadataResponseImpl(httpClient, doExecute());
+    return new XMLMetadataResponseImpl(odataClient, httpClient, doExecute());
   }
 
   public class XMLMetadataResponseImpl extends AbstractODataRetrieveResponse {
 
     private Map<String, Schema> schemas;
 
-    /**
-     * Constructor.
-     * <br/>
-     * Just to create response templates to be initialized from batch.
-     */
-    private XMLMetadataResponseImpl() {
-      super();
-    }
+    private XMLMetadataResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private XMLMetadataResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     @Override
@@ -73,8 +61,7 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
       if (schemas == null) {
         schemas = new HashMap<String, Schema>();
         try {
-          final XMLMetadata metadata = odataClient.getDeserializer(ODataFormat.XML)
-              .toMetadata(getRawResponse());
+          final XMLMetadata metadata = odataClient.getDeserializer(ODataFormat.XML).toMetadata(getRawResponse());
           for (Schema schema : metadata.getSchemas()) {
             schemas.put(schema.getNamespace(), schema);
             if (StringUtils.isNotBlank(schema.getAlias())) {

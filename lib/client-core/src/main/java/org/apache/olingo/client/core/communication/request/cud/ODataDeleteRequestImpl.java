@@ -35,15 +35,8 @@ import org.apache.olingo.commons.api.format.ODataFormat;
  * This class implements an OData delete request.
  */
 public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDeleteResponse>
-    implements ODataDeleteRequest {
+        implements ODataDeleteRequest {
 
-  /**
-   * Constructor.
-   *
-   * @param odataClient client instance getting this request
-   * @param method HTTP method to be used
-   * @param uri URI of the entity to be deleted.
-   */
   ODataDeleteRequestImpl(final CommonODataClient<?> odataClient, final HttpMethod method, final URI uri) {
     super(odataClient, method, uri);
   }
@@ -63,7 +56,7 @@ public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDelet
 
   @Override
   public ODataDeleteResponse execute() {
-    return new ODataDeleteResponseImpl(httpClient, doExecute());
+    return new ODataDeleteResponseImpl(odataClient, httpClient, doExecute());
   }
 
   /**
@@ -71,22 +64,10 @@ public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDelet
    */
   private class ODataDeleteResponseImpl extends AbstractODataResponse implements ODataDeleteResponse {
 
-    /**
-     * Constructor.
-     * <p>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataDeleteResponseImpl() {
-    }
+    private ODataDeleteResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataDeleteResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
       this.close();
     }
   }

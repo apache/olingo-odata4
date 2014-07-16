@@ -54,7 +54,7 @@ public class ODataEntityRequestImpl<E extends CommonODataEntity>
 
   @Override
   public ODataRetrieveResponse<E> execute() {
-    return new ODataEntityResponseImpl(httpClient, doExecute());
+    return new ODataEntityResponseImpl(odataClient, httpClient, doExecute());
   }
 
   /**
@@ -64,23 +64,10 @@ public class ODataEntityRequestImpl<E extends CommonODataEntity>
 
     private E entity = null;
 
-    /**
-     * Constructor.
-     * <br/>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataEntityResponseImpl() {
-      super();
-    }
+    private ODataEntityResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataEntityResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     @Override
@@ -88,11 +75,11 @@ public class ODataEntityRequestImpl<E extends CommonODataEntity>
     public E getBody() {
       if (entity == null) {
         try {
-          final ResWrap<Entity> resource = odataClient.getDeserializer(ODataFormat.fromString(getContentType()))
-              .toEntity(getRawResponse());
+          final ResWrap<Entity> resource = odataClient.getDeserializer(ODataFormat.fromString(getContentType())).
+                  toEntity(getRawResponse());
 
           entity = (E) odataClient.getBinder().getODataEntity(resource);
-        } catch (final ODataDeserializerException e) {
+        } catch (ODataDeserializerException e) {
           throw new IllegalArgumentException(e);
         } finally {
           this.close();

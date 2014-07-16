@@ -88,7 +88,7 @@ public class ODataMediaEntityUpdateRequestImpl<E extends CommonODataEntity>
     @Override
     protected ODataMediaEntityUpdateResponse<E> getResponse(final long timeout, final TimeUnit unit) {
       finalizeBody();
-      return new ODataMediaEntityUpdateResponseImpl(httpClient, getHttpResponse(timeout, unit));
+      return new ODataMediaEntityUpdateResponseImpl(odataClient, httpClient, getHttpResponse(timeout, unit));
     }
   }
 
@@ -100,23 +100,10 @@ public class ODataMediaEntityUpdateRequestImpl<E extends CommonODataEntity>
 
     private E entity = null;
 
-    /**
-     * Constructor.
-     * <br/>
-     * Just to create response templates to be initialized from batch.
-     */
-    private ODataMediaEntityUpdateResponseImpl() {
-      super();
-    }
+    private ODataMediaEntityUpdateResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final HttpResponse res) {
 
-    /**
-     * Constructor.
-     *
-     * @param client HTTP client.
-     * @param res HTTP response.
-     */
-    private ODataMediaEntityUpdateResponseImpl(final HttpClient client, final HttpResponse res) {
-      super(client, res);
+      super(odataClient, httpClient, res);
     }
 
     @Override

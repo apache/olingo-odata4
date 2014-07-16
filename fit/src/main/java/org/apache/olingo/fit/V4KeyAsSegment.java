@@ -20,6 +20,7 @@ package org.apache.olingo.fit;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.ws.rs.Consumes;
@@ -48,7 +49,7 @@ import org.springframework.stereotype.Service;
 @Path("/V40/KeyAsSegment.svc")
 public class V4KeyAsSegment extends V4Services {
 
-  public V4KeyAsSegment() throws Exception {
+  public V4KeyAsSegment() throws IOException {
     super();
   }
 

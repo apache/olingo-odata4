@@ -65,10 +65,10 @@ public class JsonDataProviderTest {
 
   @Test
   public void doRoundTrip() throws Exception {
-    doRoundTrip(entityContainer.getEntitySet("ESAllPrim"), 1401);
-    doRoundTrip(entityContainer.getEntitySet("ESCompAllPrim"), 1592);
-    doRoundTrip(entityContainer.getEntitySet("ESCollAllPrim"), 2855);
-    doRoundTrip(entityContainer.getEntitySet("ESMixPrimCollComp"), 1032);
+    doRoundTrip(entityContainer.getEntitySet("ESAllPrim"), 1440);
+    doRoundTrip(entityContainer.getEntitySet("ESCompAllPrim"), 1635);
+    doRoundTrip(entityContainer.getEntitySet("ESCollAllPrim"), 2898);
+    doRoundTrip(entityContainer.getEntitySet("ESMixPrimCollComp"), 1079);
   }
 
   @Test

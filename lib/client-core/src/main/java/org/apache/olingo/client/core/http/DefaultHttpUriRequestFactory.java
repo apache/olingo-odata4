@@ -34,7 +34,7 @@ import org.apache.olingo.client.api.http.HttpUriRequestFactory;
 public class DefaultHttpUriRequestFactory implements HttpUriRequestFactory {
 
   @Override
-  public HttpUriRequest createHttpUriRequest(final HttpMethod method, final URI uri) {
+  public HttpUriRequest create(final HttpMethod method, final URI uri) {
     HttpUriRequest result;
 
     switch (method) {
