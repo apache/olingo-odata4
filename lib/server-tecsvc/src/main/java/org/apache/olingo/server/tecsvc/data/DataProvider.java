@@ -18,6 +18,16 @@
  */
 package org.apache.olingo.server.tecsvc.data;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.UUID;
+
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.LinkedComplexValue;
@@ -35,16 +45,6 @@ import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.server.api.uri.UriParameter;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.UUID;
-
 public class DataProvider {
 
   private static final UUID GUID = UUID.fromString("01234567-89ab-cdef-0123-456789abcdef");
@@ -61,6 +61,7 @@ public class DataProvider {
     data.put("ESCollAllPrim", createESCollAllPrim());
     data.put("ESMixPrimCollComp", createESMixPrimCollComp());
     data.put("ESAllKey", createESAllKey());
+    data.put("ESMedia", createESMedia());
   }
 
   public EntitySet readAll(final EdmEntitySet edmEntitySet) throws DataProviderException {
@@ -414,6 +415,32 @@ public class DataProvider {
     entity.addProperty(createPrimitive("PropertyDuration", 6));
     entity.addProperty(createPrimitive("PropertyGuid", GUID));
     entity.addProperty(createPrimitive("PropertyTimeOfDay", getTime(2, 48, 21)));
+    entitySet.getEntities().add(entity);
+
+    return entitySet;
+  }
+
+  private EntitySet createESMedia() {
+    EntitySet entitySet = new EntitySetImpl();
+
+    Entity entity = new EntityImpl();
+    entity.addProperty(createPrimitive("PropertyInt16", 1));
+    entity.setMediaContentType("image/png");
+    entitySet.getEntities().add(entity);
+
+    entity = new EntityImpl();
+    entity.addProperty(createPrimitive("PropertyInt16", 2));
+    entity.setMediaContentType("image/bmp");
+    entitySet.getEntities().add(entity);
+
+    entity = new EntityImpl();
+    entity.addProperty(createPrimitive("PropertyInt16", 3));
+    entity.setMediaContentType("image/jpeg");
+    entitySet.getEntities().add(entity);
+
+    entity = new EntityImpl();
+    entity.addProperty(createPrimitive("PropertyInt16", 4));
+    entity.setMediaContentType("foo");
     entitySet.getEntities().add(entity);
 
     return entitySet;

@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.data.ContextURL;
@@ -45,11 +46,9 @@ import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.util.List;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 public class ODataJsonSerializer implements ODataSerializer {
 
@@ -64,21 +63,15 @@ public class ODataJsonSerializer implements ODataSerializer {
   @Override
   public InputStream serviceDocument(final Edm edm, final String serviceRoot) {
     CircleStreamBuffer buffer;
-    BufferedWriter writer;
-    JsonFactory factory;
     JsonGenerator gen = null;
 
     // TODO: move stream initialization into separate method
     try {
       buffer = new CircleStreamBuffer();
-      writer = new BufferedWriter(new OutputStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET));
-      factory = new JsonFactory();
+      gen = new JsonFactory().createGenerator(buffer.getOutputStream())
+          .setPrettyPrinter(new DefaultPrettyPrinter());
 
-      gen = factory.createGenerator(writer);
-      gen.setPrettyPrinter(new DefaultPrettyPrinter());
-
-      ServiceDocumentJsonSerializer serializer = new ServiceDocumentJsonSerializer(edm, serviceRoot);
-      serializer.writeServiceDocument(gen);
+      new ServiceDocumentJsonSerializer(edm, serviceRoot).writeServiceDocument(gen);
 
       gen.close();
 
@@ -130,7 +123,7 @@ public class ODataJsonSerializer implements ODataSerializer {
     try {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
-      if (entitySetContextURL != null && format != ODataFormat.JSON_NO_METADATA) {
+      if (format != ODataFormat.JSON_NO_METADATA) {
         json.writeStringField(Constants.JSON_CONTEXT, entitySetContextURL.getURI().toASCIIString());
       }
       if (entitySet.getCount() != null) {
@@ -174,6 +167,7 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   protected void writeEntity(final EdmEntitySet entitySet, final Entity entity, final ContextURL contextURL,
       final JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
+    final EdmEntityType entityType = entitySet.getEntityType();
     json.writeStartObject();
     if (format != ODataFormat.JSON_NO_METADATA) {
       if (contextURL != null) {
@@ -182,14 +176,15 @@ public class ODataJsonSerializer implements ODataSerializer {
       if (entity.getETag() != null) {
         json.writeStringField(Constants.JSON_ETAG, entity.getETag());
       }
-      if (entity.getMediaETag() != null) {
-        json.writeStringField(Constants.JSON_MEDIA_ETAG, entity.getMediaETag());
-      }
-      if (entity.getMediaContentType() != null) {
-        json.writeStringField(Constants.JSON_MEDIA_CONTENT_TYPE, entity.getMediaContentType());
+      if (entityType.hasStream()) {
+        if (entity.getMediaETag() != null) {
+          json.writeStringField(Constants.JSON_MEDIA_ETAG, entity.getMediaETag());
+        }
+        if (entity.getMediaContentType() != null) {
+          json.writeStringField(Constants.JSON_MEDIA_CONTENT_TYPE, entity.getMediaContentType());
+        }
       }
     }
-    final EdmEntityType entityType = entitySet.getEntityType();
     for (final String propertyName : entityType.getPropertyNames()) {
       final EdmProperty edmProperty = (EdmProperty) entityType.getProperty(propertyName);
       final Property property = entity.getProperty(propertyName);
@@ -214,7 +209,7 @@ public class ODataJsonSerializer implements ODataSerializer {
         writePrimitive(edmProperty, property, json);
       } else if (property.isLinkedComplex()) {
         writeComplexValue(edmProperty, property.asLinkedComplex().getValue(), json);
-      } else if(property.isComplex()) {
+      } else if (property.isComplex()) {
         writeComplexValue(edmProperty, property.asComplex(), json);
       } else {
         throw new ODataRuntimeException("Property type not yet supported!");
@@ -285,7 +280,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   private void writeComplexValue(final EdmProperty edmProperty, final List<Property> properties,
-                                       JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
+      JsonGenerator json) throws IOException, EdmPrimitiveTypeException {
     final EdmComplexType type = (EdmComplexType) edmProperty.getType();
     json.writeStartObject();
     for (final String propertyName : type.getPropertyNames()) {
