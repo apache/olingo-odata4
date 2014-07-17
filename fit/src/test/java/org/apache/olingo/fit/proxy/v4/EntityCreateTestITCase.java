@@ -62,7 +62,7 @@ import static org.junit.Assert.fail;
 public class EntityCreateTestITCase extends AbstractTestITCase {
 
   protected Service<EdmEnabledODataClient> getContainerFactory() {
-    return containerFactory;
+    return service;
   }
 
   protected InMemoryEntities getContainer() {

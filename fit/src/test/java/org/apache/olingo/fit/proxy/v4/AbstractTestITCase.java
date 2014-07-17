@@ -63,7 +63,7 @@ public abstract class AbstractTestITCase {
 
   protected static String testAuthServiceRootURL;
 
-  protected static Service<EdmEnabledODataClient> containerFactory;
+  protected static Service<EdmEnabledODataClient> service;
 
   protected static InMemoryEntities container;
 
@@ -77,11 +77,11 @@ public abstract class AbstractTestITCase {
     testLargeModelServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Static.svc/large";
     testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc/V40/Static.svc";
 
-    containerFactory = Service.getV4(testStaticServiceRootURL);
-    containerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
-    container = containerFactory.getEntityContainer(InMemoryEntities.class);
+    service = Service.getV4(testStaticServiceRootURL);
+    service.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    container = service.getEntityContainer(InMemoryEntities.class);
     assertNotNull(container);
-    containerFactory.getContext().detachAll();
+    service.getContext().detachAll();
   }
 
   protected Customer readCustomer(final InMemoryEntities container, final int id) {

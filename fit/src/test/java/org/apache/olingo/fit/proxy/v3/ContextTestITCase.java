@@ -322,7 +322,6 @@ public class ContextTestITCase extends AbstractTestITCase {
     final Login login = container.getLogin().newLogin();
 
     final EntityInvocationHandler handler = (EntityInvocationHandler) Proxy.getInvocationHandler(login);
-
     assertTrue(service.getContext().entityContext().isAttached(handler));
 
     try {
@@ -356,7 +355,7 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void flushTest() {
-    Customer customer = container.getCustomer().newCustomer();
+    final Customer customer = container.getCustomer().newCustomer();
     customer.setCustomerId(300);
     customer.setName("samplename");
 

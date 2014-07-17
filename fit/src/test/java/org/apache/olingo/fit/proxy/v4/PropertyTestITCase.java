@@ -49,7 +49,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
       fail();
     } catch (IllegalStateException e) {
       // ignore and detach all
-      containerFactory.getContext().detachAll();
+      service.getContext().detachAll();
     }
   }
 }

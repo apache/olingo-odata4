@@ -32,16 +32,18 @@ public interface Configuration {
 
   /**
    * Gets the configured default <tt>Accept</tt> header value format for a batch request.
+   *
    * @return configured default <tt>Accept</tt> header value for a batch request.
    */
   ContentType getDefaultBatchAcceptFormat();
-  
+
   /**
    * Set the default <tt>Accept</tt> header value format for a batch request.
+   *
    * @param contentType default <tt>Accept</tt> header value.
    */
   void setDefaultBatchAcceptFormat(ContentType contentType);
-  
+
   /**
    * Gets the configured OData format for AtomPub exchanges. If this configuration parameter doesn't exist the
    * JSON_FULL_METADATA format will be used as default.
@@ -197,52 +199,62 @@ public interface Configuration {
   void setKeyAsSegment(boolean value);
 
   /**
-   * Gets whether query URIs in request should contain fully qualified type name.
-   * - OData Intermediate Conformance Level:
-   * MUST support casting to a derived type according to [OData-URL] if derived types are present in the model.
+   * Gets whether query URIs in request should contain fully qualified type name. - OData Intermediate Conformance
+   * Level: MUST support casting to a derived type according to [OData-URL] if derived types are present in the model.
    * <br/>
-   * Example: http://host/service/Customers/Model.VipCustomer(102) or 
-   * http://host/service/Customers/Model.VipCustomer
+   * Example: http://host/service/Customers/Model.VipCustomer(102) or http://host/service/Customers/Model.VipCustomer
    *
-   * @return whether query URIs in request should contain fully qualified type name.
-   * segment.
+   * @return whether query URIs in request should contain fully qualified type name. segment.
    */
-  boolean isAddressingDerivedTypes() ;
+  boolean isAddressingDerivedTypes();
+
+  /**
+   * Sets whether query URIs in request should contain fully qualified type name. - OData Intermediate Conformance
+   * Level: MUST support casting to a derived type according to [OData-URL] if derived types are present in the model.
+   * <br/>
+   * Example: http://host/service/Customers/Model.VipCustomer(102) or http://host/service/Customers/Model.VipCustomer
+   *
+   * @param value 'TRUE' to use this feature.
+   */
+  void setAddressingDerivedTypes(boolean value);
+
+  /**
+   * Checks whether operation name in request URI should be fully qualified name, which is required by OData V4
+   * protocol, but some service may still choose to support shorter name.
+   * <br/>
+   * Example: http://host/service/Customers(2)/NS1.Model.IncreaseSalary VS
+   * http://host/service/Customers(2)/IncreaseSalary
+   *
+   * @return wheter operation name in request URI should be fully qualified name. segment.
+   */
+  boolean isUseUrlOperationFQN();
 
   /**
    * Sets whether operation name in request URI should be fully qualified name, which is required by OData V4 protocol,
    * but some service may still choose to support shorter name.
    * <br/>
-   * Example: http://host/service/Customers(2)/NS1.Model.IncreaseSalary VS 
+   * Example: http://host/service/Customers(2)/NS1.Model.IncreaseSalary VS
    * http://host/service/Customers(2)/IncreaseSalary
    *
    * @param value 'TRUE' to use this feature.
-   */  
-  void setUseUrlOperationFQN(final boolean value);
-  
-  /**
-   * Sets whether operation name in request URI should be fully qualified name, which is required by OData V4 protocol,
-   * but some service may still choose to support shorter name.
-   * <br/>
-   * Example: http://host/service/Customers(2)/NS1.Model.IncreaseSalary VS 
-   * http://host/service/Customers(2)/IncreaseSalary
-   *
-   * @return whether whether operation name in request URI should be fully qualified name.
-   * segment.
    */
-  boolean isUseUrlOperationFQN() ;
+  void setUseUrlOperationFQN(boolean value);
 
   /**
-   * Sets whether query URIs in request should contain fully qualified type name.
-   * - OData Intermediate Conformance Level:
-   * MUST support casting to a derived type according to [OData-URL] if derived types are present in the model.
-   * <br/>
-   * Example: http://host/service/Customers/Model.VipCustomer(102) or 
-   * http://host/service/Customers/Model.VipCustomer
+   * When processing a set of requests (in batch requests, for example), checks if the execution will be aborted after
+   * first error encountered or not.
+   *
+   * @return whether execution of a set of requests will be aborted after first error
+   */
+  boolean isContinueOnError();
+
+  /**
+   * When processing a set of requests (in batch requests, for example), sets if the execution will be aborted after
+   * first error encountered or not.
    *
    * @param value 'TRUE' to use this feature.
    */
-  void setAddressingDerivedTypes(final boolean value);
+  void setContinueOnError(boolean value);
 
   /**
    * Retrieves request executor service.

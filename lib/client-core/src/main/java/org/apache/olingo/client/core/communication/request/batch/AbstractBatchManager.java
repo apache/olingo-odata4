@@ -27,7 +27,6 @@ import org.apache.olingo.client.api.communication.request.batch.ODataSingleReque
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.request.Wrapper;
-
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +34,8 @@ import java.util.concurrent.TimeUnit;
  * Batch request payload management.
  */
 public abstract class AbstractBatchManager extends AbstractODataStreamManager<ODataBatchResponse> {
+
+  protected final boolean continueOnError;
 
   /**
    * Batch request current item.
@@ -46,15 +47,12 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
    */
   protected final CommonODataBatchRequest req;
 
-  /**
-   * Private constructor.
-   *
-   * @param req batch request reference.
-   */
-  protected AbstractBatchManager(
-          final CommonODataBatchRequest req, final Wrapper<Future<HttpResponse>> futureWrap) {
+  protected AbstractBatchManager(final CommonODataBatchRequest req,
+          final Wrapper<Future<HttpResponse>> futureWrap, final boolean continueOnError) {
+
     super(futureWrap);
     this.req = req;
+    this.continueOnError = continueOnError;
   }
 
   /**
@@ -68,7 +66,7 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
     // stream dash boundary
     streamDashBoundary();
 
-    final ODataChangesetResponseItem expectedResItem = new ODataChangesetResponseItem();
+    final ODataChangesetResponseItem expectedResItem = new ODataChangesetResponseItem(continueOnError);
     ((AbstractODataBatchRequest) req).addExpectedResItem(expectedResItem);
 
     currentItem = new ODataChangesetImpl(req, expectedResItem);
@@ -83,7 +81,7 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
    */
   public void addRequest(final ODataBatchableRequest request) {
     validateSingleRequest(request);
-    
+
     closeCurrentItem();
 
     // stream dash boundary
@@ -106,9 +104,6 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
     }
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   protected ODataBatchResponse getResponse(final long timeout, final TimeUnit unit) {
     closeCurrentItem();
@@ -140,5 +135,5 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
     stream(("--" + ((AbstractODataBatchRequest) req).boundary + "--").getBytes());
   }
 
-  protected abstract void validateSingleRequest(final ODataBatchableRequest request);
+  protected abstract void validateSingleRequest(ODataBatchableRequest request);
 }

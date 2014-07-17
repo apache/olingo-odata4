@@ -57,6 +57,8 @@ public class ConfigurationImpl implements Configuration {
 
   private static final String CHUNKING = "chunking";
 
+  private static final String CONTINUE_ON_ERROR = "continueOnError";
+
   private final Map<String, Object> CONF = new HashMap<String, Object>();
 
   private transient ExecutorService executor = Executors.newFixedThreadPool(10);
@@ -105,7 +107,7 @@ public class ConfigurationImpl implements Configuration {
 
   @Override
   public ODataFormat getDefaultFormat() {
-    ODataFormat format = getDefaultPubFormat();
+    final ODataFormat format = getDefaultPubFormat();
     return format == ODataFormat.ATOM ? ODataFormat.XML : format;
   }
 
@@ -207,6 +209,16 @@ public class ConfigurationImpl implements Configuration {
   @Override
   public void setUseUrlOperationFQN(final boolean value) {
     setProperty(USE_OPERATION_FQN_IN_URL, value);
+  }
+
+  @Override
+  public boolean isContinueOnError() {
+    return (Boolean) getProperty(CONTINUE_ON_ERROR, false);
+  }
+
+  @Override
+  public void setContinueOnError(final boolean value) {
+    setProperty(CONTINUE_ON_ERROR, value);
   }
 
   @Override

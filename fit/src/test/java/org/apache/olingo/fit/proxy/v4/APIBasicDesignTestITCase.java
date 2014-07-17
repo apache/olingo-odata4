@@ -48,7 +48,7 @@ import static org.junit.Assert.fail;
 public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
   protected Service<EdmEnabledODataClient> getContainerFactory() {
-    return containerFactory;
+    return service;
   }
 
   protected InMemoryEntities getContainer() {
@@ -133,7 +133,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     assertEquals(BigDecimal.ZERO, actual.getShelfLife());
     assertEquals(2, actual.getOrderShelfLifes().size());
 
-    containerFactory.getContext().detachAll();
+    service.getContext().detachAll();
 
     // Delete order ...
     container.getOrders().delete(container.getOrders().getByKey(1105));
@@ -142,7 +142,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
     container.flush();
 
-    containerFactory.getContext().detachAll();
+    service.getContext().detachAll();
     try {
       container.getOrders().getByKey(105).load();
       fail();

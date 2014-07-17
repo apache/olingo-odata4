@@ -18,6 +18,12 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.StatusLine;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
@@ -29,11 +35,10 @@ import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.core.communication.header.ODataErrorResponseChecker;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.ext.proxy.Service;
-
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * {@link org.apache.olingo.ext.proxy.api.PersistenceManager} implementation using OData batch requests to implement
@@ -52,20 +57,20 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
    * Transactional changes commit.
    */
   @Override
-  protected void doFlush(final PersistenceChanges changes, final TransactionItems items) {
+  protected List<ODataRuntimeException> doFlush(final PersistenceChanges changes, final TransactionItems items) {
     final CommonODataBatchRequest request =
             factory.getClient().getBatchRequestFactory().getBatchRequest(factory.getClient().getServiceRoot());
     ((ODataRequest) request).setAccept(
             factory.getClient().getConfiguration().getDefaultBatchAcceptFormat().toContentTypeString());
 
-    final BatchManager streamManager = (BatchManager) ((ODataStreamedRequest) request).payloadManager();
+    final BatchManager batchManager = (BatchManager) ((ODataStreamedRequest) request).payloadManager();
 
-    final ODataChangeset changeset = streamManager.addChangeset();
+    final ODataChangeset changeset = batchManager.addChangeset();
     for (Map.Entry<ODataBatchableRequest, EntityInvocationHandler> entry : changes.getChanges().entrySet()) {
       changeset.addRequest(entry.getKey());
     }
 
-    final ODataBatchResponse response = streamManager.getResponse();
+    final ODataBatchResponse response = batchManager.getResponse();
 
     // This should be 202 for service version <= 3.0 and 200 for service version >= 4.0 but it seems that
     // many service implementations are not fully compliant in this respect.
@@ -73,24 +78,54 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
       throw new IllegalStateException("Operation failed");
     }
 
+    final List<ODataRuntimeException> result = new ArrayList<ODataRuntimeException>();
+
     if (!items.isEmpty()) {
-      final Iterator<ODataBatchResponseItem> iter = response.getBody();
-      if (!iter.hasNext()) {
+      final Iterator<ODataBatchResponseItem> batchResItor = response.getBody();
+      if (!batchResItor.hasNext()) {
         throw new IllegalStateException("Unexpected operation result");
       }
 
-      final ODataBatchResponseItem item = iter.next();
+      final ODataBatchResponseItem item = batchResItor.next();
       if (!(item instanceof ODataChangesetResponseItem)) {
         throw new IllegalStateException("Unexpected batch response item " + item.getClass().getSimpleName());
       }
 
       final ODataChangesetResponseItem chgres = (ODataChangesetResponseItem) item;
 
-      for (Integer changesetItemId : items.sortedValues()) {
+      for (final Iterator<Integer> itor = items.sortedValues().iterator(); itor.hasNext();) {
+        final Integer changesetItemId = itor.next();
         LOG.debug("Expected changeset item {}", changesetItemId);
+
         final ODataResponse res = chgres.next();
         if (res.getStatusCode() >= 400) {
-          throw new IllegalStateException("Transaction failed: " + res.getStatusMessage());
+          if (factory.getClient().getConfiguration().isContinueOnError()) {
+            result.add(ODataErrorResponseChecker.checkResponse(
+                    factory.getClient(),
+                    new StatusLine() {
+
+                      @Override
+                      public ProtocolVersion getProtocolVersion() {
+                        return null;
+                      }
+
+                      @Override
+                      public int getStatusCode() {
+                        return res.getStatusCode();
+                      }
+
+                      @Override
+                      public String getReasonPhrase() {
+                        return res.getStatusMessage();
+                      }
+                    },
+                    res.getRawResponse(),
+                    ((ODataRequest) request).getAccept()));
+          } else {
+            throw new IllegalStateException("Transaction failed: " + res.getStatusMessage());
+          }
+        } else {
+          result.add(null);
         }
 
         final EntityInvocationHandler handler = items.get(changesetItemId);
@@ -107,5 +142,7 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
       }
     }
     response.close();
+
+    return result;
   }
 }

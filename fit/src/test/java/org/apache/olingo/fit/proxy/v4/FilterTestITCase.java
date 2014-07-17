@@ -44,7 +44,7 @@ public class FilterTestITCase extends AbstractTestITCase {
     final People people = container.getPeople();
 
     PersonCollection result =
-            people.filter(containerFactory.getClient().getFilterFactory().lt("PersonID", 3)).execute();
+            people.filter(service.getClient().getFilterFactory().lt("PersonID", 3)).execute();
 
     // 1. check that result looks as expected
     assertEquals(2, result.size());
@@ -77,9 +77,9 @@ public class FilterTestITCase extends AbstractTestITCase {
   @Test
   public void search() {
     final Search<Person, PersonCollection> search = container.getPeople().createSearch().setSearch(
-            containerFactory.getClient().getSearchFactory().or(
-            containerFactory.getClient().getSearchFactory().literal("Bob"),
-            containerFactory.getClient().getSearchFactory().literal("Jill")));
+            service.getClient().getSearchFactory().or(
+            service.getClient().getSearchFactory().literal("Bob"),
+            service.getClient().getSearchFactory().literal("Jill")));
 
     final PersonCollection result = search.getResult();
     assertFalse(result.isEmpty());

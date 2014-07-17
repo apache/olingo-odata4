@@ -85,6 +85,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import javax.ws.rs.BadRequestException;
 
 @Service
 @Path("/V40/Static.svc")
@@ -301,7 +302,7 @@ public class V4Services extends AbstractServices {
               addChangesetItemIntro(chbos, lastContebtID, cboundary);
 
               res = bodyPartRequest(new MimeBodyPart(part.getInputStream()), references);
-              if (res == null || res.getStatus() >= 400) {
+              if (!continueOnError && (res == null || res.getStatus() >= 400)) {
                 throw new Exception("Failure processing changeset");
               }
 
@@ -372,7 +373,7 @@ public class V4Services extends AbstractServices {
     return StringUtils.isBlank(filter) && StringUtils.isBlank(search)
             ? NumberUtils.isNumber(type)
             ? super.getEntityInternal(
-            uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null)
+                    uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null)
             : super.getEntitySet(accept, "People", type)
             : super.getEntitySet(uriInfo, accept, "People", top, skip, format, count, filter, orderby, skiptoken);
   }
@@ -555,7 +556,7 @@ public class V4Services extends AbstractServices {
       final Link link = new LinkImpl();
       link.setRel("edit");
       link.setHref(URI.create(
-              Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) 
+              Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL)
               + "ProductDetails(ProductID=6,ProductDetailID=1)").toASCIIString());
       entry.setEditLink(link);
 
@@ -753,13 +754,31 @@ public class V4Services extends AbstractServices {
 
       return utils.getValue().createResponse(
               FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
-              + File.separatorChar + filename, utils.getKey()),
+                      + File.separatorChar + filename, utils.getKey()),
               null,
               utils.getKey());
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
       return xml.createFaultResponse(accept, e);
     }
+  }
+
+  @POST
+  @Path("/People")
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
+  public Response postPeople(
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
+          final String entity) {
+
+    if ("{\"@odata.type\":\"#Microsoft.Test.OData.Services.ODataWCFService.Person\"}".equals(entity)) {
+      return xml.createFaultResponse(accept, new BadRequestException());
+    }
+
+    return super.postNewEntity(uriInfo, accept, contentType, prefer, "People", entity);
   }
 
   @Override
@@ -775,9 +794,9 @@ public class V4Services extends AbstractServices {
 
     final Response response =
             getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-            accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY);
+                    accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY);
     return response.getStatus() >= 400
-            ? postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
+            ? super.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
             : super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
   }
 
@@ -1001,7 +1020,7 @@ public class V4Services extends AbstractServices {
       // 1. Fetch the contained entity to be removed
       final InputStream entry = FSManager.instance(version).
               readFile(containedPath(entityId, containedEntitySetName).
-              append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
+                      append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
       final ResWrap<Entity> container = atomDeserializer.toEntity(entry);
 
       // 2. Remove the contained entity
@@ -1275,7 +1294,7 @@ public class V4Services extends AbstractServices {
 
       final ResWrap<Property> result = new ResWrap<Property>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-              + "Microsoft.Test.OData.Services.ODataWCFService.Address"),
+                      + "Microsoft.Test.OData.Services.ODataWCFService.Address"),
               null,
               entity.getProperty("address"));
 

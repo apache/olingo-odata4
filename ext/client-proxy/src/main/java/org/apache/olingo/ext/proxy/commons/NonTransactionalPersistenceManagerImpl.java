@@ -18,19 +18,21 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.ext.proxy.Service;
-
-import java.util.Map;
 
 /**
  * {@link org.apache.olingo.ext.proxy.api.PersistenceManager} implementation not using OData batch requests: any
- * read-write operation will be sent separately to the OData service when calling <tt>flush()</tt>; any intermediate
- * error will be logged and ignored.
+ * read-write operation will be sent separately to the OData service when calling <tt>flush()</tt>.
  */
 public class NonTransactionalPersistenceManagerImpl extends AbstractPersistenceManager {
 
@@ -41,8 +43,13 @@ public class NonTransactionalPersistenceManagerImpl extends AbstractPersistenceM
   }
 
   @Override
-  protected void doFlush(final PersistenceChanges changes, final TransactionItems items) {
-    for (Map.Entry<ODataBatchableRequest, EntityInvocationHandler> entry : changes.getChanges().entrySet()) {
+  protected List<ODataRuntimeException> doFlush(final PersistenceChanges changes, final TransactionItems items) {
+    final List<ODataRuntimeException> result = new ArrayList<ODataRuntimeException>();
+
+    for (final Iterator<Map.Entry<ODataBatchableRequest, EntityInvocationHandler>> itor =
+            changes.getChanges().entrySet().iterator(); itor.hasNext();) {
+
+      final Map.Entry<ODataBatchableRequest, EntityInvocationHandler> entry = itor.next();
       try {
         final ODataResponse response = ((ODataBasicRequest<?>) entry.getKey()).execute();
 
@@ -53,9 +60,19 @@ public class NonTransactionalPersistenceManagerImpl extends AbstractPersistenceM
           entry.getValue().setEntity(((ODataEntityUpdateResponse<?>) response).getBody());
           LOG.debug("Upgrade updated object '{}'", entry.getValue());
         }
-      } catch (Exception e) {
+
+        result.add(null);
+      } catch (ODataRuntimeException e) {
         LOG.error("While performing {}", entry.getKey().getURI(), e);
+
+        if (factory.getClient().getConfiguration().isContinueOnError()) {
+          result.add(e);
+        } else {
+          throw e;
+        }
       }
     }
+
+    return result;
   }
 }

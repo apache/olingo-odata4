@@ -51,7 +51,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void getPerson() {
-    final Address address = container.getPeople().newPerson().factory().newHomeAddress();
+    final Address address = container.getPeople().getByKey(1).factory().newHomeAddress();
     address.setStreet("1 Microsoft Way");
     address.setPostalCode("98052");
     address.setCity("London");
@@ -80,7 +80,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void resetBossAddress() {
-    final Address address = container.getPeople().newPerson().factory().newHomeAddress();
+    final Address address = container.getPeople().getByKey(1).factory().newHomeAddress();
     address.setStreet("Via Le Mani Dal Naso, 123");
     address.setPostalCode("Tollo");
     address.setCity("66010");

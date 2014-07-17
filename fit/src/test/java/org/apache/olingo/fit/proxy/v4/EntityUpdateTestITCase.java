@@ -55,7 +55,7 @@ import static org.junit.Assert.assertTrue;
 public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   protected Service<EdmEnabledODataClient> getContainerFactory() {
-    return containerFactory;
+    return service;
   }
 
   protected InMemoryEntities getContainer() {
