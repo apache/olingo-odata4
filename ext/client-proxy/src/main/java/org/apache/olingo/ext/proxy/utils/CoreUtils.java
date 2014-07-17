@@ -611,9 +611,17 @@ public final class CoreUtils {
     }
 
     try {
-      final List<String> pkgs = IOUtils.readLines(
-              Thread.currentThread().getContextClassLoader().getResourceAsStream(proxyClassListFile),
-              Constants.UTF8);
+      java.io.InputStream fileStream = 
+    	  Thread.currentThread().getContextClassLoader().getResourceAsStream(proxyClassListFile);
+      if(fileStream == null) {
+        // maven can easily build those files to META-INF/ folder, but if user wants to use eclipse ADT,
+        //   not maven, they can't do that. the app will be broken by exception at runtime.
+        // so here: when reading from META-INF/ folder fails, then try reading those 3 files from 
+        //   'asserts/META-INF/' folder, where eclipse ADT is able to place those 3 files.
+        fileStream =
+          Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/"+proxyClassListFile);
+      }
+      final List<String> pkgs = IOUtils.readLines(fileStream, Constants.UTF8);
 
       for (String pkg : pkgs) {
         final Class<?> clazz = Class.forName(pkg);
