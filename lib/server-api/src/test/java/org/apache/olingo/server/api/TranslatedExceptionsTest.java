@@ -33,6 +33,11 @@ public class TranslatedExceptionsTest {
   private static final String ONEPARAM = "ONEPARAM";
   private static final String TWOPARAM = "TWOPARAM";
 
+  public TranslatedExceptionsTest() {
+    // for test reason we assume a system with a default Locale.ENGLISH
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @Test
   public void basic() {
     ODataTranslatedException exp = new ODataTranslatedException(DEV, BASIC);
