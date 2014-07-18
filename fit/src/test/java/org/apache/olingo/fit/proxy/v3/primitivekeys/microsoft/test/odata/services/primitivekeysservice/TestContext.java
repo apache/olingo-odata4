@@ -19,7 +19,9 @@
 
 package org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.PrimitiveKeysService")
 @org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "TestContext",
@@ -65,6 +67,5 @@ public interface TestContext extends PersistenceManager {
 
   public interface Operations {
   
-    }
-
-  }
+    }   
+}

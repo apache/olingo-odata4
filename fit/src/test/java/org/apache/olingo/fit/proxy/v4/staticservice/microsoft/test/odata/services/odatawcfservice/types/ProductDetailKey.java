@@ -19,8 +19,10 @@
 
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
-import org.apache.olingo.ext.proxy.api.AbstractEntityKey;
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
+import org.apache.olingo.ext.proxy.api.AbstractEntityKey;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 @org.apache.olingo.ext.proxy.api.annotations.CompoundKey
 public class ProductDetailKey extends AbstractEntityKey {

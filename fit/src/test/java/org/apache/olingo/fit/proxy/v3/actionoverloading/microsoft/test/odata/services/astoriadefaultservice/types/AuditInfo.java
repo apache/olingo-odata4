@@ -19,10 +19,13 @@
 
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
+
+
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "AuditInfo")
 public interface AuditInfo 
-    extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.SingleQuery<AuditInfo> {
+    extends org.apache.olingo.ext.proxy.api.ComplexType,org.apache.olingo.ext.proxy.api.SingleQuery<AuditInfo> {
 
 
 
@@ -46,13 +49,4 @@ public interface AuditInfo
     void setConcurrency(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _concurrency);
 
         
-
-    ComplexFactory factory();
-
-    interface ComplexFactory {
-         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Concurrency",
-                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo")
-         org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newConcurrency();
-
-    }
 }

@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
-import org.apache.olingo.ext.proxy.api.AbstractSingleton;
-
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.api.EntityCollection;
+import org.apache.olingo.ext.proxy.api.AbstractSingleton;
 
 public class SingletonInvocationHandler<
-        T extends Serializable, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
+        T extends Serializable, KEY extends Serializable, EC extends EntityCollection<T>>
         extends AbstractInvocationHandler
         implements AbstractSingleton<T, KEY, EC> {
 
@@ -33,18 +33,17 @@ public class SingletonInvocationHandler<
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static SingletonInvocationHandler getInstance(
-          final Class<?> ref, final EntityContainerInvocationHandler containerHandler, final String singletonName) {
+          final Class<?> ref, final Service<?> service, final String singletonName) {
 
-    return new SingletonInvocationHandler(ref, containerHandler, singletonName);
+    return new SingletonInvocationHandler(ref, service, singletonName);
   }
   private final EntitySetInvocationHandler<?, ?, ?> entitySetHandler;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private SingletonInvocationHandler(
-          final Class<?> ref, final EntityContainerInvocationHandler containerHandler, final String singletonName) {
+  private SingletonInvocationHandler(final Class<?> ref, final Service<?> service, final String singletonName) {
 
-    super(containerHandler);
-    this.entitySetHandler = EntitySetInvocationHandler.getInstance(ref, containerHandler, singletonName);
+    super(service);
+    this.entitySetHandler = EntitySetInvocationHandler.getInstance(ref, service, singletonName);
   }
 
   @Override

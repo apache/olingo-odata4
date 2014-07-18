@@ -28,7 +28,7 @@ import java.io.Serializable;
  * @param <T> search result type
  * @param <EC>
  */
-public interface Search<T extends Serializable, EC extends AbstractEntityCollection<T>> extends Serializable {
+public interface Search<T extends Serializable, EC extends EntityCollection<T>> extends Serializable {
 
   /**
    * Sets the <tt>$search</tt> expression for this search.

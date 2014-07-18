@@ -1,31 +1,31 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Employee;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Message;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .MessageKey;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageKey;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Order;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .OrderCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.OrderCollection;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -33,10 +33,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-//CHECKSTYLE:OFF (Maven checkstyle)
 //CHECKSTYLE:ON (Maven checkstyle)
-
 /**
  * This is the unit test class to check entity create operations.
  */
@@ -83,13 +80,14 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   public void createEmployee() {
     final Integer id = 101;
 
-    final Employee employee = container.getPerson().newEmployee();
+    final Employee employee = service.newEntity(Employee.class);
     employee.setPersonId(id);
     employee.setName("sample employee from proxy");
     employee.setManagersPersonId(-9918);
     employee.setSalary(2147483647);
     employee.setTitle("CEO");
 
+    container.getPerson().add(employee);
     container.flush();
 
     Employee actual = container.getPerson().getByKey(id, Employee.class).load();
@@ -129,7 +127,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     Customer actual = readCustomer(container, id);
     checkSampleCustomerProfile(actual, id, sampleName);
-    assertEquals(16, actual.getInfo().getCustomerInfoId(), 0);
+    assertEquals(16, actual.getInfo().load().getCustomerInfoId(), 0);
 
     container.getCustomer().delete(actual.getCustomerId());
     container.flush();
@@ -146,13 +144,13 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     final String sampleName = "sample customer from proxy with back navigation";
     final Integer id = 102;
 
-    Order order = container.getOrder().newOrder();
+    Order order = service.newEntity(Order.class);
     order.setCustomerId(id);
     order.setOrderId(id); // same id ...
 
     final Customer customer = getSampleCustomerProfile(id, sampleName, container);
 
-    final OrderCollection orders = container.getOrder().newOrderCollection();
+    final OrderCollection orders = service.newEntityCollection(OrderCollection.class);
     orders.add(order);
 
     customer.setOrders(orders);
@@ -170,8 +168,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     assertEquals(id, actual.getOrders().iterator().next().getCustomerId());
 
     order = container.getOrder().getByKey(id);
-    assertNotNull(order);
-    assertEquals(id, order.getCustomer().getCustomerId());
+    assertEquals(id, order.getCustomer().load().getCustomerId());
 
     container.getOrder().delete(actual.getOrders());
     container.flush();
@@ -197,7 +194,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void multiKey() {
-    Message message = container.getMessage().newMessage();
+    Message message = service.newEntity(Message.class);
     message.setMessageId(100);
     message.setFromUsername("fromusername");
     message.setToUsername("myusername");
@@ -205,6 +202,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     message.setSubject("test message");
     message.setBody("test");
 
+    container.getMessage().add(message);
     container.flush();
 
     MessageKey key = new MessageKey();

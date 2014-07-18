@@ -19,16 +19,13 @@
 
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 
-@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "PageView")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "PageView", container = "Microsoft.Test.OData.Services.AstoriaDefaultService.DefaultContainer")
 public interface PageView 
   extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PageView, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PageViewCollection, PageView>, AbstractEntitySet<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PageView, java.lang.Integer, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PageViewCollection> {
-
-    org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PageView newPageView();
-    org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PageViewCollection newPageViewCollection();
-    org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ProductPageView newProductPageView();
-    org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ProductPageViewCollection newProductPageViewCollection();
 }

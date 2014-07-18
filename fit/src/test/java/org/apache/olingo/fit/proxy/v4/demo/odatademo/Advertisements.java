@@ -19,14 +19,13 @@
 
 package org.apache.olingo.fit.proxy.v4.demo.odatademo;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 
-@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Advertisements")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Advertisements", container = "ODataDemo.DemoService")
 public interface Advertisements 
   extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AdvertisementCollection, Advertisements>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement, java.util.UUID, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AdvertisementCollection> {
-
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement newAdvertisement();
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AdvertisementCollection newAdvertisementCollection();
 }

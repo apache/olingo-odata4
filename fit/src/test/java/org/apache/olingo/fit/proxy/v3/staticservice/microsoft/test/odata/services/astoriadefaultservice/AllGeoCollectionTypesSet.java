@@ -19,16 +19,13 @@
 
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 
-@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "AllGeoCollectionTypesSet")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "AllGeoCollectionTypesSet", container = "Microsoft.Test.OData.Services.AstoriaDefaultService.DefaultContainer")
 public interface AllGeoCollectionTypesSet 
   extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypesCollection, AllGeoCollectionTypesSet>, AbstractEntitySet<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes, java.lang.Integer, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypesCollection> {
-
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes newAllSpatialCollectionTypes();
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypesCollection newAllSpatialCollectionTypesCollection();
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes_Simple newAllSpatialCollectionTypes_Simple();
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes_SimpleCollection newAllSpatialCollectionTypes_SimpleCollection();
 }

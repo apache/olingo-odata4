@@ -18,11 +18,12 @@
  */
 
 package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types;
-
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.client.api.edm.ConcurrencyMode;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV3")
@@ -31,7 +32,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Key;
         hasStream = false,
         isAbstract = false)
 public interface RowIndex 
-  extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<RowIndex>,AbstractOpenType {
+  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<RowIndex>,AbstractOpenType {
 
 
     
@@ -71,11 +72,6 @@ public interface RowIndex
     void setRows(org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.IndexedRowCollection _rows);
     
 
-
-    ComplexFactory factory();
-
-    interface ComplexFactory {
-    }
 
     Annotations annotations();
 

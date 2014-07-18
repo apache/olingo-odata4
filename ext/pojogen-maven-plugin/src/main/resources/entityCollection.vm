@@ -18,15 +18,14 @@
  *#
 package ${package};
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 #foreach($ns in $namespaces)
 import #if($basePackage)${basePackage}.#end${ns}.*;
-import #if($basePackage)${basePackage}.#end${ns}.types.*;
 #end
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -44,11 +43,12 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 #set ( $javaEntityType = $utility.getJavaType($entityType) )
 
 public interface $utility.capitalize($entityType.Name)Collection extends 
-    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<$javaEntityType, ${javaEntityType}Collection, ${javaEntityType}Collection>, AbstractEntityCollection<$javaEntityType> {
+    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<$javaEntityType, ${javaEntityType}Collection, ${javaEntityType}Collection>, org.apache.olingo.ext.proxy.api.EntityCollection<$javaEntityType> {
 #set( $functions = $utility.getFunctionsBoundTo($entityType.Name, true) )
 #set( $actions = $utility.getActionsBoundTo($entityType.Name, true) )
 #if( $functions.size() > 0 || $actions.size() > 0 )

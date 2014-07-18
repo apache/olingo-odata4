@@ -19,10 +19,13 @@
 
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
+
+
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "ConcurrencyInfo")
 public interface ConcurrencyInfo 
-    extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.SingleQuery<ConcurrencyInfo> {
+    extends org.apache.olingo.ext.proxy.api.ComplexType,org.apache.olingo.ext.proxy.api.SingleQuery<ConcurrencyInfo> {
 
 
 
@@ -39,9 +42,4 @@ public interface ConcurrencyInfo
     void setQueriedDateTime(java.sql.Timestamp _queriedDateTime);
 
     
-
-    ComplexFactory factory();
-
-    interface ComplexFactory {
-    }
 }

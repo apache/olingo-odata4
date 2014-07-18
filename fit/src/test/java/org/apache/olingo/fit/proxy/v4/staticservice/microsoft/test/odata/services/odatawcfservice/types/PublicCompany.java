@@ -18,12 +18,13 @@
  */
 
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
-
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
-import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.client.api.edm.ConcurrencyMode;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
@@ -33,7 +34,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Key;
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.ODataWCFService.Company")
 public interface PublicCompany 
-  extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company,AbstractOpenType {
+  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company,AbstractOpenType {
 
   @Override
   PublicCompany load();
@@ -248,15 +249,6 @@ public interface PublicCompany
     
         }
 
-    ComplexFactory factory();
-
-    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company.ComplexFactory{
-         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Address",
-                   type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
-         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newAddress();
-
-    }
-
     Annotations annotations();
 
     interface Annotations            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company.Annotations{
@@ -330,9 +322,6 @@ public interface PublicCompany
     @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Assets", contained = true)
     interface Assets 
       extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Asset, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AssetCollection, Assets>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Asset, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AssetCollection> {
-
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Asset newAsset();
-        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AssetCollection newAssetCollection();
-        }
+    }
 
   }

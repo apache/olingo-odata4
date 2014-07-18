@@ -18,11 +18,12 @@
  */
 
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
-
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.client.api.edm.ConcurrencyMode;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 @KeyRef(OrderLineKey.class)
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
@@ -32,7 +33,7 @@ import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.AstoriaDefaultService.OrderLine")
 public interface BackOrderLine 
-  extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine {
+  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine {
 
   @Override
   BackOrderLine load();
@@ -176,11 +177,6 @@ public interface BackOrderLine
     void setProduct(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product _product);
     
 
-
-    ComplexFactory factory();
-
-    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine.ComplexFactory{
-    }
 
     Annotations annotations();
 

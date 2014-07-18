@@ -19,7 +19,9 @@
 
 package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.Annotatable;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
@@ -27,7 +29,7 @@ import org.apache.olingo.ext.proxy.api.Annotatable;
         isOpenType = false,
         isAbstract = false)
 public interface ContactDetails 
-    extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.SingleQuery<ContactDetails> {
+    extends org.apache.olingo.ext.proxy.api.ComplexType,org.apache.olingo.ext.proxy.api.SingleQuery<ContactDetails> {
 
 
 
@@ -235,11 +237,6 @@ public interface ContactDetails
 
     
 
-
-    ComplexFactory factory();
-
-    interface ComplexFactory {
-    }
 
     Annotations annotations();
 

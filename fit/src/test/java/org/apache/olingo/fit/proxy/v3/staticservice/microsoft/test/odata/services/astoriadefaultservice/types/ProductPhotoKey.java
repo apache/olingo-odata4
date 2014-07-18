@@ -19,8 +19,10 @@
 
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
-import org.apache.olingo.ext.proxy.api.AbstractEntityKey;
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
+import org.apache.olingo.ext.proxy.api.AbstractEntityKey;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 @org.apache.olingo.ext.proxy.api.annotations.CompoundKey
 public class ProductPhotoKey extends AbstractEntityKey {

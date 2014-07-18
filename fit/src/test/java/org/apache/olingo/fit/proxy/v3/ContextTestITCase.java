@@ -1,35 +1,34 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .ContactDetails;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .CustomerInfo;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfo;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Order;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .OrderCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.OrderCollection;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone;
 import org.junit.Test;
 
@@ -47,8 +46,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-//CHECKSTYLE:OFF (Maven checkstyle)
 //CHECKSTYLE:ON (Maven checkstyle)
 
 /**
@@ -58,13 +55,16 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void attachDetachNewEntity() {
-    final Customer customer1 = container.getCustomer().newCustomer();
-    final Customer customer2 = container.getCustomer().newCustomer();
+    final Customer customer1 = service.newEntity(Customer.class);
+    final Customer customer2 = service.newEntity(Customer.class);
 
     final EntityInvocationHandler source1 =
             (EntityInvocationHandler) Proxy.getInvocationHandler(customer1);
     final EntityInvocationHandler source2 =
             (EntityInvocationHandler) Proxy.getInvocationHandler(customer2);
+
+    container.getCustomer().add(customer1);
+    container.getCustomer().add(customer2);
 
     assertTrue(service.getContext().entityContext().isAttached(source1));
     assertTrue(service.getContext().entityContext().isAttached(source2));
@@ -125,22 +125,20 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void linkTargetExisting() {
-    final Customer customer = container.getCustomer().newCustomer();
+    final Customer customer = service.newEntity(Customer.class);
     final CustomerInfo customerInfo = container.getCustomerInfo().getByKey(11);
 
     customer.setInfo(customerInfo);
-
     assertNotNull(customer.getInfo());
 
-    final EntityInvocationHandler source =
-            (EntityInvocationHandler) Proxy.getInvocationHandler(customer);
-    final EntityInvocationHandler target =
-            (EntityInvocationHandler) Proxy.getInvocationHandler(customerInfo);
+    container.getCustomer().add(customer);
+
+    final EntityInvocationHandler source = (EntityInvocationHandler) Proxy.getInvocationHandler(customer);
+    final EntityInvocationHandler target = (EntityInvocationHandler) Proxy.getInvocationHandler(customerInfo);
 
     assertTrue(service.getContext().entityContext().isAttached(source));
     assertEquals(AttachedEntityStatus.NEW, service.getContext().entityContext().getStatus(source));
-    assertTrue(service.getContext().entityContext().isAttached(target));
-    assertEquals(AttachedEntityStatus.LINKED, service.getContext().entityContext().getStatus(target));
+    assertFalse(service.getContext().entityContext().isAttached(target));
 
     checkUnidirectional("Info", source, "Customer", target, false);
 
@@ -154,21 +152,17 @@ public class ContextTestITCase extends AbstractTestITCase {
   public void linkSourceExisting() {
     final Customer customer = container.getCustomer().getByKey(-10);
 
-    final CustomerInfo customerInfo = container.getCustomerInfo().newCustomerInfo();
+    final CustomerInfo customerInfo = service.newEntity(CustomerInfo.class);
 
     customer.setInfo(customerInfo);
-
     assertNotNull(customer.getInfo());
 
-    final EntityInvocationHandler source =
-            (EntityInvocationHandler) Proxy.getInvocationHandler(customer);
-    final EntityInvocationHandler target =
-            (EntityInvocationHandler) Proxy.getInvocationHandler(customerInfo);
+    final EntityInvocationHandler source = (EntityInvocationHandler) Proxy.getInvocationHandler(customer);
+    final EntityInvocationHandler target = (EntityInvocationHandler) Proxy.getInvocationHandler(customerInfo);
 
     assertTrue(service.getContext().entityContext().isAttached(source));
     assertEquals(AttachedEntityStatus.CHANGED, service.getContext().entityContext().getStatus(source));
-    assertTrue(service.getContext().entityContext().isAttached(target));
-    assertEquals(AttachedEntityStatus.NEW, service.getContext().entityContext().getStatus(target));
+    assertFalse(service.getContext().entityContext().isAttached(target));
 
     checkUnidirectional("Info", source, "Customer", target, false);
 
@@ -184,18 +178,14 @@ public class ContextTestITCase extends AbstractTestITCase {
     final CustomerInfo customerInfo = container.getCustomerInfo().getByKey(12);
 
     customer.setInfo(customerInfo);
-
     assertNotNull(customer.getInfo());
 
-    final EntityInvocationHandler source =
-            (EntityInvocationHandler) Proxy.getInvocationHandler(customer);
-    final EntityInvocationHandler target =
-            (EntityInvocationHandler) Proxy.getInvocationHandler(customerInfo);
+    final EntityInvocationHandler source = (EntityInvocationHandler) Proxy.getInvocationHandler(customer);
+    final EntityInvocationHandler target = (EntityInvocationHandler) Proxy.getInvocationHandler(customerInfo);
 
     assertTrue(service.getContext().entityContext().isAttached(source));
     assertEquals(AttachedEntityStatus.CHANGED, service.getContext().entityContext().getStatus(source));
-    assertTrue(service.getContext().entityContext().isAttached(target));
-    assertEquals(AttachedEntityStatus.LINKED, service.getContext().entityContext().getStatus(target));
+    assertFalse(service.getContext().entityContext().isAttached(target));
 
     checkUnidirectional("Info", source, "Customer", target, false);
 
@@ -207,12 +197,12 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void linkEntitySet() {
-    final Customer customer = container.getCustomer().newCustomer();
+    final Customer customer = service.newEntity(Customer.class);
 
-    final OrderCollection toBeLinked = container.getOrder().newOrderCollection();
-    toBeLinked.add(container.getOrder().newOrder());
-    toBeLinked.add(container.getOrder().newOrder());
-    toBeLinked.add(container.getOrder().newOrder());
+    final OrderCollection toBeLinked = service.newEntityCollection(OrderCollection.class);
+    toBeLinked.add(service.newEntity(Order.class));
+    toBeLinked.add(service.newEntity(Order.class));
+    toBeLinked.add(service.newEntity(Order.class));
 
     customer.setOrders(toBeLinked);
     assertNotNull(customer.getOrders());
@@ -220,12 +210,15 @@ public class ContextTestITCase extends AbstractTestITCase {
 
     final EntityInvocationHandler source = (EntityInvocationHandler) Proxy.getInvocationHandler(customer);
 
+    container.getCustomer().add(customer);
+
     assertTrue(service.getContext().entityContext().isAttached(source));
     assertEquals(AttachedEntityStatus.NEW, service.getContext().entityContext().getStatus(source));
     assertEquals(3, ((Collection) (source.getLinkChanges().entrySet().iterator().next().getValue())).size());
 
     for (Order order : toBeLinked) {
       final EntityInvocationHandler target = (EntityInvocationHandler) Proxy.getInvocationHandler(order);
+      container.getOrder().add(order);
 
       assertTrue(service.getContext().entityContext().isAttached(target));
       assertEquals(AttachedEntityStatus.NEW, service.getContext().entityContext().getStatus(target));
@@ -244,15 +237,15 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void addProperty() {
-    final Customer customer = container.getCustomer().newCustomer();
+    final Customer customer = service.newEntity(Customer.class);
     customer.setCustomerId(100);
 
-    final ContactDetails cd = customer.factory().newPrimaryContactInfo();
+    final ContactDetails cd = service.newComplex(ContactDetails.class);
     customer.setPrimaryContactInfo(cd);
 
     cd.setAlternativeNames(Arrays.asList("alternative1", "alternative2"));
 
-    final ContactDetails bcd = customer.factory().newBackupContactInfo();
+    final ContactDetails bcd = service.newComplex(ContactDetails.class);
     customer.setBackupContactInfo(Collections.<ContactDetails>singletonList(bcd));
 
     bcd.setAlternativeNames(Arrays.asList("alternative3", "alternative4"));
@@ -263,6 +256,8 @@ public class ContextTestITCase extends AbstractTestITCase {
     assertTrue(customer.getPrimaryContactInfo().getAlternativeNames().contains("alternative1"));
     assertEquals(2, customer.getBackupContactInfo().iterator().next().getAlternativeNames().size());
     assertTrue(customer.getBackupContactInfo().iterator().next().getAlternativeNames().contains("alternative4"));
+
+    container.getCustomer().add(customer);
 
     final EntityInvocationHandler source = (EntityInvocationHandler) Proxy.getInvocationHandler(customer);
 
@@ -319,9 +314,16 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void checkContextInCaseOfErrors() {
-    final Login login = container.getLogin().newLogin();
+    service.getContext().entityContext().detachAll();
+
+    final Login login = service.newEntity(Login.class);
 
     final EntityInvocationHandler handler = (EntityInvocationHandler) Proxy.getInvocationHandler(login);
+    assertFalse(service.getContext().entityContext().isAttached(handler));
+
+    container.flush(); // Login will be ignored because not added to an entity set.
+
+    container.getLogin().add(login); // now has been added
 
     assertTrue(service.getContext().entityContext().isAttached(handler));
 
@@ -356,7 +358,7 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void flushTest() {
-    Customer customer = container.getCustomer().newCustomer();
+    Customer customer = service.newEntity(Customer.class);
     customer.setCustomerId(300);
     customer.setName("samplename");
 
@@ -365,9 +367,9 @@ public class ContextTestITCase extends AbstractTestITCase {
     keys.add(-201);
     keys.add(-202);
 
-    final OrderCollection toBeLinked = container.getOrder().newOrderCollection();
+    final OrderCollection toBeLinked = service.newEntityCollection(OrderCollection.class);
     for (Integer key : keys) {
-      final Order order = container.getOrder().newOrder();
+      final Order order = service.newEntity(Order.class);
       order.setOrderId(key);
       order.setCustomerId(300);
       order.setCustomer(customer);
@@ -380,12 +382,12 @@ public class ContextTestITCase extends AbstractTestITCase {
     customerInfo.setInformation("some new info ...");
     customer.setInfo(customerInfo);
 
-    final ContactDetails cd = customer.factory().newPrimaryContactInfo();
+    final ContactDetails cd = service.newComplex(ContactDetails.class);
     cd.setAlternativeNames(Arrays.asList("alternative1", "alternative2"));
     cd.setEmailBag(Collections.<String>singleton("myemail@mydomain.org"));
     cd.setMobilePhoneBag(Collections.<Phone>emptySet());
 
-    final ContactDetails bcd = customer.factory().newBackupContactInfo();
+    final ContactDetails bcd = service.newComplex(ContactDetails.class);
     bcd.setAlternativeNames(Arrays.asList("alternative3", "alternative4"));
     bcd.setEmailBag(Collections.<String>emptySet());
     bcd.setMobilePhoneBag(Collections.<Phone>emptySet());
@@ -393,12 +395,14 @@ public class ContextTestITCase extends AbstractTestITCase {
     customer.setPrimaryContactInfo(cd);
     customer.setBackupContactInfo(Collections.<ContactDetails>singletonList(bcd));
 
+    container.getCustomer().add(customer);
+
     assertTrue(service.getContext().entityContext().
             isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(customerInfo)));
     assertTrue(service.getContext().entityContext().
             isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(customer)));
     for (Order linked : toBeLinked) {
-      assertTrue(service.getContext().entityContext().
+      assertFalse(service.getContext().entityContext().
               isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(linked)));
     }
 

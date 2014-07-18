@@ -19,10 +19,13 @@
 
 package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
+
+
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV3")
 @org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "ContactDetails")
 public interface ContactDetails 
-    extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.SingleQuery<ContactDetails> {
+    extends org.apache.olingo.ext.proxy.api.ComplexType,org.apache.olingo.ext.proxy.api.SingleQuery<ContactDetails> {
 
 
 
@@ -109,9 +112,4 @@ public interface ContactDetails
     void setLong(java.lang.Long _long);
 
     
-
-    ComplexFactory factory();
-
-    interface ComplexFactory {
-    }
 }

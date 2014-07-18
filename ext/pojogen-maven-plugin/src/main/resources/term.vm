@@ -18,13 +18,14 @@
  *#
 package ${package};
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.Term;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 #foreach($ns in $namespaces)
-import #if($basePackage)${basePackage}.#end${ns}.*;
 import #if($basePackage)${basePackage}.#end${ns}.types.*;
 #end
+//CHECKSTYLE:ON (Maven checkstyle)
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("$namespace")
 @org.apache.olingo.ext.proxy.api.annotations.Term(name = "$term.Name",

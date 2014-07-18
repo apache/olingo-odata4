@@ -19,10 +19,13 @@
 
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
+
+
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "Aliases")
 public interface Aliases 
-    extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.SingleQuery<Aliases> {
+    extends org.apache.olingo.ext.proxy.api.ComplexType,org.apache.olingo.ext.proxy.api.SingleQuery<Aliases> {
 
 
 
@@ -32,9 +35,4 @@ public interface Aliases
     void setAlternativeNames(java.util.Collection<java.lang.String> _alternativeNames);
 
     
-
-    ComplexFactory factory();
-
-    interface ComplexFactory {
-    }
 }

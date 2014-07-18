@@ -19,8 +19,10 @@
 
 package org.apache.olingo.fit.proxy.v4.demo.odatademo;
 
-import org.apache.olingo.ext.proxy.api.OperationType;
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
+import org.apache.olingo.ext.proxy.api.OperationType;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("ODataDemo")
 @org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "DemoService",
@@ -55,14 +57,5 @@ public interface DemoService extends PersistenceManager {
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "percentage", type = "Edm.Int32", nullable = false) java.lang.Integer percentage
     );
   
-      }
-
-      ComplexFactory complexFactory();
-
-    interface ComplexFactory {
-          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Address",
-                type = "ODataDemo.Address")
-      org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Address newAddress();
-
-        }
-  }
+      }   
+}

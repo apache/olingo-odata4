@@ -1,36 +1,33 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .ComputerDetail;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .ContactDetails;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComputerDetail;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .CustomerCollection;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .Dimensions;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Employee;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .EmployeeCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.EmployeeCollection;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product;
 import org.junit.Test;
 
@@ -50,8 +47,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-//CHECKSTYLE:OFF (Maven checkstyle)
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public class InvokeTestITCase extends AbstractTestITCase {
@@ -93,13 +88,14 @@ public class InvokeTestITCase extends AbstractTestITCase {
     // 0. create an employee
     final Integer id = 101;
 
-    Employee employee = container.getPerson().newEmployee();
+    Employee employee = service.newEntity(Employee.class);
     employee.setPersonId(id);
     employee.setName("sample employee from proxy");
     employee.setManagersPersonId(-9918);
     employee.setSalary(2147483647);
     employee.setTitle("CEO");
 
+    container.getPerson().add(employee);
     container.flush();
 
     employee = container.getPerson().getByKey(id, Employee.class).load();
@@ -147,16 +143,17 @@ public class InvokeTestITCase extends AbstractTestITCase {
     // 0. create a product
     final Integer id = 101;
 
-    Product product = container.getProduct().newProduct();
+    Product product = service.newEntity(Product.class);
     product.setProductId(id);
     product.setDescription("New product");
 
-    final Dimensions origDimensions = product.factory().newDimensions();
+    final Dimensions origDimensions = service.newComplex(Dimensions.class);
     origDimensions.setDepth(BigDecimal.ZERO);
     origDimensions.setHeight(BigDecimal.ZERO);
     origDimensions.setWidth(BigDecimal.ZERO);
     product.setDimensions(origDimensions);
 
+    container.getProduct().add(product);
     container.flush();
 
     product = container.getProduct().getByKey(id).load();
@@ -168,7 +165,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     try {
       // 1. invoke action bound to the product just created
-      final Dimensions newDimensions = product.factory().newDimensions();
+      final Dimensions newDimensions = service.newComplex(Dimensions.class);
       newDimensions.setDepth(BigDecimal.ONE);
       newDimensions.setHeight(BigDecimal.ONE);
       newDimensions.setWidth(BigDecimal.ONE);
@@ -200,11 +197,12 @@ public class InvokeTestITCase extends AbstractTestITCase {
     purchaseDate.set(Calendar.MONTH, 0);
     purchaseDate.set(Calendar.DAY_OF_MONTH, 1);
 
-    ComputerDetail computerDetail = container.getComputerDetail().newComputerDetail();
+    ComputerDetail computerDetail = service.newEntity(ComputerDetail.class);
     computerDetail.setComputerDetailId(id);
     computerDetail.setSpecificationsBag(Collections.singleton("First spec"));
     computerDetail.setPurchaseDate(new Timestamp(purchaseDate.getTimeInMillis()));
 
+    container.getComputerDetail().add(computerDetail);
     container.flush();
 
     computerDetail = container.getComputerDetail().getByKey(id).load();

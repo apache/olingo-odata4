@@ -19,6 +19,7 @@
 #set( $clsSuffix = ".class" )
 package ${package};
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
@@ -26,7 +27,6 @@ import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.api.OperationType;
 #foreach($ns in $namespaces)
-import #if($basePackage)${basePackage}.#end${ns}.*;
 import #if($basePackage)${basePackage}.#end${ns}.types.*;
 #end
 
@@ -45,6 +45,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("$namespace")
 @org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "$container.Name",
@@ -102,19 +103,5 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
 
   #end
   #end
-  }
-
-  #if( $complexes.size() > 0 )
-    ComplexFactory complexFactory();
-
-    interface ComplexFactory {
-    #foreach($complex in $complexes)
-      #set( $type = "${namespace}.${complex.Name}" )
-      @org.apache.olingo.ext.proxy.api.annotations.Property(name = "$complex.Name",
-                type = "$type")
-      $utility.getJavaType($type) new$utility.capitalize($complex.Name)();
-
-    #end
-    }
-  #end   
+  }   
 }

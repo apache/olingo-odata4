@@ -70,6 +70,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 
 public final class CoreUtils {
 
@@ -655,5 +659,27 @@ public final class CoreUtils {
     }
 
     throw new IllegalArgumentException("Invalid streamed property " + name);
+  }
+
+  public static URI getTargetEntitySetURI(
+          final CommonEdmEnabledODataClient<?> client, final NavigationProperty property) {
+    final Edm edm = client.getCachedEdm();
+
+    final FullQualifiedName containerName =
+            new FullQualifiedName(property.targetSchema(), property.targetContainer());
+
+    final EdmEntityContainer container = edm.getEntityContainer(containerName);
+    final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(client.getServiceRoot());
+
+    if (!container.isDefault()) {
+      final StringBuilder entitySetSegment = new StringBuilder();
+      entitySetSegment.append(container.getFullQualifiedName()).append('.');
+      entitySetSegment.append(property.targetEntitySet());
+      uriBuilder.appendEntitySetSegment(entitySetSegment.toString());
+    } else {
+      uriBuilder.appendEntitySetSegment(property.targetEntitySet());
+    }
+
+    return uriBuilder.build();
   }
 }

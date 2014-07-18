@@ -19,7 +19,9 @@
 
 package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
 @org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "DefaultContainer",
@@ -38,18 +40,5 @@ public interface DefaultContainer extends PersistenceManager {
 
   public interface Operations {
   
-    }
-
-      ComplexFactory complexFactory();
-
-    interface ComplexFactory {
-          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ContactDetails",
-                type = "Microsoft.Test.OData.Services.OpenTypesServiceV4.ContactDetails")
-      org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.ContactDetails newContactDetails();
-
-          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "AccountInfo",
-                type = "Microsoft.Test.OData.Services.OpenTypesServiceV4.AccountInfo")
-      org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.AccountInfo newAccountInfo();
-
-        }
-  }
+    }   
+}

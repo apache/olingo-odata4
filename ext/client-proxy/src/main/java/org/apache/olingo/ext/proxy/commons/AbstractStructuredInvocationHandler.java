@@ -19,18 +19,15 @@
 package org.apache.olingo.ext.proxy.commons;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
-import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinked;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
+import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
-import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
@@ -38,16 +35,19 @@ import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.context.EntityUUID;
+import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
 public abstract class AbstractStructuredInvocationHandler extends AbstractInvocationHandler {
 
@@ -57,6 +57,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
    * Logger.
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractStructuredInvocationHandler.class);
+
+  protected CommonURIBuilder<?> uri;
 
   protected final Class<?> typeRef;
 
@@ -72,10 +74,20 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   protected AbstractStructuredInvocationHandler(
           final Class<?> typeRef,
-          final Object internal,
-          final EntityContainerInvocationHandler containerHandler) {
+          final Service<?> service) {
 
-    super(containerHandler);
+    super(service);
+    this.internal = null;
+    this.typeRef = typeRef;
+    this.entityHandler = null;
+  }
+
+  protected AbstractStructuredInvocationHandler(
+          final Class<?> typeRef,
+          final Object internal,
+          final Service<?> service) {
+
+    super(service);
     this.internal = internal;
     this.typeRef = typeRef;
     this.entityHandler = null;
@@ -86,7 +98,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
           final Object internal,
           final EntityInvocationHandler entityHandler) {
 
-    super(entityHandler == null ? null : entityHandler.containerHandler);
+    super(entityHandler == null ? null : entityHandler.service);
     this.internal = internal;
     this.typeRef = typeRef;
     // prevent memory leak
@@ -123,6 +135,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       return invokeSelfMethod(method, args);
     } else if ("load".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       load();
+      attach(); // attach the current handler
       return proxy;
     } else if ("operations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       final Class<?> returnType = method.getReturnType();
@@ -131,13 +144,6 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
               OperationInvocationHandler.getInstance(getEntityHandler()));
-    } else if ("factory".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
-      final Class<?> returnType = method.getReturnType();
-
-      return Proxy.newProxyInstance(
-              Thread.currentThread().getContextClassLoader(),
-              new Class<?>[] {returnType},
-              ComplexFactoryInvocationHandler.getInstance(getEntityHandler(), this));
     } else if ("annotations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       final Class<?> returnType = method.getReturnType();
 
@@ -164,9 +170,6 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
         // if the getter refers to a property .... get property from wrapped entity
         res = getPropertyValue(property.name(), getter.getGenericReturnType());
       }
-
-      // attach the current handler
-      attach();
 
       return res;
     } else if (method.getName().startsWith("set")) {
@@ -198,9 +201,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   }
 
   protected void attach() {
-    if (entityHandler != null && !getContext().entityContext().isAttached(getEntityHandler())) {
-      getContext().entityContext().attach(getEntityHandler(), AttachedEntityStatus.ATTACHED);
-    }
+    attach(AttachedEntityStatus.ATTACHED, false);
   }
 
   protected void attach(final AttachedEntityStatus status) {
@@ -222,7 +223,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   protected Object retrieveNavigationProperty(final NavigationProperty property, final Method getter) {
     final Class<?> type = getter.getReturnType();
     final Class<?> collItemType;
-    if (AbstractEntityCollection.class.isAssignableFrom(type)) {
+    if (EntityCollection.class.isAssignableFrom(type)) {
       final Type[] eCollParams = ((ParameterizedType) type.getGenericInterfaces()[0]).getActualTypeArguments();
       collItemType = (Class<?>) eCollParams[0];
     } else {
@@ -254,7 +255,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       // navigate
       final URI uri = URIUtils.getURI(getEntityHandler().getEntityURI(), property.name());
 
-      if (AbstractEntityCollection.class.isAssignableFrom(type)) {
+      if (EntityCollection.class.isAssignableFrom(type)) {
         navPropValue = getEntityCollectionProxy(
                 collItemType,
                 type,
@@ -265,20 +266,30 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       } else if (AbstractEntitySet.class.isAssignableFrom(type)) {
         navPropValue = getEntitySetProxy(type, uri);
       } else {
-        final ODataEntityRequest<CommonODataEntity> req = getClient().getRetrieveRequestFactory().getEntityRequest(uri);
-        if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) > 0) {
-          req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
+        URI entitySetURI = CoreUtils.getTargetEntitySetURI(getClient(), property);
+
+        final EntityUUID uuid = new EntityUUID(entitySetURI, collItemType, null);
+        LOG.debug("Ask for '{}({})'", collItemType.getSimpleName(), null);
+
+        EntityInvocationHandler handler = getContext().entityContext().getEntity(uuid);
+
+        if (handler == null) {
+          final CommonODataEntity entity = getClient().getObjectFactory().newEntity(new FullQualifiedName(
+                  collItemType.getAnnotation(Namespace.class).value(), ClassUtils.getEntityTypeName(collItemType)));
+
+          handler = EntityInvocationHandler.getInstance(
+                  entity, URIUtils.getURI(this.uri.build(), property.name()), entitySetURI, collItemType, service);
+
+        } else if (getContext().entityContext().getStatus(handler) == AttachedEntityStatus.DELETED) {
+          // object deleted
+          LOG.debug("Object '{}({})' has been deleted", collItemType.getSimpleName(), uuid);
+          handler = null;
         }
 
-        final ODataRetrieveResponse<CommonODataEntity> res = req.execute();
-
-        navPropValue = getEntityProxy(
-                res.getBody(),
-                property.targetContainer(),
-                getClient().newURIBuilder().appendEntitySetSegment(property.targetEntitySet()).build(),
-                type,
-                res.getETag(),
-                true);
+        navPropValue = handler == null ? null : Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[] {collItemType},
+                handler);
       }
     }
 
@@ -297,26 +308,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       getContext().entityContext().attach(getEntityHandler(), AttachedEntityStatus.CHANGED);
     }
 
-    // 2) attach the target entity handlers
-    for (Object link : AbstractEntityCollection.class.isAssignableFrom(value.getClass())
-            ? (AbstractEntityCollection) value : Collections.singleton(value)) {
-
-      final InvocationHandler etih = Proxy.getInvocationHandler(link);
-      if (!(etih instanceof EntityInvocationHandler)) {
-        throw new IllegalArgumentException("Invalid argument type");
-      }
-
-      final EntityInvocationHandler linkedHandler = (EntityInvocationHandler) etih;
-      if (!linkedHandler.getTypeRef().isAnnotationPresent(EntityType.class)) {
-        throw new IllegalArgumentException("Invalid argument type " + linkedHandler.getTypeRef().getSimpleName());
-      }
-
-      if (!getContext().entityContext().isAttached(linkedHandler)) {
-        getContext().entityContext().attach(linkedHandler, AttachedEntityStatus.LINKED);
-      }
-    }
-
-    // 3) add links
+    // 2) add links
     addLinkChanges(property, value);
   }
 

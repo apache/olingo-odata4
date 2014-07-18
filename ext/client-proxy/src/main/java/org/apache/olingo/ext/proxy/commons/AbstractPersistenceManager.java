@@ -61,10 +61,10 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
   private static final long serialVersionUID = 2065240290461241515L;
 
-  protected final Service<?> factory;
+  protected final Service<?> service;
 
   AbstractPersistenceManager(final Service<?> factory) {
-    this.factory = factory;
+    this.service = factory;
   }
 
   protected abstract void doFlush(final PersistenceChanges changes, final TransactionItems items);
@@ -76,7 +76,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
     int pos = 0;
     final List<EntityLinkDesc> delayedUpdates = new ArrayList<EntityLinkDesc>();
-    for (AttachedEntity attachedEntity : factory.getContext().entityContext()) {
+    for (AttachedEntity attachedEntity : service.getContext().entityContext()) {
       final AttachedEntityStatus status = attachedEntity.getStatus();
       if (((status != AttachedEntityStatus.ATTACHED
               && status != AttachedEntityStatus.LINKED) || attachedEntity.getEntity().isChanged())
@@ -91,7 +91,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
     doFlush(changes, items);
 
-    factory.getContext().detachAll();
+    service.getContext().detachAll();
   }
 
   private ODataLink buildNavigationLink(final String name, final URI uri, final ODataLinkType type) {
@@ -99,11 +99,11 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
     switch (type) {
       case ENTITY_NAVIGATION:
-        result = factory.getClient().getObjectFactory().newEntityNavigationLink(name, uri);
+        result = service.getClient().getObjectFactory().newEntityNavigationLink(name, uri);
         break;
 
       case ENTITY_SET_NAVIGATION:
-        result = factory.getClient().getObjectFactory().newEntitySetNavigationLink(name, uri);
+        result = service.getClient().getObjectFactory().newEntitySetNavigationLink(name, uri);
         break;
 
       default:
@@ -120,25 +120,24 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
           final List<EntityLinkDesc> delayedUpdates,
           final PersistenceChanges changeset) {
 
-    LOG.debug("Process '{}'", handler);
-
     items.put(handler, null);
 
     final CommonODataEntity entity = handler.getEntity();
     entity.getNavigationLinks().clear();
 
-    final AttachedEntityStatus currentStatus = factory.getContext().entityContext().getStatus(handler);
+    final AttachedEntityStatus currentStatus = service.getContext().entityContext().getStatus(handler);
+    LOG.debug("Process '{}({})'", handler, currentStatus);
 
     if (AttachedEntityStatus.DELETED != currentStatus) {
       entity.getProperties().clear();
-      CoreUtils.addProperties(factory.getClient(), handler.getPropertyChanges(), entity);
+      CoreUtils.addProperties(service.getClient(), handler.getPropertyChanges(), entity);
 
       if (entity instanceof ODataEntity) {
         ((ODataEntity) entity).getAnnotations().clear();
-        CoreUtils.addAnnotations(factory.getClient(), handler.getAnnotations(), (ODataEntity) entity);
+        CoreUtils.addAnnotations(service.getClient(), handler.getAnnotations(), (ODataEntity) entity);
 
         for (Map.Entry<String, AnnotatableInvocationHandler> entry : handler.getPropAnnotatableHandlers().entrySet()) {
-          CoreUtils.addAnnotations(factory.getClient(),
+          CoreUtils.addAnnotations(service.getClient(),
                   entry.getValue().getAnnotations(), ((ODataEntity) entity).getProperty(entry.getKey()));
         }
       }
@@ -150,19 +149,28 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
               : ODataLinkType.ENTITY_NAVIGATION;
 
       final Set<EntityInvocationHandler> toBeLinked = new HashSet<EntityInvocationHandler>();
+
       for (Object proxy : type == ODataLinkType.ENTITY_SET_NAVIGATION
               ? (Collection<?>) property.getValue() : Collections.singleton(property.getValue())) {
 
         final EntityInvocationHandler target = (EntityInvocationHandler) Proxy.getInvocationHandler(proxy);
 
-        final AttachedEntityStatus status = factory.getContext().entityContext().getStatus(target);
+        final AttachedEntityStatus status;
+        if (!service.getContext().entityContext().isAttached(target)) {
+          status = resolveNavigationLink(property.getKey(), target);
+        } else {
+          status = service.getContext().entityContext().getStatus(target);
+        }
+
+        LOG.debug("Found link to '{}({})'", target, status);
 
         final URI editLink = target.getEntity().getEditLink();
 
         if ((status == AttachedEntityStatus.ATTACHED || status == AttachedEntityStatus.LINKED) && !target.isChanged()) {
+          LOG.debug("Add link to '{}'", target);
           entity.addLink(buildNavigationLink(
                   property.getKey().name(),
-                  URIUtils.getURI(factory.getClient().getServiceRoot(), editLink.toASCIIString()), type));
+                  URIUtils.getURI(service.getClient().getServiceRoot(), editLink.toASCIIString()), type));
         } else {
           if (!items.contains(target)) {
             pos = processEntityContext(target, pos, items, delayedUpdates, changeset);
@@ -175,9 +183,10 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
             LOG.debug("Schedule '{}' from '{}' to '{}'", type.name(), handler, target);
             toBeLinked.add(target);
           } else if (status == AttachedEntityStatus.CHANGED) {
+            LOG.debug("Changed: '{}' from '{}' to (${}) '{}'", type.name(), handler, targetPos, target);
             entity.addLink(buildNavigationLink(
                     property.getKey().name(),
-                    URIUtils.getURI(factory.getClient().getServiceRoot(), editLink.toASCIIString()), type));
+                    URIUtils.getURI(service.getClient().getServiceRoot(), editLink.toASCIIString()), type));
           } else {
             // create the link for the current object
             LOG.debug("'{}' from '{}' to (${}) '{}'", type.name(), handler, targetPos, target);
@@ -196,7 +205,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
       for (Map.Entry<String, AnnotatableInvocationHandler> entry
               : handler.getNavPropAnnotatableHandlers().entrySet()) {
 
-        CoreUtils.addAnnotations(factory.getClient(),
+        CoreUtils.addAnnotations(service.getClient(),
                 entry.getValue().getAnnotations(),
                 (org.apache.olingo.commons.api.domain.v4.ODataLink) entity.getNavigationLink(entry.getKey()));
       }
@@ -217,10 +226,11 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
           final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                   ? URI.create("$" + startingPos)
                   : URIUtils.getURI(
-                          factory.getClient().getServiceRoot(), handler.getEntity().getEditLink().toASCIIString());
+                  service.getClient().getServiceRoot(), handler.getEntity().getEditLink().toASCIIString());
           queueUpdate(handler, targetURI, entity, changeset);
           pos++;
           items.put(handler, pos);
+          LOG.debug("{}: Update media properties for '{}' into the process queue", pos, handler);
         }
 
         // update media content
@@ -228,28 +238,30 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
           final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                   ? URI.create("$" + startingPos + "/$value")
                   : URIUtils.getURI(
-                          factory.getClient().getServiceRoot(),
-                          handler.getEntity().getEditLink().toASCIIString() + "/$value");
+                  service.getClient().getServiceRoot(),
+                  handler.getEntity().getEditLink().toASCIIString() + "/$value");
 
           queueUpdateMediaEntity(handler, targetURI, handler.getStreamChanges(), changeset);
 
           // update media info (use null key)
           pos++;
           items.put(null, pos);
+          LOG.debug("{}: Update media info for '{}' into the process queue", pos, handler);
         }
       }
 
       for (Map.Entry<String, InputStream> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
         final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                 ? URI.create("$" + startingPos) : URIUtils.getURI(
-                        factory.getClient().getServiceRoot(),
-                        CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
+                service.getClient().getServiceRoot(),
+                CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
 
         queueUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
 
         // update media info (use null key)
         pos++;
         items.put(handler, pos);
+        LOG.debug("{}: Update media info (null key) for '{}' into the process queue", pos, handler);
       }
     }
 
@@ -267,14 +279,14 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
       items.put(delayedUpdate.getSource(), pos);
 
       final CommonODataEntity changes =
-              factory.getClient().getObjectFactory().newEntity(delayedUpdate.getSource().getEntity().getTypeName());
+              service.getClient().getObjectFactory().newEntity(delayedUpdate.getSource().getEntity().getTypeName());
 
-      AttachedEntityStatus status = factory.getContext().entityContext().getStatus(delayedUpdate.getSource());
+      AttachedEntityStatus status = service.getContext().entityContext().getStatus(delayedUpdate.getSource());
 
       final URI sourceURI;
       if (status == AttachedEntityStatus.CHANGED) {
         sourceURI = URIUtils.getURI(
-                factory.getClient().getServiceRoot(),
+                service.getClient().getServiceRoot(),
                 delayedUpdate.getSource().getEntity().getEditLink().toASCIIString());
       } else {
         int sourcePos = items.get(delayedUpdate.getSource());
@@ -282,21 +294,21 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
       }
 
       for (EntityInvocationHandler target : delayedUpdate.getTargets()) {
-        status = factory.getContext().entityContext().getStatus(target);
+        status = service.getContext().entityContext().getStatus(target);
 
         final URI targetURI;
         if (status == AttachedEntityStatus.CHANGED) {
           targetURI = URIUtils.getURI(
-                  factory.getClient().getServiceRoot(), target.getEntity().getEditLink().toASCIIString());
+                  service.getClient().getServiceRoot(), target.getEntity().getEditLink().toASCIIString());
         } else {
           int targetPos = items.get(target);
           targetURI = URI.create("$" + targetPos);
         }
 
         changes.addLink(delayedUpdate.getType() == ODataLinkType.ENTITY_NAVIGATION
-                ? factory.getClient().getObjectFactory().
+                ? service.getClient().getObjectFactory().
                 newEntityNavigationLink(delayedUpdate.getSourceName(), targetURI)
-                : factory.getClient().getObjectFactory().
+                : service.getClient().getObjectFactory().
                 newEntitySetNavigationLink(delayedUpdate.getSourceName(), targetURI));
 
         LOG.debug("'{}' from {} to {}", delayedUpdate.getType().name(), sourceURI, targetURI);
@@ -311,7 +323,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
           final CommonODataEntity entity,
           final PersistenceChanges changeset) {
 
-    switch (factory.getContext().entityContext().getStatus(handler)) {
+    switch (service.getContext().entityContext().getStatus(handler)) {
       case NEW:
         queueCreate(handler, entity, changeset);
         return AttachedEntityStatus.NEW;
@@ -339,7 +351,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
     LOG.debug("Create '{}'", handler);
 
-    changeset.addChange(factory.getClient().getCUDRequestFactory().
+    changeset.addChange(service.getClient().getCUDRequestFactory().
             getEntityCreateRequest(handler.getEntitySetURI(), entity), handler);
   }
 
@@ -352,7 +364,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     LOG.debug("Update media entity '{}'", uri);
 
     final ODataMediaEntityUpdateRequest<?> req =
-            factory.getClient().getCUDRequestFactory().getMediaEntityUpdateRequest(uri, input);
+            service.getClient().getCUDRequestFactory().getMediaEntityUpdateRequest(uri, input);
 
     if (StringUtils.isNotBlank(handler.getEntity().getMediaContentType())) {
       req.setContentType(ODataFormat.fromString(handler.getEntity().getMediaContentType()).toString());
@@ -373,7 +385,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
     LOG.debug("Update media entity '{}'", uri);
 
-    final ODataStreamUpdateRequest req = factory.getClient().getCUDRequestFactory().getStreamUpdateRequest(uri, input);
+    final ODataStreamUpdateRequest req = service.getClient().getCUDRequestFactory().getStreamUpdateRequest(uri, input);
 
     if (StringUtils.isNotBlank(handler.getETag())) {
       req.setIfMatch(handler.getETag());
@@ -390,15 +402,15 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     LOG.debug("Update '{}'", handler.getEntityURI());
 
     final ODataEntityUpdateRequest<CommonODataEntity> req =
-            factory.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
-            ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) factory.getClient()).getCUDRequestFactory().
+            service.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
+            ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(handler.getEntityURI(),
-                    org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
-            : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) factory.getClient()).getCUDRequestFactory().
+            org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+            : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(handler.getEntityURI(),
-                    org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+            org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
-    req.setPrefer(new ODataPreferences(factory.getClient().getServiceVersion()).returnContent());
+    req.setPrefer(new ODataPreferences(service.getClient().getServiceVersion()).returnContent());
 
     if (StringUtils.isNotBlank(handler.getETag())) {
       req.setIfMatch(handler.getETag());
@@ -416,15 +428,15 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     LOG.debug("Update '{}'", uri);
 
     final ODataEntityUpdateRequest<CommonODataEntity> req =
-            factory.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
-            ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) factory.getClient()).getCUDRequestFactory().
+            service.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
+            ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(uri,
-                    org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
-            : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) factory.getClient()).getCUDRequestFactory().
+            org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+            : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(uri,
-                    org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+            org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
-    req.setPrefer(new ODataPreferences(factory.getClient().getServiceVersion()).returnContent());
+    req.setPrefer(new ODataPreferences(service.getClient().getServiceVersion()).returnContent());
 
     if (StringUtils.isNotBlank(handler.getETag())) {
       req.setIfMatch(handler.getETag());
@@ -438,15 +450,29 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
           final CommonODataEntity entity,
           final PersistenceChanges changeset) {
 
-    final URI deleteURI = handler.getEntityURI() == null ? entity.getEditLink() : handler.getEntityURI();
+    final URI deleteURI = entity.getEditLink() == null ? handler.getEntityURI() : entity.getEditLink();
     LOG.debug("Delete '{}'", deleteURI);
 
-    final ODataDeleteRequest req = factory.getClient().getCUDRequestFactory().getDeleteRequest(deleteURI);
+    final ODataDeleteRequest req = service.getClient().getCUDRequestFactory().getDeleteRequest(deleteURI);
 
     if (StringUtils.isNotBlank(handler.getETag())) {
       req.setIfMatch(handler.getETag());
     }
 
     changeset.addChange(req, handler);
+  }
+
+  private AttachedEntityStatus resolveNavigationLink(
+          final NavigationProperty property, final EntityInvocationHandler handler) {
+    if (handler.getUUID().getEntitySetURI() == null) {
+      final Object key = CoreUtils.getKey(service.getClient(), handler, handler.getTypeRef(), handler.getEntity());
+      handler.updateUUID(CoreUtils.getTargetEntitySetURI(service.getClient(), property), handler.getTypeRef(), null);
+      service.getContext().entityContext().attach(handler, AttachedEntityStatus.NEW);
+      return AttachedEntityStatus.NEW;
+    } else {
+      // existent object
+      service.getContext().entityContext().attach(handler, AttachedEntityStatus.LINKED);
+      return AttachedEntityStatus.LINKED;
+    }
   }
 }

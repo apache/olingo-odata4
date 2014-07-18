@@ -19,14 +19,14 @@
 
 package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 
-import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
-
 import java.util.Collection;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 public interface PersonDetailCollection extends 
-    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetailCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetailCollection>, AbstractEntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail> {
+    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetailCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetailCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

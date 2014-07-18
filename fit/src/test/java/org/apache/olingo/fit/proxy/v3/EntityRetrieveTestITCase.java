@@ -1,64 +1,51 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.fit.proxy.v3;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Type;
 import org.apache.olingo.commons.api.edm.geo.MultiLineString;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice
-    .DefaultContainer;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .AllSpatialTypes;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .ComputerDetail;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .ConcurrencyInfo;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .ContactDetails;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .Contractor;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .ContractorCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.DefaultContainer;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialTypes;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComputerDetail;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Contractor;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContractorCollection;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .CustomerInfo;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfo;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Employee;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .EmployeeCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.EmployeeCollection;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Message;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .MessageKey;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageKey;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Order;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .OrderCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.OrderCollection;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Person;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .PersonCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PersonCollection;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .SpecialEmployee;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types
-    .SpecialEmployeeCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployee;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployeeCollection;
 import org.junit.Test;
 
 import java.lang.reflect.Proxy;
@@ -71,8 +58,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-//CHECKSTYLE:OFF (Maven checkstyle)
 //CHECKSTYLE:ON (Maven checkstyle)
 
 /**
@@ -111,11 +96,10 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
       assertNotNull(employee);
     }
 
-    final SpecialEmployeeCollection specialEmployees =
-        getContainer().getPerson().execute(SpecialEmployeeCollection.class);
-    assertNotNull(specialEmployees);
-    assertFalse(specialEmployees.isEmpty());
-    for (SpecialEmployee employee : specialEmployees) {
+    final SpecialEmployeeCollection specEmployees = getContainer().getPerson().execute(SpecialEmployeeCollection.class);
+    assertNotNull(specEmployees);
+    assertFalse(specEmployees.isEmpty());
+    for (SpecialEmployee employee : specEmployees) {
       assertNotNull(employee);
     }
 
@@ -126,7 +110,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
       assertNotNull(contractor);
     }
 
-    assertTrue(employees.size() > specialEmployees.size());
+    assertTrue(employees.size() > specEmployees.size());
     assertTrue(all.size() > employees.size() + contractors.size());
   }
 
@@ -168,7 +152,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   @Test
   public void withInlineEntry() {
     final Customer customer = readCustomer(getContainer(), -10);
-    final CustomerInfo customerInfo = customer.getInfo();
+    final CustomerInfo customerInfo = customer.getInfo().load();
     assertNotNull(customerInfo);
     assertEquals(11, customerInfo.getCustomerInfoId(), 0);
   }
@@ -187,7 +171,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
     try {
       assertNotNull(computerDetail.operations().getClass().getMethod(
-          "resetComputerDetailsSpecifications", Collection.class, Timestamp.class));
+              "resetComputerDetailsSpecifications", Collection.class, Timestamp.class));
     } catch (Exception e) {
       fail();
     }
@@ -207,7 +191,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   public void checkForETag() {
     Product product = getContainer().getProduct().getByKey(-10).load();
     assertTrue(StringUtils.isNotBlank(
-        ((EntityInvocationHandler) Proxy.getInvocationHandler(product)).getETag()));
+            ((EntityInvocationHandler) Proxy.getInvocationHandler(product)).getETag()));
   }
 
   @Test
@@ -222,7 +206,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
     for (ContactDetails contact : backupContactInfo) {
       if (contact.getContactAlias() != null && contact.getContactAlias().getAlternativeNames() != null && contact.
-          getContactAlias().getAlternativeNames().contains("vxiefursgkqzptijhincpdm")) {
+              getContactAlias().getAlternativeNames().contains("vxiefursgkqzptijhincpdm")) {
         found = true;
       }
     }

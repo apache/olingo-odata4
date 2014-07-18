@@ -24,6 +24,7 @@ import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import org.apache.olingo.ext.proxy.Service;
 
 public class AnnotatationsInvocationHandler extends AbstractInvocationHandler {
 
@@ -39,17 +40,17 @@ public class AnnotatationsInvocationHandler extends AbstractInvocationHandler {
 
     return new AnnotatationsInvocationHandler(
             targetHandler == null
-            ? entityHandler == null ? null : entityHandler.containerHandler : targetHandler.containerHandler,
+            ? entityHandler == null ? null : entityHandler.service : targetHandler.service,
             entityHandler,
             targetHandler);
   }
 
   private AnnotatationsInvocationHandler(
-          final EntityContainerInvocationHandler containerHandler,
+          final Service<?> service,
           final EntityInvocationHandler entityHandler,
           final AbstractStructuredInvocationHandler targetHandler) {
 
-    super(containerHandler);
+    super(service);
     this.targetHandler = targetHandler;
     this.entityHandler = entityHandler;
   }
@@ -80,7 +81,7 @@ public class AnnotatationsInvocationHandler extends AbstractInvocationHandler {
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {method.getReturnType()},
-              new AnnotatableInvocationHandler(containerHandler, propName, navPropName, entityHandler, targetHandler));
+              new AnnotatableInvocationHandler(service, propName, navPropName, entityHandler, targetHandler));
     } else {
       throw new NoSuchMethodException(method.getName());
     }

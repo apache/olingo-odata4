@@ -18,10 +18,11 @@
  */
 
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
-
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.client.api.edm.ConcurrencyMode;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
@@ -30,7 +31,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Key;
         hasStream = false,
         isAbstract = false)
 public interface MappedEntityType 
-  extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<MappedEntityType> {
+  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<MappedEntityType> {
 
 
     
@@ -497,23 +498,6 @@ public interface MappedEntityType
     
 
 
-
-    ComplexFactory factory();
-
-    interface ComplexFactory {
-         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfComplexToCategories",
-                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ComplexToCategory")
-         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory newBagOfComplexToCategories();
-
-         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ComplexPhone",
-                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone")
-         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone newComplexPhone();
-
-         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ComplexContactDetails",
-                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails")
-         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newComplexContactDetails();
-
-    }
 
     Annotations annotations();
 

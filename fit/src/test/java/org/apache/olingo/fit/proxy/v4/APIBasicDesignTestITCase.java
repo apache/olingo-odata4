@@ -1,30 +1,31 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types
-    .PersonCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -38,8 +39,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-
-//CHECKSTYLE:OFF (Maven checkstyle)
 //CHECKSTYLE:ON (Maven checkstyle)
 
 /**
@@ -47,8 +46,8 @@ import static org.junit.Assert.fail;
  */
 public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
-  protected Service<EdmEnabledODataClient> getContainerFactory() {
-    return containerFactory;
+  protected Service<EdmEnabledODataClient> getService() {
+    return service;
   }
 
   protected InMemoryEntities getContainer() {
@@ -57,7 +56,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
   @Test
   public void readAndCheckForPrimitive() {
-    final Customer customer = container.getCustomers().getByKey(1);
+    final Customer customer = getContainer().getCustomers().getByKey(1);
     assertNotNull(customer);
     assertNull(customer.getPersonID());
 
@@ -66,7 +65,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
   @Test
   public void readWholeEntitySet() {
-    PersonCollection person = container.getPeople().execute();
+    PersonCollection person = getContainer().getPeople().execute();
     assertEquals(5, person.size(), 0);
 
     int pageCount = 1;
@@ -81,7 +80,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
   @Test
   public void loadWithSelect() {
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order order =
-            container.getOrders().getByKey(8);
+            getContainer().getOrders().getByKey(8);
     assertNull(order.getOrderID());
     assertNull(order.getOrderDate());
 
@@ -99,7 +98,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
   @Test
   public void loadWithSelectAndExpand() {
-    final Customer customer = container.getCustomers().getByKey(1);
+    final Customer customer = getContainer().getCustomers().getByKey(1);
 
     customer.expand("Orders");
     customer.select("Orders", "PersonID");
@@ -111,7 +110,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
   @Test
   public void createDelete() {
     // Create order ....
-    final Order order = container.getOrders().newOrder();
+    final Order order = getService().newEntity(Order.class);
     order.setOrderID(1105);
 
     final Calendar orderDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -122,9 +121,10 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     order.setShelfLife(BigDecimal.ZERO);
     order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] {BigDecimal.TEN.negate(), BigDecimal.TEN}));
 
-    container.flush();
+    getContainer().getOrders().add(order);
+    getContainer().flush();
 
-    Order actual = container.getOrders().getByKey(1105);
+    Order actual = getContainer().getOrders().getByKey(1105);
     assertNull(actual.getOrderID());
 
     actual.load();
@@ -133,18 +133,18 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     assertEquals(BigDecimal.ZERO, actual.getShelfLife());
     assertEquals(2, actual.getOrderShelfLifes().size());
 
-    containerFactory.getContext().detachAll();
+    service.getContext().detachAll();
 
     // Delete order ...
-    container.getOrders().delete(container.getOrders().getByKey(1105));
-    actual = container.getOrders().getByKey(1105);
+    getContainer().getOrders().delete(getContainer().getOrders().getByKey(1105));
+    actual = getContainer().getOrders().getByKey(1105);
     assertNull(actual);
 
-    container.flush();
+    getContainer().flush();
 
-    containerFactory.getContext().detachAll();
+    service.getContext().detachAll();
     try {
-      container.getOrders().getByKey(105).load();
+      getContainer().getOrders().getByKey(105).load();
       fail();
     } catch (IllegalArgumentException e) {
     }

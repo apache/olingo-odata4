@@ -19,7 +19,7 @@
 package org.apache.olingo.ext.proxy.api;
 
 public interface EntityCollectionQuery<
-        T extends StructuredType, EC extends AbstractEntityCollection<T>, CT extends EntityCollectionQuery<T, EC, ?>>
+        T extends StructuredType, EC extends EntityCollection<T>, CT extends EntityCollectionQuery<T, EC, ?>>
         extends CollectionQuery<T, EC, CT> {
 
   /**

@@ -24,6 +24,7 @@ import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import org.apache.olingo.ext.proxy.Service;
 
 class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implements OperationExecutor {
 
@@ -34,11 +35,11 @@ class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implemen
   private final AbstractStructuredInvocationHandler invokerHandler;
 
   static ComplexFactoryInvocationHandler getInstance(
-          final EntityContainerInvocationHandler containerHandler,
+          final Service<?> service,
           final EntityInvocationHandler entityHandler,
           final AbstractStructuredInvocationHandler targetHandler) {
 
-    return new ComplexFactoryInvocationHandler(containerHandler, entityHandler, targetHandler);
+    return new ComplexFactoryInvocationHandler(service, entityHandler, targetHandler);
   }
 
   static ComplexFactoryInvocationHandler getInstance(
@@ -49,18 +50,18 @@ class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implemen
             targetHandler == null
             ? entityHandler == null
             ? null
-            : entityHandler.containerHandler
-            : targetHandler.containerHandler,
+            : entityHandler.service
+            : targetHandler.service,
             entityHandler,
             targetHandler);
   }
 
   private ComplexFactoryInvocationHandler(
-          final EntityContainerInvocationHandler containerHandler,
+          final Service<?> service,
           final EntityInvocationHandler entityHandler,
           final AbstractStructuredInvocationHandler targetHandler) {
 
-    super(containerHandler);
+    super(service);
     this.invokerHandler = targetHandler;
     this.entityHandler = entityHandler;
   }
@@ -81,9 +82,9 @@ class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implemen
               new Class<?>[] {method.getReturnType()},
               entityHandler == null
               ? ComplexInvocationHandler.getInstance(
-                      getClient(), property.name(), method.getReturnType(), containerHandler)
+              getClient(), property.name(), method.getReturnType(), service)
               : ComplexInvocationHandler.getInstance(
-                      getClient(), property.name(), method.getReturnType(), entityHandler));
+              getClient(), property.name(), method.getReturnType(), entityHandler));
     } else {
       throw new NoSuchMethodException(method.getName());
     }

@@ -19,18 +19,13 @@
 
 package org.apache.olingo.fit.proxy.v4.demo.odatademo;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 
-@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Persons")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Persons", container = "ODataDemo.DemoService")
 public interface Persons 
   extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonCollection, Persons>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonCollection> {
-
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person newPerson();
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonCollection newPersonCollection();
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Customer newCustomer();
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CustomerCollection newCustomerCollection();
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Employee newEmployee();
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.EmployeeCollection newEmployeeCollection();
 }

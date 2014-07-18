@@ -1,23 +1,24 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.fit.proxy.v4;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.ext.proxy.Service;
@@ -27,18 +28,16 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Employee;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetailKey;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types
-    .PaymentInstrument;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types
-    .PaymentInstrumentCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types
-    .ProductDetailCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -52,8 +51,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-//CHECKSTYLE:OFF (Maven checkstyle)
 //CHECKSTYLE:ON (Maven checkstyle)
 
 /**
@@ -61,8 +58,8 @@ import static org.junit.Assert.fail;
  */
 public class EntityCreateTestITCase extends AbstractTestITCase {
 
-  protected Service<EdmEnabledODataClient> getContainerFactory() {
-    return containerFactory;
+  protected Service<EdmEnabledODataClient> getService() {
+    return service;
   }
 
   protected InMemoryEntities getContainer() {
@@ -71,14 +68,14 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void createAndDelete() {
-    createPatchAndDeleteOrder(getContainer(), getContainerFactory());
+    createPatchAndDeleteOrder(getContainer(), getService());
   }
 
   @Test
   public void createEmployee() {
     final Integer id = 101;
 
-    final Employee employee = getContainer().getPeople().newEmployee();
+    final Employee employee = getService().newEntity(Employee.class);
     employee.setPersonID(id);
     employee.setFirstName("Fabio");
     employee.setLastName("Martelli");
@@ -87,12 +84,14 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     date.clear();
     date.set(2011, 3, 4, 9, 0, 0);
     employee.setDateHired(new Timestamp(date.getTimeInMillis()));
-    final Address homeAddress = employee.factory().newHomeAddress();
+    final Address homeAddress = getService().newComplex(HomeAddress.class);
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");
     employee.setHomeAddress(homeAddress);
     employee.setNumbers(Arrays.asList(new String[] {"3204725072", "08569930"}));
+
+    getContainer().getPeople().add(employee);
 
     getContainer().flush();
 
@@ -101,7 +100,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     assertEquals(id, actual.getPersonID());
     assertEquals(homeAddress.getCity(), actual.getHomeAddress().getCity());
 
-    getContainerFactory().getContext().detachAll();
+    getService().getContext().detachAll();
     actual = getContainer().getPeople().getByKey(id, Employee.class).load();
     assertNotNull(actual);
     assertEquals(id, actual.getPersonID());
@@ -116,7 +115,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     } catch (IllegalArgumentException e) {
     }
 
-    getContainerFactory().getContext().detachAll();
+    getService().getContext().detachAll();
     try {
       getContainer().getPeople().getByKey(id, Employee.class).load();
       fail();
@@ -128,24 +127,25 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   public void createWithNavigation() {
     final Integer id = 101;
 
-    final Customer customer = getContainer().getCustomers().newCustomer();
+    final Customer customer = getService().newEntity(Customer.class);
     customer.setPersonID(id);
     customer.setPersonID(id);
     customer.setFirstName("Fabio");
     customer.setLastName("Martelli");
     customer.setCity("Pescara");
     customer.setEmails(Collections.<String>singleton("fabio.martelli@tirasa.net"));
-    Address homeAddress = customer.factory().newHomeAddress();
+    Address homeAddress = getService().newComplex(HomeAddress.class);
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");
     customer.setHomeAddress(homeAddress);
     customer.setNumbers(Arrays.asList(new String[] {"3204725072", "08569930"}));
 
-    final OrderCollection orders = getContainer().getOrders().newOrderCollection();
+    final OrderCollection orders = getService().newEntityCollection(OrderCollection.class);
     orders.add(getContainer().getOrders().getByKey(8));
     customer.setOrders(orders);
 
+    getContainer().getCustomers().add(customer);
     getContainer().flush();
 
     Customer actual = readCustomer(getContainer(), id);
@@ -170,7 +170,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     // -------------------------------
     // Create a new order
     // -------------------------------
-    Order order = getContainer().getOrders().newOrder();
+    Order order = getService().newEntity(Order.class);
     order.setOrderID(id);
 
     final Calendar orderDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -185,21 +185,21 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     // -------------------------------
     // Create a new customer
     // -------------------------------
-    final Customer customer = getContainer().getCustomers().newCustomer();
+    final Customer customer = getService().newEntity(Customer.class);
     customer.setPersonID(id);
     customer.setPersonID(id);
     customer.setFirstName("Fabio");
     customer.setLastName("Martelli");
     customer.setCity("Pescara");
     customer.setEmails(Collections.<String>singleton("fabio.martelli@tirasa.net"));
-    final Address homeAddress = customer.factory().newHomeAddress();
+    final Address homeAddress = getService().newComplex(HomeAddress.class);
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");
     customer.setHomeAddress(homeAddress);
     customer.setNumbers(Arrays.asList(new String[] {"3204725072", "08569930"}));
 
-    final OrderCollection orders = getContainer().getOrders().newOrderCollection();
+    final OrderCollection orders = getService().newEntityCollection(OrderCollection.class);
     orders.add(order);
     customer.setOrders(orders);
     // -------------------------------
@@ -210,6 +210,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     order.setCustomerForOrder(customer);
     // -------------------------------
 
+    getContainer().getOrders().add(order);
     getContainer().flush();
 
     assertEquals(id, order.getOrderID());
@@ -222,7 +223,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     order = getContainer().getOrders().getByKey(id);
     assertNotNull(order);
-    assertEquals(id, order.getCustomerForOrder().getPersonID());
+    assertEquals(id, order.getCustomerForOrder().load().getPersonID());
 
     getContainer().getOrders().delete(actual.getOrders());
     getContainer().flush();
@@ -248,12 +249,13 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void multiKey() {
-    OrderDetail details = getContainer().getOrderDetails().newOrderDetail();
+    OrderDetail details = getService().newEntity(OrderDetail.class);
     details.setOrderID(8);
     details.setProductID(1);
     details.setQuantity(100);
     details.setUnitPrice(5f);
 
+    getContainer().getOrderDetails().add(details);
     getContainer().flush();
 
     OrderDetailKey key = new OrderDetailKey();
@@ -279,7 +281,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void deepInsert() {
-    Product product = getContainer().getProducts().newProduct();
+    Product product = getService().newEntity(Product.class);
     product.setProductID(12);
     product.setName("Latte");
     product.setQuantityPerUnit("100g Bag");
@@ -290,17 +292,18 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     product.setSkinColor(Color.Blue);
     product.setCoverColors(Arrays.asList(new Color[] {Color.Red, Color.Green}));
 
-    final ProductDetail detail = getContainer().getProductDetails().newProductDetail();
+    final ProductDetail detail = getService().newEntity(ProductDetail.class);
     detail.setProductID(product.getProductID());
     detail.setProductDetailID(12);
     detail.setProductName("LatteHQ");
     detail.setDescription("High-Quality Milk");
 
-    final ProductDetailCollection detailCollection = getContainer().getProductDetails().newProductDetailCollection();
+    final ProductDetailCollection detailCollection = getService().newEntityCollection(ProductDetailCollection.class);
     detailCollection.add(detail);
 
     product.setDetails(detailCollection);
 
+    getContainer().getProducts().add(product);
     getContainer().flush();
 
     product = getContainer().getProducts().getByKey(12).load();
@@ -310,12 +313,12 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void contained() {
-    PaymentInstrumentCollection instruments = 
+    PaymentInstrumentCollection instruments =
             getContainer().getAccounts().getByKey(101).getMyPaymentInstruments().execute();
     final int sizeBefore = instruments.size();
 
-    final PaymentInstrument instrument = getContainer().getAccounts().getByKey(101).
-            getMyPaymentInstruments().newPaymentInstrument();
+    final PaymentInstrument instrument = getService().newEntity(PaymentInstrument.class);
+    instruments.add(instrument);
 
     final int id = RandomUtils.nextInt(101999, 105000);
     instrument.setPaymentInstrumentID(id);

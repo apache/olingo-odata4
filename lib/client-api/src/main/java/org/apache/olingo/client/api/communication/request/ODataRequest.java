@@ -47,6 +47,14 @@ public interface ODataRequest {
   URI getURI();
 
   /**
+   * Sets OData request target URI.
+   *
+   * @param uri target URI.
+   * @return OData request target URI.
+   */
+  void setURI(URI uri);
+
+  /**
    * Returns HTTP request method.
    *
    * @return HTTP request method.

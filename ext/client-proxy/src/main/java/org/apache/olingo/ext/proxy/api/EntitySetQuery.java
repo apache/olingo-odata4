@@ -19,7 +19,7 @@
 package org.apache.olingo.ext.proxy.api;
 
 public interface EntitySetQuery<
-        T extends StructuredType, EC extends AbstractEntityCollection<T>, CT extends EntitySetQuery<T, EC, ?>>
+        T extends StructuredType, EC extends EntityCollection<T>, CT extends EntitySetQuery<T, EC, ?>>
         extends CollectionQuery<T, EC, CT> {
 
   /**
@@ -30,5 +30,5 @@ public interface EntitySetQuery<
    * @param reference entity collection class to be returned
    * @return all entities of the given subtype
    */
-  <S extends T, SEC extends AbstractEntityCollection<S>> SEC execute(Class<SEC> reference);
+  <S extends T, SEC extends EntityCollection<S>> SEC execute(Class<SEC> reference);
 }

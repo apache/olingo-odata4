@@ -33,5 +33,7 @@ public @interface EntitySet {
 
   String name();
 
+  String container() default "";
+
   boolean contained() default false;
 }

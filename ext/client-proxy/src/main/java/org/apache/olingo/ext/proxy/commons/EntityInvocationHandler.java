@@ -30,8 +30,10 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
@@ -68,8 +70,6 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   private URI baseURI;
 
-  private CommonURIBuilder<?> uri;
-
   protected final Map<String, Object> propertyChanges = new HashMap<String, Object>();
 
   protected final Map<NavigationProperty, Object> linkChanges = new HashMap<NavigationProperty, Object>();
@@ -97,7 +97,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
             entity,
             entitySet.getURI(),
             typeRef,
-            entitySet.containerHandler);
+            entitySet.service);
   }
 
   static EntityInvocationHandler getInstance(
@@ -105,18 +105,75 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
           final CommonODataEntity entity,
           final URI entitySetURI,
           final Class<?> typeRef,
-          final EntityContainerInvocationHandler containerHandler) {
+          final Service<?> service) {
 
-    return new EntityInvocationHandler(key, entity, entitySetURI, typeRef, containerHandler);
+    return new EntityInvocationHandler(key, entity, entitySetURI, typeRef, service);
   }
 
   public static EntityInvocationHandler getInstance(
           final CommonODataEntity entity,
           final URI entitySetURI,
           final Class<?> typeRef,
-          final EntityContainerInvocationHandler containerHandler) {
+          final Service<?> service) {
 
-    return new EntityInvocationHandler(null, entity, entitySetURI, typeRef, containerHandler);
+    return new EntityInvocationHandler(null, entity, entitySetURI, typeRef, service);
+  }
+
+  public static EntityInvocationHandler getInstance(
+          final CommonODataEntity entity,
+          final URI entitySetURI,
+          final URI entityURI,
+          final Class<?> typeRef,
+          final Service<?> service) {
+
+    return new EntityInvocationHandler(entity, entityURI, entitySetURI, typeRef, service);
+  }
+
+  public static EntityInvocationHandler getInstance(
+          final Class<?> typeRef,
+          final Service<?> service) {
+
+    return new EntityInvocationHandler(typeRef, service);
+  }
+
+  private EntityInvocationHandler(
+          final Class<?> typeRef,
+          final Service<?> service) {
+
+    super(typeRef, service);
+
+    final String name = typeRef.getAnnotation(org.apache.olingo.ext.proxy.api.annotations.EntityType.class).name();
+    final String namespace = typeRef.getAnnotation(Namespace.class).value();
+
+    this.internal = service.getClient().getObjectFactory().newEntity(new FullQualifiedName(namespace, name));
+    CommonODataEntity.class.cast(this.internal).setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
+
+    this.uuid = new EntityUUID(
+            null,
+            typeRef,
+            null);
+  }
+
+  private EntityInvocationHandler(
+          final CommonODataEntity entity,
+          final URI entitySetURI,
+          final URI entityURI,
+          final Class<?> typeRef,
+          final Service<?> service) {
+    super(typeRef, entity, service);
+
+    if (entityURI != null) {
+      this.baseURI = entityURI;
+      this.uri = getClient().newURIBuilder(baseURI.toASCIIString());
+    } else {
+      this.baseURI = null;
+      this.uri = null;
+    }
+
+    this.internal = entity;
+    getEntity().setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
+
+    this.uuid = new EntityUUID(entitySetURI, typeRef, null);
   }
 
   private EntityInvocationHandler(
@@ -124,12 +181,12 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
           final CommonODataEntity entity,
           final URI entitySetURI,
           final Class<?> typeRef,
-          final EntityContainerInvocationHandler containerHandler) {
+          final Service<?> service) {
 
-    super(typeRef, entity, containerHandler);
-    
+    super(typeRef, entity, service);
+
     final Object key = entityKey == null ? CoreUtils.getKey(getClient(), this, typeRef, entity) : entityKey;
-    
+
     if (entity.getEditLink() != null) {
       this.baseURI = entity.getEditLink();
       this.uri = getClient().newURIBuilder(baseURI.toASCIIString());
@@ -155,11 +212,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     this.internal = entity;
     getEntity().setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
 
-    this.uuid = new EntityUUID(
-            containerHandler.getEntityContainerName(),
-            entitySetURI,
-            typeRef,
-            key);
+    this.uuid = new EntityUUID(entitySetURI, typeRef, key);
   }
 
   public void setEntity(final CommonODataEntity entity) {
@@ -167,7 +220,6 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     getEntity().setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
 
     this.uuid = new EntityUUID(
-            getUUID().getContainerName(),
             getUUID().getEntitySetURI(),
             getUUID().getType(),
             CoreUtils.getKey(getClient(), this, typeRef, entity));
@@ -190,8 +242,9 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return uuid;
   }
 
-  public String getEntityContainerName() {
-    return uuid.getContainerName();
+  public EntityUUID updateUUID(final URI entitySetURI, final Class<?> type, final Object key) {
+    this.uuid = new EntityUUID(entitySetURI, type, key);
+    return this.uuid;
   }
 
   public URI getEntitySetURI() {
@@ -539,9 +592,12 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
       setEntity(entity);
       setETag(etag);
 
-      if (!key.equals(CoreUtils.getKey(getClient(), this, typeRef, entity))) {
+      if (key != null && !key.equals(CoreUtils.getKey(getClient(), this, typeRef, entity))) {
         throw new IllegalArgumentException("Invalid " + typeRef.getSimpleName() + "(" + key + ")");
       }
+
+      IOUtils.closeQuietly(this.stream);
+      this.stream = null;
     } catch (IllegalArgumentException e) {
       LOG.warn("Entity '" + uuid + "' not found", e);
       throw e;

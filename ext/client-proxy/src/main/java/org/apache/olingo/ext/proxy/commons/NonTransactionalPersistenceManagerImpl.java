@@ -18,14 +18,18 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
+import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.ext.proxy.Service;
-
-import java.util.Map;
 
 /**
  * {@link org.apache.olingo.ext.proxy.api.PersistenceManager} implementation not using OData batch requests: any
@@ -42,16 +46,41 @@ public class NonTransactionalPersistenceManagerImpl extends AbstractPersistenceM
 
   @Override
   protected void doFlush(final PersistenceChanges changes, final TransactionItems items) {
+    final Map<Integer, URI> responses = new HashMap<Integer, URI>();
+    int virtualContentID = 0;
+
     for (Map.Entry<ODataBatchableRequest, EntityInvocationHandler> entry : changes.getChanges().entrySet()) {
+      virtualContentID++;
+
       try {
-        final ODataResponse response = ((ODataBasicRequest<?>) entry.getKey()).execute();
+        final ODataRequest req = ODataRequest.class.cast(entry.getKey());
+        String uri = req.getURI().toASCIIString();
+        if (uri.startsWith("$")) {
+          int slashIndex = uri.indexOf('/');
+          final Integer toBeReplaced = Integer.valueOf(uri.substring(1, slashIndex < 0 ? uri.length() : slashIndex));
+          if (responses.containsKey(toBeReplaced)) {
+            uri = uri.replace("$" + toBeReplaced, responses.get(Integer.valueOf(toBeReplaced)).toASCIIString());
+            req.setURI(URI.create(uri));
+          }
+        }
+
+        final ODataResponse response;
+        if (ODataStreamedRequest.class.isAssignableFrom(req.getClass())) {
+          response = ((ODataStreamedRequest<?, ?>) req).payloadManager().getResponse();
+        } else {
+          response = ((ODataBasicRequest<?>) req).execute();
+        }
 
         if (response instanceof ODataEntityCreateResponse && response.getStatusCode() == 201) {
           entry.getValue().setEntity(((ODataEntityCreateResponse<?>) response).getBody());
+          responses.put(virtualContentID, entry.getValue().getEntityURI());
           LOG.debug("Upgrade created object '{}'", entry.getValue());
         } else if (response instanceof ODataEntityUpdateResponse && response.getStatusCode() == 200) {
           entry.getValue().setEntity(((ODataEntityUpdateResponse<?>) response).getBody());
+          responses.put(virtualContentID, entry.getValue().getEntityURI());
           LOG.debug("Upgrade updated object '{}'", entry.getValue());
+        } else {
+          responses.put(virtualContentID, null);
         }
       } catch (Exception e) {
         LOG.error("While performing {}", entry.getKey().getURI(), e);

@@ -19,10 +19,13 @@
 
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
+
+
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "Dimensions")
 public interface Dimensions 
-    extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.SingleQuery<Dimensions> {
+    extends org.apache.olingo.ext.proxy.api.ComplexType,org.apache.olingo.ext.proxy.api.SingleQuery<Dimensions> {
 
 
 
@@ -46,9 +49,4 @@ public interface Dimensions
     void setDepth(java.math.BigDecimal _depth);
 
     
-
-    ComplexFactory factory();
-
-    interface ComplexFactory {
-    }
 }

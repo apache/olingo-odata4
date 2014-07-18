@@ -19,10 +19,13 @@
 
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
+
+
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "ContactDetails")
 public interface ContactDetails 
-    extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.SingleQuery<ContactDetails> {
+    extends org.apache.olingo.ext.proxy.api.ComplexType,org.apache.olingo.ext.proxy.api.SingleQuery<ContactDetails> {
 
 
 
@@ -67,25 +70,4 @@ public interface ContactDetails
     void setMobilePhoneBag(java.util.Collection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Phone> _mobilePhoneBag);
 
         
-
-    ComplexFactory factory();
-
-    interface ComplexFactory {
-         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ContactAlias",
-                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Aliases")
-         org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Aliases newContactAlias();
-
-         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "HomePhone",
-                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone")
-         org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Phone newHomePhone();
-
-         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "WorkPhone",
-                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone")
-         org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Phone newWorkPhone();
-
-         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "MobilePhoneBag",
-                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone")
-         org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Phone newMobilePhoneBag();
-
-    }
 }

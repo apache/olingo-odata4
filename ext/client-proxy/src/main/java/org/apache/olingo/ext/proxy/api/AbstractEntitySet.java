@@ -24,8 +24,10 @@ import java.io.Serializable;
  * Interface for synchronous CRUD operations on an EntitySet.
  */
 public interface AbstractEntitySet<
-        T extends StructuredType, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
+        T extends StructuredType, KEY extends Serializable, EC extends EntityCollection<T>>
         extends Iterable<T>, Serializable {
+
+  void add(final T entity);
 
   /**
    * Returns whether an entity with the given id exists.
@@ -102,5 +104,5 @@ public interface AbstractEntitySet<
    * @param reference
    * @return the new search instance
    */
-  <S extends T, SEC extends AbstractEntityCollection<S>> Search<S, SEC> createSearch(Class<SEC> reference);
+  <S extends T, SEC extends EntityCollection<S>> Search<S, SEC> createSearch(Class<SEC> reference);
 }

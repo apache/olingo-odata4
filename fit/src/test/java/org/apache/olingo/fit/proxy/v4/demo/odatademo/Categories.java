@@ -19,14 +19,13 @@
 
 package org.apache.olingo.fit.proxy.v4.demo.odatademo;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 
-@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Categories")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Categories", container = "ODataDemo.DemoService")
 public interface Categories 
   extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection, Categories>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection> {
-
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category newCategory();
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection newCategoryCollection();
 }

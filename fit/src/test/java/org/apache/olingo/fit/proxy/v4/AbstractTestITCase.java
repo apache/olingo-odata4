@@ -1,21 +1,22 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4;
 
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
@@ -63,7 +64,7 @@ public abstract class AbstractTestITCase {
 
   protected static String testAuthServiceRootURL;
 
-  protected static Service<EdmEnabledODataClient> containerFactory;
+  protected static Service<EdmEnabledODataClient> service;
 
   protected static InMemoryEntities container;
 
@@ -77,11 +78,11 @@ public abstract class AbstractTestITCase {
     testLargeModelServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Static.svc/large";
     testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc/V40/Static.svc";
 
-    containerFactory = Service.getV4(testStaticServiceRootURL);
-    containerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
-    container = containerFactory.getEntityContainer(InMemoryEntities.class);
+    service = Service.getV4(testStaticServiceRootURL);
+    service.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    container = service.getEntityContainer(InMemoryEntities.class);
     assertNotNull(container);
-    containerFactory.getContext().detachAll();
+    service.getContext().detachAll();
   }
 
   protected Customer readCustomer(final InMemoryEntities container, final int id) {
@@ -93,10 +94,10 @@ public abstract class AbstractTestITCase {
   }
 
   protected void createPatchAndDeleteOrder(
-          final InMemoryEntities container, final Service<EdmEnabledODataClient> containerFactory) {
+          final InMemoryEntities container, final Service<EdmEnabledODataClient> service) {
 
     // Create order ....
-    final Order order = container.getOrders().newOrder();
+    final Order order = service.newEntity(Order.class);
     order.setOrderID(105);
 
     final Calendar orderDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -107,6 +108,7 @@ public abstract class AbstractTestITCase {
     order.setShelfLife(BigDecimal.ZERO);
     order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] {BigDecimal.TEN.negate(), BigDecimal.TEN}));
 
+    container.getOrders().add(order);
     container.flush();
 
     // Patch order ... (test for OLINGO-353)
@@ -124,7 +126,7 @@ public abstract class AbstractTestITCase {
     actual = container.getOrders().getByKey(105);
     assertNull(actual);
 
-    containerFactory.getContext().detachAll();
+    service.getContext().detachAll();
     actual = container.getOrders().getByKey(105);
     assertNotNull(actual);
 
@@ -134,7 +136,7 @@ public abstract class AbstractTestITCase {
 
     container.flush();
 
-    containerFactory.getContext().detachAll();
+    service.getContext().detachAll();
     try {
       container.getOrders().getByKey(105).load();
       fail();

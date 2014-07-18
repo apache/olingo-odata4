@@ -18,7 +18,7 @@
  *#
 #set( $clsSuffix = ".class" )
 package ${package};
-
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
@@ -38,7 +38,6 @@ import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 #foreach($ns in $namespaces)
 import #if($basePackage)${basePackage}.#end${ns}.*;
-import #if($basePackage)${basePackage}.#end${ns}.types.*;
 #end
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -49,6 +48,7 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 #if( $keyRef )@KeyRef(${keyRef}.class)#end
 
@@ -59,7 +59,7 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
         isAbstract = $entityType.Abstract#if($entityType.getBaseType()),
         baseType = "$entityType.getBaseType().getFullQualifiedName().toString()"#end)
 public interface $utility.capitalize($entityType.Name) 
-  extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.Annotatable,#if( $entityType.getBaseType() )$utility.getJavaType($entityType.getBaseType())#{else}org.apache.olingo.ext.proxy.api.SingleQuery<$utility.capitalize($entityType.Name)>#end#{if}( $entityType.isOpenType() ),AbstractOpenType#end {
+  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,#if( $entityType.getBaseType() )$utility.getJavaType($entityType.getBaseType())#{else}org.apache.olingo.ext.proxy.api.SingleQuery<$utility.capitalize($entityType.Name)>#end#{if}( $entityType.isOpenType() ),AbstractOpenType#end {
 
 #if( $entityType.getBaseType() )
   @Override
@@ -183,18 +183,6 @@ public interface $utility.capitalize($entityType.Name)
     }
 #end
 
-    ComplexFactory factory();
-
-    interface ComplexFactory #if( $entityType.baseType )
-           extends ${utility.getJavaType($entityType.getBaseType())}.ComplexFactory#end{
-#foreach($property in $complexProps)
-         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "$property.Name",
-                   type = "$property.Type.FullQualifiedName.toString()")
-         $utility.getJavaType($property.Type) new$utility.capitalize($property.Name)();
-
-#end
-    }
-
     Annotations annotations();
 
     interface Annotations #if( $entityType.baseType )
@@ -244,13 +232,6 @@ public interface $utility.capitalize($entityType.Name)
     @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "$property.Name", contained = true)
     interface $utility.capitalize($property.Name) 
       extends org.apache.olingo.ext.proxy.api.EntitySetQuery<$javaEntityType, ${javaEntityType}Collection, $utility.capitalize($property.Name)>, AbstractEntitySet<$javaEntityType, $type, ${javaEntityType}Collection> {
-
-    #foreach( $dos in $utility.getDescendantsOrSelf($utility.getEdmType($property)) )
-        #set( $djt = $utility.getJavaType($dos) )
-        #set( $sIdx = $djt.lastIndexOf('.') + 1 )
-        $djt new$djt.substring($sIdx)();
-        ${djt}Collection new$djt.substring($sIdx)Collection();
-    #end
     }
 
   #end

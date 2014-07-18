@@ -19,10 +19,13 @@
 
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
+
+
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "ComplexToCategory")
 public interface ComplexToCategory 
-    extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.SingleQuery<ComplexToCategory> {
+    extends org.apache.olingo.ext.proxy.api.ComplexType,org.apache.olingo.ext.proxy.api.SingleQuery<ComplexToCategory> {
 
 
 
@@ -46,9 +49,4 @@ public interface ComplexToCategory
     void setLabel(java.lang.String _label);
 
     
-
-    ComplexFactory factory();
-
-    interface ComplexFactory {
-    }
 }

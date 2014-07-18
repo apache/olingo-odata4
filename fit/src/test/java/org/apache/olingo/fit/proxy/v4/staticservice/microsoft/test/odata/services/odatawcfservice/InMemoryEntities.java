@@ -19,8 +19,10 @@
 
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice;
 
-import org.apache.olingo.ext.proxy.api.OperationType;
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
+import org.apache.olingo.ext.proxy.api.OperationType;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
 @org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "InMemoryEntities",
@@ -143,26 +145,5 @@ public interface InMemoryEntities extends PersistenceManager {
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "emails", type = "Collection(Edm.String)", nullable = false) java.util.Collection<java.lang.String> emails
     );
   
-      }
-
-      ComplexFactory complexFactory();
-
-    interface ComplexFactory {
-          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Address",
-                type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newAddress();
-
-          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "HomeAddress",
-                type = "Microsoft.Test.OData.Services.ODataWCFService.HomeAddress")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress newHomeAddress();
-
-          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CompanyAddress",
-                type = "Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyAddress newCompanyAddress();
-
-          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "AccountInfo",
-                type = "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo newAccountInfo();
-
-        }
-  }
+      }   
+}

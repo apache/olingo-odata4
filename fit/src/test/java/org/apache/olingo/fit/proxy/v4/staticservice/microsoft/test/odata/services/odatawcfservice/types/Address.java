@@ -19,7 +19,9 @@
 
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.Annotatable;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
@@ -27,7 +29,7 @@ import org.apache.olingo.ext.proxy.api.Annotatable;
         isOpenType = false,
         isAbstract = false)
 public interface Address 
-    extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.SingleQuery<Address> {
+    extends org.apache.olingo.ext.proxy.api.ComplexType,org.apache.olingo.ext.proxy.api.SingleQuery<Address> {
 
 
 
@@ -82,11 +84,6 @@ public interface Address
 
     
 
-
-    ComplexFactory factory();
-
-    interface ComplexFactory {
-    }
 
     Annotations annotations();
 

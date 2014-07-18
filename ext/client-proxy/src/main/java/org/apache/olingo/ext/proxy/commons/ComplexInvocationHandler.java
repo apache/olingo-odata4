@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
@@ -83,10 +84,10 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
           final CommonEdmEnabledODataClient<?> client,
           final String propertyName,
           final Class<?> reference,
-          final EntityContainerInvocationHandler containerHandler) {
+          final Service<?> service) {
 
     final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(client, reference);
-    return new ComplexInvocationHandler(client, init.getLeft(), init.getRight(), containerHandler);
+    return new ComplexInvocationHandler(client, init.getLeft(), init.getRight(), service);
   }
 
   public static ComplexInvocationHandler getInstance(
@@ -113,10 +114,27 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
           final CommonEdmEnabledODataClient<?> client,
           final ODataComplexValue<?> complex,
           final Class<?> typeRef,
-          final EntityContainerInvocationHandler containerHandler) {
+          final Service<?> service) {
 
-    super(typeRef, complex, containerHandler);
+    super(typeRef, complex, service);
     this.client = client;
+  }
+
+  public static ComplexInvocationHandler getInstance(
+          final Class<?> typeRef,
+          final Service<?> service) {
+    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(service.getClient(), typeRef);
+    return new ComplexInvocationHandler(init.getLeft(), init.getRight(), service);
+  }
+
+  private ComplexInvocationHandler(
+          final ODataComplexValue<?> complex,
+          final Class<?> typeRef,
+          final Service<?> service) {
+
+    super(typeRef, service);
+    this.internal = complex;
+    this.client = service.getClient();
   }
 
   @SuppressWarnings("unchecked")

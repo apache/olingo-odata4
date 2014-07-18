@@ -1,21 +1,22 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3;
 
 import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
@@ -35,6 +36,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.IndexedRow;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -45,28 +47,28 @@ import static org.junit.Assert.assertTrue;
  */
 public class OpenTypeTestITCase extends AbstractTestITCase {
 
-  private static Service<EdmEnabledODataClient> otcontainerFactory;
+  private static Service<EdmEnabledODataClient> otservice;
 
   private static DefaultContainer otcontainer;
 
   @BeforeClass
   public static void initContainer() {
-    otcontainerFactory = Service.getV3(testOpenTypeServiceRootURL);
-    otcontainerFactory.getClient().getConfiguration().
+    otservice = Service.getV3(testOpenTypeServiceRootURL);
+    otservice.getClient().getConfiguration().
             setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
-    otcontainer = otcontainerFactory.getEntityContainer(DefaultContainer.class);
+    otcontainer = otservice.getEntityContainer(DefaultContainer.class);
     assertNotNull(otcontainer);
   }
 
   @Test
   public void checkOpenTypeEntityTypesExist() {
-    assertTrue(otcontainer.getRow().newRow().getClass().getInterfaces()[0].
+    assertTrue(otservice.newEntity(Row.class).getClass().getInterfaces()[0].
             getAnnotation(EntityType.class).openType());
-    assertTrue(otcontainer.getRowIndex().newRowIndex().getClass().getInterfaces()[0].
+    assertTrue(otservice.newEntity(RowIndex.class).getClass().getInterfaces()[0].
             getAnnotation(EntityType.class).openType());
-    assertTrue(otcontainer.getRow().newIndexedRow().getClass().getInterfaces()[0].
+    assertTrue(otservice.newEntity(IndexedRow.class).getClass().getInterfaces()[0].
             getAnnotation(EntityType.class).openType());
-    otcontainerFactory.getContext().detachAll();
+    otservice.getContext().detachAll();
   }
 
   @Test
@@ -83,7 +85,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   public void cud() throws ParseException {
     final Integer id = 1426;
 
-    RowIndex rowIndex = otcontainer.getRowIndex().newRowIndex();
+    RowIndex rowIndex = otservice.newEntity(RowIndex.class);
     rowIndex.setId(id);
     rowIndex.addAdditionalProperty("aString", "string");
     rowIndex.addAdditionalProperty("aBoolean", true);
@@ -91,7 +93,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     rowIndex.addAdditionalProperty("aByte", Byte.MAX_VALUE);
     rowIndex.addAdditionalProperty("aDate", Calendar.getInstance());
 
-    final ContactDetails contact = otcontainer.complexFactory().newContactDetails();
+    final ContactDetails contact = otservice.newComplex(ContactDetails.class);
     contact.setFirstContacted("text".getBytes());
 
     Calendar cal = Calendar.getInstance();
@@ -115,6 +117,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     contact.setInt(Integer.MAX_VALUE);
     rowIndex.addAdditionalProperty("aContact", contact);
 
+    otcontainer.getRowIndex().add(rowIndex);
     otcontainer.flush();
 
     rowIndex = otcontainer.getRowIndex().getByKey(id).load();
@@ -126,7 +129,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertTrue(Timestamp.class.isAssignableFrom(rowIndex.getAdditionalProperty("aDate").getClass()));
     assertEquals(ContactDetails.class, rowIndex.getAdditionalProperty("aContact").getClass().getInterfaces()[0]);
 
-    otcontainerFactory.getContext().detachAll();
+    otservice.getContext().detachAll();
 
     otcontainer.getRowIndex().delete(id);
     otcontainer.flush();

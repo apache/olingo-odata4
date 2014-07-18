@@ -32,4 +32,6 @@ import java.lang.annotation.Target;
 public @interface Singleton {
 
   String name();
+
+  String container() default "";
 }

@@ -18,12 +18,12 @@
  *#
 package ${package};
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
 #foreach($ns in $namespaces)
-import #if($basePackage)${basePackage}.#end${ns}.*;
 import #if($basePackage)${basePackage}.#end${ns}.types.*;
 #end
 
@@ -42,6 +42,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 #set( $keys = $utility.getEntityKeyType($entitySet) )
 #if( $keys.size() > 1 )
@@ -54,14 +55,7 @@ import javax.xml.datatype.Duration;
 
 #set ( $javaEntityType = $utility.getJavaType($entitySet.EntityType) )
 
-@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "$entitySet.Name")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "$entitySet.Name", container = "$container.FullQualifiedName.toString()")
 public interface $utility.capitalize($entitySet.Name) 
   extends org.apache.olingo.ext.proxy.api.EntitySetQuery<$javaEntityType, ${javaEntityType}Collection, $utility.capitalize($entitySet.Name)>, AbstractEntitySet<$javaEntityType, $type, ${javaEntityType}Collection> {
-
-#foreach( $dos in $utility.getDescendantsOrSelf($utility.getEdmType($entitySet)) )
-    #set( $djt = $utility.getJavaType($dos) )
-    #set( $sIdx = $djt.lastIndexOf('.') + 1 )
-    $djt new$djt.substring($sIdx)();
-    ${djt}Collection new$djt.substring($sIdx)Collection();
-#end
 }

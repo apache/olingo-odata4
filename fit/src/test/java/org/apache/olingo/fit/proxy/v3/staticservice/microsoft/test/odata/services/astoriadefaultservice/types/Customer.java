@@ -18,10 +18,11 @@
  */
 
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
-
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.client.api.edm.ConcurrencyMode;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
@@ -30,7 +31,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Key;
         hasStream = false,
         isAbstract = false)
 public interface Customer 
-  extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<Customer> {
+  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<Customer> {
 
 
     
@@ -248,23 +249,6 @@ public interface Customer
     void setInfo(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfo _info);
     
 
-
-    ComplexFactory factory();
-
-    interface ComplexFactory {
-         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PrimaryContactInfo",
-                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails")
-         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newPrimaryContactInfo();
-
-         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BackupContactInfo",
-                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails")
-         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newBackupContactInfo();
-
-         @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Auditing",
-                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo")
-         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo newAuditing();
-
-    }
 
     Annotations annotations();
 

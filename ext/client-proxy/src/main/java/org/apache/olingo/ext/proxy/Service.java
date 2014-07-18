@@ -21,13 +21,21 @@ package org.apache.olingo.ext.proxy;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.ext.proxy.api.ComplexType;
+import org.apache.olingo.ext.proxy.api.EntityCollection;
+import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
+import org.apache.olingo.ext.proxy.commons.ComplexInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.EntityCollectionInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.EntityContainerInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.NonTransactionalPersistenceManagerImpl;
 import org.apache.olingo.ext.proxy.commons.TransactionalPersistenceManagerImpl;
 import org.apache.olingo.ext.proxy.context.Context;
+import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -105,7 +113,6 @@ public final class Service<C extends CommonEdmEnabledODataClient<?>> {
 
     return getInstance(ODataClientFactory.getEdmEnabledV4(serviceRoot), transactional);
   }
-
   private final CommonEdmEnabledODataClient<?> client;
 
   private final Context context;
@@ -161,5 +168,34 @@ public final class Service<C extends CommonEdmEnabledODataClient<?>> {
       ENTITY_CONTAINERS.put(reference, entityContainer);
     }
     return reference.cast(ENTITY_CONTAINERS.get(reference));
+  }
+
+  @SuppressWarnings("unchecked")
+  public <NE extends EntityType> NE newEntity(final Class<NE> reference) {
+    final EntityInvocationHandler handler = EntityInvocationHandler.getInstance(reference, this);
+
+    return (NE) Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] {reference},
+            handler);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T extends EntityType, NEC extends EntityCollection<T>> NEC newEntityCollection(final Class<NEC> reference) {
+    final Class<T> ref = (Class<T>) ClassUtils.extractTypeArg(reference, EntityCollection.class);
+
+    return (NEC) Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] {reference},
+            new EntityCollectionInvocationHandler<T>(this, new ArrayList<T>(), ref));
+  }
+
+  @SuppressWarnings("unchecked")
+  public <NE extends ComplexType> NE newComplex(final Class<NE> reference) {
+    return (NE) Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] {reference},
+            ComplexInvocationHandler.getInstance(reference, this));
+
   }
 }

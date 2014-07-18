@@ -18,10 +18,11 @@
  */
 
 package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
-
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.client.api.edm.ConcurrencyMode;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("ODataDemo")
@@ -31,7 +32,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Key;
         isAbstract = false,
         baseType = "ODataDemo.Product")
 public interface FeaturedProduct 
-  extends org.apache.olingo.ext.proxy.api.StructuredType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product {
+  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product {
 
   @Override
   FeaturedProduct load();
@@ -247,11 +248,6 @@ public interface FeaturedProduct
     interface Operations            extends org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product.Operations{
     
         }
-
-    ComplexFactory factory();
-
-    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product.ComplexFactory{
-    }
 
     Annotations annotations();
 

@@ -19,16 +19,13 @@
 
 package org.apache.olingo.fit.proxy.v4.demo.odatademo;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 
-@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Products")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Products", container = "ODataDemo.DemoService")
 public interface Products 
   extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.ProductCollection, Products>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.ProductCollection> {
-
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product newProduct();
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.ProductCollection newProductCollection();
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.FeaturedProduct newFeaturedProduct();
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.FeaturedProductCollection newFeaturedProductCollection();
 }

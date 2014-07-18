@@ -69,17 +69,17 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   /**
    * Target URI.
    */
-  protected final URI uri;
+  protected URI uri;
 
   /**
    * HTTP client.
    */
-  protected final HttpClient httpClient;
+  protected HttpClient httpClient;
 
   /**
    * HTTP request.
    */
-  protected final HttpUriRequest request;
+  protected HttpUriRequest request;
 
   /**
    * Constructor.
@@ -90,7 +90,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
    */
   protected AbstractODataRequest(final CommonODataClient<?> odataClient, final HttpMethod method, final URI uri) {
     super();
-    
+
     this.odataClient = odataClient;
     this.method = method;
 
@@ -99,14 +99,8 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
 
     // target uri
     this.uri = uri;
-
-    HttpClient _httpClient = odataClient.getConfiguration().getHttpClientFactory().create(this.method, this.uri);
-    if (odataClient.getConfiguration().isGzipCompression()) {
-      _httpClient = new DecompressingHttpClient(_httpClient);
-    }
-    this.httpClient = _httpClient;
-
-    this.request = odataClient.getConfiguration().getHttpUriRequestFactory().create(this.method, this.uri);
+    this.httpClient = getHttpClient(method, uri);
+    this.request = odataClient.getConfiguration().getHttpUriRequestFactory().create(this.method, uri);
   }
 
   public abstract ODataFormat getDefaultFormat();
@@ -114,6 +108,13 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   @Override
   public URI getURI() {
     return uri;
+  }
+
+  @Override
+  public void setURI(final URI uri) {
+    this.uri = uri;
+    this.httpClient = getHttpClient(method, uri);
+    this.request = odataClient.getConfiguration().getHttpUriRequestFactory().create(this.method, this.uri);
   }
 
   @Override
@@ -347,5 +348,13 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
     }
 
     throw new IllegalStateException("No response class template has been found");
+  }
+
+  private HttpClient getHttpClient(final HttpMethod method, final URI uri) {
+    HttpClient client = odataClient.getConfiguration().getHttpClientFactory().create(method, uri);
+    if (odataClient.getConfiguration().isGzipCompression()) {
+      client = new DecompressingHttpClient(client);
+    }
+    return client;
   }
 }

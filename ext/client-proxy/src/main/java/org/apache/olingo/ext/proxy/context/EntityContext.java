@@ -89,10 +89,12 @@ public class EntityContext implements Iterable<AttachedEntity> {
       throw new IllegalStateException("An entity with the same profile has already been attached");
     }
 
-    allAttachedEntities.put(entity, status);
+    if (entity.getUUID().getEntitySetURI() != null) {
+      allAttachedEntities.put(entity, status);
 
-    if (entity.getUUID().getKey() != null) {
-      searchableEntities.put(entity.getUUID(), entity);
+      if (entity.getUUID().getKey() != null) {
+        searchableEntities.put(entity.getUUID(), entity);
+      }
     }
   }
 

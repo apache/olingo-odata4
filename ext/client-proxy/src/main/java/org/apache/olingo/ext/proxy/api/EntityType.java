@@ -1,4 +1,4 @@
-#*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,18 +15,8 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *#
-package ${package};
+ */
+package org.apache.olingo.ext.proxy.api;
 
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.Property;
-
-@org.apache.olingo.ext.proxy.api.annotations.Namespace("$namespace")
-public interface ComplexCreator {
-  #foreach($complex in $complexes)
-      #set( $type = "${namespace}.${complex.Name}" )
-      @org.apache.olingo.ext.proxy.api.annotations.Property(name = "$complex.Name", type = "$type")
-      $utility.getJavaType($type) new$utility.capitalize($complex.Name)();
-
-  #end
+public interface EntityType extends StructuredType {
 }

@@ -19,14 +19,14 @@
 
 package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 
-import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
-
 import java.util.Collection;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 public interface SupplierCollection extends 
-    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection>, AbstractEntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier> {
+    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

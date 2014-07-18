@@ -30,7 +30,7 @@ import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
+import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
 import org.apache.olingo.ext.proxy.api.Sort;
@@ -42,9 +42,10 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.ext.proxy.Service;
 
 public abstract class AbstractEntityCollectionInvocationHandler<
-        T extends StructuredType, EC extends AbstractEntityCollection<T>>
+        T extends StructuredType, EC extends EntityCollection<T>>
         extends AbstractInvocationHandler {
 
   private static final long serialVersionUID = 98078202642671727L;
@@ -62,9 +63,9 @@ public abstract class AbstractEntityCollectionInvocationHandler<
   @SuppressWarnings("unchecked")
   public AbstractEntityCollectionInvocationHandler(
           final Class<?> ref,
-          final EntityContainerInvocationHandler containerHandler,
+          final Service<?> service,
           final CommonURIBuilder<?> uri) {
-    super(containerHandler);
+    super(service);
 
     this.uri = uri;
     this.baseURI = uri.build();
@@ -81,9 +82,9 @@ public abstract class AbstractEntityCollectionInvocationHandler<
   public AbstractEntityCollectionInvocationHandler(
           final Class<?> itemRef,
           final Class<EC> collItemRef,
-          final EntityContainerInvocationHandler containerHandler,
+          final Service<?> service,
           final CommonURIBuilder<?> uri) {
-    super(containerHandler);
+    super(service);
 
     this.uri = uri;
     this.baseURI = uri == null ? null : uri.build();
@@ -100,7 +101,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<
   }
 
   @SuppressWarnings("unchecked")
-  public <S extends T, SEC extends AbstractEntityCollection<S>> SEC fetchWholeEntitySet(
+  public <S extends T, SEC extends EntityCollection<S>> SEC fetchWholeEntitySet(
           final CommonURIBuilder<?> uriBuilder, final Class<S> typeRef, final Class<SEC> collTypeRef) {
 
     final List<S> items = new ArrayList<S>();
@@ -115,7 +116,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<
     }
 
     final EntityCollectionInvocationHandler<S> entityCollectionHandler =
-            new EntityCollectionInvocationHandler<S>(containerHandler, items, typeRef, uriBuilder);
+            new EntityCollectionInvocationHandler<S>(service, items, typeRef, uriBuilder);
     entityCollectionHandler.setAnnotations(annotations);
 
     return (SEC) Proxy.newProxyInstance(
@@ -168,7 +169,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<
               entity,
               null,
               typeRef,
-              containerHandler);
+              service);
 
       final EntityInvocationHandler handlerInTheContext = getContext().entityContext().getEntity(handler.getUUID());
 

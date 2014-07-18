@@ -22,7 +22,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
+import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.StructuredType;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -38,10 +38,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.olingo.ext.proxy.Service;
 
 public class EntityCollectionInvocationHandler<T extends StructuredType>
-        extends AbstractEntityCollectionInvocationHandler<T, AbstractEntityCollection<T>>
-        implements AbstractEntityCollection<T> {
+        extends AbstractEntityCollectionInvocationHandler<T, EntityCollection<T>>
+        implements EntityCollection<T> {
 
   private static final long serialVersionUID = 98078202642671726L;
 
@@ -54,16 +55,15 @@ public class EntityCollectionInvocationHandler<T extends StructuredType>
   private final Map<Class<? extends AbstractTerm>, Object> annotationsByTerm =
           new HashMap<Class<? extends AbstractTerm>, Object>();
 
-  public EntityCollectionInvocationHandler(final EntityContainerInvocationHandler containerHandler,
-          final Collection<T> items, final Class<T> itemRef) {
-
-    this(containerHandler, items, itemRef, null);
+  public EntityCollectionInvocationHandler(
+          final Service<?> service, final Collection<T> items, final Class<T> itemRef) {
+    this(service, items, itemRef, null);
   }
 
-  public EntityCollectionInvocationHandler(final EntityContainerInvocationHandler containerHandler,
-          final Collection<T> items, final Class<T> itemRef, final CommonURIBuilder<?> uri) {
+  public EntityCollectionInvocationHandler(
+          final Service<?> service, final Collection<T> items, final Class<T> itemRef, final CommonURIBuilder<?> uri) {
 
-    super(itemRef, null, containerHandler, uri);
+    super(itemRef, null, service, uri);
     this.items = items;
   }
 
@@ -119,7 +119,7 @@ public class EntityCollectionInvocationHandler<T extends StructuredType>
   }
 
   @SuppressWarnings("unchecked")
-  public AbstractEntityCollection<T> execute() {
+  public EntityCollection<T> execute() {
     final Triple<List<T>, URI, List<ODataAnnotation>> entitySet = fetchPartialEntitySet(this.uri.build(), itemRef);
     this.nextPageURI = entitySet.getMiddle();
 
@@ -168,6 +168,11 @@ public class EntityCollectionInvocationHandler<T extends StructuredType>
 
   @Override
   public boolean add(final T element) {
+    final EntityInvocationHandler handler = EntityInvocationHandler.class.cast(Proxy.getInvocationHandler(element));
+    if (!service.getContext().entityContext().isAttached(handler) && baseURI != null) {
+      handler.updateUUID(baseURI, itemRef, null);
+      service.getContext().entityContext().attachNew(handler);
+    }
     return items.add(element);
   }
 

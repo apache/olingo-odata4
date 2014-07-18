@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.olingo.ext.proxy.Service;
 
 public class AnnotatableInvocationHandler extends AbstractInvocationHandler implements Annotatable {
 
@@ -53,13 +54,13 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
           new HashMap<Class<? extends AbstractTerm>, Object>();
 
   public AnnotatableInvocationHandler(
-          final EntityContainerInvocationHandler containerHandler,
+          final Service<?> service,
           final String propName,
           final String navPropName,
           final EntityInvocationHandler entityHandler,
           final AbstractStructuredInvocationHandler targetHandler) {
 
-    super(containerHandler);
+    super(service);
 
     this.propName = propName;
     this.navPropName = navPropName;
@@ -158,7 +159,7 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
         res = annotation == null || annotation.hasNullValue()
                 ? null
                 : CoreUtils.getObjectFromODataValue(
-                        getClient(), annotation.getValue(), null, targetHandler.getEntityHandler());
+                getClient(), annotation.getValue(), null, targetHandler.getEntityHandler());
         if (res != null) {
           annotations.put(term, res);
         }

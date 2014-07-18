@@ -61,24 +61,18 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
   private static final long serialVersionUID = 358520026931462958L;
 
-  protected Service<?> factory;
+  protected Service<?> service;
 
-  protected EntityContainerInvocationHandler containerHandler;
-
-  protected AbstractInvocationHandler(final Service<?> factory) {
-    this.factory = factory;
-  }
-
-  protected AbstractInvocationHandler(final EntityContainerInvocationHandler containerHandler) {
-    this.containerHandler = containerHandler;
+  protected AbstractInvocationHandler(final Service<?> service) {
+    this.service = service;
   }
 
   protected CommonEdmEnabledODataClient<?> getClient() {
-    return factory == null ? containerHandler.getFactory().getClient() : factory.getClient();
+    return service.getClient();
   }
 
   protected Context getContext() {
-    return factory == null ? containerHandler.getFactory().getContext() : factory.getContext();
+    return service.getContext();
   }
 
   protected boolean isSelfMethod(final Method method, final Object[] args) {
@@ -111,13 +105,13 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     final List<Object> items = new ArrayList<Object>();
 
     for (CommonODataEntity entityFromSet : entitySet.getEntities()) {
-      items.add(getEntityProxy(entityFromSet, entityContainerName, null, typeRef, null, checkInTheContext));
+      items.add(getEntityProxy(entityFromSet, entityContainerName, uri, typeRef, null, checkInTheContext));
     }
 
     return Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {typeCollectionRef},
-            new EntityCollectionInvocationHandler(containerHandler, items, typeRef,
+            new EntityCollectionInvocationHandler(service, items, typeRef,
             uri == null ? null : getClient().newURIBuilder(uri.toASCIIString())));
   }
 
@@ -128,7 +122,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     return Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {typeRef},
-            EntitySetInvocationHandler.getInstance(typeRef, containerHandler, uri));
+            EntitySetInvocationHandler.getInstance(typeRef, service, uri));
   }
 
   protected Object getEntityProxy(
@@ -139,7 +133,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
           final String eTag,
           final boolean checkInTheContext) {
 
-    EntityInvocationHandler handler = EntityInvocationHandler.getInstance(entity, entitySetURI, type, containerHandler);
+    EntityInvocationHandler handler = EntityInvocationHandler.getInstance(entity, entitySetURI, type, service);
 
     if (StringUtils.isNotBlank(eTag)) {
       // override ETag into the wrapped object.
@@ -148,6 +142,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
     if (checkInTheContext && getContext().entityContext().isAttached(handler)) {
       handler = getContext().entityContext().getEntity(handler.getUUID());
+      handler.setEntity(entity);
     } else {
       handler.attach(AttachedEntityStatus.ATTACHED, false);
     }
@@ -209,7 +204,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
     // 2. IMPORTANT: flush any pending change *before* invoke if this operation is side effecting
     if (annotation.type() == OperationType.ACTION) {
-      containerHandler.getFactory().getPersistenceManager().flush();
+      service.getPersistenceManager().flush();
     }
 
     // 3. invoke

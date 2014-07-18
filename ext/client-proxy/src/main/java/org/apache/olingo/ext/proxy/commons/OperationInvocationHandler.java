@@ -64,21 +64,21 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
   }
 
   private OperationInvocationHandler(final EntityContainerInvocationHandler containerHandler) {
-    super(containerHandler);
+    super(containerHandler.service);
 
     this.target = containerHandler;
     this.targetFQN = new FullQualifiedName(containerHandler.getSchemaName(), containerHandler.getEntityContainerName());
   }
 
   private OperationInvocationHandler(final EntityInvocationHandler entityHandler) {
-    super(entityHandler.containerHandler);
+    super(entityHandler.service);
 
     this.target = entityHandler;
     this.targetFQN = entityHandler.getEntity().getTypeName();
   }
 
   private OperationInvocationHandler(final EntityCollectionInvocationHandler<?> collectionHandler) {
-    super(collectionHandler.containerHandler);
+    super(collectionHandler.service);
 
     this.target = collectionHandler;
 
@@ -156,7 +156,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
   }
 
   private Map.Entry<URI, EdmOperation> getBoundOperation(final Operation operation, final List<String> parameterNames) {
-    final CommonODataEntity entity = ((EntityInvocationHandler) target).getEntity();
+    final CommonODataEntity entity = EntityInvocationHandler.class.cast(target).getEntity();
 
     ODataOperation boundOp = entity.getOperation(operation.name());
     if (boundOp == null) {
@@ -196,7 +196,8 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
         boundOp = new ODataOperation();
         boundOp.setMetadataAnchor(func.getFullQualifiedName().toString());
         boundOp.setTitle(boundOp.getMetadataAnchor());
-        boundOp.setTarget(URI.create(entity.getEditLink().toString() + "/"
+        boundOp.setTarget(URI.create((entity.getEditLink() == null
+                ? EntityInvocationHandler.class.cast(target).getEntityURI() : entity.getEditLink()).toString() + "/"
                 + (useOperationFQN ? func.getFullQualifiedName().toString() : operation.name())));
       } else {
         baseType = baseType.getBaseType();

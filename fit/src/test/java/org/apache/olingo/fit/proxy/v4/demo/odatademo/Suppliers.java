@@ -19,14 +19,13 @@
 
 package org.apache.olingo.fit.proxy.v4.demo.odatademo;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 
-@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Suppliers")
+@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Suppliers", container = "ODataDemo.DemoService")
 public interface Suppliers 
   extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection, Suppliers>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection> {
-
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier newSupplier();
-    org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection newSupplierCollection();
 }

@@ -18,9 +18,11 @@
  *#
 package ${package};
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EnumType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 #set( $enumName = $utility.capitalize($enumType.Name) )
 #set( $count = $enumType.MemberNames.size() )

@@ -24,16 +24,14 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.olingo.ext.proxy.api.StructuredType;
 
 import java.io.Serializable;
 import java.net.URI;
+import org.apache.olingo.ext.proxy.api.EntityType;
 
 public class EntityUUID implements Serializable {
 
   private static final long serialVersionUID = 4855025769803086495L;
-
-  private final String containerName;
 
   private final URI entitySetURI;
 
@@ -46,12 +44,11 @@ public class EntityUUID implements Serializable {
 
   private Class<?> type;
 
-  public EntityUUID(final String containerName, final URI entitySetURI, final Class<?> type) {
-    this(containerName, entitySetURI, type, null);
+  public EntityUUID(final URI entitySetURI, final Class<?> type) {
+    this(entitySetURI, type, null);
   }
 
-  public EntityUUID(final String containerName, final URI entitySetURI, final Class<?> type, final Object key) {
-    this.containerName = containerName;
+  public EntityUUID(final URI entitySetURI, final Class<?> type, final Object key) {
     this.entitySetURI = entitySetURI;
     this.key = key;
     this.tempKey = (int) (Math.random() * 1000000);
@@ -63,15 +60,11 @@ public class EntityUUID implements Serializable {
       if (this.type == null
               && (clazz.getInterfaces().length == 0
               || ArrayUtils.contains(clazz.getInterfaces(), Serializable.class)
-              || ArrayUtils.contains(clazz.getInterfaces(), StructuredType.class))) {
+              || ArrayUtils.contains(clazz.getInterfaces(), EntityType.class))) {
 
         this.type = clazz;
       }
     }
-  }
-
-  public String getContainerName() {
-    return containerName;
   }
 
   public URI getEntitySetURI() {

@@ -19,10 +19,12 @@
 
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 
-@org.apache.olingo.ext.proxy.api.annotations.Singleton(name = "PublicCompany")
+@org.apache.olingo.ext.proxy.api.annotations.Singleton(name = "PublicCompany", container = "Microsoft.Test.OData.Services.ODataWCFService.InMemoryEntities")
 public interface PublicCompany extends org.apache.olingo.ext.proxy.api.SingleQuery<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company>,AbstractSingleton<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCollection> {
 }

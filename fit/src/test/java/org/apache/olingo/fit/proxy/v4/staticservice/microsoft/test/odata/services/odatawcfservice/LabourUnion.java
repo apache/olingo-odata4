@@ -19,10 +19,12 @@
 
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 
 
-@org.apache.olingo.ext.proxy.api.annotations.Singleton(name = "LabourUnion")
+@org.apache.olingo.ext.proxy.api.annotations.Singleton(name = "LabourUnion", container = "Microsoft.Test.OData.Services.ODataWCFService.InMemoryEntities")
 public interface LabourUnion extends org.apache.olingo.ext.proxy.api.SingleQuery<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnion>,AbstractSingleton<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnion, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnionCollection> {
 }

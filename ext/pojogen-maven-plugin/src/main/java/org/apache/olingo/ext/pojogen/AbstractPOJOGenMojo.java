@@ -283,10 +283,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
           parseObj(typesBaseDir, typesPkg, "complexType", className + ".java", objs);
         }
 
-        final List<EdmEntityType> entities = new ArrayList<EdmEntityType>();
-
         for (EdmEntityType entity : schema.getEntityTypes()) {
-          entities.add(entity);
           objs.clear();
           objs.put("entityType", entity);
 
@@ -330,35 +327,24 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
           objs.put("namespace", schema.getNamespace());
           objs.put("complexes", complexes);
 
-          parseObj(base, pkg, "container",
-                  utility.capitalize(container.getName()) + ".java", objs);
+          parseObj(base, pkg, "container", utility.capitalize(container.getName()) + ".java", objs);
 
           for (EdmEntitySet entitySet : container.getEntitySets()) {
             objs.clear();
             objs.put("entitySet", entitySet);
-            parseObj(base, pkg, "entitySet",
-                    utility.capitalize(entitySet.getName()) + ".java", objs);
+            objs.put("container", container);
+            parseObj(base, pkg, "entitySet", utility.capitalize(entitySet.getName()) + ".java", objs);
           }
 
           if (ODataServiceVersion.valueOf(getVersion().toUpperCase()).compareTo(ODataServiceVersion.V40) >= 0) {
             for (EdmSingleton singleton : container.getSingletons()) {
               objs.clear();
               objs.put("singleton", singleton);
-              parseObj(base, pkg, "singleton",
-                      utility.capitalize(singleton.getName()) + ".java", objs);
+              objs.put("container", container);
+              parseObj(base, pkg, "singleton", utility.capitalize(singleton.getName()) + ".java", objs);
             }
           }
         }
-
-        objs.clear();
-        objs.put("namespace", schema.getNamespace());
-        objs.put("complexes", complexes);
-        parseObj(base, pkg, "complexCreator", "ComplexCreator.java", objs);
-
-        objs.clear();
-        objs.put("namespace", schema.getNamespace());
-        objs.put("entities", entities);
-        parseObj(base, pkg, "entityCreator", "EntityCreator.java", objs);
       }
 
       final File metaInf = mkdir("META-INF");

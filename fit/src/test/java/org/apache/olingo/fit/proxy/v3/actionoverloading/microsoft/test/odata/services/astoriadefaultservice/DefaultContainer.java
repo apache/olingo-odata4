@@ -19,8 +19,10 @@
 
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice;
 
-import org.apache.olingo.ext.proxy.api.OperationType;
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
+import org.apache.olingo.ext.proxy.api.OperationType;
+//CHECKSTYLE:ON (Maven checkstyle)
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "DefaultContainer",
@@ -95,38 +97,5 @@ public interface DefaultContainer extends PersistenceManager {
   java.lang.Integer retrieveProduct(
     );
   
-      }
-
-      ComplexFactory complexFactory();
-
-    interface ComplexFactory {
-          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ContactDetails",
-                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails")
-      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newContactDetails();
-
-          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Aliases",
-                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Aliases")
-      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Aliases newAliases();
-
-          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Phone",
-                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone")
-      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Phone newPhone();
-
-          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "AuditInfo",
-                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo")
-      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo newAuditInfo();
-
-          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ConcurrencyInfo",
-                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo")
-      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newConcurrencyInfo();
-
-          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Dimensions",
-                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions")
-      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions newDimensions();
-
-          @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ComplexToCategory",
-                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ComplexToCategory")
-      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory newComplexToCategory();
-
-        }
-  }
+      }   
+}

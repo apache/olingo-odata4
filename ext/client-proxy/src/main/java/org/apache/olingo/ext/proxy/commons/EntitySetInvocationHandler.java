@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
@@ -29,7 +28,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
+import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
 import org.apache.olingo.ext.proxy.api.Search;
@@ -44,14 +43,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.Singleton;
 
 class EntitySetInvocationHandler<
-        T extends StructuredType, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
+        T extends StructuredType, KEY extends Serializable, EC extends EntityCollection<T>>
         extends AbstractEntityCollectionInvocationHandler<T, EC>
         implements AbstractEntitySet<T, KEY, EC> {
 
@@ -62,74 +68,78 @@ class EntitySetInvocationHandler<
    */
   private static final Logger LOG = LoggerFactory.getLogger(EntitySetInvocationHandler.class);
 
-  @SuppressWarnings("unchecked")
-  static EntitySetInvocationHandler getInstance(
-          final Class<?> itemRef,
-          final Class<?> collItemRef,
-          final EntityContainerInvocationHandler containerHandler,
-          final String entitySetName) {
-
-    final CommonURIBuilder<?> uriBuilder = buildURI(containerHandler, entitySetName);
-
-    uriBuilder.appendDerivedEntityTypeSegment(new FullQualifiedName(
-            ClassUtils.getNamespace(itemRef), ClassUtils.getEntityTypeName(itemRef)).toString());
-
-    return new EntitySetInvocationHandler(itemRef, collItemRef, containerHandler, entitySetName, uriBuilder);
-  }
-
   @SuppressWarnings({"rawtypes", "unchecked"})
   static EntitySetInvocationHandler getInstance(
           final Class<?> ref,
-          final EntityContainerInvocationHandler containerHandler,
+          final Service<?> service,
           final String entitySetName) {
 
-    return new EntitySetInvocationHandler(
-            ref, containerHandler, entitySetName, buildURI(containerHandler, entitySetName));
+    return new EntitySetInvocationHandler(ref, service, entitySetName, buildURI(ref, service, entitySetName));
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static EntitySetInvocationHandler getInstance(
-          final Class<?> ref, final EntityContainerInvocationHandler containerHandler, final URI uri) {;
+          final Class<?> ref, final Service<?> service, final URI uri) {;
 
-    return new EntitySetInvocationHandler(ref, containerHandler, (ref.getAnnotation(EntitySet.class)).name(),
-            containerHandler.getClient().newURIBuilder(uri.toASCIIString()));
+    return new EntitySetInvocationHandler(
+            ref,
+            service,
+            (ref.getAnnotation(EntitySet.class)).name(),
+            service.getClient().newURIBuilder(uri.toASCIIString()));
   }
 
   private static CommonURIBuilder<?> buildURI(
-          final EntityContainerInvocationHandler containerHandler,
+          final Class<?> ref,
+          final Service<?> service,
           final String entitySetName) {
-    final CommonURIBuilder<?> uriBuilder = containerHandler.getClient().newURIBuilder();
+    final CommonURIBuilder<?> uriBuilder = service.getClient().newURIBuilder();
+
+    final Edm edm = service.getClient().getCachedEdm();
+    final String containerNS;
+    Annotation ann = ref.getAnnotation(EntitySet.class);
+    if (ann instanceof EntitySet) {
+      containerNS = EntitySet.class.cast(ann).container();
+    } else {
+      ann = ref.getAnnotation(Singleton.class);
+      if (ann instanceof Singleton) {
+        containerNS = Singleton.class.cast(ann).container();
+      } else {
+        containerNS = null;
+      }
+    }
 
     final StringBuilder entitySetSegment = new StringBuilder();
-    if (!containerHandler.isDefaultEntityContainer()) {
-      entitySetSegment.append(containerHandler.getEntityContainerName()).append('.');
+    if (StringUtils.isNotBlank(containerNS)) {
+      final EdmEntityContainer container = edm.getEntityContainer(new FullQualifiedName(containerNS));
+      if (!container.isDefault()) {
+        entitySetSegment.append(container.getFullQualifiedName().toString()).append('.');
+      }
     }
+
     entitySetSegment.append(entitySetName);
-
     uriBuilder.appendEntitySetSegment(entitySetSegment.toString());
-
     return uriBuilder;
   }
 
   @SuppressWarnings("unchecked")
   protected EntitySetInvocationHandler(
           final Class<?> ref,
-          final EntityContainerInvocationHandler containerHandler,
+          final Service<?> service,
           final String entitySetName,
           final CommonURIBuilder<?> uri) {
 
-    super(ref, containerHandler, uri);
+    super(ref, service, uri);
   }
 
   @SuppressWarnings("unchecked")
   protected EntitySetInvocationHandler(
           final Class<?> itemRef,
           final Class<EC> collItemRef,
-          final EntityContainerInvocationHandler containerHandler,
+          final Service<?> service,
           final String entitySetName,
           final CommonURIBuilder<?> uri) {
 
-    super(itemRef, collItemRef, containerHandler, uri);
+    super(itemRef, collItemRef, service, uri);
   }
 
   @Override
@@ -144,38 +154,18 @@ class EntitySetInvocationHandler<
       return proxy;
     } else if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
-    } else if (method.getName().startsWith("new") && ArrayUtils.isEmpty(args)) {
-      if (method.getName().endsWith("Collection")) {
-        return newEntityCollection(method.getReturnType());
-      } else {
-        return newEntity(method.getReturnType());
-      }
     } else {
       throw new NoSuchMethodException(method.getName());
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private <NE> NE newEntity(final Class<NE> reference) {
-    final CommonODataEntity entity = getClient().getObjectFactory().newEntity(
-            new FullQualifiedName(containerHandler.getSchemaName(), ClassUtils.getEntityTypeName(reference)));
-
-    final EntityInvocationHandler handler =
-            EntityInvocationHandler.getInstance(entity, this.baseURI, reference, containerHandler);
-    getContext().entityContext().attachNew(handler);
-
-    return (NE) Proxy.newProxyInstance(
-            Thread.currentThread().getContextClassLoader(),
-            new Class<?>[] {reference},
-            handler);
-  }
-
-  @SuppressWarnings("unchecked")
-  private <NEC> NEC newEntityCollection(final Class<NEC> reference) {
-    return (NEC) Proxy.newProxyInstance(
-            Thread.currentThread().getContextClassLoader(),
-            new Class<?>[] {reference},
-            new EntityCollectionInvocationHandler<T>(containerHandler, new ArrayList<T>(), itemRef));
+  @Override
+  public void add(final T entity) {
+    final EntityInvocationHandler handler = EntityInvocationHandler.class.cast(Proxy.getInvocationHandler(entity));
+    if (!getContext().entityContext().isAttached(handler)) {
+      handler.updateUUID(baseURI, itemRef, null);
+      getContext().entityContext().attachNew(handler);
+    }
   }
 
   @Override
@@ -209,16 +199,16 @@ class EntitySetInvocationHandler<
       throw new IllegalArgumentException("Null key");
     }
 
-    final EntityUUID uuid = new EntityUUID(containerHandler.getEntityContainerName(), this.baseURI, typeRef, key);
+    final EntityUUID uuid = new EntityUUID(this.baseURI, typeRef, key);
     LOG.debug("Ask for '{}({})'", typeRef.getSimpleName(), key);
 
     EntityInvocationHandler handler = getContext().entityContext().getEntity(uuid);
 
     if (handler == null) {
-      final CommonODataEntity entity = getClient().getObjectFactory().newEntity(
-              new FullQualifiedName(containerHandler.getSchemaName(), ClassUtils.getEntityTypeName(typeRef)));
+      final CommonODataEntity entity = getClient().getObjectFactory().newEntity(new FullQualifiedName(
+              typeRef.getAnnotation(Namespace.class).value(), ClassUtils.getEntityTypeName(typeRef)));
 
-      handler = EntityInvocationHandler.getInstance(key, entity, this.baseURI, typeRef, containerHandler);
+      handler = EntityInvocationHandler.getInstance(key, entity, this.baseURI, typeRef, service);
 
     } else if (isDeleted(handler)) {
       // object deleted
@@ -237,11 +227,11 @@ class EntitySetInvocationHandler<
   }
 
   @SuppressWarnings("unchecked")
-  public <S extends T, SEC extends AbstractEntityCollection<S>> SEC execute(final Class<SEC> collTypeRef) {
+  public <S extends T, SEC extends EntityCollection<S>> SEC execute(final Class<SEC> collTypeRef) {
     final Class<S> ref = (Class<S>) ClassUtils.extractTypeArg(collTypeRef,
-            AbstractEntitySet.class, AbstractSingleton.class, AbstractEntityCollection.class);
+            AbstractEntitySet.class, AbstractSingleton.class, EntityCollection.class);
     final Class<S> oref = (Class<S>) ClassUtils.extractTypeArg(this.collItemRef,
-            AbstractEntitySet.class, AbstractSingleton.class, AbstractEntityCollection.class);
+            AbstractEntitySet.class, AbstractSingleton.class, EntityCollection.class);
 
     final CommonURIBuilder<?> uriBuilder = getClient().newURIBuilder(this.uri.build().toASCIIString());
 
@@ -256,7 +246,7 @@ class EntitySetInvocationHandler<
     annotations.addAll(entitySet.getRight());
 
     final EntityCollectionInvocationHandler<S> entityCollectionHandler =
-            new EntityCollectionInvocationHandler<S>(containerHandler, entitySet.getLeft(), ref, uriBuilder);
+            new EntityCollectionInvocationHandler<S>(service, entitySet.getLeft(), ref, uriBuilder);
     entityCollectionHandler.setAnnotations(annotations);
 
     entityCollectionHandler.setNextPage(entitySet.getMiddle());
@@ -277,7 +267,7 @@ class EntitySetInvocationHandler<
 
   @Override
   @SuppressWarnings("unchecked")
-  public <S extends T, SEC extends AbstractEntityCollection<S>> Search<S, SEC> createSearch(
+  public <S extends T, SEC extends EntityCollection<S>> Search<S, SEC> createSearch(
           final Class<SEC> reference) {
 
     if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
@@ -294,11 +284,7 @@ class EntitySetInvocationHandler<
   public void delete(final KEY key) throws IllegalArgumentException {
     final EntityContext entityContext = getContext().entityContext();
 
-    EntityInvocationHandler entity = entityContext.getEntity(new EntityUUID(
-            containerHandler.getEntityContainerName(),
-            baseURI,
-            itemRef,
-            key));
+    EntityInvocationHandler entity = entityContext.getEntity(new EntityUUID(baseURI, itemRef, key));
 
     if (entity == null) {
       // search for entity

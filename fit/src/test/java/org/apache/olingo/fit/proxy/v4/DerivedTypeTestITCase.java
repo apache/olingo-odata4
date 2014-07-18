@@ -1,31 +1,31 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyAddress;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditCardPI;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types
-    .CreditCardPICollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditCardPICollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types
-    .CustomerCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CustomerCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.junit.Test;
 
@@ -36,8 +36,6 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-//CHECKSTYLE:OFF (Maven checkstyle)
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public class DerivedTypeTestITCase extends AbstractTestITCase {
@@ -52,7 +50,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
     }
 
     final CreditCardPICollection creditCards = container.getAccounts().getByKey(101).
-        getMyPaymentInstruments().execute(CreditCardPICollection.class);
+            getMyPaymentInstruments().execute(CreditCardPICollection.class);
     assertNotNull(creditCards);
     for (CreditCardPI creditCard : creditCards) {
       assertTrue(creditCard instanceof CreditCardPI);
@@ -61,19 +59,19 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void createDelete() {
-    final Customer customer = container.getPeople().newCustomer();
+    final Customer customer = service.newEntity(Customer.class);
     customer.setPersonID(976);
     customer.setFirstName("Test");
     customer.setLastName("Test");
 
-    final Address homeAddress = container.complexFactory().newCompanyAddress();
+    final Address homeAddress = service.newComplex(CompanyAddress.class);
     homeAddress.setStreet("V.le Gabriele D'Annunzio");
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65127");
     customer.setHomeAddress(homeAddress);
 
-    customer.setNumbers(Collections.<String> emptyList());
-    customer.setEmails(Collections.<String> emptyList());
+    customer.setNumbers(Collections.<String>emptyList());
+    customer.setEmails(Collections.<String>emptyList());
     customer.setCity("Pescara");
 
     final Calendar birthday = Calendar.getInstance();
@@ -83,6 +81,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
 
     customer.setTimeBetweenLastTwoOrders(BigDecimal.valueOf(0.0000002));
 
+    container.getPeople().add(customer);
     container.flush();
 
     final Person actual = container.getPeople().getByKey(976, Customer.class).load();
