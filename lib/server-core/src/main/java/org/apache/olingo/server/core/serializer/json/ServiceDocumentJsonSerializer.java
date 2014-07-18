@@ -18,22 +18,18 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
+import java.io.IOException;
+
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 
-import java.io.IOException;
+import com.fasterxml.jackson.core.JsonGenerator;
 
 public class ServiceDocumentJsonSerializer {
-  public static final String ODATA_CONTEXT = "@odata.context";
-  public static final String METADATA = "$metadata";
-  public static final String VALUE = "value";
-  public static final String NAME = "name";
-  public static final String URL = "url";
   public static final String KIND = "kind";
 
   public static final String FUNCTION_IMPORT = "FunctionImport";
@@ -48,64 +44,63 @@ public class ServiceDocumentJsonSerializer {
     this.serviceRoot = serviceRoot;
   }
 
-  public void writeServiceDocument(final JsonGenerator gen) throws JsonGenerationException, IOException {
+  public void writeServiceDocument(final JsonGenerator gen) throws IOException {
     gen.writeStartObject();
 
     Object metadataUri;
 
     if (serviceRoot == null) {
-      metadataUri = METADATA;
+      metadataUri = Constants.METADATA;
     } else {
       if (serviceRoot.endsWith("/")) {
-        metadataUri = serviceRoot + METADATA;
+        metadataUri = serviceRoot + Constants.METADATA;
       } else {
-        metadataUri = serviceRoot + "/" + METADATA;
+        metadataUri = serviceRoot + "/" + Constants.METADATA;
       }
     }
 
-    gen.writeObjectField(ODATA_CONTEXT, metadataUri);
-    gen.writeArrayFieldStart(VALUE);
+    gen.writeObjectField(Constants.JSON_CONTEXT, metadataUri);
+    gen.writeArrayFieldStart(Constants.VALUE);
 
     writeEntitySets(gen, edm);
     writeFunctionImports(gen, edm);
     writeSingletons(gen, edm);
   }
 
-  private void writeEntitySets(final JsonGenerator gen, final Edm edm) throws JsonGenerationException, IOException {
+  private void writeEntitySets(final JsonGenerator gen, final Edm edm) throws IOException {
     EdmEntityContainer container = edm.getEntityContainer(null);
 
     for (EdmEntitySet edmEntitySet : container.getEntitySets()) {
       if (edmEntitySet.isIncludeInServiceDocument()) {
         gen.writeStartObject();
-        gen.writeObjectField(NAME, edmEntitySet.getName());
-        gen.writeObjectField(URL, edmEntitySet.getName());
+        gen.writeObjectField(Constants.JSON_NAME, edmEntitySet.getName());
+        gen.writeObjectField(Constants.JSON_URL, edmEntitySet.getName());
         gen.writeEndObject();
       }
     }
   }
 
-  private void writeFunctionImports(final JsonGenerator gen, final Edm edm) throws JsonGenerationException,
-      IOException {
+  private void writeFunctionImports(final JsonGenerator gen, final Edm edm) throws IOException {
     EdmEntityContainer container = edm.getEntityContainer(null);
 
     for (EdmFunctionImport edmFunctionImport : container.getFunctionImports()) {
       if (edmFunctionImport.isIncludeInServiceDocument()) {
         gen.writeStartObject();
-        gen.writeObjectField(NAME, edmFunctionImport.getName());
-        gen.writeObjectField(URL, edmFunctionImport.getName());
+        gen.writeObjectField(Constants.JSON_NAME, edmFunctionImport.getName());
+        gen.writeObjectField(Constants.JSON_URL, edmFunctionImport.getName());
         gen.writeObjectField(KIND, FUNCTION_IMPORT);
         gen.writeEndObject();
       }
     }
   }
 
-  private void writeSingletons(final JsonGenerator gen, final Edm edm) throws JsonGenerationException, IOException {
+  private void writeSingletons(final JsonGenerator gen, final Edm edm) throws IOException {
     EdmEntityContainer container = edm.getEntityContainer(null);
 
     for (EdmSingleton edmSingleton : container.getSingletons()) {
       gen.writeStartObject();
-      gen.writeObjectField(NAME, edmSingleton.getName());
-      gen.writeObjectField(URL, edmSingleton.getName());
+      gen.writeObjectField(Constants.JSON_NAME, edmSingleton.getName());
+      gen.writeObjectField(Constants.JSON_URL, edmSingleton.getName());
       gen.writeObjectField(KIND, SINGLETON);
       gen.writeEndObject();
     }

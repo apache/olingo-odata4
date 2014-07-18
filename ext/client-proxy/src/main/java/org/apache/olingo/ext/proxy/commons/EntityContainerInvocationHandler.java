@@ -23,8 +23,6 @@ import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Singleton;
-import org.apache.olingo.ext.proxy.utils.ClassUtils;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -80,8 +78,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
     if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
     } else if ("flush".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
-      service.getPersistenceManager().flush();
-      return ClassUtils.returnVoid();
+      return service.getPersistenceManager().flush();
     } else if ("operations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       final Class<?> returnType = method.getReturnType();
 

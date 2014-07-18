@@ -158,7 +158,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals(404, res.getStatusCode());
     assertEquals("Not Found", res.getStatusMessage());
     assertEquals(Integer.valueOf(3), Integer.valueOf(
-        res.getHeader(ODataBatchConstants.CHANGESET_CONTENT_ID_NAME).iterator().next()));
+            res.getHeader(ODataBatchConstants.CHANGESET_CONTENT_ID_NAME).iterator().next()));
 
     assertFalse(retitem.hasNext());
     assertFalse(iter.hasNext());
@@ -175,10 +175,12 @@ public class BatchTestITCase extends AbstractTestITCase {
   }
 
   private void continueOnError(final boolean continueOnError) {
+    final boolean preContinueOnError = client.getConfiguration().isContinueOnError();
+    client.getConfiguration().setContinueOnError(continueOnError);
+
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
     request.setAccept(ACCEPT);
-    request.continueOnError();
 
     final BatchManager streamManager = request.payloadManager();
 
@@ -187,7 +189,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // -------------------------------------------
     // prepare URI
     URIBuilder targetURI = client.newURIBuilder(testStaticServiceRootURL);
-    targetURI.appendEntitySetSegment("UnexistinfEntitySet").appendKeySegment(1);
+    targetURI.appendEntitySetSegment("UnexistingEntitySet").appendKeySegment(1);
 
     // create new request
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
@@ -232,6 +234,8 @@ public class BatchTestITCase extends AbstractTestITCase {
       assertEquals(200, res.getStatusCode());
       assertEquals("OK", res.getStatusMessage());
     }
+
+    client.getConfiguration().setContinueOnError(preContinueOnError);
   }
 
   @Test
@@ -249,7 +253,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // add create request
     final ODataEntityCreateRequest<ODataEntity> createReq =
-        client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), order);
+            client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), order);
 
     changeset.addRequest(createReq);
 
@@ -259,8 +263,8 @@ public class BatchTestITCase extends AbstractTestITCase {
     // add update request: link CustomerInfo(17) to the new customer
     final ODataEntity customerChanges = client.getObjectFactory().newEntity(order.getTypeName());
     customerChanges.addLink(client.getObjectFactory().newEntitySetNavigationLink(
-        "OrderDetails",
-        client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("OrderDetails").
+            "OrderDetails",
+            client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("OrderDetails").
             appendKeySegment(new HashMap<String, Object>() {
               private static final long serialVersionUID = 3109256773218160485L;
 
@@ -271,7 +275,7 @@ public class BatchTestITCase extends AbstractTestITCase {
             }).build()));
 
     final ODataEntityUpdateRequest<ODataEntity> updateReq = client.getCUDRequestFactory().getEntityUpdateRequest(
-        URI.create("$" + createRequestRef), UpdateType.PATCH, customerChanges);
+            URI.create("$" + createRequestRef), UpdateType.PATCH, customerChanges);
 
     changeset.addRequest(updateReq);
 
@@ -293,10 +297,10 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     order = ((ODataEntityCreateResponse<ODataEntity>) res).getBody();
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
-        URIUtils.getURI(testStaticServiceRootURL, order.getEditLink().toASCIIString() + "/OrderDetails"));
+            URIUtils.getURI(testStaticServiceRootURL, order.getEditLink().toASCIIString() + "/OrderDetails"));
 
     assertEquals(Integer.valueOf(7),
-        req.execute().getBody().getEntities().get(0).getProperty("OrderID").getPrimitiveValue().
+            req.execute().getBody().getEntities().get(0).getProperty("OrderID").getPrimitiveValue().
             toCastValue(Integer.class));
 
     res = chgitem.next();
@@ -305,13 +309,13 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // clean ...
     assertEquals(204, client.getCUDRequestFactory().getDeleteRequest(
-        URIUtils.getURI(testStaticServiceRootURL, order.getEditLink().toASCIIString())).execute().
-        getStatusCode());
+            URIUtils.getURI(testStaticServiceRootURL, order.getEditLink().toASCIIString())).execute().
+            getStatusCode());
 
     try {
       client.getRetrieveRequestFactory().getEntityRequest(
-          URIUtils.getURI(testStaticServiceRootURL, order.getEditLink().toASCIIString())).
-          execute().getBody();
+              URIUtils.getURI(testStaticServiceRootURL, order.getEditLink().toASCIIString())).
+              execute().getBody();
       fail();
     } catch (Exception e) {
       // ignore
@@ -332,7 +336,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // prepare URI
     URIBuilder targetURI = client.newURIBuilder(testStaticServiceRootURL);
     targetURI.appendEntitySetSegment("Customers").appendKeySegment(1).
-        expand("Orders").select("PersonID,Orders/OrderID");
+            expand("Orders").select("PersonID,Orders/OrderID");
 
     // create new request
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
@@ -348,7 +352,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
     final ODataEntity original = newOrder(2000);
     final ODataEntityCreateRequest<ODataEntity> createReq =
-        client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
+            client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
     createReq.setFormat(ODataFormat.JSON);
     streamManager.addRequest(createReq);
     // -------------------------------------------
@@ -386,7 +390,7 @@ public class BatchTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @SuppressWarnings({ "unchecked" })
+  @SuppressWarnings({"unchecked"})
   public void batchRequest() throws EdmPrimitiveTypeException {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
@@ -418,15 +422,15 @@ public class BatchTestITCase extends AbstractTestITCase {
     final URI editLink = targetURI.build();
 
     final ODataEntity patch = client.getObjectFactory().newEntity(
-        new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
+            new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
     patch.setEditLink(editLink);
 
     patch.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
-        "LastName",
-        client.getObjectFactory().newPrimitiveValueBuilder().buildString("new last name")));
+            "LastName",
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("new last name")));
 
     final ODataEntityUpdateRequest<ODataEntity> changeReq =
-        client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patch);
+            client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patch);
     changeReq.setFormat(ODataFormat.JSON_FULL_METADATA);
 
     changeset.addRequest(changeReq);
@@ -435,7 +439,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
     final ODataEntity original = newOrder(1000);
     final ODataEntityCreateRequest<ODataEntity> createReq =
-        client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
+            client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
     createReq.setFormat(ODataFormat.JSON);
     changeset.addRequest(createReq);
     // -------------------------------------------
@@ -468,7 +472,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals("OK", res.getStatusMessage());
 
     ODataEntityRequestImpl<ODataEntity>.ODataEntityResponseImpl entres =
-        (ODataEntityRequestImpl.ODataEntityResponseImpl) res;
+            (ODataEntityRequestImpl.ODataEntityResponseImpl) res;
 
     ODataEntity entity = entres.getBody();
     assertEquals(1, entity.getProperty("PersonID").getPrimitiveValue().toCastValue(Integer.class), 0);
@@ -513,7 +517,7 @@ public class BatchTestITCase extends AbstractTestITCase {
   public void async() {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(
-        URI.create(testStaticServiceRootURL + "/async/").normalize().toASCIIString());
+            URI.create(testStaticServiceRootURL + "/async/").normalize().toASCIIString());
     request.setAccept(ACCEPT);
 
     final AsyncBatchRequestWrapper async = client.getAsyncRequestFactory().getAsyncBatchRequestWrapper(request);
@@ -556,17 +560,17 @@ public class BatchTestITCase extends AbstractTestITCase {
     final Iterator<ODataBatchResponseItem> iter = response.getBody();
 
     // retrieve the first item (ODataRetrieve)
-    ODataBatchResponseItem item = iter.next();
+    final ODataBatchResponseItem item = iter.next();
     assertTrue(item instanceof ODataSingleResponseItem);
 
     // The service return interim results to an asynchronously executing batch.
-    ODataSingleResponseItem retitem = (ODataSingleResponseItem) item;
-    ODataResponse res = retitem.next();
+    final ODataSingleResponseItem retitem = (ODataSingleResponseItem) item;
+    final ODataResponse res = retitem.next();
     assertTrue(res instanceof AsyncResponse);
     assertEquals(202, res.getStatusCode());
     assertEquals("Accepted", res.getStatusMessage());
 
-    Collection<String> newMonitorLocation = res.getHeader(HeaderName.location);
+    final Collection<String> newMonitorLocation = res.getHeader(HeaderName.location);
     if (newMonitorLocation != null && !newMonitorLocation.isEmpty()) {
       responseWrapper.forceNextMonitorCheck(URI.create(newMonitorLocation.iterator().next()));
       // .... now you can start again with isDone() and getODataResponse().
@@ -634,20 +638,20 @@ public class BatchTestITCase extends AbstractTestITCase {
 
   private ODataEntity newOrder(final int id) {
     final ODataEntity order = getClient().getObjectFactory().
-        newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));
+            newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));
 
     order.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("OrderID",
-        getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
     order.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("OrderDate",
-        getClient().getObjectFactory().newPrimitiveValueBuilder().
+            getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).build()));
     order.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("ShelfLife",
-        getClient().getObjectFactory().newPrimitiveValueBuilder().
+            getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build()));
     order.getProperties().add(getClient().getObjectFactory().newCollectionProperty("OrderShelfLifes",
-        getClient().getObjectFactory().newCollectionValue(EdmPrimitiveTypeKind.Duration.name()).add(
-            getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Duration).
-                setValue(new BigDecimal("0.0000002")).build())));
+            getClient().getObjectFactory().newCollectionValue(EdmPrimitiveTypeKind.Duration.name()).add(
+                    getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Duration).
+                    setValue(new BigDecimal("0.0000002")).build())));
 
     return order;
   }

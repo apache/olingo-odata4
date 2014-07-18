@@ -18,34 +18,29 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
+import java.io.IOException;
+
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataErrorDetail;
 
-import java.io.IOException;
+import com.fasterxml.jackson.core.JsonGenerator;
 
 public class ODataErrorSerializer {
-
-  private static final String ERROR = "error";
-  private static final String CODE = "code";
-  private static final String MESSAGE = "message";
-  private static final String TARGET = "target";
-  private static final String DETAILS = "details";
 
   public void writeErrorDocument(JsonGenerator json, ODataError error) throws IOException {
     if (error == null) {
       throw new ODataRuntimeException("ODataError object MUST NOT be null!");
     }
     json.writeStartObject();
-    json.writeFieldName(ERROR);
+    json.writeFieldName(Constants.JSON_ERROR);
 
     json.writeStartObject();
     writeODataError(json, error.getCode(), error.getMessage(), error.getTarget());
 
     if (error.getDetails() != null) {
-      json.writeArrayFieldStart(DETAILS);
+      json.writeArrayFieldStart(Constants.ERROR_DETAILS);
       for (ODataErrorDetail detail : error.getDetails()) {
         json.writeStartObject();
         writeODataError(json, detail.getCode(), detail.getMessage(), detail.getTarget());
@@ -58,21 +53,23 @@ public class ODataErrorSerializer {
     json.writeEndObject();
   }
 
-  private void writeODataError(JsonGenerator json, String code, String message, String target) throws IOException,
-      JsonGenerationException {
+  private void writeODataError(JsonGenerator json, String code, String message, String target) throws IOException {
+    json.writeFieldName(Constants.ERROR_CODE);
     if (code == null) {
-      json.writeNullField(CODE);
+      json.writeNull();
     } else {
-      json.writeStringField(CODE, code);
+      json.writeString(code);
     }
+
+    json.writeFieldName(Constants.ERROR_MESSAGE);
     if (message == null) {
-      json.writeNullField(MESSAGE);
+      json.writeNull();
     } else {
-      json.writeStringField(MESSAGE, message);
+      json.writeString(message);
     }
 
     if (target != null) {
-      json.writeStringField(TARGET, target);
+      json.writeStringField(Constants.ERROR_TARGET, target);
     }
   }
 }

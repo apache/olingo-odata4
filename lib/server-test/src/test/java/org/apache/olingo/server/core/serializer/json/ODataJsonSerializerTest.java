@@ -18,11 +18,17 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Arrays;
+
 import org.apache.commons.io.IOUtils;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -34,9 +40,6 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.InputStream;
-import java.net.URI;
 
 public class ODataJsonSerializerTest {
 
@@ -73,6 +76,40 @@ public class ODataJsonSerializerTest {
         + "\"PropertyTimeOfDay\":\"03:26:05\""
         + "}";
     Assert.assertEquals(expectedResult, resultString);
+  }
+
+  @Test
+  public void entityAllPrimAllNull() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    entity.getProperties().retainAll(Arrays.asList(entity.getProperties().get(0)));
+    final String resultString = IOUtils.toString(serializer.entity(edmEntitySet, entity, null));
+    final String expectedResult = "{\"@odata.context\":\"$metadata#ESAllPrim/$entity\","
+        + "\"PropertyInt16\":32767,"
+        + "\"PropertyString\":null,\"PropertyBoolean\":null,"
+        + "\"PropertyByte\":null,\"PropertySByte\":null,"
+        + "\"PropertyInt32\":null,\"PropertyInt64\":null,"
+        + "\"PropertySingle\":null,\"PropertyDouble\":null,\"PropertyDecimal\":null,"
+        + "\"PropertyBinary\":null,"
+        + "\"PropertyDate\":null,\"PropertyDateTimeOffset\":null,\"PropertyDuration\":null,"
+        + "\"PropertyGuid\":null,\"PropertyTimeOfDay\":null}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+
+  @Test(expected = ODataRuntimeException.class)
+  public void entityAllPrimKeyNull() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    entity.getProperties().clear();
+    serializer.entity(edmEntitySet, entity, null);
+  }
+
+  @Test(expected = ODataRuntimeException.class)
+  public void entityWrongData() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    entity.getProperties().get(0).setValue(ValueType.PRIMITIVE, false);
+    serializer.entity(edmEntitySet, entity, null);
   }
 
   @Test
@@ -181,6 +218,18 @@ public class ODataJsonSerializerTest {
   }
 
   @Test
+  public void entityMixPrimCollCompAllNull() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
+    Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    entity.getProperties().retainAll(Arrays.asList(entity.getProperties().get(0)));
+    final String resultString = IOUtils.toString(serializer.entity(edmEntitySet, entity, null));
+    final String expectedResult = "{\"@odata.context\":\"$metadata#ESMixPrimCollComp/$entity\","
+        + "\"PropertyInt16\":32767,"
+        + "\"CollPropertyString\":null,\"PropertyComp\":null,\"CollPropertyComp\":null}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+
+  @Test
   public void entityTwoPrimNoMetadata() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
@@ -203,6 +252,31 @@ public class ODataJsonSerializerTest {
         + "{\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\"},"
         + "{\"PropertyInt16\":-32766,\"PropertyString\":\"Test String3\"},"
         + "{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"}]}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+
+  @Test
+  public void entityMedia() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMedia");
+    Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    entity.setMediaETag("theMediaETag");
+    final String resultString = IOUtils.toString(serializer.entity(edmEntitySet, entity, null));
+    final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia/$entity\","
+        + "\"@odata.mediaEtag\":\"theMediaETag\",\"@odata.mediaContentType\":\"image/png\","
+        + "\"PropertyInt16\":1}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+
+  @Test
+  public void entitySetMedia() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMedia");
+    final EntitySet entitySet = data.readAll(edmEntitySet);
+    final String resultString = IOUtils.toString(serializer.entitySet(edmEntitySet, entitySet, null));
+    final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia\",\"value\":["
+        + "{\"@odata.mediaContentType\":\"image/png\",\"PropertyInt16\":1},"
+        + "{\"@odata.mediaContentType\":\"image/bmp\",\"PropertyInt16\":2},"
+        + "{\"@odata.mediaContentType\":\"image/jpeg\",\"PropertyInt16\":3},"
+        + "{\"@odata.mediaContentType\":\"foo\",\"PropertyInt16\":4}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
 }

@@ -20,6 +20,7 @@ package org.apache.olingo.client.api.communication;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.StatusLine;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.domain.ODataError;
 
 /**
@@ -27,7 +28,7 @@ import org.apache.olingo.commons.api.domain.ODataError;
  *
  * @see ODataError
  */
-public class ODataClientErrorException extends RuntimeException {
+public class ODataClientErrorException extends ODataRuntimeException {
 
   private static final long serialVersionUID = -2551523202755268162L;
 

@@ -19,22 +19,23 @@
 package org.apache.olingo.ext.proxy.commons;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
+import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.ext.proxy.Service;
 
 /**
  * {@link org.apache.olingo.ext.proxy.api.PersistenceManager} implementation not using OData batch requests: any
- * read-write operation will be sent separately to the OData service when calling <tt>flush()</tt>; any intermediate
- * error will be logged and ignored.
+ * read-write operation will be sent separately to the OData service when calling <tt>flush()</tt>.
  */
 public class NonTransactionalPersistenceManagerImpl extends AbstractPersistenceManager {
 
@@ -45,7 +46,9 @@ public class NonTransactionalPersistenceManagerImpl extends AbstractPersistenceM
   }
 
   @Override
-  protected void doFlush(final PersistenceChanges changes, final TransactionItems items) {
+  protected List<ODataRuntimeException> doFlush(final PersistenceChanges changes, final TransactionItems items) {
+    final List<ODataRuntimeException> result = new ArrayList<ODataRuntimeException>();
+
     final Map<Integer, URI> responses = new HashMap<Integer, URI>();
     int virtualContentID = 0;
 
@@ -82,9 +85,19 @@ public class NonTransactionalPersistenceManagerImpl extends AbstractPersistenceM
         } else {
           responses.put(virtualContentID, null);
         }
-      } catch (Exception e) {
+
+        result.add(null);
+      } catch (ODataRuntimeException e) {
         LOG.error("While performing {}", entry.getKey().getURI(), e);
+
+        if (service.getClient().getConfiguration().isContinueOnError()) {
+          result.add(e);
+        } else {
+          throw e;
+        }
       }
     }
+
+    return result;
   }
 }

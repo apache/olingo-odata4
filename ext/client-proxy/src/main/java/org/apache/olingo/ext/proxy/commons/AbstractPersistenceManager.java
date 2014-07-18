@@ -25,6 +25,7 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateR
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
 import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
@@ -67,10 +68,10 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     this.service = factory;
   }
 
-  protected abstract void doFlush(final PersistenceChanges changes, final TransactionItems items);
+  protected abstract List<ODataRuntimeException> doFlush(PersistenceChanges changes, TransactionItems items);
 
   @Override
-  public void flush() {
+  public List<ODataRuntimeException> flush() {
     final PersistenceChanges changes = new PersistenceChanges();
     final TransactionItems items = new TransactionItems();
 
@@ -89,9 +90,10 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
     processDelayedUpdates(delayedUpdates, pos, items, changes);
 
-    doFlush(changes, items);
+    final List<ODataRuntimeException> result = doFlush(changes, items);
 
     service.getContext().detachAll();
+    return result;
   }
 
   private ODataLink buildNavigationLink(final String name, final URI uri, final ODataLinkType type) {

@@ -22,7 +22,6 @@ import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.core.communication.response.batch.ODataBatchErrorResponse;
 import org.apache.olingo.client.core.communication.response.v4.AsyncResponseImpl;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -32,22 +31,19 @@ import java.util.NoSuchElementException;
  */
 public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
 
+  private final boolean continueOnError;
+
   private boolean unexpected = false;
 
-  /**
-   * Constructor.
-   */
-  public ODataChangesetResponseItem() {
+  public ODataChangesetResponseItem(final boolean continueOnError) {
     super(true);
+    this.continueOnError = continueOnError;
   }
 
   public void setUnexpected() {
     this.unexpected = true;
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public ODataResponse next() {
     if (current != null) {
@@ -105,7 +101,7 @@ public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
 
     current.initFromBatch(responseLine, headers, batchLineIterator, boundary);
 
-    if (current.getStatusCode() >= 400) {
+    if (current.getStatusCode() >= 400 && !continueOnError) {
       // found error .... 
       breaking = true;
     }
