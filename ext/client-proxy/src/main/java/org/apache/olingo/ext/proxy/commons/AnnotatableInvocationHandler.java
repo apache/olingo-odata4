@@ -158,8 +158,7 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
         }
         res = annotation == null || annotation.hasNullValue()
                 ? null
-                : CoreUtils.getObjectFromODataValue(
-                getClient(), annotation.getValue(), null, targetHandler.getEntityHandler());
+                : CoreUtils.getObjectFromODataValue(annotation.getValue(), null, targetHandler.service);
         if (res != null) {
           annotations.put(term, res);
         }

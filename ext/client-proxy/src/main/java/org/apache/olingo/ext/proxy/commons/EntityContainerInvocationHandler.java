@@ -86,13 +86,6 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
               OperationInvocationHandler.getInstance(this));
-    } else if ("complexFactory".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
-      final Class<?> returnType = method.getReturnType();
-
-      return Proxy.newProxyInstance(
-              Thread.currentThread().getContextClassLoader(),
-              new Class<?>[] {returnType},
-              ComplexFactoryInvocationHandler.getInstance(service, null, null));
     } else {
       final Class<?> returnType = method.getReturnType();
 

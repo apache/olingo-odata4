@@ -231,7 +231,7 @@ public class EntityCollectionInvocationHandler<T extends StructuredType>
         }
         res = annotation == null || annotation.hasNullValue()
                 ? null
-                : CoreUtils.getObjectFromODataValue(getClient(), annotation.getValue(), null, null);
+                : CoreUtils.getObjectFromODataValue(annotation.getValue(), null, service);
         if (res != null) {
           annotationsByTerm.put(term, res);
         }

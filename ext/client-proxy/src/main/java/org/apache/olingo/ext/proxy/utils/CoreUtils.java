@@ -73,6 +73,7 @@ import java.util.Map;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 
 public final class CoreUtils {
@@ -459,8 +460,7 @@ public final class CoreUtils {
               final Object complex = Proxy.newProxyInstance(
                       Thread.currentThread().getContextClassLoader(),
                       new Class<?>[] {getter.getReturnType()},
-                      ComplexInvocationHandler.getInstance(
-                      client, property.getName(), getter.getReturnType(), typeHandler));
+                      ComplexInvocationHandler.getInstance(property.getName(), getter.getReturnType(), typeHandler));
 
               populate(client, typeHandler, complex, Property.class, property.getValue().asComplex().iterator());
               setPropertyValue(bean, getter, complex);
@@ -484,8 +484,7 @@ public final class CoreUtils {
                   final Object collItem = Proxy.newProxyInstance(
                           Thread.currentThread().getContextClassLoader(),
                           new Class<?>[] {collItemClass},
-                          ComplexInvocationHandler.getInstance(
-                          client, property.getName(), collItemClass, typeHandler));
+                          ComplexInvocationHandler.getInstance(property.getName(), collItemClass, typeHandler));
 
                   populate(client, typeHandler, collItem, Property.class, value.asComplex().iterator());
                   collection.add(collItem);
@@ -501,10 +500,9 @@ public final class CoreUtils {
   }
 
   public static Object getObjectFromODataValue(
-          final CommonEdmEnabledODataClient<?> client,
           final ODataValue value,
           final Type typeRef,
-          final EntityInvocationHandler entityHandler)
+          final Service<?> service)
           throws InstantiationException, IllegalAccessException {
 
     Class<?> internalRef;
@@ -528,8 +526,7 @@ public final class CoreUtils {
       res = Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {internalRef},
-              ComplexInvocationHandler.getInstance(
-              client, value.asComplex(), internalRef, entityHandler));
+              ComplexInvocationHandler.getInstance(value.asComplex(), internalRef, service));
     } else if (value.isCollection()) {
       final ArrayList<Object> collection = new ArrayList<Object>();
 
@@ -543,8 +540,7 @@ public final class CoreUtils {
           final Object collItem = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {internalRef},
-                  ComplexInvocationHandler.getInstance(
-                  client, itemValue.asComplex(), internalRef, entityHandler));
+                  ComplexInvocationHandler.getInstance(itemValue.asComplex(), internalRef, service));
 
           collection.add(collItem);
         }
@@ -601,7 +597,7 @@ public final class CoreUtils {
     return getTypeRef(value, "META-INF/" + Constants.PROXY_ENUM_CLASS_LIST, EnumType.class);
   }
 
-  private static Class<?> getComplexTypeRef(final ODataValue value) {
+  public static Class<?> getComplexTypeRef(final ODataValue value) {
     return getTypeRef(value, "META-INF/" + Constants.PROXY_COMPLEX_CLASS_LIST, ComplexType.class);
   }
 

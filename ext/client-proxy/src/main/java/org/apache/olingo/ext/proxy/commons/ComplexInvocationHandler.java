@@ -20,7 +20,6 @@ package org.apache.olingo.ext.proxy.commons;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataLinked;
@@ -42,11 +41,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
+import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 
 public class ComplexInvocationHandler extends AbstractStructuredInvocationHandler {
 
   private static Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init(
-          final CommonEdmEnabledODataClient<?> client,
+          final Service<?> service,
           final Class<?> reference) {
 
     final Class<?> complexTypeRef;
@@ -65,76 +67,78 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
             new FullQualifiedName(ClassUtils.getNamespace(complexTypeRef), annotation.name());
 
     final ODataComplexValue<? extends CommonODataProperty> complex =
-            client.getObjectFactory().newComplexValue(typeName.toString());
+            service.getClient().getObjectFactory().newComplexValue(typeName.toString());
 
     return new ImmutablePair<ODataComplexValue<? extends CommonODataProperty>, Class<?>>(complex, complexTypeRef);
   }
 
   public static ComplexInvocationHandler getInstance(
-          final CommonEdmEnabledODataClient<?> client,
           final String propertyName,
           final Class<?> reference,
           final EntityInvocationHandler handler) {
 
-    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(client, reference);
-    return new ComplexInvocationHandler(client, init.getLeft(), init.getRight(), handler);
+    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(handler.service, reference);
+    return new ComplexInvocationHandler(init.getLeft(), init.getRight(), handler);
   }
 
   public static ComplexInvocationHandler getInstance(
-          final CommonEdmEnabledODataClient<?> client,
-          final String propertyName,
+          final ODataComplexValue<?> complex,
           final Class<?> reference,
           final Service<?> service) {
 
-    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(client, reference);
-    return new ComplexInvocationHandler(client, init.getLeft(), init.getRight(), service);
+    return new ComplexInvocationHandler(complex, reference, service);
   }
 
   public static ComplexInvocationHandler getInstance(
-          final CommonEdmEnabledODataClient<?> client,
-          final ODataComplexValue<?> complex,
           final Class<?> typeRef,
-          final EntityInvocationHandler handler) {
-
-    return new ComplexInvocationHandler(client, complex, typeRef, handler);
+          final Service<?> service) {
+    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(service, typeRef);
+    return new ComplexInvocationHandler(init.getLeft(), init.getRight(), service);
   }
-  private final CommonEdmEnabledODataClient<?> client;
+
+  public static ComplexInvocationHandler getInstance(
+          final Class<?> reference,
+          final Service<?> service,
+          final CommonURIBuilder<?> uri) {
+    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(service, reference);
+    return new ComplexInvocationHandler(init.getLeft(), init.getRight(), service, uri);
+  }
+
+  public static ComplexInvocationHandler getInstance(
+          final ODataComplexValue<? extends CommonODataProperty> complex,
+          final Class<?> reference,
+          final Service<?> service,
+          final CommonURIBuilder<?> uri) {
+    return new ComplexInvocationHandler(complex, reference, service, uri);
+  }
 
   private ComplexInvocationHandler(
-          final CommonEdmEnabledODataClient<?> client,
-          final ODataComplexValue<?> complex,
+          final ODataComplexValue<? extends CommonODataProperty> complex,
+          final Class<?> typeRef,
+          final Service<?> service,
+          final CommonURIBuilder<?> uri) {
+
+    super(typeRef, complex, service);
+    this.uri = uri;
+    this.baseURI = this.uri.build();
+  }
+
+  private ComplexInvocationHandler(
+          final ODataComplexValue<? extends CommonODataProperty> complex,
           final Class<?> typeRef,
           final EntityInvocationHandler handler) {
 
     super(typeRef, complex, handler);
-    this.client = client;
+    this.uri = null;
   }
 
   private ComplexInvocationHandler(
-          final CommonEdmEnabledODataClient<?> client,
-          final ODataComplexValue<?> complex,
+          final ODataComplexValue<? extends CommonODataProperty> complex,
           final Class<?> typeRef,
           final Service<?> service) {
 
     super(typeRef, complex, service);
-    this.client = client;
-  }
-
-  public static ComplexInvocationHandler getInstance(
-          final Class<?> typeRef,
-          final Service<?> service) {
-    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(service.getClient(), typeRef);
-    return new ComplexInvocationHandler(init.getLeft(), init.getRight(), service);
-  }
-
-  private ComplexInvocationHandler(
-          final ODataComplexValue<?> complex,
-          final Class<?> typeRef,
-          final Service<?> service) {
-
-    super(typeRef, service);
-    this.internal = complex;
-    this.client = service.getClient();
+    this.uri = null;
   }
 
   @SuppressWarnings("unchecked")
@@ -148,7 +152,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
       final CommonODataProperty property = getComplex().get(name);
       return property == null || property.hasNullValue()
               ? null
-              : CoreUtils.getObjectFromODataValue(client, property.getValue(), type, getEntityHandler());
+              : CoreUtils.getObjectFromODataValue(property.getValue(), type, service);
     } catch (Exception e) {
       throw new IllegalArgumentException("Error getting value for property '" + name + "'", e);
     }
@@ -180,9 +184,9 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
     final FullQualifiedName fqn =
             new FullQualifiedName(ClassUtils.getNamespace(typeRef), typeRef.getAnnotation(ComplexType.class).name());
 
-    final EdmElement edmProperty = client.getCachedEdm().getComplexType(fqn).getProperty(property.name());
+    final EdmElement edmProperty = getClient().getCachedEdm().getComplexType(fqn).getProperty(property.name());
 
-    final EdmTypeInfo type = new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(
+    final EdmTypeInfo type = new EdmTypeInfo.Builder().setEdm(getClient().getCachedEdm()).setTypeExpression(
             edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
 
     setPropertyValue(property.name(), type, value);
@@ -199,7 +203,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
       toBeAdded = value;
     }
 
-    client.getBinder().add(getComplex(), CoreUtils.getODataProperty(client, name, type, toBeAdded));
+    getClient().getBinder().add(getComplex(), CoreUtils.getODataProperty(getClient(), name, type, toBeAdded));
 
     if (getEntityHandler() != null && !getContext().entityContext().isAttached(getEntityHandler())) {
       getContext().entityContext().attach(getEntityHandler(), AttachedEntityStatus.CHANGED);
@@ -242,5 +246,20 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
 
   @Override
   protected void load() {
+    try {
+      if (this.uri != null) {
+        final ODataPropertyRequest<CommonODataProperty> req =
+                getClient().getRetrieveRequestFactory().getPropertyRequest(uri.build());
+
+        final ODataRetrieveResponse<CommonODataProperty> res = req.execute();
+        this.internal = res.getBody().getValue();
+      }
+    } catch (IllegalArgumentException e) {
+      LOG.warn("Complex at '" + uri + "' not found", e);
+      throw e;
+    } catch (Exception e) {
+      LOG.warn("Error retrieving complex '" + uri + "'", e);
+      throw new IllegalArgumentException("Error retrieving " + typeRef.getSimpleName(), e);
+    }
   }
 }

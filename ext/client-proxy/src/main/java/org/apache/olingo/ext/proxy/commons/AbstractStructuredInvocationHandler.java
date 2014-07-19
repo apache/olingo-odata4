@@ -60,6 +60,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   protected CommonURIBuilder<?> uri;
 
+  protected URI baseURI;
+
   protected final Class<?> typeRef;
 
   protected EntityInvocationHandler entityHandler;
@@ -328,6 +330,18 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   public void putNavPropAnnotatableHandler(final String navPropName, final AnnotatableInvocationHandler handler) {
     navPropAnnotatableHandlers.put(navPropName, handler);
+  }
+
+  public void expand(final String... expand) {
+    this.uri.expand(expand);
+  }
+
+  public void select(final String... select) {
+    this.uri.select(select);
+  }
+
+  public void clearQueryOptions() {
+    this.uri = getClient().newURIBuilder(baseURI.toASCIIString());
   }
 
   protected abstract void load();

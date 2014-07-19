@@ -51,7 +51,6 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -63,18 +62,18 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
 public class EntityInvocationHandler extends AbstractStructuredInvocationHandler implements Annotatable {
 
   private static final long serialVersionUID = 2629912294765040037L;
 
-  private URI baseURI;
-
   protected final Map<String, Object> propertyChanges = new HashMap<String, Object>();
 
   protected final Map<NavigationProperty, Object> linkChanges = new HashMap<NavigationProperty, Object>();
 
-  protected final Map<NavigationProperty, Object> linkChache = new HashMap<NavigationProperty, Object>();
+  protected final Map<NavigationProperty, Object> linkCache = new HashMap<NavigationProperty, Object>();
 
   protected int propertiesTag = 0;
 
@@ -235,7 +234,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     this.streamedPropertyChanges.clear();
     this.propertyChanges.clear();
     this.linkChanges.clear();
-    this.linkChache.clear();
+    this.linkCache.clear();
     this.propertiesTag = 0;
     this.linksTag = 0;
     this.annotations.clear();
@@ -313,7 +312,9 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   @Override
   protected Object getPropertyValue(final String name, final Type type) {
     try {
-      if (!(type instanceof ParameterizedType) && (Class<?>) type == InputStream.class) {
+      Class<?> ref = ClassUtils.getTypeClass(type);
+
+      if (ref == InputStream.class) {
         return getStreamedProperty(name);
       } else {
         final CommonODataProperty property = getEntity().getProperty(name);
@@ -321,13 +322,37 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
         Object res;
         if (propertyChanges.containsKey(name)) {
           res = propertyChanges.get(name);
+        } else if (ref != null && ClassUtils.getTypeClass(type).isAnnotationPresent(ComplexType.class)) {
+
+          final ComplexInvocationHandler complexHandler;
+          if (property == null || property.hasNullValue()) {
+            complexHandler = ComplexInvocationHandler.getInstance(
+                    ref,
+                    service,
+                    getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name));
+          } else {
+            ref = CoreUtils.getComplexTypeRef(property.getValue()); // handle derived types
+            complexHandler = ComplexInvocationHandler.getInstance(
+                    property.getValue().asComplex(),
+                    ref,
+                    service,
+                    getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name));
+          }
+
+          complexHandler.setEntityHandler(this);
+
+          res = Proxy.newProxyInstance(
+                  Thread.currentThread().getContextClassLoader(),
+                  new Class<?>[] {ref}, complexHandler);
+
+          addPropertyChanges(name, res);
         } else {
           res = property == null || property.hasNullValue()
                   ? null
-                  : CoreUtils.getObjectFromODataValue(getClient(), property.getValue(), type, this);
+                  : CoreUtils.getObjectFromODataValue(property.getValue(), type, service);
 
           if (res != null) {
-            cacheProperty(name, res);
+            addPropertyChanges(name, res);
           }
         }
 
@@ -367,7 +392,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     if (EdmPrimitiveTypeKind.Stream.getFullQualifiedName().toString().equalsIgnoreCase(property.type())) {
       setStreamedProperty(property, (InputStream) value);
     } else {
-      propertyChanges.put(property.name(), value);
+      addPropertyChanges(property.name(), value);
 
       if (value != null) {
         Collection<?> coll;
@@ -468,8 +493,8 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
     if (linkChanges.containsKey(property)) {
       navPropValue = linkChanges.get(property);
-    } else if (linkChache.containsKey(property)) {
-      navPropValue = linkChache.get(property);
+    } else if (linkCache.containsKey(property)) {
+      navPropValue = linkCache.get(property);
     } else {
       navPropValue = retrieveNavigationProperty(property, getter);
     }
@@ -487,7 +512,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     attach(AttachedEntityStatus.CHANGED);
   }
 
-  protected void cacheProperty(final String name, final Object value) {
+  protected void addPropertyChanges(final String name, final Object value) {
     final int checkpoint = propertyChanges.hashCode();
     propertyChanges.put(name, value);
     updatePropertiesTag(checkpoint);
@@ -499,13 +524,13 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     linkChanges.put(navProp, value);
     updateLinksTag(checkpoint);
 
-    if (linkChache.containsKey(navProp)) {
-      linkChache.remove(navProp);
+    if (linkCache.containsKey(navProp)) {
+      linkCache.remove(navProp);
     }
   }
 
   protected void cacheLink(final NavigationProperty navProp, final Object value) {
-    linkChache.put(navProp, value);
+    linkCache.put(navProp, value);
   }
 
   @Override
@@ -558,7 +583,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
         }
         res = annotation == null || annotation.hasNullValue()
                 ? null
-                : CoreUtils.getObjectFromODataValue(getClient(), annotation.getValue(), null, this);
+                : CoreUtils.getObjectFromODataValue(annotation.getValue(), null, service);
         if (res != null) {
           annotations.put(term, res);
         }
@@ -638,18 +663,6 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     }
 
     return map;
-  }
-
-  public void expand(final String... expand) {
-    this.uri.expand(expand);
-  }
-
-  public void select(final String... select) {
-    this.uri.select(select);
-  }
-
-  public void clearQueryOptions() {
-    this.uri = getClient().newURIBuilder(baseURI.toASCIIString());
   }
 
   @Override

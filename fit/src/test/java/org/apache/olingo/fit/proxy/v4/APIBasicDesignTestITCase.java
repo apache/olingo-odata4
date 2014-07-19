@@ -25,15 +25,15 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
-import org.junit.Test;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
-import static org.apache.olingo.fit.proxy.v4.AbstractTestITCase.service;
 
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -62,6 +62,47 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
     assertEquals(1, customer.load().getPersonID(), 0);
     service.getContext().detachAll();
+  }
+
+  @Test
+  public void readAndCheckForComplex() {
+    Customer customer = container.getCustomers().getByKey(1); // no http request
+    Address homeAddress = customer.getHomeAddress();
+    assertNotNull(homeAddress);
+    assertNull(homeAddress.getCity());
+    assertNull(homeAddress.getPostalCode());
+    assertNull(homeAddress.getStreet());
+
+    homeAddress.load(); // HTTP request at complex loading
+    assertEquals("London", homeAddress.getCity());
+    assertEquals("98052", homeAddress.getPostalCode());
+    assertEquals("1 Microsoft Way", homeAddress.getStreet());
+
+    getService().getContext().detachAll();
+
+    homeAddress = container.getCustomers().getByKey(1).load().getHomeAddress(); // HTTP request at entity loading
+    assertEquals("London", homeAddress.getCity());
+    assertEquals("98052", homeAddress.getPostalCode());
+    assertEquals("1 Microsoft Way", homeAddress.getStreet());
+
+    getService().getContext().detachAll();
+
+    customer = container.getOrders().getByKey(8).getCustomerForOrder();
+    homeAddress = customer.getHomeAddress().select("City", "PostalCode").expand("SomethingElse"); // no HTTP request
+    assertNotNull(homeAddress);
+    assertNull(homeAddress.getCity());
+    assertNull(homeAddress.getPostalCode());
+    assertNull(homeAddress.getStreet());
+
+    try {
+      homeAddress.load();
+      fail();
+    } catch (Exception e) {
+      // Generated URL 
+      // "<serviceroot>/Orders(8)/CustomerForOrder/HomeAddress?$select=City,PostalCode&$expand=SomethingElse"
+      // curently unsupported by test service server
+      homeAddress.clearQueryOptions();
+    }
   }
 
   @Test

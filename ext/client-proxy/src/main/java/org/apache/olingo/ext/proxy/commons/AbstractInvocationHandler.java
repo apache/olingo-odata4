@@ -247,8 +247,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
       final CommonODataProperty property = (CommonODataProperty) result;
       return property == null || property.hasNullValue()
               ? null
-              : CoreUtils.getObjectFromODataValue(
-              getClient(), property.getValue(), method.getGenericReturnType(), null);
+              : CoreUtils.getObjectFromODataValue(property.getValue(), method.getGenericReturnType(), service);
     }
   }
 
