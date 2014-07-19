@@ -163,7 +163,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     Customer actual = readCustomer(container, id);
     checkSampleCustomerProfile(actual, id, sampleName);
 
-    assertEquals(1, actual.getOrders().size());
+    assertEquals(1, actual.getOrders().execute().size());
     assertEquals(id, actual.getOrders().iterator().next().getOrderId());
     assertEquals(id, actual.getOrders().iterator().next().getCustomerId());
 

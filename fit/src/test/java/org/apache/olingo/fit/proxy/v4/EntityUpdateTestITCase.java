@@ -148,7 +148,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     // assertEquals(1, customer.getOrders().size());
 
     int count = 0;
-    for (Order inside : customer.getOrders()) {
+    for (Order inside : customer.getOrders().execute()) {
       if (inside.getOrderID() == orderId) {
         count++;
       }

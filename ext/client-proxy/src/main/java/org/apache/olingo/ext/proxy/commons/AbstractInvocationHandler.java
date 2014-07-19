@@ -97,21 +97,23 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
   protected Object getEntityCollectionProxy(
           final Class<?> typeRef,
           final Class<?> typeCollectionRef,
-          final String entityContainerName,
+          final URI targetEntitySetURI,
           final CommonODataEntitySet entitySet,
           final URI uri,
           final boolean checkInTheContext) {
 
     final List<Object> items = new ArrayList<Object>();
 
-    for (CommonODataEntity entityFromSet : entitySet.getEntities()) {
-      items.add(getEntityProxy(entityFromSet, entityContainerName, uri, typeRef, null, checkInTheContext));
+    if (entitySet != null) {
+      for (CommonODataEntity entityFromSet : entitySet.getEntities()) {
+        items.add(getEntityProxy(entityFromSet, uri, typeRef, null, checkInTheContext));
+      }
     }
 
     return Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {typeCollectionRef},
-            new EntityCollectionInvocationHandler(service, items, typeRef,
+            new EntityCollectionInvocationHandler(service, items, typeRef, targetEntitySetURI,
             uri == null ? null : getClient().newURIBuilder(uri.toASCIIString())));
   }
 
@@ -127,7 +129,6 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
   protected Object getEntityProxy(
           final CommonODataEntity entity,
-          final String entityContainerName,
           final URI entitySetURI,
           final Class<?> type,
           final String eTag,
@@ -237,7 +238,6 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
       } else {
         return getEntityProxy(
                 (CommonODataEntity) result,
-                null,
                 null,
                 method.getReturnType(),
                 null,

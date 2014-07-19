@@ -135,7 +135,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   public void withInlineFeed() {
     final Customer customer = readCustomer(getContainer(), 1);
     final OrderCollection orders = customer.getOrders();
-    assertEquals(1, orders.size());
+    assertEquals(1, orders.execute().size());
     assertEquals(8, orders.iterator().next().getOrderID(), 0);
   }
 

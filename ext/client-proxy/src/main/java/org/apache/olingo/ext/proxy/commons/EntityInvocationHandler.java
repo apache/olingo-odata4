@@ -74,6 +74,8 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   protected final Map<NavigationProperty, Object> linkChanges = new HashMap<NavigationProperty, Object>();
 
+  protected final Map<NavigationProperty, Object> linkChache = new HashMap<NavigationProperty, Object>();
+
   protected int propertiesTag = 0;
 
   protected int linksTag = 0;
@@ -233,6 +235,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     this.streamedPropertyChanges.clear();
     this.propertyChanges.clear();
     this.linkChanges.clear();
+    this.linkChache.clear();
     this.propertiesTag = 0;
     this.linksTag = 0;
     this.annotations.clear();
@@ -465,6 +468,8 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
     if (linkChanges.containsKey(property)) {
       navPropValue = linkChanges.get(property);
+    } else if (linkChache.containsKey(property)) {
+      navPropValue = linkChache.get(property);
     } else {
       navPropValue = retrieveNavigationProperty(property, getter);
     }
@@ -490,13 +495,17 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   @Override
   protected void addLinkChanges(final NavigationProperty navProp, final Object value) {
-    linkChanges.put(navProp, value);
-  }
-
-  protected void cacheLink(final NavigationProperty navProp, final Object value) {
     final int checkpoint = linkChanges.hashCode();
     linkChanges.put(navProp, value);
     updateLinksTag(checkpoint);
+
+    if (linkChache.containsKey(navProp)) {
+      linkChache.remove(navProp);
+    }
+  }
+
+  protected void cacheLink(final NavigationProperty navProp, final Object value) {
+    linkChache.put(navProp, value);
   }
 
   @Override

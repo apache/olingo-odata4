@@ -160,7 +160,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   @Test
   public void withInlineFeed() {
     final Customer customer = readCustomer(getContainer(), -10);
-    final OrderCollection orders = customer.getOrders();
+    final OrderCollection orders = customer.getOrders().execute();
     assertFalse(orders.isEmpty());
   }
 

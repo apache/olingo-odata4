@@ -135,7 +135,6 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       return invokeSelfMethod(method, args);
     } else if ("load".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       load();
-      attach(); // attach the current handler
       return proxy;
     } else if ("operations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       final Class<?> returnType = method.getReturnType();
@@ -232,13 +231,14 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
     final Object navPropValue;
 
+    URI targetEntitySetURI = CoreUtils.getTargetEntitySetURI(getClient(), property);
     final ODataLink link = ((ODataLinked) internal).getNavigationLink(property.name());
+
     if (link instanceof ODataInlineEntity) {
       // return entity
       navPropValue = getEntityProxy(
               ((ODataInlineEntity) link).getEntity(),
-              property.targetContainer(),
-              getClient().newURIBuilder().appendEntitySetSegment(property.targetEntitySet()).build(),
+              targetEntitySetURI,
               type,
               null,
               false);
@@ -247,28 +247,26 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       navPropValue = getEntityCollectionProxy(
               collItemType,
               type,
-              property.targetContainer(),
+              targetEntitySetURI,
               ((ODataInlineEntitySet) link).getEntitySet(),
-              link.getLink(),
+              targetEntitySetURI,
               false);
     } else {
       // navigate
-      final URI uri = URIUtils.getURI(getEntityHandler().getEntityURI(), property.name());
+      final URI targetURI = URIUtils.getURI(getEntityHandler().getEntityURI(), property.name());
 
       if (EntityCollection.class.isAssignableFrom(type)) {
         navPropValue = getEntityCollectionProxy(
                 collItemType,
                 type,
-                property.targetContainer(),
-                getClient().getRetrieveRequestFactory().getEntitySetRequest(uri).execute().getBody(),
-                uri,
+                targetEntitySetURI,
+                null,
+                targetURI,
                 true);
       } else if (AbstractEntitySet.class.isAssignableFrom(type)) {
-        navPropValue = getEntitySetProxy(type, uri);
+        navPropValue = getEntitySetProxy(type, targetURI); // cannot be used standard target entity set URI
       } else {
-        URI entitySetURI = CoreUtils.getTargetEntitySetURI(getClient(), property);
-
-        final EntityUUID uuid = new EntityUUID(entitySetURI, collItemType, null);
+        final EntityUUID uuid = new EntityUUID(targetEntitySetURI, collItemType, null);
         LOG.debug("Ask for '{}({})'", collItemType.getSimpleName(), null);
 
         EntityInvocationHandler handler = getContext().entityContext().getEntity(uuid);
@@ -278,7 +276,11 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
                   collItemType.getAnnotation(Namespace.class).value(), ClassUtils.getEntityTypeName(collItemType)));
 
           handler = EntityInvocationHandler.getInstance(
-                  entity, URIUtils.getURI(this.uri.build(), property.name()), entitySetURI, collItemType, service);
+                  entity,
+                  URIUtils.getURI(this.uri.build(), property.name()),
+                  targetEntitySetURI,
+                  collItemType,
+                  service);
 
         } else if (getContext().entityContext().getStatus(handler) == AttachedEntityStatus.DELETED) {
           // object deleted

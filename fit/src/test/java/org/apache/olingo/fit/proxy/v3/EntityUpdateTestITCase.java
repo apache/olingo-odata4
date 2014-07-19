@@ -92,7 +92,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
     customer = container.getCustomer().getByKey(-9);
 
-    assertEquals(2, customer.getOrders().size());
+    assertEquals(2, customer.getOrders().execute().size());
 
     int count = 0;
     for (Order inside : customer.getOrders()) {

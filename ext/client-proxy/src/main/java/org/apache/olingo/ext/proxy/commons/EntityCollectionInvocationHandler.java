@@ -56,14 +56,20 @@ public class EntityCollectionInvocationHandler<T extends StructuredType>
           new HashMap<Class<? extends AbstractTerm>, Object>();
 
   public EntityCollectionInvocationHandler(
-          final Service<?> service, final Collection<T> items, final Class<T> itemRef) {
-    this(service, items, itemRef, null);
+          final Service<?> service,
+          final Collection<T> items,
+          final Class<T> itemRef) {
+    this(service, items, itemRef, null, null);
   }
 
   public EntityCollectionInvocationHandler(
-          final Service<?> service, final Collection<T> items, final Class<T> itemRef, final CommonURIBuilder<?> uri) {
+          final Service<?> service,
+          final Collection<T> items,
+          final Class<T> itemRef,
+          final URI targetEntitySetURI,
+          final CommonURIBuilder<?> uri) {
 
-    super(itemRef, null, service, uri);
+    super(itemRef, null, service, targetEntitySetURI, uri);
     this.items = items;
   }
 
@@ -120,18 +126,20 @@ public class EntityCollectionInvocationHandler<T extends StructuredType>
 
   @SuppressWarnings("unchecked")
   public EntityCollection<T> execute() {
-    final Triple<List<T>, URI, List<ODataAnnotation>> entitySet = fetchPartialEntitySet(this.uri.build(), itemRef);
-    this.nextPageURI = entitySet.getMiddle();
+    if (this.uri != null) {
+      final Triple<List<T>, URI, List<ODataAnnotation>> entitySet = fetchPartialEntitySet(this.uri.build(), itemRef);
+      this.nextPageURI = entitySet.getMiddle();
 
-    if (items == null) {
-      items = entitySet.getLeft();
-    } else {
-      items.clear();
-      items.addAll(entitySet.getLeft());
+      if (items == null) {
+        items = entitySet.getLeft();
+      } else {
+        items.clear();
+        items.addAll(entitySet.getLeft());
+      }
+
+      annotations.clear();
+      annotations.addAll(entitySet.getRight());
     }
-
-    annotations.clear();
-    annotations.addAll(entitySet.getRight());
 
     return this;
   }

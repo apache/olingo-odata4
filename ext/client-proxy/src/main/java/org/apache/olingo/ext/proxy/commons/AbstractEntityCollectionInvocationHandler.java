@@ -56,6 +56,8 @@ public abstract class AbstractEntityCollectionInvocationHandler<
 
   protected final URI baseURI;
 
+  protected URI targetEntitySetURI;
+
   protected CommonURIBuilder<?> uri;
 
   private boolean isSingleton = false;
@@ -69,6 +71,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<
 
     this.uri = uri;
     this.baseURI = uri.build();
+    this.targetEntitySetURI = uri.build();
     this.isSingleton = AbstractSingleton.class.isAssignableFrom(ref);
 
     final Type[] entitySetParams =
@@ -83,6 +86,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<
           final Class<?> itemRef,
           final Class<EC> collItemRef,
           final Service<?> service,
+          final URI targetEntitySetURI,
           final CommonURIBuilder<?> uri) {
     super(service);
 
@@ -90,6 +94,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<
     this.baseURI = uri == null ? null : uri.build();
     this.itemRef = (Class<T>) itemRef;
     this.collItemRef = collItemRef;
+    this.targetEntitySetURI = targetEntitySetURI;
   }
 
   protected Class<T> getTypeRef() {
@@ -116,7 +121,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<
     }
 
     final EntityCollectionInvocationHandler<S> entityCollectionHandler =
-            new EntityCollectionInvocationHandler<S>(service, items, typeRef, uriBuilder);
+            new EntityCollectionInvocationHandler<S>(service, items, typeRef, targetEntitySetURI, uriBuilder);
     entityCollectionHandler.setAnnotations(annotations);
 
     return (SEC) Proxy.newProxyInstance(
@@ -167,7 +172,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<
               typeRef)
               : EntityInvocationHandler.getInstance(
               entity,
-              null,
+              targetEntitySetURI,
               typeRef,
               service);
 

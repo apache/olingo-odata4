@@ -150,7 +150,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     Customer actual = readCustomer(getContainer(), id);
     assertEquals(homeAddress.getCity(), actual.getHomeAddress().getCity());
-    assertEquals(1, actual.getOrders().size());
+    assertEquals(1, actual.getOrders().execute().size());
     assertEquals(8, actual.getOrders().iterator().next().getOrderID(), 0);
 
     getContainer().getCustomers().delete(actual.getPersonID());
@@ -218,7 +218,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     Customer actual = readCustomer(getContainer(), id);
     assertEquals(homeAddress.getCity(), actual.getHomeAddress().getCity());
-    assertEquals(1, actual.getOrders().size());
+    assertEquals(1, actual.getOrders().execute().size());
     assertEquals(id, actual.getOrders().iterator().next().getOrderID());
 
     order = getContainer().getOrders().getByKey(id);
@@ -308,7 +308,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     product = getContainer().getProducts().getByKey(12).load();
     assertEquals("Latte", product.getName());
-    assertEquals(12, product.getDetails().iterator().next().getProductDetailID(), 0);
+    assertEquals(12, product.getDetails().execute().iterator().next().getProductDetailID(), 0);
   }
 
   @Test

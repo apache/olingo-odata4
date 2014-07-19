@@ -79,7 +79,7 @@ class EntitySetInvocationHandler<
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static EntitySetInvocationHandler getInstance(
-          final Class<?> ref, final Service<?> service, final URI uri) {;
+          final Class<?> ref, final Service<?> service, final URI uri) {
 
     return new EntitySetInvocationHandler(
             ref,
@@ -139,7 +139,7 @@ class EntitySetInvocationHandler<
           final String entitySetName,
           final CommonURIBuilder<?> uri) {
 
-    super(itemRef, collItemRef, service, uri);
+    super(itemRef, collItemRef, service, uri.build(), uri);
   }
 
   @Override
@@ -246,7 +246,7 @@ class EntitySetInvocationHandler<
     annotations.addAll(entitySet.getRight());
 
     final EntityCollectionInvocationHandler<S> entityCollectionHandler =
-            new EntityCollectionInvocationHandler<S>(service, entitySet.getLeft(), ref, uriBuilder);
+            new EntityCollectionInvocationHandler<S>(service, entitySet.getLeft(), ref, this.baseURI, uriBuilder);
     entityCollectionHandler.setAnnotations(annotations);
 
     entityCollectionHandler.setNextPage(entitySet.getMiddle());

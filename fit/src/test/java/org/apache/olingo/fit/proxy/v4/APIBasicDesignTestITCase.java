@@ -32,6 +32,7 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
+import static org.apache.olingo.fit.proxy.v4.AbstractTestITCase.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -60,6 +61,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     assertNull(customer.getPersonID());
 
     assertEquals(1, customer.load().getPersonID(), 0);
+    service.getContext().detachAll();
   }
 
   @Test
@@ -74,6 +76,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     }
 
     assertEquals(2, pageCount);
+    service.getContext().detachAll(); // avoid influences
   }
 
   @Test
@@ -93,6 +96,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     order.load();
     assertNotNull(order.getOrderDate());
     assertNotNull(order.getOrderID());
+    service.getContext().detachAll(); // avoid influences
   }
 
   @Test
@@ -104,6 +108,19 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
     customer.load();
     assertEquals(1, customer.getOrders().size());
+    service.getContext().detachAll(); // avoid influences
+  }
+
+  @Test
+  public void navigateLinks() {
+    final Customer customer = getContainer().getCustomers().getByKey(1); // no query
+    assertNotNull(customer.getCompany().load().getCompanyID()); // singleton: single query
+    assertEquals(1, customer.getOrders().execute().size()); // collection: single query
+
+    final Order order = getContainer().getOrders().getByKey(8); // no querys
+    assertNotNull(order.getCustomerForOrder().load().getPersonID()); // entity type: single query
+
+    service.getContext().detachAll(); // avoid influences
   }
 
   @Test
@@ -147,5 +164,6 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
       fail();
     } catch (IllegalArgumentException e) {
     }
+    service.getContext().detachAll(); // avoid influences
   }
 }
