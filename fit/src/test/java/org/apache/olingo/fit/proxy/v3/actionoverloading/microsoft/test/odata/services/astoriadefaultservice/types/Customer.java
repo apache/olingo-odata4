@@ -19,9 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -33,6 +57,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 public interface Customer 
   extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<Customer> {
 
+
+    
 
     
     
@@ -54,9 +80,9 @@ public interface Customer
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.io.InputStream getThumbnail();
+    org.apache.olingo.ext.proxy.api.EdmStreamType getThumbnail();
 
-    void setThumbnail(java.io.InputStream _thumbnail);    
+    void setThumbnail(org.apache.olingo.ext.proxy.api.EdmStreamType _thumbnail);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Video", 
@@ -77,11 +103,11 @@ public interface Customer
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.io.InputStream getVideo();
+    org.apache.olingo.ext.proxy.api.EdmStreamType getVideo();
 
-    void setVideo(java.io.InputStream _video);    
-    
+    void setVideo(org.apache.olingo.ext.proxy.api.EdmStreamType _video);
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CustomerId", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -102,7 +128,7 @@ public interface Customer
                 fcKeepInContent = false)
     java.lang.Integer getCustomerId();
 
-    void setCustomerId(java.lang.Integer _customerId);    
+    void setCustomerId(java.lang.Integer _customerId);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Name", 
@@ -125,7 +151,7 @@ public interface Customer
                 fcKeepInContent = false)
     java.lang.String getName();
 
-    void setName(java.lang.String _name);    
+    void setName(java.lang.String _name);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PrimaryContactInfo", 
@@ -148,8 +174,8 @@ public interface Customer
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails getPrimaryContactInfo();
 
-    void setPrimaryContactInfo(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails _primaryContactInfo);    
-        
+    void setPrimaryContactInfo(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails _primaryContactInfo);
+    
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BackupContactInfo", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails", 
@@ -171,8 +197,8 @@ public interface Customer
                 fcKeepInContent = false)
     java.util.Collection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails> getBackupContactInfo();
 
-    void setBackupContactInfo(java.util.Collection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails> _backupContactInfo);    
-        
+    void setBackupContactInfo(java.util.Collection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails> _backupContactInfo);
+    
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Auditing", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo", 
@@ -194,8 +220,7 @@ public interface Customer
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo getAuditing();
 
-    void setAuditing(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo _auditing);    
-        
+    void setAuditing(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo _auditing);
     
 
     @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Orders", 

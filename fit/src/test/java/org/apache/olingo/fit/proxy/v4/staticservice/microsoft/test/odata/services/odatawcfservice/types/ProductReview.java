@@ -19,10 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 @KeyRef(ProductReviewKey.class)
@@ -36,7 +59,9 @@ public interface ProductReview
 
 
                 
+
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductID", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -57,9 +82,9 @@ public interface ProductReview
                 fcKeepInContent = false)
     java.lang.Integer getProductID();
 
-    void setProductID(java.lang.Integer _productID);    
-    
+    void setProductID(java.lang.Integer _productID);
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductDetailID", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -80,9 +105,9 @@ public interface ProductReview
                 fcKeepInContent = false)
     java.lang.Integer getProductDetailID();
 
-    void setProductDetailID(java.lang.Integer _productDetailID);    
-    
+    void setProductDetailID(java.lang.Integer _productDetailID);
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ReviewTitle", 
                 type = "Edm.String", 
                 nullable = false,
@@ -103,9 +128,9 @@ public interface ProductReview
                 fcKeepInContent = false)
     java.lang.String getReviewTitle();
 
-    void setReviewTitle(java.lang.String _reviewTitle);    
-    
+    void setReviewTitle(java.lang.String _reviewTitle);
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "RevisionID", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -126,7 +151,7 @@ public interface ProductReview
                 fcKeepInContent = false)
     java.lang.Integer getRevisionID();
 
-    void setRevisionID(java.lang.Integer _revisionID);    
+    void setRevisionID(java.lang.Integer _revisionID);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Comment", 
@@ -149,7 +174,7 @@ public interface ProductReview
                 fcKeepInContent = false)
     java.lang.String getComment();
 
-    void setComment(java.lang.String _comment);    
+    void setComment(java.lang.String _comment);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Author", 
@@ -172,8 +197,7 @@ public interface ProductReview
                 fcKeepInContent = false)
     java.lang.String getAuthor();
 
-    void setAuthor(java.lang.String _author);    
-    
+    void setAuthor(java.lang.String _author);
     
 
 

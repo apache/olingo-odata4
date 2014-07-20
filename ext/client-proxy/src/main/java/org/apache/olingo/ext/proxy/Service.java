@@ -171,7 +171,7 @@ public final class Service<C extends CommonEdmEnabledODataClient<?>> {
   }
 
   @SuppressWarnings("unchecked")
-  public <NE extends EntityType> NE newEntity(final Class<NE> reference) {
+  public <NE extends EntityType> NE newEntityInstance(final Class<NE> reference) {
     final EntityInvocationHandler handler = EntityInvocationHandler.getInstance(reference, this);
 
     return (NE) Proxy.newProxyInstance(

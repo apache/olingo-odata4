@@ -19,9 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -36,6 +60,8 @@ public interface DiscontinuedProduct
 
   @Override
   DiscontinuedProduct load();
+
+    
 
     
     
@@ -57,11 +83,11 @@ public interface DiscontinuedProduct
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.io.InputStream getPicture();
+    org.apache.olingo.ext.proxy.api.EdmStreamType getPicture();
 
-    void setPicture(java.io.InputStream _picture);    
-    
+    void setPicture(org.apache.olingo.ext.proxy.api.EdmStreamType _picture);
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductId", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -82,7 +108,7 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     java.lang.Integer getProductId();
 
-    void setProductId(java.lang.Integer _productId);    
+    void setProductId(java.lang.Integer _productId);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Description", 
@@ -105,7 +131,7 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     java.lang.String getDescription();
 
-    void setDescription(java.lang.String _description);    
+    void setDescription(java.lang.String _description);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Dimensions", 
@@ -128,8 +154,8 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions getDimensions();
 
-    void setDimensions(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions _dimensions);    
-        
+    void setDimensions(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions _dimensions);
+    
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BaseConcurrency", 
                 type = "Edm.String", 
@@ -151,7 +177,7 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     java.lang.String getBaseConcurrency();
 
-    void setBaseConcurrency(java.lang.String _baseConcurrency);    
+    void setBaseConcurrency(java.lang.String _baseConcurrency);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ComplexConcurrency", 
@@ -174,8 +200,8 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo getComplexConcurrency();
 
-    void setComplexConcurrency(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _complexConcurrency);    
-        
+    void setComplexConcurrency(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _complexConcurrency);
+    
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "NestedComplexConcurrency", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo", 
@@ -197,8 +223,8 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo getNestedComplexConcurrency();
 
-    void setNestedComplexConcurrency(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo _nestedComplexConcurrency);    
-        
+    void setNestedComplexConcurrency(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo _nestedComplexConcurrency);
+    
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Discontinued", 
                 type = "Edm.DateTime", 
@@ -220,7 +246,7 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     java.sql.Timestamp getDiscontinued();
 
-    void setDiscontinued(java.sql.Timestamp _discontinued);    
+    void setDiscontinued(java.sql.Timestamp _discontinued);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ReplacementProductId", 
@@ -243,7 +269,7 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     java.lang.Integer getReplacementProductId();
 
-    void setReplacementProductId(java.lang.Integer _replacementProductId);    
+    void setReplacementProductId(java.lang.Integer _replacementProductId);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "DiscontinuedPhone", 
@@ -266,8 +292,8 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone getDiscontinuedPhone();
 
-    void setDiscontinuedPhone(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone _discontinuedPhone);    
-        
+    void setDiscontinuedPhone(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone _discontinuedPhone);
+    
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ChildConcurrencyToken", 
                 type = "Edm.String", 
@@ -289,8 +315,7 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     java.lang.String getChildConcurrencyToken();
 
-    void setChildConcurrencyToken(java.lang.String _childConcurrencyToken);    
-    
+    void setChildConcurrencyToken(java.lang.String _childConcurrencyToken);
     
 
     @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "RelatedProducts", 

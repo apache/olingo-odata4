@@ -106,7 +106,6 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   @Test
   public void navigate() {
     final Order order = getContainer().getOrders().getByKey(8).load();
-    assertNotNull(order);
     assertEquals(8, order.getOrderID(), 0);
 
     final Timestamp date = order.getOrderDate();

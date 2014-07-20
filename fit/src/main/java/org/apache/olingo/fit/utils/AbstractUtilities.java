@@ -656,6 +656,8 @@ public abstract class AbstractUtilities {
                   + ",MessageId=" + entity.getProperty("MessageId").asPrimitive();
         }
         Commons.SEQUENCE.put(entitySetName, messageId);
+      } else if ("PersonDetails".equals(entitySetName)) {
+        res = getDefaultEntryKey(entitySetName, entity, "PersonID");
       } else if ("Order".equals(entitySetName)) {
         res = getDefaultEntryKey(entitySetName, entity, "OrderId");
       } else if ("Product".equals(entitySetName)) {

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -54,8 +55,8 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void attachDetachNewEntity() {
-    final Customer customer1 = service.newEntity(Customer.class);
-    final Customer customer2 = service.newEntity(Customer.class);
+    final Customer customer1 = service.newEntityInstance(Customer.class);
+    final Customer customer2 = service.newEntityInstance(Customer.class);
 
     final EntityInvocationHandler source1 =
             (EntityInvocationHandler) Proxy.getInvocationHandler(customer1);
@@ -124,7 +125,7 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void linkTargetExisting() {
-    final Customer customer = service.newEntity(Customer.class);
+    final Customer customer = service.newEntityInstance(Customer.class);
     final CustomerInfo customerInfo = container.getCustomerInfo().getByKey(11);
 
     customer.setInfo(customerInfo);
@@ -151,7 +152,7 @@ public class ContextTestITCase extends AbstractTestITCase {
   public void linkSourceExisting() {
     final Customer customer = container.getCustomer().getByKey(-10);
 
-    final CustomerInfo customerInfo = service.newEntity(CustomerInfo.class);
+    final CustomerInfo customerInfo = service.newEntityInstance(CustomerInfo.class);
 
     customer.setInfo(customerInfo);
     assertNotNull(customer.getInfo());
@@ -196,12 +197,12 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void linkEntitySet() {
-    final Customer customer = service.newEntity(Customer.class);
+    final Customer customer = service.newEntityInstance(Customer.class);
 
     final OrderCollection toBeLinked = service.newEntityCollection(OrderCollection.class);
-    toBeLinked.add(service.newEntity(Order.class));
-    toBeLinked.add(service.newEntity(Order.class));
-    toBeLinked.add(service.newEntity(Order.class));
+    toBeLinked.add(service.newEntityInstance(Order.class));
+    toBeLinked.add(service.newEntityInstance(Order.class));
+    toBeLinked.add(service.newEntityInstance(Order.class));
 
     customer.setOrders(toBeLinked);
     assertNotNull(customer.getOrders());
@@ -236,7 +237,7 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void addProperty() {
-    final Customer customer = service.newEntity(Customer.class);
+    final Customer customer = service.newEntityInstance(Customer.class);
     customer.setCustomerId(100);
 
     final ContactDetails cd = service.newComplex(ContactDetails.class);
@@ -315,7 +316,7 @@ public class ContextTestITCase extends AbstractTestITCase {
   public void checkContextInCaseOfErrors() {
     service.getContext().entityContext().detachAll();
 
-    final Login login = service.newEntity(Login.class);
+    final Login login = service.newEntityInstance(Login.class);
 
     final EntityInvocationHandler handler = (EntityInvocationHandler) Proxy.getInvocationHandler(login);
     assertFalse(service.getContext().entityContext().isAttached(handler));
@@ -357,7 +358,7 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void flushTest() {
-    Customer customer = service.newEntity(Customer.class);
+    Customer customer = service.newEntityInstance(Customer.class);
     customer.setCustomerId(300);
     customer.setName("samplename");
 
@@ -368,7 +369,7 @@ public class ContextTestITCase extends AbstractTestITCase {
 
     final OrderCollection toBeLinked = service.newEntityCollection(OrderCollection.class);
     for (Integer key : keys) {
-      final Order order = service.newEntity(Order.class);
+      final Order order = service.newEntityInstance(Order.class);
       order.setOrderId(key);
       order.setCustomerId(300);
       order.setCustomer(customer);

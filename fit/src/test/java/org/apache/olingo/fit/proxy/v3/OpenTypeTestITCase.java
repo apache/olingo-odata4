@@ -62,11 +62,11 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void checkOpenTypeEntityTypesExist() {
-    assertTrue(otservice.newEntity(Row.class).getClass().getInterfaces()[0].
+    assertTrue(otservice.newEntityInstance(Row.class).getClass().getInterfaces()[0].
             getAnnotation(EntityType.class).openType());
-    assertTrue(otservice.newEntity(RowIndex.class).getClass().getInterfaces()[0].
+    assertTrue(otservice.newEntityInstance(RowIndex.class).getClass().getInterfaces()[0].
             getAnnotation(EntityType.class).openType());
-    assertTrue(otservice.newEntity(IndexedRow.class).getClass().getInterfaces()[0].
+    assertTrue(otservice.newEntityInstance(IndexedRow.class).getClass().getInterfaces()[0].
             getAnnotation(EntityType.class).openType());
     otservice.getContext().detachAll();
   }
@@ -85,7 +85,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   public void cud() throws ParseException {
     final Integer id = 1426;
 
-    RowIndex rowIndex = otservice.newEntity(RowIndex.class);
+    RowIndex rowIndex = otservice.newEntityInstance(RowIndex.class);
     rowIndex.setId(id);
     rowIndex.addAdditionalProperty("aString", "string");
     rowIndex.addAdditionalProperty("aBoolean", true);

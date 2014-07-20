@@ -24,7 +24,6 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
@@ -62,6 +61,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.apache.olingo.ext.proxy.api.EdmStreamType;
+import org.apache.olingo.ext.proxy.api.EdmStreamTypeImpl;
+import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
@@ -79,12 +81,14 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   protected int linksTag = 0;
 
-  private final Map<String, InputStream> streamedPropertyChanges = new HashMap<String, InputStream>();
+  private final Map<String, EdmStreamValue> streamedPropertyChanges = new HashMap<String, EdmStreamValue>();
+
+  private final Map<String, EdmStreamType> streamedPropertyCache = new HashMap<String, EdmStreamType>();
 
   private final Map<Class<? extends AbstractTerm>, Object> annotations =
           new HashMap<Class<? extends AbstractTerm>, Object>();
 
-  private InputStream stream;
+  private EdmStreamValue stream;
 
   private EntityUUID uuid;
 
@@ -232,6 +236,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     }
 
     this.streamedPropertyChanges.clear();
+    this.streamedPropertyCache.clear();
     this.propertyChanges.clear();
     this.linkChanges.clear();
     this.linkCache.clear();
@@ -312,14 +317,27 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   @Override
   protected Object getPropertyValue(final String name, final Type type) {
     try {
+      Object res;
       Class<?> ref = ClassUtils.getTypeClass(type);
+      if (ref == EdmStreamType.class) {
+        if (streamedPropertyCache.containsKey(name)) {
+          res = streamedPropertyCache.get(name);
+        } else if (streamedPropertyChanges.containsKey(name)) {
+          res = new EdmStreamTypeImpl(streamedPropertyChanges.get(name));
+        } else {
+          res = Proxy.newProxyInstance(
+                  Thread.currentThread().getContextClassLoader(),
+                  new Class<?>[] {EdmStreamType.class}, new EdmStreamTypeHandler(
+                  getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name),
+                  service));
 
-      if (ref == InputStream.class) {
-        return getStreamedProperty(name);
+          streamedPropertyCache.put(name, EdmStreamType.class.cast(res));
+        }
+
+        return res;
       } else {
         final CommonODataProperty property = getEntity().getProperty(name);
 
-        Object res;
         if (propertyChanges.containsKey(name)) {
           res = propertyChanges.get(name);
         } else if (ref != null && ClassUtils.getTypeClass(type).isAnnotationPresent(ComplexType.class)) {
@@ -390,7 +408,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   @Override
   protected void setPropertyValue(final Property property, final Object value) {
     if (EdmPrimitiveTypeKind.Stream.getFullQualifiedName().toString().equalsIgnoreCase(property.type())) {
-      setStreamedProperty(property, (InputStream) value);
+      setStreamedProperty(property, (EdmStreamType) value);
     } else {
       addPropertyChanges(property.name(), value);
 
@@ -425,66 +443,55 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
             || !this.streamedPropertyChanges.isEmpty();
   }
 
-  public void setStream(final InputStream stream) {
+  public void uploadStream(final EdmStreamValue stream) {
     if (typeRef.getAnnotation(EntityType.class).hasStream()) {
-      IOUtils.closeQuietly(this.stream);
+      if (this.stream != null) {
+        this.stream.close();
+      }
       this.stream = stream;
       attach(AttachedEntityStatus.CHANGED);
     }
   }
 
-  public InputStream getStreamChanges() {
+  public EdmStreamValue getStreamChanges() {
     return this.stream;
   }
 
-  public Map<String, InputStream> getStreamedPropertyChanges() {
+  public Map<String, EdmStreamValue> getStreamedPropertyChanges() {
     return streamedPropertyChanges;
   }
 
-  public InputStream getStream() {
-    final URI contentSource = getEntity().getMediaContentSource();
+  public EdmStreamValue loadStream() {
+    final URI contentSource = getEntity().getMediaContentSource() == null
+            ? getClient().newURIBuilder(baseURI.toASCIIString()).appendValueSegment().build()
+            : getEntity().getMediaContentSource();
 
     if (this.stream == null
             && typeRef.getAnnotation(EntityType.class).hasStream()
             && contentSource != null) {
 
-      final ODataMediaRequest retrieveReq = getClient().getRetrieveRequestFactory()
-              .getMediaEntityRequest(contentSource);
+      final ODataMediaRequest retrieveReq =
+              getClient().getRetrieveRequestFactory().getMediaEntityRequest(contentSource);
+
       if (StringUtils.isNotBlank(getEntity().getMediaContentType())) {
         retrieveReq.setFormat(ODataFormat.fromString(getEntity().getMediaContentType()));
       }
-      this.stream = retrieveReq.execute().getBody();
+
+      final ODataRetrieveResponse<InputStream> res = retrieveReq.execute();
+      this.stream = new EdmStreamValue(res.getContentType(), res.getBody());
     }
 
     return this.stream;
   }
 
-  public Object getStreamedProperty(final String name) {
-    InputStream res = streamedPropertyChanges.get(name);
-
-    try {
-      if (res == null) {
-        final URI link = URIUtils.getURI(
-                getClient().getServiceRoot(),
-                CoreUtils.getMediaEditLink(name, getEntity()).toASCIIString());
-
-        final ODataMediaRequest req = getClient().getRetrieveRequestFactory().getMediaRequest(link);
-        res = req.execute().getBody();
-      }
-    } catch (Exception e) {
-      res = null;
-    }
-
-    return res;
-  }
-
-  private void setStreamedProperty(final Property property, final InputStream input) {
+  private void setStreamedProperty(final Property property, final EdmStreamType input) {
     final Object obj = streamedPropertyChanges.get(property.name());
     if (obj instanceof InputStream) {
       IOUtils.closeQuietly((InputStream) obj);
     }
 
-    streamedPropertyChanges.put(property.name(), input);
+    streamedPropertyCache.remove(property.name());
+    streamedPropertyChanges.put(property.name(), input.load());
   }
 
   @Override
@@ -630,8 +637,10 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
         throw new IllegalArgumentException("Invalid " + typeRef.getSimpleName() + "(" + key + ")");
       }
 
-      IOUtils.closeQuietly(this.stream);
-      this.stream = null;
+      if (this.stream != null) {
+        this.stream.close();
+        this.stream = null;
+      }
     } catch (IllegalArgumentException e) {
       LOG.warn("Entity '" + uuid + "' not found", e);
       throw e;

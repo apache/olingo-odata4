@@ -19,9 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -38,7 +62,9 @@ public interface Customer
   Customer load();
 
     
+
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PersonID", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -59,7 +85,7 @@ public interface Customer
                 fcKeepInContent = false)
     java.lang.Integer getPersonID();
 
-    void setPersonID(java.lang.Integer _personID);    
+    void setPersonID(java.lang.Integer _personID);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "FirstName", 
@@ -82,7 +108,7 @@ public interface Customer
                 fcKeepInContent = false)
     java.lang.String getFirstName();
 
-    void setFirstName(java.lang.String _firstName);    
+    void setFirstName(java.lang.String _firstName);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "LastName", 
@@ -105,7 +131,7 @@ public interface Customer
                 fcKeepInContent = false)
     java.lang.String getLastName();
 
-    void setLastName(java.lang.String _lastName);    
+    void setLastName(java.lang.String _lastName);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "MiddleName", 
@@ -128,7 +154,7 @@ public interface Customer
                 fcKeepInContent = false)
     java.lang.String getMiddleName();
 
-    void setMiddleName(java.lang.String _middleName);    
+    void setMiddleName(java.lang.String _middleName);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "HomeAddress", 
@@ -151,8 +177,8 @@ public interface Customer
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address getHomeAddress();
 
-    void setHomeAddress(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _homeAddress);    
-        
+    void setHomeAddress(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _homeAddress);
+    
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Home", 
                 type = "Edm.GeographyPoint", 
@@ -174,7 +200,7 @@ public interface Customer
                 fcKeepInContent = false)
     org.apache.olingo.commons.api.edm.geo.Point getHome();
 
-    void setHome(org.apache.olingo.commons.api.edm.geo.Point _home);    
+    void setHome(org.apache.olingo.commons.api.edm.geo.Point _home);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Numbers", 
@@ -197,7 +223,7 @@ public interface Customer
                 fcKeepInContent = false)
     java.util.Collection<java.lang.String> getNumbers();
 
-    void setNumbers(java.util.Collection<java.lang.String> _numbers);    
+    void setNumbers(java.util.Collection<java.lang.String> _numbers);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Emails", 
@@ -220,7 +246,7 @@ public interface Customer
                 fcKeepInContent = false)
     java.util.Collection<java.lang.String> getEmails();
 
-    void setEmails(java.util.Collection<java.lang.String> _emails);    
+    void setEmails(java.util.Collection<java.lang.String> _emails);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "City", 
@@ -243,7 +269,7 @@ public interface Customer
                 fcKeepInContent = false)
     java.lang.String getCity();
 
-    void setCity(java.lang.String _city);    
+    void setCity(java.lang.String _city);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Birthday", 
@@ -266,7 +292,7 @@ public interface Customer
                 fcKeepInContent = false)
     java.sql.Timestamp getBirthday();
 
-    void setBirthday(java.sql.Timestamp _birthday);    
+    void setBirthday(java.sql.Timestamp _birthday);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "TimeBetweenLastTwoOrders", 
@@ -289,8 +315,7 @@ public interface Customer
                 fcKeepInContent = false)
     java.math.BigDecimal getTimeBetweenLastTwoOrders();
 
-    void setTimeBetweenLastTwoOrders(java.math.BigDecimal _timeBetweenLastTwoOrders);    
-    
+    void setTimeBetweenLastTwoOrders(java.math.BigDecimal _timeBetweenLastTwoOrders);
     
 
     @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Parent", 

@@ -97,7 +97,7 @@ public abstract class AbstractTestITCase {
           final InMemoryEntities container, final Service<EdmEnabledODataClient> service) {
 
     // Create order ....
-    final Order order = service.newEntity(Order.class);
+    final Order order = service.newEntityInstance(Order.class);
     order.setOrderID(105);
 
     final Calendar orderDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));

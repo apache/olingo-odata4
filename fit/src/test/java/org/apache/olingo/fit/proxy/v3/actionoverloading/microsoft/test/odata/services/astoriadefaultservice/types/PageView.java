@@ -19,9 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -35,7 +59,9 @@ public interface PageView
 
 
     
+
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PageViewId", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -56,7 +82,7 @@ public interface PageView
                 fcKeepInContent = false)
     java.lang.Integer getPageViewId();
 
-    void setPageViewId(java.lang.Integer _pageViewId);    
+    void setPageViewId(java.lang.Integer _pageViewId);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Username", 
@@ -79,7 +105,7 @@ public interface PageView
                 fcKeepInContent = false)
     java.lang.String getUsername();
 
-    void setUsername(java.lang.String _username);    
+    void setUsername(java.lang.String _username);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Viewed", 
@@ -102,7 +128,7 @@ public interface PageView
                 fcKeepInContent = false)
     java.sql.Timestamp getViewed();
 
-    void setViewed(java.sql.Timestamp _viewed);    
+    void setViewed(java.sql.Timestamp _viewed);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "TimeSpentOnPage", 
@@ -125,7 +151,7 @@ public interface PageView
                 fcKeepInContent = false)
     java.math.BigDecimal getTimeSpentOnPage();
 
-    void setTimeSpentOnPage(java.math.BigDecimal _timeSpentOnPage);    
+    void setTimeSpentOnPage(java.math.BigDecimal _timeSpentOnPage);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PageUrl", 
@@ -148,8 +174,7 @@ public interface PageView
                 fcKeepInContent = false)
     java.lang.String getPageUrl();
 
-    void setPageUrl(java.lang.String _pageUrl);    
-    
+    void setPageUrl(java.lang.String _pageUrl);
     
 
     @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Login", 

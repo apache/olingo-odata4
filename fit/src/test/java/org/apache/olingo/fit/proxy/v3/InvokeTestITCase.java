@@ -88,7 +88,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     // 0. create an employee
     final Integer id = 101;
 
-    Employee employee = service.newEntity(Employee.class);
+    Employee employee = service.newEntityInstance(Employee.class);
     employee.setPersonId(id);
     employee.setName("sample employee from proxy");
     employee.setManagersPersonId(-9918);
@@ -143,7 +143,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     // 0. create a product
     final Integer id = 101;
 
-    Product product = service.newEntity(Product.class);
+    Product product = service.newEntityInstance(Product.class);
     product.setProductId(id);
     product.setDescription("New product");
 
@@ -197,7 +197,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     purchaseDate.set(Calendar.MONTH, 0);
     purchaseDate.set(Calendar.DAY_OF_MONTH, 1);
 
-    ComputerDetail computerDetail = service.newEntity(ComputerDetail.class);
+    ComputerDetail computerDetail = service.newEntityInstance(ComputerDetail.class);
     computerDetail.setComputerDetailId(id);
     computerDetail.setSpecificationsBag(Collections.singleton("First spec"));
     computerDetail.setPurchaseDate(new Timestamp(purchaseDate.getTimeInMillis()));

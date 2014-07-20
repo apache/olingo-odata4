@@ -71,6 +71,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.ext.proxy.Service;
@@ -648,13 +649,8 @@ public final class CoreUtils {
   }
 
   public static URI getMediaEditLink(final String name, final CommonODataEntity entity) {
-    for (ODataLink link : entity.getMediaEditLinks()) {
-      if (name.equalsIgnoreCase(link.getName())) {
-        return link.getLink();
-      }
-    }
-
-    throw new IllegalArgumentException("Invalid streamed property " + name);
+    final ODataLink mediaEditLink = entity.getMediaEditLink(name);
+    return mediaEditLink == null ? URIUtils.getURI(entity.getEditLink(), name) : mediaEditLink.getLink();
   }
 
   public static URI getTargetEntitySetURI(

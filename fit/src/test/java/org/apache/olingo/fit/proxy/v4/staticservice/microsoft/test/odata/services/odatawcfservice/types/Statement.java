@@ -19,9 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -35,7 +59,9 @@ public interface Statement
 
 
     
+
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "StatementID", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -56,7 +82,7 @@ public interface Statement
                 fcKeepInContent = false)
     java.lang.Integer getStatementID();
 
-    void setStatementID(java.lang.Integer _statementID);    
+    void setStatementID(java.lang.Integer _statementID);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "TransactionType", 
@@ -79,7 +105,7 @@ public interface Statement
                 fcKeepInContent = false)
     java.lang.String getTransactionType();
 
-    void setTransactionType(java.lang.String _transactionType);    
+    void setTransactionType(java.lang.String _transactionType);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "TransactionDescription", 
@@ -102,7 +128,7 @@ public interface Statement
                 fcKeepInContent = false)
     java.lang.String getTransactionDescription();
 
-    void setTransactionDescription(java.lang.String _transactionDescription);    
+    void setTransactionDescription(java.lang.String _transactionDescription);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Amount", 
@@ -125,8 +151,7 @@ public interface Statement
                 fcKeepInContent = false)
     java.lang.Double getAmount();
 
-    void setAmount(java.lang.Double _amount);    
-    
+    void setAmount(java.lang.Double _amount);
     
 
 

@@ -19,10 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 @KeyRef(MessageKey.class)
@@ -36,7 +59,9 @@ public interface Message
 
 
         
+
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "MessageId", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -57,9 +82,9 @@ public interface Message
                 fcKeepInContent = false)
     java.lang.Integer getMessageId();
 
-    void setMessageId(java.lang.Integer _messageId);    
-    
+    void setMessageId(java.lang.Integer _messageId);
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "FromUsername", 
                 type = "Edm.String", 
                 nullable = false,
@@ -80,7 +105,7 @@ public interface Message
                 fcKeepInContent = false)
     java.lang.String getFromUsername();
 
-    void setFromUsername(java.lang.String _fromUsername);    
+    void setFromUsername(java.lang.String _fromUsername);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ToUsername", 
@@ -103,7 +128,7 @@ public interface Message
                 fcKeepInContent = false)
     java.lang.String getToUsername();
 
-    void setToUsername(java.lang.String _toUsername);    
+    void setToUsername(java.lang.String _toUsername);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Sent", 
@@ -126,7 +151,7 @@ public interface Message
                 fcKeepInContent = false)
     java.sql.Timestamp getSent();
 
-    void setSent(java.sql.Timestamp _sent);    
+    void setSent(java.sql.Timestamp _sent);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Subject", 
@@ -149,7 +174,7 @@ public interface Message
                 fcKeepInContent = false)
     java.lang.String getSubject();
 
-    void setSubject(java.lang.String _subject);    
+    void setSubject(java.lang.String _subject);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Body", 
@@ -172,7 +197,7 @@ public interface Message
                 fcKeepInContent = false)
     java.lang.String getBody();
 
-    void setBody(java.lang.String _body);    
+    void setBody(java.lang.String _body);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "IsRead", 
@@ -195,8 +220,7 @@ public interface Message
                 fcKeepInContent = false)
     java.lang.Boolean getIsRead();
 
-    void setIsRead(java.lang.Boolean _isRead);    
-    
+    void setIsRead(java.lang.Boolean _isRead);
     
 
     @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Sender", 

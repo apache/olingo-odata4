@@ -73,7 +73,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void patchLink() {
-    Order order = service.newEntity(Order.class);
+    Order order = service.newEntityInstance(Order.class);
     order.setOrderId(400);
     order.setCustomerId(-9);
 

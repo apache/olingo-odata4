@@ -88,7 +88,7 @@ public abstract class AbstractTestITCase {
           final String sampleName,
           final DefaultContainer container) {
 
-    final Customer customer = service.newEntity(Customer.class);
+    final Customer customer = service.newEntityInstance(Customer.class);
 
     // add name attribute
     customer.setName(sampleName);

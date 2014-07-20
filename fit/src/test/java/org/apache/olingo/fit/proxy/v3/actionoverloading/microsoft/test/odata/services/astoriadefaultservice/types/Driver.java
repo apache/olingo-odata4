@@ -19,9 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -35,7 +59,9 @@ public interface Driver
 
 
     
+
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Name", 
                 type = "Edm.String", 
                 nullable = false,
@@ -56,7 +82,7 @@ public interface Driver
                 fcKeepInContent = false)
     java.lang.String getName();
 
-    void setName(java.lang.String _name);    
+    void setName(java.lang.String _name);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BirthDate", 
@@ -79,8 +105,7 @@ public interface Driver
                 fcKeepInContent = false)
     java.sql.Timestamp getBirthDate();
 
-    void setBirthDate(java.sql.Timestamp _birthDate);    
-    
+    void setBirthDate(java.sql.Timestamp _birthDate);
     
 
     @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "License", 

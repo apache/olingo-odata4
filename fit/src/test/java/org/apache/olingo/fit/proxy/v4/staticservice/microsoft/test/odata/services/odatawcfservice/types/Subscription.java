@@ -19,9 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -35,7 +59,9 @@ public interface Subscription
 
 
     
+
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "SubscriptionID", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -56,7 +82,7 @@ public interface Subscription
                 fcKeepInContent = false)
     java.lang.Integer getSubscriptionID();
 
-    void setSubscriptionID(java.lang.Integer _subscriptionID);    
+    void setSubscriptionID(java.lang.Integer _subscriptionID);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "TemplateGuid", 
@@ -79,7 +105,7 @@ public interface Subscription
                 fcKeepInContent = false)
     java.lang.String getTemplateGuid();
 
-    void setTemplateGuid(java.lang.String _templateGuid);    
+    void setTemplateGuid(java.lang.String _templateGuid);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Title", 
@@ -102,7 +128,7 @@ public interface Subscription
                 fcKeepInContent = false)
     java.lang.String getTitle();
 
-    void setTitle(java.lang.String _title);    
+    void setTitle(java.lang.String _title);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Category", 
@@ -125,7 +151,7 @@ public interface Subscription
                 fcKeepInContent = false)
     java.lang.String getCategory();
 
-    void setCategory(java.lang.String _category);    
+    void setCategory(java.lang.String _category);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CreatedDate", 
@@ -148,8 +174,7 @@ public interface Subscription
                 fcKeepInContent = false)
     java.sql.Timestamp getCreatedDate();
 
-    void setCreatedDate(java.sql.Timestamp _createdDate);    
-    
+    void setCreatedDate(java.sql.Timestamp _createdDate);
     
 
 

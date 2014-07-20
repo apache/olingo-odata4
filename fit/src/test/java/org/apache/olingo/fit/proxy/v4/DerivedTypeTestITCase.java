@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -58,7 +59,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void createDelete() {
-    final Customer customer = service.newEntity(Customer.class);
+    final Customer customer = service.newEntityInstance(Customer.class);
     customer.setPersonID(976);
     customer.setFirstName("Test");
     customer.setLastName("Test");

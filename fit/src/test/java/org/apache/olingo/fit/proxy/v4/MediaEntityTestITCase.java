@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4;
 
 import org.apache.commons.io.IOUtils;
@@ -28,13 +29,14 @@ import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.UUID;
+import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 /**
@@ -65,12 +67,13 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   public void read() throws IOException {
     final UUID uuid = UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7");
 
-    final Advertisement adv = getContainer().getAdvertisements().getByKey(uuid).load();
-    assertNotNull(adv.getAirDate());
+    final Advertisement adv = getContainer().getAdvertisements().getByKey(uuid);
+    assertNull(adv.getAirDate()); // No HTTP request --> property null
 
-    final InputStream is = adv.getStream();
-    assertNotNull(is);
-    IOUtils.closeQuietly(is);
+    final EdmStreamValue res = adv.loadStream();
+    assertEquals("application/octet-stream", res.getContentType());
+    assertNotNull(res.getStream());
+    IOUtils.closeQuietly(res.getStream());
 
     getService().getContext().detachAll();
   }
@@ -78,11 +81,12 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   @Test
   public void update() throws IOException {
     final UUID uuid = UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7");
-    final Advertisement adv = getContainer().getAdvertisements().getByKey(uuid).load();
+    final Advertisement adv = getContainer().getAdvertisements().getByKey(uuid);
     final String random = RandomStringUtils.random(124, "abcdefghijklmnopqrstuvwxyz");
-    adv.setStream(IOUtils.toInputStream(random));
+    adv.uploadStream(new EdmStreamValue("application/octet-stream", IOUtils.toInputStream(random)));
     getContainer().flush();
-    assertEquals(random, IOUtils.toString(getContainer().getAdvertisements().getByKey(uuid).load().getStream()));
+    assertEquals(random,
+            IOUtils.toString(getContainer().getAdvertisements().getByKey(uuid).loadStream().getStream()));
     getService().getContext().detachAll();
   }
 
@@ -90,8 +94,8 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   public void create() throws IOException {
     final String random = RandomStringUtils.random(124, "abcdefghijklmnopqrstuvwxyz");
 
-    final Advertisement adv = getService().newEntity(Advertisement.class);
-    adv.setStream(IOUtils.toInputStream(random));
+    final Advertisement adv = getService().newEntityInstance(Advertisement.class);
+    adv.uploadStream(new EdmStreamValue("application/octet-stream", IOUtils.toInputStream(random)));
     adv.setAirDate(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 
     getContainer().getAdvertisements().add(adv);
@@ -100,7 +104,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final UUID uuid = adv.getID();
     getService().getContext().detachAll();
 
-    assertEquals(random, IOUtils.toString(getContainer().getAdvertisements().getByKey(uuid).load().getStream()));
+    assertEquals(random, IOUtils.toString(getContainer().getAdvertisements().getByKey(uuid).loadStream().getStream()));
 
     getService().getContext().detachAll();
 

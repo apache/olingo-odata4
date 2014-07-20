@@ -19,11 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -40,7 +62,9 @@ public interface PublicCompany
   PublicCompany load();
 
     
+
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CompanyID", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -61,7 +85,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     java.lang.Integer getCompanyID();
 
-    void setCompanyID(java.lang.Integer _companyID);    
+    void setCompanyID(java.lang.Integer _companyID);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CompanyCategory", 
@@ -84,7 +108,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory getCompanyCategory();
 
-    void setCompanyCategory(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory _companyCategory);    
+    void setCompanyCategory(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory _companyCategory);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Revenue", 
@@ -107,7 +131,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     java.lang.Long getRevenue();
 
-    void setRevenue(java.lang.Long _revenue);    
+    void setRevenue(java.lang.Long _revenue);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Name", 
@@ -130,7 +154,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     java.lang.String getName();
 
-    void setName(java.lang.String _name);    
+    void setName(java.lang.String _name);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Address", 
@@ -153,8 +177,8 @@ public interface PublicCompany
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address getAddress();
 
-    void setAddress(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _address);    
-        
+    void setAddress(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _address);
+    
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "StockExchange", 
                 type = "Edm.String", 
@@ -176,8 +200,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     java.lang.String getStockExchange();
 
-    void setStockExchange(java.lang.String _stockExchange);    
-    
+    void setStockExchange(java.lang.String _stockExchange);
     
 
     @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Employees", 

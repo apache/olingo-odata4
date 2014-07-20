@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -75,7 +76,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   public void createEmployee() {
     final Integer id = 101;
 
-    final Employee employee = getService().newEntity(Employee.class);
+    final Employee employee = getService().newEntityInstance(Employee.class);
     employee.setPersonID(id);
     employee.setFirstName("Fabio");
     employee.setLastName("Martelli");
@@ -127,7 +128,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   public void createWithNavigation() {
     final Integer id = 101;
 
-    final Customer customer = getService().newEntity(Customer.class);
+    final Customer customer = getService().newEntityInstance(Customer.class);
     customer.setPersonID(id);
     customer.setPersonID(id);
     customer.setFirstName("Fabio");
@@ -170,7 +171,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     // -------------------------------
     // Create a new order
     // -------------------------------
-    Order order = getService().newEntity(Order.class);
+    Order order = getService().newEntityInstance(Order.class);
     order.setOrderID(id);
 
     final Calendar orderDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -185,7 +186,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     // -------------------------------
     // Create a new customer
     // -------------------------------
-    final Customer customer = getService().newEntity(Customer.class);
+    final Customer customer = getService().newEntityInstance(Customer.class);
     customer.setPersonID(id);
     customer.setPersonID(id);
     customer.setFirstName("Fabio");
@@ -249,7 +250,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void multiKey() {
-    OrderDetail details = getService().newEntity(OrderDetail.class);
+    OrderDetail details = getService().newEntityInstance(OrderDetail.class);
     details.setOrderID(8);
     details.setProductID(1);
     details.setQuantity(100);
@@ -281,7 +282,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void deepInsert() {
-    Product product = getService().newEntity(Product.class);
+    Product product = getService().newEntityInstance(Product.class);
     product.setProductID(12);
     product.setName("Latte");
     product.setQuantityPerUnit("100g Bag");
@@ -292,7 +293,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     product.setSkinColor(Color.Blue);
     product.setCoverColors(Arrays.asList(new Color[] {Color.Red, Color.Green}));
 
-    final ProductDetail detail = getService().newEntity(ProductDetail.class);
+    final ProductDetail detail = getService().newEntityInstance(ProductDetail.class);
     detail.setProductID(product.getProductID());
     detail.setProductDetailID(12);
     detail.setProductName("LatteHQ");
@@ -317,7 +318,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
             getContainer().getAccounts().getByKey(101).getMyPaymentInstruments().execute();
     final int sizeBefore = instruments.size();
 
-    final PaymentInstrument instrument = getService().newEntity(PaymentInstrument.class);
+    final PaymentInstrument instrument = getService().newEntityInstance(PaymentInstrument.class);
     instruments.add(instrument);
 
     final int id = RandomUtils.nextInt(101999, 105000);

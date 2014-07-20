@@ -19,9 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -35,7 +59,9 @@ public interface MappedEntityType
 
 
     
+
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Id", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -56,7 +82,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.lang.Integer getId();
 
-    void setId(java.lang.Integer _id);    
+    void setId(java.lang.Integer _id);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Href", 
@@ -79,7 +105,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.lang.String getHref();
 
-    void setHref(java.lang.String _href);    
+    void setHref(java.lang.String _href);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Title", 
@@ -102,7 +128,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.lang.String getTitle();
 
-    void setTitle(java.lang.String _title);    
+    void setTitle(java.lang.String _title);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "HrefLang", 
@@ -125,7 +151,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.lang.String getHrefLang();
 
-    void setHrefLang(java.lang.String _hrefLang);    
+    void setHrefLang(java.lang.String _hrefLang);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Type", 
@@ -148,7 +174,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.lang.String getType();
 
-    void setType(java.lang.String _type);    
+    void setType(java.lang.String _type);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Length", 
@@ -171,7 +197,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.lang.Integer getLength();
 
-    void setLength(java.lang.Integer _length);    
+    void setLength(java.lang.Integer _length);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfPrimitiveToLinks", 
@@ -194,7 +220,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.util.Collection<java.lang.String> getBagOfPrimitiveToLinks();
 
-    void setBagOfPrimitiveToLinks(java.util.Collection<java.lang.String> _bagOfPrimitiveToLinks);    
+    void setBagOfPrimitiveToLinks(java.util.Collection<java.lang.String> _bagOfPrimitiveToLinks);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Logo", 
@@ -217,7 +243,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     byte[] getLogo();
 
-    void setLogo(byte[] _logo);    
+    void setLogo(byte[] _logo);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfDecimals", 
@@ -240,7 +266,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.util.Collection<java.math.BigDecimal> getBagOfDecimals();
 
-    void setBagOfDecimals(java.util.Collection<java.math.BigDecimal> _bagOfDecimals);    
+    void setBagOfDecimals(java.util.Collection<java.math.BigDecimal> _bagOfDecimals);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfDoubles", 
@@ -263,7 +289,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.util.Collection<java.lang.Double> getBagOfDoubles();
 
-    void setBagOfDoubles(java.util.Collection<java.lang.Double> _bagOfDoubles);    
+    void setBagOfDoubles(java.util.Collection<java.lang.Double> _bagOfDoubles);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfSingles", 
@@ -286,7 +312,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.util.Collection<java.lang.Float> getBagOfSingles();
 
-    void setBagOfSingles(java.util.Collection<java.lang.Float> _bagOfSingles);    
+    void setBagOfSingles(java.util.Collection<java.lang.Float> _bagOfSingles);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfBytes", 
@@ -309,7 +335,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.util.Collection<java.lang.Short> getBagOfBytes();
 
-    void setBagOfBytes(java.util.Collection<java.lang.Short> _bagOfBytes);    
+    void setBagOfBytes(java.util.Collection<java.lang.Short> _bagOfBytes);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfInt16s", 
@@ -332,7 +358,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.util.Collection<java.lang.Short> getBagOfInt16s();
 
-    void setBagOfInt16s(java.util.Collection<java.lang.Short> _bagOfInt16s);    
+    void setBagOfInt16s(java.util.Collection<java.lang.Short> _bagOfInt16s);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfInt32s", 
@@ -355,7 +381,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.util.Collection<java.lang.Integer> getBagOfInt32s();
 
-    void setBagOfInt32s(java.util.Collection<java.lang.Integer> _bagOfInt32s);    
+    void setBagOfInt32s(java.util.Collection<java.lang.Integer> _bagOfInt32s);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfInt64s", 
@@ -378,7 +404,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.util.Collection<java.lang.Long> getBagOfInt64s();
 
-    void setBagOfInt64s(java.util.Collection<java.lang.Long> _bagOfInt64s);    
+    void setBagOfInt64s(java.util.Collection<java.lang.Long> _bagOfInt64s);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfGuids", 
@@ -401,7 +427,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.util.Collection<java.util.UUID> getBagOfGuids();
 
-    void setBagOfGuids(java.util.Collection<java.util.UUID> _bagOfGuids);    
+    void setBagOfGuids(java.util.Collection<java.util.UUID> _bagOfGuids);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfDateTime", 
@@ -424,7 +450,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.util.Collection<java.sql.Timestamp> getBagOfDateTime();
 
-    void setBagOfDateTime(java.util.Collection<java.sql.Timestamp> _bagOfDateTime);    
+    void setBagOfDateTime(java.util.Collection<java.sql.Timestamp> _bagOfDateTime);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfComplexToCategories", 
@@ -447,8 +473,8 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     java.util.Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory> getBagOfComplexToCategories();
 
-    void setBagOfComplexToCategories(java.util.Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory> _bagOfComplexToCategories);    
-        
+    void setBagOfComplexToCategories(java.util.Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory> _bagOfComplexToCategories);
+    
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ComplexPhone", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone", 
@@ -470,8 +496,8 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone getComplexPhone();
 
-    void setComplexPhone(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone _complexPhone);    
-        
+    void setComplexPhone(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone _complexPhone);
+    
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ComplexContactDetails", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails", 
@@ -493,8 +519,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails getComplexContactDetails();
 
-    void setComplexContactDetails(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails _complexContactDetails);    
-        
+    void setComplexContactDetails(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails _complexContactDetails);
     
 
 

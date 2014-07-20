@@ -19,11 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -37,7 +59,9 @@ public interface GiftCard
 
 
     
+
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GiftCardID", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -58,7 +82,7 @@ public interface GiftCard
                 fcKeepInContent = false)
     java.lang.Integer getGiftCardID();
 
-    void setGiftCardID(java.lang.Integer _giftCardID);    
+    void setGiftCardID(java.lang.Integer _giftCardID);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "GiftCardNO", 
@@ -81,7 +105,7 @@ public interface GiftCard
                 fcKeepInContent = false)
     java.lang.String getGiftCardNO();
 
-    void setGiftCardNO(java.lang.String _giftCardNO);    
+    void setGiftCardNO(java.lang.String _giftCardNO);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Amount", 
@@ -104,7 +128,7 @@ public interface GiftCard
                 fcKeepInContent = false)
     java.lang.Double getAmount();
 
-    void setAmount(java.lang.Double _amount);    
+    void setAmount(java.lang.Double _amount);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ExperationDate", 
@@ -127,7 +151,7 @@ public interface GiftCard
                 fcKeepInContent = false)
     java.sql.Timestamp getExperationDate();
 
-    void setExperationDate(java.sql.Timestamp _experationDate);    
+    void setExperationDate(java.sql.Timestamp _experationDate);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "OwnerName", 
@@ -150,8 +174,7 @@ public interface GiftCard
                 fcKeepInContent = false)
     java.lang.String getOwnerName();
 
-    void setOwnerName(java.lang.String _ownerName);    
-    
+    void setOwnerName(java.lang.String _ownerName);
     
 
 

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
@@ -42,10 +43,10 @@ import org.junit.Test;
 public class ContextTestITCase extends AbstractTestITCase {
 
   private void continueOnError(final Service<EdmEnabledODataClient> service, final InMemoryEntities container) {
-    final Person person = service.newEntity(Person.class);
+    final Person person = service.newEntityInstance(Person.class);
     container.getPeople().add(person);
 
-    final Employee employee = service.newEntity(Employee.class);
+    final Employee employee = service.newEntityInstance(Employee.class);
     employee.setPersonID(199);
     employee.setFirstName("Fabio");
     employee.setLastName("Martelli");

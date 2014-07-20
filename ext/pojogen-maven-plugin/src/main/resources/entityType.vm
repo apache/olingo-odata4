@@ -71,12 +71,18 @@ public interface $utility.capitalize($entityType.Name)
     #if(!$keys.add($key.KeyPropertyName)) #stop #end
 #end
 
-#set( $complexProps = [] )
 #set( $contained = [] )
+
 #foreach($propertyName in $entityType.PropertyNames)
     #set($property = $entityType.getProperty($propertyName))
     #set($fcprops = $utility.getFcProperties($property) )
     #if($keys.contains($property.Name))@Key#end
+
+    #if($property.Type.FullQualifiedName.toString().equals("Edm.Stream"))#*
+      *##set( $returnType = "org.apache.olingo.ext.proxy.api.EdmStreamType" )#*
+    *##else#*
+      *##set( $returnType = $utility.getJavaType($property.Type, $property.Collection) )#*
+    *##end
 
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "$property.Name", 
                 type = "$property.Type.FullQualifiedName.toString()", 
@@ -96,13 +102,9 @@ public interface $utility.capitalize($entityType.Name)
                 fcNSPrefix = "#if($fcprops.containsKey("fcNSPrefix"))$fcprops.get("fcNSPrefix")#end",
                 fcNSURI = "#if($fcprops.containsKey("fcNSURI"))$fcprops.get("fcNSURI")#end",
                 fcKeepInContent = #if($fcprops.containsKey("fcKeepInContent"))$fcprops.get("fcKeepInContent")#{else}false#end)
-    $utility.getJavaType($property.Type, $property.Collection) get$utility.capitalize($property.Name)();
+    $returnType get$utility.capitalize($property.Name)();
 
-    void set$utility.capitalize($property.Name)($utility.getJavaType($property.Type, $property.Collection) _$utility.uncapitalize($property.Name));    
-    #if($utility.isComplex($property.Type.FullQualifiedName))#*
-      *##set( $adding = $complexProps.add($property) )
-    #end
-
+    void set$utility.capitalize($property.Name)($returnType _$utility.uncapitalize($property.Name));
 #end
     
 #foreach($propertyName in $entityType.NavigationPropertyNames)
@@ -126,9 +128,9 @@ public interface $utility.capitalize($entityType.Name)
 #end
 
 #if($entityType.hasStream())
-    void setStream(java.io.InputStream stream);
+    void uploadStream(org.apache.olingo.ext.proxy.api.EdmStreamValue stream);
 
-    java.io.InputStream getStream();
+    org.apache.olingo.ext.proxy.api.EdmStreamValue loadStream();
 #end
 
 #set( $functions = $utility.getFunctionsBoundTo($entityType.Name, false) )

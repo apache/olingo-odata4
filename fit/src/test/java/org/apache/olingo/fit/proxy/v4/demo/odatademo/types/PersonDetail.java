@@ -19,9 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v4.demo.odatademo.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -35,7 +59,9 @@ public interface PersonDetail
 
 
     
+
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PersonID", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -56,7 +82,7 @@ public interface PersonDetail
                 fcKeepInContent = false)
     java.lang.Integer getPersonID();
 
-    void setPersonID(java.lang.Integer _personID);    
+    void setPersonID(java.lang.Integer _personID);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Age", 
@@ -79,7 +105,7 @@ public interface PersonDetail
                 fcKeepInContent = false)
     java.lang.Short getAge();
 
-    void setAge(java.lang.Short _age);    
+    void setAge(java.lang.Short _age);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Gender", 
@@ -102,7 +128,7 @@ public interface PersonDetail
                 fcKeepInContent = false)
     java.lang.Boolean getGender();
 
-    void setGender(java.lang.Boolean _gender);    
+    void setGender(java.lang.Boolean _gender);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Phone", 
@@ -125,7 +151,7 @@ public interface PersonDetail
                 fcKeepInContent = false)
     java.lang.String getPhone();
 
-    void setPhone(java.lang.String _phone);    
+    void setPhone(java.lang.String _phone);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Address", 
@@ -148,8 +174,8 @@ public interface PersonDetail
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Address getAddress();
 
-    void setAddress(org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Address _address);    
-        
+    void setAddress(org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Address _address);
+    
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Photo", 
                 type = "Edm.Stream", 
@@ -169,10 +195,9 @@ public interface PersonDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.io.InputStream getPhoto();
+    org.apache.olingo.ext.proxy.api.EdmStreamType getPhoto();
 
-    void setPhoto(java.io.InputStream _photo);    
-    
+    void setPhoto(org.apache.olingo.ext.proxy.api.EdmStreamType _photo);
     
 
     @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Person", 

@@ -19,10 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 @KeyRef(ProductReviewKey.class)
@@ -36,7 +59,9 @@ public interface ProductReview
 
 
             
+
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductId", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -57,9 +82,9 @@ public interface ProductReview
                 fcKeepInContent = false)
     java.lang.Integer getProductId();
 
-    void setProductId(java.lang.Integer _productId);    
-    
+    void setProductId(java.lang.Integer _productId);
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ReviewId", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -80,7 +105,7 @@ public interface ProductReview
                 fcKeepInContent = false)
     java.lang.Integer getReviewId();
 
-    void setReviewId(java.lang.Integer _reviewId);    
+    void setReviewId(java.lang.Integer _reviewId);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Review", 
@@ -103,9 +128,9 @@ public interface ProductReview
                 fcKeepInContent = false)
     java.lang.String getReview();
 
-    void setReview(java.lang.String _review);    
-    
+    void setReview(java.lang.String _review);
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "RevisionId", 
                 type = "Edm.String", 
                 nullable = false,
@@ -126,8 +151,7 @@ public interface ProductReview
                 fcKeepInContent = false)
     java.lang.String getRevisionId();
 
-    void setRevisionId(java.lang.String _revisionId);    
-    
+    void setRevisionId(java.lang.String _revisionId);
     
 
     @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Product", 

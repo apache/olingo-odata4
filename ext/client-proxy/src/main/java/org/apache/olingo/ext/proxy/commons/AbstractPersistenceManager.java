@@ -31,7 +31,6 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -42,7 +41,6 @@ import org.apache.olingo.ext.proxy.utils.CoreUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.ArrayList;
@@ -52,6 +50,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 
 abstract class AbstractPersistenceManager implements PersistenceManager {
 
@@ -252,7 +251,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
         }
       }
 
-      for (Map.Entry<String, InputStream> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
+      for (Map.Entry<String, EdmStreamValue> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
         final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                 ? URI.create("$" + startingPos) : URIUtils.getURI(
                 service.getClient().getServiceRoot(),
@@ -360,16 +359,16 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
   private void queueUpdateMediaEntity(
           final EntityInvocationHandler handler,
           final URI uri,
-          final InputStream input,
+          final EdmStreamValue input,
           final PersistenceChanges changeset) {
 
     LOG.debug("Update media entity '{}'", uri);
 
     final ODataMediaEntityUpdateRequest<?> req =
-            service.getClient().getCUDRequestFactory().getMediaEntityUpdateRequest(uri, input);
+            service.getClient().getCUDRequestFactory().getMediaEntityUpdateRequest(uri, input.getStream());
 
-    if (StringUtils.isNotBlank(handler.getEntity().getMediaContentType())) {
-      req.setContentType(ODataFormat.fromString(handler.getEntity().getMediaContentType()).toString());
+    if (StringUtils.isNotBlank(input.getContentType())) {
+      req.setContentType(input.getContentType());
     }
 
     if (StringUtils.isNotBlank(handler.getETag())) {
@@ -382,12 +381,17 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
   private void queueUpdateMediaResource(
           final EntityInvocationHandler handler,
           final URI uri,
-          final InputStream input,
+          final EdmStreamValue input,
           final PersistenceChanges changeset) {
 
     LOG.debug("Update media entity '{}'", uri);
 
-    final ODataStreamUpdateRequest req = service.getClient().getCUDRequestFactory().getStreamUpdateRequest(uri, input);
+    final ODataStreamUpdateRequest req =
+            service.getClient().getCUDRequestFactory().getStreamUpdateRequest(uri, input.getStream());
+
+    if (StringUtils.isNotBlank(input.getContentType())) {
+      req.setContentType(input.getContentType());
+    }
 
     if (StringUtils.isNotBlank(handler.getETag())) {
       req.setIfMatch(handler.getETag());

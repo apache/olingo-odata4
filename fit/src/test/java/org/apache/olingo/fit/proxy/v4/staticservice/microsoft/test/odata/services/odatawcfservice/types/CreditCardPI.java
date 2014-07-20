@@ -19,10 +19,33 @@
 
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -39,7 +62,9 @@ public interface CreditCardPI
   CreditCardPI load();
 
     
+
     @Key
+    
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PaymentInstrumentID", 
                 type = "Edm.Int32", 
                 nullable = false,
@@ -60,7 +85,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     java.lang.Integer getPaymentInstrumentID();
 
-    void setPaymentInstrumentID(java.lang.Integer _paymentInstrumentID);    
+    void setPaymentInstrumentID(java.lang.Integer _paymentInstrumentID);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "FriendlyName", 
@@ -83,7 +108,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     java.lang.String getFriendlyName();
 
-    void setFriendlyName(java.lang.String _friendlyName);    
+    void setFriendlyName(java.lang.String _friendlyName);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CreatedDate", 
@@ -106,7 +131,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     java.sql.Timestamp getCreatedDate();
 
-    void setCreatedDate(java.sql.Timestamp _createdDate);    
+    void setCreatedDate(java.sql.Timestamp _createdDate);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CardNumber", 
@@ -129,7 +154,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     java.lang.String getCardNumber();
 
-    void setCardNumber(java.lang.String _cardNumber);    
+    void setCardNumber(java.lang.String _cardNumber);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CVV", 
@@ -152,7 +177,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     java.lang.String getCVV();
 
-    void setCVV(java.lang.String _cVV);    
+    void setCVV(java.lang.String _cVV);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "HolderName", 
@@ -175,7 +200,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     java.lang.String getHolderName();
 
-    void setHolderName(java.lang.String _holderName);    
+    void setHolderName(java.lang.String _holderName);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Balance", 
@@ -198,7 +223,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     java.lang.Double getBalance();
 
-    void setBalance(java.lang.Double _balance);    
+    void setBalance(java.lang.Double _balance);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ExperationDate", 
@@ -221,8 +246,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     java.sql.Timestamp getExperationDate();
 
-    void setExperationDate(java.sql.Timestamp _experationDate);    
-    
+    void setExperationDate(java.sql.Timestamp _experationDate);
     
 
     @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "TheStoredPI", 

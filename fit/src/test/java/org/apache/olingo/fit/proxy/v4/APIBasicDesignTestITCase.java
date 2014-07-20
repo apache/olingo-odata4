@@ -167,7 +167,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
   @Test
   public void createDelete() {
     // Create order ....
-    final Order order = getService().newEntity(Order.class);
+    final Order order = getService().newEntityInstance(Order.class);
     order.setOrderID(1105);
 
     final Calendar orderDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -206,5 +206,17 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     } catch (IllegalArgumentException e) {
     }
     service.getContext().detachAll(); // avoid influences
+  }
+
+  @Test
+  public void updateComplexProperty() {
+    Address homeAddress = container.getCustomers().getByKey(1).getHomeAddress();
+    homeAddress.setCity("Pescara");
+    homeAddress.setPostalCode("98052");
+    container.flush();
+
+    assertEquals("Pescara", container.getCustomers().getByKey(1).getHomeAddress().load().getCity());
+    assertEquals("98052", container.getCustomers().getByKey(1).getHomeAddress().load().getPostalCode());
+//    assertNotNull(container.getCustomers().getByKey(1).getHomeAddress().load().getStreet());
   }
 }

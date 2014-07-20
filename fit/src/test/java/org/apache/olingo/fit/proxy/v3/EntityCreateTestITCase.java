@@ -80,7 +80,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   public void createEmployee() {
     final Integer id = 101;
 
-    final Employee employee = service.newEntity(Employee.class);
+    final Employee employee = service.newEntityInstance(Employee.class);
     employee.setPersonId(id);
     employee.setName("sample employee from proxy");
     employee.setManagersPersonId(-9918);
@@ -144,7 +144,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     final String sampleName = "sample customer from proxy with back navigation";
     final Integer id = 102;
 
-    Order order = service.newEntity(Order.class);
+    Order order = service.newEntityInstance(Order.class);
     order.setCustomerId(id);
     order.setOrderId(id); // same id ...
 
@@ -194,7 +194,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void multiKey() {
-    Message message = service.newEntity(Message.class);
+    Message message = service.newEntityInstance(Message.class);
     message.setMessageId(100);
     message.setFromUsername("fromusername");
     message.setToUsername("myusername");

@@ -25,6 +25,8 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import org.apache.olingo.ext.proxy.api.EdmStreamTypeImpl;
+import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import static org.apache.olingo.fit.proxy.v3.AbstractTestITCase.service;
 
 import static org.junit.Assert.assertEquals;
@@ -39,7 +41,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void read() throws IOException {
-    final InputStream is = container.getCar().getByKey(12).load().getStream();
+    final InputStream is = container.getCar().getByKey(12).load().loadStream().getStream();
     assertNotNull(is);
     IOUtils.closeQuietly(is);
   }
@@ -49,15 +51,15 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final String TO_BE_UPDATED = "buffered stream sample (" + System.currentTimeMillis() + ")";
     final InputStream input = new ByteArrayInputStream(TO_BE_UPDATED.getBytes());
 
-    Car car = container.getCar().getByKey(12).load();
-    car.setPhoto(input);
+    Car car = container.getCar().getByKey(12);
+    car.setPhoto(new EdmStreamTypeImpl(new EdmStreamValue("application/octet-stream", input)));
 
     container.flush();
 
-    car = container.getCar().getByKey(12).load();
-    final InputStream is = car.getPhoto();
-    assertEquals(TO_BE_UPDATED, IOUtils.toString(is));
-    IOUtils.closeQuietly(is);
+    car = container.getCar().getByKey(12);
+    final EdmStreamValue value = car.getPhoto().load();
+    assertEquals(TO_BE_UPDATED, IOUtils.toString(value.getStream()));
+    IOUtils.closeQuietly(value.getStream());
   }
 
   @Test
@@ -68,11 +70,11 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final String TO_BE_UPDATED = "buffered stream sample (" + System.currentTimeMillis() + ")";
     InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);
 
-    car.setStream(input);
+    car.uploadStream(new EdmStreamValue("*/*", input));
 
     container.flush();
 
-    input = container.getCar().getByKey(14).load().getStream();
+    input = container.getCar().getByKey(14).loadStream().getStream();
     assertEquals(TO_BE_UPDATED, IOUtils.toString(input));
     IOUtils.closeQuietly(input);
 
@@ -81,13 +83,13 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void create() throws IOException {
-    Car car = service.newEntity(Car.class);
+    Car car = service.newEntityInstance(Car.class);
 
     final String TO_BE_UPDATED = "buffered stream sample (" + System.currentTimeMillis() + ")";
     InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);
 
     final String DESC = "DESC - " + System.currentTimeMillis();
-    car.setStream(input);
+    car.uploadStream(new EdmStreamValue("*/*", input));
     car.setDescription(DESC);
 
     container.getCar().add(car);
@@ -100,7 +102,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
     car = container.getCar().getByKey(key).load();
     assertEquals(DESC, car.getDescription());
-    input = car.getStream();
+    input = car.loadStream().getStream();
     assertEquals(TO_BE_UPDATED, IOUtils.toString(input));
     IOUtils.closeQuietly(input);
 
