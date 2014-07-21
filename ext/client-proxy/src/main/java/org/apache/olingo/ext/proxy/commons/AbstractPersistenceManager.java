@@ -89,7 +89,13 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
     processDelayedUpdates(delayedUpdates, pos, items, changes);
 
-    final List<ODataRuntimeException> result = doFlush(changes, items);
+    // remove null values
+    items.normalize();
+
+    final List<ODataRuntimeException> result = new ArrayList<ODataRuntimeException>();
+    if (!items.isEmpty()) {
+      result.addAll(doFlush(changes, items));
+    }
 
     service.getContext().detachAll();
     return result;
@@ -203,8 +209,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     }
 
     if (entity instanceof ODataEntity) {
-      for (Map.Entry<String, AnnotatableInvocationHandler> entry
-              : handler.getNavPropAnnotatableHandlers().entrySet()) {
+      for (Map.Entry<String, AnnotatableInvocationHandler> entry : handler.getNavPropAnnotatableHandlers().entrySet()) {
 
         CoreUtils.addAnnotations(service.getClient(),
                 entry.getValue().getAnnotations(),
@@ -212,11 +217,14 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
       }
     }
 
-    // insert into the process queue
-    LOG.debug("{}: Insert '{}' into the process queue", pos, handler);
     final AttachedEntityStatus processedStatus = queue(handler, entity, changeset);
-
-    items.put(handler, pos);
+    if (processedStatus != null) {
+      // insert into the process queue
+      LOG.debug("{}: Insert '{}' into the process queue", pos, handler);
+      items.put(handler, pos);
+    } else {
+      pos--;
+    }
 
     if (processedStatus != AttachedEntityStatus.DELETED) {
       int startingPos = pos;
@@ -329,19 +337,21 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
         queueCreate(handler, entity, changeset);
         return AttachedEntityStatus.NEW;
 
-      case CHANGED:
-        queueUpdate(handler, entity, changeset);
-        return AttachedEntityStatus.CHANGED;
-
       case DELETED:
         queueDelete(handler, entity, changeset);
         return AttachedEntityStatus.DELETED;
 
+//      case CHANGED:
+//        queueUpdate(handler, entity, changeset);
+//        return AttachedEntityStatus.CHANGED;
+
       default:
-        if (handler.isChanged()) {
+        if (handler.isChanged(false)) {
           queueUpdate(handler, entity, changeset);
+          return AttachedEntityStatus.CHANGED;
+        } else {
+          return null;
         }
-        return AttachedEntityStatus.CHANGED;
     }
   }
 

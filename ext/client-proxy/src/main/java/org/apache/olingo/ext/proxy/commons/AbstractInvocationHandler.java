@@ -40,7 +40,6 @@ import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.Context;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
@@ -144,8 +143,6 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     if (checkInTheContext && getContext().entityContext().isAttached(handler)) {
       handler = getContext().entityContext().getEntity(handler.getUUID());
       handler.setEntity(entity);
-    } else {
-      handler.attach(AttachedEntityStatus.ATTACHED, false);
     }
 
     return Proxy.newProxyInstance(

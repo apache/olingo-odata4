@@ -20,7 +20,9 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TransactionItems {
 
@@ -51,6 +53,21 @@ public class TransactionItems {
     }
   }
 
+  public void normalize() {
+    final Set<Integer> toBeRemoved = new HashSet<Integer>();
+    for (EntityInvocationHandler key : keys) {
+      int i = keys.indexOf(key);
+      if (values.get(i) == null) {
+        toBeRemoved.add(i);
+      }
+    }
+
+    for (int i : toBeRemoved) {
+      keys.remove(i);
+      values.remove(i);
+    }
+  }
+
   public void put(final EntityInvocationHandler key, final Integer value) {
     // replace just in case of null current value; otherwise add the new entry
     if (key != null && keys.contains(key) && values.get(keys.indexOf(key)) == null) {
@@ -77,5 +94,4 @@ public class TransactionItems {
   public boolean isEmpty() {
     return keys.isEmpty();
   }
-
 }

@@ -93,6 +93,7 @@ public abstract class Commons {
     MEDIA_CONTENT.put("Car",
         new ImmutablePair<String, EdmPrimitiveTypeKind>("VIN", EdmPrimitiveTypeKind.Int32));
     MEDIA_CONTENT.put("Car/Photo", null);
+    MEDIA_CONTENT.put("PersonDetails/Photo", null);
     MEDIA_CONTENT.put("Advertisements",
         new ImmutablePair<String, EdmPrimitiveTypeKind>("ID", EdmPrimitiveTypeKind.Guid));
   }

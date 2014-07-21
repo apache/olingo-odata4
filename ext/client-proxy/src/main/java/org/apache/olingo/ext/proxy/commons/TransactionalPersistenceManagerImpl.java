@@ -103,22 +103,21 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
             result.add(ODataErrorResponseChecker.checkResponse(
                     service.getClient(),
                     new StatusLine() {
+              @Override
+              public ProtocolVersion getProtocolVersion() {
+                return null;
+              }
 
-                      @Override
-                      public ProtocolVersion getProtocolVersion() {
-                        return null;
-                      }
+              @Override
+              public int getStatusCode() {
+                return res.getStatusCode();
+              }
 
-                      @Override
-                      public int getStatusCode() {
-                        return res.getStatusCode();
-                      }
-
-                      @Override
-                      public String getReasonPhrase() {
-                        return res.getStatusMessage();
-                      }
-                    },
+              @Override
+              public String getReasonPhrase() {
+                return res.getStatusMessage();
+              }
+            },
                     res.getRawResponse(),
                     ((ODataRequest) request).getAccept()));
           } else {

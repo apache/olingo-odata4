@@ -261,6 +261,7 @@ public abstract class AbstractServices {
     return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(version), new Exception("Non nullable properties"));
   }
   // ----------------------------------------------
+
   protected Response bodyPartRequest(final MimeBodyPart body) throws Exception {
     return bodyPartRequest(body, Collections.<String, String>emptyMap());
   }
@@ -677,7 +678,7 @@ public abstract class AbstractServices {
       ResWrap<Entity> result = atomDeserializer.toEntity(serialization);
       result = new ResWrap<Entity>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-                      + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
+              + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
               null, result.getPayload());
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
@@ -752,7 +753,7 @@ public abstract class AbstractServices {
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-                              ConstantKey.ENTITY), Accept.ATOM));
+              ConstantKey.ENTITY), Accept.ATOM));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -846,7 +847,7 @@ public abstract class AbstractServices {
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Product", entityId) + Constants.get(version,
-                              ConstantKey.ENTITY), Accept.ATOM));
+              ConstantKey.ENTITY), Accept.ATOM));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -884,7 +885,7 @@ public abstract class AbstractServices {
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("ComputerDetail", entityId) + Constants.get(version,
-                              ConstantKey.ENTITY), Accept.ATOM));
+              ConstantKey.ENTITY), Accept.ATOM));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -1342,8 +1343,8 @@ public abstract class AbstractServices {
 
     try {
       final FSManager fsManager = FSManager.instance(version);
-
       final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
+
       final ResWrap<Entity> container = xml.readContainerEntity(Accept.ATOM,
               fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), Accept.ATOM));
 

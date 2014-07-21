@@ -1,5 +1,5 @@
 {
-  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc//$metadata#People/$entity",
+  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#People/$entity",
   "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Customer",
   "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc//People(1)",
   "@odata.editLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc//People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer",

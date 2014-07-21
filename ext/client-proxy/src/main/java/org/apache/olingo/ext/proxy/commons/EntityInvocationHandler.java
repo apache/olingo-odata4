@@ -303,13 +303,13 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   private void updatePropertiesTag(final int checkpoint) {
-    if (checkpoint == propertiesTag) {
+    if (propertiesTag == 0 || checkpoint == propertiesTag) {
       propertiesTag = propertyChanges.hashCode();
     }
   }
 
   private void updateLinksTag(final int checkpoint) {
-    if (checkpoint == linksTag) {
+    if (linksTag == 0 || checkpoint == linksTag) {
       linksTag = linkChanges.hashCode();
     }
   }
@@ -437,10 +437,14 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   @Override
   public boolean isChanged() {
+    return isChanged(true);
+  }
+
+  public boolean isChanged(final boolean includeMedia) {
     return this.linkChanges.hashCode() != this.linksTag
             || this.propertyChanges.hashCode() != this.propertiesTag
-            || this.stream != null
-            || !this.streamedPropertyChanges.isEmpty();
+            || (includeMedia && (this.stream != null
+            || !this.streamedPropertyChanges.isEmpty()));
   }
 
   public void uploadStream(final EdmStreamValue stream) {
@@ -521,15 +525,15 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   protected void addPropertyChanges(final String name, final Object value) {
     final int checkpoint = propertyChanges.hashCode();
-    propertyChanges.put(name, value);
     updatePropertiesTag(checkpoint);
+    propertyChanges.put(name, value);
   }
 
   @Override
   protected void addLinkChanges(final NavigationProperty navProp, final Object value) {
     final int checkpoint = linkChanges.hashCode();
-    linkChanges.put(navProp, value);
     updateLinksTag(checkpoint);
+    linkChanges.put(navProp, value);
 
     if (linkCache.containsKey(navProp)) {
       linkCache.remove(navProp);

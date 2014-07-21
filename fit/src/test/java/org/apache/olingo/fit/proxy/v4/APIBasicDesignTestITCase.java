@@ -19,6 +19,7 @@
 package org.apache.olingo.fit.proxy.v4;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
+import java.io.IOException;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
@@ -32,6 +33,18 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.ext.proxy.api.EdmStreamTypeImpl;
+import org.apache.olingo.ext.proxy.api.EdmStreamValue;
+import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
+import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -218,5 +231,64 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     assertEquals("Pescara", container.getCustomers().getByKey(1).getHomeAddress().load().getCity());
     assertEquals("98052", container.getCustomers().getByKey(1).getHomeAddress().load().getPostalCode());
 //    assertNotNull(container.getCustomers().getByKey(1).getHomeAddress().load().getStreet());
+  }
+
+  @Test
+  public void updateAndReadEdmStreamProperty() throws IOException {
+    // ---------------------------------------
+    // Instantiate Demo Service
+    // ---------------------------------------
+    final Service<EdmEnabledODataClient> dservice = Service.getV4(testDemoServiceRootURL);
+    dservice.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    final DemoService dcontainer = dservice.getEntityContainer(DemoService.class);
+    assertNotNull(dcontainer);
+    dservice.getContext().detachAll();
+    // ---------------------------------------
+    final String random = RandomStringUtils.random(124, "abcdefghijklmnopqrstuvwxyz");
+
+    final PersonDetail personDetail = dcontainer.getPersonDetails().getByKey(1); // NO HTTP Request
+
+    // 1 HTTP Request to add an Edm.Stream property value about MediaEditLink Photo
+    personDetail.setPhoto(
+            new EdmStreamTypeImpl(new EdmStreamValue("application/octet-stream", IOUtils.toInputStream(random))));
+
+    dcontainer.flush();
+
+    final EdmStreamValue actual = dcontainer.getPersonDetails().getByKey(1).getPhoto().load(); // 1 HTTP Request
+    assertEquals(random, IOUtils.toString(actual.getStream()));
+
+    service.getContext().detachAll(); // avoid influences
+  }
+
+  @Test
+  public void getProductDetails() {
+    Product product = getService().newEntityInstance(Product.class);
+    product.setProductID(1012);
+    product.setName("Latte");
+    product.setQuantityPerUnit("100g Bag");
+    product.setUnitPrice(3.24f);
+    product.setQuantityInStock(100);
+    product.setDiscontinued(false);
+    product.setUserAccess(AccessLevel.Execute);
+    product.setSkinColor(Color.Blue);
+    product.setCoverColors(Arrays.asList(new Color[] {Color.Red, Color.Green}));
+
+    final ProductDetail detail = getService().newEntityInstance(ProductDetail.class);
+    detail.setProductID(product.getProductID());
+    detail.setProductDetailID(1012);
+    detail.setProductName("LatteHQ");
+    detail.setDescription("High-Quality Milk");
+
+    final ProductDetailCollection detailCollection = getService().newEntityCollection(ProductDetailCollection.class);
+    detailCollection.add(detail);
+
+    product.setDetails(detailCollection);
+
+    getContainer().getProducts().add(product);
+    getContainer().flush(); // The first HTTP Request to create product and the linked product detail
+
+    // the second HTTP Request to execute getProductDetails() operation.
+    final ProductDetailCollection result = container.getProducts().getByKey(1012).operations().getProductDetails(1);
+    assertEquals(1, result.size());
   }
 }

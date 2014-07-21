@@ -60,6 +60,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import javax.xml.stream.XMLStreamException;
 
 public abstract class AbstractUtilities {
 
@@ -550,8 +551,9 @@ public abstract class AbstractUtilities {
 
   public ResWrap<Entity> readContainerEntity(final Accept accept, final InputStream entity)
           throws ODataDeserializerException {
-    return accept == Accept.ATOM || accept == Accept.XML ? atomDeserializer.toEntity(entity) : jsonDeserializer.
-            toEntity(entity);
+    return accept == Accept.ATOM || accept == Accept.XML
+            ? atomDeserializer.toEntity(entity)
+            : jsonDeserializer.toEntity(entity);
   }
 
   public Entity readEntity(final Accept accept, final InputStream entity)
