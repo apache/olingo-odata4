@@ -309,18 +309,49 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
         odataLinked.addLink(new ODataInlineEntity(client.getServiceVersion(),
                 URIUtils.getURI(base, link.getHref()), ODataLinkType.ENTITY_NAVIGATION, link.getTitle(),
                 getODataEntity(new ResWrap<Entity>(
-                inlineEntity.getBaseURI() == null ? null : inlineEntity.getBaseURI(),
-                metadataETag,
-                inlineEntity))));
+                                inlineEntity.getBaseURI() == null ? null : inlineEntity.getBaseURI(),
+                                metadataETag,
+                                inlineEntity))));
       } else {
         odataLinked.addLink(new ODataInlineEntitySet(client.getServiceVersion(),
                 URIUtils.getURI(base, link.getHref()), ODataLinkType.ENTITY_SET_NAVIGATION, link.getTitle(),
                 getODataEntitySet(new ResWrap<EntitySet>(
-                inlineEntitySet.getBaseURI() == null ? null : inlineEntitySet.getBaseURI(),
-                metadataETag,
-                inlineEntitySet))));
+                                inlineEntitySet.getBaseURI() == null ? null : inlineEntitySet.getBaseURI(),
+                                metadataETag,
+                                inlineEntitySet))));
       }
     }
+  }
+
+  private EdmEntityType findEntityType(
+          final String entitySetOrSingletonOrType, final EdmEntityContainer container) {
+
+    EdmEntityType type = null;
+
+    final String firstToken = StringUtils.substringBefore(entitySetOrSingletonOrType, "/");
+    EdmBindingTarget bindingTarget = container.getEntitySet(firstToken);
+    if (bindingTarget == null) {
+      bindingTarget = container.getSingleton(firstToken);
+    }
+    if (bindingTarget != null) {
+      type = bindingTarget.getEntityType();
+    }
+
+    if (entitySetOrSingletonOrType.indexOf('/') != -1) {
+      final String[] splitted = entitySetOrSingletonOrType.split("/");
+      if (splitted.length > 1) {
+        for (int i = 1; i < splitted.length && type != null; i++) {
+          final EdmNavigationProperty navProp = type.getNavigationProperty(splitted[i]);
+          if (navProp == null) {
+            type = null;
+          } else {
+            type = navProp.getType();
+          }
+        }
+      }
+    }
+
+    return type;
   }
 
   /**
@@ -340,19 +371,17 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
         for (EdmSchema schema : edm.getSchemas()) {
           final EdmEntityContainer container = schema.getEntityContainer();
           if (container != null) {
-            EdmBindingTarget bindingTarget = container.getEntitySet(contextURL.getEntitySetOrSingletonOrType());
-            if (bindingTarget == null) {
-              bindingTarget = container.getSingleton(contextURL.getEntitySetOrSingletonOrType());
-            }
-            if (bindingTarget != null) {
+            final EdmEntityType entityType = findEntityType(contextURL.getEntitySetOrSingletonOrType(), container);
+
+            if (entityType != null) {
               if (contextURL.getNavOrPropertyPath() == null) {
-                type = bindingTarget.getEntityType();
+                type = entityType;
               } else {
-                final EdmNavigationProperty navProp = bindingTarget.getEntityType().
-                        getNavigationProperty(contextURL.getNavOrPropertyPath());
+                final EdmNavigationProperty navProp =
+                        entityType.getNavigationProperty(contextURL.getNavOrPropertyPath());
 
                 type = navProp == null
-                        ? bindingTarget.getEntityType()
+                        ? entityType
                         : navProp.getType();
               }
             }
@@ -397,7 +426,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     final CommonODataEntity entity = resource.getPayload().getSelfLink() == null
             ? client.getObjectFactory().newEntity(typeName)
             : client.getObjectFactory().newEntity(typeName,
-            URIUtils.getURI(base, resource.getPayload().getSelfLink().getHref()));
+                    URIUtils.getURI(base, resource.getPayload().getSelfLink().getHref()));
 
     if (StringUtils.isNotBlank(resource.getPayload().getETag())) {
       entity.setETag(resource.getPayload().getETag());
@@ -489,15 +518,15 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       value = client.getObjectFactory().newPrimitiveValueBuilder()
               .setValue(valuable.asGeospatial())
               .setType(type == null
-              || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(type)
-              || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(type)
-              ? valuable.asGeospatial().getEdmPrimitiveTypeKind()
-              : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).build();
+                      || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(type)
+                      || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(type)
+                      ? valuable.asGeospatial().getEdmPrimitiveTypeKind()
+                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).build();
     } else if (valuable.isPrimitive() || valuable.getValueType() == null) {
       value = client.getObjectFactory().newPrimitiveValueBuilder()
               .setValue(valuable.asPrimitive())
               .setType(type == null || !EdmPrimitiveType.EDM_NAMESPACE.equals(type.getNamespace()) ? null
-              : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).build();
+                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).build();
     } else if (valuable.isComplex() || valuable.isLinkedComplex()) {
       value = client.getObjectFactory().newComplexValue(type == null ? null : type.toString());
       if (!valuable.isNull()) {

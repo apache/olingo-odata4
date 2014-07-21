@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.commons.api.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -26,11 +31,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.net.URI;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class ContextURLTest {
 
@@ -52,6 +52,11 @@ public class ContextURLTest {
     assertNull(contextURL.getSelectList());
     assertEquals("Items", contextURL.getNavOrPropertyPath());
     assertFalse(contextURL.isEntity());
+
+    contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Me/Folders('Inbox')/Messages"));
+
+    assertEquals("Me/Folders", contextURL.getEntitySetOrSingletonOrType());
+    assertEquals("Messages", contextURL.getNavOrPropertyPath());
   }
 
   @Test
@@ -96,7 +101,7 @@ public class ContextURLTest {
   @Test
   public void collectionOfDerivedEntities() {
     final ContextURL contextURL = ContextURL.getInstance(
-        URI.create("http://host/service/$metadata#Customers/Model.VipCustomer"));
+            URI.create("http://host/service/$metadata#Customers/Model.VipCustomer"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertEquals("Model.VipCustomer", contextURL.getDerivedEntity());
@@ -108,7 +113,7 @@ public class ContextURLTest {
   @Test
   public void derivedEntity() {
     final ContextURL contextURL = ContextURL.getInstance(
-        URI.create("http://host/service/$metadata#Customers/Model.VipCustomer/$entity"));
+            URI.create("http://host/service/$metadata#Customers/Model.VipCustomer/$entity"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertEquals("Model.VipCustomer", contextURL.getDerivedEntity());
@@ -120,7 +125,7 @@ public class ContextURLTest {
   @Test
   public void collectionOfProjectedEntities() {
     final ContextURL contextURL = ContextURL.getInstance(
-        URI.create("http://host/service/$metadata#Customers(Address,Orders)"));
+            URI.create("http://host/service/$metadata#Customers(Address,Orders)"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -132,7 +137,7 @@ public class ContextURLTest {
   @Test
   public void projectedEntity() {
     ContextURL contextURL = ContextURL.getInstance(
-        URI.create("http://host/service/$metadata#Customers(Name,Rating)/$entity"));
+            URI.create("http://host/service/$metadata#Customers(Name,Rating)/$entity"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -141,7 +146,7 @@ public class ContextURLTest {
     assertTrue(contextURL.isEntity());
 
     contextURL = ContextURL.getInstance(
-        URI.create("http://host/service/$metadata#Customers(Name,Address/Country)"));
+            URI.create("http://host/service/$metadata#Customers(Name,Address/Country)"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -153,8 +158,8 @@ public class ContextURLTest {
   @Test
   public void collectionOfProjectedExpandedEntities() {
     final ContextURL contextURL = ContextURL.getInstance(
-        URI.create("http://host/service/$metadata#Employees/"
-            + "Sales.Manager(DirectReports,DirectReports+(FirstName,LastName))"));
+            URI.create("http://host/service/$metadata#Employees/"
+                    + "Sales.Manager(DirectReports,DirectReports+(FirstName,LastName))"));
 
     assertEquals("Employees", contextURL.getEntitySetOrSingletonOrType());
     assertEquals("Sales.Manager", contextURL.getDerivedEntity());
@@ -166,7 +171,7 @@ public class ContextURLTest {
   @Test
   public void propertyValue() {
     final ContextURL contextURL = ContextURL.getInstance(
-        URI.create("http://host/service/$metadata#Customers(1)/Addresses"));
+            URI.create("http://host/service/$metadata#Customers(1)/Addresses"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -178,7 +183,7 @@ public class ContextURLTest {
   @Test
   public void CollectionOfComplexOrPrimitiveTypes() {
     final ContextURL contextURL = ContextURL.getInstance(
-        URI.create("http://host/service/$metadata#Collection(Edm.String)"));
+            URI.create("http://host/service/$metadata#Collection(Edm.String)"));
 
     assertEquals("Collection(Edm.String)", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -260,8 +265,8 @@ public class ContextURLTest {
     EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
     Mockito.when(entitySet.getName()).thenReturn("Customers");
     ContextURL contextURL = ContextURL.create().serviceRoot(URI.create("http://host/service/"))
-        .entitySet(entitySet)
-        .build();
+            .entitySet(entitySet)
+            .build();
     assertEquals("http://host/service/$metadata#Customers", contextURL.getURI().toASCIIString());
   }
 
@@ -272,9 +277,9 @@ public class ContextURLTest {
     EdmEntityType derivedType = Mockito.mock(EdmEntityType.class);
     Mockito.when(derivedType.getFullQualifiedName()).thenReturn(new FullQualifiedName("Model", "VipCustomer"));
     ContextURL contextURL = ContextURL.create().serviceRoot(URI.create("http://host/service/"))
-        .entitySet(entitySet)
-        .derived(derivedType)
-        .build();
+            .entitySet(entitySet)
+            .derived(derivedType)
+            .build();
     assertEquals("http://host/service/$metadata#Customers/Model.VipCustomer", contextURL.getURI().toASCIIString());
   }
 
@@ -292,12 +297,12 @@ public class ContextURLTest {
     EdmEntityType derivedType = Mockito.mock(EdmEntityType.class);
     Mockito.when(derivedType.getFullQualifiedName()).thenReturn(new FullQualifiedName("Model", "VipCustomer"));
     ContextURL contextURL = ContextURL.create().serviceRoot(URI.create("http://host/service/"))
-        .entitySet(entitySet)
-        .derived(derivedType)
-        .suffix(Suffix.ENTITY)
-        .build();
+            .entitySet(entitySet)
+            .derived(derivedType)
+            .suffix(Suffix.ENTITY)
+            .build();
     assertEquals("http://host/service/$metadata#Customers/Model.VipCustomer/$entity",
-        contextURL.getURI().toASCIIString());
+            contextURL.getURI().toASCIIString());
   }
 
   @Test(expected = IllegalArgumentException.class)

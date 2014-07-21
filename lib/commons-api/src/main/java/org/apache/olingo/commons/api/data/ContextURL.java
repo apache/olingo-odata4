@@ -82,19 +82,15 @@ public class ContextURL {
     } else if (contextURLasString.endsWith("/$ref")) {
       instance.suffix = Suffix.REFERENCE;
       contextURLasString = contextURLasString.replace("/$ref", StringUtils.EMPTY);
-
     } else if (contextURLasString.endsWith("/$delta")) {
       instance.suffix = Suffix.DELTA;
       contextURLasString = contextURLasString.replace("/$delta", StringUtils.EMPTY);
-
     } else if (contextURLasString.endsWith("/$deletedEntity")) {
       instance.suffix = Suffix.DELTA_DELETED_ENTITY;
       contextURLasString = contextURLasString.replace("/$deletedEntity", StringUtils.EMPTY);
-
     } else if (contextURLasString.endsWith("/$link")) {
       instance.suffix = Suffix.DELTA_LINK;
       contextURLasString = contextURLasString.replace("/$link", StringUtils.EMPTY);
-
     } else if (contextURLasString.endsWith("/$deletedLink")) {
       instance.suffix = Suffix.DELTA_DELETED_LINK;
       contextURLasString = contextURLasString.replace("/$deletedLink", StringUtils.EMPTY);
@@ -125,8 +121,8 @@ public class ContextURL {
       }
     }
 
-    final int slashIdx = instance.entitySetOrSingletonOrType.indexOf('/');
-    if (slashIdx != -1) {
+    final int slashIdx = instance.entitySetOrSingletonOrType.lastIndexOf('/');
+    if (slashIdx != -1 && instance.entitySetOrSingletonOrType.substring(slashIdx + 1).indexOf('.') != -1) {
       final String clone = instance.entitySetOrSingletonOrType;
       instance.entitySetOrSingletonOrType = clone.substring(0, slashIdx);
       instance.derivedEntity = clone.substring(slashIdx + 1);
@@ -226,7 +222,7 @@ public class ContextURL {
     }
 
     public ContextURL build() {
-      StringBuilder result = new StringBuilder();
+      final StringBuilder result = new StringBuilder();
       if (contextURL.serviceRoot != null) {
         result.append(contextURL.serviceRoot);
       }
