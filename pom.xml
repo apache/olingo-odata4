@@ -20,7 +20,7 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.olingo</groupId>
@@ -87,6 +87,7 @@
     <antlr.version>4.1</antlr.version>
 
     <android.platform.version>4.1.1.4</android.platform.version>
+    <stax.api.version>1.0-2</stax.api.version>
 
     <sl4j.version>1.7.7</sl4j.version>
 
@@ -269,10 +270,16 @@
   </dependencyManagement>
 
   <build>
+  
     <finalName>${project.artifactId}-${project.version}</finalName>
 
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
@@ -545,6 +552,7 @@
                 <exclude>**/maven-eclipse.xml</exclude>
                 <exclude>**/ref/**</exclude>
                 <exclude>**/server-ref/**</exclude>
+                <exclude>**/dependency-reduced-pom.xml</exclude>
               </excludes>
             </configuration>
           </execution>
