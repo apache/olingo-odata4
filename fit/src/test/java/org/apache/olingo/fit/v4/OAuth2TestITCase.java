@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.fit.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -25,39 +28,41 @@ import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.client.core.http.DefaultHttpUriRequestFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.fit.CXFOAuth2HttpUriRequestFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import java.net.URI;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
+import org.apache.olingo.fit.CXFOAuth2HttpClientFactory;
 
 public class OAuth2TestITCase extends AbstractTestITCase {
+
+  private static final URI OAUTH2_GRANT_SERVICE_URI =
+          URI.create("http://localhost:9080/stub/StaticService/oauth2/authorize");
+
+  private static final URI OAUTH2_TOKEN_SERVICE_URI =
+          URI.create("http://localhost:9080/stub/StaticService/oauth2/token");
 
   private EdmEnabledODataClient _edmClient;
 
   @BeforeClass
   public static void enableOAuth2() {
-    client.getConfiguration().setHttpUriRequestFactory(
-            new CXFOAuth2HttpUriRequestFactory(URI.create(testOAuth2ServiceRootURL)));
+    client.getConfiguration().setHttpClientFactory(
+            new CXFOAuth2HttpClientFactory(OAUTH2_GRANT_SERVICE_URI, OAUTH2_TOKEN_SERVICE_URI));
   }
 
   @AfterClass
   public static void disableOAuth2() {
-    client.getConfiguration().setHttpUriRequestFactory(new DefaultHttpUriRequestFactory());
+    client.getConfiguration().setHttpClientFactory(new DefaultHttpClientFactory());
   }
 
   protected EdmEnabledODataClient getEdmClient() {
     if (_edmClient == null) {
       _edmClient = ODataClientFactory.getEdmEnabledV4(testOAuth2ServiceRootURL);
-      _edmClient.getConfiguration().setHttpUriRequestFactory(
-              new CXFOAuth2HttpUriRequestFactory(URI.create(testOAuth2ServiceRootURL)));
+      _edmClient.getConfiguration().setHttpClientFactory(
+              new CXFOAuth2HttpClientFactory(OAUTH2_GRANT_SERVICE_URI, OAUTH2_TOKEN_SERVICE_URI));
     }
 
     return _edmClient;

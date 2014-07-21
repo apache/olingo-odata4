@@ -16,38 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.http;
+package org.apache.olingo.client.api.http;
 
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.olingo.client.api.http.HttpMethod;
+public interface WrappingHttpClientFactory extends HttpClientFactory {
 
-import java.net.URI;
-
-public abstract class AbstractOAuth2HttpUriRequestFactory extends DefaultHttpUriRequestFactory {
-
-  protected final URI redirectURI;
-
-  public AbstractOAuth2HttpUriRequestFactory(final URI redirectURI) {
-    this.redirectURI = redirectURI;
-  }
-
-  protected abstract boolean isInited();
-
-  protected abstract void init() throws OAuth2Exception;
-
-  protected abstract void sign(HttpUriRequest request);
-
-  @Override
-  public HttpUriRequest create(final HttpMethod method, final URI uri) {
-    if (!isInited()) {
-      init();
-    }
-
-    final HttpUriRequest request = super.create(method, uri);
-
-    sign(request);
-
-    return request;
-  }
-
+  HttpClientFactory getWrappedHttpClientFactory();
 }

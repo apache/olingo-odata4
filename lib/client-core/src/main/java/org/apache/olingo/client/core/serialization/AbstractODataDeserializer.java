@@ -46,10 +46,11 @@ import java.io.InputStream;
 public abstract class AbstractODataDeserializer {
 
   protected final ODataServiceVersion version;
+
   protected final ODataDeserializer deserializer;
 
   public AbstractODataDeserializer(final ODataServiceVersion version, final boolean serverMode,
-      final ODataFormat format) {
+          final ODataFormat format) {
     this.version = version;
     if (format == ODataFormat.XML || format == ODataFormat.ATOM) {
       deserializer = new AtomDeserializer(version);
@@ -76,18 +77,18 @@ public abstract class AbstractODataDeserializer {
 
   protected XmlMapper getXmlMapper() {
     final XmlMapper xmlMapper = new XmlMapper(
-        new XmlFactory(new InputFactoryImpl(), new OutputFactoryImpl()), new JacksonXmlModule());
+            new XmlFactory(new InputFactoryImpl(), new OutputFactoryImpl()), new JacksonXmlModule());
 
     xmlMapper.setInjectableValues(new InjectableValues.Std().
-        addValue(ODataServiceVersion.class, version).
-        addValue(Boolean.class, Boolean.FALSE));
+            addValue(ODataServiceVersion.class, version).
+            addValue(Boolean.class, Boolean.FALSE));
 
     xmlMapper.addHandler(new DeserializationProblemHandler() {
       @Override
       public boolean handleUnknownProperty(final DeserializationContext ctxt, final JsonParser jp,
-          final com.fasterxml.jackson.databind.JsonDeserializer<?> deserializer,
-          final Object beanOrClass, final String propertyName)
-          throws IOException, JsonProcessingException {
+              final com.fasterxml.jackson.databind.JsonDeserializer<?> deserializer,
+              final Object beanOrClass, final String propertyName)
+              throws IOException, JsonProcessingException {
 
         // skip any unknown property
         ctxt.getParser().skipChildren();

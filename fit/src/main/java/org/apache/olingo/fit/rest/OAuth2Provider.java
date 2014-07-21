@@ -40,8 +40,6 @@ public class OAuth2Provider implements AuthorizationCodeDataProvider {
 
   public static final String REDIRECT_URI = "/stub/StaticService/V40/OAuth2.svc/";
 
-  public static final String OAUTH2_CODE_HEADER = "oauth2.token";
-
   private Client client;
 
   private ServerAuthorizationCodeGrant grant;

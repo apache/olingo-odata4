@@ -40,6 +40,9 @@
   <jaxrs:server id="services" address="/" basePackages="org.apache.olingo.fit">
     <jaxrs:providers>
       <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
+      <bean class="org.apache.olingo.fit.rest.OAuth2RequestFilter">
+        <property name="dataProvider" ref="oauthProvider"/>
+      </bean>
       <bean class="org.apache.olingo.fit.rest.ServiceNameResponseFilter"/>
     </jaxrs:providers>
   </jaxrs:server>
@@ -52,7 +55,7 @@
     <property name="dataProvider" ref="oauthProvider"/>
   </bean>  
   <bean id="oauthSecurityInterceptor" class="org.apache.olingo.fit.rest.StaticSecurityInterceptor"/>
-  <jaxrs:server id="oauthServer" address="/oauth">
+  <jaxrs:server id="oauthServer" address="/oauth2">
     <jaxrs:serviceBeans>
       <ref bean="authorizationService"/>
       <ref bean="accessTokenService"/>

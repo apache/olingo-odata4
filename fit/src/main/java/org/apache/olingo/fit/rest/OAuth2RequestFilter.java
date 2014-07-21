@@ -16,18 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.http;
+package org.apache.olingo.fit.rest;
 
-public class OAuth2Exception extends RuntimeException {
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.ext.Provider;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.rs.security.oauth2.filters.OAuthRequestFilter;
 
-  private static final long serialVersionUID = 5695438980473040134L;
+@Provider
+public class OAuth2RequestFilter extends OAuthRequestFilter implements ContainerRequestFilter {
 
-  public OAuth2Exception(final String message) {
-    super(message);
+  @Override
+  public void filter(final ContainerRequestContext context) {
+    final String svcName =
+            StringUtils.substringBefore(StringUtils.substringAfter(context.getUriInfo().getPath(), "/"), "/");
+    if ("OAuth2.svc".equals(svcName)) {
+      super.filter(context);
+    }
   }
-
-  public OAuth2Exception(final Throwable cause) {
-    super(cause);
-  }
-
 }

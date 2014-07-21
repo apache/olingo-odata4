@@ -31,7 +31,6 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
-import org.apache.olingo.client.core.http.ProxyWrapperHttpClientFactory;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -65,6 +64,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import org.apache.olingo.client.api.http.WrappingHttpClientFactory;
 
 /**
  * URI utilities.
@@ -354,8 +354,8 @@ public final class URIUtils {
     HttpClientFactory httpclientFactory = client.getConfiguration().getHttpClientFactory();
     if (httpclientFactory instanceof BasicAuthHttpClientFactory) {
       return true;
-    } else if (httpclientFactory instanceof ProxyWrapperHttpClientFactory) {
-      ProxyWrapperHttpClientFactory tmp = (ProxyWrapperHttpClientFactory) httpclientFactory;
+    } else if (httpclientFactory instanceof WrappingHttpClientFactory) {
+      WrappingHttpClientFactory tmp = (WrappingHttpClientFactory) httpclientFactory;
       if (tmp.getWrappedHttpClientFactory() instanceof BasicAuthHttpClientFactory) {
         return true;
       }

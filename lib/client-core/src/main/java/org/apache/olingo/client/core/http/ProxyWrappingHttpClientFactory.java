@@ -28,12 +28,13 @@ import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.HttpMethod;
 
 import java.net.URI;
+import org.apache.olingo.client.api.http.WrappingHttpClientFactory;
 
 /**
  * Implementation for working behind an HTTP proxy (possibly requiring authentication); requires another concrete
  * {@link HttpClientFactory} implementation acting as real HTTP client factory.
  */
-public class ProxyWrapperHttpClientFactory implements HttpClientFactory {
+public class ProxyWrappingHttpClientFactory implements WrappingHttpClientFactory {
 
   private final URI proxy;
 
@@ -43,19 +44,19 @@ public class ProxyWrapperHttpClientFactory implements HttpClientFactory {
 
   private final DefaultHttpClientFactory wrapped;
 
-  public ProxyWrapperHttpClientFactory(final URI proxy) {
+  public ProxyWrappingHttpClientFactory(final URI proxy) {
     this(proxy, null, null, new DefaultHttpClientFactory());
   }
 
-  public ProxyWrapperHttpClientFactory(final URI proxy, final String proxyUsername, final String proxyPassword) {
+  public ProxyWrappingHttpClientFactory(final URI proxy, final String proxyUsername, final String proxyPassword) {
     this(proxy, proxyUsername, proxyPassword, new DefaultHttpClientFactory());
   }
 
-  public ProxyWrapperHttpClientFactory(final URI proxy, final DefaultHttpClientFactory wrapped) {
+  public ProxyWrappingHttpClientFactory(final URI proxy, final DefaultHttpClientFactory wrapped) {
     this(proxy, null, null, wrapped);
   }
 
-  public ProxyWrapperHttpClientFactory(final URI proxy,
+  public ProxyWrappingHttpClientFactory(final URI proxy,
           final String proxyUsername, final String proxyPassword, final DefaultHttpClientFactory wrapped) {
 
     this.proxy = proxy;
