@@ -19,7 +19,7 @@
             <outputDirectory></outputDirectory>
             <outputFileNameMapping>${artifact.groupId}-${artifact.artifactId}-${artifact.version}.${artifact.extension}</outputFileNameMapping>
             <unpack>false</unpack>
-            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <scope>compile</scope>
             <includes>
