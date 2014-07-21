@@ -36,7 +36,7 @@ import java.util.TimeZone;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.api.EdmStreamTypeImpl;
+import org.apache.olingo.ext.proxy.commons.EdmStreamTypeImpl;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail;

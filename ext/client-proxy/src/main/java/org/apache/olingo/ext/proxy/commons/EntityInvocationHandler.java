@@ -62,7 +62,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.apache.olingo.ext.proxy.api.EdmStreamType;
-import org.apache.olingo.ext.proxy.api.EdmStreamTypeImpl;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;

@@ -25,7 +25,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import org.apache.olingo.ext.proxy.api.EdmStreamTypeImpl;
+import org.apache.olingo.ext.proxy.commons.EdmStreamTypeImpl;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import static org.apache.olingo.fit.proxy.v3.AbstractTestITCase.service;
 

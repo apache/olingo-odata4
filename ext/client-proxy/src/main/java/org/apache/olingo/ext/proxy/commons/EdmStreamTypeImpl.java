@@ -16,7 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.ext.proxy.api;
+package org.apache.olingo.ext.proxy.commons;
+
+import org.apache.olingo.ext.proxy.api.EdmStreamType;
+import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 
 public class EdmStreamTypeImpl implements EdmStreamType {
 
