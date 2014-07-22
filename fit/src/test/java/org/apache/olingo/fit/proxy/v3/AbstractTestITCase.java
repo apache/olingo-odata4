@@ -18,28 +18,28 @@
  */
 package org.apache.olingo.fit.proxy.v3;
 
-//CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
-import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.Service;
-import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetailsCollection;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.DefaultContainer;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Aliases;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
-
-import org.junit.BeforeClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.ext.proxy.AbstractService;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+
+//CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.fit.proxy.v3.staticservice.Service;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.DefaultContainer;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Aliases;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetailsCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection;
+import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public abstract class AbstractTestITCase {
@@ -63,7 +63,7 @@ public abstract class AbstractTestITCase {
 
   protected static String testLargeModelServiceRootURL;
 
-  protected static Service<EdmEnabledODataClient> service;
+  protected static AbstractService<EdmEnabledODataClient> service;
 
   protected static DefaultContainer container;
 

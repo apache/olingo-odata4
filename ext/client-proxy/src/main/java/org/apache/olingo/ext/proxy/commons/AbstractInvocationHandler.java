@@ -18,32 +18,6 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
-import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
-import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
-import org.apache.olingo.commons.api.domain.ODataInvokeResult;
-import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.edm.EdmFunction;
-import org.apache.olingo.commons.api.edm.EdmOperation;
-import org.apache.olingo.commons.api.edm.EdmReturnType;
-import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-import org.apache.olingo.ext.proxy.Service;
-import org.apache.olingo.ext.proxy.api.OperationType;
-import org.apache.olingo.ext.proxy.api.annotations.Operation;
-import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.ext.proxy.context.Context;
-import org.apache.olingo.ext.proxy.utils.ClassUtils;
-import org.apache.olingo.ext.proxy.utils.CoreUtils;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -55,18 +29,43 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
+import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
+import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataInvokeResult;
+import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmOperation;
+import org.apache.olingo.commons.api.edm.EdmReturnType;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.ComplexCollection;
 import org.apache.olingo.ext.proxy.api.ComplexType;
+import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.context.Context;
+import org.apache.olingo.ext.proxy.utils.ClassUtils;
+import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
 abstract class AbstractInvocationHandler implements InvocationHandler {
 
   private static final long serialVersionUID = 358520026931462958L;
 
-  protected Service<?> service;
+  protected AbstractService<?> service;
 
-  protected AbstractInvocationHandler(final Service<?> service) {
+  protected AbstractInvocationHandler(final AbstractService<?> service) {
     this.service = service;
   }
 
@@ -117,7 +116,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {typeCollectionRef},
             new EntityCollectionInvocationHandler(service, items, typeCollectionRef, targetEntitySetURI,
-            uri == null ? null : getClient().newURIBuilder(uri.toASCIIString())));
+                    uri == null ? null : getClient().newURIBuilder(uri.toASCIIString())));
   }
 
   protected Object getEntitySetProxy(
@@ -174,6 +173,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     return result;
   }
 
+  @SuppressWarnings({"unchecked", "rawtypes"})
   protected Object invokeOperation(
           final Operation annotation,
           final Method method,
@@ -247,7 +247,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     } else {
       Object res;
 
-      Class<?> ref = ClassUtils.getTypeClass(method.getReturnType());
+      final Class<?> ref = ClassUtils.getTypeClass(method.getReturnType());
       final CommonODataProperty property = (CommonODataProperty) result;
 
       if (property == null || property.hasNullValue()) {
@@ -270,10 +270,10 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
           res = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {ref}, new ComplexCollectionInvocationHandler(
-                  service,
-                  items,
-                  itemRef,
-                  null));
+                          service,
+                          items,
+                          itemRef,
+                          null));
         } else {
           final List items = new ArrayList();
 
@@ -284,10 +284,10 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
           res = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {PrimitiveCollection.class}, new PrimitiveCollectionInvocationHandler(
-                  service,
-                  items,
-                  null,
-                  null));
+                          service,
+                          items,
+                          null,
+                          null));
         }
       } else {
         if (edmType.isComplexType()) {
@@ -325,7 +325,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
               service,
               targetURI);
     } else {
-      actualRef = CoreUtils.getComplexTypeRef(value); // handle derived types
+      actualRef = CoreUtils.getComplexTypeRef(service, value); // handle derived types
       complexHandler = ComplexInvocationHandler.getInstance(
               value.asComplex(),
               actualRef,

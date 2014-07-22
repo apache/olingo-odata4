@@ -24,7 +24,7 @@ import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.AbstractService;
 
 public class AnnotatationsInvocationHandler extends AbstractInvocationHandler {
 
@@ -46,7 +46,7 @@ public class AnnotatationsInvocationHandler extends AbstractInvocationHandler {
   }
 
   private AnnotatationsInvocationHandler(
-          final Service<?> service,
+          final AbstractService<?> service,
           final EntityInvocationHandler entityHandler,
           final AbstractStructuredInvocationHandler targetHandler) {
 

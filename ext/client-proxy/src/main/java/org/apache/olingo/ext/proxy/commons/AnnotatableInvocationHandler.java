@@ -36,7 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.AbstractService;
 
 public class AnnotatableInvocationHandler extends AbstractInvocationHandler implements Annotatable {
 
@@ -54,7 +54,7 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
           new HashMap<Class<? extends AbstractTerm>, Object>();
 
   public AnnotatableInvocationHandler(
-          final Service<?> service,
+          final AbstractService<?> service,
           final String propName,
           final String navPropName,
           final EntityInvocationHandler entityHandler,
@@ -173,7 +173,7 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
   @Override
   public Collection<Class<? extends AbstractTerm>> getAnnotationTerms() {
     return entityHandler.getEntity() instanceof ODataEntity
-            ? CoreUtils.getAnnotationTerms(internalAnnotations())
+            ? CoreUtils.getAnnotationTerms(service, internalAnnotations())
             : Collections.<Class<? extends AbstractTerm>>emptyList();
   }
 }

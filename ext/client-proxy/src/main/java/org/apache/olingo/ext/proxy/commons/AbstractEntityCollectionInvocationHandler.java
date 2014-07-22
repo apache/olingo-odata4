@@ -37,7 +37,7 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
@@ -56,7 +56,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<T extends Entity
   @SuppressWarnings("unchecked")
   public AbstractEntityCollectionInvocationHandler(
           final Class<?> ref,
-          final Service<?> service,
+          final AbstractService<?> service,
           final CommonURIBuilder<?> uri) {
 
     super(service,
@@ -80,7 +80,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<T extends Entity
   @SuppressWarnings("unchecked")
   public AbstractEntityCollectionInvocationHandler(
           final Class<? extends EntityCollection<T>> ref,
-          final Service<?> service,
+          final AbstractService<?> service,
           final URI targetEntitySetURI,
           final CommonURIBuilder<?> uri) {
     super(service,

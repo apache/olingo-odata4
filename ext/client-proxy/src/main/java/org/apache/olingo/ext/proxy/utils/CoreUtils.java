@@ -18,44 +18,6 @@
  */
 package org.apache.olingo.ext.proxy.utils;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
-import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
-import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotatable;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
-import org.apache.olingo.commons.api.edm.EdmElement;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmTerm;
-import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.domain.v4.ODataAnnotationImpl;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.ext.proxy.api.AbstractTerm;
-import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
-import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
-import org.apache.olingo.ext.proxy.api.annotations.EnumType;
-import org.apache.olingo.ext.proxy.api.annotations.Key;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.Property;
-import org.apache.olingo.ext.proxy.api.annotations.Term;
-import org.apache.olingo.ext.proxy.commons.AbstractStructuredInvocationHandler;
-import org.apache.olingo.ext.proxy.commons.ComplexInvocationHandler;
-import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -70,12 +32,47 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotatable;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmTerm;
+import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.domain.v4.ODataAnnotationImpl;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.ext.proxy.AbstractService;
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
+import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
+import org.apache.olingo.ext.proxy.api.annotations.EnumType;
+import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Term;
+import org.apache.olingo.ext.proxy.commons.AbstractStructuredInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.ComplexInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class CoreUtils {
 
@@ -503,7 +500,7 @@ public final class CoreUtils {
   public static Object getObjectFromODataValue(
           final ODataValue value,
           final Type typeRef,
-          final Service<?> service)
+          final AbstractService<?> service)
           throws InstantiationException, IllegalAccessException {
 
     Class<?> internalRef;
@@ -523,7 +520,7 @@ public final class CoreUtils {
       res = null;
     } else if (value.isComplex()) {
       // complex types supports inheritance in V4, best to re-read actual type
-      internalRef = getComplexTypeRef(value);
+      internalRef = getComplexTypeRef(service, value);
       res = Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {internalRef},
@@ -537,7 +534,7 @@ public final class CoreUtils {
         if (itemValue.isPrimitive()) {
           collection.add(CoreUtils.primitiveValueToObject(itemValue.asPrimitive(), internalRef));
         } else if (itemValue.isComplex()) {
-          internalRef = getComplexTypeRef(value);
+          internalRef = getComplexTypeRef(service, value);
           final Object collItem = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {internalRef},
@@ -550,7 +547,7 @@ public final class CoreUtils {
       res = collection;
     } else if (value instanceof ODataEnumValue) {
       if (internalRef == null) {
-        internalRef = getEnumTypeRef(value);
+        internalRef = getEnumTypeRef(service, value);
       }
       res = enumValueToObject((ODataEnumValue) value, internalRef);
     } else {
@@ -561,79 +558,27 @@ public final class CoreUtils {
   }
 
   @SuppressWarnings("unchecked")
-  public static Collection<Class<? extends AbstractTerm>> getAnnotationTerms(final List<ODataAnnotation> annotations) {
+  public static Collection<Class<? extends AbstractTerm>> getAnnotationTerms(
+          final AbstractService<?> service, final List<ODataAnnotation> annotations) {
+
     final List<Class<? extends AbstractTerm>> res = new ArrayList<Class<? extends AbstractTerm>>();
 
     for (ODataAnnotation annotation : annotations) {
-      res.add((Class<? extends AbstractTerm>) getTermTypeRef(annotation));
+      final Class<? extends AbstractTerm> clazz = service.getTermClass(annotation.getTerm());
+      if (clazz != null) {
+        res.add(clazz);
+      }
     }
 
     return res;
   }
 
-  private static Class<?> getTermTypeRef(final ODataAnnotation annotation) {
-    try {
-      final List<String> pkgs = IOUtils.readLines(Thread.currentThread().getContextClassLoader().
-              getResourceAsStream("META-INF/" + Constants.PROXY_TERM_CLASS_LIST),
-              Constants.UTF8);
-      for (String pkg : pkgs) {
-        final Class<?> clazz = Class.forName(pkg);
-        final Term term = clazz.getAnnotation(Term.class);
-        final Namespace ns = clazz.getAnnotation(Namespace.class);
-
-        if (ns != null && term != null
-                && annotation.getTerm().equals(new FullQualifiedName(ns.value(), term.name()).toString())) {
-
-          return clazz;
-        }
-      }
-    } catch (Exception e) {
-      LOG.warn("Error retrieving class list for {}", Term.class.getName(), e);
-    }
-
-    throw new IllegalArgumentException("Could not find Term class for " + annotation.getTerm());
+  private static Class<?> getEnumTypeRef(final AbstractService<?> service, final ODataValue value) {
+    return service.getEnumTypeClass(value.getTypeName().replaceAll("^Collection\\(", "").replaceAll("\\)$", ""));
   }
 
-  private static Class<?> getEnumTypeRef(final ODataValue value) {
-    return getTypeRef(value, "META-INF/" + Constants.PROXY_ENUM_CLASS_LIST, EnumType.class);
-  }
-
-  public static Class<?> getComplexTypeRef(final ODataValue value) {
-    return getTypeRef(value, "META-INF/" + Constants.PROXY_COMPLEX_CLASS_LIST, ComplexType.class);
-  }
-
-  private static Class<?> getTypeRef(
-          final ODataValue value,
-          final String proxyClassListFile,
-          final Class<? extends Annotation> annType) {
-
-    if (!annType.isAssignableFrom(EnumType.class) && !annType.isAssignableFrom(ComplexType.class)) {
-      throw new IllegalArgumentException("Invalid annotation type " + annType);
-    }
-
-    try {
-      final List<String> pkgs = IOUtils.readLines(
-              Thread.currentThread().getContextClassLoader().getResourceAsStream(proxyClassListFile),
-              Constants.UTF8);
-
-      for (String pkg : pkgs) {
-        final Class<?> clazz = Class.forName(pkg);
-        final Annotation ann = clazz.getAnnotation(annType);
-        final Namespace ns = clazz.getAnnotation(Namespace.class);
-
-        if (ns != null && ann != null
-                && value.getTypeName().replaceAll("^Collection\\(", "").replaceAll("\\)$", "").
-                equals(new FullQualifiedName(ns.value(), annType.isAssignableFrom(EnumType.class)
-                ? EnumType.class.cast(ann).name()
-                : ComplexType.class.cast(ann).name()).toString())) {
-          return clazz;
-        }
-      }
-    } catch (Exception e) {
-      LOG.warn("Error retrieving class list for {}", annType.getName(), e);
-    }
-
-    throw new IllegalArgumentException("Provided value '" + value + "' is not annotated as " + annType.getName());
+  public static Class<?> getComplexTypeRef(final AbstractService<?> service, final ODataValue value) {
+    return service.getComplexTypeClass(value.getTypeName().replaceAll("^Collection\\(", "").replaceAll("\\)$", ""));
   }
 
   private static String firstValidEntityKey(final Class<?> entityTypeRef) {

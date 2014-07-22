@@ -25,7 +25,7 @@ import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinked;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -76,7 +76,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   protected AbstractStructuredInvocationHandler(
           final Class<?> typeRef,
-          final Service<?> service) {
+          final AbstractService<?> service) {
 
     super(service);
     this.internal = null;
@@ -87,7 +87,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   protected AbstractStructuredInvocationHandler(
           final Class<?> typeRef,
           final Object internal,
-          final Service<?> service) {
+          final AbstractService<?> service) {
 
     super(service);
     this.internal = internal;

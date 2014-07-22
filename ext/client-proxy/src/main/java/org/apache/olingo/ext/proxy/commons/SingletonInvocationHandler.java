@@ -20,7 +20,7 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
 import org.apache.olingo.ext.proxy.api.EntityType;
@@ -35,12 +35,12 @@ public class SingletonInvocationHandler<
   private final EntitySetInvocationHandler<?, ?, ?> entitySetHandler;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static SingletonInvocationHandler getInstance(final Class<?> ref, final Service<?> service) {
+  static SingletonInvocationHandler getInstance(final Class<?> ref, final AbstractService<?> service) {
     return new SingletonInvocationHandler(ref, service);
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private SingletonInvocationHandler(final Class<?> ref, final Service<?> service) {
+  private SingletonInvocationHandler(final Class<?> ref, final AbstractService<?> service) {
 
     super(service);
     this.entitySetHandler = EntitySetInvocationHandler.getInstance(ref, service);

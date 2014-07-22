@@ -32,7 +32,7 @@ import java.util.Map;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.Sort;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -60,7 +60,7 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
           new HashMap<Class<? extends AbstractTerm>, Object>();
 
   public AbstractCollectionInvocationHandler(
-          final Service<?> service,
+          final AbstractService<?> service,
           final Collection<T> items,
           final Class<T> itemRef,
           final CommonURIBuilder<?> uri) {
@@ -193,7 +193,7 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
   }
 
   public Collection<Class<? extends AbstractTerm>> getAnnotationTerms() {
-    return CoreUtils.getAnnotationTerms(annotations);
+    return CoreUtils.getAnnotationTerms(service, annotations);
   }
 
   @Override

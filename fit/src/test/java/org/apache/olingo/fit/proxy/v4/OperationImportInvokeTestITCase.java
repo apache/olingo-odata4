@@ -18,6 +18,13 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+import java.util.Collection;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
@@ -25,14 +32,6 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection;
-
-import org.junit.Test;
-
-import java.util.Collection;
-import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public class OperationImportInvokeTestITCase extends AbstractTestITCase {

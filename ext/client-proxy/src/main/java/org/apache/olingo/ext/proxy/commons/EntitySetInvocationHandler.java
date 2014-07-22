@@ -51,7 +51,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.Singleton;
@@ -69,18 +69,18 @@ class EntitySetInvocationHandler<
   private static final Logger LOG = LoggerFactory.getLogger(EntitySetInvocationHandler.class);
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static EntitySetInvocationHandler getInstance(final Class<?> ref, final Service<?> service) {
+  static EntitySetInvocationHandler getInstance(final Class<?> ref, final AbstractService<?> service) {
     return new EntitySetInvocationHandler(ref, service, buildURI(ref, service));
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static EntitySetInvocationHandler getInstance(final Class<?> ref, final Service<?> service, final URI uri) {
+  static EntitySetInvocationHandler getInstance(final Class<?> ref, final AbstractService<?> service, final URI uri) {
     return new EntitySetInvocationHandler(ref, service, service.getClient().newURIBuilder(uri.toASCIIString()));
   }
 
   private static CommonURIBuilder<?> buildURI(
           final Class<?> ref,
-          final Service<?> service) {
+          final AbstractService<?> service) {
     final CommonURIBuilder<?> uriBuilder = service.getClient().newURIBuilder();
 
     final Edm edm = service.getClient().getCachedEdm();
@@ -117,7 +117,7 @@ class EntitySetInvocationHandler<
   @SuppressWarnings("unchecked")
   protected EntitySetInvocationHandler(
           final Class<?> ref,
-          final Service<?> service,
+          final AbstractService<?> service,
           final CommonURIBuilder<?> uri) {
 
     super(ref, service, uri);

@@ -18,27 +18,27 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.Service;
-import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
-import org.junit.BeforeClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.TimeZone;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.ext.proxy.AbstractService;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.Service;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
+import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractTestITCase {
 
@@ -93,7 +93,7 @@ public abstract class AbstractTestITCase {
   }
 
   protected void createPatchAndDeleteOrder(
-          final InMemoryEntities container, final Service<EdmEnabledODataClient> service) {
+          final InMemoryEntities container, final AbstractService<EdmEnabledODataClient> service) {
 
     // Create order ....
     final Order order = service.newEntityInstance(Order.class);

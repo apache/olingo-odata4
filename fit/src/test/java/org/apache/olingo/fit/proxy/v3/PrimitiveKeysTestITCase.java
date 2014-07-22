@@ -16,12 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.math.BigDecimal;
+import java.util.UUID;
 import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.fit.proxy.v3.primitivekeys.Service;
 import org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.TestContext;
 import org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBoolean;
 import org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmByte;
@@ -34,12 +38,6 @@ import org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmSingle;
 import org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmString;
 import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * This is the unit test class to check basic feed operations.

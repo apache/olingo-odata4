@@ -16,8 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company;
@@ -25,10 +28,6 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.IsBoss;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class SingletonTestITCase extends AbstractTestITCase {
 

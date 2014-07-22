@@ -18,27 +18,25 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-
-import org.apache.olingo.ext.proxy.Service;
-import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.Service;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Employee;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
-
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
 
 public class ContextTestITCase extends AbstractTestITCase {
 

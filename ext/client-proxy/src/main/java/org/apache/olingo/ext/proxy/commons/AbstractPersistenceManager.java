@@ -31,7 +31,7 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.context.AttachedEntity;
@@ -61,9 +61,9 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
   private static final long serialVersionUID = 2065240290461241515L;
 
-  protected final Service<?> service;
+  protected final AbstractService<?> service;
 
-  AbstractPersistenceManager(final Service<?> factory) {
+  AbstractPersistenceManager(final AbstractService<?> factory) {
     this.service = factory;
   }
 

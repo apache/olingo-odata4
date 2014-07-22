@@ -19,104 +19,37 @@
 package org.apache.olingo.ext.proxy;
 
 import java.io.Serializable;
+import java.lang.reflect.Proxy;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
-import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
+import org.apache.olingo.ext.proxy.api.ComplexCollection;
 import org.apache.olingo.ext.proxy.api.ComplexType;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.ext.proxy.commons.ComplexCollectionInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.ComplexInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.EntityCollectionInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.EntityContainerInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.NonTransactionalPersistenceManagerImpl;
+import org.apache.olingo.ext.proxy.commons.PrimitiveCollectionInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.TransactionalPersistenceManagerImpl;
 import org.apache.olingo.ext.proxy.context.Context;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
-
-import java.lang.reflect.Proxy;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import org.apache.olingo.ext.proxy.api.ComplexCollection;
-import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
-import org.apache.olingo.ext.proxy.commons.ComplexCollectionInvocationHandler;
-import org.apache.olingo.ext.proxy.commons.PrimitiveCollectionInvocationHandler;
 
 /**
  * Entry point for proxy mode, gives access to entity container instances.
  *
  * @param <C> actual client class
  */
-public final class Service<C extends CommonEdmEnabledODataClient<?>> {
-
-  private static final Map<String, Service<?>> FACTORY_PER_SERVICEROOT =
-          new ConcurrentHashMap<String, Service<?>>();
+public abstract class AbstractService<C extends CommonEdmEnabledODataClient<?>> {
 
   private final Map<Class<?>, Object> ENTITY_CONTAINERS = new ConcurrentHashMap<Class<?>, Object>();
 
-  @SuppressWarnings("unchecked")
-  private static <C extends CommonEdmEnabledODataClient<?>> Service<C> getInstance(
-          final C client, final boolean transactional) {
-
-    if (!FACTORY_PER_SERVICEROOT.containsKey(client.getServiceRoot())) {
-      client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON_FULL_METADATA);
-      final Service<C> instance = new Service<C>(client, transactional);
-      FACTORY_PER_SERVICEROOT.put(client.getServiceRoot(), instance);
-    }
-
-    return (Service<C>) FACTORY_PER_SERVICEROOT.get(client.getServiceRoot());
-  }
-
-  /**
-   * Gives an OData 3.0 instance for given service root, operating in transactions (with batch requests).
-   *
-   * @param serviceRoot OData service root
-   * @return OData 3.0 instance for given service root, operating in transactions (with batch requests)
-   */
-  public static Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> getV3(
-          final String serviceRoot) {
-
-    return getV3(serviceRoot, true);
-  }
-
-  /**
-   * Gives an OData 3.0 instance for given service root.
-   *
-   * @param serviceRoot OData service root
-   * @param transactional whether operating in transactions (with batch requests) or not
-   * @return OData 3.0 instance for given service root
-   */
-  public static Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> getV3(
-          final String serviceRoot, final boolean transactional) {
-
-    return getInstance(ODataClientFactory.getEdmEnabledV3(serviceRoot), transactional);
-  }
-
-  /**
-   * Gives an OData 4.0 instance for given service root, operating in transactions (with batch requests).
-   *
-   * @param serviceRoot OData service root
-   * @return OData 4.0 instance for given service root, operating in transactions (with batch requests)
-   */
-  public static Service<org.apache.olingo.client.api.v4.EdmEnabledODataClient> getV4(
-          final String serviceRoot) {
-
-    return getV4(serviceRoot, true);
-  }
-
-  /**
-   * Gives an OData 4.0 instance for given service root.
-   *
-   * @param serviceRoot OData service root
-   * @param transactional whether operating in transactions (with batch requests) or not
-   * @return OData 4.0 instance for given service root
-   */
-  public static Service<org.apache.olingo.client.api.v4.EdmEnabledODataClient> getV4(
-          final String serviceRoot, final boolean transactional) {
-
-    return getInstance(ODataClientFactory.getEdmEnabledV4(serviceRoot), transactional);
-  }
   private final CommonEdmEnabledODataClient<?> client;
 
   private final Context context;
@@ -125,11 +58,17 @@ public final class Service<C extends CommonEdmEnabledODataClient<?>> {
 
   private PersistenceManager persistenceManager;
 
-  private Service(final CommonEdmEnabledODataClient<?> client, final boolean transactional) {
+  protected AbstractService(final CommonEdmEnabledODataClient<?> client, final boolean transactional) {
     this.client = client;
-    this.context = new Context();
     this.transactional = transactional;
+    this.context = new Context();
   }
+
+  public abstract Class<?> getComplexTypeClass(String name);
+
+  public abstract Class<?> getEnumTypeClass(String name);
+
+  public abstract Class<? extends AbstractTerm> getTermClass(String name);
 
   @SuppressWarnings("unchecked")
   public C getClient() {
@@ -198,7 +137,6 @@ public final class Service<C extends CommonEdmEnabledODataClient<?>> {
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {ref},
             ComplexInvocationHandler.getInstance(ref, this));
-
   }
 
   @SuppressWarnings("unchecked")

@@ -38,7 +38,7 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 
 public class PrimitiveCollectionInvocationHandler<T extends Serializable>
@@ -48,20 +48,20 @@ public class PrimitiveCollectionInvocationHandler<T extends Serializable>
   private static final long serialVersionUID = 98078202642671756L;
 
   public PrimitiveCollectionInvocationHandler(
-          final Service<?> service,
+          final AbstractService<?> service,
           final Class<T> itemRef) {
     this(service, new ArrayList<T>(), itemRef, null);
   }
 
   public PrimitiveCollectionInvocationHandler(
-          final Service<?> service,
+          final AbstractService<?> service,
           final Class<T> itemRef,
           final CommonURIBuilder<?> uri) {
     this(service, new ArrayList<T>(), itemRef, uri);
   }
 
   public PrimitiveCollectionInvocationHandler(
-          final Service<?> service,
+          final AbstractService<?> service,
           final Collection<T> items,
           final Class<T> itemRef,
           final CommonURIBuilder<?> uri) {

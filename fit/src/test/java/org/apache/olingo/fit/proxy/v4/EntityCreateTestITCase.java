@@ -21,7 +21,7 @@ package org.apache.olingo.fit.proxy.v4;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
@@ -57,7 +57,7 @@ import static org.junit.Assert.fail;
  */
 public class EntityCreateTestITCase extends AbstractTestITCase {
 
-  protected Service<EdmEnabledODataClient> getService() {
+  protected AbstractService<EdmEnabledODataClient> getService() {
     return service;
   }
 

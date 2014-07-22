@@ -16,21 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
 
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.Service;
-import org.apache.olingo.ext.proxy.api.annotations.EntityType;
-import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.DefaultContainer;
-import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.AccountInfo;
-import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Color;
-import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.ContactDetails;
-import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row;
-import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndex;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -38,16 +29,20 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.fit.proxy.v4.opentype.Service;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.DefaultContainer;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.AccountInfo;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Color;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.ContactDetails;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.IndexedRow;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndex;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-/**
- * This is the unit test class to check actions overloading.
- */
 public class OpenTypeTestITCase extends AbstractTestITCase {
 
   private static Service<EdmEnabledODataClient> otservice;

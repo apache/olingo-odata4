@@ -38,7 +38,7 @@ import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.core.communication.header.ODataErrorResponseChecker;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.AbstractService;
 
 /**
  * {@link org.apache.olingo.ext.proxy.api.PersistenceManager} implementation using OData batch requests to implement
@@ -49,7 +49,7 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
 
   private static final long serialVersionUID = -3320312269235907501L;
 
-  public TransactionalPersistenceManagerImpl(final Service<?> factory) {
+  public TransactionalPersistenceManagerImpl(final AbstractService<?> factory) {
     super(factory);
   }
 

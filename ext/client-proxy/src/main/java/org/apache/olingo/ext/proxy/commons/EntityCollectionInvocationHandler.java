@@ -27,7 +27,7 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EntityType;
 
 public class EntityCollectionInvocationHandler<T extends EntityType>
@@ -37,12 +37,12 @@ public class EntityCollectionInvocationHandler<T extends EntityType>
   private static final long serialVersionUID = 98078202642671726L;
 
   public EntityCollectionInvocationHandler(
-          final Service<?> service, final Class<? extends EntityCollection<T>> collItemRef) {
+          final AbstractService<?> service, final Class<? extends EntityCollection<T>> collItemRef) {
     this(service, new ArrayList<T>(), collItemRef, null, null);
   }
 
   public <EC extends EntityCollection<T>> EntityCollectionInvocationHandler(
-          final Service<?> service,
+          final AbstractService<?> service,
           final Collection<T> items,
           final Class<? extends EntityCollection<T>> collItemRef,
           final URI targetEntitySetURI,

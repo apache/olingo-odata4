@@ -16,15 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
+
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI;
 import org.junit.Test;
-
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * This is the unit test class to check actions overloading.

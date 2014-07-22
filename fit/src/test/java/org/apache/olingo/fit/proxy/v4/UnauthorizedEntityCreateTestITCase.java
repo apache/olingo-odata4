@@ -16,14 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
 
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.fit.proxy.v4.staticservice.Service;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.junit.Test;
 
@@ -33,24 +32,24 @@ public class UnauthorizedEntityCreateTestITCase extends AbstractTestITCase {
 
   private InMemoryEntities ime;
 
-  public Service<EdmEnabledODataClient> getContainerFactory() {
+  public Service<EdmEnabledODataClient> getService() {
     if (ecf == null) {
       ecf = Service.getV4(testAuthServiceRootURL);
       ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
       ecf.getClient().getConfiguration().
-          setHttpClientFactory(new BasicAuthHttpClientFactory("not_auth", "not_auth"));
+              setHttpClientFactory(new BasicAuthHttpClientFactory("not_auth", "not_auth"));
     }
     return ecf;
   }
 
   @Test(expected = HttpClientException.class)
   public void unauthorizedCreate() {
-    createPatchAndDeleteOrder(getContainer(), getContainerFactory());
+    createPatchAndDeleteOrder(getContainer(), getService());
   }
 
   protected InMemoryEntities getContainer() {
     if (ime == null) {
-      ime = getContainerFactory().getEntityContainer(InMemoryEntities.class);
+      ime = getService().getEntityContainer(InMemoryEntities.class);
     }
     return ime;
   }

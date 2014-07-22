@@ -21,7 +21,7 @@ package org.apache.olingo.ext.proxy.commons;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.AbstractService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class EdmStreamTypeHandler extends AbstractInvocationHandler {
 
   protected EdmStreamTypeHandler(
           final CommonURIBuilder<?> uri,
-          final Service<?> service) {
+          final AbstractService<?> service) {
 
     super(service);
     this.uri = uri;

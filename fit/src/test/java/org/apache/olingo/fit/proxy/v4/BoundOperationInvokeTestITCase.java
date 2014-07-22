@@ -18,6 +18,13 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.sql.Timestamp;
+import java.util.Calendar;
+import org.junit.Test;
+
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
@@ -28,15 +35,7 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailKey;
-
-import java.sql.Timestamp;
-import java.util.Calendar;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AddressCollection;
-
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public class BoundOperationInvokeTestITCase extends AbstractTestITCase {

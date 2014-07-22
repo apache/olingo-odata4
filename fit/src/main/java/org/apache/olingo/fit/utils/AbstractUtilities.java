@@ -60,7 +60,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import javax.xml.stream.XMLStreamException;
 
 public abstract class AbstractUtilities {
 

@@ -19,7 +19,7 @@
 package org.apache.olingo.ext.proxy.commons;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Singleton;
@@ -37,13 +37,13 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
 
   private final boolean defaultEC;
 
-  public static EntityContainerInvocationHandler getInstance(final Class<?> ref, final Service<?> service) {
+  public static EntityContainerInvocationHandler getInstance(final Class<?> ref, final AbstractService<?> service) {
 
     final EntityContainerInvocationHandler instance = new EntityContainerInvocationHandler(ref, service);
     return instance;
   }
 
-  private EntityContainerInvocationHandler(final Class<?> ref, final Service<?> factory) {
+  private EntityContainerInvocationHandler(final Class<?> ref, final AbstractService<?> factory) {
     super(factory);
 
     final Annotation annotation = ref.getAnnotation(EntityContainer.class);
@@ -57,7 +57,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
     this.namespace = ((EntityContainer) annotation).namespace();
   }
 
-  protected Service<?> getService() {
+  protected AbstractService<?> getService() {
     return service;
   }
 

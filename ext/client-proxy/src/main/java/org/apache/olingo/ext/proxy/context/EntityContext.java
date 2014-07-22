@@ -192,9 +192,8 @@ public class EntityContext implements Iterable<AttachedEntity> {
   @Override
   public Iterator<AttachedEntity> iterator() {
     final List<AttachedEntity> res = new ArrayList<AttachedEntity>();
-    for (Map.Entry<EntityInvocationHandler, AttachedEntityStatus> attachedEntity : allAttachedEntities.
-            entrySet()) {
-      res.add(new AttachedEntity(attachedEntity.getKey(), attachedEntity.getValue()));
+    for (Map.Entry<EntityInvocationHandler, AttachedEntityStatus> entity : allAttachedEntities.entrySet()) {
+      res.add(new AttachedEntity(entity.getKey(), entity.getValue()));
     }
     return res.iterator();
   }

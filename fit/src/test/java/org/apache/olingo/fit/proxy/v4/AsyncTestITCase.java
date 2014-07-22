@@ -16,25 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
-
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.olingo.ext.proxy.api.AsyncCall;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types
-    .CustomerCollection;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
-import org.junit.Test;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.olingo.ext.proxy.api.AsyncCall;
+import org.junit.Test;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CustomerCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public class AsyncTestITCase extends AbstractTestITCase {
@@ -42,13 +39,13 @@ public class AsyncTestITCase extends AbstractTestITCase {
   @Test
   public void retrieveEntitySet() throws InterruptedException, ExecutionException {
     final Future<CustomerCollection> futureCustomers =
-        new AsyncCall<CustomerCollection>(service.getClient().getConfiguration()) {
+            new AsyncCall<CustomerCollection>(service.getClient().getConfiguration()) {
 
-          @Override
-          public CustomerCollection call() {
-            return container.getCustomers().execute();
-          }
-        };
+              @Override
+              public CustomerCollection call() {
+                return container.getCustomers().execute();
+              }
+            };
     assertNotNull(futureCustomers);
 
     while (!futureCustomers.isDone()) {

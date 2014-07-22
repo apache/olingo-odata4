@@ -16,18 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
-
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.ext.proxy.Service;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.fit.proxy.v4.staticservice.Service;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
+import org.junit.Test;
 
 public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
@@ -35,7 +34,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   private InMemoryEntities ime;
 
-  protected Service<EdmEnabledODataClient> getContainerFactory() {
+  protected Service<EdmEnabledODataClient> getService() {
     if (ecf == null) {
       ecf = Service.getV4(testKeyAsSegmentServiceRootURL);
       ecf.getClient().getConfiguration().setKeyAsSegment(true);
@@ -46,7 +45,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   protected InMemoryEntities getContainer() {
     if (ime == null) {
-      ime = getContainerFactory().getEntityContainer(InMemoryEntities.class);
+      ime = getService().getEntityContainer(InMemoryEntities.class);
     }
     return ime;
   }
@@ -58,7 +57,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   @Test
   public void createAndDelete() {
-    createPatchAndDeleteOrder(getContainer(), getContainerFactory());
+    createPatchAndDeleteOrder(getContainer(), getService());
   }
 
   @Test

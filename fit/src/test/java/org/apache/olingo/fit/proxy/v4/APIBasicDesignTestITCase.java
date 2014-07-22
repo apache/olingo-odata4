@@ -18,41 +18,41 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
-//CHECKSTYLE:OFF (Maven checkstyle)
-import java.io.IOException;
-
-import org.apache.olingo.ext.proxy.Service;
-import org.apache.olingo.ext.proxy.commons.EdmStreamTypeImpl;
-import org.apache.olingo.ext.proxy.api.EdmStreamValue;
-import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
-import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
-
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.TimeZone;
-import java.sql.Timestamp;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
-
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.TimeZone;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.ext.proxy.AbstractService;
+import org.apache.olingo.ext.proxy.api.EdmStreamValue;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.ext.proxy.commons.EdmStreamTypeImpl;
+import org.apache.olingo.fit.proxy.v4.demo.Service;
+import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
+import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail;
+
+//CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
+import org.junit.Test;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 /**
@@ -60,7 +60,7 @@ import static org.junit.Assert.fail;
  */
 public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
-  protected Service<EdmEnabledODataClient> getService() {
+  protected AbstractService<EdmEnabledODataClient> getService() {
     return service;
   }
 

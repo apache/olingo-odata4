@@ -18,34 +18,6 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
-import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.ext.proxy.Service;
-import org.apache.olingo.ext.proxy.api.AbstractTerm;
-import org.apache.olingo.ext.proxy.api.Annotatable;
-import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
-import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
-import org.apache.olingo.ext.proxy.api.annotations.EntityType;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
-import org.apache.olingo.ext.proxy.api.annotations.Property;
-import org.apache.olingo.ext.proxy.api.annotations.Term;
-import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
-import org.apache.olingo.ext.proxy.context.EntityUUID;
-import org.apache.olingo.ext.proxy.utils.CoreUtils;
-
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -63,13 +35,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
+import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.ext.proxy.AbstractService;
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.ComplexCollection;
 import org.apache.olingo.ext.proxy.api.EdmStreamType;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
+import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Term;
+import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
+import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
+import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
 public class EntityInvocationHandler extends AbstractStructuredInvocationHandler implements Annotatable {
 
@@ -114,7 +113,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
           final CommonODataEntity entity,
           final URI entitySetURI,
           final Class<?> typeRef,
-          final Service<?> service) {
+          final AbstractService<?> service) {
 
     return new EntityInvocationHandler(key, entity, entitySetURI, typeRef, service);
   }
@@ -123,7 +122,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
           final CommonODataEntity entity,
           final URI entitySetURI,
           final Class<?> typeRef,
-          final Service<?> service) {
+          final AbstractService<?> service) {
 
     return new EntityInvocationHandler(null, entity, entitySetURI, typeRef, service);
   }
@@ -133,21 +132,21 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
           final URI entitySetURI,
           final URI entityURI,
           final Class<?> typeRef,
-          final Service<?> service) {
+          final AbstractService<?> service) {
 
     return new EntityInvocationHandler(entity, entityURI, entitySetURI, typeRef, service);
   }
 
   public static EntityInvocationHandler getInstance(
           final Class<?> typeRef,
-          final Service<?> service) {
+          final AbstractService<?> service) {
 
     return new EntityInvocationHandler(typeRef, service);
   }
 
   private EntityInvocationHandler(
           final Class<?> typeRef,
-          final Service<?> service) {
+          final AbstractService<?> service) {
 
     super(typeRef, service);
 
@@ -168,7 +167,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
           final URI entitySetURI,
           final URI entityURI,
           final Class<?> typeRef,
-          final Service<?> service) {
+          final AbstractService<?> service) {
     super(typeRef, entity, service);
 
     if (entityURI != null) {
@@ -190,7 +189,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
           final CommonODataEntity entity,
           final URI entitySetURI,
           final Class<?> typeRef,
-          final Service<?> service) {
+          final AbstractService<?> service) {
 
     super(typeRef, entity, service);
 
@@ -334,8 +333,8 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
           res = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {EdmStreamType.class}, new EdmStreamTypeHandler(
-                  getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name),
-                  service));
+                          getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name),
+                          service));
 
           streamedPropertyCache.put(name, EdmStreamType.class.cast(res));
         }
@@ -661,7 +660,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   @Override
   public Collection<Class<? extends AbstractTerm>> getAnnotationTerms() {
     return getEntity() instanceof ODataEntity
-            ? CoreUtils.getAnnotationTerms(((ODataEntity) getEntity()).getAnnotations())
+            ? CoreUtils.getAnnotationTerms(service, ((ODataEntity) getEntity()).getAnnotations())
             : Collections.<Class<? extends AbstractTerm>>emptyList();
   }
 
