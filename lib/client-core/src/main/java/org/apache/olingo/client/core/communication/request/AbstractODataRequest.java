@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.util.Collection;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 
 /**
  * Abstract representation of an OData request. Get instance by using factories.
@@ -300,26 +301,31 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
 
     // Add all available headers
     for (String key : getHeaderNames()) {
-      this.request.addHeader(key, odataHeaders.getHeader(key));
+      request.addHeader(key, odataHeaders.getHeader(key));
     }
 
     if (LOG.isDebugEnabled()) {
-      for (Header header : this.request.getAllHeaders()) {
+      for (Header header : request.getAllHeaders()) {
         LOG.debug("HTTP header being sent: " + header);
       }
     }
 
     HttpResponse response;
     try {
-      response = this.httpClient.execute(this.request);
+      response = httpClient.execute(request);
     } catch (IOException e) {
       throw new HttpClientException(e);
     } catch (RuntimeException e) {
-      this.request.abort();
+      request.abort();
       throw new HttpClientException(e);
     }
 
-    checkResponse(odataClient, response, getAccept());
+    try {
+      checkResponse(odataClient, response, getAccept());
+    } catch (ODataRuntimeException e) {
+      odataClient.getConfiguration().getHttpClientFactory().close(httpClient);
+      throw e;
+    }
 
     return response;
   }
