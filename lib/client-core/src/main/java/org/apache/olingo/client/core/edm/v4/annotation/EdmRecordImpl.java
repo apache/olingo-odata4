@@ -29,14 +29,11 @@ import java.util.List;
 
 public class EdmRecordImpl extends AbstractEdmAnnotatableDynamicAnnotationExpression implements EdmRecord {
 
-  private final Edm edm;
-
   private final List<EdmPropertyValue> propertyValues;
 
   private EdmStructuredType type;
 
   public EdmRecordImpl(final Edm edm, final String type, final List<EdmPropertyValue> propertyValues) {
-    this.edm = edm;
     this.propertyValues = propertyValues;
 
     if (type != null) {

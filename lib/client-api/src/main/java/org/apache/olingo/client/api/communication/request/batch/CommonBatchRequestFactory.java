@@ -18,12 +18,10 @@
  */
 package org.apache.olingo.client.api.communication.request.batch;
 
-import java.io.Serializable;
-
 /**
  * OData batch request factory class.
  */
-public interface CommonBatchRequestFactory extends Serializable {
+public interface CommonBatchRequestFactory {
 
   /**
    * Gets a batch request object instance.

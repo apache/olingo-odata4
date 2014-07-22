@@ -26,8 +26,6 @@ import org.apache.olingo.client.core.communication.request.batch.AbstractBatchRe
 public class BatchRequestFactoryImpl extends AbstractBatchRequestFactory
         implements BatchRequestFactory {
 
-  private static final long serialVersionUID = -6271567229804128570L;
-
   public BatchRequestFactoryImpl(final ODataClient client) {
     super(client);
   }

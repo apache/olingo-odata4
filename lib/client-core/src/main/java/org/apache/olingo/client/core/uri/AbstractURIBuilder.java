@@ -62,7 +62,6 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
       return value;
     }
   }
-  private static final long serialVersionUID = -3267515371720408124L;
 
   /**
    * Logger.

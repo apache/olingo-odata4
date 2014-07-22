@@ -97,7 +97,7 @@ public class ExpressionTest {
   @Test
   public void testEnumerationExpression() throws ExpressionVisitException, ODataApplicationException {
     EnumerationImpl expression = new EnumerationImpl();
-    EdmEnumType type = (EdmEnumType) edm.getEnumType(EnumTypeProvider.nameENString);
+    EdmEnumType type = edm.getEnumType(EnumTypeProvider.nameENString);
     assertNotNull(type);
     expression.setType(type);
 

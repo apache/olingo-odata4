@@ -29,7 +29,7 @@ public class ODataClientTest {
 
   @Test
   public void before() {
-    CommonODataClient client = ODataClientFactory.getV3();
+    CommonODataClient<?> client = ODataClientFactory.getV3();
     assertNotNull(client);
     assertEquals(ODataServiceVersion.V30, client.getServiceVersion());
 

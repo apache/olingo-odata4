@@ -18,8 +18,10 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmMember;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -29,10 +31,7 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.edm.provider.EnumMember;
 import org.apache.olingo.server.api.edm.provider.EnumType;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType {
+public class EdmEnumTypeImpl extends AbstractEdmEnumType {
 
   private final EdmPrimitiveType underlyingType;
 

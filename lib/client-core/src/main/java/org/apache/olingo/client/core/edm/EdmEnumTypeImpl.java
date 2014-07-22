@@ -18,11 +18,17 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.olingo.client.api.edm.xml.EnumType;
 import org.apache.olingo.client.api.edm.xml.Member;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmMember;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -32,14 +38,7 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.AbstractEdmEnumType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType {
+public class EdmEnumTypeImpl extends AbstractEdmEnumType {
 
   private static final EdmPrimitiveTypeKind[] VALID_UNDERLYING_TYPES = new EdmPrimitiveTypeKind[] {
     EdmPrimitiveTypeKind.Byte,

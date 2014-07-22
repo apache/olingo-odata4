@@ -18,12 +18,10 @@
  */
 package org.apache.olingo.client.api.uri;
 
-import java.io.Serializable;
-
 /**
  * OData filter factory.
  */
-public interface CommonFilterFactory extends Serializable {
+public interface CommonFilterFactory {
 
   CommonFilterArgFactory getArgFactory();
 

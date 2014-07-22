@@ -38,11 +38,8 @@ import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
 
 import java.net.URI;
 
-@SuppressWarnings("unchecked")
 public class RetrieveRequestFactoryImpl extends AbstractRetrieveRequestFactory
         implements RetrieveRequestFactory {
-
-  private static final long serialVersionUID = 546577958047902917L;
 
   public RetrieveRequestFactoryImpl(final ODataClient client) {
     super(client);

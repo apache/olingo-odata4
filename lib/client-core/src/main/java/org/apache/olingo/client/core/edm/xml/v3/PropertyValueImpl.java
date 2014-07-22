@@ -28,8 +28,6 @@ import java.util.Date;
 
 public class PropertyValueImpl extends AbstractEdmItem implements PropertyValue {
 
-  private static final long serialVersionUID = -6580934436491418564L;
-
   @JsonProperty(value = "Property", required = true)
   private String property;
 

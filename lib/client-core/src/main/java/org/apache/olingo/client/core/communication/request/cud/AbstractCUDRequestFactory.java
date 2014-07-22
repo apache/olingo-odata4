@@ -43,8 +43,6 @@ import java.net.URI;
 
 public abstract class AbstractCUDRequestFactory<UT extends CommonUpdateType> implements CommonCUDRequestFactory<UT> {
 
-  private static final long serialVersionUID = -2723641791198745990L;
-
   protected final CommonODataClient<?> client;
 
   protected AbstractCUDRequestFactory(final CommonODataClient<?> client) {

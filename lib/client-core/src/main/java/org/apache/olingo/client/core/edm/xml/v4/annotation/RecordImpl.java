@@ -28,8 +28,6 @@ import java.util.List;
 @JsonDeserialize(using = RecordDeserializer.class)
 public class RecordImpl extends AbstractAnnotatableDynamicAnnotationExpression implements Record {
 
-  private static final long serialVersionUID = -2886526224721870304L;
-
   private String type;
 
   private final List<PropertyValue> propertyValues = new ArrayList<PropertyValue>();

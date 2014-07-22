@@ -26,8 +26,6 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
 @JsonDeserialize(using = CastDeserializer.class)
 public class CastImpl extends AbstractAnnotatableDynamicAnnotationExpression implements Cast {
 
-  private static final long serialVersionUID = -7836626668653004926L;
-
   private String type;
 
   private Integer maxLength;

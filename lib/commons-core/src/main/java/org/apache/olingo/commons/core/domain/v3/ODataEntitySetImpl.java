@@ -28,8 +28,6 @@ import java.util.List;
 
 public class ODataEntitySetImpl extends AbstractODataEntitySet implements ODataEntitySet {
 
-  private static final long serialVersionUID = -8127933181196033586L;
-
   private final List<ODataEntity> entities = new ArrayList<ODataEntity>();
 
   public ODataEntitySetImpl() {}

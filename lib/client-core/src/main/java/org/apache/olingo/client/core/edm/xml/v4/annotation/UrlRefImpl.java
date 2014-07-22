@@ -25,8 +25,6 @@ import org.apache.olingo.client.api.edm.xml.v4.annotation.UrlRef;
 @JsonDeserialize(using = UrlRefDeserializer.class)
 public class UrlRefImpl extends AbstractDynamicAnnotationExpression implements UrlRef {
 
-  private static final long serialVersionUID = 3755101394647430897L;
-
   private AnnotationExpression value;
 
   @Override

@@ -20,13 +20,8 @@ package org.apache.olingo.client.api.communication.request.invoke;
 
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 
-import java.io.Serializable;
-
 /**
  * Marker class for invoke with no return type.
  */
-public class ODataNoContent implements Serializable, ODataInvokeResult {
-
-  private static final long serialVersionUID = 2780193571934253136L;
-
+public class ODataNoContent implements ODataInvokeResult {
 }

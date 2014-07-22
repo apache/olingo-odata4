@@ -301,7 +301,7 @@ public class FilterValidator implements TestValidator {
 
   public FilterValidator is(final String expectedFilterAsString) {
     try {
-      String actualFilterAsText = FilterTreeToText.Serialize((FilterOptionImpl) filter);
+      String actualFilterAsText = FilterTreeToText.Serialize(filter);
       assertEquals(expectedFilterAsString, actualFilterAsText);
     } catch (ExpressionVisitException e) {
       fail("Exception occured while converting the filterTree into text" + "\n"

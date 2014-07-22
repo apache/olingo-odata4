@@ -200,7 +200,7 @@ public class UriResourceImplTest {
     assertEquals("", impl.toString());
 
     // function
-    EdmFunction function = (EdmFunction) edm.getEntityContainer(null).getFunctionImport("FINRTInt16")
+    EdmFunction function = edm.getEntityContainer(null).getFunctionImport("FINRTInt16")
         .getUnboundFunction(new ArrayList<String>());
     assertNotNull(function);
     impl.setFunction(function);

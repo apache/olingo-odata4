@@ -24,8 +24,6 @@ import org.apache.olingo.client.api.edm.xml.v4.annotation.TwoParamsOpDynamicAnno
 public class TwoParamsOpDynamicAnnotationExpressionImpl
         extends AbstractDynamicAnnotationExpression implements TwoParamsOpDynamicAnnotationExpression {
 
-  private static final long serialVersionUID = -7974475975925167731L;
-
   private Type type;
 
   private DynamicAnnotationExpression left;

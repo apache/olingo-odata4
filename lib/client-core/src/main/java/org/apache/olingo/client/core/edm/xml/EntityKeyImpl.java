@@ -28,8 +28,6 @@ import java.util.List;
 @JsonDeserialize(using = EntityKeyDeserializer.class)
 public class EntityKeyImpl extends AbstractEdmItem implements EntityKey {
 
-  private static final long serialVersionUID = 2586047015894794685L;
-
   private final List<PropertyRef> propertyRefs = new ArrayList<PropertyRef>();
 
   @Override

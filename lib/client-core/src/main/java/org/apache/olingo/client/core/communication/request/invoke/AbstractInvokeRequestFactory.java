@@ -35,8 +35,6 @@ import java.util.Map;
 
 public abstract class AbstractInvokeRequestFactory implements InvokeRequestFactory {
 
-  private static final long serialVersionUID = -906760270085197249L;
-
   @Override
   public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getFunctionInvokeRequest(
           final URI uri, final Class<RES> resultRef) {

@@ -30,8 +30,6 @@ import java.net.URI;
  */
 public class DefaultHttpClientFactory extends AbstractHttpClientFactory {
 
-  private static final long serialVersionUID = -2461355444507227332L;
-
   @Override
   public DefaultHttpClient create(final HttpMethod method, final URI uri) {
     final DefaultHttpClient client = new DefaultHttpClient();

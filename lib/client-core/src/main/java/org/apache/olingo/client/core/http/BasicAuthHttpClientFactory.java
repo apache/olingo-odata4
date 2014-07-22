@@ -30,8 +30,6 @@ import java.net.URI;
  */
 public class BasicAuthHttpClientFactory extends DefaultHttpClientFactory {
 
-  private static final long serialVersionUID = 7985626503125490244L;
-
   private final String username;
 
   private final String password;

@@ -20,8 +20,6 @@ import org.apache.olingo.client.api.communication.request.batch.CommonBatchReque
  */
 public abstract class AbstractBatchRequestFactory implements CommonBatchRequestFactory {
 
-  private static final long serialVersionUID = -3875283254713404483L;
-
   protected final CommonODataClient<?> client;
 
   protected AbstractBatchRequestFactory(final CommonODataClient<?> client) {

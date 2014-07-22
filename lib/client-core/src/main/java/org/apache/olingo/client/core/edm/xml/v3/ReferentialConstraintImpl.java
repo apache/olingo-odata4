@@ -26,8 +26,6 @@ import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
 
 public class ReferentialConstraintImpl extends AbstractEdmItem implements ReferentialConstraint {
 
-  private static final long serialVersionUID = 9067893732765127269L;
-
   @JsonProperty(value = "Principal", required = true)
   private ReferentialConstraintRoleImpl principal;
 

@@ -25,8 +25,6 @@ import java.net.URI;
 
 public class ODataDeletedEntityImpl extends ODataItem implements ODataDeletedEntity {
 
-  private static final long serialVersionUID = -3841730551749114664L;
-
   private URI id;
 
   private Reason reason;

@@ -28,8 +28,6 @@ import java.util.List;
 @JsonDeserialize(using = CollectionDeserializer.class)
 public class CollectionImpl extends AbstractDynamicAnnotationExpression implements Collection {
 
-  private static final long serialVersionUID = -4975881520695477686L;
-
   private final List<AnnotationExpression> items = new ArrayList<AnnotationExpression>();
 
   @Override

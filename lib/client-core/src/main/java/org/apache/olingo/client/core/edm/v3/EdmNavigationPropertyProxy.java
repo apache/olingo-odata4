@@ -41,8 +41,6 @@ import java.util.List;
 
 public class EdmNavigationPropertyProxy extends AbstractEdmNavigationProperty {
 
-  private final List<? extends Schema> xmlSchemas;
-
   private final NavigationProperty navigationProperty;
 
   private final FullQualifiedName typeFQN;
@@ -61,7 +59,6 @@ public class EdmNavigationPropertyProxy extends AbstractEdmNavigationProperty {
           final NavigationProperty navigationProperty) {
 
     super(edm, navigationProperty.getName());
-    this.xmlSchemas = xmlSchemas;
     this.navigationProperty = navigationProperty;
 
     final FullQualifiedName relFQN = new FullQualifiedName(navigationProperty.getRelationship());

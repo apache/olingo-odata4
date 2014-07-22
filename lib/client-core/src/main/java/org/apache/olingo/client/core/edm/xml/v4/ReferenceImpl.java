@@ -30,8 +30,6 @@ import java.util.List;
 @JsonDeserialize(using = ReferenceDeserializer.class)
 public class ReferenceImpl extends AbstractAnnotatable implements Reference {
 
-  private static final long serialVersionUID = -5600031479702563436L;
-
   private URI uri;
 
   private final List<Include> includes = new ArrayList<Include>();

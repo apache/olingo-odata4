@@ -24,8 +24,6 @@ import org.apache.olingo.client.api.edm.xml.DataServices;
 @JsonDeserialize(using = DataServicesDeserializer.class)
 public abstract class AbstractDataServices extends AbstractEdmItem implements DataServices {
 
-  private static final long serialVersionUID = -9126377222393876166L;
-
   private String dataServiceVersion;
 
   private String maxDataServiceVersion;

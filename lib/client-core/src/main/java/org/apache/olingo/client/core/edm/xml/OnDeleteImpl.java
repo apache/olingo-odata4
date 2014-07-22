@@ -24,8 +24,6 @@ import org.apache.olingo.client.api.edm.xml.OnDeleteAction;
 
 public class OnDeleteImpl extends AbstractEdmItem implements OnDelete {
 
-  private static final long serialVersionUID = -5321523424474336347L;
-
   @JsonProperty(value = "Action", required = true)
   private OnDeleteAction action = OnDeleteAction.None;
 

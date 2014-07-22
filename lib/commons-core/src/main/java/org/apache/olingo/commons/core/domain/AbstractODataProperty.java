@@ -28,8 +28,6 @@ import org.apache.olingo.commons.api.domain.ODataValue;
 
 public abstract class AbstractODataProperty implements CommonODataProperty {
 
-  private static final long serialVersionUID = 926939448778950450L;
-
   /**
    * Property name.
    */

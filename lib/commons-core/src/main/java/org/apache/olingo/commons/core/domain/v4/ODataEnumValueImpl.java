@@ -24,8 +24,6 @@ import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 
 public class ODataEnumValueImpl extends AbstractODataValue implements ODataEnumValue {
 
-  private static final long serialVersionUID = 5830261159033325828L;
-
   private final String value;
 
   public ODataEnumValueImpl(final String typeName, final String value) {

@@ -28,8 +28,6 @@ import java.util.List;
 
 public class ODataDeltaImpl extends ODataEntitySetImpl implements ODataDelta {
 
-  private static final long serialVersionUID = -418357452933455313L;
-
   private final List<ODataDeletedEntity> deletedEntities = new ArrayList<ODataDeletedEntity>();
 
   private final List<ODataDeltaLink> addedLinks = new ArrayList<ODataDeltaLink>();

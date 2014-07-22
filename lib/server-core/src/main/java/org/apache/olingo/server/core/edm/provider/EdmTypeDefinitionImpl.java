@@ -18,22 +18,21 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmTerm;
-import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.AbstractEdmTypeDefinition;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 
-import java.util.List;
-
-public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements EdmTypeDefinition {
+public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition {
 
   private TypeDefinition typeDefinition;
 

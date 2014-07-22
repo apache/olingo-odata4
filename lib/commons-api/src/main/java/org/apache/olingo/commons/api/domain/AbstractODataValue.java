@@ -28,8 +28,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public abstract class AbstractODataValue implements ODataValue {
 
-  private static final long serialVersionUID = 7445422004232581877L;
-
   /**
    * Type name;
    */
@@ -79,6 +77,7 @@ public abstract class AbstractODataValue implements ODataValue {
    * 
    * @return complex value.
    */
+  @SuppressWarnings("unchecked")
   @Override
   public <OP extends CommonODataProperty> ODataComplexValue<OP> asComplex() {
     return isComplex() ? (ODataComplexValue<OP>) this : null;
@@ -99,6 +98,7 @@ public abstract class AbstractODataValue implements ODataValue {
    * 
    * @return collection value.
    */
+  @SuppressWarnings("unchecked")
   @Override
   public <OV extends ODataValue> ODataCollectionValue<OV> asCollection() {
     return isCollection() ? (ODataCollectionValue<OV>) this : null;

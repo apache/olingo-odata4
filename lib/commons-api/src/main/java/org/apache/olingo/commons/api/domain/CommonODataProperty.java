@@ -18,12 +18,10 @@
  */
 package org.apache.olingo.commons.api.domain;
 
-import java.io.Serializable;
-
 /**
  * OData entity property.
  */
-public interface CommonODataProperty extends ODataInvokeResult, Serializable {
+public interface CommonODataProperty extends ODataInvokeResult {
 
   /**
    * Returns property name.

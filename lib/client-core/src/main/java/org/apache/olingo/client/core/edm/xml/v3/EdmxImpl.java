@@ -22,8 +22,6 @@ import org.apache.olingo.client.core.edm.xml.AbstractEdmx;
 
 public class EdmxImpl extends AbstractEdmx {
 
-  private static final long serialVersionUID = -8031883176876401375L;
-
   @Override
   public DataServicesImpl getDataServices() {
     return (DataServicesImpl) super.getDataServices();

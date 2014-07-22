@@ -27,8 +27,6 @@ import java.net.URI;
  */
 public class ODataLink extends ODataItem {
 
-  private static final long serialVersionUID = 7274966414277952124L;
-
   public static class Builder {
 
     protected ODataServiceVersion version;

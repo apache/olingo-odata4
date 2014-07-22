@@ -200,6 +200,8 @@ public class StringHelper {
   }
 
   private static class TestUtilRuntimeException extends RuntimeException {
+    private static final long serialVersionUID = 8759664297317490186L;
+    @SuppressWarnings("unused")
     public TestUtilRuntimeException(String message, Throwable cause) {
     }
   }

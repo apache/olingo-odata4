@@ -28,8 +28,6 @@ import java.util.List;
 
 public class XMLMetadataImpl extends AbstractXMLMetadata implements XMLMetadata {
 
-  private static final long serialVersionUID = -7765327879691528010L;
-
   public XMLMetadataImpl(final EdmxImpl edmx) {
     super(edmx);
   }

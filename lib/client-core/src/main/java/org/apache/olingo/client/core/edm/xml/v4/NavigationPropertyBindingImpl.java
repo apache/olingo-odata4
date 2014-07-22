@@ -24,8 +24,6 @@ import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
 
 public class NavigationPropertyBindingImpl extends AbstractEdmItem implements NavigationPropertyBinding {
 
-  private static final long serialVersionUID = -6026065326479176817L;
-
   @JsonProperty(value = "Path", required = true)
   private String path;
 

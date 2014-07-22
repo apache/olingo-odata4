@@ -25,8 +25,6 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
 @JsonDeserialize(using = PropertyDeserializer.class)
 public abstract class AbstractProperty extends AbstractEdmItem implements CommonProperty {
 
-  private static final long serialVersionUID = -6004492361142315153L;
-
   private String name;
 
   private String type;

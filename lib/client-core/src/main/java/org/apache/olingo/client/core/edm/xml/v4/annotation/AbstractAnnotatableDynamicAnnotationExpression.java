@@ -27,8 +27,6 @@ import java.util.List;
 abstract class AbstractAnnotatableDynamicAnnotationExpression
         extends AbstractDynamicAnnotationExpression implements Annotatable {
 
-  private static final long serialVersionUID = -8117155475397749038L;
-
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override

@@ -34,8 +34,6 @@ import java.util.Map;
 public abstract class AbstractODataComplexValue<OP extends CommonODataProperty>
     extends AbstractODataValue implements ODataComplexValue<OP> {
 
-  private static final long serialVersionUID = -1878555027714020431L;
-
   /**
    * Complex type fields.
    */

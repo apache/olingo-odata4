@@ -31,7 +31,6 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 import java.io.IOException;
 
-@SuppressWarnings("rawtypes")
 public class EntityContainerDeserializer extends AbstractEdmDeserializer<AbstractEntityContainer> {
 
   @Override

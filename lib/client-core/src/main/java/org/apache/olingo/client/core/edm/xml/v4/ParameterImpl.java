@@ -28,8 +28,6 @@ import java.util.List;
 
 public class ParameterImpl extends AbstractParameter implements Parameter {
 
-  private static final long serialVersionUID = -1067642515116697747L;
-
   private SRID srid;
 
   private final List<Annotation> annotations = new ArrayList<Annotation>();

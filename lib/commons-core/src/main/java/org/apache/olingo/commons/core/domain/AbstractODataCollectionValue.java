@@ -35,8 +35,6 @@ import java.util.List;
 public abstract class AbstractODataCollectionValue<OV extends ODataValue>
     extends AbstractODataValue implements ODataCollectionValue<OV> {
 
-  private static final long serialVersionUID = -3665659846001987187L;
-
   /**
    * Values.
    */

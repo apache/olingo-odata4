@@ -31,8 +31,6 @@ import java.util.List;
 @JsonDeserialize(using = NavigationPropertyDeserializer.class)
 public class NavigationPropertyImpl extends AbstractNavigationProperty implements NavigationProperty {
 
-  private static final long serialVersionUID = -2889417442815563307L;
-
   private String type;
 
   private boolean nullable = true;
