@@ -74,12 +74,12 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   public void createEmployee() {
     final Integer id = 101;
 
-    final Employee employee = getService().newEntityInstance(Employee.class);
+    final Employee employee = getContainer().newEntityInstance(Employee.class);
     employee.setPersonID(id);
     employee.setFirstName("Fabio");
     employee.setLastName("Martelli");
 
-    PrimitiveCollection<String> value = getService().newPrimitiveCollection(String.class);
+    PrimitiveCollection<String> value = getContainer().newPrimitiveCollection(String.class);
     value.add("fabio.martelli@tirasa.net");
     employee.setEmails(value);
 
@@ -87,13 +87,13 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     date.clear();
     date.set(2011, 3, 4, 9, 0, 0);
     employee.setDateHired(new Timestamp(date.getTimeInMillis()));
-    final Address homeAddress = getService().newComplexInstance(HomeAddress.class);
+    final Address homeAddress = getContainer().newComplexInstance(HomeAddress.class);
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");
     employee.setHomeAddress(homeAddress);
 
-    value = getService().newPrimitiveCollection(String.class);
+    value = getContainer().newPrimitiveCollection(String.class);
     value.add("3204725072");
     value.add("08569930");
     employee.setNumbers(value);
@@ -134,29 +134,29 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   public void createWithNavigation() {
     final Integer id = 101;
 
-    final Customer customer = getService().newEntityInstance(Customer.class);
+    final Customer customer = getContainer().newEntityInstance(Customer.class);
     customer.setPersonID(id);
     customer.setPersonID(id);
     customer.setFirstName("Fabio");
     customer.setLastName("Martelli");
     customer.setCity("Pescara");
 
-    PrimitiveCollection<String> value = getService().newPrimitiveCollection(String.class);
+    PrimitiveCollection<String> value = getContainer().newPrimitiveCollection(String.class);
     value.add("fabio.martelli@tirasa.net");
     customer.setEmails(value);
 
-    Address homeAddress = getService().newComplexInstance(HomeAddress.class);
+    Address homeAddress = getContainer().newComplexInstance(HomeAddress.class);
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");
     customer.setHomeAddress(homeAddress);
 
-    value = getService().newPrimitiveCollection(String.class);
+    value = getContainer().newPrimitiveCollection(String.class);
     value.add("3204725072");
     value.add("08569930");
     customer.setNumbers(value);
 
-    final OrderCollection orders = getService().newEntityCollection(OrderCollection.class);
+    final OrderCollection orders = getContainer().newEntityCollection(OrderCollection.class);
     orders.add(getContainer().getOrders().getByKey(8));
     customer.setOrders(orders);
 
@@ -185,7 +185,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     // -------------------------------
     // Create a new order
     // -------------------------------
-    Order order = getService().newEntityInstance(Order.class);
+    Order order = getContainer().newEntityInstance(Order.class);
     order.setOrderID(id);
 
     final Calendar orderDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -195,7 +195,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     order.setShelfLife(BigDecimal.TEN);
 
-    PrimitiveCollection<BigDecimal> osl = getService().newPrimitiveCollection(BigDecimal.class);
+    PrimitiveCollection<BigDecimal> osl = getContainer().newPrimitiveCollection(BigDecimal.class);
     osl.add(BigDecimal.TEN.negate());
     osl.add(BigDecimal.TEN);
     order.setOrderShelfLifes(osl);
@@ -204,29 +204,29 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     // -------------------------------
     // Create a new customer
     // -------------------------------
-    final Customer customer = getService().newEntityInstance(Customer.class);
+    final Customer customer = getContainer().newEntityInstance(Customer.class);
     customer.setPersonID(id);
     customer.setPersonID(id);
     customer.setFirstName("Fabio");
     customer.setLastName("Martelli");
     customer.setCity("Pescara");
 
-    PrimitiveCollection<String> value = getService().newPrimitiveCollection(String.class);
+    PrimitiveCollection<String> value = getContainer().newPrimitiveCollection(String.class);
     value.add("fabio.martelli@tirasa.net");
     customer.setEmails(value);
 
-    final Address homeAddress = getService().newComplexInstance(HomeAddress.class);
+    final Address homeAddress = getContainer().newComplexInstance(HomeAddress.class);
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");
     customer.setHomeAddress(homeAddress);
 
-    value = getService().newPrimitiveCollection(String.class);
+    value = getContainer().newPrimitiveCollection(String.class);
     value.add("3204725072");
     value.add("08569930");
     customer.setNumbers(value);
 
-    final OrderCollection orders = getService().newEntityCollection(OrderCollection.class);
+    final OrderCollection orders = getContainer().newEntityCollection(OrderCollection.class);
     orders.add(order);
     customer.setOrders(orders);
     // -------------------------------
@@ -276,7 +276,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void multiKey() {
-    OrderDetail details = getService().newEntityInstance(OrderDetail.class);
+    OrderDetail details = getContainer().newEntityInstance(OrderDetail.class);
     details.setOrderID(8);
     details.setProductID(1);
     details.setQuantity(100);
@@ -308,7 +308,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void deepInsert() {
-    Product product = getService().newEntityInstance(Product.class);
+    Product product = getContainer().newEntityInstance(Product.class);
     product.setProductID(12);
     product.setName("Latte");
     product.setQuantityPerUnit("100g Bag");
@@ -318,18 +318,18 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     product.setUserAccess(AccessLevel.Execute);
     product.setSkinColor(Color.Blue);
 
-    PrimitiveCollection<Color> value = getService().newPrimitiveCollection(Color.class);
+    PrimitiveCollection<Color> value = getContainer().newPrimitiveCollection(Color.class);
     value.add(Color.Red);
     value.add(Color.Green);
     product.setCoverColors(value);
 
-    final ProductDetail detail = getService().newEntityInstance(ProductDetail.class);
+    final ProductDetail detail = getContainer().newEntityInstance(ProductDetail.class);
     detail.setProductID(product.getProductID());
     detail.setProductDetailID(12);
     detail.setProductName("LatteHQ");
     detail.setDescription("High-Quality Milk");
 
-    final ProductDetailCollection detailCollection = getService().newEntityCollection(ProductDetailCollection.class);
+    final ProductDetailCollection detailCollection = getContainer().newEntityCollection(ProductDetailCollection.class);
     detailCollection.add(detail);
 
     product.setDetails(detailCollection);
@@ -348,7 +348,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
             getContainer().getAccounts().getByKey(101).getMyPaymentInstruments().execute();
     final int sizeBefore = instruments.size();
 
-    final PaymentInstrument instrument = getService().newEntityInstance(PaymentInstrument.class);
+    final PaymentInstrument instrument = getContainer().newEntityInstance(PaymentInstrument.class);
     instruments.add(instrument);
 
     final int id = RandomUtils.nextInt(101999, 105000);

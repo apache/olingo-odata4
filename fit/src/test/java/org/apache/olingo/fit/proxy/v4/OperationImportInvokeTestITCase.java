@@ -50,7 +50,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void getPerson() {
-    final Address address = service.newComplexInstance(HomeAddress.class);
+    final Address address = container.newComplexInstance(HomeAddress.class);
     address.setStreet("1 Microsoft Way");
     address.setPostalCode("98052");
     address.setCity("London");
@@ -79,7 +79,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void resetBossAddress() {
-    final Address address = service.newComplexInstance(HomeAddress.class);
+    final Address address = container.newComplexInstance(HomeAddress.class);
     address.setStreet("Via Le Mani Dal Naso, 123");
     address.setPostalCode("Tollo");
     address.setCity("66010");
@@ -92,7 +92,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void bossEmails() {
-    PrimitiveCollection<String> be = service.newPrimitiveCollection(String.class);
+    PrimitiveCollection<String> be = container.newPrimitiveCollection(String.class);
     be.add("first@olingo.apache.org");
     be.add("second@olingo.apache.org");
 

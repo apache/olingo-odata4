@@ -26,6 +26,11 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.ComplexCollection;
+import org.apache.olingo.ext.proxy.api.ComplexType;
+import org.apache.olingo.ext.proxy.api.EntityCollection;
+import org.apache.olingo.ext.proxy.api.EntityType;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 #foreach($ns in $namespaces)
 import #if($basePackage)${basePackage}.#end${ns}.types.*;
 #end
@@ -103,5 +108,15 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
 
   #end
   #end
-  }   
+  }
+
+  <NE extends EntityType> NE newEntityInstance(Class<NE> ref);
+
+  <T extends EntityType, NEC extends EntityCollection<T>> NEC newEntityCollection(Class<NEC> ref);
+
+  <NE extends ComplexType> NE newComplexInstance(Class<NE> ref);
+
+  <T extends ComplexType, NEC extends ComplexCollection<T>> NEC newComplexCollection(Class<NEC> ref);
+
+  <T extends Serializable, NEC extends PrimitiveCollection<T>> NEC newPrimitiveCollection(Class<T> ref);
 }

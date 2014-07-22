@@ -96,7 +96,7 @@ public abstract class AbstractTestITCase {
           final InMemoryEntities container, final AbstractService<EdmEnabledODataClient> service) {
 
     // Create order ....
-    final Order order = service.newEntityInstance(Order.class);
+    final Order order = container.newEntityInstance(Order.class);
     order.setOrderID(105);
 
     final Calendar orderDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -106,7 +106,7 @@ public abstract class AbstractTestITCase {
 
     order.setShelfLife(BigDecimal.ZERO);
 
-    final PrimitiveCollection<BigDecimal> value = service.newPrimitiveCollection(BigDecimal.class);
+    final PrimitiveCollection<BigDecimal> value = container.newPrimitiveCollection(BigDecimal.class);
     value.add(BigDecimal.TEN.negate());
     value.add(BigDecimal.TEN);
     order.setOrderShelfLifes(value);

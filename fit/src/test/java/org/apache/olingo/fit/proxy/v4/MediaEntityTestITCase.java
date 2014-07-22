@@ -92,7 +92,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   public void create() throws IOException {
     final String random = RandomStringUtils.random(124, "abcdefghijklmnopqrstuvwxyz");
 
-    final Advertisement adv = getService().newEntityInstance(Advertisement.class);
+    final Advertisement adv = getContainer().newEntityInstance(Advertisement.class);
     adv.uploadStream(new EdmStreamValue("application/octet-stream", IOUtils.toInputStream(random)));
     adv.setAirDate(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 

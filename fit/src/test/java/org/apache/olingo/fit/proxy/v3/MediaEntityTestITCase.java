@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3;
 
 import org.apache.commons.io.IOUtils;
@@ -84,7 +83,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void create() throws IOException {
-    Car car = service.newEntityInstance(Car.class);
+    Car car = container.newEntityInstance(Car.class);
 
     final String TO_BE_UPDATED = "buffered stream sample (" + System.currentTimeMillis() + ")";
     InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);

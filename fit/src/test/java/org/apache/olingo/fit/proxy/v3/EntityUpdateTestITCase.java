@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -73,11 +72,11 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void patchLink() {
-    Order order = service.newEntityInstance(Order.class);
+    Order order = container.newEntityInstance(Order.class);
     order.setOrderId(400);
     order.setCustomerId(-9);
 
-    OrderCollection orders = service.newEntityCollection(OrderCollection.class);
+    OrderCollection orders = container.newEntityCollection(OrderCollection.class);
     orders.add(order);
 
     Customer customer = container.getCustomer().getByKey(-9);

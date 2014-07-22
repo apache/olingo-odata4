@@ -95,19 +95,19 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   @Test
   public void patchLink() {
     // 1. create customer
-    Customer customer = getService().newEntityInstance(Customer.class);
+    Customer customer = getContainer().newEntityInstance(Customer.class);
     customer.setPersonID(977);
     customer.setFirstName("Test");
     customer.setLastName("Test");
 
-    final Address homeAddress = getService().newComplexInstance(CompanyAddress.class);
+    final Address homeAddress = getContainer().newComplexInstance(CompanyAddress.class);
     homeAddress.setStreet("V.le Gabriele D'Annunzio");
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65127");
     customer.setHomeAddress(homeAddress);
 
-    customer.setNumbers(getService().newPrimitiveCollection(String.class)); // empty
-    customer.setEmails(getService().newPrimitiveCollection(String.class)); // empty
+    customer.setNumbers(getContainer().newPrimitiveCollection(String.class)); // empty
+    customer.setEmails(getContainer().newPrimitiveCollection(String.class)); // empty
     customer.setCity("Pescara");
 
     final Calendar birthday = Calendar.getInstance();
@@ -120,10 +120,10 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     // 2. create order and set it to customer
     final int orderId = RandomUtils.nextInt(400, 410);
 
-    Order order = getService().newEntityInstance(Order.class);
+    Order order = getContainer().newEntityInstance(Order.class);
     order.setOrderID(orderId);
 
-    final OrderCollection orders = getService().newEntityCollection(OrderCollection.class);
+    final OrderCollection orders = getContainer().newEntityCollection(OrderCollection.class);
     orders.add(order);
 
     customer.setOrders(orders);

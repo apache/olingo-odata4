@@ -94,12 +94,12 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void resetAddress() {
-    final Address address = service.newComplexInstance(HomeAddress.class);
+    final Address address = container.newComplexInstance(HomeAddress.class);
     address.setStreet("Via Le Mani Dal Naso, 123");
     address.setPostalCode("Tollo");
     address.setCity("66010");
 
-    final AddressCollection ac = service.newComplexCollection(AddressCollection.class);
+    final AddressCollection ac = container.newComplexCollection(AddressCollection.class);
     ac.add(address);
 
     final Person person = container.getCustomers().getByKey(2).operations().resetAddress(ac, 0);

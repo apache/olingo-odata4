@@ -57,19 +57,19 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void createDelete() {
-    final Customer customer = service.newEntityInstance(Customer.class);
+    final Customer customer = container.newEntityInstance(Customer.class);
     customer.setPersonID(976);
     customer.setFirstName("Test");
     customer.setLastName("Test");
 
-    final Address homeAddress = service.newComplexInstance(CompanyAddress.class);
+    final Address homeAddress = container.newComplexInstance(CompanyAddress.class);
     homeAddress.setStreet("V.le Gabriele D'Annunzio");
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65127");
     customer.setHomeAddress(homeAddress);
 
-    customer.setNumbers(service.newPrimitiveCollection(String.class)); // empty
-    customer.setEmails(service.newPrimitiveCollection(String.class)); // empty
+    customer.setNumbers(container.newPrimitiveCollection(String.class)); // empty
+    customer.setEmails(container.newPrimitiveCollection(String.class)); // empty
     customer.setCity("Pescara");
 
     final Calendar birthday = Calendar.getInstance();

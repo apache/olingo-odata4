@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
@@ -60,11 +61,11 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void checkOpenTypeEntityTypesExist() {
-    assertTrue(otservice.newEntityInstance(Row.class).getClass().getInterfaces()[0].
+    assertTrue(otcontainer.newEntityInstance(Row.class).getClass().getInterfaces()[0].
             getAnnotation(EntityType.class).openType());
-    assertTrue(otservice.newEntityInstance(RowIndex.class).getClass().getInterfaces()[0].
+    assertTrue(otcontainer.newEntityInstance(RowIndex.class).getClass().getInterfaces()[0].
             getAnnotation(EntityType.class).openType());
-    assertTrue(otservice.newEntityInstance(IndexedRow.class).getClass().getInterfaces()[0].
+    assertTrue(otcontainer.newEntityInstance(IndexedRow.class).getClass().getInterfaces()[0].
             getAnnotation(EntityType.class).openType());
     otservice.getContext().detachAll();
   }
@@ -83,7 +84,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   public void cud() throws ParseException {
     final Integer id = 1426;
 
-    RowIndex rowIndex = otservice.newEntityInstance(RowIndex.class);
+    RowIndex rowIndex = otcontainer.newEntityInstance(RowIndex.class);
     rowIndex.setId(id);
     rowIndex.addAdditionalProperty("aString", "string");
     rowIndex.addAdditionalProperty("aBoolean", true);
@@ -91,7 +92,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     rowIndex.addAdditionalProperty("aByte", Byte.MAX_VALUE);
     rowIndex.addAdditionalProperty("aDate", Calendar.getInstance());
 
-    final ContactDetails contact = otservice.newComplexInstance(ContactDetails.class);
+    final ContactDetails contact = otcontainer.newComplexInstance(ContactDetails.class);
     contact.setFirstContacted("text".getBytes());
 
     Calendar cal = Calendar.getInstance();
@@ -116,7 +117,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     rowIndex.addAdditionalProperty("aContact", contact);
     rowIndex.addAdditionalProperty("aColor", Color.Green);
 
-    final AccountInfo ai = otservice.newComplexInstance(AccountInfo.class);
+    final AccountInfo ai = otcontainer.newComplexInstance(AccountInfo.class);
     ai.setFirstName("Fabio");
     ai.setLastName("Martelli");
     ai.addAdditionalProperty("email", "fabio.martelli@tirasa.net");

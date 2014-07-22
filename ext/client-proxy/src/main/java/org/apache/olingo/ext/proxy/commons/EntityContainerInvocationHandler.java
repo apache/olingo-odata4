@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
+import java.io.Serializable;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
@@ -26,6 +27,12 @@ import org.apache.olingo.ext.proxy.api.annotations.Singleton;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import org.apache.olingo.ext.proxy.api.ComplexCollection;
+import org.apache.olingo.ext.proxy.api.ComplexType;
+import org.apache.olingo.ext.proxy.api.EntityCollection;
+import org.apache.olingo.ext.proxy.api.EntityType;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
 public final class EntityContainerInvocationHandler extends AbstractInvocationHandler {
 
@@ -43,8 +50,8 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
     return instance;
   }
 
-  private EntityContainerInvocationHandler(final Class<?> ref, final AbstractService<?> factory) {
-    super(factory);
+  private EntityContainerInvocationHandler(final Class<?> ref, final AbstractService<?> service) {
+    super(service);
 
     final Annotation annotation = ref.getAnnotation(EntityContainer.class);
     if (!(annotation instanceof EntityContainer)) {
@@ -107,5 +114,50 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
 
       throw new NoSuchMethodException(method.getName());
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  public <NE extends EntityType> NE newEntityInstance(final Class<NE> ref) {
+    final EntityInvocationHandler handler = EntityInvocationHandler.getInstance(ref, getService());
+
+    return (NE) Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] {ref},
+            handler);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T extends EntityType, NEC extends EntityCollection<T>> NEC newEntityCollection(final Class<NEC> ref) {
+    return (NEC) Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] {ref},
+            new EntityCollectionInvocationHandler<T>(getService(), ref));
+  }
+
+  @SuppressWarnings("unchecked")
+  public <NE extends ComplexType> NE newComplexInstance(final Class<NE> ref) {
+    return (NE) Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] {ref},
+            ComplexInvocationHandler.getInstance(ref, getService()));
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T extends ComplexType, NEC extends ComplexCollection<T>> NEC newComplexCollection(final Class<NEC> ref) {
+    final Class<T> itemRef = (Class<T>) ClassUtils.extractTypeArg(ref, ComplexCollection.class);
+
+    return (NEC) Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] {ref},
+            new ComplexCollectionInvocationHandler<T>(getService(), itemRef));
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T extends Serializable, NEC extends PrimitiveCollection<T>> NEC newPrimitiveCollection(final Class<T> ref) {
+
+    return (NEC) Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] {PrimitiveCollection.class},
+            new PrimitiveCollectionInvocationHandler<T>(getService(), ref));
   }
 }

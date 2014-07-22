@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -34,6 +33,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 //CHECKSTYLE:ON (Maven checkstyle)
+
 /**
  * This is the unit test class to check entity create operations.
  */
@@ -80,7 +80,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   public void createEmployee() {
     final Integer id = 101;
 
-    final Employee employee = service.newEntityInstance(Employee.class);
+    final Employee employee = container.newEntityInstance(Employee.class);
     employee.setPersonId(id);
     employee.setName("sample employee from proxy");
     employee.setManagersPersonId(-9918);
@@ -144,13 +144,13 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     final String sampleName = "sample customer from proxy with back navigation";
     final Integer id = 102;
 
-    Order order = service.newEntityInstance(Order.class);
+    Order order = container.newEntityInstance(Order.class);
     order.setCustomerId(id);
     order.setOrderId(id); // same id ...
 
     final Customer customer = getSampleCustomerProfile(id, sampleName, container);
 
-    final OrderCollection orders = service.newEntityCollection(OrderCollection.class);
+    final OrderCollection orders = container.newEntityCollection(OrderCollection.class);
     orders.add(order);
 
     customer.setOrders(orders);
@@ -194,7 +194,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void multiKey() {
-    Message message = service.newEntityInstance(Message.class);
+    Message message = container.newEntityInstance(Message.class);
     message.setMessageId(100);
     message.setFromUsername("fromusername");
     message.setToUsername("myusername");

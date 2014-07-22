@@ -184,7 +184,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
   @Test
   public void createDelete() {
     // Create order ....
-    final Order order = getService().newEntityInstance(Order.class);
+    final Order order = getContainer().newEntityInstance(Order.class);
     order.setOrderID(1105);
 
     final Calendar orderDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -194,7 +194,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
     order.setShelfLife(BigDecimal.ZERO);
 
-    final PrimitiveCollection<BigDecimal> osl = getService().newPrimitiveCollection(BigDecimal.class);
+    final PrimitiveCollection<BigDecimal> osl = getContainer().newPrimitiveCollection(BigDecimal.class);
     osl.add(BigDecimal.TEN.negate());
     osl.add(BigDecimal.TEN);
 
@@ -272,7 +272,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
   @Test
   public void getProductDetails() {
-    Product product = getService().newEntityInstance(Product.class);
+    Product product = getContainer().newEntityInstance(Product.class);
     product.setProductID(1012);
     product.setName("Latte");
     product.setQuantityPerUnit("100g Bag");
@@ -282,19 +282,19 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     product.setUserAccess(AccessLevel.Execute);
     product.setSkinColor(Color.Blue);
 
-    final PrimitiveCollection<Color> cc = getService().newPrimitiveCollection(Color.class);
+    final PrimitiveCollection<Color> cc = getContainer().newPrimitiveCollection(Color.class);
     cc.add(Color.Red);
     cc.add(Color.Green);
 
     product.setCoverColors(cc);
 
-    final ProductDetail detail = getService().newEntityInstance(ProductDetail.class);
+    final ProductDetail detail = getContainer().newEntityInstance(ProductDetail.class);
     detail.setProductID(product.getProductID());
     detail.setProductDetailID(1012);
     detail.setProductName("LatteHQ");
     detail.setDescription("High-Quality Milk");
 
-    final ProductDetailCollection detailCollection = getService().newEntityCollection(ProductDetailCollection.class);
+    final ProductDetailCollection detailCollection = getContainer().newEntityCollection(ProductDetailCollection.class);
     detailCollection.add(detail);
 
     product.setDetails(detailCollection);

@@ -88,7 +88,7 @@ public abstract class AbstractTestITCase {
           final String sampleName,
           final DefaultContainer container) {
 
-    final Customer customer = service.newEntityInstance(Customer.class);
+    final Customer customer = container.newEntityInstance(Customer.class);
 
     // add name attribute
     customer.setName(sampleName);
@@ -96,36 +96,36 @@ public abstract class AbstractTestITCase {
     // add key attribute
     customer.setCustomerId(id);
 
-    final ContactDetails cd = service.newComplexInstance(ContactDetails.class); // PrimaryContactInfo
+    final ContactDetails cd = container.newComplexInstance(ContactDetails.class); // PrimaryContactInfo
 
-    PrimitiveCollection<String> value = service.newPrimitiveCollection(String.class);
+    PrimitiveCollection<String> value = container.newPrimitiveCollection(String.class);
     value.add("alternative1");
     value.add("alternative2");
     cd.setAlternativeNames(value);
 
-    value = service.newPrimitiveCollection(String.class);
+    value = container.newPrimitiveCollection(String.class);
     value.add("myname@mydomain.org");
     cd.setEmailBag(value);
 
-    cd.setMobilePhoneBag(service.newComplexCollection(PhoneCollection.class)); // empty
+    cd.setMobilePhoneBag(container.newComplexCollection(PhoneCollection.class)); // empty
     customer.setPrimaryContactInfo(cd);
 
-    final Aliases aliases = service.newComplexInstance(Aliases.class);
+    final Aliases aliases = container.newComplexInstance(Aliases.class);
 
-    value = service.newPrimitiveCollection(String.class);
+    value = container.newPrimitiveCollection(String.class);
     value.add("myAlternativeName");
     aliases.setAlternativeNames(value);
     cd.setContactAlias(aliases);
 
-    final ContactDetails bcd = service.newComplexInstance(ContactDetails.class); // BackupContactInfo;
-    value = service.newPrimitiveCollection(String.class);
+    final ContactDetails bcd = container.newComplexInstance(ContactDetails.class); // BackupContactInfo;
+    value = container.newPrimitiveCollection(String.class);
     value.add("alternative3");
     value.add("alternative4");
     bcd.setAlternativeNames(value);
-    bcd.setEmailBag(service.newPrimitiveCollection(String.class)); // empty
-    bcd.setMobilePhoneBag(service.newComplexCollection(PhoneCollection.class)); // empty
+    bcd.setEmailBag(container.newPrimitiveCollection(String.class)); // empty
+    bcd.setMobilePhoneBag(container.newComplexCollection(PhoneCollection.class)); // empty
 
-    final ContactDetailsCollection bci = service.newComplexCollection(ContactDetailsCollection.class);
+    final ContactDetailsCollection bci = container.newComplexCollection(ContactDetailsCollection.class);
     bci.add(bcd);
     customer.setBackupContactInfo(bci);
 

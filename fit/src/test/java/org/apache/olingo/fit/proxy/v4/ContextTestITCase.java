@@ -41,15 +41,15 @@ import org.junit.Test;
 public class ContextTestITCase extends AbstractTestITCase {
 
   private void continueOnError(final Service<EdmEnabledODataClient> service, final InMemoryEntities container) {
-    final Person person = service.newEntityInstance(Person.class);
+    final Person person = container.newEntityInstance(Person.class);
     container.getPeople().add(person);
 
-    final Employee employee = service.newEntityInstance(Employee.class);
+    final Employee employee = container.newEntityInstance(Employee.class);
     employee.setPersonID(199);
     employee.setFirstName("Fabio");
     employee.setLastName("Martelli");
 
-    final PrimitiveCollection<String> emails = service.newPrimitiveCollection(String.class);
+    final PrimitiveCollection<String> emails = container.newPrimitiveCollection(String.class);
     emails.add("fabio.martelli@tirasa.net");
 
     employee.setEmails(emails);
@@ -57,13 +57,13 @@ public class ContextTestITCase extends AbstractTestITCase {
     date.clear();
     date.set(2011, 3, 4, 9, 0, 0);
     employee.setDateHired(new Timestamp(date.getTimeInMillis()));
-    final Address homeAddress = service.newComplexInstance(Address.class);
+    final Address homeAddress = container.newComplexInstance(Address.class);
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");
     employee.setHomeAddress(homeAddress);
 
-    final PrimitiveCollection<String> numbers = service.newPrimitiveCollection(String.class);
+    final PrimitiveCollection<String> numbers = container.newPrimitiveCollection(String.class);
     numbers.add("3204725072");
     numbers.add("08569930");
     employee.setNumbers(numbers);

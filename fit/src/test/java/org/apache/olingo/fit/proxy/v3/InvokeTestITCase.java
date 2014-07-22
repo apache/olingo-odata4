@@ -89,7 +89,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     // 0. create an employee
     final Integer id = 101;
 
-    Employee employee = service.newEntityInstance(Employee.class);
+    Employee employee = container.newEntityInstance(Employee.class);
     employee.setPersonId(id);
     employee.setName("sample employee from proxy");
     employee.setManagersPersonId(-9918);
@@ -144,11 +144,11 @@ public class InvokeTestITCase extends AbstractTestITCase {
     // 0. create a product
     final Integer id = 101;
 
-    Product product = service.newEntityInstance(Product.class);
+    Product product = container.newEntityInstance(Product.class);
     product.setProductId(id);
     product.setDescription("New product");
 
-    final Dimensions origDimensions = service.newComplexInstance(Dimensions.class);
+    final Dimensions origDimensions = container.newComplexInstance(Dimensions.class);
     origDimensions.setDepth(BigDecimal.ZERO);
     origDimensions.setHeight(BigDecimal.ZERO);
     origDimensions.setWidth(BigDecimal.ZERO);
@@ -166,7 +166,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     try {
       // 1. invoke action bound to the product just created
-      final Dimensions newDimensions = service.newComplexInstance(Dimensions.class);
+      final Dimensions newDimensions = container.newComplexInstance(Dimensions.class);
       newDimensions.setDepth(BigDecimal.ONE);
       newDimensions.setHeight(BigDecimal.ONE);
       newDimensions.setWidth(BigDecimal.ONE);
@@ -198,10 +198,10 @@ public class InvokeTestITCase extends AbstractTestITCase {
     purchaseDate.set(Calendar.MONTH, 0);
     purchaseDate.set(Calendar.DAY_OF_MONTH, 1);
 
-    ComputerDetail computerDetail = service.newEntityInstance(ComputerDetail.class);
+    ComputerDetail computerDetail = container.newEntityInstance(ComputerDetail.class);
     computerDetail.setComputerDetailId(id);
 
-    final PrimitiveCollection<String> sb = service.newPrimitiveCollection(String.class);
+    final PrimitiveCollection<String> sb = container.newPrimitiveCollection(String.class);
     sb.add("First spec");
     computerDetail.setSpecificationsBag(sb);
 
@@ -218,7 +218,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     assertEquals(purchaseDate.getTimeInMillis(), computerDetail.getPurchaseDate().getTime());
 
     try {
-      final PrimitiveCollection<String> cds = service.newPrimitiveCollection(String.class);
+      final PrimitiveCollection<String> cds = container.newPrimitiveCollection(String.class);
       cds.add("Second spec");
 
       // 1. invoke action bound to the computer detail just created

@@ -16,10 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
+import org.apache.olingo.ext.proxy.api.ComplexCollection;
+import org.apache.olingo.ext.proxy.api.ComplexType;
+import org.apache.olingo.ext.proxy.api.EntityCollection;
+import org.apache.olingo.ext.proxy.api.EntityType;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import java.io.Serializable;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV3")
@@ -40,5 +47,15 @@ public interface DefaultContainer extends PersistenceManager {
 
   public interface Operations {
   
-    }   
+    }
+
+  <NE extends EntityType> NE newEntityInstance(Class<NE> ref);
+
+  <T extends EntityType, NEC extends EntityCollection<T>> NEC newEntityCollection(Class<NEC> ref);
+
+  <NE extends ComplexType> NE newComplexInstance(Class<NE> ref);
+
+  <T extends ComplexType, NEC extends ComplexCollection<T>> NEC newComplexCollection(Class<NEC> ref);
+
+  <T extends Serializable, NEC extends PrimitiveCollection<T>> NEC newPrimitiveCollection(Class<T> ref);
 }

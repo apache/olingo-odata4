@@ -54,8 +54,8 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void attachDetachNewEntity() {
-    final Customer customer1 = service.newEntityInstance(Customer.class);
-    final Customer customer2 = service.newEntityInstance(Customer.class);
+    final Customer customer1 = container.newEntityInstance(Customer.class);
+    final Customer customer2 = container.newEntityInstance(Customer.class);
 
     final EntityInvocationHandler source1 =
             (EntityInvocationHandler) Proxy.getInvocationHandler(customer1);
@@ -124,7 +124,7 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void linkTargetExisting() {
-    final Customer customer = service.newEntityInstance(Customer.class);
+    final Customer customer = container.newEntityInstance(Customer.class);
     final CustomerInfo customerInfo = container.getCustomerInfo().getByKey(11);
 
     customer.setInfo(customerInfo);
@@ -151,7 +151,7 @@ public class ContextTestITCase extends AbstractTestITCase {
   public void linkSourceExisting() {
     final Customer customer = container.getCustomer().getByKey(-10);
 
-    final CustomerInfo customerInfo = service.newEntityInstance(CustomerInfo.class);
+    final CustomerInfo customerInfo = container.newEntityInstance(CustomerInfo.class);
 
     customer.setInfo(customerInfo);
     assertNotNull(customer.getInfo());
@@ -196,12 +196,12 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void linkEntitySet() {
-    final Customer customer = service.newEntityInstance(Customer.class);
+    final Customer customer = container.newEntityInstance(Customer.class);
 
-    final OrderCollection toBeLinked = service.newEntityCollection(OrderCollection.class);
-    toBeLinked.add(service.newEntityInstance(Order.class));
-    toBeLinked.add(service.newEntityInstance(Order.class));
-    toBeLinked.add(service.newEntityInstance(Order.class));
+    final OrderCollection toBeLinked = container.newEntityCollection(OrderCollection.class);
+    toBeLinked.add(container.newEntityInstance(Order.class));
+    toBeLinked.add(container.newEntityInstance(Order.class));
+    toBeLinked.add(container.newEntityInstance(Order.class));
 
     customer.setOrders(toBeLinked);
     assertNotNull(customer.getOrders());
@@ -236,24 +236,24 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void addProperty() {
-    final Customer customer = service.newEntityInstance(Customer.class);
+    final Customer customer = container.newEntityInstance(Customer.class);
     customer.setCustomerId(100);
 
-    final ContactDetails cd = service.newComplexInstance(ContactDetails.class);
+    final ContactDetails cd = container.newComplexInstance(ContactDetails.class);
     customer.setPrimaryContactInfo(cd);
 
-    PrimitiveCollection<String> alternativeNames = service.newPrimitiveCollection(String.class);
+    PrimitiveCollection<String> alternativeNames = container.newPrimitiveCollection(String.class);
     alternativeNames.add("alternative1");
     alternativeNames.add("alternative2");
     cd.setAlternativeNames(alternativeNames);
 
-    final ContactDetails bcd = service.newComplexInstance(ContactDetails.class);
-    final ContactDetailsCollection bci = service.newComplexCollection(ContactDetailsCollection.class);
+    final ContactDetails bcd = container.newComplexInstance(ContactDetails.class);
+    final ContactDetailsCollection bci = container.newComplexCollection(ContactDetailsCollection.class);
     bci.add(bcd);
 
     customer.setBackupContactInfo(bci);
 
-    alternativeNames = service.newPrimitiveCollection(String.class);
+    alternativeNames = container.newPrimitiveCollection(String.class);
     alternativeNames.add("alternative3");
     alternativeNames.add("alternative4");
     bcd.setAlternativeNames(alternativeNames);
@@ -324,7 +324,7 @@ public class ContextTestITCase extends AbstractTestITCase {
   public void checkContextInCaseOfErrors() {
     service.getContext().entityContext().detachAll();
 
-    final Login login = service.newEntityInstance(Login.class);
+    final Login login = container.newEntityInstance(Login.class);
 
     final EntityInvocationHandler handler = (EntityInvocationHandler) Proxy.getInvocationHandler(login);
     assertFalse(service.getContext().entityContext().isAttached(handler));
@@ -366,7 +366,7 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   @Test
   public void flushTest() {
-    Customer customer = service.newEntityInstance(Customer.class);
+    Customer customer = container.newEntityInstance(Customer.class);
     customer.setCustomerId(300);
     customer.setName("samplename");
 
@@ -375,9 +375,9 @@ public class ContextTestITCase extends AbstractTestITCase {
     keys.add(-201);
     keys.add(-202);
 
-    final OrderCollection toBeLinked = service.newEntityCollection(OrderCollection.class);
+    final OrderCollection toBeLinked = container.newEntityCollection(OrderCollection.class);
     for (Integer key : keys) {
-      final Order order = service.newEntityInstance(Order.class);
+      final Order order = container.newEntityInstance(Order.class);
       order.setOrderId(key);
       order.setCustomerId(300);
       order.setCustomer(customer);
@@ -390,31 +390,31 @@ public class ContextTestITCase extends AbstractTestITCase {
     customerInfo.setInformation("some new info ...");
     customer.setInfo(customerInfo);
 
-    final ContactDetails cd = service.newComplexInstance(ContactDetails.class);
-    PrimitiveCollection<String> alternativeNames = service.newPrimitiveCollection(String.class);
+    final ContactDetails cd = container.newComplexInstance(ContactDetails.class);
+    PrimitiveCollection<String> alternativeNames = container.newPrimitiveCollection(String.class);
     alternativeNames.add("alternative1");
     alternativeNames.add("alternative2");
     cd.setAlternativeNames(alternativeNames);
 
-    final PrimitiveCollection<String> emailBag = service.newPrimitiveCollection(String.class);
+    final PrimitiveCollection<String> emailBag = container.newPrimitiveCollection(String.class);
     alternativeNames.add("myemail@mydomain.org");
     cd.setEmailBag(emailBag);
 
-    cd.setMobilePhoneBag(service.newComplexCollection(PhoneCollection.class)); // empty
+    cd.setMobilePhoneBag(container.newComplexCollection(PhoneCollection.class)); // empty
 
-    final ContactDetails bcd = service.newComplexInstance(ContactDetails.class);
+    final ContactDetails bcd = container.newComplexInstance(ContactDetails.class);
 
-    alternativeNames = service.newPrimitiveCollection(String.class);
+    alternativeNames = container.newPrimitiveCollection(String.class);
     alternativeNames.add("alternative3");
     alternativeNames.add("alternative4");
 
     bcd.setAlternativeNames(alternativeNames);
-    bcd.setEmailBag(service.newPrimitiveCollection(String.class));
-    bcd.setMobilePhoneBag(service.newComplexCollection(PhoneCollection.class)); // empty
+    bcd.setEmailBag(container.newPrimitiveCollection(String.class));
+    bcd.setMobilePhoneBag(container.newComplexCollection(PhoneCollection.class)); // empty
 
     customer.setPrimaryContactInfo(cd);
 
-    final ContactDetailsCollection bci = service.newComplexCollection(ContactDetailsCollection.class);
+    final ContactDetailsCollection bci = container.newComplexCollection(ContactDetailsCollection.class);
     bci.add(bcd);
 
     customer.setBackupContactInfo(bci);
