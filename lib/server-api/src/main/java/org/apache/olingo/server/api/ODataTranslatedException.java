@@ -36,6 +36,12 @@ public class ODataTranslatedException extends ODataException {
   private static final String BUNDLE_NAME = "i18n";
   private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
+  // MessageKeys
+  public static final String AMBIGUOUS_XHTTP_METHOD = "ODataTranslatedException.AMBIGUOUS_XHTTP_METHOD";
+  public static final String HTTP_METHOD_NOT_IMPLEMENTED = "ODataTranslatedException.HTTP_METHOD_NOT_IMPLEMENTED";
+  public static final String PROCESSOR_NOT_IMPLEMENTED = "ODataTranslatedException.PROCESSOR_NOT_IMPLEMENTED";
+  public static final String ODATA_VERSION_NOT_SUPPORTED = "ODataTranslatedException.ODATA_VERSION_NOT_SUPPORTED";
+
   private String messageKey;
   private Object[] parameters;
 
@@ -49,6 +55,10 @@ public class ODataTranslatedException extends ODataException {
     super(developmentMessage, cause);
     this.messageKey = messageKey;
     this.parameters = parameters;
+  }
+
+  public String getMessageKey() {
+    return messageKey;
   }
 
   public String getTranslatedMessage(final Locale locale) {

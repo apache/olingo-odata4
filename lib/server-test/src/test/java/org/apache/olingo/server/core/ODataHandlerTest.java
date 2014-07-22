@@ -34,6 +34,8 @@ import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
+
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
@@ -172,7 +174,7 @@ public class ODataHandlerTest {
     assertEquals(ODataServiceVersion.V40.toString(), response.getHeaders().get(HttpHeader.ODATA_VERSION));
   }
 
-  @Test(expected = Exception.class)
+  @Test
   public void testMaxVersionNotSupported() {
     ODataRequest request = new ODataRequest();
 
@@ -184,6 +186,7 @@ public class ODataHandlerTest {
     assertNotNull(response);
 
     assertEquals(ODataServiceVersion.V40.toString(), response.getHeaders().get(HttpHeader.ODATA_VERSION));
+    assertEquals(400, response.getStatusCode());
   }
 
 }

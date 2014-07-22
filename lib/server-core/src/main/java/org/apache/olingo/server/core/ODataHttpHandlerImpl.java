@@ -22,10 +22,12 @@ import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.processor.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,11 +54,32 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
   @Override
   public void process(final HttpServletRequest request, final HttpServletResponse response) {
-    ODataRequest odRequest = createODataRequest(request, 0);
-
-    ODataResponse odResponse = handler.process(odRequest);
+    ODataRequest odRequest = null;
+    ODataResponse odResponse = null;
+    try {
+      odRequest = createODataRequest(request, 0);
+      odResponse = handler.process(odRequest);
+      // ALL future methods after process must not throw exceptions!
+    } catch (Exception e) {
+      odResponse = handleException(e);
+    }
 
     convertToHttp(response, odResponse);
+  }
+
+  private ODataResponse handleException(Exception e) {
+    ODataResponse resp = new ODataResponse();
+    if (e instanceof ODataTranslatedException) {
+      ODataTranslatedException exp = (ODataTranslatedException) e;
+      if (exp.getMessageKey() == ODataTranslatedException.AMBIGUOUS_XHTTP_METHOD) {
+        resp.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
+      } else if (exp.getMessageKey() == ODataTranslatedException.HTTP_METHOD_NOT_IMPLEMENTED) {
+        resp.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
+      }
+    }
+    ODataExceptionHandler exceptionHandler = new ODataExceptionHandler();
+    exceptionHandler.handle(resp, e);
+    return resp;
   }
 
   static void convertToHttp(final HttpServletResponse response, final ODataResponse odResponse) {
@@ -91,7 +114,8 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  private ODataRequest createODataRequest(final HttpServletRequest httpRequest, final int split) {
+  private ODataRequest createODataRequest(final HttpServletRequest httpRequest, final int split)
+      throws ODataTranslatedException {
     try {
       ODataRequest odRequest = new ODataRequest();
 
@@ -106,9 +130,9 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  static void extractMethod(final ODataRequest odRequest, final HttpServletRequest httpRequest) {
+  static void extractMethod(final ODataRequest odRequest, final HttpServletRequest httpRequest)
+      throws ODataTranslatedException {
     try {
-
       HttpMethod httpRequestMethod = HttpMethod.valueOf(httpRequest.getMethod());
 
       if (httpRequestMethod == HttpMethod.POST) {
@@ -123,7 +147,8 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
           odRequest.setMethod(HttpMethod.valueOf(xHttpMethod));
         } else {
           if (!xHttpMethod.equalsIgnoreCase(xHttpMethodOverride)) {
-            throw new ODataRuntimeException("!!! HTTP 400 !!! Ambiguous X-HTTP-Methods!");
+            throw new ODataTranslatedException("Ambiguous X-HTTP-Methods",
+                ODataTranslatedException.AMBIGUOUS_XHTTP_METHOD, xHttpMethod, xHttpMethodOverride);
           }
           odRequest.setMethod(HttpMethod.valueOf(xHttpMethod));
         }
@@ -131,12 +156,12 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
         odRequest.setMethod(httpRequestMethod);
       }
     } catch (IllegalArgumentException e) {
-      throw new ODataRuntimeException("!!! HTTP 501 !!!");
+      throw new ODataTranslatedException("Invalid http method" + httpRequest.getMethod(),
+          ODataTranslatedException.HTTP_METHOD_NOT_IMPLEMENTED, httpRequest.getMethod());
     }
   }
 
   static void extractUri(final ODataRequest odRequest, final HttpServletRequest httpRequest, final int split) {
-
     String rawRequestUri = httpRequest.getRequestURL().toString();
 
     String rawODataPath;

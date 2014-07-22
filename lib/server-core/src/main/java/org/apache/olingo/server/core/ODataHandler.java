@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.server.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -27,6 +30,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.processor.CollectionProcessor;
 import org.apache.olingo.server.api.processor.DefaultProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
@@ -39,19 +43,14 @@ import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ODataHandler {
 
-  private final static Logger LOG = LoggerFactory.getLogger(ODataHandler.class);
-
   private final OData odata;
   private final Edm edm;
-  private Map<Class<? extends Processor>, Processor> processors = new HashMap<Class<? extends Processor>, Processor>();
+  private final ODataResponse response;
+  private final Map<Class<? extends Processor>, Processor> processors =
+      new HashMap<Class<? extends Processor>, Processor>();
 
   public ODataHandler(final OData server, final Edm edm) {
     odata = server;
@@ -59,12 +58,13 @@ public class ODataHandler {
 
     register(new DefaultProcessor());
     register(new DefaultRedirectProcessor());
+    response = new ODataResponse();
   }
 
   public ODataResponse process(final ODataRequest request) {
-    try {
-      ODataResponse response = new ODataResponse();
+    ContentType requestedContentType = null;
 
+    try {
       validateODataVersion(request, response);
 
       Parser parser = new Parser();
@@ -75,7 +75,6 @@ public class ODataHandler {
       UriValidator validator = new UriValidator();
       validator.validate(uriInfo, request.getMethod());
 
-      ContentType requestedContentType = null;
       switch (uriInfo.getKind()) {
       case metadata:
         MetadataProcessor mp = selectProcessor(MetadataProcessor.class);
@@ -105,16 +104,19 @@ public class ODataHandler {
       default:
         throw new ODataRuntimeException("not implemented");
       }
-
-      return response;
     } catch (Exception e) {
-      // TODO OData error message handling
-      throw new RuntimeException(e);
+      ODataExceptionHandler exceptionHandler = new ODataExceptionHandler();
+      exceptionHandler.handle(response, e);
+//    exceptionHandler.setRequestedContentType(requestedContentType);
+//    exceptionHandler.setRequestedLocale();
+//    exceptionHandler.setExceptionProcessor() or setExceptionCallback()
     }
+    return response;
   }
 
   private void
-      handleResourceDispatching(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo) {
+      handleResourceDispatching(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo)
+          throws ODataTranslatedException {
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
     ContentType requestedContentType = null;
@@ -175,31 +177,34 @@ public class ODataHandler {
     }
   }
 
-  private void validateODataVersion(final ODataRequest request, final ODataResponse response) {
+  private void validateODataVersion(final ODataRequest request, final ODataResponse response)
+      throws ODataTranslatedException {
     String maxVersion = request.getHeader(HttpHeader.ODATA_MAX_VERSION);
+    response.setHeader(HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
 
     if (maxVersion != null) {
       if (ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersion)) {
-        throw new ODataRuntimeException("400 Bad Request - ODataVersion not supported: " + maxVersion);
+        response.setStatusCode(400);
+        throw new ODataTranslatedException("ODataVersion not supported: " + maxVersion,
+            ODataTranslatedException.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
       }
     }
-
-    response.setHeader(HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
   }
 
-  private <T extends Processor> T selectProcessor(final Class<T> cls) {
+  private <T extends Processor> T selectProcessor(final Class<T> cls) throws ODataTranslatedException {
     @SuppressWarnings("unchecked")
     T p = (T) processors.get(cls);
 
     if (p == null) {
-      throw new ODataRuntimeException("Not implemented");
+      response.setStatusCode(501);
+      throw new ODataTranslatedException("Processor: " + cls.getName() + " not registered.",
+          ODataTranslatedException.PROCESSOR_NOT_IMPLEMENTED, cls.getName());
     }
 
     return p;
   }
 
   public void register(final Processor processor) {
-
     processor.init(odata, edm);
 
     for (Class<?> cls : processor.getClass().getInterfaces()) {

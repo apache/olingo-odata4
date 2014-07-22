@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class ODataResponse {
 
-  private int statusCode;
+  private int statusCode = 0;
   private Map<String, String> headers = new HashMap<String, String>();
   private InputStream content;
 
