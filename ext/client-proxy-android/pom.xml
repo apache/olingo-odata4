@@ -41,11 +41,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-client-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>android</artifactId>
       <version>${android.platform.version}</version>
@@ -71,7 +66,29 @@
           </execution>
         </executions>
         <configuration>
-           <relocations>
+          <artifactSet>
+            <includes>
+              <include>org.apache.olingo:olingo-client-proxy-android</include>
+              <include>org.apache.olingo:olingo-client-proxy</include>
+              <include>org.apache.olingo:olingo-client-core-android</include>
+              <include>org.apache.olingo:olingo-client-core</include>
+              <include>org.apache.olingo:olingo-client-api</include>
+              <include>org.apache.olingo:olingo-commons-core</include>
+              <include>org.apache.olingo:olingo-commons-api</include>
+              <include>org.apache.commons:commons-lang3</include>
+              <include>org.slf4j:slf4j-api</include>
+              <include>commons-io:commons-io</include>
+              <include>com.fasterxml.jackson.core:jackson-core</include>
+              <include>com.fasterxml.jackson.core:jackson-databind</include>
+              <include>com.fasterxml.jackson.core:jackson-annotations</include>
+              <include>com.fasterxml.jackson.dataformat:jackson-dataformat-xml</include>
+              <include>com.fasterxml.jackson.module:jackson-module-jaxb-annotations</include>
+              <include>org.codehaus.woodstox:stax2-api</include>
+              <include>javax.xml.stream:stax-api</include>
+              <include>com.fasterxml:aalto-xml</include>
+            </includes>
+          </artifactSet>
+          <relocations>
             <relocation>
               <pattern>javax.xml.stream</pattern>
               <shadedPattern>org.apache.olingo.javax.xml.stream</shadedPattern>
