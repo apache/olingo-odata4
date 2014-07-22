@@ -18,12 +18,9 @@
  */
 package org.apache.olingo.commons.api.domain;
 
-import java.io.Serializable;
 import java.net.URI;
 
-public class ODataOperation implements Serializable {
-
-  private static final long serialVersionUID = 4155165768886762490L;
+public class ODataOperation {
 
   private String metadataAnchor;
 

@@ -28,8 +28,6 @@ import java.util.Date;
 
 public class ValueAnnotationImpl extends AbstractEdmItem implements ValueAnnotation {
 
-  private static final long serialVersionUID = -1826414005417952278L;
-
   @JsonProperty(value = "Term", required = true)
   private String term;
 

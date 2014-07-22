@@ -29,10 +29,7 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 
 import java.net.URI;
 
-public class CUDRequestFactoryImpl extends AbstractCUDRequestFactory<UpdateType>
-        implements CUDRequestFactory {
-
-  private static final long serialVersionUID = 109196636064983035L;
+public class CUDRequestFactoryImpl extends AbstractCUDRequestFactory<UpdateType> implements CUDRequestFactory {
 
   public CUDRequestFactoryImpl(final ODataClient client) {
     super(client);

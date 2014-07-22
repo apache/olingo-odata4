@@ -28,8 +28,6 @@ import java.util.List;
 @JsonDeserialize(using = FunctionImportDeserializer.class)
 public class FunctionImportImpl implements FunctionImport {
 
-  private static final long serialVersionUID = -6214472528425935461L;
-
   private String name;
 
   private String returnType;

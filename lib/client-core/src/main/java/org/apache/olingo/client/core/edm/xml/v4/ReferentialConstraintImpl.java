@@ -23,8 +23,6 @@ import org.apache.olingo.client.api.edm.xml.v4.ReferentialConstraint;
 
 public class ReferentialConstraintImpl extends AbstractAnnotatable implements ReferentialConstraint {
 
-  private static final long serialVersionUID = -9182114558289778632L;
-
   @JsonProperty(value = "Property", required = true)
   private String property;
 

@@ -67,7 +67,7 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
     streamDashBoundary();
 
     final ODataChangesetResponseItem expectedResItem = new ODataChangesetResponseItem(continueOnError);
-    ((AbstractODataBatchRequest) req).addExpectedResItem(expectedResItem);
+    ((AbstractODataBatchRequest<?, ?>) req).addExpectedResItem(expectedResItem);
 
     currentItem = new ODataChangesetImpl(req, expectedResItem);
 
@@ -90,7 +90,7 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
     final ODataSingleResponseItem expectedResItem = new ODataSingleResponseItem();
     currentItem = new ODataSingleRequestImpl(req, expectedResItem);
 
-    ((AbstractODataBatchRequest) req).addExpectedResItem(expectedResItem);
+    ((AbstractODataBatchRequest<?, ?>) req).addExpectedResItem(expectedResItem);
 
     ((ODataSingleRequest) currentItem).setRequest(request);
   }
@@ -122,7 +122,7 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
     newLine();
 
     // stream batch-boundary
-    stream(("--" + ((AbstractODataBatchRequest) req).boundary).getBytes());
+    stream(("--" + ((AbstractODataBatchRequest<?, ?>) req).boundary).getBytes());
     newLine();
   }
 
@@ -132,7 +132,7 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
   protected void streamCloseDelimiter() {
     // stream close-delimiter
     newLine();
-    stream(("--" + ((AbstractODataBatchRequest) req).boundary + "--").getBytes());
+    stream(("--" + ((AbstractODataBatchRequest<?, ?>) req).boundary + "--").getBytes());
   }
 
   protected abstract void validateSingleRequest(ODataBatchableRequest request);

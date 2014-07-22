@@ -26,8 +26,6 @@ import java.util.List;
 
 public class EnumTypeImpl extends AbstractEnumType {
 
-  private static final long serialVersionUID = 8967396195669128419L;
-
   private final List<Member> members = new ArrayList<Member>();
 
   @Override

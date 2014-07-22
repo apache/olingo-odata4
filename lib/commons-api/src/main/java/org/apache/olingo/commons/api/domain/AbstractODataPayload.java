@@ -25,8 +25,6 @@ import java.net.URI;
  */
 public abstract class AbstractODataPayload extends ODataItem {
 
-  private static final long serialVersionUID = -8234709365887433612L;
-
   /**
    * Context URL.
    */

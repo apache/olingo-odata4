@@ -26,8 +26,6 @@ import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 
 public class PropertyImpl extends AbstractProperty implements Property {
 
-  private static final long serialVersionUID = 6224524803474652100L;
-
   private String collation;
 
   private boolean fixedLength;

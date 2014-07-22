@@ -32,8 +32,6 @@ import java.net.URI;
 
 public abstract class AbstractRetrieveRequestFactory implements CommonRetrieveRequestFactory {
 
-  private static final long serialVersionUID = -111683263158803362L;
-
   protected final CommonODataClient<?> client;
 
   protected AbstractRetrieveRequestFactory(final CommonODataClient<?> client) {

@@ -28,8 +28,6 @@ import java.util.List;
 
 public class ODataDeltaLinkImpl extends ODataItem implements ODataDeltaLink {
 
-  private static final long serialVersionUID = -6686550836508873044L;
-
   private URI source;
 
   private String relationship;

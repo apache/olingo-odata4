@@ -55,7 +55,7 @@ public abstract class AbstractEdmNavigationProperty extends EdmElementImpl imple
     if (partnerNavigationProperty == null) {
       String partner = internatGetPartner();
       if (partner != null) {
-        EdmStructuredType type = (EdmStructuredType) getType();
+        EdmStructuredType type = getType();
         EdmNavigationProperty property = null;
         final String[] split = partner.split("/");
         for (String element : split) {
@@ -64,7 +64,7 @@ public abstract class AbstractEdmNavigationProperty extends EdmElementImpl imple
             throw new EdmException("Cannot find navigation property with name: " + element
                 + " at type " + type.getName());
           }
-          type = (EdmStructuredType) property.getType();
+          type = property.getType();
         }
         partnerNavigationProperty = property;
       }

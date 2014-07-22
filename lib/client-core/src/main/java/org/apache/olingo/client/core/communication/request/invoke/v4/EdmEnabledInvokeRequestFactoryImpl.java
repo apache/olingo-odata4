@@ -30,8 +30,6 @@ import java.util.Map;
 
 public class EdmEnabledInvokeRequestFactoryImpl extends AbstractEdmEnabledInvokeRequestFactory {
 
-  private static final long serialVersionUID = 5854571629835831697L;
-
   private final EdmEnabledODataClient edmClient;
 
   public EdmEnabledInvokeRequestFactoryImpl(final EdmEnabledODataClient client) {

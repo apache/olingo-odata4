@@ -18,12 +18,14 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.CommonProperty;
 import org.apache.olingo.client.api.edm.xml.v4.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMapping;
-import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
@@ -31,10 +33,7 @@ import org.apache.olingo.commons.core.edm.AbstractEdmProperty;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
-import java.util.Collections;
-import java.util.List;
-
-public class EdmPropertyImpl extends AbstractEdmProperty implements EdmProperty {
+public class EdmPropertyImpl extends AbstractEdmProperty {
 
   private final FullQualifiedName structuredTypeName;
 

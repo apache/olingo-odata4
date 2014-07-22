@@ -21,7 +21,4 @@ package org.apache.olingo.client.core.edm.xml.v3;
 import org.apache.olingo.client.core.edm.xml.AbstractMember;
 
 public class MemberImpl extends AbstractMember {
-
-  private static final long serialVersionUID = 6605381518349837929L;
-
 }

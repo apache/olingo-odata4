@@ -26,8 +26,6 @@ import org.apache.olingo.client.api.edm.xml.ComplexType;
 @JsonDeserialize(using = ComplexTypeDeserializer.class)
 public abstract class AbstractComplexType extends AbstractEdmItem implements ComplexType {
 
-  private static final long serialVersionUID = -4765071294433482957L;
-
   private String name;
 
   @Override

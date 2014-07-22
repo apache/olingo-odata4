@@ -22,8 +22,6 @@ import org.apache.olingo.client.core.edm.xml.AbstractXMLMetadata;
 
 public class XMLMetadataImpl extends AbstractXMLMetadata {
 
-  private static final long serialVersionUID = -7765327879691528010L;
-
   public XMLMetadataImpl(final EdmxImpl edmx) {
     super(edmx);
   }

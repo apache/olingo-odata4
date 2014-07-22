@@ -30,8 +30,6 @@ import java.util.List;
 @JsonDeserialize(using = TypeDefinitionDeserializer.class)
 public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinition {
 
-  private static final long serialVersionUID = -5888231162358116515L;
-
   private String name;
 
   private String underlyingType;

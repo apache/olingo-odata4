@@ -28,8 +28,6 @@ import org.apache.olingo.client.api.v4.ODataClient;
 
 public class AsyncRequestFactoryImpl implements AsyncRequestFactory {
 
-  private static final long serialVersionUID = 546577958047902917L;
-
   private final ODataClient client;
 
   public AsyncRequestFactoryImpl(final ODataClient client) {

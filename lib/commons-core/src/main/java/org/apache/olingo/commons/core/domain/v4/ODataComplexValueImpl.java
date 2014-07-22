@@ -33,8 +33,6 @@ import java.util.Map;
 
 public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProperty> implements ODataLinkedComplexValue {
 
-  private static final long serialVersionUID = 1143925901934898802L;
-
   /**
    * Navigation links (might contain in-line entities or entity sets).
    */

@@ -24,8 +24,6 @@ import org.apache.olingo.commons.core.domain.AbstractODataComplexValue;
 
 public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProperty> {
 
-  private static final long serialVersionUID = 1143925901934898802L;
-
   public ODataComplexValueImpl(final String typeName) {
     super(typeName);
   }

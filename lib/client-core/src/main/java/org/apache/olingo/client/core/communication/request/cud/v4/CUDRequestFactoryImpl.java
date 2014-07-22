@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.core.communication.request.cud.v4;
 
+import java.net.URI;
+
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
@@ -25,12 +27,7 @@ import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.communication.request.cud.AbstractCUDRequestFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
 
-import java.net.URI;
-
-public class CUDRequestFactoryImpl extends AbstractCUDRequestFactory<UpdateType>
-        implements CUDRequestFactory {
-
-  private static final long serialVersionUID = 3080623853913380425L;
+public class CUDRequestFactoryImpl extends AbstractCUDRequestFactory<UpdateType> implements CUDRequestFactory {
 
   public CUDRequestFactoryImpl(final ODataClient client) {
     super(client);

@@ -35,8 +35,6 @@ import java.util.List;
  */
 public abstract class AbstractODataEntity extends AbstractODataPayload implements CommonODataEntity {
 
-  private static final long serialVersionUID = 8360640095932811034L;
-
   private final FullQualifiedName typeName;
 
   /**

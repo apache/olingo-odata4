@@ -28,8 +28,6 @@ import java.util.List;
 @JsonDeserialize(using = EntityContainerDeserializer.class)
 public abstract class AbstractEntityContainer extends AbstractEdmItem implements EntityContainer {
 
-  private static final long serialVersionUID = 4121974387552855032L;
-
   private String name;
 
   private String _extends;

@@ -30,8 +30,6 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class FilterFactoryImpl extends AbstractFilterFactory implements FilterFactory {
 
-  private static final long serialVersionUID = -5358934829490623191L;
-
   public FilterFactoryImpl(ODataServiceVersion version) {
     super(version);
   }

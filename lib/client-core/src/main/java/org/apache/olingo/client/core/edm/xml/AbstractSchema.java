@@ -27,8 +27,6 @@ import org.apache.olingo.client.api.edm.xml.Schema;
 @JsonDeserialize(using = SchemaDeserializer.class)
 public abstract class AbstractSchema extends AbstractEdmItem implements Schema {
 
-  private static final long serialVersionUID = -1356392748971378455L;
-
   private String namespace;
 
   private String alias;

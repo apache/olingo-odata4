@@ -74,15 +74,16 @@ h6 {
 }
 
 .logo {
-	float: left;
+	float: right;
 }
 
-hr {
+hr, thead, tfoot {
 	margin: 9px 0;
 	border-top: 1px solid #8904B1;
 	border-bottom: 1px solid #8904B1;
 }
 
+table { border-collapse: collapse; border: 1px solid #8904B1; }
 
 .version {
 	font-family: "Courier New", monospace;

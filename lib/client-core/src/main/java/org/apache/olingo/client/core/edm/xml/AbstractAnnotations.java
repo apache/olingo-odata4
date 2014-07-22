@@ -23,8 +23,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public abstract class AbstractAnnotations extends AbstractEdmItem
         implements org.apache.olingo.client.api.edm.xml.CommonAnnotations {
 
-  private static final long serialVersionUID = 4926640428016042620L;
-
   @JsonProperty(value = "Target", required = true)
   private String target;
 

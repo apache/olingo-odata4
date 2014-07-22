@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.client.api.communication.request.cud;
 
+import java.io.InputStream;
+import java.net.URI;
+
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
@@ -25,16 +28,12 @@ import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 
-import java.io.InputStream;
-import java.io.Serializable;
-import java.net.URI;
-
 /**
  * OData request factory class.
  *
  * @param <UT> concrete UpdateType.
  */
-public interface CommonCUDRequestFactory<UT extends CommonUpdateType> extends Serializable {
+public interface CommonCUDRequestFactory<UT extends CommonUpdateType> {
 
   /**
    * Gets a create request object instance.

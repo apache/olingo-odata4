@@ -30,15 +30,11 @@ import java.util.List;
 
 public class EdmFunctionImportProxy extends EdmOperationImportImpl implements EdmFunctionImport {
 
-  private final FunctionImport functionImport;
-
   private FullQualifiedName functionFQN;
 
   public EdmFunctionImportProxy(final Edm edm, final EdmEntityContainer container, final String name,
           final FunctionImport functionImport) {
-
     super(edm, container, name, functionImport.getEntitySet());
-    this.functionImport = functionImport;
   }
 
   @Override

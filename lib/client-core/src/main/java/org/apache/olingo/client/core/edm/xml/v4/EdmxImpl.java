@@ -27,8 +27,6 @@ import java.util.List;
 
 public class EdmxImpl extends AbstractEdmx implements Edmx {
 
-  private static final long serialVersionUID = -8031883176876401375L;
-
   private final List<Reference> references = new ArrayList<Reference>();
 
   @Override

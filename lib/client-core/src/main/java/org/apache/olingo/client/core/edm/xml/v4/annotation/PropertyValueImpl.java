@@ -25,8 +25,6 @@ import org.apache.olingo.client.api.edm.xml.v4.annotation.PropertyValue;
 @JsonDeserialize(using = PropertyValueDeserializer.class)
 public class PropertyValueImpl extends AbstractAnnotatableDynamicAnnotationExpression implements PropertyValue {
 
-  private static final long serialVersionUID = 3081968466425707461L;
-
   private String property;
 
   private AnnotationExpression value;

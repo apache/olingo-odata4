@@ -28,8 +28,6 @@ import java.util.List;
 @JsonDeserialize(using = EnumTypeDeserializer.class)
 public abstract class AbstractEnumType extends AbstractEdmItem implements EnumType {
 
-  private static final long serialVersionUID = 2688487586103418210L;
-
   private String name;
 
   private String underlyingType;

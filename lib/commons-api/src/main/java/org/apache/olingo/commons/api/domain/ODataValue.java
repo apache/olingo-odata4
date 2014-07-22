@@ -18,12 +18,10 @@
  */
 package org.apache.olingo.commons.api.domain;
 
-import java.io.Serializable;
-
 /**
  * Abstract representation of an OData entity property value.
  */
-public interface ODataValue extends Serializable {
+public interface ODataValue {
 
   /**
    * Gets value type name.

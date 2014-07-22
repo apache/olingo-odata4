@@ -33,8 +33,6 @@ import java.util.List;
 
 public class ODataPropertyImpl extends AbstractODataProperty implements ODataProperty {
 
-  private static final long serialVersionUID = 4851331227420757747L;
-
   private final ODataValuable valuable;
 
   private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();

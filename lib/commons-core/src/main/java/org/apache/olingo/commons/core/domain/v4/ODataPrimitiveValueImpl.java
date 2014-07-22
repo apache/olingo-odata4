@@ -26,8 +26,6 @@ import org.apache.olingo.commons.core.domain.AbstractODataPrimitiveValue;
 
 public class ODataPrimitiveValueImpl extends AbstractODataPrimitiveValue implements ODataValue {
 
-  private static final long serialVersionUID = -5201738902625613179L;
-
   public static class BuilderImpl extends AbstractBuilder {
 
     private final ODataPrimitiveValueImpl instance;

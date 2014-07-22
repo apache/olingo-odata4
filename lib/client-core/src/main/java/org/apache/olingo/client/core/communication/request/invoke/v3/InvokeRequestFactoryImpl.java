@@ -30,8 +30,6 @@ import java.util.Map;
 
 public class InvokeRequestFactoryImpl extends AbstractInvokeRequestFactory {
 
-  private static final long serialVersionUID = -659256862901915496L;
-
   private final ODataClient client;
 
   public InvokeRequestFactoryImpl(final ODataClient client) {

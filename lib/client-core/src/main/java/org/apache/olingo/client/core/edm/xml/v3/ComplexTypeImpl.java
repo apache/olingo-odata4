@@ -18,15 +18,12 @@
  */
 package org.apache.olingo.client.core.edm.xml.v3;
 
-import org.apache.olingo.client.api.edm.xml.ComplexType;
-import org.apache.olingo.client.core.edm.xml.AbstractComplexType;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComplexTypeImpl extends AbstractComplexType implements ComplexType {
+import org.apache.olingo.client.core.edm.xml.AbstractComplexType;
 
-  private static final long serialVersionUID = -1251230308269425962L;
+public class ComplexTypeImpl extends AbstractComplexType {
 
   private final List<PropertyImpl> properties = new ArrayList<PropertyImpl>();
 

@@ -23,8 +23,6 @@ package org.apache.olingo.client.core.edm.xml.v4.annotation;
  */
 abstract class AbstractElementOrAttributeExpression extends AbstractDynamicAnnotationExpression {
 
-  private static final long serialVersionUID = 5503275111425750339L;
-
   private String value;
 
   public String getValue() {

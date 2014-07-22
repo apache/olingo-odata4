@@ -18,17 +18,16 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve;
 
+import java.net.URI;
+
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 
-import java.io.Serializable;
-import java.net.URI;
-
 /**
  * OData request factory class.
  */
-public interface CommonRetrieveRequestFactory extends Serializable {
+public interface CommonRetrieveRequestFactory {
 
   /**
    * Gets a metadata request instance.
@@ -104,7 +103,6 @@ public interface CommonRetrieveRequestFactory extends Serializable {
   /**
    * Gets a uri request returning a single OData entity property value.
    *
-   * @param <T> concrete ODataProperty implementation.
    * @param uri request URI.
    * @return new {@link ODataValueRequest} instance.
    */

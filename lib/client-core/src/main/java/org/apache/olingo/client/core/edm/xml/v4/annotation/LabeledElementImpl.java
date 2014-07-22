@@ -26,8 +26,6 @@ import org.apache.olingo.client.api.edm.xml.v4.annotation.LabeledElement;
 public class LabeledElementImpl
         extends AbstractAnnotatableDynamicAnnotationExpression implements LabeledElement {
 
-  private static final long serialVersionUID = 6938971787086282939L;
-
   private String name;
 
   private DynamicAnnotationExpression value;

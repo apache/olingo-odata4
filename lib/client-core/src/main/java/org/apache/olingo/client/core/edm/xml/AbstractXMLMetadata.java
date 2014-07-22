@@ -32,8 +32,6 @@ import java.util.Map;
  */
 public abstract class AbstractXMLMetadata extends AbstractEdmItem implements XMLMetadata {
 
-  private static final long serialVersionUID = -1214173426671503187L;
-
   protected final Edmx edmx;
 
   protected final Map<String, Schema> schemaByNsOrAlias;

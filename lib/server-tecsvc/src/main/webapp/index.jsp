@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; UTF-8"
- pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <!--
   Licensed to the Apache Software Foundation (ASF) under one
@@ -22,54 +21,35 @@
 
 <!DOCTYPE html>
 <html>
-<header>
+<head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
  <title>Apache Olingo - OData 4.0</title>
-
  <link type="text/css" rel="stylesheet" href="css/olingo.css">
-
-</header>
+</head>
 
 <body>
- <div>
-  <h1>
-   &nbsp;Olingo OData 4.0
-   <div class="logo">
+  <div class="logo">
     <img height="40" src="img/OlingoOrangeTM.png" />
-   </div>
-  </h1>
+  </div>
+  <h1>Olingo OData 4.0</h1>
   <hr>
- </div>
- <h2>Technical Service</h2>
- <div>
-
-
-
+  <h2>Technical Service</h2>
   <ul>
-   <li><a href="odata.svc/">Service Document</a></li>
-   <li><a href="odata.svc/$metadata">Metadata</a></li>
+    <li><a href="odata.svc/">Service Document</a></li>
+    <li><a href="odata.svc/$metadata">Metadata</a></li>
+    <li>Entity Set <a href="odata.svc/ESAllPrim">ESAllPrim</a></li>
+    <li>Entity <a href="odata.svc/ESAllPrim(32767)">ESAllPrim(32767)</a></li>
   </ul>
- </div>
- <p>
- <hr>
- <p>
- <div class="version">
-  <%
-    String version = "gen/version.html";
-
-    try {
-  %>
-  <jsp:include page='<%=version%>' />
-  <%
-    } catch (Exception e) {
-  %>
-  <p>IDE Build</p>
-  <%
-    }
-  %>
- </div>
-
-
+  <hr>
+  <div class="version">
+    <% String version = "gen/version.html";
+      try {
+     %>
+    <jsp:include page='<%=version%>' />
+    <%} catch (Exception e) {
+     %>
+    <p>IDE Build</p>
+    <%}%>
+  </div>
 </body>
-
 </html>

@@ -23,8 +23,6 @@ import org.apache.olingo.client.api.edm.xml.v4.annotation.ConstantAnnotationExpr
 public class ConstantAnnotationExpressionImpl
         extends AbstractAnnotationExpression implements ConstantAnnotationExpression {
 
-  private static final long serialVersionUID = 2250072064504668969L;
-
   private Type type;
 
   private String value;

@@ -68,9 +68,7 @@ public class EdmReturnTypeImpl extends AbstractEdmReturnType {
 
   @Override
   public SRID getSrid() {
-    return (returnType instanceof ReturnType)
-            ? ((ReturnType) returnType).getSrid()
-            : null;
+    return returnType == null ? null : returnType.getSrid();
   }
 
 }

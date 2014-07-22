@@ -33,8 +33,6 @@ import java.util.UUID;
 
 public abstract class AbstractODataPrimitiveValue extends AbstractODataValue implements ODataPrimitiveValue {
 
-  private static final long serialVersionUID = 8889282662298376036L;
-
   public static abstract class AbstractBuilder implements Builder {
 
     private final ODataServiceVersion version;

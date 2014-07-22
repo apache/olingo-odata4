@@ -25,8 +25,6 @@ import java.net.URI;
 
 public abstract class AbstractODataEntitySet extends AbstractODataPayload implements CommonODataEntitySet {
 
-  private static final long serialVersionUID = 9039605899821494024L;
-
   /**
    * Link to the next page.
    */

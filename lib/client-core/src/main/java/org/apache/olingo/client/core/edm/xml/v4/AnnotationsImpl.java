@@ -29,8 +29,6 @@ import java.util.List;
 @JsonDeserialize(using = AnnotationsDeserializer.class)
 public class AnnotationsImpl extends AbstractAnnotations implements Annotations {
 
-  private static final long serialVersionUID = 3877353656301805410L;
-
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override

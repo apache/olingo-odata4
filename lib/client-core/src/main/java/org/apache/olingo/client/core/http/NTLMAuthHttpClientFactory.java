@@ -32,13 +32,11 @@ import java.net.URI;
  * <br/>
  * External NTLM engine such as <a href="http://jcifs.samba.org/">JCIFS</a> library developed by the
  * <a href="http://www.samba.org/">Samba</a> project as a part of their Windows interoperability suite of programs.
- *
+ * <br/>
+ * See also http://hc.apache.org/httpcomponents-client-ga/ntlm.html#Using_Samba_JCIFS_as_an_alternative_NTLM_engine.
  * @see NTCredentials
- * @see http://hc.apache.org/httpcomponents-client-ga/ntlm.html#Using_Samba_JCIFS_as_an_alternative_NTLM_engine
  */
 public class NTLMAuthHttpClientFactory extends DefaultHttpClientFactory {
-
-  private static final long serialVersionUID = 9060120943020134668L;
 
   private final String username;
 

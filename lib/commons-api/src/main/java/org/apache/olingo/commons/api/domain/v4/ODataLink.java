@@ -27,8 +27,6 @@ import java.util.List;
 
 public class ODataLink extends org.apache.olingo.commons.api.domain.ODataLink implements ODataAnnotatable {
 
-  private static final long serialVersionUID = 8953805653775734101L;
-
   public static class Builder extends org.apache.olingo.commons.api.domain.ODataLink.Builder {
 
     @Override

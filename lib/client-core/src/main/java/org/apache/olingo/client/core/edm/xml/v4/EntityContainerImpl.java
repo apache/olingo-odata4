@@ -18,8 +18,10 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
-import org.apache.olingo.client.api.edm.xml.v4.Annotatable;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.v4.EntitySet;
@@ -27,12 +29,7 @@ import org.apache.olingo.client.api.edm.xml.v4.FunctionImport;
 import org.apache.olingo.client.api.edm.xml.v4.Singleton;
 import org.apache.olingo.client.core.edm.xml.AbstractEntityContainer;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class EntityContainerImpl extends AbstractEntityContainer implements Annotatable, EntityContainer {
-
-  private static final long serialVersionUID = 2526002525927260320L;
+public class EntityContainerImpl extends AbstractEntityContainer implements EntityContainer {
 
   private final List<EntitySet> entitySets = new ArrayList<EntitySet>();
 

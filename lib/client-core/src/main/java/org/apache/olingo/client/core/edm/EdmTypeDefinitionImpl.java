@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
@@ -25,7 +27,6 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmTerm;
-import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.edm.geo.SRID;
@@ -33,9 +34,7 @@ import org.apache.olingo.commons.core.edm.AbstractEdmTypeDefinition;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
-import java.util.List;
-
-public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements EdmTypeDefinition {
+public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition {
 
   private final TypeDefinition typeDefinition;
 
