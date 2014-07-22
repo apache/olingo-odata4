@@ -47,32 +47,30 @@ public final class ODataErrorResponseChecker {
 
     ODataRuntimeException result = null;
 
-    if (statusLine.getStatusCode() >= 400) {
-      if (entity == null) {
-        result = new ODataClientErrorException(statusLine);
+    if (entity == null) {
+      result = new ODataClientErrorException(statusLine);
+    } else {
+      final ODataFormat format = accept.contains("xml") ? ODataFormat.XML : ODataFormat.JSON;
+
+      ODataError error;
+      try {
+        error = odataClient.getReader().readError(entity, format);
+      } catch (final RuntimeException e) {
+        LOG.warn("Error deserializing error response", e);
+        error = getGenericError(
+                statusLine.getStatusCode(),
+                statusLine.getReasonPhrase());
+      } catch (final ODataDeserializerException e) {
+        LOG.warn("Error deserializing error response", e);
+        error = getGenericError(
+                statusLine.getStatusCode(),
+                statusLine.getReasonPhrase());
+      }
+
+      if (statusLine.getStatusCode() >= 500) {
+        result = new ODataServerErrorException(statusLine);
       } else {
-        final ODataFormat format = accept.contains("xml") ? ODataFormat.XML : ODataFormat.JSON;
-
-        ODataError error;
-        try {
-          error = odataClient.getReader().readError(entity, format);
-        } catch (final RuntimeException e) {
-          LOG.warn("Error deserializing error response", e);
-          error = getGenericError(
-                  statusLine.getStatusCode(),
-                  statusLine.getReasonPhrase());
-        } catch (final ODataDeserializerException e) {
-          LOG.warn("Error deserializing error response", e);
-          error = getGenericError(
-                  statusLine.getStatusCode(),
-                  statusLine.getReasonPhrase());
-        }
-
-        if (statusLine.getStatusCode() >= 500) {
-          result = new ODataServerErrorException(statusLine);
-        } else {
-          result = new ODataClientErrorException(statusLine, error);
-        }
+        result = new ODataClientErrorException(statusLine, error);
       }
     }
 

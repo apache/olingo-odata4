@@ -48,18 +48,20 @@ public abstract class AbstractRequest {
   protected void checkResponse(
           final CommonODataClient<?> odataClient, final HttpResponse response, final String accept) {
 
-    try {
-      final ODataRuntimeException exception = ODataErrorResponseChecker.
-              checkResponse(odataClient,
-                      response.getStatusLine(),
-                      response.getEntity() == null ? null : response.getEntity().getContent(),
-                      accept);
-      if (exception != null) {
-        throw exception;
+    if (response.getStatusLine().getStatusCode() >= 400) {
+      try {
+        final ODataRuntimeException exception = ODataErrorResponseChecker.checkResponse(
+                odataClient,
+                response.getStatusLine(),
+                response.getEntity() == null ? null : response.getEntity().getContent(),
+                accept);
+        if (exception != null) {
+          throw exception;
+        }
+      } catch (IOException e) {
+        throw new ODataRuntimeException(
+                "Received '" + response.getStatusLine() + "' but could not extract error body", e);
       }
-    } catch (IOException e) {
-      throw new ODataRuntimeException(
-              "Received '" + response.getStatusLine() + "' but could not extract error body", e);
     }
   }
 }

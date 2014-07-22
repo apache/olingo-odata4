@@ -38,6 +38,7 @@ import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
 import java.io.InputStream;
 import java.net.URI;
+import org.apache.http.HttpStatus;
 
 /**
  * This class implements an OData update request.
@@ -88,7 +89,13 @@ public class ODataEntityUpdateRequestImpl<E extends CommonODataEntity>
     ((HttpEntityEnclosingRequestBase) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 
     try {
-      return new ODataEntityUpdateResponseImpl(odataClient, httpClient, doExecute());
+      final HttpResponse httpResponse = doExecute();
+      final ODataEntityUpdateResponseImpl response =
+              new ODataEntityUpdateResponseImpl(odataClient, httpClient, httpResponse);
+      if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_NO_CONTENT) {
+        response.close();
+      }
+      return response;
     } finally {
       IOUtils.closeQuietly(input);
     }
