@@ -23,12 +23,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.http.HttpStatusCode;
+
 /**
  * Response object to carry OData relevant http information (statusCode, content & response headers)
  */
 public class ODataResponse {
 
-  private int statusCode = 0;
+  private int statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode();
   private Map<String, String> headers = new HashMap<String, String>();
   private InputStream content;
 

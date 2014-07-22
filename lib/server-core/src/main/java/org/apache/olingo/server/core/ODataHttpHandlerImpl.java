@@ -47,6 +47,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   private static final Logger LOG = LoggerFactory.getLogger(ODataHttpHandlerImpl.class);
 
   private ODataHandler handler;
+  private int split = 0;
 
   public ODataHttpHandlerImpl(final OData odata, final Edm edm) {
     handler = new ODataHandler(odata, edm);
@@ -57,7 +58,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     ODataRequest odRequest = null;
     ODataResponse odResponse = null;
     try {
-      odRequest = createODataRequest(request, 0);
+      odRequest = createODataRequest(request, split);
       odResponse = handler.process(odRequest);
       // ALL future methods after process must not throw exceptions!
     } catch (Exception e) {
@@ -65,6 +66,11 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
 
     convertToHttp(response, odResponse);
+  }
+  
+  @Override
+  public void setSplit(int split) {
+    this.split = split;
   }
 
   private ODataResponse handleException(Exception e) {

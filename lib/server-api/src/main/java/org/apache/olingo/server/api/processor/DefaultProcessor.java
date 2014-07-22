@@ -18,23 +18,26 @@
  */
 package org.apache.olingo.server.api.processor;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.uri.UriInfo;
 
-import java.io.InputStream;
-
 /**
- * Processor implementation for handling of metadata and service document. This implementation is registerd in the 
+ * Processor implementation for handling of metadata and service document. This implementation is registerd in the
  * ODataHandler by default. The default can be replaced by re-registering an custom implementation.
  */
-public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProcessor {
+public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProcessor, ExceptionProcessor {
 
   private OData odata;
   private Edm edm;
@@ -48,11 +51,8 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
   @Override
   public void readServiceDocument(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) {
-    ODataSerializer serializer;
-    InputStream responseEntity;
-
-    serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-    responseEntity = serializer.serviceDocument(edm, request.getRawBaseUri());
+    ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
+    InputStream responseEntity = serializer.serviceDocument(edm, request.getRawBaseUri());
 
     response.setStatusCode(200);
     response.setContent(responseEntity);
@@ -63,14 +63,29 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
   @Override
   public void readMetadata(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) {
-    ODataSerializer serializer;
-    InputStream responseEntity;
-
-    serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-    responseEntity = serializer.metadataDocument(edm);
+    ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
+    InputStream responseEntity = serializer.metadataDocument(edm);
     response.setStatusCode(200);
     response.setContent(responseEntity);
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
   }
 
+  @Override
+  public void processException(ODataRequest request, ODataResponse response, ODataServerError serverError,
+      ContentType requestedContentType) {
+    try {
+      ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
+      InputStream responseEntity = serializer.error(serverError);
+      response.setStatusCode(serverError.getStatusCode());
+      response.setContent(responseEntity);
+      response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
+    } catch (Exception e) {
+      // This should never happen but to be sure we have this catch here to prevent sending a stacktrace to a client.
+      String responseContent =
+          "An unexpected exception occoured during error processing with message: \"" + e.getMessage() + "\"";
+      response.setContent(new ByteArrayInputStream(responseContent.getBytes()));
+      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
+      response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_JSON.toContentTypeString());
+    }
+  }
 }

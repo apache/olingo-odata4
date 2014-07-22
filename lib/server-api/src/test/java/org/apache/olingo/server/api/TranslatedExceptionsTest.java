@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 
+import org.apache.olingo.server.api.ODataTranslatedException.ODataErrorMessage;
 import org.junit.Test;
 
 public class TranslatedExceptionsTest {
@@ -43,25 +44,28 @@ public class TranslatedExceptionsTest {
     ODataTranslatedException exp = new ODataTranslatedException(DEV, BASIC);
     assertEquals(DEV, exp.getMessage());
 
-    String translatedMessage = exp.getTranslatedMessage(null);
+    ODataErrorMessage translatedMessage = exp.getTranslatedMessage(null);
     assertNotNull(translatedMessage);
-    assertEquals("Test Default", translatedMessage);
+    assertEquals("Test Default", translatedMessage.getMessage());
 
     translatedMessage = exp.getTranslatedMessage(Locale.ENGLISH);
     assertNotNull(translatedMessage);
-    assertEquals("Test Default", translatedMessage);
+    assertEquals("Test Default", translatedMessage.getMessage());
+    assertEquals(Locale.ENGLISH, translatedMessage.getLocale());
 
     translatedMessage = exp.getTranslatedMessage(Locale.UK);
     assertNotNull(translatedMessage);
-    assertEquals("Test Default", translatedMessage);
+    assertEquals("Test Default", translatedMessage.getMessage());
 
     translatedMessage = exp.getTranslatedMessage(Locale.GERMAN);
     assertNotNull(translatedMessage);
-    assertEquals("Test DE", translatedMessage);
+    assertEquals("Test DE", translatedMessage.getMessage());
+    assertEquals(Locale.GERMAN, translatedMessage.getLocale());
 
     translatedMessage = exp.getTranslatedMessage(Locale.GERMANY);
     assertNotNull(translatedMessage);
-    assertEquals("Test DE", translatedMessage);
+    assertEquals("Test DE", translatedMessage.getMessage());
+    assertEquals(Locale.GERMAN, translatedMessage.getLocale());
   }
 
   @Test
@@ -69,9 +73,9 @@ public class TranslatedExceptionsTest {
     ODataTranslatedException exp = new ODataTranslatedException(DEV, BASIC, "unusedParam1", "unusedParam2");
     assertEquals(DEV, exp.getMessage());
 
-    String translatedMessage = exp.getTranslatedMessage(null);
+    ODataErrorMessage translatedMessage = exp.getTranslatedMessage(null);
     assertNotNull(translatedMessage);
-    assertEquals("Test Default", translatedMessage);
+    assertEquals("Test Default", translatedMessage.getMessage());
   }
 
   @Test
@@ -79,9 +83,9 @@ public class TranslatedExceptionsTest {
     ODataTranslatedException exp = new ODataTranslatedException(DEV, ONEPARAM, "usedParam1");
     assertEquals(DEV, exp.getMessage());
 
-    String translatedMessage = exp.getTranslatedMessage(null);
+    ODataErrorMessage translatedMessage = exp.getTranslatedMessage(null);
     assertNotNull(translatedMessage);
-    assertEquals("Param1: usedParam1", translatedMessage);
+    assertEquals("Param1: usedParam1", translatedMessage.getMessage());
   }
 
   @Test
@@ -89,9 +93,9 @@ public class TranslatedExceptionsTest {
     ODataTranslatedException exp = new ODataTranslatedException(DEV, ONEPARAM, "usedParam1", "unusedParam2");
     assertEquals(DEV, exp.getMessage());
 
-    String translatedMessage = exp.getTranslatedMessage(null);
+    ODataErrorMessage translatedMessage = exp.getTranslatedMessage(null);
     assertNotNull(translatedMessage);
-    assertEquals("Param1: usedParam1", translatedMessage);
+    assertEquals("Param1: usedParam1", translatedMessage.getMessage());
   }
 
   @Test
@@ -99,9 +103,9 @@ public class TranslatedExceptionsTest {
     ODataTranslatedException exp = new ODataTranslatedException(DEV, TWOPARAM, "usedParam1", "usedParam2");
     assertEquals(DEV, exp.getMessage());
 
-    String translatedMessage = exp.getTranslatedMessage(null);
+    ODataErrorMessage translatedMessage = exp.getTranslatedMessage(null);
     assertNotNull(translatedMessage);
-    assertEquals("Param1: usedParam1 Param2: usedParam2", translatedMessage);
+    assertEquals("Param1: usedParam1 Param2: usedParam2", translatedMessage.getMessage());
   }
 
   @Test
@@ -109,19 +113,28 @@ public class TranslatedExceptionsTest {
     ODataTranslatedException exp = new ODataTranslatedException(DEV, ONEPARAM);
     assertEquals(DEV, exp.getMessage());
 
-    String translatedMessage = exp.getTranslatedMessage(null);
+    ODataErrorMessage translatedMessage = exp.getTranslatedMessage(null);
     assertNotNull(translatedMessage);
-    assertTrue(translatedMessage.contains("Missing replacement for place holder in message"));
+    assertTrue(translatedMessage.getMessage().contains("Missing replacement for place holder in message"));
   }
-  
+
   @Test
   public void noMessageForKey() {
     ODataTranslatedException exp = new ODataTranslatedException(DEV, "NOMESSAGE");
     assertEquals(DEV, exp.getMessage());
 
-    String translatedMessage = exp.getTranslatedMessage(null);
+    ODataErrorMessage translatedMessage = exp.getTranslatedMessage(null);
     assertNotNull(translatedMessage);
-    assertTrue(translatedMessage.contains("Missing message for key"));
+    assertTrue(translatedMessage.getMessage().contains("Missing message for key"));
   }
 
+  @Test
+  public void keyForRootBundleButNotPresentInDerivedBundle() {
+    ODataTranslatedException exp = new ODataTranslatedException(DEV, ONEPARAM, "param1");
+    assertEquals(DEV, exp.getMessage());
+    
+    ODataErrorMessage translatedMessage = exp.getTranslatedMessage(Locale.GERMAN);
+    assertNotNull(translatedMessage);
+    assertEquals("Param1: param1", translatedMessage.getMessage());
+  }
 }

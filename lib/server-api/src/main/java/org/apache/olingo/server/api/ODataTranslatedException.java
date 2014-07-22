@@ -34,8 +34,8 @@ public class ODataTranslatedException extends ODataException {
   private static final long serialVersionUID = -1210541002198287561L;
   private static final Logger log = LoggerFactory.getLogger(ODataTranslatedException.class);
   private static final String BUNDLE_NAME = "i18n";
-  private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
-
+  
+  public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
   // MessageKeys
   public static final String AMBIGUOUS_XHTTP_METHOD = "ODataTranslatedException.AMBIGUOUS_XHTTP_METHOD";
   public static final String HTTP_METHOD_NOT_IMPLEMENTED = "ODataTranslatedException.HTTP_METHOD_NOT_IMPLEMENTED";
@@ -51,6 +51,11 @@ public class ODataTranslatedException extends ODataException {
     this.parameters = parameters;
   }
 
+  @Override
+  public String getLocalizedMessage() {
+    return getTranslatedMessage(DEFAULT_LOCALE).getMessage();
+  }
+
   public ODataTranslatedException(String developmentMessage, Throwable cause, String messageKey, String... parameters) {
     super(developmentMessage, cause);
     this.messageKey = messageKey;
@@ -61,13 +66,13 @@ public class ODataTranslatedException extends ODataException {
     return messageKey;
   }
 
-  public String getTranslatedMessage(final Locale locale) {
+  public ODataErrorMessage getTranslatedMessage(final Locale locale) {
     if (messageKey == null) {
-      return getMessage();
+      return new ODataErrorMessage(getMessage(), DEFAULT_LOCALE);
     }
     ResourceBundle bundle = createResourceBundle(locale);
     if (bundle == null) {
-      return getMessage();
+      return new ODataErrorMessage(getMessage(), DEFAULT_LOCALE);
     }
 
     return buildMessage(bundle, locale);
@@ -87,7 +92,7 @@ public class ODataTranslatedException extends ODataException {
     return bundle;
   }
 
-  private String buildMessage(ResourceBundle bundle, Locale locale) {
+  private ODataErrorMessage buildMessage(ResourceBundle bundle, Locale locale) {
     String message = null;
 
     try {
@@ -96,14 +101,34 @@ public class ODataTranslatedException extends ODataException {
       Formatter f = new Formatter(builder, locale);
       f.format(message, parameters);
       f.close();
-
-      return builder.toString();
-
+      Locale usedLocale = bundle.getLocale();
+      if (usedLocale == Locale.ROOT || Locale.ROOT.equals(usedLocale)) {
+        usedLocale = DEFAULT_LOCALE;
+      }
+      return new ODataErrorMessage(builder.toString(), usedLocale);
     } catch (MissingResourceException e) {
-      return "Missing message for key '" + messageKey + "'!";
+      return new ODataErrorMessage("Missing message for key '" + messageKey + "'!", DEFAULT_LOCALE);
     } catch (MissingFormatArgumentException e) {
-      return "Missing replacement for place holder in message '" + message +
-          "' for following arguments '" + Arrays.toString(parameters) + "'!";
+      return new ODataErrorMessage("Missing replacement for place holder in message '" + message +
+          "' for following arguments '" + Arrays.toString(parameters) + "'!", DEFAULT_LOCALE);
+    }
+  }
+
+  public class ODataErrorMessage {
+    String message;
+    Locale locale;
+
+    public ODataErrorMessage(String message, Locale usedLocale) {
+      this.message = message;
+      this.locale = usedLocale;
+    }
+
+    public String getMessage() {
+      return message;
+    }
+
+    public Locale getLocale() {
+      return locale;
     }
   }
 }

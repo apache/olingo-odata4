@@ -20,7 +20,9 @@ package org.apache.olingo.server.api;
 
 import java.util.Locale;
 
-public class ODataApplicationException extends Exception {
+import org.apache.olingo.commons.api.ODataException;
+
+public class ODataApplicationException extends ODataException {
 
   private static final long serialVersionUID = 5358683245923127425L;
   private int statusCode = 500;
@@ -62,7 +64,7 @@ public class ODataApplicationException extends Exception {
     return locale;
   }
 
-  public String getoDataErrorCode() {
+  public String getODataErrorCode() {
     return oDataErrorCode;
   }
 }

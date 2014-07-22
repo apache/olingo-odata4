@@ -19,23 +19,15 @@
 package org.apache.olingo.server.api.processor;
 
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.ODataServerError;
 
 /**
- * Processor interface for handling the metadata document.
+ * Processor which is called if any exception occurs inside the library or another processor
  */
-public interface MetadataProcessor extends Processor {
+public interface ExceptionProcessor extends Processor{
 
-  /**
-   * Read data from persistency and puts serialized content and status into the response.
-   * @param request - OData request object containing raw http information.
-   * @param response - OData response object for collecting response data
-   * @param uriInfo - information of a parsed OData uri
-   * @param requestedContentType - requested content type after content negotiation
-   */
-  void readMetadata(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestedContentType)
-      throws ODataApplicationException;
+  public void processException(ODataRequest request, ODataResponse response, ODataServerError serverError,
+      final ContentType requestedContentType);
 }

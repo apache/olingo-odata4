@@ -19,21 +19,26 @@
 package org.apache.olingo.server.core;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.processor.CollectionProcessor;
 import org.apache.olingo.server.api.processor.DefaultProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
+import org.apache.olingo.server.api.processor.ExceptionProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
@@ -48,7 +53,6 @@ public class ODataHandler {
 
   private final OData odata;
   private final Edm edm;
-  private final ODataResponse response;
   private final Map<Class<? extends Processor>, Processor> processors =
       new HashMap<Class<? extends Processor>, Processor>();
 
@@ -58,15 +62,14 @@ public class ODataHandler {
 
     register(new DefaultProcessor());
     register(new DefaultRedirectProcessor());
-    response = new ODataResponse();
   }
 
   public ODataResponse process(final ODataRequest request) {
     ContentType requestedContentType = null;
-
+    ODataResponse response = new ODataResponse();
     try {
       validateODataVersion(request, response);
-
+      
       Parser parser = new Parser();
       String odUri =
           request.getRawODataPath() + (request.getRawQueryPath() == null ? "" : "?" + request.getRawQueryPath());
@@ -77,7 +80,7 @@ public class ODataHandler {
 
       switch (uriInfo.getKind()) {
       case metadata:
-        MetadataProcessor mp = selectProcessor(MetadataProcessor.class);
+        MetadataProcessor mp = selectProcessor(MetadataProcessor.class, response);
 
         requestedContentType =
             ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, mp, MetadataProcessor.class);
@@ -86,10 +89,10 @@ public class ODataHandler {
         break;
       case service:
         if ("".equals(request.getRawODataPath())) {
-          RedirectProcessor rdp = selectProcessor(RedirectProcessor.class);
+          RedirectProcessor rdp = selectProcessor(RedirectProcessor.class, response);
           rdp.redirect(request, response);
         } else {
-          ServiceDocumentProcessor sdp = selectProcessor(ServiceDocumentProcessor.class);
+          ServiceDocumentProcessor sdp = selectProcessor(ServiceDocumentProcessor.class, response);
 
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, sdp,
@@ -104,15 +107,49 @@ public class ODataHandler {
       default:
         throw new ODataRuntimeException("not implemented");
       }
+    } catch (ODataTranslatedException e) {
+      Locale requestedLocale = null;
+      ODataServerError serverError =
+          ODataExceptionHelper.createServerErrorObject(e, response.getStatusCode(), requestedLocale);
+      handleException(request, response, serverError, requestedContentType);
+    } catch (ODataApplicationException e) {
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
+      handleException(request, response, serverError, requestedContentType);
     } catch (Exception e) {
-      ODataExceptionHandler exceptionHandler = new ODataExceptionHandler();
-      exceptionHandler.handle(response, e);
-//    exceptionHandler.setRequestedContentType(requestedContentType);
-//    exceptionHandler.setRequestedLocale();
-//    exceptionHandler.setExceptionProcessor() or setExceptionCallback()
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, response.getStatusCode());
+      handleException(request, response, serverError, requestedContentType);
     }
     return response;
   }
+
+  private void handleException(ODataRequest request, ODataResponse response, ODataServerError serverError,
+      ContentType requestedContentType) {
+    try {
+      ExceptionProcessor exceptionProcessor = selectProcessor(ExceptionProcessor.class, response);
+      if (requestedContentType == null) {
+        requestedContentType = ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
+      }
+      exceptionProcessor.processException(request, response, serverError, requestedContentType);
+    } catch (ODataTranslatedException e1) {
+      throw new ODataRuntimeException("Could not instanciate ExceptionProcessor");
+    }
+  }
+
+//  private void handleException(ODataRequest request, ODataResponse response, ODataTranslatedException e,
+//      ContentType requestedContentType) {
+//    try {
+//      ExceptionProcessor exceptionProcessor = selectProcessor(ExceptionProcessor.class, response);
+//      Locale requestedLocale = null;
+//      ODataServerError serverError =
+//          ODataExceptionHelper.createServerErrorObject(e, response.getStatusCode(), requestedLocale);
+//      if (requestedContentType == null) {
+//        requestedContentType = ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
+//      }
+//      exceptionProcessor.processException(request, response, serverError, requestedContentType);
+//    } catch (ODataTranslatedException e1) {
+//      throw new ODataRuntimeException("Could not instanciate ExceptionProcessor", e);
+//    }
+//  }
 
   private void
       handleResourceDispatching(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo)
@@ -125,7 +162,7 @@ public class ODataHandler {
     case entitySet:
       if (((UriResourcePartTyped) lastPathSegment).isCollection()) {
         if (request.getMethod().equals(HttpMethod.GET)) {
-          CollectionProcessor cp = selectProcessor(CollectionProcessor.class);
+          CollectionProcessor cp = selectProcessor(CollectionProcessor.class, response);
 
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp, CollectionProcessor.class);
@@ -136,7 +173,7 @@ public class ODataHandler {
         }
       } else {
         if (request.getMethod().equals(HttpMethod.GET)) {
-          EntityProcessor ep = selectProcessor(EntityProcessor.class);
+          EntityProcessor ep = selectProcessor(EntityProcessor.class, response);
 
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
@@ -150,7 +187,7 @@ public class ODataHandler {
     case navigationProperty:
       if (((UriResourceNavigation) lastPathSegment).isCollection()) {
         if (request.getMethod().equals(HttpMethod.GET)) {
-          CollectionProcessor cp = selectProcessor(CollectionProcessor.class);
+          CollectionProcessor cp = selectProcessor(CollectionProcessor.class, response);
 
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp, CollectionProcessor.class);
@@ -161,7 +198,7 @@ public class ODataHandler {
         }
       } else {
         if (request.getMethod().equals(HttpMethod.GET)) {
-          EntityProcessor ep = selectProcessor(EntityProcessor.class);
+          EntityProcessor ep = selectProcessor(EntityProcessor.class, response);
 
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
@@ -191,7 +228,8 @@ public class ODataHandler {
     }
   }
 
-  private <T extends Processor> T selectProcessor(final Class<T> cls) throws ODataTranslatedException {
+  private <T extends Processor> T selectProcessor(final Class<T> cls, ODataResponse response)
+      throws ODataTranslatedException {
     @SuppressWarnings("unchecked")
     T p = (T) processors.get(cls);
 

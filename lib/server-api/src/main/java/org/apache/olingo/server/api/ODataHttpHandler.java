@@ -42,4 +42,10 @@ public interface ODataHttpHandler {
    */
   void register(Processor processor);
 
+  /**
+   * Sets the split parameter which is used for service resolution. Default is 0. 
+   * @param split
+   */
+  void setSplit(int split);
+
 }

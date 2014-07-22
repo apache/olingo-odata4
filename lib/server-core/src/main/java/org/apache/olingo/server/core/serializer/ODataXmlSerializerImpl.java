@@ -18,23 +18,24 @@
  */
 package org.apache.olingo.server.core.serializer;
 
+import java.io.InputStream;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.xml.MetadataDocumentXmlSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.InputStream;
 
 public class ODataXmlSerializerImpl implements ODataSerializer {
 
@@ -86,7 +87,7 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
-  public InputStream error(ODataError error) {
+  public InputStream error(ODataServerError error) {
     throw new ODataRuntimeException("error serialization not implemented for XML format");
   }
 
