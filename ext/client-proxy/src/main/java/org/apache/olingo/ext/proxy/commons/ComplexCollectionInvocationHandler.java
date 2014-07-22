@@ -96,7 +96,7 @@ public class ComplexCollectionInvocationHandler<T extends ComplexType>
 
   @SuppressWarnings("unchecked")
   @Override
-  public <S extends T> Triple<List<S>, URI, List<ODataAnnotation>> fetchPartial(final URI uri, final Class<S> typeRef) {
+  public Triple<List<T>, URI, List<ODataAnnotation>> fetchPartial(final URI uri, final Class<T> typeRef) {
     final ODataPropertyRequest<ODataProperty> req = getClient().getRetrieveRequestFactory().getPropertyRequest(uri);
     if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) > 0) {
       req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
@@ -104,16 +104,16 @@ public class ComplexCollectionInvocationHandler<T extends ComplexType>
 
     final ODataRetrieveResponse<ODataProperty> res = req.execute();
 
-    List<S> resItems = new ArrayList<S>();
+    List<T> resItems = new ArrayList<T>();
 
     final ODataProperty property = res.getBody();
     if (property != null && !property.hasNullValue()) {
       for (ODataValue item : property.getCollectionValue()) {
-        resItems.add((S) getComplex(property.getName(), item, typeRef, null, null, true));
+        resItems.add((T) getComplex(property.getName(), item, typeRef, null, null, true));
       }
     }
 
-    return new ImmutableTriple<List<S>, URI, List<ODataAnnotation>>(
+    return new ImmutableTriple<List<T>, URI, List<ODataAnnotation>>(
             resItems, null, Collections.<ODataAnnotation>emptyList());
   }
 }

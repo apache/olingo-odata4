@@ -22,4 +22,29 @@ import java.io.Serializable;
 import java.util.Collection;
 
 public interface PrimitiveCollection<T extends Serializable> extends Collection<T>, Serializable {
+
+  /**
+   * Returns all instances.
+   *
+   * @return all entities
+   */
+  PrimitiveCollection<T> execute();
+
+  /**
+   * Sets the maximum number of results to retrieve (<tt>$top</tt>).
+   *
+   * @param top maximum number of results to retrieve
+   * @return the same query instance.
+   * @throws IllegalArgumentException if the argument is negative
+   */
+  PrimitiveCollection<T> top(int top) throws IllegalArgumentException;
+
+  /**
+   * Sets the position of the first result to retrieve (<tt>$skip</tt>).
+   *
+   * @param skip position of the first result, numbered from 0
+   * @return the same query instance.
+   * @throws IllegalArgumentException if the argument is negative
+   */
+  PrimitiveCollection<T> skip(int skip) throws IllegalArgumentException;
 }

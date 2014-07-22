@@ -93,8 +93,7 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
     return this;
   }
 
-  public abstract <S extends T> Triple<List<S>, URI, List<ODataAnnotation>> fetchPartial(
-          final URI uri, final Class<S> typeRef);
+  public abstract Triple<List<T>, URI, List<ODataAnnotation>> fetchPartial(final URI uri, final Class<T> typeRef);
 
   public void setAnnotations(final List<ODataAnnotation> annotations) {
     this.annotations.clear();

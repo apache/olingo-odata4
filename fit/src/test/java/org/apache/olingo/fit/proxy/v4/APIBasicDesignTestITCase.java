@@ -20,10 +20,12 @@ package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+//CHECKSTYLE:OFF (Maven checkstyle)
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -37,11 +39,12 @@ import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 import org.apache.olingo.ext.proxy.commons.EdmStreamTypeImpl;
-import org.apache.olingo.fit.proxy.v4.demo.Service;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.DefaultContainer;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetailsCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail;
 
-//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
@@ -53,8 +56,8 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
 import org.junit.Test;
-//CHECKSTYLE:ON (Maven checkstyle)
 
+//CHECKSTYLE:ON (Maven checkstyle)
 /**
  * This is the unit test class to check entity create operations.
  */
@@ -168,12 +171,12 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
   @Test
   public void navigateLinks() {
-    final Customer customer = getContainer().getCustomers().getByKey(1); // no query
-    assertNotNull(customer.getCompany().load().getCompanyID()); // singleton: single query
-    assertEquals(1, customer.getOrders().execute().size()); // collection: single query
+    final Customer customer = getContainer().getCustomers().getByKey(1); // No HTTP Request
+    assertNotNull(customer.getCompany().load().getCompanyID()); // singleton: single request
+    assertEquals(1, customer.getOrders().execute().size()); // collection: single request
 
-    final Order order = getContainer().getOrders().getByKey(8); // no querys
-    assertNotNull(order.getCustomerForOrder().load().getPersonID()); // entity type: single query
+    final Order order = getContainer().getOrders().getByKey(8); // No HTTP Requests
+    assertNotNull(order.getCustomerForOrder().load().getPersonID()); // entity type: single request
 
     service.getContext().detachAll(); // avoid influences
   }
@@ -234,9 +237,9 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     homeAddress.setPostalCode("98052");
     container.flush();
 
-    assertEquals("Pescara", container.getCustomers().getByKey(1).getHomeAddress().load().getCity());
-    assertEquals("98052", container.getCustomers().getByKey(1).getHomeAddress().load().getPostalCode());
-//    assertNotNull(container.getCustomers().getByKey(1).getHomeAddress().load().getStreet());
+    homeAddress = container.getCustomers().getByKey(1).getHomeAddress().load();
+    assertEquals("Pescara", homeAddress.getCity());
+    assertEquals("98052", homeAddress.getPostalCode());
   }
 
   @Test
@@ -244,7 +247,8 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     // ---------------------------------------
     // Instantiate Demo Service
     // ---------------------------------------
-    final Service<EdmEnabledODataClient> dservice = Service.getV4(testDemoServiceRootURL);
+    final org.apache.olingo.fit.proxy.v4.demo.Service<EdmEnabledODataClient> dservice =
+            org.apache.olingo.fit.proxy.v4.demo.Service.getV4(testDemoServiceRootURL);
     dservice.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     final DemoService dcontainer = dservice.getEntityContainer(DemoService.class);
     assertNotNull(dcontainer);
@@ -263,7 +267,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     final EdmStreamValue actual = dcontainer.getPersonDetails().getByKey(1).getPhoto().load(); // 1 HTTP Request
     assertEquals(random, IOUtils.toString(actual.getStream()));
 
-    service.getContext().detachAll(); // avoid influences
+    dservice.getContext().detachAll(); // avoid influences
   }
 
   @Test
@@ -301,5 +305,66 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     // the second HTTP Request to execute getProductDetails() operation.
     final ProductDetailCollection result = container.getProducts().getByKey(1012).operations().getProductDetails(1);
     assertEquals(1, result.size());
+  }
+
+  @Test
+  public void workingWithComplexCollections() throws IOException {
+    // ---------------------------------------
+    // Instantiate V3 Service (Currently, complex collections not provided by V4 service)
+    // ---------------------------------------
+    org.apache.olingo.fit.proxy.v3.staticservice.Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> v3serv =
+            org.apache.olingo.fit.proxy.v3.staticservice.Service.getV3(
+            "http://localhost:9080/stub/StaticService/V30/Static.svc");
+    v3serv.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    final DefaultContainer v3cont = v3serv.getEntityContainer(DefaultContainer.class);
+    assertNotNull(v3cont);
+    v3serv.getContext().detachAll();
+    // ---------------------------------------
+
+    final ContactDetailsCollection bci = v3cont.getCustomer().getByKey(-10).getBackupContactInfo(); // 1 HTTP Request
+    assertNotNull(bci);
+    assertTrue(bci.isEmpty());
+
+    bci.execute();
+    assertFalse(bci.isEmpty());
+    assertEquals(9, bci.size());
+
+    final PhoneCollection phoneCollection = bci.iterator().next().getMobilePhoneBag(); // No new HTTP Request
+    assertFalse(phoneCollection.isEmpty());
+
+    assertEquals("jlessdhjbgglmofcyßucßqbrfßppgzvygdyssßpehkrdetitmßfddsplccvussrvidmkodchdfzjvfgossbciq",
+            bci.iterator().next().getHomePhone().getPhoneNumber()); // No new HTTP Request
+
+    // assertNotNull(v3cont.getOrder().getByKey(8).getCustomer().getBackupContactInfo().execute().iterator().next().
+    //        getHomePhone().getPhoneNumber());
+    // Not supported by the test service BTW generates a single request as expected: 
+    // <service root>/Order(8)/Customer/BackupContactInfo
+
+    v3serv.getContext().detachAll();
+
+    // Static test service doesn't support query options about complexes: the following provides just a client example
+    v3cont.getCustomer().getByKey(-10).getBackupContactInfo().
+            select("HomePhone").
+            filter("HomePhone eq 12345").
+            skip(1).
+            top(10).
+            orderBy("HomePhone").
+            execute(); // New HTTP Request
+
+    v3serv.getContext().detachAll();
+  }
+
+  @Test
+  public void workingWithPrimitiveCollections() throws IOException {
+    final PrimitiveCollection<String> emails = container.getPeople().getByKey(1).getEmails();
+    assertNotNull(emails);
+    assertTrue(emails.isEmpty());
+    assertFalse(emails.execute().isEmpty());
+
+    getService().getContext().detachAll();
+
+    // container.getOrders().getByKey(1).getCustomerForOrder().getEmails().execute().isEmpty());
+    // Not supported by the test service BTW generates a single request as expected: 
+    // <service root>/Orders(1)/CustomerForOrder/Emails
   }
 }

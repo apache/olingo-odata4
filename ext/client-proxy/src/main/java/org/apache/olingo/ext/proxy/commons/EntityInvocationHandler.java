@@ -23,19 +23,15 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.lang.reflect.Type;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
@@ -43,50 +39,28 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.Annotatable;
-import org.apache.olingo.ext.proxy.api.ComplexCollection;
-import org.apache.olingo.ext.proxy.api.EdmStreamType;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
-import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
-import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
-import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Term;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
-import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
 public class EntityInvocationHandler extends AbstractStructuredInvocationHandler implements Annotatable {
 
   private static final long serialVersionUID = 2629912294765040037L;
-
-  protected final Map<String, Object> propertyChanges = new HashMap<String, Object>();
-
-  protected final Map<NavigationProperty, Object> linkChanges = new HashMap<NavigationProperty, Object>();
-
-  protected final Map<NavigationProperty, Object> linkCache = new HashMap<NavigationProperty, Object>();
-
-  protected int propertiesTag = 0;
-
-  protected int linksTag = 0;
-
-  private final Map<String, EdmStreamValue> streamedPropertyChanges = new HashMap<String, EdmStreamValue>();
-
-  private final Map<String, EdmStreamType> streamedPropertyCache = new HashMap<String, EdmStreamType>();
 
   private final Map<Class<? extends AbstractTerm>, Object> annotations =
           new HashMap<Class<? extends AbstractTerm>, Object>();
@@ -287,203 +261,8 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     getEntity().setETag(eTag);
   }
 
-  public Map<String, Object> getPropertyChanges() {
-    return propertyChanges;
-  }
-
-  @Override
-  public void addAdditionalProperty(final String name, final Object value) {
-    propertyChanges.put(name, value);
-    attach(AttachedEntityStatus.CHANGED);
-  }
-
-  public Map<NavigationProperty, Object> getLinkChanges() {
-    return linkChanges;
-  }
-
   public Map<Class<? extends AbstractTerm>, Object> getAnnotations() {
     return annotations;
-  }
-
-  private void updatePropertiesTag(final int checkpoint) {
-    if (propertiesTag == 0 || checkpoint == propertiesTag) {
-      propertiesTag = propertyChanges.hashCode();
-    }
-  }
-
-  private void updateLinksTag(final int checkpoint) {
-    if (linksTag == 0 || checkpoint == linksTag) {
-      linksTag = linkChanges.hashCode();
-    }
-  }
-
-  @Override
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  protected Object getPropertyValue(final String name, final Type type) {
-    try {
-      Object res;
-      Class<?> ref = ClassUtils.getTypeClass(type);
-
-      if (ref == EdmStreamType.class) {
-        if (streamedPropertyCache.containsKey(name)) {
-          res = streamedPropertyCache.get(name);
-        } else if (streamedPropertyChanges.containsKey(name)) {
-          res = new EdmStreamTypeImpl(streamedPropertyChanges.get(name));
-        } else {
-          res = Proxy.newProxyInstance(
-                  Thread.currentThread().getContextClassLoader(),
-                  new Class<?>[] {EdmStreamType.class}, new EdmStreamTypeHandler(
-                          getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name),
-                          service));
-
-          streamedPropertyCache.put(name, EdmStreamType.class.cast(res));
-        }
-
-        return res;
-      } else {
-
-        if (propertyChanges.containsKey(name)) {
-          res = propertyChanges.get(name);
-        } else {
-          final CommonODataProperty property = getEntity().getProperty(name);
-
-          if (ref != null && ClassUtils.getTypeClass(type).isAnnotationPresent(ComplexType.class)) {
-            res = getComplex(
-                    name,
-                    property == null || property.hasNullValue() ? null : property.getValue(),
-                    ref,
-                    this,
-                    baseURI,
-                    false);
-            addPropertyChanges(name, res);
-          } else if (ref != null && ComplexCollection.class.isAssignableFrom(ref)) {
-
-            final ComplexCollectionInvocationHandler<?> collectionHandler;
-            final Class<?> itemRef = ClassUtils.extractTypeArg(ref, ComplexCollection.class);
-
-            if (property == null || property.hasNullValue()) {
-              collectionHandler = new ComplexCollectionInvocationHandler(
-                      service,
-                      itemRef,
-                      getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name));
-            } else {
-              List items = new ArrayList();
-
-              for (ODataValue item : property.getValue().asCollection()) {
-                items.add(getComplex(
-                        name,
-                        item,
-                        itemRef,
-                        this,
-                        baseURI,
-                        true));
-              }
-
-              collectionHandler = new ComplexCollectionInvocationHandler(
-                      service,
-                      items,
-                      itemRef,
-                      getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name));
-            }
-
-            res = Proxy.newProxyInstance(
-                    Thread.currentThread().getContextClassLoader(),
-                    new Class<?>[] {ref}, collectionHandler);
-
-            addPropertyChanges(name, res);
-          } else if (ref != null && PrimitiveCollection.class.isAssignableFrom(ref)) {
-            final PrimitiveCollectionInvocationHandler collectionHandler;
-//            Class<?> itemRef = ClassUtils.extractTypeArg(ref, Collection.class);
-            if (property == null || property.hasNullValue()) {
-              collectionHandler = new PrimitiveCollectionInvocationHandler(
-                      service,
-                      null,
-                      getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name));
-            } else {
-              List items = new ArrayList();
-              for (ODataValue item : property.getValue().asCollection()) {
-                items.add(item.asPrimitive().toValue());
-              }
-              collectionHandler = new PrimitiveCollectionInvocationHandler(
-                      service,
-                      items,
-                      null,
-                      getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name));
-            }
-
-            res = Proxy.newProxyInstance(
-                    Thread.currentThread().getContextClassLoader(),
-                    new Class<?>[] {PrimitiveCollection.class}, collectionHandler);
-          } else {
-            res = property == null || property.hasNullValue()
-                    ? null
-                    : CoreUtils.getObjectFromODataValue(property.getValue(), type, service);
-
-            if (res != null) {
-              addPropertyChanges(name, res);
-            }
-          }
-        }
-
-        return res;
-      }
-    } catch (Exception e) {
-      throw new IllegalArgumentException("Error getting value for property '" + name + "'", e);
-    }
-  }
-
-  @Override
-  public Collection<String> getAdditionalPropertyNames() {
-    final Set<String> res = new HashSet<String>(propertyChanges.keySet());
-    final Set<String> propertyNames = new HashSet<String>();
-    for (Method method : typeRef.getMethods()) {
-      final Annotation ann = method.getAnnotation(Property.class);
-      if (ann != null) {
-        final String property = ((Property) ann).name();
-        propertyNames.add(property);
-
-        // maybe someone could add a normal attribute to the additional set
-        res.remove(property);
-      }
-    }
-
-    for (CommonODataProperty property : getEntity().getProperties()) {
-      if (!propertyNames.contains(property.getName())) {
-        res.add(property.getName());
-      }
-    }
-
-    return res;
-  }
-
-  @Override
-  protected void setPropertyValue(final Property property, final Object value) {
-    if (EdmPrimitiveTypeKind.Stream.getFullQualifiedName().toString().equalsIgnoreCase(property.type())) {
-      setStreamedProperty(property, (EdmStreamType) value);
-    } else {
-      addPropertyChanges(property.name(), value);
-
-      if (value != null) {
-        Collection<?> coll;
-        if (Collection.class.isAssignableFrom(value.getClass())) {
-          coll = Collection.class.cast(value);
-        } else {
-          coll = Collections.singleton(value);
-        }
-
-        for (Object item : coll) {
-          if (item instanceof Proxy) {
-            final InvocationHandler handler = Proxy.getInvocationHandler(item);
-            if ((handler instanceof ComplexInvocationHandler)
-                    && ((ComplexInvocationHandler) handler).getEntityHandler() == null) {
-              ((ComplexInvocationHandler) handler).setEntityHandler(this);
-            }
-          }
-        }
-      }
-    }
-
-    attach(AttachedEntityStatus.CHANGED);
   }
 
   @Override
@@ -512,10 +291,6 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return this.stream;
   }
 
-  public Map<String, EdmStreamValue> getStreamedPropertyChanges() {
-    return streamedPropertyChanges;
-  }
-
   public EdmStreamValue loadStream() {
     final URI contentSource = getEntity().getMediaContentSource() == null
             ? getClient().newURIBuilder(baseURI.toASCIIString()).appendValueSegment().build()
@@ -539,16 +314,6 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return this.stream;
   }
 
-  private void setStreamedProperty(final Property property, final EdmStreamType input) {
-    final Object obj = streamedPropertyChanges.get(property.name());
-    if (obj instanceof InputStream) {
-      IOUtils.closeQuietly((InputStream) obj);
-    }
-
-    streamedPropertyCache.remove(property.name());
-    streamedPropertyChanges.put(property.name(), input.load());
-  }
-
   @Override
   protected Object getNavigationPropertyValue(final NavigationProperty property, final Method getter) {
     final Object navPropValue;
@@ -566,29 +331,6 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     }
 
     return navPropValue;
-  }
-
-  @Override
-  public void removeAdditionalProperty(final String name) {
-    propertyChanges.remove(name);
-    attach(AttachedEntityStatus.CHANGED);
-  }
-
-  protected void addPropertyChanges(final String name, final Object value) {
-    final int checkpoint = propertyChanges.hashCode();
-    updatePropertiesTag(checkpoint);
-    propertyChanges.put(name, value);
-  }
-
-  @Override
-  protected void addLinkChanges(final NavigationProperty navProp, final Object value) {
-    final int checkpoint = linkChanges.hashCode();
-    updateLinksTag(checkpoint);
-    linkChanges.put(navProp, value);
-
-    if (linkCache.containsKey(navProp)) {
-      linkCache.remove(navProp);
-    }
   }
 
   protected void cacheLink(final NavigationProperty navProp, final Object value) {
@@ -727,6 +469,17 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     }
 
     return map;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  protected <T extends CommonODataProperty> List<T> getInternalProperties() {
+    return getEntity() == null ? Collections.<T>emptyList() : (List<T>) getEntity().getProperties();
+  }
+
+  @Override
+  protected CommonODataProperty getInternalProperty(final String name) {
+    return getEntity() == null ? null : getEntity().getProperty(name);
   }
 
   @Override

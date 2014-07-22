@@ -36,14 +36,12 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 
 public class PrimitiveCollectionInvocationHandler<T extends Serializable>
-        extends AbstractCollectionInvocationHandler<T, PrimitiveCollection<T>>
-        implements PrimitiveCollection<T> {
+        extends AbstractCollectionInvocationHandler<T, PrimitiveCollection<T>> {
 
   private static final long serialVersionUID = 98078202642671756L;
 
@@ -72,12 +70,8 @@ public class PrimitiveCollectionInvocationHandler<T extends Serializable>
   @Override
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if ("filter".equals(method.getName())
-            || "orderBy".equals(method.getName())
             || "top".equals(method.getName())
             || "skip".equals(method.getName())
-            || "expand".equals(method.getName())
-            || "select".equals(method.getName())
-            || "nextPage".equals(method.getName())
             || "execute".equals(method.getName())) {
       invokeSelfMethod(method, args);
       return proxy;
@@ -95,26 +89,27 @@ public class PrimitiveCollectionInvocationHandler<T extends Serializable>
     }
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public <S extends T> Triple<List<S>, URI, List<ODataAnnotation>> fetchPartial(final URI uri, final Class<S> typeRef) {
-    final ODataPropertyRequest<ODataProperty> req = getClient().getRetrieveRequestFactory().getPropertyRequest(uri);
+  @SuppressWarnings("unchecked")
+  public Triple<List<T>, URI, List<ODataAnnotation>> fetchPartial(final URI uri, final Class<T> typeRef) {
+    final ODataPropertyRequest<org.apache.olingo.commons.api.domain.v4.ODataProperty> req =
+            getClient().getRetrieveRequestFactory().getPropertyRequest(uri);
     if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) > 0) {
       req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
     }
 
-    final ODataRetrieveResponse<ODataProperty> res = req.execute();
+    final ODataRetrieveResponse<org.apache.olingo.commons.api.domain.v4.ODataProperty> res = req.execute();
 
-    List<S> resItems = new ArrayList<S>();
+    List<T> resItems = new ArrayList<T>();
 
-    final ODataProperty property = res.getBody();
+    org.apache.olingo.commons.api.domain.v4.ODataProperty property = res.getBody();
     if (property != null && !property.hasNullValue()) {
       for (ODataValue item : property.getCollectionValue()) {
-        resItems.add((S) getComplex(property.getName(), item, typeRef, null, null, true));
+        resItems.add((T) item.asPrimitive().toValue());
       }
     }
 
-    return new ImmutableTriple<List<S>, URI, List<ODataAnnotation>>(
+    return new ImmutableTriple<List<T>, URI, List<ODataAnnotation>>(
             resItems, null, Collections.<ODataAnnotation>emptyList());
   }
 

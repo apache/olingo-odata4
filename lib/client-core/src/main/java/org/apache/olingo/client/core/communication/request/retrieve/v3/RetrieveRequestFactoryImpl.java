@@ -37,6 +37,7 @@ import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 
 import java.net.URI;
 
+@SuppressWarnings("unchecked")
 public class RetrieveRequestFactoryImpl extends AbstractRetrieveRequestFactory implements RetrieveRequestFactory {
 
   public RetrieveRequestFactoryImpl(final ODataClient client) {

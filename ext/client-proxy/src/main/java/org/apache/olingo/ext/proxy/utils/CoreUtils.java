@@ -39,6 +39,7 @@ import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -99,8 +100,6 @@ public final class CoreUtils {
       for (Object collectionItem : (Collection<?>) obj) {
         if (intType.isPrimitiveType()) {
           value.asCollection().add(getODataValue(client, intType, collectionItem).asPrimitive());
-        } else if (intType.isComplexType()) {
-          value.asCollection().add(getODataValue(client, intType, collectionItem).asComplex());
         } else if (intType.isEnumType()) {
           if (client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
             throw new UnsupportedInV3Exception();
@@ -109,32 +108,39 @@ public final class CoreUtils {
                     client, intType, collectionItem)).asEnum());
           }
 
+        } else if (intType.isComplexType()) {
+          value.asCollection().add(getODataValue(client, intType, collectionItem).asComplex());
         } else {
           throw new UnsupportedOperationException("Unsupported object type " + intType.getFullQualifiedName());
         }
       }
     } else if (type.isComplexType()) {
+
       final Object objHandler = Proxy.getInvocationHandler(obj);
       if (objHandler instanceof ComplexInvocationHandler) {
         value = ((ComplexInvocationHandler) objHandler).getComplex();
 
         final Class<?> typeRef = ((ComplexInvocationHandler) objHandler).getTypeRef();
-        for (Method method : typeRef.getMethods()) {
-          final Property propAnn = method.getAnnotation(Property.class);
-          if (propAnn != null) {
-            try {
-              value.asComplex().add(getODataComplexProperty(
-                      client, type.getFullQualifiedName(), propAnn.name(), method.invoke(obj)));
-            } catch (Exception ignore) {
-              // ignore value
-              LOG.warn("Error attaching complex {} for field '{}.{}'",
-                      type.getFullQualifiedName(), typeRef.getName(), propAnn.name(), ignore);
-            }
+
+        for (Map.Entry<String, Object> changes
+                : ((ComplexInvocationHandler) objHandler).getPropertyChanges().entrySet()) {
+          try {
+            value.asComplex().add(getODataComplexProperty(
+                    client, type.getFullQualifiedName(), changes.getKey(), changes.getValue()));
+          } catch (Exception ignore) {
+            // ignore value
+            LOG.warn("Error attaching complex {} for field '{}.{}'",
+                    type.getFullQualifiedName(), typeRef.getName(), changes.getKey(), ignore);
           }
         }
+
+
+
+
       } else {
         throw new IllegalArgumentException(objHandler.getClass().getName() + "' is not a complex value");
       }
+
     } else if (type.isEnumType()) {
       if (client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
         throw new UnsupportedInV3Exception();
@@ -307,6 +313,21 @@ public final class CoreUtils {
     for (Map.Entry<String, Object> entry : changes.entrySet()) {
       ((List<CommonODataProperty>) entity.getProperties()).add(
               getODataEntityProperty(client, entity.getTypeName(), entry.getKey(), entry.getValue()));
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  public static void addProperties(
+          final CommonEdmEnabledODataClient<?> client,
+          final Map<String, Object> changes,
+          final ODataComplexValue<CommonODataProperty> entity) {
+
+    for (Map.Entry<String, Object> entry : changes.entrySet()) {
+      entity.add(getODataComplexProperty(
+              client,
+              new FullQualifiedName(entity.getTypeName()),
+              entry.getKey(),
+              entry.getValue()));
     }
   }
 

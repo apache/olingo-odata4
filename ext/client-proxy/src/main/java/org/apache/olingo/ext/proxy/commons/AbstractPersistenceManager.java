@@ -341,10 +341,6 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
         queueDelete(handler, entity, changeset);
         return AttachedEntityStatus.DELETED;
 
-//      case CHANGED:
-//        queueUpdate(handler, entity, changeset);
-//        return AttachedEntityStatus.CHANGED;
-
       default:
         if (handler.isChanged(false)) {
           queueUpdate(handler, entity, changeset);

@@ -214,11 +214,11 @@ class EntitySetInvocationHandler<
 
     final List<ODataAnnotation> anns = new ArrayList<ODataAnnotation>();
 
-    final Triple<List<S>, URI, List<ODataAnnotation>> entitySet = fetchPartial(uriBuilder.build(), ref);
+    final Triple<List<T>, URI, List<ODataAnnotation>> entitySet = fetchPartial(uriBuilder.build(), (Class<T>) ref);
     anns.addAll(entitySet.getRight());
 
     final EntityCollectionInvocationHandler<S> entityCollectionHandler = new EntityCollectionInvocationHandler<S>(
-            service, entitySet.getLeft(), collTypeRef, this.baseURI, uriBuilder);
+            service, (List<S>) entitySet.getLeft(), collTypeRef, this.baseURI, uriBuilder);
     entityCollectionHandler.setAnnotations(anns);
 
     entityCollectionHandler.nextPageURI = entitySet.getMiddle();
@@ -260,8 +260,8 @@ class EntitySetInvocationHandler<
 
     URI nextURI = uriBuilder.build();
     while (nextURI != null) {
-      final Triple<List<S>, URI, List<ODataAnnotation>> entitySet = fetchPartial(nextURI, typeRef);
-      res.addAll(entitySet.getLeft());
+      final Triple<List<T>, URI, List<ODataAnnotation>> entitySet = fetchPartial(nextURI, (Class<T>) typeRef);
+      res.addAll((List<S>) entitySet.getLeft());
       nextURI = entitySet.getMiddle();
       anns.addAll(entitySet.getRight());
     }

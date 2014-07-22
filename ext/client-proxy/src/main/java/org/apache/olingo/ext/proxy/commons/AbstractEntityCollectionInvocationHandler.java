@@ -95,8 +95,8 @@ public abstract class AbstractEntityCollectionInvocationHandler<T extends Entity
 
   @SuppressWarnings("unchecked")
   @Override
-  public <S extends T> Triple<List<S>, URI, List<ODataAnnotation>> fetchPartial(
-          final URI uri, final Class<S> typeRef) {
+  public Triple<List<T>, URI, List<ODataAnnotation>> fetchPartial(
+          final URI uri, final Class<T> typeRef) {
 
     final List<CommonODataEntity> entities = new ArrayList<CommonODataEntity>();
     final URI next;
@@ -125,7 +125,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<T extends Entity
       }
     }
 
-    final List<S> res = new ArrayList<S>(entities.size());
+    final List<T> res = new ArrayList<T>(entities.size());
 
     for (CommonODataEntity entity : entities) {
       final EntityInvocationHandler handler =
@@ -142,12 +142,12 @@ public abstract class AbstractEntityCollectionInvocationHandler<T extends Entity
 
       final EntityInvocationHandler handlerInTheContext = getContext().entityContext().getEntity(handler.getUUID());
 
-      res.add((S) Proxy.newProxyInstance(
+      res.add((T) Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {typeRef},
               handlerInTheContext == null ? handler : handlerInTheContext));
     }
 
-    return new ImmutableTriple<List<S>, URI, List<ODataAnnotation>>(res, next, anns);
+    return new ImmutableTriple<List<T>, URI, List<ODataAnnotation>>(res, next, anns);
   }
 }
