@@ -26,7 +26,7 @@ import java.util.Collection;
 
 
 public interface PaymentInstrumentCollection extends 
-    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument> {
+    org.apache.olingo.ext.proxy.api.StruncturedCollectionQuery<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

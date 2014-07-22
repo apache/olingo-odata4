@@ -26,7 +26,7 @@ import java.util.Collection;
 
 
 public interface MessageAttachmentCollection extends 
-    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachment, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachmentCollection, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachmentCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachment> {
+    org.apache.olingo.ext.proxy.api.StruncturedCollectionQuery<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachment, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachmentCollection, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachmentCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachment> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

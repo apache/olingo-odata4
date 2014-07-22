@@ -26,7 +26,7 @@ import java.util.Collection;
 
 
 public interface OrderCollection extends 
-    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Order, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderCollection, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Order> {
+    org.apache.olingo.ext.proxy.api.StruncturedCollectionQuery<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Order, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderCollection, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Order> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

@@ -196,9 +196,9 @@ public interface Person
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.lang.String> getNumbers();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getNumbers();
 
-    void setNumbers(java.util.Collection<java.lang.String> _numbers);
+    void setNumbers(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> _numbers);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Emails", 
@@ -219,9 +219,9 @@ public interface Person
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.lang.String> getEmails();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getEmails();
 
-    void setEmails(java.util.Collection<java.lang.String> _emails);
+    void setEmails(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> _emails);
     
 
     @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Parent", 
@@ -250,7 +250,7 @@ public interface Person
                     type = OperationType.ACTION,
                     returnType = "Microsoft.Test.OData.Services.ODataWCFService.Person")
       org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person resetAddress(
-                @Parameter(name = "addresses", type = "Collection(Microsoft.Test.OData.Services.ODataWCFService.Address)", nullable = false) java.util.Collection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address> addresses, 
+                @Parameter(name = "addresses", type = "Collection(Microsoft.Test.OData.Services.ODataWCFService.Address)", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AddressCollection addresses, 
                 @Parameter(name = "index", type = "Edm.Int32", nullable = false) java.lang.Integer index
             );
 

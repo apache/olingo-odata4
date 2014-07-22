@@ -53,6 +53,7 @@ import java.lang.reflect.Proxy;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collection;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -172,7 +173,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
     try {
       assertNotNull(computerDetail.operations().getClass().getMethod(
-              "resetComputerDetailsSpecifications", Collection.class, Timestamp.class));
+              "resetComputerDetailsSpecifications", PrimitiveCollection.class, Timestamp.class));
     } catch (Exception e) {
       fail();
     }

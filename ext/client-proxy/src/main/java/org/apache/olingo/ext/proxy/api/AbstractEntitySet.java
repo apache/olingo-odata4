@@ -24,10 +24,10 @@ import java.io.Serializable;
  * Interface for synchronous CRUD operations on an EntitySet.
  */
 public interface AbstractEntitySet<
-        T extends StructuredType, KEY extends Serializable, EC extends EntityCollection<T>>
+        T extends EntityType, KEY extends Serializable, EC extends EntityCollection<T>>
         extends Iterable<T>, Serializable {
 
-  void add(final T entity);
+  boolean add(final T entity);
 
   /**
    * Returns whether an entity with the given id exists.

@@ -18,21 +18,8 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-public interface EntityCollectionQuery<
-        T extends StructuredType, EC extends EntityCollection<T>, CT extends EntityCollectionQuery<T, EC, ?>>
-        extends CollectionQuery<T, EC, CT> {
+import java.io.Serializable;
+import java.util.Collection;
 
-  /**
-   * Explicit paging result handling.
-   *
-   * @return next page.
-   */
-  CT nextPage();
-
-  /**
-   * Checks for next page existence.
-   *
-   * @return <<tt>TRUE</tt> whether a next page exist; <tt>FALSE</tt> otherwise.
-   */
-  boolean hasNextPage();
+public interface ComplexCollection<T extends ComplexType> extends Collection<T>, Serializable {
 }

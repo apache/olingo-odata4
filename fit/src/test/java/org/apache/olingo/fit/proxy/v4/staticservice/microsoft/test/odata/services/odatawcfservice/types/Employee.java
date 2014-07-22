@@ -197,9 +197,9 @@ public interface Employee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.lang.String> getNumbers();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getNumbers();
 
-    void setNumbers(java.util.Collection<java.lang.String> _numbers);
+    void setNumbers(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> _numbers);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Emails", 
@@ -220,9 +220,9 @@ public interface Employee
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.lang.String> getEmails();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getEmails();
 
-    void setEmails(java.util.Collection<java.lang.String> _emails);
+    void setEmails(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> _emails);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "DateHired", 

@@ -96,7 +96,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     rowIndex.addAdditionalProperty("aByte", Byte.MAX_VALUE);
     rowIndex.addAdditionalProperty("aDate", Calendar.getInstance());
 
-    final ContactDetails contact = otservice.newComplex(ContactDetails.class);
+    final ContactDetails contact = otservice.newComplexInstance(ContactDetails.class);
     contact.setFirstContacted("text".getBytes());
 
     Calendar cal = Calendar.getInstance();
@@ -121,7 +121,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     rowIndex.addAdditionalProperty("aContact", contact);
     rowIndex.addAdditionalProperty("aColor", Color.Green);
 
-    final AccountInfo ai = otservice.newComplex(AccountInfo.class);
+    final AccountInfo ai = otservice.newComplexInstance(AccountInfo.class);
     ai.setFirstName("Fabio");
     ai.setLastName("Martelli");
     ai.addAdditionalProperty("email", "fabio.martelli@tirasa.net");

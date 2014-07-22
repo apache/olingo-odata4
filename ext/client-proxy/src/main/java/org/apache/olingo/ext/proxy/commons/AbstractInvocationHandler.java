@@ -55,6 +55,10 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.ext.proxy.api.ComplexCollection;
+import org.apache.olingo.ext.proxy.api.ComplexType;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 
 abstract class AbstractInvocationHandler implements InvocationHandler {
 
@@ -112,7 +116,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     return Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {typeCollectionRef},
-            new EntityCollectionInvocationHandler(service, items, typeRef, targetEntitySetURI,
+            new EntityCollectionInvocationHandler(service, items, typeCollectionRef, targetEntitySetURI,
             uri == null ? null : getClient().newURIBuilder(uri.toASCIIString())));
   }
 
@@ -241,11 +245,101 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
                 false);
       }
     } else {
+      Object res;
+
+      Class<?> ref = ClassUtils.getTypeClass(method.getReturnType());
       final CommonODataProperty property = (CommonODataProperty) result;
-      return property == null || property.hasNullValue()
-              ? null
-              : CoreUtils.getObjectFromODataValue(property.getValue(), method.getGenericReturnType(), service);
+
+      if (property == null || property.hasNullValue()) {
+        res = null;
+      } else if (edmType.isCollection()) {
+        if (edmType.isComplexType()) {
+          final Class<?> itemRef = ClassUtils.extractTypeArg(ref, ComplexCollection.class);
+          final List items = new ArrayList();
+
+          for (ODataValue item : property.getValue().asCollection()) {
+            items.add(getComplex(
+                    property.getName(),
+                    item,
+                    itemRef,
+                    null,
+                    null,
+                    true));
+          }
+
+          res = Proxy.newProxyInstance(
+                  Thread.currentThread().getContextClassLoader(),
+                  new Class<?>[] {ref}, new ComplexCollectionInvocationHandler(
+                  service,
+                  items,
+                  itemRef,
+                  null));
+        } else {
+          final List items = new ArrayList();
+
+          for (ODataValue item : property.getValue().asCollection()) {
+            items.add(item.asPrimitive().toValue());
+          }
+
+          res = Proxy.newProxyInstance(
+                  Thread.currentThread().getContextClassLoader(),
+                  new Class<?>[] {PrimitiveCollection.class}, new PrimitiveCollectionInvocationHandler(
+                  service,
+                  items,
+                  null,
+                  null));
+        }
+      } else {
+        if (edmType.isComplexType()) {
+          res = getComplex(property.getName(), property.getValue().asComplex(), ref, null, null, false);
+        } else {
+          res = CoreUtils.getObjectFromODataValue(property.getValue(), method.getGenericReturnType(), service);
+        }
+      }
+
+      return res;
     }
+  }
+
+  protected ComplexType getComplex(
+          final String name,
+          final ODataValue value,
+          final Class<?> ref,
+          final EntityInvocationHandler handler,
+          final URI baseURI,
+          final boolean collectionItem) {
+
+    final CommonURIBuilder<?> targetURI;
+    if (collectionItem) {
+      targetURI = null;
+    } else {
+      targetURI = baseURI == null
+              ? null : getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name);
+    }
+
+    final ComplexInvocationHandler complexHandler;
+    Class<?> actualRef = ref;
+    if (value == null) {
+      complexHandler = ComplexInvocationHandler.getInstance(
+              actualRef,
+              service,
+              targetURI);
+    } else {
+      actualRef = CoreUtils.getComplexTypeRef(value); // handle derived types
+      complexHandler = ComplexInvocationHandler.getInstance(
+              value.asComplex(),
+              actualRef,
+              service,
+              targetURI);
+    }
+
+    complexHandler.setEntityHandler(handler);
+
+    final ComplexType res = ComplexType.class.cast(Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] {actualRef}, complexHandler));
+
+    return res;
   }
 
   @Override

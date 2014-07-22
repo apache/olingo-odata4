@@ -16,20 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection;
+
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.Collection;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -51,7 +51,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void getPerson() {
-    final Address address = service.newComplex(HomeAddress.class);
+    final Address address = service.newComplexInstance(HomeAddress.class);
     address.setStreet("1 Microsoft Way");
     address.setPostalCode("98052");
     address.setCity("London");
@@ -80,7 +80,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void resetBossAddress() {
-    final Address address = service.newComplex(HomeAddress.class);
+    final Address address = service.newComplexInstance(HomeAddress.class);
     address.setStreet("Via Le Mani Dal Naso, 123");
     address.setPostalCode("Tollo");
     address.setCity("66010");
@@ -93,11 +93,14 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void bossEmails() {
-    final Collection<String> result = container.operations().resetBossEmail(Arrays.asList(
-            new String[] {"first@olingo.apache.org", "second@olingo.apache.org"}));
+    PrimitiveCollection<String> be = service.newPrimitiveCollection(String.class);
+    be.add("first@olingo.apache.org");
+    be.add("second@olingo.apache.org");
+
+    final PrimitiveCollection<String> result = container.operations().resetBossEmail(be);
     assertEquals(2, result.size());
 
-    final Collection<String> result2 = container.operations().getBossEmails(0, 100);
+    final PrimitiveCollection<String> result2 = container.operations().getBossEmails(0, 100);
     assertEquals(result, result2);
   }
 }

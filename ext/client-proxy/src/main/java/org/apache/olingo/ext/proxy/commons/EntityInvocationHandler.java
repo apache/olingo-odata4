@@ -53,16 +53,21 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.ext.proxy.api.ComplexCollection;
 import org.apache.olingo.ext.proxy.api.EdmStreamType;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
@@ -314,10 +319,12 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   @Override
+  @SuppressWarnings({"unchecked", "rawtypes"})
   protected Object getPropertyValue(final String name, final Type type) {
     try {
       Object res;
       Class<?> ref = ClassUtils.getTypeClass(type);
+
       if (ref == EdmStreamType.class) {
         if (streamedPropertyCache.containsKey(name)) {
           res = streamedPropertyCache.get(name);
@@ -335,41 +342,87 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
         return res;
       } else {
-        final CommonODataProperty property = getEntity().getProperty(name);
 
         if (propertyChanges.containsKey(name)) {
           res = propertyChanges.get(name);
-        } else if (ref != null && ClassUtils.getTypeClass(type).isAnnotationPresent(ComplexType.class)) {
-
-          final ComplexInvocationHandler complexHandler;
-          if (property == null || property.hasNullValue()) {
-            complexHandler = ComplexInvocationHandler.getInstance(
-                    ref,
-                    service,
-                    getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name));
-          } else {
-            ref = CoreUtils.getComplexTypeRef(property.getValue()); // handle derived types
-            complexHandler = ComplexInvocationHandler.getInstance(
-                    property.getValue().asComplex(),
-                    ref,
-                    service,
-                    getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name));
-          }
-
-          complexHandler.setEntityHandler(this);
-
-          res = Proxy.newProxyInstance(
-                  Thread.currentThread().getContextClassLoader(),
-                  new Class<?>[] {ref}, complexHandler);
-
-          addPropertyChanges(name, res);
         } else {
-          res = property == null || property.hasNullValue()
-                  ? null
-                  : CoreUtils.getObjectFromODataValue(property.getValue(), type, service);
+          final CommonODataProperty property = getEntity().getProperty(name);
 
-          if (res != null) {
+          if (ref != null && ClassUtils.getTypeClass(type).isAnnotationPresent(ComplexType.class)) {
+            res = getComplex(
+                    name,
+                    property == null || property.hasNullValue() ? null : property.getValue(),
+                    ref,
+                    this,
+                    baseURI,
+                    false);
             addPropertyChanges(name, res);
+          } else if (ref != null && ComplexCollection.class.isAssignableFrom(ref)) {
+
+            final ComplexCollectionInvocationHandler<?> collectionHandler;
+            final Class<?> itemRef = ClassUtils.extractTypeArg(ref, ComplexCollection.class);
+
+            if (property == null || property.hasNullValue()) {
+              collectionHandler = new ComplexCollectionInvocationHandler(
+                      service,
+                      itemRef,
+                      getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name));
+            } else {
+              List items = new ArrayList();
+
+              for (ODataValue item : property.getValue().asCollection()) {
+                items.add(getComplex(
+                        name,
+                        item,
+                        itemRef,
+                        this,
+                        baseURI,
+                        true));
+              }
+
+              collectionHandler = new ComplexCollectionInvocationHandler(
+                      service,
+                      items,
+                      itemRef,
+                      getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name));
+            }
+
+            res = Proxy.newProxyInstance(
+                    Thread.currentThread().getContextClassLoader(),
+                    new Class<?>[] {ref}, collectionHandler);
+
+            addPropertyChanges(name, res);
+          } else if (ref != null && PrimitiveCollection.class.isAssignableFrom(ref)) {
+            final PrimitiveCollectionInvocationHandler collectionHandler;
+//            Class<?> itemRef = ClassUtils.extractTypeArg(ref, Collection.class);
+            if (property == null || property.hasNullValue()) {
+              collectionHandler = new PrimitiveCollectionInvocationHandler(
+                      service,
+                      null,
+                      getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name));
+            } else {
+              List items = new ArrayList();
+              for (ODataValue item : property.getValue().asCollection()) {
+                items.add(item.asPrimitive().toValue());
+              }
+              collectionHandler = new PrimitiveCollectionInvocationHandler(
+                      service,
+                      items,
+                      null,
+                      getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name));
+            }
+
+            res = Proxy.newProxyInstance(
+                    Thread.currentThread().getContextClassLoader(),
+                    new Class<?>[] {PrimitiveCollection.class}, collectionHandler);
+          } else {
+            res = property == null || property.hasNullValue()
+                    ? null
+                    : CoreUtils.getObjectFromODataValue(property.getValue(), type, service);
+
+            if (res != null) {
+              addPropertyChanges(name, res);
+            }
           }
         }
 

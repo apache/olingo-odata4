@@ -16,10 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
@@ -28,12 +28,12 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailKey;
-import org.junit.Test;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Collections;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AddressCollection;
+
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -95,13 +95,15 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void resetAddress() {
-    final Address address = service.newComplex(HomeAddress.class);
+    final Address address = service.newComplexInstance(HomeAddress.class);
     address.setStreet("Via Le Mani Dal Naso, 123");
     address.setPostalCode("Tollo");
     address.setCity("66010");
 
-    final Person person = container.getCustomers().getByKey(2).operations().
-            resetAddress(Collections.singletonList(address), 0);
+    final AddressCollection ac = service.newComplexCollection(AddressCollection.class);
+    ac.add(address);
+
+    final Person person = container.getCustomers().getByKey(2).operations().resetAddress(ac, 0);
     assertEquals(2, person.getPersonID(), 0);
   }
 

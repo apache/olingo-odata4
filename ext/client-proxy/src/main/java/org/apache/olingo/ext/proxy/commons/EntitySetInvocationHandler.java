@@ -33,7 +33,6 @@ import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
 import org.apache.olingo.ext.proxy.api.Search;
 import org.apache.olingo.ext.proxy.api.SingleQuery;
-import org.apache.olingo.ext.proxy.api.StructuredType;
 import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityContext;
@@ -53,11 +52,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.Singleton;
 
 class EntitySetInvocationHandler<
-        T extends StructuredType, KEY extends Serializable, EC extends EntityCollection<T>>
+        T extends EntityType, KEY extends Serializable, EC extends EntityCollection<T>>
         extends AbstractEntityCollectionInvocationHandler<T, EC>
         implements AbstractEntitySet<T, KEY, EC> {
 
@@ -69,42 +69,35 @@ class EntitySetInvocationHandler<
   private static final Logger LOG = LoggerFactory.getLogger(EntitySetInvocationHandler.class);
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static EntitySetInvocationHandler getInstance(
-          final Class<?> ref,
-          final Service<?> service,
-          final String entitySetName) {
-
-    return new EntitySetInvocationHandler(ref, service, entitySetName, buildURI(ref, service, entitySetName));
+  static EntitySetInvocationHandler getInstance(final Class<?> ref, final Service<?> service) {
+    return new EntitySetInvocationHandler(ref, service, buildURI(ref, service));
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static EntitySetInvocationHandler getInstance(
-          final Class<?> ref, final Service<?> service, final URI uri) {
-
-    return new EntitySetInvocationHandler(
-            ref,
-            service,
-            (ref.getAnnotation(EntitySet.class)).name(),
-            service.getClient().newURIBuilder(uri.toASCIIString()));
+  static EntitySetInvocationHandler getInstance(final Class<?> ref, final Service<?> service, final URI uri) {
+    return new EntitySetInvocationHandler(ref, service, service.getClient().newURIBuilder(uri.toASCIIString()));
   }
 
   private static CommonURIBuilder<?> buildURI(
           final Class<?> ref,
-          final Service<?> service,
-          final String entitySetName) {
+          final Service<?> service) {
     final CommonURIBuilder<?> uriBuilder = service.getClient().newURIBuilder();
 
     final Edm edm = service.getClient().getCachedEdm();
     final String containerNS;
+    final String entitySetName;
     Annotation ann = ref.getAnnotation(EntitySet.class);
     if (ann instanceof EntitySet) {
       containerNS = EntitySet.class.cast(ann).container();
+      entitySetName = EntitySet.class.cast(ann).name();
     } else {
       ann = ref.getAnnotation(Singleton.class);
       if (ann instanceof Singleton) {
         containerNS = Singleton.class.cast(ann).container();
+        entitySetName = Singleton.class.cast(ann).name();
       } else {
         containerNS = null;
+        entitySetName = null;
       }
     }
 
@@ -125,21 +118,9 @@ class EntitySetInvocationHandler<
   protected EntitySetInvocationHandler(
           final Class<?> ref,
           final Service<?> service,
-          final String entitySetName,
           final CommonURIBuilder<?> uri) {
 
     super(ref, service, uri);
-  }
-
-  @SuppressWarnings("unchecked")
-  protected EntitySetInvocationHandler(
-          final Class<?> itemRef,
-          final Class<EC> collItemRef,
-          final Service<?> service,
-          final String entitySetName,
-          final CommonURIBuilder<?> uri) {
-
-    super(itemRef, collItemRef, service, uri.build(), uri);
   }
 
   @Override
@@ -156,15 +137,6 @@ class EntitySetInvocationHandler<
       return invokeSelfMethod(method, args);
     } else {
       throw new NoSuchMethodException(method.getName());
-    }
-  }
-
-  @Override
-  public void add(final T entity) {
-    final EntityInvocationHandler handler = EntityInvocationHandler.class.cast(Proxy.getInvocationHandler(entity));
-    if (!getContext().entityContext().isAttached(handler)) {
-      handler.updateUUID(baseURI, itemRef, null);
-      getContext().entityContext().attachNew(handler);
     }
   }
 
@@ -209,7 +181,6 @@ class EntitySetInvocationHandler<
               typeRef.getAnnotation(Namespace.class).value(), ClassUtils.getEntityTypeName(typeRef)));
 
       handler = EntityInvocationHandler.getInstance(key, entity, this.baseURI, typeRef, service);
-
     } else if (isDeleted(handler)) {
       // object deleted
       LOG.debug("Object '{}({})' has been deleted", typeRef.getSimpleName(), uuid);
@@ -222,6 +193,7 @@ class EntitySetInvocationHandler<
             handler);
   }
 
+  @Override
   public EC execute() {
     return execute(collItemRef);
   }
@@ -240,16 +212,16 @@ class EntitySetInvocationHandler<
               ClassUtils.getNamespace(ref), ClassUtils.getEntityTypeName(ref)).toString());
     }
 
-    final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
+    final List<ODataAnnotation> anns = new ArrayList<ODataAnnotation>();
 
-    final Triple<List<S>, URI, List<ODataAnnotation>> entitySet = fetchPartialEntitySet(uriBuilder.build(), ref);
-    annotations.addAll(entitySet.getRight());
+    final Triple<List<S>, URI, List<ODataAnnotation>> entitySet = fetchPartial(uriBuilder.build(), ref);
+    anns.addAll(entitySet.getRight());
 
-    final EntityCollectionInvocationHandler<S> entityCollectionHandler =
-            new EntityCollectionInvocationHandler<S>(service, entitySet.getLeft(), ref, this.baseURI, uriBuilder);
-    entityCollectionHandler.setAnnotations(annotations);
+    final EntityCollectionInvocationHandler<S> entityCollectionHandler = new EntityCollectionInvocationHandler<S>(
+            service, entitySet.getLeft(), collTypeRef, this.baseURI, uriBuilder);
+    entityCollectionHandler.setAnnotations(anns);
 
-    entityCollectionHandler.setNextPage(entitySet.getMiddle());
+    entityCollectionHandler.nextPageURI = entitySet.getMiddle();
 
     return (SEC) Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
@@ -267,8 +239,7 @@ class EntitySetInvocationHandler<
 
   @Override
   @SuppressWarnings("unchecked")
-  public <S extends T, SEC extends EntityCollection<S>> Search<S, SEC> createSearch(
-          final Class<SEC> reference) {
+  public <S extends T, SEC extends EntityCollection<S>> Search<S, SEC> createSearch(final Class<SEC> reference) {
 
     if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
       throw new UnsupportedInV3Exception();
@@ -278,6 +249,31 @@ class EntitySetInvocationHandler<
             reference,
             baseURI,
             (EntitySetInvocationHandler<S, ?, SEC>) this);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <S extends T, SEC extends EntityCollection<S>> SEC fetchWholeEntitySet(
+          final CommonURIBuilder<?> uriBuilder, final Class<S> typeRef, final Class<SEC> collTypeRef) {
+
+    final List<S> res = new ArrayList<S>();
+    final List<ODataAnnotation> anns = new ArrayList<ODataAnnotation>();
+
+    URI nextURI = uriBuilder.build();
+    while (nextURI != null) {
+      final Triple<List<S>, URI, List<ODataAnnotation>> entitySet = fetchPartial(nextURI, typeRef);
+      res.addAll(entitySet.getLeft());
+      nextURI = entitySet.getMiddle();
+      anns.addAll(entitySet.getRight());
+    }
+
+    final EntityCollectionInvocationHandler<S> entityCollectionHandler =
+            new EntityCollectionInvocationHandler<S>(service, res, collTypeRef, targetEntitySetURI, uriBuilder);
+    entityCollectionHandler.setAnnotations(anns);
+
+    return (SEC) Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] {collTypeRef},
+            entityCollectionHandler);
   }
 
   @Override

@@ -302,10 +302,6 @@ public abstract class AbstractUtility {
 
     final EdmTypeInfo edmType = getEdmTypeInfo(typeExpression);
 
-    if ((forceCollection || edmType.isCollection()) && !edmType.isEntityType()) {
-      res.append("java.util.Collection<");
-    }
-
     final String basepkg = StringUtils.isBlank(basePackage) ? "" : basePackage + ".";
 
     if ("Edm.Stream".equals(typeExpression)) {
@@ -337,10 +333,10 @@ public abstract class AbstractUtility {
     }
 
     if (forceCollection || edmType.isCollection()) {
-      if (edmType.isEntityType()) {
+      if (edmType.isEntityType() || edmType.isComplexType()) {
         res.append("Collection");
       } else {
-        res.append('>');
+        res.insert(0, "org.apache.olingo.ext.proxy.api.PrimitiveCollection<").append(">");
       }
     }
 

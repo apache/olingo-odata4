@@ -16,12 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
 
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -106,7 +105,11 @@ public abstract class AbstractTestITCase {
     order.setOrderDate(new Timestamp(orderDate.getTimeInMillis()));
 
     order.setShelfLife(BigDecimal.ZERO);
-    order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] {BigDecimal.TEN.negate(), BigDecimal.TEN}));
+
+    final PrimitiveCollection<BigDecimal> value = service.newPrimitiveCollection(BigDecimal.class);
+    value.add(BigDecimal.TEN.negate());
+    value.add(BigDecimal.TEN);
+    order.setOrderShelfLifes(value);
 
     container.getOrders().add(order);
     container.flush();

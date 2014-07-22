@@ -63,6 +63,14 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
     return new OperationInvocationHandler(collectionHandler);
   }
 
+  static OperationInvocationHandler getInstance(final ComplexCollectionInvocationHandler<?> collectionHandler) {
+    return new OperationInvocationHandler(collectionHandler);
+  }
+
+  static OperationInvocationHandler getInstance(final PrimitiveCollectionInvocationHandler<?> collectionHandler) {
+    return new OperationInvocationHandler(collectionHandler);
+  }
+
   private OperationInvocationHandler(final EntityContainerInvocationHandler containerHandler) {
     super(containerHandler.service);
 
@@ -82,8 +90,30 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
 
     this.target = collectionHandler;
 
-    final String typeName = ClassUtils.getEntityTypeName(collectionHandler.getEntityReference());
-    final String typeNamespace = ClassUtils.getNamespace(collectionHandler.getEntityReference());
+    final String typeName = ClassUtils.getEntityTypeName(collectionHandler.getTypeRef());
+    final String typeNamespace = ClassUtils.getNamespace(collectionHandler.getTypeRef());
+
+    this.targetFQN = new FullQualifiedName(typeNamespace, typeName);
+  }
+
+  private OperationInvocationHandler(final ComplexCollectionInvocationHandler<?> collectionHandler) {
+    super(collectionHandler.service);
+
+    this.target = collectionHandler;
+
+    final String typeName = ClassUtils.getEntityTypeName(collectionHandler.getTypeRef());
+    final String typeNamespace = ClassUtils.getNamespace(collectionHandler.getTypeRef());
+
+    this.targetFQN = new FullQualifiedName(typeNamespace, typeName);
+  }
+
+  private OperationInvocationHandler(final PrimitiveCollectionInvocationHandler<?> collectionHandler) {
+    super(collectionHandler.service);
+
+    this.target = collectionHandler;
+
+    final String typeName = ClassUtils.getEntityTypeName(collectionHandler.getTypeRef());
+    final String typeNamespace = ClassUtils.getNamespace(collectionHandler.getTypeRef());
 
     this.targetFQN = new FullQualifiedName(typeNamespace, typeName);
   }

@@ -171,9 +171,9 @@ public interface Customer
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails> getBackupContactInfo();
+    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetailsCollection getBackupContactInfo();
 
-    void setBackupContactInfo(java.util.Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails> _backupContactInfo);
+    void setBackupContactInfo(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetailsCollection _backupContactInfo);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Auditing", 

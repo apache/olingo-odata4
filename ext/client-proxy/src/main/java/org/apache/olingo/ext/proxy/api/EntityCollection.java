@@ -21,5 +21,5 @@ package org.apache.olingo.ext.proxy.api;
 import java.io.Serializable;
 import java.util.Collection;
 
-public interface EntityCollection<T extends Serializable> extends Collection<T>, Serializable {
+public interface EntityCollection<T extends EntityType> extends Collection<T>, Serializable {
 }

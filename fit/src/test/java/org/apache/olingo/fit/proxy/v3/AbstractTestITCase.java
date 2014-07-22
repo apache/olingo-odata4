@@ -16,25 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.Service;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetailsCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.DefaultContainer;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Aliases;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone;
+
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -96,21 +96,38 @@ public abstract class AbstractTestITCase {
     // add key attribute
     customer.setCustomerId(id);
 
-    final ContactDetails cd = service.newComplex(ContactDetails.class); // PrimaryContactInfo
-    cd.setAlternativeNames(Arrays.asList("alternative1", "alternative2"));
-    cd.setEmailBag(Collections.<String>singleton("myname@mydomain.org"));
-    cd.setMobilePhoneBag(Collections.<Phone>emptySet());
+    final ContactDetails cd = service.newComplexInstance(ContactDetails.class); // PrimaryContactInfo
+
+    PrimitiveCollection<String> value = service.newPrimitiveCollection(String.class);
+    value.add("alternative1");
+    value.add("alternative2");
+    cd.setAlternativeNames(value);
+
+    value = service.newPrimitiveCollection(String.class);
+    value.add("myname@mydomain.org");
+    cd.setEmailBag(value);
+
+    cd.setMobilePhoneBag(service.newComplexCollection(PhoneCollection.class)); // empty
     customer.setPrimaryContactInfo(cd);
 
-    final Aliases aliases = service.newComplex(Aliases.class);
-    aliases.setAlternativeNames(Collections.<String>singleton("myAlternativeName"));
+    final Aliases aliases = service.newComplexInstance(Aliases.class);
+
+    value = service.newPrimitiveCollection(String.class);
+    value.add("myAlternativeName");
+    aliases.setAlternativeNames(value);
     cd.setContactAlias(aliases);
 
-    final ContactDetails bcd = service.newComplex(ContactDetails.class); // BackupContactInfo;
-    bcd.setAlternativeNames(Arrays.asList("alternative3", "alternative4"));
-    bcd.setEmailBag(Collections.<String>emptySet());
-    bcd.setMobilePhoneBag(Collections.<Phone>emptySet());
-    customer.setBackupContactInfo(Collections.<ContactDetails>singleton(bcd));
+    final ContactDetails bcd = service.newComplexInstance(ContactDetails.class); // BackupContactInfo;
+    value = service.newPrimitiveCollection(String.class);
+    value.add("alternative3");
+    value.add("alternative4");
+    bcd.setAlternativeNames(value);
+    bcd.setEmailBag(service.newPrimitiveCollection(String.class)); // empty
+    bcd.setMobilePhoneBag(service.newComplexCollection(PhoneCollection.class)); // empty
+
+    final ContactDetailsCollection bci = service.newComplexCollection(ContactDetailsCollection.class);
+    bci.add(bcd);
+    customer.setBackupContactInfo(bci);
 
     container.getCustomer().add(customer);
     return customer;

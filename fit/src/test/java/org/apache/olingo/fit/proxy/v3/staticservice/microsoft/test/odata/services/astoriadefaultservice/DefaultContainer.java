@@ -111,7 +111,7 @@ public interface DefaultContainer extends PersistenceManager {
                     type = OperationType.FUNCTION,
                     isComposable = false,
                     returnType = "Collection(Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails)")
-  java.util.Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails> entityProjectionReturnsCollectionOfComplexTypes(
+  org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetailsCollection entityProjectionReturnsCollectionOfComplexTypes(
     );
 
           @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetArgumentPlusOne",

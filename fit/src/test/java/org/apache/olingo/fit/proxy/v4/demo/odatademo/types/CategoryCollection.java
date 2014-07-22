@@ -26,7 +26,7 @@ import java.util.Collection;
 
 
 public interface CategoryCollection extends 
-    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category> {
+    org.apache.olingo.ext.proxy.api.StruncturedCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

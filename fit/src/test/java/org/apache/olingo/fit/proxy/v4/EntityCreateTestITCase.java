@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -43,10 +42,9 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.TimeZone;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -80,17 +78,25 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     employee.setPersonID(id);
     employee.setFirstName("Fabio");
     employee.setLastName("Martelli");
-    employee.setEmails(Collections.<String>singleton("fabio.martelli@tirasa.net"));
+
+    PrimitiveCollection<String> value = getService().newPrimitiveCollection(String.class);
+    value.add("fabio.martelli@tirasa.net");
+    employee.setEmails(value);
+
     final Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     date.clear();
     date.set(2011, 3, 4, 9, 0, 0);
     employee.setDateHired(new Timestamp(date.getTimeInMillis()));
-    final Address homeAddress = getService().newComplex(HomeAddress.class);
+    final Address homeAddress = getService().newComplexInstance(HomeAddress.class);
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");
     employee.setHomeAddress(homeAddress);
-    employee.setNumbers(Arrays.asList(new String[] {"3204725072", "08569930"}));
+
+    value = getService().newPrimitiveCollection(String.class);
+    value.add("3204725072");
+    value.add("08569930");
+    employee.setNumbers(value);
 
     getContainer().getPeople().add(employee);
 
@@ -134,13 +140,21 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     customer.setFirstName("Fabio");
     customer.setLastName("Martelli");
     customer.setCity("Pescara");
-    customer.setEmails(Collections.<String>singleton("fabio.martelli@tirasa.net"));
-    Address homeAddress = getService().newComplex(HomeAddress.class);
+
+    PrimitiveCollection<String> value = getService().newPrimitiveCollection(String.class);
+    value.add("fabio.martelli@tirasa.net");
+    customer.setEmails(value);
+
+    Address homeAddress = getService().newComplexInstance(HomeAddress.class);
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");
     customer.setHomeAddress(homeAddress);
-    customer.setNumbers(Arrays.asList(new String[] {"3204725072", "08569930"}));
+
+    value = getService().newPrimitiveCollection(String.class);
+    value.add("3204725072");
+    value.add("08569930");
+    customer.setNumbers(value);
 
     final OrderCollection orders = getService().newEntityCollection(OrderCollection.class);
     orders.add(getContainer().getOrders().getByKey(8));
@@ -180,7 +194,11 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     order.setOrderDate(new Timestamp(orderDate.getTimeInMillis()));
 
     order.setShelfLife(BigDecimal.TEN);
-    order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] {BigDecimal.TEN.negate(), BigDecimal.TEN}));
+
+    PrimitiveCollection<BigDecimal> osl = getService().newPrimitiveCollection(BigDecimal.class);
+    osl.add(BigDecimal.TEN.negate());
+    osl.add(BigDecimal.TEN);
+    order.setOrderShelfLifes(osl);
     // -------------------------------
 
     // -------------------------------
@@ -192,13 +210,21 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     customer.setFirstName("Fabio");
     customer.setLastName("Martelli");
     customer.setCity("Pescara");
-    customer.setEmails(Collections.<String>singleton("fabio.martelli@tirasa.net"));
-    final Address homeAddress = getService().newComplex(HomeAddress.class);
+
+    PrimitiveCollection<String> value = getService().newPrimitiveCollection(String.class);
+    value.add("fabio.martelli@tirasa.net");
+    customer.setEmails(value);
+
+    final Address homeAddress = getService().newComplexInstance(HomeAddress.class);
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");
     customer.setHomeAddress(homeAddress);
-    customer.setNumbers(Arrays.asList(new String[] {"3204725072", "08569930"}));
+
+    value = getService().newPrimitiveCollection(String.class);
+    value.add("3204725072");
+    value.add("08569930");
+    customer.setNumbers(value);
 
     final OrderCollection orders = getService().newEntityCollection(OrderCollection.class);
     orders.add(order);
@@ -291,7 +317,11 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     product.setDiscontinued(false);
     product.setUserAccess(AccessLevel.Execute);
     product.setSkinColor(Color.Blue);
-    product.setCoverColors(Arrays.asList(new Color[] {Color.Red, Color.Green}));
+
+    PrimitiveCollection<Color> value = getService().newPrimitiveCollection(Color.class);
+    value.add(Color.Red);
+    value.add(Color.Green);
+    product.setCoverColors(value);
 
     final ProductDetail detail = getService().newEntityInstance(ProductDetail.class);
     detail.setProductID(product.getProductID());

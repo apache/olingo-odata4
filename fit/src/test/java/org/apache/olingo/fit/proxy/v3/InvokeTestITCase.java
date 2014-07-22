@@ -16,11 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComputerDetail;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
@@ -29,17 +28,19 @@ import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Employee;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.EmployeeCollection;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product;
-import org.junit.Test;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetailsCollection;
+
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -58,7 +59,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     assertEquals("Foo", string);
 
     // 2. complex collection result
-    final Collection<ContactDetails> details = container.operations().entityProjectionReturnsCollectionOfComplexTypes();
+    final ContactDetailsCollection details = container.operations().entityProjectionReturnsCollectionOfComplexTypes();
     assertFalse(details.isEmpty());
     for (ContactDetails detail : details) {
       assertNotNull(detail);
@@ -147,7 +148,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     product.setProductId(id);
     product.setDescription("New product");
 
-    final Dimensions origDimensions = service.newComplex(Dimensions.class);
+    final Dimensions origDimensions = service.newComplexInstance(Dimensions.class);
     origDimensions.setDepth(BigDecimal.ZERO);
     origDimensions.setHeight(BigDecimal.ZERO);
     origDimensions.setWidth(BigDecimal.ZERO);
@@ -165,7 +166,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     try {
       // 1. invoke action bound to the product just created
-      final Dimensions newDimensions = service.newComplex(Dimensions.class);
+      final Dimensions newDimensions = service.newComplexInstance(Dimensions.class);
       newDimensions.setDepth(BigDecimal.ONE);
       newDimensions.setHeight(BigDecimal.ONE);
       newDimensions.setWidth(BigDecimal.ONE);
@@ -199,7 +200,11 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     ComputerDetail computerDetail = service.newEntityInstance(ComputerDetail.class);
     computerDetail.setComputerDetailId(id);
-    computerDetail.setSpecificationsBag(Collections.singleton("First spec"));
+
+    final PrimitiveCollection<String> sb = service.newPrimitiveCollection(String.class);
+    sb.add("First spec");
+    computerDetail.setSpecificationsBag(sb);
+
     computerDetail.setPurchaseDate(new Timestamp(purchaseDate.getTimeInMillis()));
 
     container.getComputerDetail().add(computerDetail);
@@ -213,9 +218,12 @@ public class InvokeTestITCase extends AbstractTestITCase {
     assertEquals(purchaseDate.getTimeInMillis(), computerDetail.getPurchaseDate().getTime());
 
     try {
+      final PrimitiveCollection<String> cds = service.newPrimitiveCollection(String.class);
+      cds.add("Second spec");
+
       // 1. invoke action bound to the computer detail just created
       computerDetail.operations().resetComputerDetailsSpecifications(
-              Collections.singleton("Second spec"), new Timestamp(Calendar.getInstance().getTimeInMillis()));
+              cds, new Timestamp(Calendar.getInstance().getTimeInMillis()));
 
       // 2. check that invoked action has effectively run
       computerDetail = container.getComputerDetail().getByKey(id).load();

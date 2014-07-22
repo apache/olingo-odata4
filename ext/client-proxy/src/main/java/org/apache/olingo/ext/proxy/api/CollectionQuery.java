@@ -18,10 +18,11 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
+import java.util.Collection;
 import org.apache.olingo.client.api.uri.URIFilter;
 
 public interface CollectionQuery<
-        T extends StructuredType, EC extends EntityCollection<T>, CT extends CollectionQuery<T, EC, ?>>
+        T extends StructuredType, EC extends Collection<T>, CT extends CollectionQuery<T, EC, ?>>
         extends CommonQuery<CollectionQuery<T, EC, CT>> {
 
   /**

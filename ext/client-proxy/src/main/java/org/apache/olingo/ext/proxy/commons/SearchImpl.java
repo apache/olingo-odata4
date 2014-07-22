@@ -25,11 +25,11 @@ import org.apache.olingo.client.api.uri.v4.URISearch;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
+import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.Search;
-import org.apache.olingo.ext.proxy.api.StructuredType;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
-public class SearchImpl<T extends StructuredType, EC extends EntityCollection<T>> implements Search<T, EC> {
+public class SearchImpl<T extends EntityType, EC extends EntityCollection<T>> implements Search<T, EC> {
 
   private static final long serialVersionUID = 4383858176507769973L;
 

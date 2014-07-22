@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -29,16 +28,16 @@ import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Order;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.OrderCollection;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone;
 import org.junit.Test;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetailsCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -240,15 +239,24 @@ public class ContextTestITCase extends AbstractTestITCase {
     final Customer customer = service.newEntityInstance(Customer.class);
     customer.setCustomerId(100);
 
-    final ContactDetails cd = service.newComplex(ContactDetails.class);
+    final ContactDetails cd = service.newComplexInstance(ContactDetails.class);
     customer.setPrimaryContactInfo(cd);
 
-    cd.setAlternativeNames(Arrays.asList("alternative1", "alternative2"));
+    PrimitiveCollection<String> alternativeNames = service.newPrimitiveCollection(String.class);
+    alternativeNames.add("alternative1");
+    alternativeNames.add("alternative2");
+    cd.setAlternativeNames(alternativeNames);
 
-    final ContactDetails bcd = service.newComplex(ContactDetails.class);
-    customer.setBackupContactInfo(Collections.<ContactDetails>singletonList(bcd));
+    final ContactDetails bcd = service.newComplexInstance(ContactDetails.class);
+    final ContactDetailsCollection bci = service.newComplexCollection(ContactDetailsCollection.class);
+    bci.add(bcd);
 
-    bcd.setAlternativeNames(Arrays.asList("alternative3", "alternative4"));
+    customer.setBackupContactInfo(bci);
+
+    alternativeNames = service.newPrimitiveCollection(String.class);
+    alternativeNames.add("alternative3");
+    alternativeNames.add("alternative4");
+    bcd.setAlternativeNames(alternativeNames);
 
     assertEquals(Integer.valueOf(100), customer.getCustomerId());
     assertNotNull(customer.getPrimaryContactInfo().getAlternativeNames());
@@ -382,18 +390,34 @@ public class ContextTestITCase extends AbstractTestITCase {
     customerInfo.setInformation("some new info ...");
     customer.setInfo(customerInfo);
 
-    final ContactDetails cd = service.newComplex(ContactDetails.class);
-    cd.setAlternativeNames(Arrays.asList("alternative1", "alternative2"));
-    cd.setEmailBag(Collections.<String>singleton("myemail@mydomain.org"));
-    cd.setMobilePhoneBag(Collections.<Phone>emptySet());
+    final ContactDetails cd = service.newComplexInstance(ContactDetails.class);
+    PrimitiveCollection<String> alternativeNames = service.newPrimitiveCollection(String.class);
+    alternativeNames.add("alternative1");
+    alternativeNames.add("alternative2");
+    cd.setAlternativeNames(alternativeNames);
 
-    final ContactDetails bcd = service.newComplex(ContactDetails.class);
-    bcd.setAlternativeNames(Arrays.asList("alternative3", "alternative4"));
-    bcd.setEmailBag(Collections.<String>emptySet());
-    bcd.setMobilePhoneBag(Collections.<Phone>emptySet());
+    final PrimitiveCollection<String> emailBag = service.newPrimitiveCollection(String.class);
+    alternativeNames.add("myemail@mydomain.org");
+    cd.setEmailBag(emailBag);
+
+    cd.setMobilePhoneBag(service.newComplexCollection(PhoneCollection.class)); // empty
+
+    final ContactDetails bcd = service.newComplexInstance(ContactDetails.class);
+
+    alternativeNames = service.newPrimitiveCollection(String.class);
+    alternativeNames.add("alternative3");
+    alternativeNames.add("alternative4");
+
+    bcd.setAlternativeNames(alternativeNames);
+    bcd.setEmailBag(service.newPrimitiveCollection(String.class));
+    bcd.setMobilePhoneBag(service.newComplexCollection(PhoneCollection.class)); // empty
 
     customer.setPrimaryContactInfo(cd);
-    customer.setBackupContactInfo(Collections.<ContactDetails>singletonList(bcd));
+
+    final ContactDetailsCollection bci = service.newComplexCollection(ContactDetailsCollection.class);
+    bci.add(bcd);
+
+    customer.setBackupContactInfo(bci);
 
     container.getCustomer().add(customer);
 

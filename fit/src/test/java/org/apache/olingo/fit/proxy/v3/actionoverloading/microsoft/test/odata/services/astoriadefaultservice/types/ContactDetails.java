@@ -30,16 +30,16 @@ public interface ContactDetails
 
 
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "EmailBag", type = "Edm.String", nullable = false)
-    java.util.Collection<java.lang.String> getEmailBag();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getEmailBag();
 
-    void setEmailBag(java.util.Collection<java.lang.String> _emailBag);
+    void setEmailBag(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> _emailBag);
 
     
 
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "AlternativeNames", type = "Edm.String", nullable = false)
-    java.util.Collection<java.lang.String> getAlternativeNames();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getAlternativeNames();
 
-    void setAlternativeNames(java.util.Collection<java.lang.String> _alternativeNames);
+    void setAlternativeNames(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> _alternativeNames);
 
     
 
@@ -65,9 +65,9 @@ public interface ContactDetails
         
 
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "MobilePhoneBag", type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone", nullable = false)
-    java.util.Collection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Phone> getMobilePhoneBag();
+    org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection getMobilePhoneBag();
 
-    void setMobilePhoneBag(java.util.Collection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Phone> _mobilePhoneBag);
+    void setMobilePhoneBag(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection _mobilePhoneBag);
 
         
 }

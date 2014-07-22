@@ -82,9 +82,9 @@ public interface AllSpatialCollectionTypes_Simple
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<org.apache.olingo.commons.api.edm.geo.Point> getManyGeogPoint();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<org.apache.olingo.commons.api.edm.geo.Point> getManyGeogPoint();
 
-    void setManyGeogPoint(java.util.Collection<org.apache.olingo.commons.api.edm.geo.Point> _manyGeogPoint);
+    void setManyGeogPoint(org.apache.olingo.ext.proxy.api.PrimitiveCollection<org.apache.olingo.commons.api.edm.geo.Point> _manyGeogPoint);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ManyGeogLine", 
@@ -105,9 +105,9 @@ public interface AllSpatialCollectionTypes_Simple
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<org.apache.olingo.commons.api.edm.geo.LineString> getManyGeogLine();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<org.apache.olingo.commons.api.edm.geo.LineString> getManyGeogLine();
 
-    void setManyGeogLine(java.util.Collection<org.apache.olingo.commons.api.edm.geo.LineString> _manyGeogLine);
+    void setManyGeogLine(org.apache.olingo.ext.proxy.api.PrimitiveCollection<org.apache.olingo.commons.api.edm.geo.LineString> _manyGeogLine);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ManyGeogPolygon", 
@@ -128,9 +128,9 @@ public interface AllSpatialCollectionTypes_Simple
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<org.apache.olingo.commons.api.edm.geo.Polygon> getManyGeogPolygon();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<org.apache.olingo.commons.api.edm.geo.Polygon> getManyGeogPolygon();
 
-    void setManyGeogPolygon(java.util.Collection<org.apache.olingo.commons.api.edm.geo.Polygon> _manyGeogPolygon);
+    void setManyGeogPolygon(org.apache.olingo.ext.proxy.api.PrimitiveCollection<org.apache.olingo.commons.api.edm.geo.Polygon> _manyGeogPolygon);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ManyGeomPoint", 
@@ -151,9 +151,9 @@ public interface AllSpatialCollectionTypes_Simple
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<org.apache.olingo.commons.api.edm.geo.Point> getManyGeomPoint();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<org.apache.olingo.commons.api.edm.geo.Point> getManyGeomPoint();
 
-    void setManyGeomPoint(java.util.Collection<org.apache.olingo.commons.api.edm.geo.Point> _manyGeomPoint);
+    void setManyGeomPoint(org.apache.olingo.ext.proxy.api.PrimitiveCollection<org.apache.olingo.commons.api.edm.geo.Point> _manyGeomPoint);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ManyGeomLine", 
@@ -174,9 +174,9 @@ public interface AllSpatialCollectionTypes_Simple
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<org.apache.olingo.commons.api.edm.geo.LineString> getManyGeomLine();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<org.apache.olingo.commons.api.edm.geo.LineString> getManyGeomLine();
 
-    void setManyGeomLine(java.util.Collection<org.apache.olingo.commons.api.edm.geo.LineString> _manyGeomLine);
+    void setManyGeomLine(org.apache.olingo.ext.proxy.api.PrimitiveCollection<org.apache.olingo.commons.api.edm.geo.LineString> _manyGeomLine);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ManyGeomPolygon", 
@@ -197,9 +197,9 @@ public interface AllSpatialCollectionTypes_Simple
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<org.apache.olingo.commons.api.edm.geo.Polygon> getManyGeomPolygon();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<org.apache.olingo.commons.api.edm.geo.Polygon> getManyGeomPolygon();
 
-    void setManyGeomPolygon(java.util.Collection<org.apache.olingo.commons.api.edm.geo.Polygon> _manyGeomPolygon);
+    void setManyGeomPolygon(org.apache.olingo.ext.proxy.api.PrimitiveCollection<org.apache.olingo.commons.api.edm.geo.Polygon> _manyGeomPolygon);
     
 
 

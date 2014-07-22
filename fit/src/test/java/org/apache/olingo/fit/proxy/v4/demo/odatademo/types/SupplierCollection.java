@@ -26,7 +26,7 @@ import java.util.Collection;
 
 
 public interface SupplierCollection extends 
-    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier> {
+    org.apache.olingo.ext.proxy.api.StruncturedCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

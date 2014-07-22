@@ -76,7 +76,7 @@ public interface InMemoryEntities extends PersistenceManager {
                     type = OperationType.FUNCTION,
                     isComposable = false,
                     returnType = "Collection(Edm.String)")
-  java.util.Collection<java.lang.String> getBossEmails(
+  org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getBossEmails(
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "start", type = "Edm.Int32", nullable = false) java.lang.Integer start, 
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "count", type = "Edm.Int32", nullable = false) java.lang.Integer count
     );
@@ -108,7 +108,7 @@ public interface InMemoryEntities extends PersistenceManager {
                     type = OperationType.FUNCTION,
                     isComposable = false,
                     returnType = "Collection(Edm.String)")
-  java.util.Collection<java.lang.String> getProductsByAccessLevel(
+  org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getProductsByAccessLevel(
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "accessLevel", type = "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel accessLevel
     );
 
@@ -141,8 +141,8 @@ public interface InMemoryEntities extends PersistenceManager {
           @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetBossEmail",
                     type = OperationType.ACTION,
                     returnType = "Collection(Edm.String)")
-  java.util.Collection<java.lang.String> resetBossEmail(
-        @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "emails", type = "Collection(Edm.String)", nullable = false) java.util.Collection<java.lang.String> emails
+  org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> resetBossEmail(
+        @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "emails", type = "Collection(Edm.String)", nullable = false) org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> emails
     );
   
       }   

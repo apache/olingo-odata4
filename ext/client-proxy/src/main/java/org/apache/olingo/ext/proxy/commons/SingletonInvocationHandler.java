@@ -23,27 +23,27 @@ import java.lang.reflect.Method;
 import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
+import org.apache.olingo.ext.proxy.api.EntityType;
 
 public class SingletonInvocationHandler<
-        T extends Serializable, KEY extends Serializable, EC extends EntityCollection<T>>
+        T extends EntityType, KEY extends Serializable, EC extends EntityCollection<T>>
         extends AbstractInvocationHandler
         implements AbstractSingleton<T, KEY, EC> {
 
   private static final long serialVersionUID = 2450269053734776228L;
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  static SingletonInvocationHandler getInstance(
-          final Class<?> ref, final Service<?> service, final String singletonName) {
-
-    return new SingletonInvocationHandler(ref, service, singletonName);
-  }
   private final EntitySetInvocationHandler<?, ?, ?> entitySetHandler;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private SingletonInvocationHandler(final Class<?> ref, final Service<?> service, final String singletonName) {
+  static SingletonInvocationHandler getInstance(final Class<?> ref, final Service<?> service) {
+    return new SingletonInvocationHandler(ref, service);
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  private SingletonInvocationHandler(final Class<?> ref, final Service<?> service) {
 
     super(service);
-    this.entitySetHandler = EntitySetInvocationHandler.getInstance(ref, service, singletonName);
+    this.entitySetHandler = EntitySetInvocationHandler.getInstance(ref, service);
   }
 
   @Override

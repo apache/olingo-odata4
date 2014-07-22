@@ -150,9 +150,9 @@ public interface ComputerDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.lang.String> getSpecificationsBag();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getSpecificationsBag();
 
-    void setSpecificationsBag(java.util.Collection<java.lang.String> _specificationsBag);
+    void setSpecificationsBag(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> _specificationsBag);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PurchaseDate", 
@@ -219,7 +219,7 @@ public interface ComputerDetail
           @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetComputerDetailsSpecifications",
                     type = OperationType.ACTION)
       void resetComputerDetailsSpecifications(
-                @Parameter(name = "specifications", type = "Collection(Edm.String)", nullable = false) java.util.Collection<java.lang.String> specifications, 
+                @Parameter(name = "specifications", type = "Collection(Edm.String)", nullable = false) org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> specifications, 
                 @Parameter(name = "purchaseTime", type = "Edm.DateTime", nullable = false) java.sql.Timestamp purchaseTime
             );
 

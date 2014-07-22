@@ -242,9 +242,9 @@ public interface Product
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> getCoverColors();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> getCoverColors();
 
-    void setCoverColors(java.util.Collection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> _coverColors);
+    void setCoverColors(org.apache.olingo.ext.proxy.api.PrimitiveCollection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> _coverColors);
     
 
     @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Details", 

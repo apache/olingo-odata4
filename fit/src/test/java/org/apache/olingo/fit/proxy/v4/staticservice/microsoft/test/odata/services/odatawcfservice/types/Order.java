@@ -125,9 +125,9 @@ public interface Order
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.math.BigDecimal> getOrderShelfLifes();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.math.BigDecimal> getOrderShelfLifes();
 
-    void setOrderShelfLifes(java.util.Collection<java.math.BigDecimal> _orderShelfLifes);
+    void setOrderShelfLifes(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.math.BigDecimal> _orderShelfLifes);
     
 
     @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "LoggedInEmployee", 

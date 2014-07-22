@@ -93,7 +93,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     rowIndex.addAdditionalProperty("aByte", Byte.MAX_VALUE);
     rowIndex.addAdditionalProperty("aDate", Calendar.getInstance());
 
-    final ContactDetails contact = otservice.newComplex(ContactDetails.class);
+    final ContactDetails contact = otservice.newComplexInstance(ContactDetails.class);
     contact.setFirstContacted("text".getBytes());
 
     Calendar cal = Calendar.getInstance();

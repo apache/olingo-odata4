@@ -194,9 +194,9 @@ public interface MappedEntityType
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.lang.String> getBagOfPrimitiveToLinks();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getBagOfPrimitiveToLinks();
 
-    void setBagOfPrimitiveToLinks(java.util.Collection<java.lang.String> _bagOfPrimitiveToLinks);
+    void setBagOfPrimitiveToLinks(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> _bagOfPrimitiveToLinks);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Logo", 
@@ -240,9 +240,9 @@ public interface MappedEntityType
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.math.BigDecimal> getBagOfDecimals();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.math.BigDecimal> getBagOfDecimals();
 
-    void setBagOfDecimals(java.util.Collection<java.math.BigDecimal> _bagOfDecimals);
+    void setBagOfDecimals(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.math.BigDecimal> _bagOfDecimals);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfDoubles", 
@@ -263,9 +263,9 @@ public interface MappedEntityType
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.lang.Double> getBagOfDoubles();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.Double> getBagOfDoubles();
 
-    void setBagOfDoubles(java.util.Collection<java.lang.Double> _bagOfDoubles);
+    void setBagOfDoubles(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.Double> _bagOfDoubles);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfSingles", 
@@ -286,9 +286,9 @@ public interface MappedEntityType
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.lang.Float> getBagOfSingles();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.Float> getBagOfSingles();
 
-    void setBagOfSingles(java.util.Collection<java.lang.Float> _bagOfSingles);
+    void setBagOfSingles(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.Float> _bagOfSingles);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfBytes", 
@@ -309,9 +309,9 @@ public interface MappedEntityType
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.lang.Short> getBagOfBytes();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.Short> getBagOfBytes();
 
-    void setBagOfBytes(java.util.Collection<java.lang.Short> _bagOfBytes);
+    void setBagOfBytes(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.Short> _bagOfBytes);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfInt16s", 
@@ -332,9 +332,9 @@ public interface MappedEntityType
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.lang.Short> getBagOfInt16s();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.Short> getBagOfInt16s();
 
-    void setBagOfInt16s(java.util.Collection<java.lang.Short> _bagOfInt16s);
+    void setBagOfInt16s(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.Short> _bagOfInt16s);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfInt32s", 
@@ -355,9 +355,9 @@ public interface MappedEntityType
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.lang.Integer> getBagOfInt32s();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.Integer> getBagOfInt32s();
 
-    void setBagOfInt32s(java.util.Collection<java.lang.Integer> _bagOfInt32s);
+    void setBagOfInt32s(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.Integer> _bagOfInt32s);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfInt64s", 
@@ -378,9 +378,9 @@ public interface MappedEntityType
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.lang.Long> getBagOfInt64s();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.Long> getBagOfInt64s();
 
-    void setBagOfInt64s(java.util.Collection<java.lang.Long> _bagOfInt64s);
+    void setBagOfInt64s(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.Long> _bagOfInt64s);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfGuids", 
@@ -401,9 +401,9 @@ public interface MappedEntityType
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.util.UUID> getBagOfGuids();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.util.UUID> getBagOfGuids();
 
-    void setBagOfGuids(java.util.Collection<java.util.UUID> _bagOfGuids);
+    void setBagOfGuids(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.util.UUID> _bagOfGuids);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfDateTime", 
@@ -424,9 +424,9 @@ public interface MappedEntityType
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.sql.Timestamp> getBagOfDateTime();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.sql.Timestamp> getBagOfDateTime();
 
-    void setBagOfDateTime(java.util.Collection<java.sql.Timestamp> _bagOfDateTime);
+    void setBagOfDateTime(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.sql.Timestamp> _bagOfDateTime);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "BagOfComplexToCategories", 
@@ -447,9 +447,9 @@ public interface MappedEntityType
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory> getBagOfComplexToCategories();
+    org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategoryCollection getBagOfComplexToCategories();
 
-    void setBagOfComplexToCategories(java.util.Collection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory> _bagOfComplexToCategories);
+    void setBagOfComplexToCategories(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategoryCollection _bagOfComplexToCategories);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ComplexPhone", 

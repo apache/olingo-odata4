@@ -26,7 +26,7 @@ import java.util.Collection;
 
 
 public interface EmployeeCollection extends 
-    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Employee, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.EmployeeCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.EmployeeCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Employee> {
+    org.apache.olingo.ext.proxy.api.StruncturedCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Employee, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.EmployeeCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.EmployeeCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Employee> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

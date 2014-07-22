@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -25,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyAddress;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
@@ -40,9 +40,7 @@ import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.UUID;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyAddress;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -102,14 +100,14 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     customer.setFirstName("Test");
     customer.setLastName("Test");
 
-    final Address homeAddress = getService().newComplex(CompanyAddress.class);
+    final Address homeAddress = getService().newComplexInstance(CompanyAddress.class);
     homeAddress.setStreet("V.le Gabriele D'Annunzio");
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65127");
     customer.setHomeAddress(homeAddress);
 
-    customer.setNumbers(Collections.<String>emptyList());
-    customer.setEmails(Collections.<String>emptyList());
+    customer.setNumbers(getService().newPrimitiveCollection(String.class)); // empty
+    customer.setEmails(getService().newPrimitiveCollection(String.class)); // empty
     customer.setCity("Pescara");
 
     final Calendar birthday = Calendar.getInstance();

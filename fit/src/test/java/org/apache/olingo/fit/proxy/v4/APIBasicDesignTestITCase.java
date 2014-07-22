@@ -20,24 +20,12 @@ package org.apache.olingo.fit.proxy.v4;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import java.io.IOException;
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.ext.proxy.Service;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.TimeZone;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.ext.proxy.Service;
 import org.apache.olingo.ext.proxy.commons.EdmStreamTypeImpl;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
@@ -45,6 +33,19 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
+
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.TimeZone;
+import java.sql.Timestamp;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -189,7 +190,12 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     order.setOrderDate(new Timestamp(orderDate.getTimeInMillis()));
 
     order.setShelfLife(BigDecimal.ZERO);
-    order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] {BigDecimal.TEN.negate(), BigDecimal.TEN}));
+
+    final PrimitiveCollection<BigDecimal> osl = getService().newPrimitiveCollection(BigDecimal.class);
+    osl.add(BigDecimal.TEN.negate());
+    osl.add(BigDecimal.TEN);
+
+    order.setOrderShelfLifes(osl);
 
     getContainer().getOrders().add(order);
     getContainer().flush();
@@ -271,7 +277,12 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     product.setDiscontinued(false);
     product.setUserAccess(AccessLevel.Execute);
     product.setSkinColor(Color.Blue);
-    product.setCoverColors(Arrays.asList(new Color[] {Color.Red, Color.Green}));
+
+    final PrimitiveCollection<Color> cc = getService().newPrimitiveCollection(Color.class);
+    cc.add(Color.Red);
+    cc.add(Color.Green);
+
+    product.setCoverColors(cc);
 
     final ProductDetail detail = getService().newEntityInstance(ProductDetail.class);
     detail.setProductID(product.getProductID());

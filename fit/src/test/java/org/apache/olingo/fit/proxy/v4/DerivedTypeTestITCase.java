@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -32,7 +31,6 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Collections;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -64,14 +62,14 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
     customer.setFirstName("Test");
     customer.setLastName("Test");
 
-    final Address homeAddress = service.newComplex(CompanyAddress.class);
+    final Address homeAddress = service.newComplexInstance(CompanyAddress.class);
     homeAddress.setStreet("V.le Gabriele D'Annunzio");
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65127");
     customer.setHomeAddress(homeAddress);
 
-    customer.setNumbers(Collections.<String>emptyList());
-    customer.setEmails(Collections.<String>emptyList());
+    customer.setNumbers(service.newPrimitiveCollection(String.class)); // empty
+    customer.setEmails(service.newPrimitiveCollection(String.class)); // empty
     customer.setCity("Pescara");
 
     final Calendar birthday = Calendar.getInstance();

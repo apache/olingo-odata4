@@ -281,6 +281,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
           objs.clear();
           objs.put("complexType", complex);
           parseObj(typesBaseDir, typesPkg, "complexType", className + ".java", objs);
+          parseObj(typesBaseDir, typesPkg, "complexCollection", className + "Collection.java", objs);
         }
 
         for (EdmEntityType entity : schema.getEntityTypes()) {

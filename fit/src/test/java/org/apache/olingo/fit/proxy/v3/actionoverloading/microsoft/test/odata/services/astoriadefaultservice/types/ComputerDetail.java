@@ -148,9 +148,9 @@ public interface ComputerDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    java.util.Collection<java.lang.String> getSpecificationsBag();
+    org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getSpecificationsBag();
 
-    void setSpecificationsBag(java.util.Collection<java.lang.String> _specificationsBag);
+    void setSpecificationsBag(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> _specificationsBag);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PurchaseDate", 

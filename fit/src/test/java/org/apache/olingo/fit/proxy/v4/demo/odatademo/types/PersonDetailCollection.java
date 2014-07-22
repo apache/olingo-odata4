@@ -26,7 +26,7 @@ import java.util.Collection;
 
 
 public interface PersonDetailCollection extends 
-    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetailCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetailCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail> {
+    org.apache.olingo.ext.proxy.api.StruncturedCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetailCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetailCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

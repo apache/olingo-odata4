@@ -26,7 +26,7 @@ import java.util.Collection;
 
 
 public interface ProductCollection extends 
-    org.apache.olingo.ext.proxy.api.EntityCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.ProductCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.ProductCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product> {
+    org.apache.olingo.ext.proxy.api.StruncturedCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.ProductCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.ProductCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 
