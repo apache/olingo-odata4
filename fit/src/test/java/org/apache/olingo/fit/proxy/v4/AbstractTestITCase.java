@@ -29,26 +29,24 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.TimeZone;
+
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.proxy.v4.staticservice.Service;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
+import org.apache.olingo.fit.server.TomcatTestServer;
+import org.apache.olingo.server.tecsvc.TechnicalServlet;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractTestITCase {
-
-  /**
-   * Logger.
-   */
-  protected static final Logger LOG = LoggerFactory.getLogger(AbstractTestITCase.class);
-
-  protected static final String TEST_PRODUCT_TYPE = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product";
+public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
   protected static String testStaticServiceRootURL;
 
@@ -146,5 +144,10 @@ public abstract class AbstractTestITCase {
       fail();
     } catch (IllegalArgumentException e) {
     }
+  }
+
+  @Override
+  protected CommonODataClient getClient() {
+    throw new RuntimeException("This method should not be used from proxy tests.");
   }
 }

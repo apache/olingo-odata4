@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -31,11 +32,12 @@ import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Before;
 import org.junit.Test;
 
-public class BasicITCase {
+public class BasicITCase extends AbstractBaseTestITCase {
 
   private static final String SERVICE_URI = TecSvcConst.BASE_URI;
 
@@ -46,6 +48,7 @@ public class BasicITCase {
     odata = ODataClientFactory.getV4();
     odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
   }
+
 
   @Test
   public void readServiceDocument() {
@@ -80,5 +83,9 @@ public class BasicITCase {
     assertEquals("Namespace1_Alias", edm.getSchema("com.sap.odata.test1").getAlias());
     assertNotNull(edm.getTerm(new FullQualifiedName("Core.Description")));
     assertEquals(2, edm.getSchemas().size());
+  }
+
+  @Override protected CommonODataClient getClient() {
+    return null;
   }
 }

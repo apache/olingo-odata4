@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.server.tecsvc.data;
+package org.apache.olingo.fit.server;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -147,8 +147,8 @@ public class StringHelper {
   }
 
   /**
-   * Encapsulate given content in an {@link InputStream} with charset <code>UTF-8</code>.
-   * 
+   * Encapsulate given content in an {@link java.io.InputStream} with charset <code>UTF-8</code>.
+   *
    * @param content to encapsulate content
    * @return content as stream
    */
@@ -162,12 +162,12 @@ public class StringHelper {
   }
 
   /**
-   * Encapsulate given content in an {@link InputStream} with given charset.
-   * 
+   * Encapsulate given content in an {@link java.io.InputStream} with given charset.
+   *
    * @param content to encapsulate content
    * @param charset to be used charset
    * @return content as stream
-   * @throws UnsupportedEncodingException if charset is not supported
+   * @throws java.io.UnsupportedEncodingException if charset is not supported
    */
   public static InputStream encapsulate(final String content, final String charset)
       throws UnsupportedEncodingException {

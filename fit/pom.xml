@@ -79,6 +79,19 @@
     <!-- /REST services CXF -->
 
     <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <version>7.0.54</version>
+      <!--<version>8.0.9</version>-->
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-logging-juli</artifactId>
+      <version>7.0.54</version>
+      <!--<version>8.0.9</version>-->
+    </dependency>
+
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
@@ -115,7 +128,6 @@
       <groupId>org.apache.olingo</groupId>
       <artifactId>olingo-server-tecsvc</artifactId>
       <version>${project.version}</version>
-      <type>war</type>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -139,6 +151,44 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.17</version>
+        <!--<configuration>-->
+          <!--<includes>-->
+            <!--<include>**/*TestITCase.java</include>-->
+          <!--</includes>-->
+        <!--</configuration>-->
+      </plugin>
+
+      <!--
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.8</version>
+        <executions>
+          <execution>
+            <id>unpack-dependencies</id>
+            <phase>compile</phase>
+            <!--<phase>package</phase>-->
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includes>**/olingo/**/*.class</includes>
+              <excludes>**/*.properties</excludes>
+              <outputDirectory>${project.build.directory}/classes</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!--
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
         <inherited>true</inherited>
         <configuration>
@@ -157,8 +207,8 @@
           <execution>
             <id>integration-test</id>
             <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
+              <!--<goal>integration-test</goal>-->
+              <!--<goal>verify</goal>-->
             </goals>
           </execution>
         </executions>
@@ -168,6 +218,15 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <inherited>true</inherited>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>exploded</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
           <webResources>
             <resource>
@@ -177,6 +236,7 @@
               </includes>-->
             </resource>
           </webResources>
+
           <packagingExcludes>WEB-INF/classes/esigate.properties,WEB-INF/classes/META-INF/LICENSE*,WEB-INF/classes/META-INF/DEPENDENCIES*</packagingExcludes>
         </configuration>
       </plugin>
@@ -191,74 +251,6 @@
             <org.slf4j.simpleLogger.defaultLogLevel>DEBUG</org.slf4j.simpleLogger.defaultLogLevel>
           </systemPropertyVariables>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.cargo</groupId>
-        <artifactId>cargo-maven2-plugin</artifactId>
-        <inherited>true</inherited>
-        <configuration>
-          <configuration>
-            <type>standalone</type>
-            <properties>
-              <cargo.servlet.port>${cargo.servlet.port}</cargo.servlet.port>
-              <cargo.tomcat.ajp.port>${cargo.tomcat.ajp.port}</cargo.tomcat.ajp.port>
-              <cargo.rmi.port>${cargo.rmi.port}</cargo.rmi.port>
-
-              <!--<cargo.jvmargs>-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -->
-              <cargo.jvmargs>-noverify -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:MaxPermSize=256m</cargo.jvmargs>
-            </properties>
-            <files>
-              <file>
-                <file>${project.build.outputDirectory}/esigate.properties</file>
-                <todir>lib</todir>
-              </file>
-            </files>
-            <configfiles>
-              <configfile>
-                <file>${project.build.outputDirectory}/context.xml</file>
-                <todir>conf/</todir>
-                <tofile>context.xml</tofile>
-              </configfile>
-              <configfile>
-                <file>${project.build.outputDirectory}/tomcat-users.xml</file>
-                <todir>conf/</todir>
-                <tofile>tomcat-users.xml</tofile>
-              </configfile>
-            </configfiles>
-          </configuration>
-          <deployables>
-            <deployable>
-              <groupId>org.apache.olingo</groupId>
-              <artifactId>olingo-server-tecsvc</artifactId>
-              <type>war</type>
-              <properties>
-                <context>olingo-server-tecsvc</context>
-              </properties>
-            </deployable>
-            <deployable>
-              <properties>
-                <context>stub</context>
-              </properties>
-            </deployable>
-          </deployables>
-        </configuration>
-        <executions>
-          <execution>
-            <id>start-container</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>start</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>stop-container</id>
-            <phase>post-integration-test</phase>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
 

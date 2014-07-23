@@ -27,9 +27,17 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
+import org.apache.olingo.fit.server.StringHelper;
+import org.apache.olingo.fit.server.TomcatTestServer;
+import org.apache.olingo.server.tecsvc.TechnicalServlet;
+import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -43,6 +51,21 @@ public abstract class AbstractBaseTestITCase {
 
   @SuppressWarnings("rawtypes")
   protected abstract CommonODataClient getClient();
+
+
+  @BeforeClass
+  public static void init() throws Exception {
+    TomcatTestServer server = TomcatTestServer.init(9080)
+        .addServlet(TechnicalServlet.class, "/olingo-server-tecsvc/odata.svc/*")
+        .addServlet(StaticContent.class, "/olingo-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml")
+        .addWebApp()
+        .start();
+  }
+
+//  @AfterClass
+//  public static void cleanUp() throws LifecycleException {
+//    server.stop();
+//  }
 
   protected void debugEntity(final Entity entity, final String message) {
     if (LOG.isDebugEnabled()) {
@@ -104,4 +127,13 @@ public abstract class AbstractBaseTestITCase {
     }
   }
 
+  public static class StaticContent extends HttpServlet {
+    @Override protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+
+      StringHelper.Stream st = StringHelper.toStream(
+          Thread.currentThread().getContextClassLoader().getResourceAsStream("org-odata-core-v1.xml"));
+      resp.getOutputStream().write(st.asArray());
+    }
+  }
 }
