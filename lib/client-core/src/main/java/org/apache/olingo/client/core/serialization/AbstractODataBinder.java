@@ -67,6 +67,7 @@ import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.serialization.ContextURLParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -256,8 +257,9 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       LOG.debug("EntitySet -> ODataEntitySet:\n{}", writer.toString());
     }
 
-    final URI base = resource.getContextURL() == null
-            ? resource.getPayload().getBaseURI() : resource.getContextURL().getServiceRoot();
+    final URI base = resource.getContextURL() == null ?
+        resource.getPayload().getBaseURI() :
+        ContextURLParser.parse(resource.getContextURL()).getServiceRoot();
 
     final URI next = resource.getPayload().getNext();
 
@@ -411,9 +413,11 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       LOG.debug("EntityResource -> ODataEntity:\n{}", writer.toString());
     }
 
-    final URI base = resource.getContextURL() == null
-            ? resource.getPayload().getBaseURI() : resource.getContextURL().getServiceRoot();
-    final EdmType edmType = findType(resource.getContextURL(), resource.getMetadataETag());
+    final ContextURL contextURL = ContextURLParser.parse(resource.getContextURL());
+    final URI base = resource.getContextURL() == null ?
+        resource.getPayload().getBaseURI() :
+        contextURL.getServiceRoot();
+    final EdmType edmType = findType(contextURL, resource.getMetadataETag());
     FullQualifiedName typeName = null;
     if (resource.getPayload().getType() == null) {
       if (edmType != null) {
@@ -511,7 +515,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   protected abstract CommonODataProperty getODataProperty(EdmType type, Property resource);
 
   protected ODataValue getODataValue(final FullQualifiedName type,
-          final Valuable valuable, final ContextURL contextURL, final String metadataETag) {
+          final Valuable valuable, final URI contextURL, final String metadataETag) {
 
     ODataValue value = null;
     if (valuable.isGeospatial()) {

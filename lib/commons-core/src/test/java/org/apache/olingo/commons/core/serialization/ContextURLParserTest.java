@@ -16,27 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.data;
+package org.apache.olingo.commons.core.serialization;
+
+import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.core.serialization.ContextURLParser;
+import org.junit.Test;
+
+import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.olingo.commons.api.data.ContextURL.Suffix;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import java.net.URI;
-
-public class ContextURLTest {
+public class ContextURLParserTest {
 
   @Test
   public void collectionOfEntities() {
-    ContextURL contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers"));
+    ContextURL contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#Customers"));
 
     assertEquals(URI.create("http://host/service/"), contextURL.getServiceRoot());
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
@@ -45,7 +42,7 @@ public class ContextURLTest {
     assertNull(contextURL.getNavOrPropertyPath());
     assertFalse(contextURL.isEntity());
 
-    contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Orders(4711)/Items"));
+    contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#Orders(4711)/Items"));
 
     assertEquals("Orders", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -53,7 +50,7 @@ public class ContextURLTest {
     assertEquals("Items", contextURL.getNavOrPropertyPath());
     assertFalse(contextURL.isEntity());
 
-    contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Me/Folders('Inbox')/Messages"));
+    contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#Me/Folders('Inbox')/Messages"));
 
     assertEquals("Me/Folders", contextURL.getEntitySetOrSingletonOrType());
     assertEquals("Messages", contextURL.getNavOrPropertyPath());
@@ -61,7 +58,7 @@ public class ContextURLTest {
 
   @Test
   public void entity() {
-    ContextURL contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$entity"));
+    ContextURL contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#Customers/$entity"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -69,7 +66,7 @@ public class ContextURLTest {
     assertNull(contextURL.getNavOrPropertyPath());
     assertTrue(contextURL.isEntity());
 
-    contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Orders(4711)/Items/$entity"));
+    contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#Orders(4711)/Items/$entity"));
 
     assertEquals("Orders", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -78,7 +75,7 @@ public class ContextURLTest {
     assertTrue(contextURL.isEntity());
 
     // v3
-    contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Products/@Element"));
+    contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#Products/@Element"));
 
     assertEquals("Products", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -89,7 +86,7 @@ public class ContextURLTest {
 
   @Test
   public void singleton() {
-    ContextURL contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Contoso"));
+    ContextURL contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#Contoso"));
 
     assertEquals("Contoso", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -100,8 +97,8 @@ public class ContextURLTest {
 
   @Test
   public void collectionOfDerivedEntities() {
-    final ContextURL contextURL = ContextURL.getInstance(
-            URI.create("http://host/service/$metadata#Customers/Model.VipCustomer"));
+    final ContextURL contextURL = ContextURLParser.parse(
+        URI.create("http://host/service/$metadata#Customers/Model.VipCustomer"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertEquals("Model.VipCustomer", contextURL.getDerivedEntity());
@@ -112,8 +109,8 @@ public class ContextURLTest {
 
   @Test
   public void derivedEntity() {
-    final ContextURL contextURL = ContextURL.getInstance(
-            URI.create("http://host/service/$metadata#Customers/Model.VipCustomer/$entity"));
+    final ContextURL contextURL = ContextURLParser.parse(
+        URI.create("http://host/service/$metadata#Customers/Model.VipCustomer/$entity"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertEquals("Model.VipCustomer", contextURL.getDerivedEntity());
@@ -124,8 +121,8 @@ public class ContextURLTest {
 
   @Test
   public void collectionOfProjectedEntities() {
-    final ContextURL contextURL = ContextURL.getInstance(
-            URI.create("http://host/service/$metadata#Customers(Address,Orders)"));
+    final ContextURL contextURL = ContextURLParser.parse(
+        URI.create("http://host/service/$metadata#Customers(Address,Orders)"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -136,8 +133,8 @@ public class ContextURLTest {
 
   @Test
   public void projectedEntity() {
-    ContextURL contextURL = ContextURL.getInstance(
-            URI.create("http://host/service/$metadata#Customers(Name,Rating)/$entity"));
+    ContextURL contextURL = ContextURLParser.parse(
+        URI.create("http://host/service/$metadata#Customers(Name,Rating)/$entity"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -145,8 +142,8 @@ public class ContextURLTest {
     assertNull(contextURL.getNavOrPropertyPath());
     assertTrue(contextURL.isEntity());
 
-    contextURL = ContextURL.getInstance(
-            URI.create("http://host/service/$metadata#Customers(Name,Address/Country)"));
+    contextURL = ContextURLParser.parse(
+        URI.create("http://host/service/$metadata#Customers(Name,Address/Country)"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -157,9 +154,9 @@ public class ContextURLTest {
 
   @Test
   public void collectionOfProjectedExpandedEntities() {
-    final ContextURL contextURL = ContextURL.getInstance(
-            URI.create("http://host/service/$metadata#Employees/"
-                    + "Sales.Manager(DirectReports,DirectReports+(FirstName,LastName))"));
+    final ContextURL contextURL = ContextURLParser.parse(
+        URI.create("http://host/service/$metadata#Employees/"
+            + "Sales.Manager(DirectReports,DirectReports+(FirstName,LastName))"));
 
     assertEquals("Employees", contextURL.getEntitySetOrSingletonOrType());
     assertEquals("Sales.Manager", contextURL.getDerivedEntity());
@@ -170,8 +167,8 @@ public class ContextURLTest {
 
   @Test
   public void propertyValue() {
-    final ContextURL contextURL = ContextURL.getInstance(
-            URI.create("http://host/service/$metadata#Customers(1)/Addresses"));
+    final ContextURL contextURL = ContextURLParser.parse(
+        URI.create("http://host/service/$metadata#Customers(1)/Addresses"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -182,8 +179,8 @@ public class ContextURLTest {
 
   @Test
   public void CollectionOfComplexOrPrimitiveTypes() {
-    final ContextURL contextURL = ContextURL.getInstance(
-            URI.create("http://host/service/$metadata#Collection(Edm.String)"));
+    final ContextURL contextURL = ContextURLParser.parse(
+        URI.create("http://host/service/$metadata#Collection(Edm.String)"));
 
     assertEquals("Collection(Edm.String)", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -194,7 +191,7 @@ public class ContextURLTest {
 
   @Test
   public void complexOrPrimitiveType() {
-    ContextURL contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Edm.String"));
+    ContextURL contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#Edm.String"));
 
     assertEquals("Edm.String", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -202,7 +199,7 @@ public class ContextURLTest {
     assertNull(contextURL.getNavOrPropertyPath());
     assertFalse(contextURL.isEntity());
 
-    contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#ODataDemo.Address"));
+    contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#ODataDemo.Address"));
 
     assertEquals("ODataDemo.Address", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -213,7 +210,7 @@ public class ContextURLTest {
 
   @Test
   public void reference() {
-    ContextURL contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$ref"));
+    ContextURL contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#Customers/$ref"));
     assertTrue(contextURL.isReference());
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
@@ -223,103 +220,28 @@ public class ContextURLTest {
 
   @Test
   public void delta() {
-    ContextURL contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$delta"));
+    ContextURL contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#Customers/$delta"));
     assertTrue(contextURL.isDelta());
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
     assertFalse(contextURL.isEntity());
 
-    contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$deletedLink"));
+    contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#Customers/$deletedLink"));
     assertTrue(contextURL.isDeltaDeletedLink());
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
     assertFalse(contextURL.isEntity());
 
-    contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$link"));
+    contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#Customers/$link"));
     assertTrue(contextURL.isDeltaLink());
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
     assertFalse(contextURL.isEntity());
 
-    contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$deletedEntity"));
+    contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#Customers/$deletedEntity"));
     assertTrue(contextURL.isDeltaDeletedEntity());
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
     assertFalse(contextURL.isEntity());
-  }
-
-  @Test
-  public void buildServiceDocument() {
-    ContextURL contextURL = ContextURL.create().serviceRoot(URI.create("http://host/service/")).build();
-    assertEquals("http://host/service/$metadata", contextURL.getURI().toASCIIString());
-  }
-
-  @Test
-  public void buildRelative() {
-    ContextURL contextURL = ContextURL.create().build();
-    assertEquals("$metadata", contextURL.getURI().toASCIIString());
-  }
-
-  @Test
-  public void buildEntitySet() {
-    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
-    Mockito.when(entitySet.getName()).thenReturn("Customers");
-    ContextURL contextURL = ContextURL.create().serviceRoot(URI.create("http://host/service/"))
-            .entitySet(entitySet)
-            .build();
-    assertEquals("http://host/service/$metadata#Customers", contextURL.getURI().toASCIIString());
-  }
-
-  @Test
-  public void buildDerivedEntitySet() {
-    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
-    Mockito.when(entitySet.getName()).thenReturn("Customers");
-    EdmEntityType derivedType = Mockito.mock(EdmEntityType.class);
-    Mockito.when(derivedType.getFullQualifiedName()).thenReturn(new FullQualifiedName("Model", "VipCustomer"));
-    ContextURL contextURL = ContextURL.create().serviceRoot(URI.create("http://host/service/"))
-            .entitySet(entitySet)
-            .derived(derivedType)
-            .build();
-    assertEquals("http://host/service/$metadata#Customers/Model.VipCustomer", contextURL.getURI().toASCIIString());
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void buildDerivedEntitySetWithoutEntitySet() {
-    EdmEntityType derivedType = Mockito.mock(EdmEntityType.class);
-    Mockito.when(derivedType.getFullQualifiedName()).thenReturn(new FullQualifiedName("Model", "VipCustomer"));
-    ContextURL.create().derived(derivedType).build();
-  }
-
-  @Test
-  public void buildDerivedEntity() {
-    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
-    Mockito.when(entitySet.getName()).thenReturn("Customers");
-    EdmEntityType derivedType = Mockito.mock(EdmEntityType.class);
-    Mockito.when(derivedType.getFullQualifiedName()).thenReturn(new FullQualifiedName("Model", "VipCustomer"));
-    ContextURL contextURL = ContextURL.create().serviceRoot(URI.create("http://host/service/"))
-            .entitySet(entitySet)
-            .derived(derivedType)
-            .suffix(Suffix.ENTITY)
-            .build();
-    assertEquals("http://host/service/$metadata#Customers/Model.VipCustomer/$entity",
-            contextURL.getURI().toASCIIString());
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void buildSuffixWithoutEntitySet() {
-    ContextURL.create().suffix(Suffix.ENTITY).build();
-  }
-
-  @Test
-  public void buildReference() {
-    ContextURL contextURL = ContextURL.create().suffix(Suffix.REFERENCE).build();
-    assertEquals("$metadata#$ref", contextURL.getURI().toASCIIString());
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void buildReferenceWithEntitySet() {
-    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
-    Mockito.when(entitySet.getName()).thenReturn("Customers");
-    ContextURL.create().entitySet(entitySet).suffix(Suffix.REFERENCE).build();
   }
 }

@@ -59,7 +59,7 @@ public class JsonEntitySerializer extends JsonSerializer {
       if (container.getContextURL() != null) {
         jgen.writeStringField(version.compareTo(ODataServiceVersion.V40) >= 0
             ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
-            container.getContextURL().getURI().toASCIIString());
+            container.getContextURL().toASCIIString());
       }
       if (version.compareTo(ODataServiceVersion.V40) >= 0 && StringUtils.isNotBlank(container.getMetadataETag())) {
         jgen.writeStringField(Constants.JSON_METADATA_ETAG, container.getMetadataETag());

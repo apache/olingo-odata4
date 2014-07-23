@@ -27,7 +27,6 @@ import org.apache.olingo.client.core.serialization.AbstractODataBinder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.Annotatable;
 import org.apache.olingo.commons.api.data.Annotation;
-import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.DeletedEntity;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.DeltaLink;
@@ -75,6 +74,7 @@ import org.apache.olingo.commons.core.domain.v4.ODataDeletedEntityImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataDeltaLinkImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataPropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.serialization.ContextURLParser;
 
 import java.net.URI;
 import java.util.List;
@@ -273,8 +273,9 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     final ODataEntitySet entitySet = (ODataEntitySet) super.getODataEntitySet(resource);
 
     if (resource.getPayload().getDeltaLink() != null) {
-      final URI base = resource.getContextURL() == null
-              ? resource.getPayload().getBaseURI() : resource.getContextURL().getServiceRoot();
+      final URI base = resource.getContextURL() == null ?
+          resource.getPayload().getBaseURI() :
+          ContextURLParser.parse(resource.getContextURL()).getServiceRoot();
       entitySet.setDeltaLink(URIUtils.getURI(base, resource.getPayload().getDeltaLink()));
     }
     odataAnnotations(resource.getPayload(), entitySet);
@@ -307,8 +308,8 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   @Override
   public ODataProperty getODataProperty(final ResWrap<Property> resource) {
     final Property payload = resource.getPayload();
-    final EdmTypeInfo typeInfo = buildTypeInfo(resource.getContextURL(), resource.getMetadataETag(),
-            payload.getName(), payload.getType());
+    final EdmTypeInfo typeInfo = buildTypeInfo(ContextURLParser.parse(resource.getContextURL()),
+        resource.getMetadataETag(), payload.getName(), payload.getType());
 
     final ODataProperty property = new ODataPropertyImpl(payload.getName(),
             getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
@@ -332,7 +333,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
   @Override
   protected ODataValue getODataValue(final FullQualifiedName type,
-          final Valuable valuable, final ContextURL contextURL, final String metadataETag) {
+          final Valuable valuable, final URI contextURL, final String metadataETag) {
 
     // fixes enum values treated as primitive when no type information is available
     if (client instanceof EdmEnabledODataClient && type != null) {
@@ -359,8 +360,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
         edmType = ((EdmEnabledODataClient) client).getEdm(metadataETag).getComplexType(type);
       }
 
-      odataNavigationLinks(edmType, valuable.asLinkedComplex(), lcValue, metadataETag,
-              contextURL == null ? null : contextURL.getURI());
+      odataNavigationLinks(edmType, valuable.asLinkedComplex(), lcValue, metadataETag, contextURL);
       odataAnnotations(valuable.asLinkedComplex(), lcValue);
 
       value = lcValue;
@@ -373,8 +373,9 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
   @Override
   public ODataDelta getODataDelta(final ResWrap<Delta> resource) {
-    final URI base = resource.getContextURL() == null
-            ? resource.getPayload().getBaseURI() : resource.getContextURL().getServiceRoot();
+    final URI base = resource.getContextURL() == null ?
+        resource.getPayload().getBaseURI() :
+        ContextURLParser.parse(resource.getContextURL()).getServiceRoot();
 
     final URI next = resource.getPayload().getNext();
 

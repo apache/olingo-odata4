@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -78,6 +79,8 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
       }
     } catch (final DataProvider.DataProviderException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
+    } catch (final ODataSerializerException e) {
+      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     }
   }
 
@@ -100,6 +103,8 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
         response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
       }
     } catch (final DataProvider.DataProviderException e) {
+      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
+    } catch (final ODataSerializerException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     }
   }
@@ -147,6 +152,6 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
   }
 
   private ContextURL getContextUrl(final EdmEntitySet entitySet) {
-    return ContextURL.create().entitySet(entitySet).build();
+    return ContextURL.Builder.create().entitySet(entitySet).build();
   }
 }

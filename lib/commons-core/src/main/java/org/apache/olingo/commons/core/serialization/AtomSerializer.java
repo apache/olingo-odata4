@@ -19,9 +19,11 @@
 package org.apache.olingo.commons.core.serialization;
 
 import com.fasterxml.aalto.stax.OutputFactoryImpl;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
+import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
@@ -49,6 +51,7 @@ import javax.xml.XMLConstants;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
 import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
@@ -549,7 +552,8 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
       final XMLStreamWriter writer, final ResWrap<T> container) throws XMLStreamException {
 
     if (container.getContextURL() != null) {
-      String base = container.getContextURL().getServiceRoot().toASCIIString();
+      final ContextURL contextURL = ContextURLParser.parse(container.getContextURL());
+      String base = contextURL.getServiceRoot().toASCIIString();
       if (container.getPayload() instanceof EntitySet) {
         ((EntitySetImpl) container.getPayload()).setBaseURI(base);
       }
@@ -558,7 +562,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
       }
 
       writer.writeAttribute(namespaceMetadata, Constants.CONTEXT,
-          container.getContextURL().getURI().toASCIIString());
+          container.getContextURL().toASCIIString());
     }
 
     if (StringUtils.isNotBlank(container.getMetadataETag())) {

@@ -18,10 +18,11 @@
  */
 package org.apache.olingo.server.core;
 
-import java.io.InputStream;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
@@ -35,7 +36,7 @@ public class ODataExceptionHandler {
 
   public void handle(ODataResponse resp, Exception e) {
     if (resp.getStatusCode() == 0) {
-      resp.setStatusCode(500);
+      resp.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     }
     ODataServerError error = new ODataServerError();
     if (e instanceof ODataTranslatedException) {
@@ -45,8 +46,9 @@ public class ODataExceptionHandler {
     }
 
     ODataSerializer serializer = OData.newInstance().createSerializer(requestedFormat);
-    InputStream errorStream = serializer.error(error);
-    resp.setContent(errorStream);
+    try {
+      resp.setContent(serializer.error(error));
+    } catch (final ODataSerializerException e1) {}
     // Set header
   }
 }

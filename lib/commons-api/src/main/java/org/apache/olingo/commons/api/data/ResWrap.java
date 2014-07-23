@@ -27,17 +27,11 @@ import java.net.URI;
  */
 public class ResWrap<T> {
 
-  private final ContextURL contextURL;
-
+  private final URI contextURL;
   private final String metadataETag;
-
   private final T payload;
 
   public ResWrap(final URI contextURL, final String metadataETag, final T payload) {
-    this(contextURL == null ? null : ContextURL.getInstance(contextURL), metadataETag, payload);
-  }
-
-  public ResWrap(final ContextURL contextURL, final String metadataETag, final T payload) {
     this.contextURL = contextURL;
     this.metadataETag = metadataETag;
     this.payload = payload;
@@ -55,7 +49,7 @@ public class ResWrap<T> {
    * 
    * @return context URL.
    */
-  public ContextURL getContextURL() {
+  public URI getContextURL() {
     return contextURL;
   }
 

@@ -42,6 +42,7 @@ import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.domain.v3.ODataPropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.serialization.ContextURLParser;
 
 public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder {
 
@@ -109,8 +110,8 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
   @Override
   public ODataProperty getODataProperty(final ResWrap<Property> property) {
-    final EdmTypeInfo typeInfo = buildTypeInfo(property.getContextURL(), property.getMetadataETag(),
-            property.getPayload().getName(), property.getPayload().getType());
+    final EdmTypeInfo typeInfo = buildTypeInfo(ContextURLParser.parse(property.getContextURL()),
+        property.getMetadataETag(), property.getPayload().getName(), property.getPayload().getType());
 
     return new ODataPropertyImpl(property.getPayload().getName(),
             getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),

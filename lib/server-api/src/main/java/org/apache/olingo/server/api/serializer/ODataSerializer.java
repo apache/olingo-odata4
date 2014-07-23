@@ -25,24 +25,28 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.apache.olingo.server.api.ODataServerError;
 
 public interface ODataSerializer {
 
   public static final String DEFAULT_CHARSET = "UTF-8";
 
-  InputStream serviceDocument(Edm edm, String serviceRoot);
+  InputStream serviceDocument(Edm edm, String serviceRoot) throws ODataSerializerException;
 
-  InputStream metadataDocument(Edm edm);
+  InputStream metadataDocument(Edm edm) throws ODataSerializerException;
 
-  InputStream entity(EdmEntitySet edmEntitySet, Entity entity, ContextURL contextURL);
+  InputStream entity(EdmEntitySet edmEntitySet, Entity entity, ContextURL contextURL)
+      throws ODataSerializerException;
 
-  InputStream entitySet(EdmEntitySet edmEntitySet, EntitySet entitySet, ContextURL contextURL);
+  InputStream entitySet(EdmEntitySet edmEntitySet, EntitySet entitySet, ContextURL contextURL)
+      throws ODataSerializerException;
 
   /**
    * Writes an ODataError into an InputStream.
    * @param error the main error
    * @return inputStream containing the OData formatted error
+   * @throws ODataSerializerException 
    */
-  InputStream error(ODataServerError error);
+  InputStream error(ODataServerError error) throws ODataSerializerException;
 }

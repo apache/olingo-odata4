@@ -221,7 +221,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
     final ResWrap<Entity> entity =
         client.getDeserializer(ODataFormat.JSON).toEntity(IOUtils.toInputStream(fromSection45_1));
 
-    assertEquals("http://host/service/$metadata#Customers/$entity", entity.getContextURL().getURI().toASCIIString());
+    assertEquals("http://host/service/$metadata#Customers/$entity", entity.getContextURL().toASCIIString());
     assertEquals("W/\"A1FF3E230954908F\"", entity.getMetadataETag());
     assertEquals("W/\"A1FF3E230954908G\"", entity.getPayload().getETag());
     assertEquals("Model.VipCustomer", entity.getPayload().getType());

@@ -18,7 +18,8 @@
  */
 package org.apache.olingo.server.tecsvc.data;
 
-import org.apache.olingo.commons.api.data.ContextURL;
+import java.util.List;
+
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.LinkedComplexValue;
@@ -32,20 +33,15 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.InputStream;
-import java.util.List;
-
 /**
  */
-public class JsonDataProviderTest {
+public class DataProviderTest {
 
   private final Edm edm = OData.newInstance().createEdm(new EdmTechProvider());
   private final EdmEntityContainer entityContainer = edm.getEntityContainer(
@@ -56,19 +52,11 @@ public class JsonDataProviderTest {
   private final EdmEntitySet esCollAllPrim;
   private final EdmEntitySet esMixPrimCollAllPrim;
 
-  public JsonDataProviderTest() {
+  public DataProviderTest() {
     esAllPrim = entityContainer.getEntitySet("ESAllPrim");
     esCompAllPrim = entityContainer.getEntitySet("ESCompAllPrim");
     esCollAllPrim = entityContainer.getEntitySet("ESCollAllPrim");
     esMixPrimCollAllPrim = entityContainer.getEntitySet("ESMixPrimCollComp");
-  }
-
-  @Test
-  public void doRoundTrip() throws Exception {
-    doRoundTrip(entityContainer.getEntitySet("ESAllPrim"), 1440);
-    doRoundTrip(entityContainer.getEntitySet("ESCompAllPrim"), 1635);
-    doRoundTrip(entityContainer.getEntitySet("ESCollAllPrim"), 2898);
-    doRoundTrip(entityContainer.getEntitySet("ESMixPrimCollComp"), 1079);
   }
 
   @Test
@@ -178,19 +166,5 @@ public class JsonDataProviderTest {
         }
       }
     }
-  }
-
-  private void doRoundTrip(EdmEntitySet entitySet, int expectedLength) throws Exception {
-    DataProvider jdp = new DataProvider(edm);
-    EntitySet outSet = jdp.readAll(entitySet);
-
-
-    ODataJsonSerializer serializer = new ODataJsonSerializer(ODataFormat.JSON);
-    ContextURL contextUrl = null;
-    InputStream is = serializer.entitySet(entitySet, outSet, contextUrl);
-
-    StringHelper.Stream stream = StringHelper.toStream(is);
-
-    Assert.assertEquals(expectedLength, stream.asString().length());
   }
 }

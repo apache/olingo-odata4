@@ -48,7 +48,7 @@ public class ServiceDocumentTest extends AbstractTest {
     ResWrap<ServiceDocument> service = getClient().getDeserializer(format).toServiceDocument(
             getClass().getResourceAsStream("serviceDocument." + getFileExtension(format)));
 
-    assertEquals(URI.create("http://host/service/$metadata"), service.getContextURL().getURI());
+    assertEquals(URI.create("http://host/service/$metadata"), service.getContextURL());
     assertEquals("W/\"MjAxMy0wNS0xM1QxNDo1NFo=\"", service.getMetadataETag());
 
     final ODataServiceDocument serviceDocument = getClient().getBinder().getODataServiceDocument(service.getPayload());

@@ -55,7 +55,7 @@ public class JsonPropertySerializer extends JsonSerializer {
     if (serverMode && container.getContextURL() != null) {
       jgen.writeStringField(version.compareTo(ODataServiceVersion.V40) >= 0
           ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
-          container.getContextURL().getURI().toASCIIString());
+          container.getContextURL().toASCIIString());
     }
 
     if (StringUtils.isNotBlank(property.getType())) {

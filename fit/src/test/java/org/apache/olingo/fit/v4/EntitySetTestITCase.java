@@ -56,7 +56,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
 
     final ResWrap<ODataEntitySet> entitySet = res.getBodyAs(ODataEntitySet.class);
     assertNotNull(entitySet.getPayload());
-    assertTrue(entitySet.getContextURL().getURI().toASCIIString().endsWith("$metadata#People"));
+    assertTrue(entitySet.getContextURL().toASCIIString().endsWith("$metadata#People"));
   }
 
   @Test

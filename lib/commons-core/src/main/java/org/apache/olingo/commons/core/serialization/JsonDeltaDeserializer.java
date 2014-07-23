@@ -70,8 +70,8 @@ public class JsonDeltaDeserializer extends JsonDeserializer {
       JsonEntityDeserializer entityDeserializer = new JsonEntityDeserializer(version, serverMode);
       for (JsonNode jsonNode : tree.get(Constants.VALUE)) {
         final ObjectNode item = (ObjectNode) jsonNode;
-        final ContextURL itemContextURL = item.hasNonNull(Constants.JSON_CONTEXT)
-            ? ContextURL.getInstance(URI.create(item.get(Constants.JSON_CONTEXT).textValue())) : null;
+        final ContextURL itemContextURL = item.hasNonNull(Constants.JSON_CONTEXT) ?
+            ContextURLParser.parse(URI.create(item.get(Constants.JSON_CONTEXT).textValue())) : null;
         item.remove(Constants.JSON_CONTEXT);
 
         if (itemContextURL == null || itemContextURL.isEntity()) {
