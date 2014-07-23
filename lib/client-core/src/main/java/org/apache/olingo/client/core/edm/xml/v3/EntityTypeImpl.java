@@ -25,6 +25,8 @@ import java.util.List;
 
 public class EntityTypeImpl extends AbstractEntityType {
 
+  private static final long serialVersionUID = -3176443460980923223L;
+
   private final List<PropertyImpl> properties = new ArrayList<PropertyImpl>();
 
   private final List<NavigationPropertyImpl> navigationProperties = new ArrayList<NavigationPropertyImpl>();

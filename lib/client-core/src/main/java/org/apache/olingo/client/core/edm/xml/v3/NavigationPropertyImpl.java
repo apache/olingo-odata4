@@ -24,6 +24,8 @@ import org.apache.olingo.client.core.edm.xml.AbstractNavigationProperty;
 
 public class NavigationPropertyImpl extends AbstractNavigationProperty implements NavigationProperty {
 
+  private static final long serialVersionUID = 8735501652152204703L;
+
   @JsonProperty(value = "Relationship", required = true)
   private String relationship;
 

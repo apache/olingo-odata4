@@ -18,7 +18,9 @@
  */
 package org.apache.olingo.client.api.edm.xml;
 
-public interface Named {
+import java.io.Serializable;
+
+public interface Named extends Serializable {
 
   String getName();
 }

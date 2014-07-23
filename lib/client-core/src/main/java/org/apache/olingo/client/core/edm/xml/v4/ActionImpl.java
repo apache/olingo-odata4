@@ -29,6 +29,8 @@ import java.util.List;
 @JsonDeserialize(using = ActionDeserializer.class)
 public class ActionImpl extends AbstractAnnotatable implements Action {
 
+  private static final long serialVersionUID = 5321541275349234088L;
+
   private String name;
 
   private boolean bound = false;

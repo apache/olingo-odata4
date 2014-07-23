@@ -23,6 +23,8 @@ import org.apache.olingo.client.api.edm.xml.PropertyRef;
 
 public class PropertyRefImpl extends AbstractEdmItem implements PropertyRef {
 
+  private static final long serialVersionUID = 1504095609268590326L;
+
   @JsonProperty(value = "Name", required = true)
   private String name;
 

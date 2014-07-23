@@ -24,6 +24,8 @@ import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
 
 public class ValueTermImpl extends AbstractEdmItem implements ValueTerm {
 
+  private static final long serialVersionUID = 1052544883399866381L;
+
   @JsonProperty(value = "Name", required = true)
   private String name;
 

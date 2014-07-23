@@ -28,6 +28,8 @@ import java.util.List;
 
 public class EntitySetImpl extends AbstractEntitySet implements EntitySet {
 
+  private static final long serialVersionUID = -5553885465204370676L;
+
   private boolean includeInServiceDocument = true;
 
   private final List<Annotation> annotations = new ArrayList<Annotation>();

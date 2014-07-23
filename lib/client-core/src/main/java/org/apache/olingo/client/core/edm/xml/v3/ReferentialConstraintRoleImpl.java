@@ -29,6 +29,8 @@ import java.util.List;
 @JsonDeserialize(using = ReferentialConstraintRoleDeserializer.class)
 public class ReferentialConstraintRoleImpl extends AbstractEdmItem implements ReferentialConstraintRole {
 
+  private static final long serialVersionUID = 4608335749988090522L;
+
   private String role;
 
   private List<PropertyRef> propertyRefs = new ArrayList<PropertyRef>();

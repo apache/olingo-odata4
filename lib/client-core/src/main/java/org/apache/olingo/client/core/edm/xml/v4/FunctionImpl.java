@@ -24,6 +24,8 @@ import org.apache.olingo.client.api.edm.xml.v4.Function;
 @JsonDeserialize(using = FunctionDeserializer.class)
 public class FunctionImpl extends ActionImpl implements Function {
 
+  private static final long serialVersionUID = -5494898295282843362L;
+
   private boolean composable = false;
 
   @Override

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -26,19 +26,20 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 
 public class ContextURLParser {
+
   public static ContextURL parse(final URI contextURL) {
     if (contextURL == null) {
       return null;
     }
 
-    ContextURL.Builder builder = ContextURL.Builder.create();
+    final ContextURL.Builder builder = ContextURL.Builder.create();
 
     String contextURLasString = contextURL.toASCIIString();
 
     if (contextURLasString.endsWith("/$entity") || contextURLasString.endsWith("/@Element")) {
       builder.suffix(Suffix.ENTITY);
-      contextURLasString = contextURLasString.replace("/$entity", StringUtils.EMPTY)
-              .replace("/@Element", StringUtils.EMPTY);
+      contextURLasString = contextURLasString.replace("/$entity", StringUtils.EMPTY).
+              replace("/@Element", StringUtils.EMPTY);
     } else if (contextURLasString.endsWith("/$ref")) {
       builder.suffix(Suffix.REFERENCE);
       contextURLasString = contextURLasString.replace("/$ref", StringUtils.EMPTY);

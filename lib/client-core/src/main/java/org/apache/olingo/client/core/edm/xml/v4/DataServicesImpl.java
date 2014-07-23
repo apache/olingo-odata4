@@ -26,6 +26,8 @@ import java.util.List;
 
 public class DataServicesImpl extends AbstractDataServices {
 
+  private static final long serialVersionUID = 4200317286476885204L;
+
   private final List<Schema> schemas = new ArrayList<Schema>();
 
   @Override

@@ -18,16 +18,27 @@
  */
 package org.apache.olingo.ext.proxy;
 
+import java.io.ObjectInputStream;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.zip.GZIPInputStream;
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
+import org.apache.olingo.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.client.core.ODataClientFactory;
+import org.apache.olingo.client.core.edm.EdmClientImpl;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.commons.EntityContainerInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.NonTransactionalPersistenceManagerImpl;
 import org.apache.olingo.ext.proxy.commons.TransactionalPersistenceManagerImpl;
 import org.apache.olingo.ext.proxy.context.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Entry point for proxy mode, gives access to entity container instances.
@@ -35,6 +46,8 @@ import org.apache.olingo.ext.proxy.context.Context;
  * @param <C> actual client class
  */
 public abstract class AbstractService<C extends CommonEdmEnabledODataClient<?>> {
+
+  protected static final Logger LOG = LoggerFactory.getLogger(AbstractService.class);
 
   private final Map<Class<?>, Object> ENTITY_CONTAINERS = new ConcurrentHashMap<Class<?>, Object>();
 
@@ -46,8 +59,28 @@ public abstract class AbstractService<C extends CommonEdmEnabledODataClient<?>> 
 
   private PersistenceManager persistenceManager;
 
-  protected AbstractService(final CommonEdmEnabledODataClient<?> client, final boolean transactional) {
-    this.client = client;
+  protected AbstractService(final String compressedMetadata,
+          final ODataServiceVersion version, final String serviceRoot, final boolean transactional) {
+
+    GZIPInputStream gzis = null;
+    ObjectInputStream ois = null;
+    XMLMetadata metadata = null;
+    try {
+      gzis = new GZIPInputStream(IOUtils.toInputStream(compressedMetadata, "UTF-8"));
+      ois = new ObjectInputStream(gzis);
+      metadata = (XMLMetadata) ois.readObject();
+    } catch (Exception e) {
+      LOG.error("While deserializing compressed metadata", e);
+    } finally {
+      IOUtils.closeQuietly(ois);
+      IOUtils.closeQuietly(gzis);
+    }
+
+    final Edm edm = metadata == null ? null : new EdmClientImpl(version, metadata.getSchemaByNsOrAlias());
+    this.client = version.compareTo(ODataServiceVersion.V40) < 0
+            ? ODataClientFactory.getEdmEnabledV3(serviceRoot, edm)
+            : ODataClientFactory.getEdmEnabledV4(serviceRoot, edm);
+    this.client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON_FULL_METADATA);
     this.transactional = transactional;
     this.context = new Context();
   }

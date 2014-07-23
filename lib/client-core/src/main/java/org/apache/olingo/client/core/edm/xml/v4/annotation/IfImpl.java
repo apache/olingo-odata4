@@ -23,6 +23,8 @@ import org.apache.olingo.client.api.edm.xml.v4.annotation.If;
 
 public class IfImpl extends AbstractAnnotatableDynamicAnnotationExpression implements If {
 
+  private static final long serialVersionUID = -8571383625077590656L;
+
   private AnnotationExpression guard;
 
   private AnnotationExpression _then;

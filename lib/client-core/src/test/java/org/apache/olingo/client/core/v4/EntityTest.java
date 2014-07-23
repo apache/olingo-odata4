@@ -58,7 +58,7 @@ public class EntityTest extends AbstractTest {
   }
 
   private EdmEnabledODataClient getEdmEnabledClient() {
-    return new EdmEnabledODataClientImpl(null) {
+    return new EdmEnabledODataClientImpl(null, null) {
 
       private Edm edm;
 

@@ -24,6 +24,8 @@ import org.apache.olingo.client.api.edm.xml.EntitySet;
 @JsonDeserialize(using = EntitySetDeserializer.class)
 public abstract class AbstractEntitySet extends AbstractEdmItem implements EntitySet {
 
+  private static final long serialVersionUID = 8583772498037429318L;
+
   private String name;
 
   private String entityType;

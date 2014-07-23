@@ -21,4 +21,7 @@ package org.apache.olingo.client.core.edm.xml.v3;
 import org.apache.olingo.client.core.edm.xml.AbstractEntitySet;
 
 public class EntitySetImpl extends AbstractEntitySet {
+
+  private static final long serialVersionUID = -1812036330596086383L;
+
 }

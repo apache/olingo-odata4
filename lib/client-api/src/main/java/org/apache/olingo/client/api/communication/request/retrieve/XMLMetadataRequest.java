@@ -18,12 +18,10 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve;
 
-import org.apache.olingo.client.api.edm.xml.Schema;
-
-import java.util.Map;
+import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 
 /**
  * This class implements an XML metadata request.
  */
-public interface XMLMetadataRequest extends ODataRetrieveRequest<Map<String, Schema>> {
+public interface XMLMetadataRequest extends ODataRetrieveRequest<XMLMetadata> {
 }

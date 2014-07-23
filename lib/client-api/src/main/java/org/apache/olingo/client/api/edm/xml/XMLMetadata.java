@@ -27,14 +27,6 @@ import java.util.Map;
 public interface XMLMetadata {
 
   /**
-   * Checks whether the given key is a valid namespace or alias in the EdM metadata document.
-   *
-   * @param key namespace or alias
-   * @return true if key is valid namespace or alias
-   */
-  boolean isNsOrAlias(String key);
-
-  /**
    * Returns the Schema at the specified position in the EdM metadata document.
    *
    * @param index index of the Schema to return

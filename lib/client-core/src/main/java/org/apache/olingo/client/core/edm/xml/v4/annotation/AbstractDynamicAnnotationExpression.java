@@ -42,6 +42,8 @@ import org.apache.olingo.client.api.edm.xml.v4.annotation.UrlRef;
 public abstract class AbstractDynamicAnnotationExpression
         extends AbstractAnnotationExpression implements DynamicAnnotationExpression {
 
+  private static final long serialVersionUID = 1093411847477874348L;
+
   @Override
   public boolean isNot() {
     return this instanceof Not;

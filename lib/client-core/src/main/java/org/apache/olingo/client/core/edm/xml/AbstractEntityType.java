@@ -25,6 +25,8 @@ import org.apache.olingo.client.api.edm.xml.EntityType;
 @JsonDeserialize(using = EntityTypeDeserializer.class)
 public abstract class AbstractEntityType extends AbstractComplexType implements EntityType {
 
+  private static final long serialVersionUID = 1203890295232722675L;
+
   private boolean abstractEntityType = false;
 
   private String baseType;

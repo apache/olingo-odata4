@@ -23,6 +23,8 @@ import org.apache.olingo.client.api.edm.xml.CommonNavigationProperty;
 
 public class AbstractNavigationProperty extends AbstractEdmItem implements CommonNavigationProperty {
 
+  private static final long serialVersionUID = 6240231735592427582L;
+
   @JsonProperty(value = "Name", required = true)
   private String name;
 

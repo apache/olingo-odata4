@@ -31,6 +31,8 @@ import org.apache.olingo.client.core.edm.xml.AbstractEntityContainer;
 
 public class EntityContainerImpl extends AbstractEntityContainer implements EntityContainer {
 
+  private static final long serialVersionUID = 5631432527646955795L;
+
   private final List<EntitySet> entitySets = new ArrayList<EntitySet>();
 
   private final List<Singleton> singletons = new ArrayList<Singleton>();

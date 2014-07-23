@@ -18,14 +18,13 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
+import java.net.URI;
+import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.edm.xml.Schema;
+import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.edm.Edm;
-
-import java.net.URI;
-import java.util.Map;
 
 /**
  * This class implements a metadata query request.
@@ -34,52 +33,76 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
 
   private final String serviceRoot;
 
-  /**
-   * Constructor.
-   *
-   * @param odataClient client instance getting this request
-   * @param uri metadata URI.
-   */
+  private EdmMetadataResponseImpl privateResponse;
+
   EdmMetadataRequestImpl(final CommonODataClient<?> odataClient, final String serviceRoot, final URI uri) {
     super(odataClient, uri);
     this.serviceRoot = serviceRoot;
   }
 
+  private EdmMetadataResponseImpl getPrivateResponse() {
+    if (privateResponse == null) {
+      final ODataRetrieveResponse<XMLMetadata> xmlMetadataResponse =
+              odataClient.getRetrieveRequestFactory().getXMLMetadataRequest(serviceRoot).execute();
+
+      privateResponse = new EdmMetadataResponseImpl(odataClient, httpClient, xmlMetadataResponse);
+    }
+    return privateResponse;
+  }
+
+  @Override
+  public XMLMetadata getXMLMetadata() {
+    return getPrivateResponse().getXMLMetadata();
+  }
+
   @Override
   public ODataRetrieveResponse<Edm> execute() {
-    final ODataRetrieveResponse<Map<String, Schema>> xmlMetadataResponse =
-            odataClient.getRetrieveRequestFactory().getXMLMetadataRequest(serviceRoot).execute();
+    return getPrivateResponse();
+  }
 
-    return new AbstractODataRetrieveResponse(odataClient, httpClient, null) {
-      private Edm metadata = null;
+  private class EdmMetadataResponseImpl extends AbstractODataRetrieveResponse {
 
-      @Override
-      public void close() {
-        super.close();
-        xmlMetadataResponse.close();
-      }
+    private final ODataRetrieveResponse<XMLMetadata> xmlMetadataResponse;
 
-      @Override
-      public int getStatusCode() {
-        return xmlMetadataResponse.getStatusCode();
-      }
+    private XMLMetadata metadata = null;
 
-      @Override
-      public String getStatusMessage() {
-        return xmlMetadataResponse.getStatusMessage();
-      }
+    private EdmMetadataResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+            final ODataRetrieveResponse<XMLMetadata> xmlMetadataResponse) {
 
-      @Override
-      public Edm getBody() {
-        if (metadata == null) {
-          try {
-            metadata = odataClient.getReader().readMetadata(xmlMetadataResponse.getBody());
-          } finally {
-            this.close();
-          }
+      super(odataClient, httpClient, null);
+      this.xmlMetadataResponse = xmlMetadataResponse;
+    }
+
+    @Override
+    public void close() {
+      super.close();
+      xmlMetadataResponse.close();
+    }
+
+    @Override
+    public int getStatusCode() {
+      return xmlMetadataResponse.getStatusCode();
+    }
+
+    @Override
+    public String getStatusMessage() {
+      return xmlMetadataResponse.getStatusMessage();
+    }
+
+    public XMLMetadata getXMLMetadata() {
+      if (metadata == null) {
+        try {
+          metadata = xmlMetadataResponse.getBody();
+        } finally {
+          this.close();
         }
-        return metadata;
       }
-    };
+      return metadata;
+    }
+
+    @Override
+    public Edm getBody() {
+      return odataClient.getReader().readMetadata(getXMLMetadata().getSchemaByNsOrAlias());
+    }
   }
 }

@@ -44,7 +44,6 @@ import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail;
-
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
@@ -56,11 +55,8 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
 import org.junit.Test;
-
 //CHECKSTYLE:ON (Maven checkstyle)
-/**
- * This is the unit test class to check entity create operations.
- */
+
 public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
   protected AbstractService<EdmEnabledODataClient> getService() {
@@ -314,7 +310,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     // ---------------------------------------
     org.apache.olingo.fit.proxy.v3.staticservice.Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> v3serv =
             org.apache.olingo.fit.proxy.v3.staticservice.Service.getV3(
-            "http://localhost:9080/stub/StaticService/V30/Static.svc");
+                    "http://localhost:9080/stub/StaticService/V30/Static.svc");
     v3serv.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     final DefaultContainer v3cont = v3serv.getEntityContainer(DefaultContainer.class);
     assertNotNull(v3cont);
@@ -339,7 +335,6 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     //        getHomePhone().getPhoneNumber());
     // Not supported by the test service BTW generates a single request as expected: 
     // <service root>/Order(8)/Customer/BackupContactInfo
-
     v3serv.getContext().detachAll();
 
     // Static test service doesn't support query options about complexes: the following provides just a client example

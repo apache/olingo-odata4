@@ -35,13 +35,12 @@ import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.communication.request.retrieve.AbstractMetadataRequestImpl;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationsImpl;
 import org.apache.olingo.client.core.edm.xml.v4.SchemaImpl;
+import org.apache.olingo.client.core.edm.xml.AbstractSchema;
 import org.apache.olingo.commons.api.format.ODataFormat;
-
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
-public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<String, Schema>>
+public class XMLMetadataRequestImpl
+        extends AbstractMetadataRequestImpl<org.apache.olingo.client.api.edm.xml.XMLMetadata>
         implements XMLMetadataRequest {
 
   XMLMetadataRequestImpl(final ODataClient odataClient, final URI uri) {
@@ -49,34 +48,26 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
   }
 
   @Override
-  public ODataRetrieveResponse<Map<String, Schema>> execute() {
+  public ODataRetrieveResponse<org.apache.olingo.client.api.edm.xml.XMLMetadata> execute() {
     final SingleXMLMetadatRequestImpl rootReq = new SingleXMLMetadatRequestImpl((ODataClient) odataClient, uri);
     final ODataRetrieveResponse<XMLMetadata> rootRes = rootReq.execute();
 
     final XMLMetadataResponseImpl response =
-            new XMLMetadataResponseImpl(odataClient, httpClient, rootReq.getHttpResponse());
-
-    final XMLMetadata rootMetadata = rootRes.getBody();
-    for (Schema schema : rootMetadata.getSchemas()) {
-      response.getBody().put(schema.getNamespace(), schema);
-      if (StringUtils.isNotBlank(schema.getAlias())) {
-        response.getBody().put(schema.getAlias(), schema);
-      }
-    }
+            new XMLMetadataResponseImpl(odataClient, httpClient, rootReq.getHttpResponse(), rootRes.getBody());
 
     // process external references
-    for (Reference reference : rootMetadata.getReferences()) {
+    for (Reference reference : rootRes.getBody().getReferences()) {
       final SingleXMLMetadatRequestImpl includeReq = new SingleXMLMetadatRequestImpl(
               (ODataClient) odataClient, odataClient.newURIBuilder(reference.getUri().toASCIIString()).build());
       final XMLMetadata includeMetadata = includeReq.execute().getBody();
-
+      
       // edmx:Include
       for (Include include : reference.getIncludes()) {
         final Schema includedSchema = includeMetadata.getSchema(include.getNamespace());
         if (includedSchema != null) {
-          response.getBody().put(include.getNamespace(), includedSchema);
+          response.getBody().getSchemas().add((org.apache.olingo.client.api.edm.xml.v4.Schema) includedSchema);
           if (StringUtils.isNotBlank(include.getAlias())) {
-            response.getBody().put(include.getAlias(), includedSchema);
+            ((AbstractSchema) includedSchema).setAlias(include.getAlias());
           }
         }
       }
@@ -113,10 +104,7 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
           }
 
           if (!forInclusion.getAnnotationGroups().isEmpty()) {
-            response.getBody().put(forInclusion.getNamespace(), forInclusion);
-            if (StringUtils.isNotBlank(forInclusion.getAlias())) {
-              response.getBody().put(forInclusion.getAlias(), forInclusion);
-            }
+            response.getBody().getSchemas().add(forInclusion);
           }
         }
       }
@@ -142,26 +130,32 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
       httpResponse = doExecute();
       return new AbstractODataRetrieveResponse(odataClient, httpClient, httpResponse) {
 
+        private XMLMetadata metadata = null;
+
         @Override
         public XMLMetadata getBody() {
-          try {
-            return ((ODataClient) odataClient).getDeserializer(ODataFormat.XML).toMetadata(getRawResponse());
-          } finally {
-            this.close();
+          if (metadata == null) {
+            try {
+              metadata = ((ODataClient) odataClient).getDeserializer(ODataFormat.XML).toMetadata(getRawResponse());
+            } finally {
+              this.close();
+            }
           }
+          return metadata;
         }
       };
     }
   }
 
-  public class XMLMetadataResponseImpl extends AbstractODataRetrieveResponse {
+  private class XMLMetadataResponseImpl extends AbstractODataRetrieveResponse {
 
-    private final Map<String, Schema> schemas = new HashMap<String, Schema>();
+    private final XMLMetadata metadata;
 
     private XMLMetadataResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
-            final HttpResponse res) {
+            final HttpResponse res, final XMLMetadata metadata) {
 
       super(odataClient, httpClient, null);
+      this.metadata = metadata;
 
       statusCode = res.getStatusLine().getStatusCode();
       statusMessage = res.getStatusLine().getReasonPhrase();
@@ -170,8 +164,8 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
     }
 
     @Override
-    public Map<String, Schema> getBody() {
-      return schemas;
+    public XMLMetadata getBody() {
+      return metadata;
     }
   }
 

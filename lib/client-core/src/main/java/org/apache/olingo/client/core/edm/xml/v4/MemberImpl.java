@@ -27,6 +27,8 @@ import java.util.List;
 
 public class MemberImpl extends AbstractMember implements Annotatable {
 
+  private static final long serialVersionUID = -6138606817225829791L;
+
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override

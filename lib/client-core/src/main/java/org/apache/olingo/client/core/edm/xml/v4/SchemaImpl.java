@@ -44,6 +44,8 @@ import java.util.Map;
 
 public class SchemaImpl extends AbstractSchema implements Schema {
 
+  private static final long serialVersionUID = 1911087363912024939L;
+
   private final List<Action> actions = new ArrayList<Action>();
 
   private final List<Annotations> annotationGroups = new ArrayList<Annotations>();

@@ -28,6 +28,8 @@ import java.util.List;
 @JsonDeserialize(using = ApplyDeserializer.class)
 public class ApplyImpl extends AbstractAnnotatableDynamicAnnotationExpression implements Apply {
 
+  private static final long serialVersionUID = 4358398303405059879L;
+
   private String function;
 
   private final List<AnnotationExpression> parameters = new ArrayList<AnnotationExpression>();

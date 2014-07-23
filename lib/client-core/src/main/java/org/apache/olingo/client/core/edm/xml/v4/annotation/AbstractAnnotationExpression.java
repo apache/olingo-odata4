@@ -25,6 +25,8 @@ import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
 
 public abstract class AbstractAnnotationExpression extends AbstractEdmItem implements AnnotationExpression {
 
+  private static final long serialVersionUID = -4238652997159205377L;
+
   @Override
   public boolean isConstant() {
     return this instanceof ConstantAnnotationExpression;

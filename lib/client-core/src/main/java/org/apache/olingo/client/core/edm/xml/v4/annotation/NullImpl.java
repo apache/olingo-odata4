@@ -23,4 +23,7 @@ import org.apache.olingo.client.api.edm.xml.v4.annotation.Null;
 
 @JsonDeserialize(using = NullDeserializer.class)
 public class NullImpl extends AbstractAnnotatableDynamicAnnotationExpression implements Null {
+
+  private static final long serialVersionUID = -3148516847180393142L;
+
 }

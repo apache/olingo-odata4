@@ -21,4 +21,7 @@ package org.apache.olingo.client.core.edm.xml.v4.annotation;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.NavigationPropertyPath;
 
 public class NavigationPropertyPathImpl extends AbstractElementOrAttributeExpression implements NavigationPropertyPath {
+
+  private static final long serialVersionUID = 879840502446301312L;
+
 }

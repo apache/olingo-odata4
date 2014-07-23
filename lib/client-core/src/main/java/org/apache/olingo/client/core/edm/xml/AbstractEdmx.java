@@ -25,6 +25,8 @@ import org.apache.olingo.client.api.edm.xml.Edmx;
 @JsonDeserialize(using = EdmxDeserializer.class)
 public abstract class AbstractEdmx extends AbstractEdmItem implements Edmx {
 
+  private static final long serialVersionUID = 4832081463474985688L;
+
   private String version;
 
   private DataServices dataServices;

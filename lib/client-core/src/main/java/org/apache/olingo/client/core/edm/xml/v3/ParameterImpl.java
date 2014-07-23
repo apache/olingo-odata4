@@ -24,6 +24,8 @@ import org.apache.olingo.client.core.edm.xml.AbstractParameter;
 
 public class ParameterImpl extends AbstractParameter implements Parameter {
 
+  private static final long serialVersionUID = -1596842580400648211L;
+
   private ParameterMode mode;
 
   @Override

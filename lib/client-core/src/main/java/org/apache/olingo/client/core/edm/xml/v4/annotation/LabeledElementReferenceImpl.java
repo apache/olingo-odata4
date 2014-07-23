@@ -22,4 +22,7 @@ import org.apache.olingo.client.api.edm.xml.v4.annotation.LabeledElementReferenc
 
 public class LabeledElementReferenceImpl
         extends AbstractElementOrAttributeExpression implements LabeledElementReference {
+
+  private static final long serialVersionUID = 7560525604021670529L;
+
 }

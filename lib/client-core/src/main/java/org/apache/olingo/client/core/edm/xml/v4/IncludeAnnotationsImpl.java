@@ -24,6 +24,8 @@ import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
 
 public class IncludeAnnotationsImpl extends AbstractEdmItem implements IncludeAnnotations {
 
+  private static final long serialVersionUID = -8157841387011422396L;
+
   @JsonProperty(value = "TermNamespace", required = true)
   private String termNamespace;
 

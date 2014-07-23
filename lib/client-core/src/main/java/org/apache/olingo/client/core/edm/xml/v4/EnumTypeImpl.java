@@ -27,6 +27,8 @@ import java.util.List;
 
 public class EnumTypeImpl extends AbstractEnumType implements Annotatable {
 
+  private static final long serialVersionUID = 9191189755592743333L;
+
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override

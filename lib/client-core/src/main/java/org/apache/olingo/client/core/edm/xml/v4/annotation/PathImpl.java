@@ -21,4 +21,7 @@ package org.apache.olingo.client.core.edm.xml.v4.annotation;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.Path;
 
 public class PathImpl extends AbstractElementOrAttributeExpression implements Path {
+
+  private static final long serialVersionUID = 6020168217561402545L;
+
 }

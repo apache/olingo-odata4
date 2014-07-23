@@ -24,6 +24,8 @@ import org.apache.olingo.client.api.edm.xml.CommonParameter;
 @JsonDeserialize(using = ParameterDeserializer.class)
 public abstract class AbstractParameter extends AbstractEdmItem implements CommonParameter {
 
+  private static final long serialVersionUID = -1064183665249856572L;
+
   private String name;
 
   private String type;

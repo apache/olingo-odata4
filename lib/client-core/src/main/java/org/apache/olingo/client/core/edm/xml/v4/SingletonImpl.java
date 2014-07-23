@@ -28,6 +28,8 @@ import java.util.List;
 @JsonDeserialize(using = SingletonDeserializer.class)
 public class SingletonImpl extends AbstractAnnotatable implements Singleton {
 
+  private static final long serialVersionUID = 1656749615107151921L;
+
   private String name;
 
   private String entityType;

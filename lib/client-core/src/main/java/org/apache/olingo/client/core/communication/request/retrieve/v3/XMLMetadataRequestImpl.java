@@ -18,23 +18,18 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve.v3;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.communication.request.retrieve.AbstractMetadataRequestImpl;
 import org.apache.olingo.commons.api.format.ODataFormat;
-
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
-public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<String, Schema>>
+public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<XMLMetadata>
         implements XMLMetadataRequest {
 
   XMLMetadataRequestImpl(final ODataClient odataClient, final URI query) {
@@ -42,13 +37,13 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
   }
 
   @Override
-  public ODataRetrieveResponse<Map<String, Schema>> execute() {
+  public ODataRetrieveResponse<XMLMetadata> execute() {
     return new XMLMetadataResponseImpl(odataClient, httpClient, doExecute());
   }
 
-  public class XMLMetadataResponseImpl extends AbstractODataRetrieveResponse {
+  private class XMLMetadataResponseImpl extends AbstractODataRetrieveResponse {
 
-    private Map<String, Schema> schemas;
+    private XMLMetadata metadata;
 
     private XMLMetadataResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
             final HttpResponse res) {
@@ -57,22 +52,15 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
     }
 
     @Override
-    public Map<String, Schema> getBody() {
-      if (schemas == null) {
-        schemas = new HashMap<String, Schema>();
+    public XMLMetadata getBody() {
+      if (metadata == null) {
         try {
-          final XMLMetadata metadata = odataClient.getDeserializer(ODataFormat.XML).toMetadata(getRawResponse());
-          for (Schema schema : metadata.getSchemas()) {
-            schemas.put(schema.getNamespace(), schema);
-            if (StringUtils.isNotBlank(schema.getAlias())) {
-              schemas.put(schema.getAlias(), schema);
-            }
-          }
+          metadata = odataClient.getDeserializer(ODataFormat.XML).toMetadata(getRawResponse());
         } finally {
           this.close();
         }
       }
-      return schemas;
+      return metadata;
     }
   }
 }

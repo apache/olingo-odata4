@@ -248,7 +248,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     for (Annotation annotation : annotatable.getAnnotations()) {
       FullQualifiedName fqn = null;
       if (client instanceof EdmEnabledODataClient) {
-        final EdmTerm term = ((EdmEnabledODataClient) client).getEdm(null).
+        final EdmTerm term = ((EdmEnabledODataClient) client).getCachedEdm().
                 getTerm(new FullQualifiedName(annotation.getTerm()));
         if (term != null) {
           fqn = term.getType().getFullQualifiedName();

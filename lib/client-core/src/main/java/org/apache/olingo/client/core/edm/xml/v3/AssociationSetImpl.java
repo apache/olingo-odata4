@@ -29,6 +29,8 @@ import java.util.List;
 @JsonDeserialize(using = AssociationSetDeserializer.class)
 public class AssociationSetImpl extends AbstractEdmItem implements AssociationSet {
 
+  private static final long serialVersionUID = 5618645304372365820L;
+
   private String name;
 
   private String association;

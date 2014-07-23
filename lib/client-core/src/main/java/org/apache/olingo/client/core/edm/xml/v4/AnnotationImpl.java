@@ -25,6 +25,8 @@ import org.apache.olingo.client.api.edm.xml.v4.annotation.AnnotationExpression;
 @JsonDeserialize(using = AnnotationDeserializer.class)
 public class AnnotationImpl extends AbstractAnnotatable implements Annotation {
 
+  private static final long serialVersionUID = 5464714417411058033L;
+
   private String term;
 
   private String qualifier;

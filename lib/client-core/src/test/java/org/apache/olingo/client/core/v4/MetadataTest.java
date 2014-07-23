@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.client.core.v4;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.Annotations;
 import org.apache.olingo.client.api.edm.xml.v4.ComplexType;
@@ -63,11 +68,6 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 public class MetadataTest extends AbstractTest {
 
   @Override
@@ -103,13 +103,13 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(user);
     assertFalse(user.getPropertyNames().isEmpty());
     assertFalse(user.getNavigationPropertyNames().isEmpty());
-    
+
     final EdmEntityType entity = edm.getEntityType(
             new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Entity"));
     assertEquals(entity, user.getBaseType());
     assertFalse(entity.getPropertyNames().isEmpty());
     assertTrue(entity.getNavigationPropertyNames().isEmpty());
-    
+
     final EdmEntityType folder = edm.getEntityType(
             new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Folder"));
     assertEquals(folder, user.getNavigationProperty("Inbox").getType());

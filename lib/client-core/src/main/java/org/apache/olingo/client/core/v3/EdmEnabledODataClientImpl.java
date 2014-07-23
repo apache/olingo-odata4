@@ -35,10 +35,11 @@ public class EdmEnabledODataClientImpl extends ODataClientImpl implements EdmEna
 
   private Edm edm;
 
-  public EdmEnabledODataClientImpl(final String serviceRoot) {
+  public EdmEnabledODataClientImpl(final String serviceRoot, final Edm edm) {
     super();
 
     this.serviceRoot = serviceRoot;
+    this.edm = edm;
   }
 
   @Override

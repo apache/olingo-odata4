@@ -23,6 +23,8 @@ import org.apache.olingo.client.api.edm.xml.v4.annotation.Not;
 
 public class NotImpl extends AbstractDynamicAnnotationExpression implements Not {
 
+  private static final long serialVersionUID = -437788415922966812L;
+
   private DynamicAnnotationExpression expression;
 
   @Override

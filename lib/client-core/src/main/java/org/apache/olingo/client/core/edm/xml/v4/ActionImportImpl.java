@@ -23,6 +23,8 @@ import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
 
 public class ActionImportImpl extends AbstractAnnotatable implements ActionImport {
 
+  private static final long serialVersionUID = 2971468441177647068L;
+
   @JsonProperty(value = "Name", required = true)
   private String name;
 

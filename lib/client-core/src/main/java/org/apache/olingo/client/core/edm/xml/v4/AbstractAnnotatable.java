@@ -27,6 +27,8 @@ import java.util.List;
 
 public abstract class AbstractAnnotatable extends AbstractEdmItem implements Annotatable {
 
+  private static final long serialVersionUID = 3739284381932173905L;
+
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override

@@ -81,7 +81,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   /**
    * Logger.
    */
-  protected final Logger LOG = LoggerFactory.getLogger(AbstractODataBinder.class);
+  protected static final Logger LOG = LoggerFactory.getLogger(AbstractODataBinder.class);
 
   protected final CommonODataClient<?> client;
 

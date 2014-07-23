@@ -24,26 +24,28 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
-import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.AbstractService;
 
 public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractService<C> {
 
+  //CHECKSTYLE:OFF (Maven checkstyle)
+  private static final String COMPRESSED_METADATA = "$metadata";
+  //CHECKSTYLE:ON (Maven checkstyle)
+
   private static final Map<String, Service<?>> SERVICES = new ConcurrentHashMap<String, Service<?>>();
 
   @SuppressWarnings("unchecked")
   private static <C extends CommonEdmEnabledODataClient<?>> Service<C> getInstance(
-          final C client, final boolean transactional) {
+          final ODataServiceVersion version, final String serviceRoot, final boolean transactional) {
 
-    if (!SERVICES.containsKey(client.getServiceRoot())) {
-      client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON_FULL_METADATA);
-      final Service<C> instance = new Service<C>(client, transactional);
-      SERVICES.put(client.getServiceRoot(), instance);
+    if (!SERVICES.containsKey(serviceRoot)) {
+      final Service<C> instance = new Service<C>(COMPRESSED_METADATA, version, serviceRoot, transactional);
+      SERVICES.put(serviceRoot, instance);
     }
 
-    return (Service<C>) SERVICES.get(client.getServiceRoot());
+    return (Service<C>) SERVICES.get(serviceRoot);
   }
 
   /**
@@ -68,7 +70,7 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
   public static Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> getV3(
           final String serviceRoot, final boolean transactional) {
 
-    return getInstance(ODataClientFactory.getEdmEnabledV3(serviceRoot), transactional);
+    return getInstance(ODataServiceVersion.V30, serviceRoot, transactional);
   }
 
   /**
@@ -93,16 +95,19 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
   public static Service<org.apache.olingo.client.api.v4.EdmEnabledODataClient> getV4(
           final String serviceRoot, final boolean transactional) {
 
-    return getInstance(ODataClientFactory.getEdmEnabledV4(serviceRoot), transactional);
+    return getInstance(ODataServiceVersion.V40, serviceRoot, transactional);
   }
+
   private final Map<String, Class<?>> complexTypes = new HashMap<String, Class<?>>();
 
   private final Map<String, Class<?>> enumTypes = new HashMap<String, Class<?>>();
 
   private final Map<String, Class<? extends AbstractTerm>> terms = new HashMap<String, Class<? extends AbstractTerm>>();
 
-  public Service(final CommonEdmEnabledODataClient<?> client, final boolean transactional) {
-    super(client, transactional);
+  public Service(final String compressedMetadata,
+          final ODataServiceVersion version, final String serviceRoot, final boolean transactional) {
+
+    super(compressedMetadata, version, serviceRoot, transactional);
 
     //CHECKSTYLE:OFF (Maven checkstyle)
 #foreach ($complexType in $complexTypes.entrySet())

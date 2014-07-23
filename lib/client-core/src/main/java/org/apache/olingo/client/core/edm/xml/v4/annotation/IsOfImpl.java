@@ -26,6 +26,8 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
 @JsonDeserialize(using = IsOfDeserializer.class)
 public class IsOfImpl extends AbstractAnnotatableDynamicAnnotationExpression implements IsOf {
 
+  private static final long serialVersionUID = -893355856129761174L;
+
   private String type;
 
   private Integer maxLength;

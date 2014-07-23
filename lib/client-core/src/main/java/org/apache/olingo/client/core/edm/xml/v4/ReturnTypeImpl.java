@@ -26,6 +26,8 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
 @JsonDeserialize(using = ReturnTypeDeserializer.class)
 public class ReturnTypeImpl extends AbstractEdmItem implements ReturnType {
 
+  private static final long serialVersionUID = 6261092793901735110L;
+
   private String type;
 
   private boolean nullable = true;

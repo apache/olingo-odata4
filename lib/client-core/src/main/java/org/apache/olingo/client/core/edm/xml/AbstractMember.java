@@ -23,6 +23,8 @@ import org.apache.olingo.client.api.edm.xml.Member;
 
 public abstract class AbstractMember extends AbstractEdmItem implements Member {
 
+  private static final long serialVersionUID = -2335311346302901837L;
+
   @JsonProperty(value = "Name", required = true)
   private String name;
 

@@ -1,22 +1,27 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.fit.v4;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
@@ -34,11 +39,6 @@ import org.apache.olingo.commons.api.edm.annotation.EdmRecord;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmBoolean;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 public class MetadataTestITCase extends AbstractTestITCase {
 
   @Test
@@ -47,7 +47,7 @@ public class MetadataTestITCase extends AbstractTestITCase {
     assertNotNull(edm);
 
     final EdmEntityType order = edm.getEntityType(
-        new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService", "Order"));
+            new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService", "Order"));
     assertNotNull(order);
 
     final EdmProperty orderDate = order.getStructuralProperty("OrderDate");
@@ -68,12 +68,12 @@ public class MetadataTestITCase extends AbstractTestITCase {
     assertEquals(3, record.getPropertyValues().size());
     assertTrue(record.getPropertyValues().get(0).getValue().isConstant());
     assertTrue(record.getPropertyValues().get(0).getValue().asConstant().getValue().asPrimitive().
-        toCastValue(Boolean.class));
+            toCastValue(Boolean.class));
     assertTrue(record.getPropertyValues().get(1).getValue().asDynamic().isCollection());
     assertEquals(1, record.getPropertyValues().get(1).getValue().asDynamic().asCollection().getItems().size());
     assertTrue(record.getPropertyValues().get(1).getValue().asDynamic().asCollection().getItems().get(0).isDynamic());
     assertEquals("OrderID", record.getPropertyValues().get(1).getValue().asDynamic().asCollection().
-        getItems().get(0).asDynamic().asPropertyPath().getValue());
+            getItems().get(0).asDynamic().asPropertyPath().getValue());
   }
 
   @Test
@@ -82,7 +82,7 @@ public class MetadataTestITCase extends AbstractTestITCase {
     assertNotNull(edm);
 
     final EdmEntityContainer container = edm.getEntityContainer(
-        new FullQualifiedName("ODataWebExperimental.Northwind.Model", "NorthwindEntities"));
+            new FullQualifiedName("ODataWebExperimental.Northwind.Model", "NorthwindEntities"));
     assertNotNull(container);
 
     final EdmEntitySet categories = container.getEntitySet("Categories");
@@ -93,7 +93,7 @@ public class MetadataTestITCase extends AbstractTestITCase {
   @Test
   public void vocabularies() {
     final Edm edm = client.getRetrieveRequestFactory().
-        getMetadataRequest(testVocabulariesServiceRootURL).execute().getBody();
+            getMetadataRequest(testVocabulariesServiceRootURL).execute().getBody();
     assertNotNull(edm);
 
     // 1. core
@@ -105,12 +105,12 @@ public class MetadataTestITCase extends AbstractTestITCase {
     final EdmTerm descriptionTerm = edm.getTerm(new FullQualifiedName("Core.Description"));
     assertNotNull(descriptionTerm);
     assertEquals(descriptionTerm.getFullQualifiedName(),
-        edm.getTerm(new FullQualifiedName("Org.OData.Core.V1.Description")).getFullQualifiedName());
+            edm.getTerm(new FullQualifiedName("Org.OData.Core.V1.Description")).getFullQualifiedName());
 
     final EdmAnnotation description = core.getAnnotation(descriptionTerm);
     assertNotNull(description);
     assertEquals("Core terms needed to write vocabularies",
-        description.getExpression().asConstant().getValue().asPrimitive().toString());
+            description.getExpression().asConstant().getValue().asPrimitive().toString());
 
     final EdmTerm isLanguageDependent = edm.getTerm(new FullQualifiedName("Core.IsLanguageDependent"));
     assertNotNull(isLanguageDependent);
@@ -125,14 +125,14 @@ public class MetadataTestITCase extends AbstractTestITCase {
     assertTrue(permissions.getType() instanceof EdmEnumType);
 
     // 2. measures
-    final EdmSchema measures = edm.getSchema("Measures");
+    final EdmSchema measures = edm.getSchema("UoM");
     assertNotNull(measures);
 
-    final EdmTerm scale = edm.getTerm(new FullQualifiedName("Measures.Scale"));
+    final EdmTerm scale = edm.getTerm(new FullQualifiedName("UoM.Scale"));
     assertNotNull(scale);
 
     final EdmAnnotation requiresTypeInScale = edm.getAnnotation(
-        scale.getFullQualifiedName(), edm.getTerm(new FullQualifiedName("Core.RequiresType")));
+            scale.getFullQualifiedName(), edm.getTerm(new FullQualifiedName("Core.RequiresType")));
     assertNotNull(requiresTypeInScale);
     assertEquals("Edm.Decimal", requiresTypeInScale.getExpression().asConstant().getValue().toString());
 
@@ -140,6 +140,6 @@ public class MetadataTestITCase extends AbstractTestITCase {
     final EdmTerm deleteRestrictions = edm.getTerm(new FullQualifiedName("Capabilities.DeleteRestrictions"));
     assertNotNull(deleteRestrictions);
     assertEquals(deleteRestrictions.getType().getFullQualifiedName(),
-        edm.getComplexType(new FullQualifiedName("Capabilities.DeleteRestrictionsType")).getFullQualifiedName());
+            edm.getComplexType(new FullQualifiedName("Capabilities.DeleteRestrictionsType")).getFullQualifiedName());
   }
 }

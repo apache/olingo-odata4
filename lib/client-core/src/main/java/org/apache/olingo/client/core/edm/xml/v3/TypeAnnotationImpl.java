@@ -29,6 +29,8 @@ import java.util.List;
 @JsonDeserialize(using = TypeAnnotationDeserializer.class)
 public class TypeAnnotationImpl extends AbstractEdmItem implements TypeAnnotation {
 
+  private static final long serialVersionUID = 2410104492911373705L;
+
   private String term;
 
   private String qualifier;

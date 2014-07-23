@@ -28,6 +28,8 @@ import java.util.List;
 @JsonDeserialize(using = TermDeserializer.class)
 public class TermImpl extends AbstractAnnotatable implements Term {
 
+  private static final long serialVersionUID = -8350072064720586186L;
+
   private String name;
 
   private String type;

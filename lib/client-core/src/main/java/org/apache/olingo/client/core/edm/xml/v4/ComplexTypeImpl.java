@@ -29,6 +29,8 @@ import java.util.List;
 
 public class ComplexTypeImpl extends AbstractComplexType implements ComplexType {
 
+  private static final long serialVersionUID = 4076944306925840115L;
+
   private boolean abstractEntityType = false;
 
   private String baseType;

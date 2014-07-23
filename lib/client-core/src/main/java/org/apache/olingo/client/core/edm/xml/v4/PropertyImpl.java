@@ -27,6 +27,8 @@ import java.util.List;
 
 public class PropertyImpl extends AbstractProperty implements Property {
 
+  private static final long serialVersionUID = 4544336801968719526L;
+
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override

@@ -28,6 +28,8 @@ import java.util.List;
 
 public class EntityContainerImpl extends AbstractEntityContainer {
 
+  private static final long serialVersionUID = 2822470162604186366L;
+
   private final List<EntitySet> entitySets = new ArrayList<EntitySet>();
 
   private final List<AssociationSet> associationSets = new ArrayList<AssociationSet>();

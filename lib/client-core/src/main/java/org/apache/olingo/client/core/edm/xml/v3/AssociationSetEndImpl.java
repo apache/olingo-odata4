@@ -24,6 +24,8 @@ import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
 
 public class AssociationSetEndImpl extends AbstractEdmItem implements AssociationSetEnd {
 
+  private static final long serialVersionUID = -6224442131427159639L;
+
   @JsonProperty("Role")
   private String role;
 

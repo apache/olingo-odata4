@@ -32,66 +32,38 @@ import java.util.Map;
  */
 public abstract class AbstractXMLMetadata extends AbstractEdmItem implements XMLMetadata {
 
-  protected final Edmx edmx;
+  private static final long serialVersionUID = -5141922932300533083L;
 
-  protected final Map<String, Schema> schemaByNsOrAlias;
+  protected final Edmx edmx;
 
   public AbstractXMLMetadata(final Edmx edmx) {
     this.edmx = edmx;
-
-    this.schemaByNsOrAlias = new HashMap<String, Schema>();
-    for (Schema schema : edmx.getDataServices().getSchemas()) {
-      this.schemaByNsOrAlias.put(schema.getNamespace(), schema);
-      if (StringUtils.isNotBlank(schema.getAlias())) {
-        this.schemaByNsOrAlias.put(schema.getAlias(), schema);
-      }
-    }
   }
 
-  /**
-   * Checks whether the given key is a valid namespace or alias in the EdM metadata document.
-   *
-   * @param key namespace or alias
-   * @return true if key is valid namespace or alias
-   */
-  @Override
-  public boolean isNsOrAlias(final String key) {
-    return this.schemaByNsOrAlias.keySet().contains(key);
-  }
-
-  /**
-   * Returns the Schema at the specified position in the EdM metadata document.
-   *
-   * @param index index of the Schema to return
-   * @return the Schema at the specified position in the EdM metadata document
-   */
-  @Override
-  public Schema getSchema(final int index) {
-    return this.edmx.getDataServices().getSchemas().get(index);
-  }
-
-  /**
-   * Returns the Schema with the specified key (namespace or alias) in the EdM metadata document.
-   *
-   * @param key namespace or alias
-   * @return the Schema with the specified key in the EdM metadata document
-   */
-  @Override
-  public Schema getSchema(final String key) {
-    return this.schemaByNsOrAlias.get(key);
-  }
-
-  /**
-   * Returns all Schema objects defined in the EdM metadata document.
-   *
-   * @return all Schema objects defined in the EdM metadata document
-   */
   @Override
   public List<? extends Schema> getSchemas() {
     return this.edmx.getDataServices().getSchemas();
   }
 
+  @Override
+  public Schema getSchema(final int index) {
+    return getSchemas().get(index);
+  }
+
+  @Override
+  public Schema getSchema(final String key) {
+    return getSchemaByNsOrAlias().get(key);
+  }
+
+  @Override
   public Map<String, Schema> getSchemaByNsOrAlias() {
+    final Map<String, Schema> schemaByNsOrAlias = new HashMap<String, Schema>();
+    for (Schema schema : getSchemas()) {
+      schemaByNsOrAlias.put(schema.getNamespace(), schema);
+      if (StringUtils.isNotBlank(schema.getAlias())) {
+        schemaByNsOrAlias.put(schema.getAlias(), schema);
+      }
+    }
     return schemaByNsOrAlias;
   }
 

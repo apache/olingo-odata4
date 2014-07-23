@@ -33,6 +33,8 @@ import org.apache.olingo.client.core.edm.xml.AbstractSchema;
 
 public class SchemaImpl extends AbstractSchema {
 
+  private static final long serialVersionUID = -4209527632478405476L;
+
   private final List<Annotations> annotationList = new ArrayList<Annotations>();
 
   private final List<Association> associations = new ArrayList<Association>();

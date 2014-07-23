@@ -24,6 +24,8 @@ import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
 
 public class IncludeImpl extends AbstractEdmItem implements Include {
 
+  private static final long serialVersionUID = -5450008299655584221L;
+
   @JsonProperty(value = "Namespace", required = true)
   private String namespace;
 

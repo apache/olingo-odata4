@@ -25,6 +25,8 @@ import org.apache.olingo.client.core.edm.xml.AbstractComplexType;
 
 public class ComplexTypeImpl extends AbstractComplexType {
 
+  private static final long serialVersionUID = 1898153741241706365L;
+
   private final List<PropertyImpl> properties = new ArrayList<PropertyImpl>();
 
   private final List<NavigationPropertyImpl> navigationProperties = new ArrayList<NavigationPropertyImpl>();

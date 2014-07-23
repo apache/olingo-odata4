@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -28,7 +29,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class AbstractEdmItem {
+public abstract class AbstractEdmItem implements Serializable {
+
+  private static final long serialVersionUID = 241190986363884784L;
 
   protected <T extends Named> T getOneByName(final String name, final Collection<T> items) {
     final List<T> result = getAllByName(name, items);

@@ -30,6 +30,8 @@ import java.util.List;
 @JsonDeserialize(using = AssociationDeserializer.class)
 public class AssociationImpl extends AbstractEdmItem implements Association {
 
+  private static final long serialVersionUID = 7819893498731190381L;
+
   private String name;
 
   private ReferentialConstraint referentialConstraint;

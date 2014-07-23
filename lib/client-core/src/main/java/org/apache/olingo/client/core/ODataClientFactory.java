@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core;
 
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 public final class ODataClientFactory {
@@ -27,8 +28,14 @@ public final class ODataClientFactory {
   }
 
   public static org.apache.olingo.client.api.v3.EdmEnabledODataClient getEdmEnabledV3(final String serviceRoot) {
+    return getEdmEnabledV3(serviceRoot, null);
+  }
+
+  public static org.apache.olingo.client.api.v3.EdmEnabledODataClient getEdmEnabledV3(
+          final String serviceRoot, final Edm edm) {
+
     final org.apache.olingo.client.api.v3.EdmEnabledODataClient instance =
-            new org.apache.olingo.client.core.v3.EdmEnabledODataClientImpl(serviceRoot);
+            new org.apache.olingo.client.core.v3.EdmEnabledODataClientImpl(serviceRoot, edm);
     instance.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
     return instance;
   }
@@ -38,8 +45,14 @@ public final class ODataClientFactory {
   }
 
   public static org.apache.olingo.client.api.v4.EdmEnabledODataClient getEdmEnabledV4(final String serviceRoot) {
+    return getEdmEnabledV4(serviceRoot, null);
+  }
+
+  public static org.apache.olingo.client.api.v4.EdmEnabledODataClient getEdmEnabledV4(
+          final String serviceRoot, final Edm edm) {
+
     final org.apache.olingo.client.api.v4.EdmEnabledODataClient instance =
-            new org.apache.olingo.client.core.v4.EdmEnabledODataClientImpl(serviceRoot);
+            new org.apache.olingo.client.core.v4.EdmEnabledODataClientImpl(serviceRoot, edm);
     instance.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
     return instance;
   }
