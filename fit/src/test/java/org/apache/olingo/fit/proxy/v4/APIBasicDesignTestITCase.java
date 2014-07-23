@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
@@ -38,7 +39,6 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
-import org.apache.olingo.ext.proxy.commons.EdmStreamTypeImpl;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.DefaultContainer;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetailsCollection;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection;
@@ -210,10 +210,20 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
     service.getContext().detachAll();
 
-    // Delete order ...
+    // (1) Delete by key (see EntityCreateTestITCase)
+    getContainer().getOrders().delete(1105);
+    assertNull(getContainer().getOrders().getByKey(1105));
+
+    service.getContext().detachAll(); // detach to show the second delete case
+
+    // (2) Delete by object (see EntityCreateTestITCase)
     getContainer().getOrders().delete(getContainer().getOrders().getByKey(1105));
-    actual = getContainer().getOrders().getByKey(1105);
-    assertNull(actual);
+    assertNull(getContainer().getOrders().getByKey(1105));
+
+    // (3) Delete by invoking delete method on the object itself
+    service.getContext().detachAll(); // detach to show the third delete case
+    getContainer().getOrders().getByKey(1105).delete();
+    assertNull(getContainer().getOrders().getByKey(1105));
 
     getContainer().flush();
 
@@ -255,8 +265,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     final PersonDetail personDetail = dcontainer.getPersonDetails().getByKey(1); // NO HTTP Request
 
     // 1 HTTP Request to add an Edm.Stream property value about MediaEditLink Photo
-    personDetail.setPhoto(
-            new EdmStreamTypeImpl(new EdmStreamValue("application/octet-stream", IOUtils.toInputStream(random))));
+    personDetail.setPhoto(dcontainer.newEdmStreamValue("application/octet-stream", IOUtils.toInputStream(random)));
 
     dcontainer.flush();
 
@@ -361,5 +370,10 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     // container.getOrders().getByKey(1).getCustomerForOrder().getEmails().execute().isEmpty());
     // Not supported by the test service BTW generates a single request as expected: 
     // <service root>/Orders(1)/CustomerForOrder/Emails
+  }
+
+  @Test
+  public void workingWithSingletons() {
+    assertNotNull(container.getCompany().getVipCustomer().load().getPersonID());
   }
 }

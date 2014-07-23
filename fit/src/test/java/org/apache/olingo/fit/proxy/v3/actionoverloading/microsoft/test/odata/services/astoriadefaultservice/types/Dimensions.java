@@ -28,21 +28,33 @@ public interface Dimensions
 
 
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Width", type = "Edm.Decimal", nullable = false)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "Width", 
+                type = "Edm.Decimal", 
+                nullable = false)
     java.math.BigDecimal getWidth();
 
     void setWidth(java.math.BigDecimal _width);
 
     
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Height", type = "Edm.Decimal", nullable = false)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "Height", 
+                type = "Edm.Decimal", 
+                nullable = false)
     java.math.BigDecimal getHeight();
 
     void setHeight(java.math.BigDecimal _height);
 
     
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Depth", type = "Edm.Decimal", nullable = false)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "Depth", 
+                type = "Edm.Decimal", 
+                nullable = false)
     java.math.BigDecimal getDepth();
 
     void setDepth(java.math.BigDecimal _depth);

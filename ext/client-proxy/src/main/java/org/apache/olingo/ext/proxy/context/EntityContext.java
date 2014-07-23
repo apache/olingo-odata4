@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.ext.proxy.context;
 
+import java.net.URI;
 import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 
 import java.util.ArrayList;
@@ -47,6 +48,13 @@ public class EntityContext implements Iterable<AttachedEntity> {
    */
   private final Map<EntityInvocationHandler, AttachedEntityStatus> allAttachedEntities =
           new LinkedHashMap<EntityInvocationHandler, AttachedEntityStatus>();
+
+  /**
+   * Deletes to be performed excluding entities.
+   * <br/>
+   * Attachment order will be maintained.
+   */
+  private final List<URI> furtherDeletes = new ArrayList<URI>();
 
   /**
    * Attaches an entity with status <tt>NEW</tt>.
@@ -116,6 +124,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
   public void detachAll() {
     allAttachedEntities.clear();
     searchableEntities.clear();
+    furtherDeletes.clear();
   }
 
   /**
@@ -196,5 +205,13 @@ public class EntityContext implements Iterable<AttachedEntity> {
       res.add(new AttachedEntity(entity.getKey(), entity.getValue()));
     }
     return res.iterator();
+  }
+
+  public List<URI> getFurtherDeletes() {
+    return furtherDeletes;
+  }
+
+  public void addFurtherDeletes(final URI uri) {
+    furtherDeletes.add(uri);
   }
 }

@@ -19,28 +19,14 @@
 package org.apache.olingo.ext.proxy.api;
 
 import java.io.InputStream;
-import org.apache.commons.io.IOUtils;
 
-public class EdmStreamValue {
+public interface EdmStreamValue {
 
-  private final String contentType;
+  EdmStreamValue load();
 
-  private final InputStream stream;
+  String getContentType();
 
-  public EdmStreamValue(final String contentType, final InputStream stream) {
-    this.contentType = contentType;
-    this.stream = stream;
-  }
+  InputStream getStream();
 
-  public String getContentType() {
-    return contentType;
-  }
-
-  public InputStream getStream() {
-    return stream;
-  }
-
-  public void close() {
-    IOUtils.closeQuietly(this.stream);
-  }
+  void close();
 }

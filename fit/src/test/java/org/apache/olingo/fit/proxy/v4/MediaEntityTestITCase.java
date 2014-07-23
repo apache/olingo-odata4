@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
@@ -81,7 +82,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final UUID uuid = UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7");
     final Advertisement adv = getContainer().getAdvertisements().getByKey(uuid);
     final String random = RandomStringUtils.random(124, "abcdefghijklmnopqrstuvwxyz");
-    adv.uploadStream(new EdmStreamValue("application/octet-stream", IOUtils.toInputStream(random)));
+    adv.uploadStream(getContainer().newEdmStreamValue("application/octet-stream", IOUtils.toInputStream(random)));
     getContainer().flush();
     assertEquals(random,
             IOUtils.toString(getContainer().getAdvertisements().getByKey(uuid).loadStream().getStream()));
@@ -93,7 +94,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final String random = RandomStringUtils.random(124, "abcdefghijklmnopqrstuvwxyz");
 
     final Advertisement adv = getContainer().newEntityInstance(Advertisement.class);
-    adv.uploadStream(new EdmStreamValue("application/octet-stream", IOUtils.toInputStream(random)));
+    adv.uploadStream(getContainer().newEdmStreamValue("application/octet-stream", IOUtils.toInputStream(random)));
     adv.setAirDate(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 
     getContainer().getAdvertisements().add(adv);

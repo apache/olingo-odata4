@@ -26,7 +26,9 @@ import org.apache.olingo.ext.proxy.api.ComplexType;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import java.io.Serializable;
+import java.io.InputStream;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
@@ -61,17 +63,35 @@ public interface InMemoryEntities extends PersistenceManager {
 
 
 
-    PublicCompany getPublicCompany();
+    @org.apache.olingo.ext.proxy.api.annotations.Singleton(
+                name = "PublicCompany",
+                container = "Microsoft.Test.OData.Services.ODataWCFService.InMemoryEntities")
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company getPublicCompany();
 
-    DefaultStoredPI getDefaultStoredPI();
+    @org.apache.olingo.ext.proxy.api.annotations.Singleton(
+                name = "DefaultStoredPI",
+                container = "Microsoft.Test.OData.Services.ODataWCFService.InMemoryEntities")
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI getDefaultStoredPI();
 
-    VipCustomer getVipCustomer();
+    @org.apache.olingo.ext.proxy.api.annotations.Singleton(
+                name = "VipCustomer",
+                container = "Microsoft.Test.OData.Services.ODataWCFService.InMemoryEntities")
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer getVipCustomer();
 
-    Company getCompany();
+    @org.apache.olingo.ext.proxy.api.annotations.Singleton(
+                name = "Company",
+                container = "Microsoft.Test.OData.Services.ODataWCFService.InMemoryEntities")
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company getCompany();
 
-    Boss getBoss();
+    @org.apache.olingo.ext.proxy.api.annotations.Singleton(
+                name = "Boss",
+                container = "Microsoft.Test.OData.Services.ODataWCFService.InMemoryEntities")
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person getBoss();
 
-    LabourUnion getLabourUnion();
+    @org.apache.olingo.ext.proxy.api.annotations.Singleton(
+                name = "LabourUnion",
+                container = "Microsoft.Test.OData.Services.ODataWCFService.InMemoryEntities")
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnion getLabourUnion();
 
 
   Operations operations();
@@ -161,4 +181,6 @@ public interface InMemoryEntities extends PersistenceManager {
   <T extends ComplexType, NEC extends ComplexCollection<T>> NEC newComplexCollection(Class<NEC> ref);
 
   <T extends Serializable, NEC extends PrimitiveCollection<T>> NEC newPrimitiveCollection(Class<T> ref);
+
+  EdmStreamValue newEdmStreamValue(String contentType, InputStream stream);
 }

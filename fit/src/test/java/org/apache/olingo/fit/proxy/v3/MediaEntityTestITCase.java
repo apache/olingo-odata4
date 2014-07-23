@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3;
 
 import org.apache.commons.io.IOUtils;
@@ -25,8 +26,8 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import org.apache.olingo.ext.proxy.commons.EdmStreamTypeImpl;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
+import static org.apache.olingo.fit.proxy.v3.AbstractTestITCase.container;
 import static org.apache.olingo.fit.proxy.v3.AbstractTestITCase.service;
 
 import static org.junit.Assert.assertEquals;
@@ -52,7 +53,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final InputStream input = new ByteArrayInputStream(TO_BE_UPDATED.getBytes());
 
     Car car = container.getCar().getByKey(12);
-    car.setPhoto(new EdmStreamTypeImpl(new EdmStreamValue("application/octet-stream", input)));
+    car.setPhoto(container.newEdmStreamValue("application/octet-stream", input));
 
     container.flush();
 
@@ -70,7 +71,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final String TO_BE_UPDATED = "buffered stream sample (" + System.currentTimeMillis() + ")";
     InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);
 
-    car.uploadStream(new EdmStreamValue("*/*", input));
+    car.uploadStream(container.newEdmStreamValue("*/*", input));
 
     container.flush();
 
@@ -89,7 +90,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);
 
     final String DESC = "DESC - " + System.currentTimeMillis();
-    car.uploadStream(new EdmStreamValue("*/*", input));
+    car.uploadStream(container.newEdmStreamValue("*/*", input));
     car.setDescription(DESC);
 
     container.getCar().add(car);

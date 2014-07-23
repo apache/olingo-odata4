@@ -34,6 +34,7 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.context.AttachedEntity;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityLinkDesc;
@@ -50,7 +51,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 
 abstract class AbstractPersistenceManager implements PersistenceManager {
 
@@ -91,6 +91,12 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
     // remove null values
     items.normalize();
+
+    for (URI uri : service.getContext().entityContext().getFurtherDeletes()) {
+      pos++;
+      queueDelete(uri, null, changes);
+      items.put(null, pos);
+    }
 
     final List<ODataRuntimeException> result = new ArrayList<ODataRuntimeException>();
     if (!items.isEmpty()) {
@@ -461,17 +467,31 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
           final EntityInvocationHandler handler,
           final CommonODataEntity entity,
           final PersistenceChanges changeset) {
-
     final URI deleteURI = entity.getEditLink() == null ? handler.getEntityURI() : entity.getEditLink();
+    changeset.addChange(buildDeleteRequest(deleteURI, handler.getETag(), changeset), handler);
+  }
+
+  private void queueDelete(
+          final URI deleteURI,
+          final String etag,
+          final PersistenceChanges changeset) {
+    changeset.addChange(buildDeleteRequest(deleteURI, etag, changeset), null);
+  }
+
+  private ODataDeleteRequest buildDeleteRequest(
+          final URI deleteURI,
+          final String etag,
+          final PersistenceChanges changeset) {
+
     LOG.debug("Delete '{}'", deleteURI);
 
     final ODataDeleteRequest req = service.getClient().getCUDRequestFactory().getDeleteRequest(deleteURI);
 
-    if (StringUtils.isNotBlank(handler.getETag())) {
-      req.setIfMatch(handler.getETag());
+    if (StringUtils.isNotBlank(etag)) {
+      req.setIfMatch(etag);
     }
 
-    changeset.addChange(req, handler);
+    return req;
   }
 
   private AttachedEntityStatus resolveNavigationLink(

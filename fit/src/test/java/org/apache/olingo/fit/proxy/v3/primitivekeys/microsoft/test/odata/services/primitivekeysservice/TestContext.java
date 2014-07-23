@@ -25,7 +25,9 @@ import org.apache.olingo.ext.proxy.api.ComplexType;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import java.io.Serializable;
+import java.io.InputStream;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.PrimitiveKeysService")
@@ -83,4 +85,6 @@ public interface TestContext extends PersistenceManager {
   <T extends ComplexType, NEC extends ComplexCollection<T>> NEC newComplexCollection(Class<NEC> ref);
 
   <T extends Serializable, NEC extends PrimitiveCollection<T>> NEC newPrimitiveCollection(Class<T> ref);
+
+  EdmStreamValue newEdmStreamValue(String contentType, InputStream stream);
 }

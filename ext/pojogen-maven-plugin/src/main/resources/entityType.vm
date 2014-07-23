@@ -79,7 +79,7 @@ public interface $utility.capitalize($entityType.Name)
     #if($keys.contains($property.Name))@Key#end
 
     #if($property.Type.FullQualifiedName.toString().equals("Edm.Stream"))#*
-      *##set( $returnType = "org.apache.olingo.ext.proxy.api.EdmStreamType" )#*
+      *##set( $returnType = "org.apache.olingo.ext.proxy.api.EdmStreamValue" )#*
     *##else#*
       *##set( $returnType = $utility.getJavaType($property.Type, $property.Collection) )#*
     *##end

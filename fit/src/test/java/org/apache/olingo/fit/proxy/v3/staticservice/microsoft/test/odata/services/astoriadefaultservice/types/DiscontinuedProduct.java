@@ -58,9 +58,9 @@ public interface DiscontinuedProduct
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    org.apache.olingo.ext.proxy.api.EdmStreamType getPicture();
+    org.apache.olingo.ext.proxy.api.EdmStreamValue getPicture();
 
-    void setPicture(org.apache.olingo.ext.proxy.api.EdmStreamType _picture);
+    void setPicture(org.apache.olingo.ext.proxy.api.EdmStreamValue _picture);
     @Key
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ProductId", 

@@ -28,42 +28,66 @@ public interface ContactDetails
 
 
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "EmailBag", type = "Edm.String", nullable = false)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "EmailBag", 
+                type = "Edm.String", 
+                nullable = false)
     org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getEmailBag();
 
     void setEmailBag(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> _emailBag);
 
     
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "AlternativeNames", type = "Edm.String", nullable = false)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "AlternativeNames", 
+                type = "Edm.String", 
+                nullable = false)
     org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getAlternativeNames();
 
     void setAlternativeNames(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> _alternativeNames);
 
     
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ContactAlias", type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Aliases", nullable = true)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "ContactAlias", 
+                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Aliases", 
+                nullable = true)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Aliases getContactAlias();
 
     void setContactAlias(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Aliases _contactAlias);
 
         
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "HomePhone", type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone", nullable = true)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "HomePhone", 
+                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone", 
+                nullable = true)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Phone getHomePhone();
 
     void setHomePhone(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Phone _homePhone);
 
         
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "WorkPhone", type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone", nullable = true)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "WorkPhone", 
+                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone", 
+                nullable = true)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Phone getWorkPhone();
 
     void setWorkPhone(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Phone _workPhone);
 
         
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "MobilePhoneBag", type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone", nullable = false)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "MobilePhoneBag", 
+                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone", 
+                nullable = false)
     org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection getMobilePhoneBag();
 
     void setMobilePhoneBag(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection _mobilePhoneBag);

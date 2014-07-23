@@ -373,7 +373,7 @@ public class V4Services extends AbstractServices {
     return StringUtils.isBlank(filter) && StringUtils.isBlank(search)
             ? NumberUtils.isNumber(type)
             ? super.getEntityInternal(
-                    uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null)
+            uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null)
             : super.getEntitySet(accept, "People", type)
             : super.getEntitySet(uriInfo, accept, "People", top, skip, format, count, filter, orderby, skiptoken);
   }
@@ -754,7 +754,7 @@ public class V4Services extends AbstractServices {
 
       return utils.getValue().createResponse(
               FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
-                      + File.separatorChar + filename, utils.getKey()),
+              + File.separatorChar + filename, utils.getKey()),
               null,
               utils.getKey());
     } catch (Exception e) {
@@ -794,7 +794,7 @@ public class V4Services extends AbstractServices {
 
     final Response response =
             getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-                    accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY);
+            accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY);
     return response.getStatus() >= 400
             ? super.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
             : super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
@@ -1020,7 +1020,7 @@ public class V4Services extends AbstractServices {
       // 1. Fetch the contained entity to be removed
       final InputStream entry = FSManager.instance(version).
               readFile(containedPath(entityId, containedEntitySetName).
-                      append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
+              append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
       final ResWrap<Entity> container = atomDeserializer.toEntity(entry);
 
       // 2. Remove the contained entity
@@ -1294,7 +1294,7 @@ public class V4Services extends AbstractServices {
 
       final ResWrap<Property> result = new ResWrap<Property>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-                      + "Microsoft.Test.OData.Services.ODataWCFService.Address"),
+              + "Microsoft.Test.OData.Services.ODataWCFService.Address"),
               null,
               entity.getProperty("address"));
 
@@ -1361,5 +1361,18 @@ public class V4Services extends AbstractServices {
           final String entity) {
 
     return xml.createResponse(null, null, null, Status.NO_CONTENT);
+  }
+
+  @GET
+  @Path("/Company/VipCustomer")
+  public Response getVipCustomer(
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) final String expand,
+          @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) final String select) {
+
+    return super.getEntityInternal(
+            uriInfo.getRequestUri().toASCIIString(), accept, "VipCustomer", "1", format, expand, select);
   }
 }

@@ -28,7 +28,11 @@ public interface Aliases
 
 
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "AlternativeNames", type = "Edm.String", nullable = false)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "AlternativeNames", 
+                type = "Edm.String", 
+                nullable = false)
     org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getAlternativeNames();
 
     void setAlternativeNames(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> _alternativeNames);

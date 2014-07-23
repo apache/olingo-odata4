@@ -52,9 +52,7 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmSchema;
-import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmTerm;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -346,15 +344,6 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
             objs.put("entitySet", entitySet);
             objs.put("container", container);
             parseObj(base, pkg, "entitySet", utility.capitalize(entitySet.getName()) + ".java", objs);
-          }
-
-          if (ODataServiceVersion.valueOf(getVersion().toUpperCase()).compareTo(ODataServiceVersion.V40) >= 0) {
-            for (EdmSingleton singleton : container.getSingletons()) {
-              objs.clear();
-              objs.put("singleton", singleton);
-              objs.put("container", container);
-              parseObj(base, pkg, "singleton", utility.capitalize(singleton.getName()) + ".java", objs);
-            }
           }
         }
       }

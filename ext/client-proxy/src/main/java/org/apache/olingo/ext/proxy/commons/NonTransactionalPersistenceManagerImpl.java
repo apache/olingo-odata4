@@ -74,11 +74,13 @@ public class NonTransactionalPersistenceManagerImpl extends AbstractPersistenceM
           response = ((ODataBasicRequest<?>) req).execute();
         }
 
-        if (response instanceof ODataEntityCreateResponse && response.getStatusCode() == 201) {
+        if (entry.getValue() != null
+                && response instanceof ODataEntityCreateResponse && response.getStatusCode() == 201) {
           entry.getValue().setEntity(((ODataEntityCreateResponse<?>) response).getBody());
           responses.put(virtualContentID, entry.getValue().getEntityURI());
           LOG.debug("Upgrade created object '{}'", entry.getValue());
-        } else if (response instanceof ODataEntityUpdateResponse && response.getStatusCode() == 200) {
+        } else if (entry.getValue() != null
+                && response instanceof ODataEntityUpdateResponse && response.getStatusCode() == 200) {
           entry.getValue().setEntity(((ODataEntityUpdateResponse<?>) response).getBody());
           responses.put(virtualContentID, entry.getValue().getEntityURI());
           LOG.debug("Upgrade updated object '{}'", entry.getValue());

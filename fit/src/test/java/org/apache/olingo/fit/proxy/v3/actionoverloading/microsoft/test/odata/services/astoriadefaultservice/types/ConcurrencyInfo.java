@@ -28,14 +28,22 @@ public interface ConcurrencyInfo
 
 
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Token", type = "Edm.String", nullable = true)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "Token", 
+                type = "Edm.String", 
+                nullable = true)
     java.lang.String getToken();
 
     void setToken(java.lang.String _token);
 
     
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "QueriedDateTime", type = "Edm.DateTime", nullable = true)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "QueriedDateTime", 
+                type = "Edm.DateTime", 
+                nullable = true)
     java.sql.Timestamp getQueriedDateTime();
 
     void setQueriedDateTime(java.sql.Timestamp _queriedDateTime);

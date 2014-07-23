@@ -40,15 +40,12 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.api.ComplexCollection;
-import org.apache.olingo.ext.proxy.api.EdmStreamType;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -66,15 +63,11 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.context.EntityContext;
 
 public abstract class AbstractStructuredInvocationHandler extends AbstractInvocationHandler {
 
   private static final long serialVersionUID = 2629912294765040037L;
-
-  /**
-   * Logger.
-   */
-  protected static final Logger LOG = LoggerFactory.getLogger(AbstractStructuredInvocationHandler.class);
 
   protected CommonURIBuilder<?> uri;
 
@@ -106,7 +99,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   protected final Map<String, EdmStreamValue> streamedPropertyChanges = new HashMap<String, EdmStreamValue>();
 
-  protected final Map<String, EdmStreamType> streamedPropertyCache = new HashMap<String, EdmStreamType>();
+  protected final Map<String, EdmStreamValue> streamedPropertyCache = new HashMap<String, EdmStreamValue>();
 
   protected AbstractStructuredInvocationHandler(
           final Class<?> typeRef,
@@ -235,6 +228,29 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     }
   }
 
+  public void delete(final String name) {
+    if (baseURI != null) {
+      getContext().entityContext().addFurtherDeletes(
+              getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name).build());
+    }
+  }
+
+  public void delete() {
+    final EntityContext entityContext = getContext().entityContext();
+
+    if (this instanceof EntityInvocationHandler) {
+      final EntityInvocationHandler handler = EntityInvocationHandler.class.cast(this);
+
+      if (entityContext.isAttached(handler)) {
+        entityContext.setStatus(handler, AttachedEntityStatus.DELETED);
+      } else {
+        entityContext.attach(handler, AttachedEntityStatus.DELETED);
+      }
+    } else if (baseURI != null) {
+      entityContext.addFurtherDeletes(baseURI);
+    }
+  }
+
   protected void attach() {
     attach(AttachedEntityStatus.ATTACHED, false);
   }
@@ -259,19 +275,20 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       Object res;
       Class<?> ref = ClassUtils.getTypeClass(type);
 
-      if (ref == EdmStreamType.class) {
+      if (ref == EdmStreamValue.class) {
         if (streamedPropertyCache.containsKey(name)) {
           res = streamedPropertyCache.get(name);
         } else if (streamedPropertyChanges.containsKey(name)) {
-          res = new EdmStreamTypeImpl(streamedPropertyChanges.get(name));
+          res = streamedPropertyChanges.get(name);
         } else {
           res = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
-                  new Class<?>[] {EdmStreamType.class}, new EdmStreamTypeHandler(
-                  getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name),
+                  new Class<?>[] {EdmStreamValue.class}, new EdmStreamValueHandler(
+                  baseURI == null
+                  ? null : getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name).build(),
                   service));
 
-          streamedPropertyCache.put(name, EdmStreamType.class.cast(res));
+          streamedPropertyCache.put(name, EdmStreamValue.class.cast(res));
         }
 
         return res;
@@ -375,7 +392,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   protected void setPropertyValue(final Property property, final Object value) {
     if (EdmPrimitiveTypeKind.Stream.getFullQualifiedName().toString().equalsIgnoreCase(property.type())) {
-      setStreamedProperty(property, (EdmStreamType) value);
+      setStreamedProperty(property, (EdmStreamValue) value);
     } else {
       addPropertyChanges(property.name(), value);
 
@@ -402,7 +419,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     attach(AttachedEntityStatus.CHANGED);
   }
 
-  private void setStreamedProperty(final Property property, final EdmStreamType input) {
+  private void setStreamedProperty(final Property property, final EdmStreamValue input) {
     final Object obj = streamedPropertyChanges.get(property.name());
     if (obj instanceof InputStream) {
       IOUtils.closeQuietly((InputStream) obj);
@@ -605,7 +622,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   }
 
   public void clearQueryOptions() {
-    this.uri = getClient().newURIBuilder(baseURI.toASCIIString());
+    this.uri = baseURI == null ? null : getClient().newURIBuilder(baseURI.toASCIIString());
   }
 
   protected abstract void load();

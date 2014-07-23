@@ -55,9 +55,9 @@ public interface Customer
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    org.apache.olingo.ext.proxy.api.EdmStreamType getThumbnail();
+    org.apache.olingo.ext.proxy.api.EdmStreamValue getThumbnail();
 
-    void setThumbnail(org.apache.olingo.ext.proxy.api.EdmStreamType _thumbnail);
+    void setThumbnail(org.apache.olingo.ext.proxy.api.EdmStreamValue _thumbnail);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Video", 
@@ -78,9 +78,9 @@ public interface Customer
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    org.apache.olingo.ext.proxy.api.EdmStreamType getVideo();
+    org.apache.olingo.ext.proxy.api.EdmStreamValue getVideo();
 
-    void setVideo(org.apache.olingo.ext.proxy.api.EdmStreamType _video);
+    void setVideo(org.apache.olingo.ext.proxy.api.EdmStreamValue _video);
     @Key
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "CustomerId", 

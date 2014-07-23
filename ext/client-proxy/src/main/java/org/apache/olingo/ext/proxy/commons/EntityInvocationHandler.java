@@ -308,7 +308,10 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
       }
 
       final ODataRetrieveResponse<InputStream> res = retrieveReq.execute();
-      this.stream = new EdmStreamValue(res.getContentType(), res.getBody());
+      this.stream = EdmStreamValue.class.cast(Proxy.newProxyInstance(
+              Thread.currentThread().getContextClassLoader(),
+              new Class<?>[] {EdmStreamValue.class},
+              new EdmStreamValueHandler(res.getContentType(), res.getBody(), contentSource, service)));
     }
 
     return this.stream;

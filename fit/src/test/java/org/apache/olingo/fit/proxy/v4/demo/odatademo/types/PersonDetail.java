@@ -170,9 +170,9 @@ public interface PersonDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    org.apache.olingo.ext.proxy.api.EdmStreamType getPhoto();
+    org.apache.olingo.ext.proxy.api.EdmStreamValue getPhoto();
 
-    void setPhoto(org.apache.olingo.ext.proxy.api.EdmStreamType _photo);
+    void setPhoto(org.apache.olingo.ext.proxy.api.EdmStreamValue _photo);
     
 
     @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Person", 

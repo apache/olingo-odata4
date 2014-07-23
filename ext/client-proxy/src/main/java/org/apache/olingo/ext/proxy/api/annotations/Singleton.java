@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * <tt>getSimpleName()</tt>.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target(ElementType.METHOD)
 public @interface Singleton {
 
   String name();

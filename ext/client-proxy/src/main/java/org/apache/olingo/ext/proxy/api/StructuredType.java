@@ -22,4 +22,14 @@ package org.apache.olingo.ext.proxy.api;
  * Marker interface for Entity and complex type.
  */
 public interface StructuredType extends java.io.Serializable {
+
+  /**
+   * Delete object.
+   */
+  void delete();
+
+  /**
+   * Delete a specific property.
+   */
+  void delete(String name);
 }

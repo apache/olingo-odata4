@@ -55,9 +55,9 @@ public interface Car
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    org.apache.olingo.ext.proxy.api.EdmStreamType getPhoto();
+    org.apache.olingo.ext.proxy.api.EdmStreamValue getPhoto();
 
-    void setPhoto(org.apache.olingo.ext.proxy.api.EdmStreamType _photo);
+    void setPhoto(org.apache.olingo.ext.proxy.api.EdmStreamValue _photo);
     
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Video", 
@@ -78,9 +78,9 @@ public interface Car
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    org.apache.olingo.ext.proxy.api.EdmStreamType getVideo();
+    org.apache.olingo.ext.proxy.api.EdmStreamValue getVideo();
 
-    void setVideo(org.apache.olingo.ext.proxy.api.EdmStreamType _video);
+    void setVideo(org.apache.olingo.ext.proxy.api.EdmStreamValue _video);
     @Key
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "VIN", 

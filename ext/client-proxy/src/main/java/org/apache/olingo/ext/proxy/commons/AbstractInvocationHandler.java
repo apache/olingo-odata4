@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -43,9 +44,12 @@ import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.ext.proxy.AbstractService;
@@ -53,15 +57,25 @@ import org.apache.olingo.ext.proxy.api.ComplexCollection;
 import org.apache.olingo.ext.proxy.api.ComplexType;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.annotations.Singleton;
+import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.Context;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract class AbstractInvocationHandler implements InvocationHandler {
 
   private static final long serialVersionUID = 358520026931462958L;
+
+  /**
+   * Logger.
+   */
+  protected static final Logger LOG = LoggerFactory.getLogger(AbstractInvocationHandler.class);
 
   protected AbstractService<?> service;
 
@@ -116,7 +130,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {typeCollectionRef},
             new EntityCollectionInvocationHandler(service, items, typeCollectionRef, targetEntitySetURI,
-                    uri == null ? null : getClient().newURIBuilder(uri.toASCIIString())));
+            uri == null ? null : getClient().newURIBuilder(uri.toASCIIString())));
   }
 
   protected Object getEntitySetProxy(
@@ -270,10 +284,10 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
           res = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {ref}, new ComplexCollectionInvocationHandler(
-                          service,
-                          items,
-                          itemRef,
-                          null));
+                  service,
+                  items,
+                  itemRef,
+                  null));
         } else {
           final List items = new ArrayList();
 
@@ -284,10 +298,10 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
           res = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {PrimitiveCollection.class}, new PrimitiveCollectionInvocationHandler(
-                          service,
-                          items,
-                          null,
-                          null));
+                  service,
+                  items,
+                  null,
+                  null));
         }
       } else {
         if (edmType.isComplexType()) {
@@ -340,6 +354,53 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
             new Class<?>[] {actualRef}, complexHandler));
 
     return res;
+  }
+
+  protected boolean isDeleted(final EntityInvocationHandler handler) {
+    return getContext().entityContext().getStatus(handler) == AttachedEntityStatus.DELETED;
+  }
+
+  protected static CommonURIBuilder<?> buildEntitySetURI(
+          final Class<?> ref,
+          final AbstractService<?> service) {
+
+    final String containerNS;
+    final String entitySetName;
+    Annotation ann = ref.getAnnotation(EntitySet.class);
+    if (ann instanceof EntitySet) {
+      containerNS = EntitySet.class.cast(ann).container();
+      entitySetName = EntitySet.class.cast(ann).name();
+    } else {
+      ann = ref.getAnnotation(Singleton.class);
+      if (ann instanceof Singleton) {
+        containerNS = Singleton.class.cast(ann).container();
+        entitySetName = Singleton.class.cast(ann).name();
+      } else {
+        containerNS = null;
+        entitySetName = null;
+      }
+    }
+
+    return buildEntitySetURI(containerNS, entitySetName, service);
+  }
+
+  protected static CommonURIBuilder<?> buildEntitySetURI(
+          final String containerNS, final String entitySetName, final AbstractService<?> service) {
+
+    final CommonURIBuilder<?> uriBuilder = service.getClient().newURIBuilder();
+    final Edm edm = service.getClient().getCachedEdm();
+
+    final StringBuilder entitySetSegment = new StringBuilder();
+    if (StringUtils.isNotBlank(containerNS)) {
+      final EdmEntityContainer container = edm.getEntityContainer(new FullQualifiedName(containerNS));
+      if (!container.isDefault()) {
+        entitySetSegment.append(container.getFullQualifiedName().toString()).append('.');
+      }
+    }
+
+    entitySetSegment.append(entitySetName);
+    uriBuilder.appendEntitySetSegment(entitySetSegment.toString());
+    return uriBuilder;
   }
 
   @Override

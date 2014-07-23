@@ -28,21 +28,33 @@ public interface ComplexToCategory
 
 
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Term", type = "Edm.String", nullable = true)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "Term", 
+                type = "Edm.String", 
+                nullable = true)
     java.lang.String getTerm();
 
     void setTerm(java.lang.String _term);
 
     
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Scheme", type = "Edm.String", nullable = true)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "Scheme", 
+                type = "Edm.String", 
+                nullable = true)
     java.lang.String getScheme();
 
     void setScheme(java.lang.String _scheme);
 
     
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Label", type = "Edm.String", nullable = true)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "Label", 
+                type = "Edm.String", 
+                nullable = true)
     java.lang.String getLabel();
 
     void setLabel(java.lang.String _label);

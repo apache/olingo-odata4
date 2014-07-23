@@ -31,6 +31,7 @@ import org.apache.olingo.ext.proxy.api.ComplexType;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 #foreach($ns in $namespaces)
 import #if($basePackage)${basePackage}.#end${ns}.types.*;
 #end
@@ -45,8 +46,9 @@ import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
 import java.math.BigDecimal;
 import java.net.URI;
-import java.util.UUID;
 import java.io.Serializable;
+import java.io.InputStream;
+import java.util.UUID;
 import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
@@ -119,4 +121,6 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
   <T extends ComplexType, NEC extends ComplexCollection<T>> NEC newComplexCollection(Class<NEC> ref);
 
   <T extends Serializable, NEC extends PrimitiveCollection<T>> NEC newPrimitiveCollection(Class<T> ref);
+
+  EdmStreamValue newEdmStreamValue(String contentType, InputStream stream);
 }

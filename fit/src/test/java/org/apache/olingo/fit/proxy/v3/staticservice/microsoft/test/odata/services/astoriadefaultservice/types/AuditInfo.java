@@ -28,21 +28,33 @@ public interface AuditInfo
 
 
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ModifiedDate", type = "Edm.DateTime", nullable = false)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "ModifiedDate", 
+                type = "Edm.DateTime", 
+                nullable = false)
     java.sql.Timestamp getModifiedDate();
 
     void setModifiedDate(java.sql.Timestamp _modifiedDate);
 
     
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "ModifiedBy", type = "Edm.String", nullable = true)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "ModifiedBy", 
+                type = "Edm.String", 
+                nullable = true)
     java.lang.String getModifiedBy();
 
     void setModifiedBy(java.lang.String _modifiedBy);
 
     
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Concurrency", type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo", nullable = true)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "Concurrency", 
+                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo", 
+                nullable = true)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo getConcurrency();
 
     void setConcurrency(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _concurrency);

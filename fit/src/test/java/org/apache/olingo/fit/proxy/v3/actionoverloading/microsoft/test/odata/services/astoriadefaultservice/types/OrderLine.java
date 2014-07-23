@@ -57,9 +57,9 @@ public interface OrderLine
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    org.apache.olingo.ext.proxy.api.EdmStreamType getOrderLineStream();
+    org.apache.olingo.ext.proxy.api.EdmStreamValue getOrderLineStream();
 
-    void setOrderLineStream(org.apache.olingo.ext.proxy.api.EdmStreamType _orderLineStream);
+    void setOrderLineStream(org.apache.olingo.ext.proxy.api.EdmStreamValue _orderLineStream);
     @Key
     
     @org.apache.olingo.ext.proxy.api.annotations.Property(name = "OrderId", 

@@ -33,28 +33,20 @@ import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
 import org.apache.olingo.ext.proxy.api.Search;
 import org.apache.olingo.ext.proxy.api.SingleQuery;
-import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.Singleton;
 
 class EntitySetInvocationHandler<
         T extends EntityType, KEY extends Serializable, EC extends EntityCollection<T>>
@@ -63,55 +55,14 @@ class EntitySetInvocationHandler<
 
   private static final long serialVersionUID = 2629912294765040027L;
 
-  /**
-   * Logger.
-   */
-  private static final Logger LOG = LoggerFactory.getLogger(EntitySetInvocationHandler.class);
-
   @SuppressWarnings({"rawtypes", "unchecked"})
   static EntitySetInvocationHandler getInstance(final Class<?> ref, final AbstractService<?> service) {
-    return new EntitySetInvocationHandler(ref, service, buildURI(ref, service));
+    return new EntitySetInvocationHandler(ref, service, buildEntitySetURI(ref, service));
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static EntitySetInvocationHandler getInstance(final Class<?> ref, final AbstractService<?> service, final URI uri) {
     return new EntitySetInvocationHandler(ref, service, service.getClient().newURIBuilder(uri.toASCIIString()));
-  }
-
-  private static CommonURIBuilder<?> buildURI(
-          final Class<?> ref,
-          final AbstractService<?> service) {
-    final CommonURIBuilder<?> uriBuilder = service.getClient().newURIBuilder();
-
-    final Edm edm = service.getClient().getCachedEdm();
-    final String containerNS;
-    final String entitySetName;
-    Annotation ann = ref.getAnnotation(EntitySet.class);
-    if (ann instanceof EntitySet) {
-      containerNS = EntitySet.class.cast(ann).container();
-      entitySetName = EntitySet.class.cast(ann).name();
-    } else {
-      ann = ref.getAnnotation(Singleton.class);
-      if (ann instanceof Singleton) {
-        containerNS = Singleton.class.cast(ann).container();
-        entitySetName = Singleton.class.cast(ann).name();
-      } else {
-        containerNS = null;
-        entitySetName = null;
-      }
-    }
-
-    final StringBuilder entitySetSegment = new StringBuilder();
-    if (StringUtils.isNotBlank(containerNS)) {
-      final EdmEntityContainer container = edm.getEntityContainer(new FullQualifiedName(containerNS));
-      if (!container.isDefault()) {
-        entitySetSegment.append(container.getFullQualifiedName().toString()).append('.');
-      }
-    }
-
-    entitySetSegment.append(entitySetName);
-    uriBuilder.appendEntitySetSegment(entitySetSegment.toString());
-    return uriBuilder;
   }
 
   @SuppressWarnings("unchecked")
@@ -309,10 +260,6 @@ class EntitySetInvocationHandler<
     for (S en : entities) {
       delete(en);
     }
-  }
-
-  private boolean isDeleted(final EntityInvocationHandler handler) {
-    return getContext().entityContext().getStatus(handler) == AttachedEntityStatus.DELETED;
   }
 
   @Override

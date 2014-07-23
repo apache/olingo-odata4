@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.olingo.ext.proxy.AbstractService;
@@ -27,11 +28,17 @@ import org.apache.olingo.ext.proxy.api.annotations.Singleton;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.URI;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.api.ComplexCollection;
 import org.apache.olingo.ext.proxy.api.ComplexType;
+import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
 public final class EntityContainerInvocationHandler extends AbstractInvocationHandler {
@@ -96,24 +103,43 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
     } else {
       final Class<?> returnType = method.getReturnType();
 
-      final EntitySet entitySet = returnType.getAnnotation(EntitySet.class);
-      if (entitySet == null) {
-        final Singleton singleton = returnType.getAnnotation(Singleton.class);
-        if (singleton != null) {
-          return Proxy.newProxyInstance(
-                  Thread.currentThread().getContextClassLoader(),
-                  new Class<?>[] {returnType},
-                  SingletonInvocationHandler.getInstance(returnType, service));
-        }
-      } else {
+      if (returnType.isAnnotationPresent(EntitySet.class)) {
         return Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
                 new Class<?>[] {returnType},
                 EntitySetInvocationHandler.getInstance(returnType, service));
+      } else if (returnType.isAnnotationPresent(org.apache.olingo.ext.proxy.api.annotations.EntityType.class)) {
+        return getSingleton(method);
       }
 
       throw new NoSuchMethodException(method.getName());
     }
+  }
+
+  private Object getSingleton(final Method method) throws IllegalArgumentException {
+    final Class<?> typeRef = method.getReturnType();
+    final Singleton singleton = method.getAnnotation(Singleton.class);
+
+    final URI uri = buildEntitySetURI(singleton.container(), singleton.name(), service).build();
+    final EntityUUID uuid = new EntityUUID(uri, typeRef);
+    LOG.debug("Ask for singleton '{}'", typeRef.getSimpleName());
+
+    EntityInvocationHandler handler = getContext().entityContext().getEntity(uuid);
+
+    if (handler == null) {
+      final CommonODataEntity entity = getClient().getObjectFactory().newEntity(new FullQualifiedName(
+              typeRef.getAnnotation(Namespace.class).value(), ClassUtils.getEntityTypeName(typeRef)));
+
+      handler = EntityInvocationHandler.getInstance(entity, uri, uri, typeRef, service);
+    } else if (isDeleted(handler)) {
+      // object deleted
+      LOG.debug("Singleton '{}' has been deleted", typeRef.getSimpleName());
+      handler = null;
+    }
+
+    return handler == null
+            ? null
+            : Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] {typeRef}, handler);
   }
 
   @SuppressWarnings("unchecked")
@@ -159,5 +185,15 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {PrimitiveCollection.class},
             new PrimitiveCollectionInvocationHandler<T>(getService(), ref));
+  }
+
+  @SuppressWarnings("unchecked")
+  public EdmStreamValue newEdmStreamValue(
+          final String contentType, final InputStream stream) {
+
+    return EdmStreamValue.class.cast(Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] {EdmStreamValue.class},
+            new EdmStreamValueHandler(contentType, stream, null, getService())));
   }
 }

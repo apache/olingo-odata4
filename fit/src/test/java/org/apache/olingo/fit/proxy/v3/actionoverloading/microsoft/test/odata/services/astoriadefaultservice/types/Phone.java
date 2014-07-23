@@ -28,14 +28,22 @@ public interface Phone
 
 
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "PhoneNumber", type = "Edm.String", nullable = true)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "PhoneNumber", 
+                type = "Edm.String", 
+                nullable = true)
     java.lang.String getPhoneNumber();
 
     void setPhoneNumber(java.lang.String _phoneNumber);
 
     
 
-    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Extension", type = "Edm.String", nullable = true)
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "Extension", 
+                type = "Edm.String", 
+                nullable = true)
     java.lang.String getExtension();
 
     void setExtension(java.lang.String _extension);
