@@ -18,6 +18,17 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
+import java.lang.reflect.Proxy;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
@@ -42,16 +53,6 @@ import org.apache.olingo.ext.proxy.utils.CoreUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Proxy;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 abstract class AbstractPersistenceManager implements PersistenceManager {
 
   /**
@@ -65,6 +66,17 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
   AbstractPersistenceManager(final AbstractService<?> factory) {
     this.service = factory;
+  }
+
+  @Override
+  public Future<List<ODataRuntimeException>> flushAsync() {
+    return service.getClient().getConfiguration().getExecutor().submit(new Callable<List<ODataRuntimeException>>() {
+
+      @Override
+      public List<ODataRuntimeException> call() throws Exception {
+        return flush();
+      }
+    });
   }
 
   protected abstract List<ODataRuntimeException> doFlush(PersistenceChanges changes, TransactionItems items);
@@ -241,7 +253,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
           final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                   ? URI.create("$" + startingPos)
                   : URIUtils.getURI(
-                  service.getClient().getServiceRoot(), handler.getEntity().getEditLink().toASCIIString());
+                          service.getClient().getServiceRoot(), handler.getEntity().getEditLink().toASCIIString());
           queueUpdate(handler, targetURI, entity, changeset);
           pos++;
           items.put(handler, pos);
@@ -253,8 +265,8 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
           final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                   ? URI.create("$" + startingPos + "/$value")
                   : URIUtils.getURI(
-                  service.getClient().getServiceRoot(),
-                  handler.getEntity().getEditLink().toASCIIString() + "/$value");
+                          service.getClient().getServiceRoot(),
+                          handler.getEntity().getEditLink().toASCIIString() + "/$value");
 
           queueUpdateMediaEntity(handler, targetURI, handler.getStreamChanges(), changeset);
 
@@ -268,8 +280,8 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
       for (Map.Entry<String, EdmStreamValue> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
         final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                 ? URI.create("$" + startingPos) : URIUtils.getURI(
-                service.getClient().getServiceRoot(),
-                CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
+                        service.getClient().getServiceRoot(),
+                        CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
 
         queueUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
 
@@ -423,10 +435,10 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
             service.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(handler.getEntityURI(),
-            org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+                    org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
             : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(handler.getEntityURI(),
-            org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+                    org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(service.getClient().getServiceVersion()).returnContent());
 
@@ -449,10 +461,10 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
             service.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(uri,
-            org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+                    org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
             : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(uri,
-            org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+                    org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(service.getClient().getServiceVersion()).returnContent());
 

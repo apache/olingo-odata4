@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
+import java.util.concurrent.Future;
+
 public interface EntitySetQuery<
         T extends EntityType, EC extends EntityCollection<T>, CT extends EntitySetQuery<T, EC, ?>>
         extends CollectionQuery<T, EC, CT> {
@@ -31,4 +33,14 @@ public interface EntitySetQuery<
    * @return all entities of the given subtype
    */
   <S extends T, SEC extends EntityCollection<S>> SEC execute(Class<SEC> reference);
+
+  /**
+   * Asynchronously returns all instances of the given subtype.
+   *
+   * @param <S>
+   * @param <SEC>
+   * @param reference entity collection class to be returned
+   * @return future handle on all entities of the given subtype
+   */
+  <S extends T, SEC extends EntityCollection<S>> Future<SEC> executeAsync(Class<SEC> reference);
 }

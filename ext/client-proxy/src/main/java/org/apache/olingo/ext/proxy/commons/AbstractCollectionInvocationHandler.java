@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
@@ -71,6 +73,16 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
     this.items = items;
     this.uri = uri;
     this.baseURI = this.uri == null ? null : this.uri.build();
+  }
+
+  public Future<Collection<T>> executeAsync() {
+    return service.getClient().getConfiguration().getExecutor().submit(new Callable<Collection<T>>() {
+
+      @Override
+      public Collection<T> call() throws Exception {
+        return execute();
+      }
+    });
   }
 
   @SuppressWarnings("unchecked")

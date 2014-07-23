@@ -20,6 +20,7 @@ package org.apache.olingo.ext.proxy.api;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.concurrent.Future;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 
 /**
@@ -34,4 +35,12 @@ public interface PersistenceManager extends Serializable {
    * bearing the error returned from the service.
    */
   List<ODataRuntimeException> flush();
+
+  /**
+   * Asynchronously flushes all pending changes to the OData service.
+   *
+   * @return a future handle for a list where n-th item is either null (if corresponding request went out successfully)
+   * or the exception bearing the error returned from the service.
+   */
+  Future<List<ODataRuntimeException>> flushAsync();
 }

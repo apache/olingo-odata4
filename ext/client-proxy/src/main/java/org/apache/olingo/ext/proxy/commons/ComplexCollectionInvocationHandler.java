@@ -18,11 +18,6 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Triple;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URI;
@@ -30,11 +25,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.domain.v3.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.ComplexCollection;
@@ -78,6 +78,7 @@ public class ComplexCollectionInvocationHandler<T extends ComplexType>
             || "select".equals(method.getName())
             || "nextPage".equals(method.getName())
             || "execute".equals(method.getName())) {
+
       invokeSelfMethod(method, args);
       return proxy;
     } else if (isSelfMethod(method, args)) {
@@ -97,18 +98,19 @@ public class ComplexCollectionInvocationHandler<T extends ComplexType>
   @SuppressWarnings("unchecked")
   @Override
   public Triple<List<T>, URI, List<ODataAnnotation>> fetchPartial(final URI uri, final Class<T> typeRef) {
-    final ODataPropertyRequest<ODataProperty> req = getClient().getRetrieveRequestFactory().getPropertyRequest(uri);
+    final ODataPropertyRequest<CommonODataProperty> req =
+            getClient().getRetrieveRequestFactory().getPropertyRequest(uri);
     if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) > 0) {
       req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
     }
 
-    final ODataRetrieveResponse<ODataProperty> res = req.execute();
+    final ODataRetrieveResponse<CommonODataProperty> res = req.execute();
 
-    List<T> resItems = new ArrayList<T>();
+    final List<T> resItems = new ArrayList<T>();
 
-    final ODataProperty property = res.getBody();
-    if (property != null && !property.hasNullValue()) {
-      for (ODataValue item : property.getCollectionValue()) {
+    final CommonODataProperty property = res.getBody();
+    if (property != null && property.hasCollectionValue()) {
+      for (ODataValue item : (ODataCollectionValue<ODataValue>) property.getValue()) {
         resItems.add((T) getComplex(property.getName(), item, typeRef, null, null, true));
       }
     }

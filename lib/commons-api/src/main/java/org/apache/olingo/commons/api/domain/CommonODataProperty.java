@@ -25,49 +25,49 @@ public interface CommonODataProperty extends ODataInvokeResult {
 
   /**
    * Returns property name.
-   * 
+   *
    * @return property name.
    */
   String getName();
 
   /**
+   * Returns property value.
+   *
+   * @return property value.
+   */
+  ODataValue getValue();
+
+  /**
    * Checks if has null value.
-   * 
+   *
    * @return 'TRUE' if has null value; 'FALSE' otherwise.
    */
   boolean hasNullValue();
 
   /**
    * Checks if has primitive value.
-   * 
+   *
    * @return 'TRUE' if has primitive value; 'FALSE' otherwise.
    */
   boolean hasPrimitiveValue();
 
   /**
    * Gets primitive value.
-   * 
+   *
    * @return primitive value if exists; null otherwise.
    */
   ODataPrimitiveValue getPrimitiveValue();
 
   /**
-   * Returns property value.
-   * 
-   * @return property value.
-   */
-  ODataValue getValue();
-
-  /**
    * Checks if has collection value.
-   * 
+   *
    * @return 'TRUE' if has collection value; 'FALSE' otherwise.
    */
   boolean hasCollectionValue();
 
   /**
    * Checks if has complex value.
-   * 
+   *
    * @return 'TRUE' if has complex value; 'FALSE' otherwise.
    */
   boolean hasComplexValue();

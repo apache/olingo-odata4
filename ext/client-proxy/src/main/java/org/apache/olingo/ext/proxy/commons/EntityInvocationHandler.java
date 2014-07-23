@@ -424,14 +424,13 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
       final ODataRetrieveResponse<CommonODataEntity> res = req.execute();
 
-      final String etag = res.getETag();
       final CommonODataEntity entity = res.getBody();
       if (entity == null) {
         throw new IllegalArgumentException("Invalid " + typeRef.getSimpleName() + "(" + key + ")");
       }
 
       setEntity(entity);
-      setETag(etag);
+      setETag(res.getETag());
 
       if (key != null && !key.equals(CoreUtils.getKey(getClient(), this, typeRef, entity))) {
         throw new IllegalArgumentException("Invalid " + typeRef.getSimpleName() + "(" + key + ")");

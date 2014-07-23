@@ -16,24 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Car;
-import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import org.apache.olingo.ext.proxy.api.EdmStreamValue;
-import static org.apache.olingo.fit.proxy.v3.AbstractTestITCase.container;
-import static org.apache.olingo.fit.proxy.v3.AbstractTestITCase.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Car;
+import org.junit.Test;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 
 /**
  * This is the unit test class to check media entity retrieve operations.

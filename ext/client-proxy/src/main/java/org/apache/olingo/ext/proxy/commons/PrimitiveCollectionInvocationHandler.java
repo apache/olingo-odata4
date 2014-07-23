@@ -20,11 +20,6 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Triple;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URI;
@@ -32,10 +27,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
@@ -72,7 +71,9 @@ public class PrimitiveCollectionInvocationHandler<T extends Serializable>
     if ("filter".equals(method.getName())
             || "top".equals(method.getName())
             || "skip".equals(method.getName())
-            || "execute".equals(method.getName())) {
+            || "execute".equals(method.getName())
+            || "executeAsync".equals(method.getName())) {
+
       invokeSelfMethod(method, args);
       return proxy;
     } else if (isSelfMethod(method, args)) {

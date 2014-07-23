@@ -18,6 +18,14 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
@@ -28,25 +36,18 @@ import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.ext.proxy.api.EntityCollection;
+import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
+import org.apache.olingo.ext.proxy.api.EntityCollection;
+import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.Search;
 import org.apache.olingo.ext.proxy.api.SingleQuery;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
-
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.olingo.ext.proxy.AbstractService;
-import org.apache.olingo.ext.proxy.api.EntityType;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 
 class EntitySetInvocationHandler<
         T extends EntityType, KEY extends Serializable, EC extends EntityCollection<T>>
@@ -82,6 +83,7 @@ class EntitySetInvocationHandler<
             || "skip".equals(method.getName())
             || "expand".equals(method.getName())
             || "select".equals(method.getName())) {
+
       invokeSelfMethod(method, args);
       return proxy;
     } else if (isSelfMethod(method, args)) {
@@ -147,6 +149,16 @@ class EntitySetInvocationHandler<
   @Override
   public EC execute() {
     return execute(collItemRef);
+  }
+
+  public <S extends T, SEC extends EntityCollection<S>> Future<SEC> executeAsync(final Class<SEC> collTypeRef) {
+    return service.getClient().getConfiguration().getExecutor().submit(new Callable<SEC>() {
+
+      @Override
+      public SEC call() throws Exception {
+        return execute(collTypeRef);
+      }
+    });
   }
 
   @SuppressWarnings("unchecked")

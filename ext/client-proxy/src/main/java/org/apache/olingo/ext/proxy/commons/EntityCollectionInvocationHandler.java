@@ -18,16 +18,15 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.ext.proxy.api.EntityCollection;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.ext.proxy.AbstractService;
+import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.EntityType;
 
 public class EntityCollectionInvocationHandler<T extends EntityType>
@@ -62,6 +61,7 @@ public class EntityCollectionInvocationHandler<T extends EntityType>
             || "select".equals(method.getName())
             || "nextPage".equals(method.getName())
             || "execute".equals(method.getName())) {
+
       invokeSelfMethod(method, args);
       return proxy;
     } else if (isSelfMethod(method, args)) {

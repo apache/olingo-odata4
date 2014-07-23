@@ -20,15 +20,23 @@ package org.apache.olingo.ext.proxy.api;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.concurrent.Future;
 
 public interface PrimitiveCollection<T extends Serializable> extends Collection<T>, Serializable {
 
   /**
    * Returns all instances.
    *
-   * @return all entities
+   * @return all instances
    */
   PrimitiveCollection<T> execute();
+
+  /**
+   * Asynchronously returns all instances.
+   *
+   * @return future handle on all instances
+   */
+  Future<PrimitiveCollection<T>> executeAsync();
 
   /**
    * Sets the maximum number of results to retrieve (<tt>$top</tt>).

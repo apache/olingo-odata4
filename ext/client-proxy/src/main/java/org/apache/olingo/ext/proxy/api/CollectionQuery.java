@@ -19,6 +19,7 @@
 package org.apache.olingo.ext.proxy.api;
 
 import java.util.Collection;
+import java.util.concurrent.Future;
 import org.apache.olingo.client.api.uri.URIFilter;
 
 public interface CollectionQuery<
@@ -28,9 +29,16 @@ public interface CollectionQuery<
   /**
    * Returns all instances.
    *
-   * @return all entities
+   * @return all instances
    */
   EC execute();
+
+  /**
+   * Asynchronously returns all instances.
+   *
+   * @return future handle on all instances
+   */
+  Future<EC> executeAsync();
 
   /**
    * Sets the <tt>$filter</tt> expression.

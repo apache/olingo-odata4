@@ -22,11 +22,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.List;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.olingo.ext.proxy.api.AsyncCall;
 import org.junit.Test;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
@@ -38,14 +39,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveEntitySet() throws InterruptedException, ExecutionException {
-    final Future<CustomerCollection> futureCustomers =
-            new AsyncCall<CustomerCollection>(service.getClient().getConfiguration()) {
-
-              @Override
-              public CustomerCollection call() {
-                return container.getCustomers().execute();
-              }
-            };
+    final Future<CustomerCollection> futureCustomers = container.getCustomers().executeAsync();
     assertNotNull(futureCustomers);
 
     while (!futureCustomers.isDone()) {
@@ -61,34 +55,20 @@ public class AsyncTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void updateEntity() throws InterruptedException {
+  public void updateEntity() throws Exception {
     final String randomFirstName = RandomStringUtils.random(10, "abcedfghijklmnopqrstuvwxyz");
 
-    Person person = container.getPeople().getByKey(1);
+    final Person person = container.getPeople().getByKey(1);
     person.setFirstName(randomFirstName);
 
-    final Future<Void> futureFlush = new AsyncCall<Void>(service.getClient().getConfiguration()) {
-
-      @Override
-      public Void call() {
-        container.flush();
-        return null;
-      }
-    };
+    final Future<List<ODataRuntimeException>> futureFlush = container.flushAsync();
     assertNotNull(futureFlush);
 
     while (!futureFlush.isDone()) {
       Thread.sleep(1000L);
     }
 
-    new AsyncCall<Person>(service.getClient().getConfiguration()) {
-
-      @Override
-      public Person call() {
-        return container.getPeople().getByKey(1);
-      }
-    };
-
-    assertEquals(randomFirstName, person.getFirstName());
+    final Future<Person> futurePerson = container.getPeople().getByKey(1).loadAsync();
+    assertEquals(randomFirstName, futurePerson.get().getFirstName());
   }
 }
