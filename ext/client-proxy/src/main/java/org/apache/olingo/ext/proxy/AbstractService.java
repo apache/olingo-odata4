@@ -18,11 +18,13 @@
  */
 package org.apache.olingo.ext.proxy;
 
+import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
@@ -62,11 +64,13 @@ public abstract class AbstractService<C extends CommonEdmEnabledODataClient<?>> 
   protected AbstractService(final String compressedMetadata,
           final ODataServiceVersion version, final String serviceRoot, final boolean transactional) {
 
+    ByteArrayInputStream bais = null;
     GZIPInputStream gzis = null;
     ObjectInputStream ois = null;
     XMLMetadata metadata = null;
     try {
-      gzis = new GZIPInputStream(IOUtils.toInputStream(compressedMetadata, "UTF-8"));
+      bais = new ByteArrayInputStream(Base64.decodeBase64(compressedMetadata));
+      gzis = new GZIPInputStream(bais);
       ois = new ObjectInputStream(gzis);
       metadata = (XMLMetadata) ois.readObject();
     } catch (Exception e) {
@@ -74,6 +78,7 @@ public abstract class AbstractService<C extends CommonEdmEnabledODataClient<?>> 
     } finally {
       IOUtils.closeQuietly(ois);
       IOUtils.closeQuietly(gzis);
+      IOUtils.closeQuietly(bais);
     }
 
     final Edm edm = metadata == null ? null : new EdmClientImpl(version, metadata.getSchemaByNsOrAlias());
