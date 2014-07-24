@@ -21,6 +21,7 @@ package org.apache.olingo.ext.proxy.api;
 import org.apache.olingo.client.api.uri.v4.URISearch;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * Interface used to control search execution.
@@ -28,7 +29,7 @@ import java.io.Serializable;
  * @param <T> search result type
  * @param <EC>
  */
-public interface Search<T extends EntityType, EC extends EntityCollection<T>> extends Serializable {
+public interface Search<T extends EntityType<?>, EC extends Collection<T>> extends Serializable {
 
   /**
    * Sets the <tt>$search</tt> expression for this search.

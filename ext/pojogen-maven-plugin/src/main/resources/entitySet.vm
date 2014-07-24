@@ -57,5 +57,14 @@ import javax.xml.datatype.Duration;
 
 @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "$entitySet.Name", container = "$container.FullQualifiedName.toString()")
 public interface $utility.capitalize($entitySet.Name) 
-  extends org.apache.olingo.ext.proxy.api.EntitySetQuery<$javaEntityType, ${javaEntityType}Collection, $utility.capitalize($entitySet.Name)>, AbstractEntitySet<$javaEntityType, $type, ${javaEntityType}Collection> {
+  extends org.apache.olingo.ext.proxy.api.EntitySet<$javaEntityType, ${javaEntityType}Collection>, 
+  org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<$utility.capitalize($entitySet.Name)>,
+  AbstractEntitySet<$javaEntityType, $type, ${javaEntityType}Collection> {
+
+#set( $functions = $utility.getFunctionsBoundTo("${container.Namespace}.${entitySet.Name}", false) )
+#set( $actions = $utility.getActionsBoundTo("${container.Namespace}.${entitySet.Name}", false) )
+#if( $functions.size() > 0 || $actions.size() > 0 )
+#set($structuredType = $entitySet.EntityType)
+#parse( "operation.vm" )
+#end
 }

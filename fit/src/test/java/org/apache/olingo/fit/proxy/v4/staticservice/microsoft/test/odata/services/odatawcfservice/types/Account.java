@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -33,7 +34,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         hasStream = false,
         isAbstract = false)
 public interface Account 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<Account> {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.ext.proxy.api.EntityType<Account>, org.apache.olingo.ext.proxy.api.StructuredQuery<Account>   {
 
 
     
@@ -132,33 +134,36 @@ public interface Account
     void setAvailableSubscriptionTemplatess(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.SubscriptionCollection _availableSubscriptionTemplatess);
     
 
+
         Operations operations();
 
     interface Operations {
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetDefaultPI",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetDefaultPI",
                     type = OperationType.FUNCTION,
                     isComposable = false,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument getDefaultPI(
+                    referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument")
+      org.apache.olingo.ext.proxy.api.StructuredInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument> getDefaultPI(
             );
 
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetAccountInfo",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetAccountInfo",
                     type = OperationType.FUNCTION,
                     isComposable = true,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo getAccountInfo(
+                    referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo")
+      org.apache.olingo.ext.proxy.api.StructuredInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo> getAccountInfo(
             );
 
     
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "RefreshDefaultPI",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "RefreshDefaultPI",
                     type = OperationType.ACTION,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument refreshDefaultPI(
+                    referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument")
+      org.apache.olingo.ext.proxy.api.StructuredInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument> refreshDefaultPI(
                 @Parameter(name = "newDate", type = "Edm.DateTimeOffset", nullable = true) java.sql.Timestamp newDate
             );
 
         }
-
     Annotations annotations();
 
     interface Annotations {
@@ -207,7 +212,9 @@ public interface Account
     
     @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "MyPaymentInstruments", contained = true)
     interface MyPaymentInstruments 
-      extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection, MyPaymentInstruments>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection> {
+      extends org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection>, 
+      org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<MyPaymentInstruments>,
+      AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection> {
     }
 
         @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "ActiveSubscriptions", 
@@ -223,7 +230,9 @@ public interface Account
     
     @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "ActiveSubscriptions", contained = true)
     interface ActiveSubscriptions 
-      extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Subscription, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.SubscriptionCollection, ActiveSubscriptions>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Subscription, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.SubscriptionCollection> {
+      extends org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Subscription, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.SubscriptionCollection>, 
+      org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<ActiveSubscriptions>,
+      AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Subscription, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.SubscriptionCollection> {
     }
 
   }

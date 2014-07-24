@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -63,6 +62,7 @@ import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
+import org.apache.olingo.ext.proxy.utils.ProxyUtils;
 
 public abstract class AbstractStructuredInvocationHandler extends AbstractInvocationHandler {
 
@@ -166,7 +166,6 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       return proxy;
     } else if ("loadAsync".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       return service.getClient().getConfiguration().getExecutor().submit(new Callable<Object>() {
-
         @Override
         public Object call() throws Exception {
           load();
@@ -292,10 +291,10 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
           res = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {EdmStreamValue.class}, new EdmStreamValueHandler(
-                          baseURI == null
-                          ? null
-                          : getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name).build(),
-                          service));
+                  baseURI == null
+                  ? null
+                  : getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name).build(),
+                  service));
 
           streamedPropertyCache.put(name, EdmStreamValue.class.cast(res));
         }
@@ -444,8 +443,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     final Class<?> type = getter.getReturnType();
     final Class<?> collItemType;
     if (EntityCollection.class.isAssignableFrom(type)) {
-      final Type[] eCollParams = ((ParameterizedType) type.getGenericInterfaces()[0]).getActualTypeArguments();
-      collItemType = (Class<?>) eCollParams[0];
+      collItemType = ClassUtils.extractTypeArg(type, EntityCollection.class, ComplexCollection.class);
     } else {
       collItemType = type;
     }
@@ -457,7 +455,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
     if (link instanceof ODataInlineEntity) {
       // return entity
-      navPropValue = getEntityProxy(
+      navPropValue = ProxyUtils.getEntityProxy(
+              service,
               ((ODataInlineEntity) link).getEntity(),
               targetEntitySetURI,
               type,
@@ -465,7 +464,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
               false);
     } else if (link instanceof ODataInlineEntitySet) {
       // return entity set
-      navPropValue = getEntityCollectionProxy(
+      navPropValue = ProxyUtils.getEntityCollectionProxy(
+              service,
               collItemType,
               type,
               targetEntitySetURI,
@@ -477,7 +477,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       final URI targetURI = URIUtils.getURI(getEntityHandler().getEntityURI(), property.name());
 
       if (EntityCollection.class.isAssignableFrom(type)) {
-        navPropValue = getEntityCollectionProxy(
+        navPropValue = ProxyUtils.getEntityCollectionProxy(
+                service,
                 collItemType,
                 type,
                 targetEntitySetURI,
@@ -485,7 +486,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
                 targetURI,
                 true);
       } else if (AbstractEntitySet.class.isAssignableFrom(type)) {
-        navPropValue = getEntitySetProxy(type, targetURI); // cannot be used standard target entity set URI
+        navPropValue =
+                ProxyUtils.getEntitySetProxy(service, type, targetURI); // cannot be used standard target entity set URI
       } else {
         final EntityUUID uuid = new EntityUUID(targetEntitySetURI, collItemType, null);
         LOG.debug("Ask for '{}({})'", collItemType.getSimpleName(), null);

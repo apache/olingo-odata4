@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -26,5 +27,8 @@ import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 
 @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "EdmBinarySet", container = "Microsoft.Test.OData.Services.PrimitiveKeysService.TestContext")
 public interface EdmBinarySet 
-  extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBinary, org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBinaryCollection, EdmBinarySet>, AbstractEntitySet<org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBinary, byte[], org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBinaryCollection> {
+  extends org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBinary, org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBinaryCollection>, 
+  org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<EdmBinarySet>,
+  AbstractEntitySet<org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBinary, byte[], org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBinaryCollection> {
+
 }

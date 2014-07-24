@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -32,7 +33,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         hasStream = false,
         isAbstract = false)
 public interface GiftCard 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<GiftCard> {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.ext.proxy.api.EntityType<GiftCard>, org.apache.olingo.ext.proxy.api.StructuredQuery<GiftCard>   {
 
 
     
@@ -155,20 +157,21 @@ public interface GiftCard
     
 
 
+
         Operations operations();
 
     interface Operations {
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetActualAmount",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetActualAmount",
                     type = OperationType.FUNCTION,
                     isComposable = false,
-                    returnType = "Edm.Double")
-      java.lang.Double getActualAmount(
+                    referenceType = java.lang.Double.class,                    returnType = "Edm.Double")
+      org.apache.olingo.ext.proxy.api.Invoker<java.lang.Double> getActualAmount(
                 @Parameter(name = "bonusRate", type = "Edm.Double", nullable = true) java.lang.Double bonusRate
             );
 
     
         }
-
     Annotations annotations();
 
     interface Annotations {

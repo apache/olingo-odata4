@@ -56,11 +56,12 @@ public class InvokeTestITCase extends AbstractTestITCase {
   @Test
   public void getWithNoParams() {
     // 1. primitive result
-    final String string = container.operations().getPrimitiveString();
+    final String string = container.operations().getPrimitiveString().execute();
     assertEquals("Foo", string);
 
     // 2. complex collection result
-    final ContactDetailsCollection details = container.operations().entityProjectionReturnsCollectionOfComplexTypes();
+    final ContactDetailsCollection details =
+            container.operations().entityProjectionReturnsCollectionOfComplexTypes().execute();
     assertFalse(details.isEmpty());
     for (ContactDetails detail : details) {
       assertNotNull(detail);
@@ -71,10 +72,10 @@ public class InvokeTestITCase extends AbstractTestITCase {
   @Test
   public void getWithParam() {
     // 1. primitive result
-    assertEquals(155, container.operations().getArgumentPlusOne(154), 0);
+    assertEquals(155, container.operations().getArgumentPlusOne(154).execute(), 0);
 
     // 2. entity collection result
-    final CustomerCollection customers = container.operations().getSpecificCustomer(StringUtils.EMPTY);
+    final CustomerCollection customers = container.operations().getSpecificCustomer(StringUtils.EMPTY).execute();
     assertNotNull(customers);
     assertFalse(customers.isEmpty());
     final Set<Integer> customerIds = new HashSet<Integer>(customers.size());
@@ -106,7 +107,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
     try {
       // 1. invoke action bound to the employee just created
-      employee.operations().sack();
+      employee.operations().sack().execute();
 
       // 2. check that invoked action has effectively run
       employee = container.getPerson().getByKey(id, Employee.class).load();
@@ -131,7 +132,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     }
     assertFalse(preSalaries.isEmpty());
 
-    employees.operations().increaseSalaries(1);
+    employees.operations().increaseSalaries(1).execute();
 
     employees = container.getPerson().execute(EmployeeCollection.class);
     assertFalse(employees.isEmpty());
@@ -172,7 +173,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
       newDimensions.setHeight(BigDecimal.ONE);
       newDimensions.setWidth(BigDecimal.ONE);
 
-      product.operations().changeProductDimensions(newDimensions);
+      product.operations().changeProductDimensions(newDimensions).execute();
 
       // 2. check that invoked action has effectively run
       product = container.getProduct().getByKey(id).load();
@@ -224,7 +225,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
 
       // 1. invoke action bound to the computer detail just created
       computerDetail.operations().resetComputerDetailsSpecifications(
-              cds, new Timestamp(Calendar.getInstance().getTimeInMillis()));
+              cds, new Timestamp(Calendar.getInstance().getTimeInMillis())).execute();
 
       // 2. check that invoked action has effectively run
       computerDetail = container.getComputerDetail().getByKey(id).load();

@@ -31,6 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends AbstractODataInvokeRequest<T> {
 
@@ -55,7 +56,8 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends Abstrac
 
   @Override
   protected URI buildGETURI() {
-    String baseURI = this.uri.toASCIIString();
+    final String rawQuery = this.uri.getRawQuery();
+    String baseURI = StringUtils.substringBefore(this.uri.toASCIIString(), "?" + rawQuery);
     if (baseURI.endsWith("()")) {
       baseURI = baseURI.substring(0, baseURI.length() - 2);
     }
@@ -82,7 +84,9 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends Abstrac
     inlineParams.deleteCharAt(inlineParams.length() - 1);
 
     try {
-      return URI.create(baseURI + "(" + URLEncoder.encode(inlineParams.toString(), Constants.UTF8) + ")");
+      return URI.create(baseURI + "(" + URLEncoder.encode(inlineParams.toString(), Constants.UTF8) + ")"
+              + (StringUtils.isNotBlank(rawQuery) ? "?" + rawQuery : StringUtils.EMPTY));
+
     } catch (UnsupportedEncodingException e) {
       throw new IllegalArgumentException("While adding GET parameters", e);
     }

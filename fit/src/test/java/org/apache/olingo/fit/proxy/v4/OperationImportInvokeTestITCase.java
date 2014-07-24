@@ -16,15 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import java.util.Collection;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker;
+import org.apache.olingo.ext.proxy.api.StructuredInvoker;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
@@ -39,14 +39,14 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void getDefaultColor() {
-    final Color color = container.operations().getDefaultColor();
+    final Color color = container.operations().getDefaultColor().execute();
     assertEquals(Color.Red, color);
   }
 
   @Test
   public void getPerson2() {
-    final Person person = container.operations().getPerson2("London");
-    assertEquals(1, person.getPersonID(), 0);
+    final StructuredInvoker<Person> person = container.operations().getPerson2("London");
+    assertEquals(1, person.execute().getPersonID(), 0);
   }
 
   @Test
@@ -56,26 +56,27 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     address.setPostalCode("98052");
     address.setCity("London");
 
-    final Person person = container.operations().getPerson(address);
-    assertEquals(1, person.getPersonID(), 0);
+    final StructuredInvoker<Person> person = container.operations().getPerson(address);
+    assertEquals(1, person.execute().getPersonID(), 0);
   }
 
   @Test
   public void getAllProducts() {
-    final ProductCollection products = container.operations().getAllProducts();
-    assertEquals(5, products.size());
+    final StructuredCollectionInvoker<ProductCollection> products = container.operations().getAllProducts();
+    assertEquals(5, products.execute().size());
   }
 
   @Test
   public void getProductsByAccessLevel() {
-    final Collection<String> products = container.operations().getProductsByAccessLevel(AccessLevel.None);
+    final PrimitiveCollection<String> products =
+            container.operations().getProductsByAccessLevel(AccessLevel.None).execute();
     assertEquals(5, products.size());
     assertTrue(products.contains("Car"));
   }
 
   @Test
   public void discount() {
-    container.operations().discount(22);
+    container.operations().discount(22).execute();
   }
 
   @Test
@@ -85,7 +86,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     address.setPostalCode("Tollo");
     address.setCity("66010");
 
-    final Address actual = container.operations().resetBossAddress(address);
+    final Address actual = container.operations().resetBossAddress(address).execute();
     assertEquals(address.getStreet(), actual.getStreet());
     assertEquals(address.getPostalCode(), actual.getPostalCode());
     assertEquals(address.getCity(), actual.getCity());
@@ -97,10 +98,10 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     be.add("first@olingo.apache.org");
     be.add("second@olingo.apache.org");
 
-    final PrimitiveCollection<String> result = container.operations().resetBossEmail(be);
+    final PrimitiveCollection<String> result = container.operations().resetBossEmail(be).execute();
     assertEquals(2, result.size());
 
-    final PrimitiveCollection<String> result2 = container.operations().getBossEmails(0, 100);
+    final PrimitiveCollection<String> result2 = container.operations().getBossEmails(0, 100).execute();
     assertEquals(result, result2);
   }
 }

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -33,7 +34,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         hasStream = false,
         isAbstract = false)
 public interface Company 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<Company>,AbstractOpenType {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.ext.proxy.api.EntityType<Company>, org.apache.olingo.ext.proxy.api.StructuredQuery<Company>  ,AbstractOpenType {
 
 
     
@@ -196,26 +198,28 @@ public interface Company
     void setCoreDepartment(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Department _coreDepartment);
     
 
+
         Operations operations();
 
     interface Operations {
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetEmployeesCount",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetEmployeesCount",
                     type = OperationType.FUNCTION,
                     isComposable = false,
-                    returnType = "Edm.Int32")
-      java.lang.Integer getEmployeesCount(
+                    referenceType = java.lang.Integer.class,                    returnType = "Edm.Int32")
+      org.apache.olingo.ext.proxy.api.Invoker<java.lang.Integer> getEmployeesCount(
             );
 
     
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "IncreaseRevenue",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "IncreaseRevenue",
                     type = OperationType.ACTION,
-                    returnType = "Edm.Int64")
-      java.lang.Long increaseRevenue(
+                    referenceType = java.lang.Long.class,                    returnType = "Edm.Int64")
+      org.apache.olingo.ext.proxy.api.Invoker<java.lang.Long> increaseRevenue(
                 @Parameter(name = "IncreaseValue", type = "Edm.Int64", nullable = true) java.lang.Long increaseValue
             );
 
         }
-
     Annotations annotations();
 
     interface Annotations {

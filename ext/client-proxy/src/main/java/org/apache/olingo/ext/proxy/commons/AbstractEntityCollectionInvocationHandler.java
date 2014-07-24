@@ -42,7 +42,8 @@ import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
-public abstract class AbstractEntityCollectionInvocationHandler<T extends EntityType, EC extends EntityCollection<T>>
+public abstract class AbstractEntityCollectionInvocationHandler<
+        T extends EntityType<?>, EC extends EntityCollection<T, ?, ?>>
         extends AbstractCollectionInvocationHandler<T, EC> {
 
   private static final long serialVersionUID = 98078202642671727L;
@@ -79,7 +80,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<T extends Entity
 
   @SuppressWarnings("unchecked")
   public AbstractEntityCollectionInvocationHandler(
-          final Class<? extends EntityCollection<T>> ref,
+          final Class<? extends EntityCollection<T, ?, ?>> ref,
           final AbstractService<?> service,
           final URI targetEntitySetURI,
           final CommonURIBuilder<?> uri) {

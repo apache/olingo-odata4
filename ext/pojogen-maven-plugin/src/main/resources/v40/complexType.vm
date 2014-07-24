@@ -22,7 +22,7 @@
         isAbstract = $complexType.Abstract#if($complexType.getBaseType()),
         baseType = "$complexType.getBaseType().getFullQualifiedName().toString()"#end)
 public interface $utility.capitalize($complexType.Name) 
-    extends org.apache.olingo.ext.proxy.api.ComplexType,#if($complexType.getBaseType())$utility.getJavaType($complexType.getBaseType().getFullQualifiedName().toString())#{else}org.apache.olingo.ext.proxy.api.SingleQuery<$utility.capitalize($complexType.Name)>#{end}#if( $complexType.isOpenType() ),AbstractOpenType#{end} {
+    extends #if($complexType.getBaseType())$utility.getJavaType($complexType.getBaseType().getFullQualifiedName().toString())#{else}org.apache.olingo.ext.proxy.api.ComplexType<$utility.capitalize($complexType.Name)>, org.apache.olingo.ext.proxy.api.StructuredQuery<$utility.capitalize($complexType.Name)>#{end}#if( $complexType.isOpenType() ),AbstractOpenType#{end} {
 
 #if( $entityType.getBaseType() )
   @Override

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.demo.odatademo;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -26,5 +27,8 @@ import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 
 @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Categories", container = "ODataDemo.DemoService")
 public interface Categories 
-  extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection, Categories>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection> {
+  extends org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection>, 
+  org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<Categories>,
+  AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection> {
+
 }

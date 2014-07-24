@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -97,88 +98,98 @@ public interface InMemoryEntities extends PersistenceManager {
   Operations operations();
 
   public interface Operations {
-        @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetBossEmails",
+        
+    @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetBossEmails",
                     type = OperationType.FUNCTION,
                     isComposable = false,
-                    returnType = "Collection(Edm.String)")
-  org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getBossEmails(
+                    referenceType = org.apache.olingo.ext.proxy.api.PrimitiveCollection.class,                    returnType = "Collection(Edm.String)")
+    org.apache.olingo.ext.proxy.api.PrimitiveCollectionInvoker<org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String>> getBossEmails(
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "start", type = "Edm.Int32", nullable = false) java.lang.Integer start, 
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "count", type = "Edm.Int32", nullable = false) java.lang.Integer count
     );
 
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetPerson2",
+          
+    @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetPerson2",
                     type = OperationType.FUNCTION,
                     isComposable = true,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Person")
-  org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person getPerson2(
+                    referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Person")
+    org.apache.olingo.ext.proxy.api.StructuredInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person> getPerson2(
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "city", type = "Edm.String", nullable = false) java.lang.String city
     );
 
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetDefaultColor",
+          
+    @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetDefaultColor",
                     type = OperationType.FUNCTION,
                     isComposable = true,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Color")
-  org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color getDefaultColor(
+                    referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Color")
+    org.apache.olingo.ext.proxy.api.Invoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> getDefaultColor(
     );
 
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetPerson",
+          
+    @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetPerson",
                     type = OperationType.FUNCTION,
                     isComposable = true,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Person")
-  org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person getPerson(
+                    referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Person")
+    org.apache.olingo.ext.proxy.api.StructuredInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person> getPerson(
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "address", type = "Microsoft.Test.OData.Services.ODataWCFService.Address", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address address
     );
 
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetProductsByAccessLevel",
+          
+    @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetProductsByAccessLevel",
                     type = OperationType.FUNCTION,
                     isComposable = false,
-                    returnType = "Collection(Edm.String)")
-  org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> getProductsByAccessLevel(
+                    referenceType = org.apache.olingo.ext.proxy.api.PrimitiveCollection.class,                    returnType = "Collection(Edm.String)")
+    org.apache.olingo.ext.proxy.api.PrimitiveCollectionInvoker<org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String>> getProductsByAccessLevel(
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "accessLevel", type = "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel accessLevel
     );
 
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetAllProducts",
+          
+    @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetAllProducts",
                     type = OperationType.FUNCTION,
                     isComposable = true,
-                    returnType = "Collection(Microsoft.Test.OData.Services.ODataWCFService.Product)")
-  org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection getAllProducts(
+                    referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection.class,                    returnType = "Collection(Microsoft.Test.OData.Services.ODataWCFService.Product)")
+    org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection> getAllProducts(
     );
 
     
-        @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetBossAddress",
+        
+    @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetBossAddress",
                     type = OperationType.ACTION,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Address")
-  org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address resetBossAddress(
+                    referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Address")
+    org.apache.olingo.ext.proxy.api.StructuredInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address> resetBossAddress(
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "address", type = "Microsoft.Test.OData.Services.ODataWCFService.Address", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address address
     );
   
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetDataSource",
+          
+    @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetDataSource",
                     type = OperationType.ACTION)
-  void resetDataSource(
+    org.apache.olingo.ext.proxy.api.Invoker<Void> resetDataSource(
     );
   
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "Discount",
+          
+    @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "Discount",
                     type = OperationType.ACTION)
-  void discount(
+    org.apache.olingo.ext.proxy.api.Invoker<Void> discount(
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "percentage", type = "Edm.Int32", nullable = false) java.lang.Integer percentage
     );
   
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetBossEmail",
+          
+    @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetBossEmail",
                     type = OperationType.ACTION,
-                    returnType = "Collection(Edm.String)")
-  org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> resetBossEmail(
+                    referenceType = org.apache.olingo.ext.proxy.api.PrimitiveCollection.class,                    returnType = "Collection(Edm.String)")
+    org.apache.olingo.ext.proxy.api.PrimitiveCollectionInvoker<org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String>> resetBossEmail(
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "emails", type = "Collection(Edm.String)", nullable = false) org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> emails
     );
   
       }
 
-  <NE extends EntityType> NE newEntityInstance(Class<NE> ref);
+  <NE extends EntityType<?>> NE newEntityInstance(Class<NE> ref);
 
-  <T extends EntityType, NEC extends EntityCollection<T>> NEC newEntityCollection(Class<NEC> ref);
+  <T extends EntityType<?>, NEC extends EntityCollection<T, ?, ?>> NEC newEntityCollection(Class<NEC> ref);
 
-  <NE extends ComplexType> NE newComplexInstance(Class<NE> ref);
+  <NE extends ComplexType<?>> NE newComplexInstance(Class<NE> ref);
 
-  <T extends ComplexType, NEC extends ComplexCollection<T>> NEC newComplexCollection(Class<NEC> ref);
+  <T extends ComplexType<?>, NEC extends ComplexCollection<T, ?, ?>> NEC newComplexCollection(Class<NEC> ref);
 
   <T extends Serializable, NEC extends PrimitiveCollection<T>> NEC newPrimitiveCollection(Class<T> ref);
 

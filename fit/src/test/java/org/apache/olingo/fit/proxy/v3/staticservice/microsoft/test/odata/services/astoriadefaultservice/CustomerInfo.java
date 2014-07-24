@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -26,5 +27,8 @@ import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 
 @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "CustomerInfo", container = "Microsoft.Test.OData.Services.AstoriaDefaultService.DefaultContainer")
 public interface CustomerInfo 
-  extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfo, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfoCollection, CustomerInfo>, AbstractEntitySet<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfo, java.lang.Integer, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfoCollection> {
+  extends org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfo, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfoCollection>, 
+  org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<CustomerInfo>,
+  AbstractEntitySet<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfo, java.lang.Integer, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfoCollection> {
+
 }

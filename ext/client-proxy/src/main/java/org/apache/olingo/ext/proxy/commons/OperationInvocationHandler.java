@@ -36,12 +36,16 @@ import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
 final class OperationInvocationHandler extends AbstractInvocationHandler implements OperationExecutor {
 
@@ -119,13 +123,13 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
   }
 
   @Override
+  @SuppressWarnings({"unchecked", "rawtypes"})
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
     } else {
-      final Annotation[] methodAnnots = method.getAnnotations();
-      if (methodAnnots[0] instanceof Operation) {
-        final Operation operation = (Operation) methodAnnots[0];
+      final Operation operation = method.getAnnotation(Operation.class);
+      if (operation != null) {
 
         final Annotation[][] annotations = method.getParameterAnnotations();
         final List<String> parameterNames;
@@ -160,7 +164,33 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
           throw new IllegalStateException("Invalid target invocation");
         }
 
-        return invokeOperation(operation, method, parameters, edmOperation.getKey(), edmOperation.getValue());
+        final Map<String, ODataValue> parameterValues = new LinkedHashMap<String, ODataValue>();
+        for (Map.Entry<Parameter, Object> parameter : parameters.entrySet()) {
+
+          if (!parameter.getKey().nullable() && parameter.getValue() == null) {
+            throw new IllegalArgumentException(
+                    "Parameter " + parameter.getKey().name() + " is not nullable but a null value was provided");
+          }
+
+          final EdmTypeInfo type = new EdmTypeInfo.Builder().
+                  setEdm(service.getClient().getCachedEdm()).setTypeExpression(parameter.getKey().type()).build();
+
+          final ODataValue paramValue = parameter.getValue() == null
+                  ? null
+                  : CoreUtils.getODataValue(service.getClient(), type, parameter.getValue());
+
+          parameterValues.put(parameter.getKey().name(), paramValue);
+        }
+
+        return Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[] {method.getReturnType()}, new InvokerHandler(
+                edmOperation.getKey(),
+                parameterValues,
+                operation,
+                edmOperation.getValue(),
+                operation.referenceType(),
+                service));
       } else {
         throw new NoSuchMethodException(method.getName());
       }

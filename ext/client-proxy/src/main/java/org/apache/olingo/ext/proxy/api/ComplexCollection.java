@@ -18,8 +18,9 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-import java.io.Serializable;
 import java.util.Collection;
 
-public interface ComplexCollection<T extends ComplexType> extends Collection<T>, Serializable {
+public interface ComplexCollection<
+        T extends StructuredType<?>, EC extends Collection<T>, CT extends StructuredCollection<T, EC, ?>>
+        extends StructuredCollection<T, EC, CT> {
 }

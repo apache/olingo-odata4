@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -25,7 +26,8 @@ import java.util.Collection;
 
 
 public interface CustomerCollection extends 
-    org.apache.olingo.ext.proxy.api.StruncturedCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Customer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CustomerCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CustomerCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Customer> {
+    org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CustomerCollection>,
+    org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Customer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CustomerCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CustomerCollection> {
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

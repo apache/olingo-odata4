@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -32,7 +33,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         hasStream = false,
         isAbstract = false)
 public interface ComputerDetail 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<ComputerDetail> {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.ext.proxy.api.EntityType<ComputerDetail>, org.apache.olingo.ext.proxy.api.StructuredQuery<ComputerDetail>   {
 
 
     
@@ -211,19 +213,20 @@ public interface ComputerDetail
     void setComputer(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Computer _computer);
     
 
+
         Operations operations();
 
     interface Operations {
     
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetComputerDetailsSpecifications",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetComputerDetailsSpecifications",
                     type = OperationType.ACTION)
-      void resetComputerDetailsSpecifications(
+      org.apache.olingo.ext.proxy.api.Invoker<Void> resetComputerDetailsSpecifications(
                 @Parameter(name = "specifications", type = "Collection(Edm.String)", nullable = false) org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> specifications, 
                 @Parameter(name = "purchaseTime", type = "Edm.DateTime", nullable = false) java.sql.Timestamp purchaseTime
             );
 
         }
-
     Annotations annotations();
 
     interface Annotations {

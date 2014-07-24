@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -26,5 +27,8 @@ import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 
 @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Row", container = "Microsoft.Test.OData.Services.OpenTypesServiceV3.DefaultContainer")
 public interface Row 
-  extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.Row, org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.RowCollection, Row>, AbstractEntitySet<org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.Row, java.util.UUID, org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.RowCollection> {
+  extends org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.Row, org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.RowCollection>, 
+  org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<Row>,
+  AbstractEntitySet<org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.Row, java.util.UUID, org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.RowCollection> {
+
 }

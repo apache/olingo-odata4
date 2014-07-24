@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -26,5 +27,8 @@ import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 
 @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "RSAToken", container = "Microsoft.Test.OData.Services.AstoriaDefaultService.DefaultContainer")
 public interface RSAToken 
-  extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.RSAToken, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.RSATokenCollection, RSAToken>, AbstractEntitySet<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.RSAToken, java.lang.String, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.RSATokenCollection> {
+  extends org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.RSAToken, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.RSATokenCollection>, 
+  org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<RSAToken>,
+  AbstractEntitySet<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.RSAToken, java.lang.String, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.RSATokenCollection> {
+
 }

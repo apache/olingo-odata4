@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -31,7 +32,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product")
 public interface DiscontinuedProduct 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product   {
 
   @Override
   DiscontinuedProduct load();
@@ -334,13 +336,13 @@ public interface DiscontinuedProduct
     void setPhotos(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductPhotoCollection _photos);
     
 
+
         @Override
         Operations operations();
 
     interface Operations            extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product.Operations{
     
         }
-
     Annotations annotations();
 
     interface Annotations            extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product.Annotations{

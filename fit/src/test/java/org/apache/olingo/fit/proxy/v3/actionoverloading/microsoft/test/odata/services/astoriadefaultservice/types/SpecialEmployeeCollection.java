@@ -16,32 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.OperationType;
-import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import java.util.Collection;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
 public interface SpecialEmployeeCollection extends 
-    org.apache.olingo.ext.proxy.api.StruncturedCollectionQuery<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployee, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployeeCollection, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployeeCollection>, org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployee> {
-    Operations operations();
+    org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployeeCollection>,
+    org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployee, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployeeCollection, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployeeCollection> {
 
-    public interface Operations {
+        Operations operations();
 
+    interface Operations {
     
-          @Operation(name = "IncreaseSalaries",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "IncreaseSalaries",
                     type = OperationType.ACTION)
-      void increaseSalaries(
+      org.apache.olingo.ext.proxy.api.Invoker<Void> increaseSalaries(
                 @Parameter(name = "n", type = "Edm.Int32", nullable = false) java.lang.Integer n
             );
 
         }
-
   Object getAnnotation(Class<? extends AbstractTerm> term);
 
   Collection<Class<? extends AbstractTerm>> getAnnotationTerms();

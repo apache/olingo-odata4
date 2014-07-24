@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -28,7 +29,7 @@ import org.apache.olingo.ext.proxy.api.Annotatable;
         isOpenType = false,
         isAbstract = false)
 public interface Address 
-    extends org.apache.olingo.ext.proxy.api.ComplexType,org.apache.olingo.ext.proxy.api.SingleQuery<Address> {
+    extends org.apache.olingo.ext.proxy.api.ComplexType<Address>, org.apache.olingo.ext.proxy.api.StructuredQuery<Address> {
 
 
 
@@ -144,6 +145,8 @@ public interface Address
 
 
     }
+
+
 
 
 }

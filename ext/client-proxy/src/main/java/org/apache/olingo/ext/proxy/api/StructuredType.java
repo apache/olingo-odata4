@@ -18,10 +18,23 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
+import java.io.Serializable;
+import java.util.concurrent.Future;
+
 /**
  * Marker interface for Entity and complex type.
  */
-public interface StructuredType extends java.io.Serializable {
+public interface StructuredType<T> extends Serializable {
+
+  /**
+   * @return structured type instance
+   */
+  T load();
+
+  /**
+   * @return future handle on structured type instance
+   */
+  Future<T> loadAsync();
 
   /**
    * Delete object.

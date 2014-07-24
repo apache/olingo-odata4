@@ -59,7 +59,9 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
         isAbstract = $entityType.Abstract#if($entityType.getBaseType()),
         baseType = "$entityType.getBaseType().getFullQualifiedName().toString()"#end)
 public interface $utility.capitalize($entityType.Name) 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,#if( $entityType.getBaseType() )$utility.getJavaType($entityType.getBaseType())#{else}org.apache.olingo.ext.proxy.api.SingleQuery<$utility.capitalize($entityType.Name)>#end#{if}( $entityType.isOpenType() ),AbstractOpenType#end {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  #if( $entityType.getBaseType() )$utility.getJavaType($entityType.getBaseType())#{else}org.apache.olingo.ext.proxy.api.EntityType<$utility.capitalize($entityType.Name)>, org.apache.olingo.ext.proxy.api.StructuredQuery<$utility.capitalize($entityType.Name)>#end
+  #{if}( $entityType.isOpenType() ),AbstractOpenType#end {
 
 #if( $entityType.getBaseType() )
   @Override
@@ -137,52 +139,8 @@ public interface $utility.capitalize($entityType.Name)
 #set( $actions = $utility.getActionsBoundTo($entityType.Name, false) )
 #set( $inherited = $utility.justInheritedOperationsBoundTo($entityType) )
 #if( $inherited.size() > 0 || $functions.size() > 0 || $actions.size() > 0 )
-    #if($inherited.size() > 0)
-    @Override
-    #end
-    Operations operations();
-
-    interface Operations #if($inherited.size() > 0)
-           extends ${utility.getJavaType($entityType.getBaseType())}.Operations#end{
-    #foreach($operation in $functions)
-      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "$operation.Name",
-                    type = OperationType.FUNCTION,
-                    isComposable = $operation.Composable#if($operation.ReturnType),
-                    returnType = "#if( $operation.ReturnType.Collection )Collection(#end$operation.ReturnType.Type.FullQualifiedName.toString()#if( $operation.ReturnType.Collection ))#end"#end)
-      #if($operation.ReturnType)$utility.getJavaType($operation.ReturnType.Type, $operation.ReturnType.Collection)#{else}void#end $utility.uncapitalize($operation.Name)(
-      #if($operation.ParameterNames)
-        #set( $count = $operation.ParameterNames.size() )#*
-        *##foreach($paramName in $operation.ParameterNames)#*
-          *##set( $count = $count - 1 )#*
-          *##set( $param = $operation.getParameter($paramName) )#*
-          *##if( !$entityType.FullQualifiedName.equals($param.Type.FullQualifiedName) )#*
-        *#    @Parameter(name = "$param.Name", type = "#if( $param.Collection )Collection(#end$param.Type.FullQualifiedName.toString()#if( $param.Collection ))#end", nullable = $param.Nullable) $utility.getJavaType($param.Type, $param.Collection) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
-
-      #end
-      #end#*
-      *##end);
-
-    #end
-
-    #foreach($operation in $actions)
-      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "$operation.Name",
-                    type = OperationType.ACTION#if($operation.ReturnType),
-                    returnType = "#if( $operation.ReturnType.Collection )Collection(#end$operation.ReturnType.Type.FullQualifiedName.toString()#if( $operation.ReturnType.Collection ))#end"#end)
-      #if($operation.ReturnType)$utility.getJavaType($operation.ReturnType.Type, $operation.ReturnType.Collection)#{else}void#end $utility.uncapitalize($operation.Name)(
-      #if($operation.ParameterNames)
-        #set( $count = $operation.ParameterNames.size() )#*
-        *##foreach($paramName in $operation.ParameterNames)#*
-          *##set( $count = $count - 1 )#*
-          *##set( $param = $operation.getParameter($paramName) )#*
-          *##if( !$entityType.FullQualifiedName.equals($param.Type.FullQualifiedName) )#*
-        *#    @Parameter(name = "$param.Name", type = "#if( $param.Collection )Collection(#end$param.Type.FullQualifiedName.toString()#if( $param.Collection ))#end", nullable = $param.Nullable) $utility.getJavaType($param.Type, $param.Collection) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
-
-      #end
-      #end#*
-      *##end);
-
-    #end
-    }
+#set($structuredType = $entityType)
+#parse( "operation.vm" )
 #end
 
     Annotations annotations();
@@ -233,7 +191,9 @@ public interface $utility.capitalize($entityType.Name)
 
     @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "$property.Name", contained = true)
     interface $utility.capitalize($property.Name) 
-      extends org.apache.olingo.ext.proxy.api.EntitySetQuery<$javaEntityType, ${javaEntityType}Collection, $utility.capitalize($property.Name)>, AbstractEntitySet<$javaEntityType, $type, ${javaEntityType}Collection> {
+      extends org.apache.olingo.ext.proxy.api.EntitySet<$javaEntityType, ${javaEntityType}Collection>, 
+      org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<$utility.capitalize($property.Name)>,
+      AbstractEntitySet<$javaEntityType, $type, ${javaEntityType}Collection> {
     }
 
   #end

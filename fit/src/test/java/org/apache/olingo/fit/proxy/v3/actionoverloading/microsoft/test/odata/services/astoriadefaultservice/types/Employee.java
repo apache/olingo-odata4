@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -33,7 +34,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.AstoriaDefaultService.Person")
 public interface Employee 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Person {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Person   {
 
   @Override
   Employee load();
@@ -178,25 +180,27 @@ public interface Employee
     void setManager(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Employee _manager);
     
 
+
         @Override
         Operations operations();
 
     interface Operations            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Person.Operations{
     
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "UpdatePersonInfo",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "UpdatePersonInfo",
                     type = OperationType.ACTION)
-      void updatePersonInfo(
+      org.apache.olingo.ext.proxy.api.Invoker<Void> updatePersonInfo(
             );
 
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "IncreaseEmployeeSalary",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "IncreaseEmployeeSalary",
                     type = OperationType.ACTION,
-                    returnType = "Edm.Boolean")
-      java.lang.Boolean increaseEmployeeSalary(
+                    referenceType = java.lang.Boolean.class,                    returnType = "Edm.Boolean")
+      org.apache.olingo.ext.proxy.api.Invoker<java.lang.Boolean> increaseEmployeeSalary(
                 @Parameter(name = "n", type = "Edm.Int32", nullable = false) java.lang.Integer n
             );
 
         }
-
     Annotations annotations();
 
     interface Annotations            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Person.Annotations{

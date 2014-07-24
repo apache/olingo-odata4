@@ -155,7 +155,8 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends EntityType, NEC extends EntityCollection<T>> NEC newEntityCollection(final Class<NEC> ref) {
+  public <T extends EntityType<?>, NEC extends EntityCollection<T, ?, ?>> NEC newEntityCollection(
+          final Class<NEC> ref) {
     return (NEC) Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {ref},
@@ -163,7 +164,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
   }
 
   @SuppressWarnings("unchecked")
-  public <NE extends ComplexType> NE newComplexInstance(final Class<NE> ref) {
+  public <NE extends ComplexType<?>> NE newComplexInstance(final Class<NE> ref) {
     return (NE) Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {ref},
@@ -171,7 +172,8 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends ComplexType, NEC extends ComplexCollection<T>> NEC newComplexCollection(final Class<NEC> ref) {
+  public <T extends ComplexType<?>, NEC extends ComplexCollection<T, ?, ?>> NEC newComplexCollection(
+          final Class<NEC> ref) {
     final Class<T> itemRef = (Class<T>) ClassUtils.extractTypeArg(ref, ComplexCollection.class);
 
     return (NEC) Proxy.newProxyInstance(

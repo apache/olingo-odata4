@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -24,7 +25,7 @@ package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.se
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "Dimensions")
 public interface Dimensions 
-    extends org.apache.olingo.ext.proxy.api.ComplexType,org.apache.olingo.ext.proxy.api.SingleQuery<Dimensions> {
+    extends org.apache.olingo.ext.proxy.api.ComplexType<Dimensions>, org.apache.olingo.ext.proxy.api.StructuredQuery<Dimensions> {
 
 
 
@@ -60,4 +61,6 @@ public interface Dimensions
     void setDepth(java.math.BigDecimal _depth);
 
     
+
+
 }

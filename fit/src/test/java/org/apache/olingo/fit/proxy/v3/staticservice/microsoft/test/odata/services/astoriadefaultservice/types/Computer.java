@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -31,7 +32,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         hasStream = false,
         isAbstract = false)
 public interface Computer 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<Computer> {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.ext.proxy.api.EntityType<Computer>, org.apache.olingo.ext.proxy.api.StructuredQuery<Computer>   {
 
 
     
@@ -95,18 +97,19 @@ public interface Computer
     void setComputerDetail(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComputerDetail _computerDetail);
     
 
+
         Operations operations();
 
     interface Operations {
     
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetComputer",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetComputer",
                     type = OperationType.ACTION,
-                    returnType = "Microsoft.Test.OData.Services.AstoriaDefaultService.Computer")
-      org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Computer getComputer(
+                    referenceType = org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Computer.class,                    returnType = "Microsoft.Test.OData.Services.AstoriaDefaultService.Computer")
+      org.apache.olingo.ext.proxy.api.StructuredInvoker<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Computer> getComputer(
             );
 
         }
-
     Annotations annotations();
 
     interface Annotations {

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.demo.odatademo;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -26,5 +27,8 @@ import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 
 @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Suppliers", container = "ODataDemo.DemoService")
 public interface Suppliers 
-  extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection, Suppliers>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection> {
+  extends org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection>, 
+  org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<Suppliers>,
+  AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection> {
+
 }

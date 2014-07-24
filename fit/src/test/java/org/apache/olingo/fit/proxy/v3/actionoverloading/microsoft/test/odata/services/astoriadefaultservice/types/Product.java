@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -31,7 +32,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         hasStream = false,
         isAbstract = false)
 public interface Product 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<Product> {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.ext.proxy.api.EntityType<Product>, org.apache.olingo.ext.proxy.api.StructuredQuery<Product>   {
 
 
     
@@ -240,18 +242,19 @@ public interface Product
     void setPhotos(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ProductPhotoCollection _photos);
     
 
+
         Operations operations();
 
     interface Operations {
     
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "RetrieveProduct",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "RetrieveProduct",
                     type = OperationType.ACTION,
-                    returnType = "Edm.Int32")
-      java.lang.Integer retrieveProduct(
+                    referenceType = java.lang.Integer.class,                    returnType = "Edm.Int32")
+      org.apache.olingo.ext.proxy.api.Invoker<java.lang.Integer> retrieveProduct(
             );
 
         }
-
     Annotations annotations();
 
     interface Annotations {

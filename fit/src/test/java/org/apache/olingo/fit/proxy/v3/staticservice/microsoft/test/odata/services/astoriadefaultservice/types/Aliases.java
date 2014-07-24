@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -24,7 +25,7 @@ package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.servic
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "Aliases")
 public interface Aliases 
-    extends org.apache.olingo.ext.proxy.api.ComplexType,org.apache.olingo.ext.proxy.api.SingleQuery<Aliases> {
+    extends org.apache.olingo.ext.proxy.api.ComplexType<Aliases>, org.apache.olingo.ext.proxy.api.StructuredQuery<Aliases> {
 
 
 
@@ -38,4 +39,6 @@ public interface Aliases
     void setAlternativeNames(org.apache.olingo.ext.proxy.api.PrimitiveCollection<java.lang.String> _alternativeNames);
 
     
+
+
 }

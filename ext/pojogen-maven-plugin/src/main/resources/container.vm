@@ -72,11 +72,35 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
   public interface Operations {
   #foreach($operation in $container.FunctionImports)
   #foreach($function in $operation.UnboundFunctions)
+    #if($function.ReturnType)#*
+      *##set($defaultType = $utility.getJavaType($function.ReturnType.Type, $function.ReturnType.Collection))#*
+      *##if(!($function.getReturnType().isCollection() || ${function.ReturnType.Type.Kind} == "ENTITY" || ${function.ReturnType.Type.Kind} == "COMPLEX" || $utility.isStreamType($function.ReturnType.Type)))#*
+        *##set($returnType = "org.apache.olingo.ext.proxy.api.Invoker<$defaultType>")#*
+      *##else#*
+        *##if(${function.ReturnType.Type.Kind} == "ENTITY" || ${function.ReturnType.Type.Kind} == "COMPLEX")#*
+          *##if($function.getReturnType().isCollection())#*
+            *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker<$defaultType>")#*
+          *##{else}#*
+            *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredInvoker<$defaultType>")#*
+          *##end#*
+        *##{else}#*
+          *##if($function.getReturnType().isCollection())#*
+            *##set($returnType = "org.apache.olingo.ext.proxy.api.PrimitiveCollectionInvoker<$defaultType>")#*
+          *##{else}#*
+            *##set($returnType = "org.apache.olingo.ext.proxy.api.Invoker<$defaultType>")#*
+          *##end#*
+        *##end#*
+      *##end#*
+    *##{else}#*
+      *##set($returnType = "org.apache.olingo.ext.proxy.api.Invoker<Void>")#*
+    *##end
+
     @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "$function.Name",
                     type = OperationType.FUNCTION,
                     isComposable = $function.Composable#if($function.ReturnType),
+                    #if($function.ReturnType)referenceType = ${defaultType.replaceAll("<.*>", "")}.class,#end
                     returnType = "#if( $function.ReturnType.Collection )Collection(#end$function.ReturnType.Type.FullQualifiedName.toString()#if( $function.ReturnType.Collection ))#end"#end)
-  #if($function.ReturnType)$utility.getJavaType($function.ReturnType.Type, $function.ReturnType.Collection)#{else}void#end $utility.uncapitalize($function.Name)(
+    $returnType $utility.uncapitalize($function.Name)(
     #if($function.ParameterNames)
       #set( $count = $function.ParameterNames.size() )#*
       *##foreach($paramName in $function.ParameterNames)#*
@@ -93,10 +117,34 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
   #foreach($operation in $container.ActionImports)
   #set( $action = $operation.UnboundAction )
   #if($action)
+    #if($action.ReturnType)#*
+      *##set($defaultType = $utility.getJavaType($action.ReturnType.Type, $action.ReturnType.Collection))#*
+      *##if(!($action.getReturnType().isCollection() || ${action.ReturnType.Type.Kind} == "ENTITY" || ${action.ReturnType.Type.Kind} == "COMPLEX" || $utility.isStreamType($action.ReturnType.Type)))#*
+        *##set($returnType = "org.apache.olingo.ext.proxy.api.Invoker<$defaultType>")#*
+      *##else#*
+        *##if(${action.ReturnType.Type.Kind} == "ENTITY" || ${action.ReturnType.Type.Kind} == "COMPLEX")#*
+          *##if($action.getReturnType().isCollection())#*
+            *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker<$defaultType>")#*
+          *##{else}#*
+            *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredInvoker<$defaultType>")#*
+          *##end#*
+        *##{else}#*
+          *##if($action.getReturnType().isCollection())#*
+            *##set($returnType = "org.apache.olingo.ext.proxy.api.PrimitiveCollectionInvoker<$defaultType>")#*
+          *##{else}#*
+            *##set($returnType = "org.apache.olingo.ext.proxy.api.Invoker<$defaultType>")#*
+          *##end#*
+        *##end#*
+      *##end#*
+    *##{else}#*
+      *##set($returnType = "org.apache.olingo.ext.proxy.api.Invoker<Void>")#*
+    *##end
+
     @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "$action.Name",
                     type = OperationType.ACTION#if($action.ReturnType),
+                    #if($action.ReturnType)referenceType = ${defaultType.replaceAll("<.*>", "")}.class,#end
                     returnType = "#if( $action.ReturnType.Collection )Collection(#end$action.ReturnType.Type.FullQualifiedName.toString()#if( $action.ReturnType.Collection ))#end"#end)
-  #if($action.ReturnType)$utility.getJavaType($action.ReturnType.Type, $action.ReturnType.Collection)#{else}void#end $utility.uncapitalize($action.Name)(
+    $returnType $utility.uncapitalize($action.Name)(
     #if($action.ParameterNames)
       #set( $count = $action.ParameterNames.size() )#*
       *##foreach($paramName in $action.ParameterNames)#*
@@ -112,13 +160,13 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
   #end
   }
 
-  <NE extends EntityType> NE newEntityInstance(Class<NE> ref);
+  <NE extends EntityType<?>> NE newEntityInstance(Class<NE> ref);
 
-  <T extends EntityType, NEC extends EntityCollection<T>> NEC newEntityCollection(Class<NEC> ref);
+  <T extends EntityType<?>, NEC extends EntityCollection<T, ?, ?>> NEC newEntityCollection(Class<NEC> ref);
 
-  <NE extends ComplexType> NE newComplexInstance(Class<NE> ref);
+  <NE extends ComplexType<?>> NE newComplexInstance(Class<NE> ref);
 
-  <T extends ComplexType, NEC extends ComplexCollection<T>> NEC newComplexCollection(Class<NEC> ref);
+  <T extends ComplexType<?>, NEC extends ComplexCollection<T, ?, ?>> NEC newComplexCollection(Class<NEC> ref);
 
   <T extends Serializable, NEC extends PrimitiveCollection<T>> NEC newPrimitiveCollection(Class<T> ref);
 

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.demo.odatademo;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -26,5 +27,8 @@ import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 
 @org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Advertisements", container = "ODataDemo.DemoService")
 public interface Advertisements 
-  extends org.apache.olingo.ext.proxy.api.EntitySetQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AdvertisementCollection, Advertisements>, AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement, java.util.UUID, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AdvertisementCollection> {
+  extends org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AdvertisementCollection>, 
+  org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<Advertisements>,
+  AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement, java.util.UUID, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AdvertisementCollection> {
+
 }

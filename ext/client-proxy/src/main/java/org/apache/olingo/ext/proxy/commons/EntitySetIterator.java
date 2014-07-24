@@ -30,7 +30,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.EntityType;
 
-class EntitySetIterator<T extends EntityType, KEY extends Serializable, EC extends EntityCollection<T>>
+class EntitySetIterator<T extends EntityType<?>, KEY extends Serializable, EC extends EntityCollection<T, ?, ?>>
         implements Iterator<T> {
 
   private final EntitySetInvocationHandler<T, KEY, EC> esi;

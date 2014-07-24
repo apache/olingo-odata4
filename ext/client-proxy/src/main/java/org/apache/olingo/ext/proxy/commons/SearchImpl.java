@@ -29,7 +29,7 @@ import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.Search;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
-public class SearchImpl<T extends EntityType, EC extends EntityCollection<T>> implements Search<T, EC> {
+public class SearchImpl<T extends EntityType<?>, EC extends EntityCollection<T, ?, ?>> implements Search<T, EC> {
 
   private static final long serialVersionUID = 4383858176507769973L;
 
@@ -50,7 +50,7 @@ public class SearchImpl<T extends EntityType, EC extends EntityCollection<T>> im
           final Class<EC> collTypeRef, final URI baseURI, final EntitySetInvocationHandler<T, ?, EC> handler) {
 
     this.client = client;
-    this.typeRef = (Class<T>) ClassUtils.extractTypeArg(collTypeRef);
+    this.typeRef = (Class<T>) ClassUtils.extractTypeArg(collTypeRef, EntityCollection.class);
     this.collTypeRef = collTypeRef;
     this.baseURI = baseURI;
     this.handler = handler;

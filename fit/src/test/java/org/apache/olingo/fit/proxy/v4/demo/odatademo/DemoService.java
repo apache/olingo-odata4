@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.demo.odatademo;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -58,21 +59,22 @@ public interface DemoService extends PersistenceManager {
 
   public interface Operations {
   
-        @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "IncreaseSalaries",
+        
+    @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "IncreaseSalaries",
                     type = OperationType.ACTION)
-  void increaseSalaries(
+    org.apache.olingo.ext.proxy.api.Invoker<Void> increaseSalaries(
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "percentage", type = "Edm.Int32", nullable = false) java.lang.Integer percentage
     );
   
       }
 
-  <NE extends EntityType> NE newEntityInstance(Class<NE> ref);
+  <NE extends EntityType<?>> NE newEntityInstance(Class<NE> ref);
 
-  <T extends EntityType, NEC extends EntityCollection<T>> NEC newEntityCollection(Class<NEC> ref);
+  <T extends EntityType<?>, NEC extends EntityCollection<T, ?, ?>> NEC newEntityCollection(Class<NEC> ref);
 
-  <NE extends ComplexType> NE newComplexInstance(Class<NE> ref);
+  <NE extends ComplexType<?>> NE newComplexInstance(Class<NE> ref);
 
-  <T extends ComplexType, NEC extends ComplexCollection<T>> NEC newComplexCollection(Class<NEC> ref);
+  <T extends ComplexType<?>, NEC extends ComplexCollection<T, ?, ?>> NEC newComplexCollection(Class<NEC> ref);
 
   <T extends Serializable, NEC extends PrimitiveCollection<T>> NEC newPrimitiveCollection(Class<T> ref);
 
