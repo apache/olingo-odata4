@@ -130,11 +130,12 @@ public class TranslatedExceptionsTest {
 
   @Test
   public void keyForRootBundleButNotPresentInDerivedBundle() {
-    ODataTranslatedException exp = new ODataTranslatedException(DEV, ONEPARAM, "param1");
+    ODataTranslatedException exp =
+        new ODataTranslatedException(DEV, ODataTranslatedException.HTTP_METHOD_NOT_IMPLEMENTED, "param1");
     assertEquals(DEV, exp.getMessage());
-    
+
     ODataErrorMessage translatedMessage = exp.getTranslatedMessage(Locale.GERMAN);
     assertNotNull(translatedMessage);
-    assertEquals("Param1: param1", translatedMessage.getMessage());
+    assertEquals("Invalid http method given: 'param1'.", translatedMessage.getMessage());
   }
 }

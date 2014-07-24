@@ -38,6 +38,7 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerException;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -117,9 +118,9 @@ public class ODataJsonSerializerTest {
       Assert.fail("Expected exception not thrown!");
     } catch (final ODataSerializerException e) {
       Assert.assertEquals(ODataSerializerException.WRONG_PROPERTY_VALUE, e.getMessageKey());
-      // final String message = e.getLocalizedMessage();
-      // Assert.assertThat(message, CoreMatchers.containsString("PropertyInt16"));
-      // Assert.assertThat(message, CoreMatchers.containsString("false"));
+       final String message = e.getLocalizedMessage();
+       Assert.assertThat(message, CoreMatchers.containsString("PropertyInt16"));
+       Assert.assertThat(message, CoreMatchers.containsString("false"));
     }
   }
 
