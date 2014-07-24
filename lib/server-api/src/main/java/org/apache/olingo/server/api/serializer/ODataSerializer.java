@@ -25,7 +25,6 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.apache.olingo.server.api.ODataServerError;
 
 public interface ODataSerializer {

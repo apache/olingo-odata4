@@ -33,11 +33,12 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
+import org.apache.olingo.server.api.serializer.ODataSerializerException;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -106,13 +107,21 @@ public class ODataJsonSerializerTest {
         ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build());
   }
 
-  @Test(expected = ODataSerializerException.class)
+  @Test
   public void entityWrongData() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     entity.getProperties().get(0).setValue(ValueType.PRIMITIVE, false);
-    serializer.entity(edmEntitySet, entity,
-        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build());
+    try {
+      serializer.entity(edmEntitySet, entity,
+          ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build());
+      Assert.fail("Expected exception not thrown!");
+    } catch (final ODataSerializerException e) {
+      Assert.assertEquals(ODataSerializerException.WRONG_PROPERTY_VALUE, e.getMessageKey());
+       final String message = e.getLocalizedMessage();
+       Assert.assertThat(message, CoreMatchers.containsString("PropertyInt16"));
+       Assert.assertThat(message, CoreMatchers.containsString("false"));
+    }
   }
 
   @Test
@@ -151,7 +160,8 @@ public class ODataJsonSerializerTest {
     final String expectedResult = "{"
         + "\"@odata.context\":\"http://host/service/$metadata#ESCollAllPrim/$entity\","
         + "\"PropertyInt16\":1,"
-        + "\"CollPropertyString\":[\"spiderman@comic.com\",\"spidermaus@comic.com\",\"spidergirl@comic.com\"],"
+        + "\"CollPropertyString\":"
+        + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
         + "\"CollPropertyBoolean\":[true,false,true],"
         + "\"CollPropertyByte\":[50,200,249],"
         + "\"CollPropertySByte\":[-120,120,126],"
@@ -214,7 +224,8 @@ public class ODataJsonSerializerTest {
     final String expectedResult = "{"
         + "\"@odata.context\":\"$metadata#ESMixPrimCollComp/$entity\","
         + "\"PropertyInt16\":32767,"
-        + "\"CollPropertyString\":[\"spiderman@comic.com\",\"spidermaus@comic.com\",\"spidergirl@comic.com\"],"
+        + "\"CollPropertyString\":"
+        + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
         + "\"PropertyComp\":{\"PropertyInt16\":111,\"PropertyString\":\"TEST A\"},"
         + "\"CollPropertyComp\":["
         + "{\"PropertyInt16\":123,\"PropertyString\":\"TEST 1\"},"

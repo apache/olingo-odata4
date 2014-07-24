@@ -24,7 +24,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
@@ -32,6 +31,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
+import org.apache.olingo.server.api.serializer.ODataSerializerException;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.xml.MetadataDocumentXmlSerializer;
 import org.slf4j.Logger;
@@ -42,12 +42,13 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   private static final Logger log = LoggerFactory.getLogger(ODataXmlSerializerImpl.class);
 
   @Override
-  public InputStream serviceDocument(final Edm edm, final String serviceRoot) {
-    throw new ODataRuntimeException("Service Document not implemented for XML format");
+  public InputStream serviceDocument(final Edm edm, final String serviceRoot) throws ODataSerializerException {
+    throw new ODataSerializerException("Service Document not implemented for XML format",
+        ODataSerializerException.NOT_IMPLEMENTED);
   }
 
   @Override
-  public InputStream metadataDocument(final Edm edm) {
+  public InputStream metadataDocument(final Edm edm) throws ODataSerializerException {
     CircleStreamBuffer buffer;
     XMLStreamWriter xmlStreamWriter = null;
 
@@ -61,34 +62,38 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
       xmlStreamWriter.close();
 
       return buffer.getInputStream();
-    } catch (Exception e) {
+    } catch (final XMLStreamException e) {
       log.error(e.getMessage(), e);
-      throw new ODataRuntimeException(e);
+      throw new ODataSerializerException("An I/O exception occurred.", e, ODataSerializerException.IO_EXCEPTION);
     } finally {
       if (xmlStreamWriter != null) {
         try {
           xmlStreamWriter.close();
         } catch (XMLStreamException e) {
-          throw new ODataRuntimeException(e);
+          throw new ODataSerializerException("An I/O exception occurred.", e, ODataSerializerException.IO_EXCEPTION);
         }
       }
     }
   }
 
   @Override
-  public InputStream entity(final EdmEntitySet edmEntitySet, final Entity entity, final ContextURL contextURL) {
-    throw new ODataRuntimeException("Entity serialization not implemented for XML format");
+  public InputStream entity(final EdmEntitySet edmEntitySet, final Entity entity, final ContextURL contextURL)
+      throws ODataSerializerException {
+    throw new ODataSerializerException("Entity serialization not implemented for XML format",
+        ODataSerializerException.NOT_IMPLEMENTED);
   }
 
   @Override
   public InputStream entitySet(final EdmEntitySet edmEntitySet, final EntitySet entitySet,
-      final ContextURL contextURL) {
-    throw new ODataRuntimeException("Entityset serialization not implemented for XML format");
+      final ContextURL contextURL) throws ODataSerializerException {
+    throw new ODataSerializerException("Entityset serialization not implemented for XML format",
+        ODataSerializerException.NOT_IMPLEMENTED);
   }
 
   @Override
-  public InputStream error(ODataServerError error) {
-    throw new ODataRuntimeException("error serialization not implemented for XML format");
+  public InputStream error(ODataServerError error) throws ODataSerializerException {
+    throw new ODataSerializerException("error serialization not implemented for XML format",
+        ODataSerializerException.NOT_IMPLEMENTED);
   }
 
 }
