@@ -51,15 +51,20 @@ public class ODataTranslatedException extends ODataException {
     this.parameters = parameters;
   }
 
+  public ODataTranslatedException(String developmentMessage, Throwable cause, String messageKey, String... parameters) {
+    super(developmentMessage, cause);
+    this.messageKey = messageKey;
+    this.parameters = parameters;
+  }
+
   @Override
   public String getLocalizedMessage() {
     return getTranslatedMessage(DEFAULT_LOCALE).getMessage();
   }
 
-  public ODataTranslatedException(String developmentMessage, Throwable cause, String messageKey, String... parameters) {
-    super(developmentMessage, cause);
-    this.messageKey = messageKey;
-    this.parameters = parameters;
+  @Override
+  public String toString() {
+    return getMessage();
   }
 
   public String getMessageKey() {

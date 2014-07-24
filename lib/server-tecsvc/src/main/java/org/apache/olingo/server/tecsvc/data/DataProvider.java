@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.LinkedComplexValue;
@@ -99,7 +100,7 @@ public class DataProvider {
     }
   }
 
-  public static class DataProviderException extends Exception {
+  public static class DataProviderException extends ODataException {
     private static final long serialVersionUID = 5098059649321796156L;
 
     public DataProviderException(String message, Throwable throwable) {
@@ -286,7 +287,7 @@ public class DataProvider {
     Entity entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 1));
     entity.addProperty(createCollection("CollPropertyString",
-        "spiderman@comic.com", "spidermaus@comic.com", "spidergirl@comic.com"));
+        "Employee1@company.example", "Employee2@company.example", "Employee3@company.example"));
     entity.addProperty(createCollection("CollPropertyBoolean", true, false, true));
     entity.addProperty(createCollection("CollPropertyByte", 50, 200, 249));
     entity.addProperty(createCollection("CollPropertySByte", -120, 120, 126));
@@ -333,7 +334,7 @@ public class DataProvider {
     Entity entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE));
     entity.addProperty(createCollection("CollPropertyString",
-        "spiderman@comic.com", "spidermaus@comic.com", "spidergirl@comic.com"));
+        "Employee1@company.example", "Employee2@company.example", "Employee3@company.example"));
     LinkedComplexValue complexValue = new LinkedComplexValueImpl();
     complexValue.getValue().add(createPrimitive("PropertyInt16", 111));
     complexValue.getValue().add(createPrimitive("PropertyString", "TEST A"));
@@ -358,7 +359,7 @@ public class DataProvider {
     entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 7));
     entity.addProperty(createCollection("CollPropertyString",
-        "spiderman@comic.com", "spidermaus@comic.com", "spidergirl@comic.com"));
+        "Employee1@company.example", "Employee2@company.example", "Employee3@company.example"));
     complexValue = new LinkedComplexValueImpl();
     complexValue.getValue().add(createPrimitive("PropertyInt16", 222));
     complexValue.getValue().add(createPrimitive("PropertyString", "TEST B"));
@@ -370,7 +371,7 @@ public class DataProvider {
     entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 0));
     entity.addProperty(createCollection("CollPropertyString",
-        "spiderman@comic.com", "spidermaus@comic.com", "spidergirl@comic.com"));
+        "Employee1@company.example", "Employee2@company.example", "Employee3@company.example"));
     complexValue = new LinkedComplexValueImpl();
     complexValue.getValue().add(createPrimitive("PropertyInt16", 333));
     complexValue.getValue().add(createPrimitive("PropertyString", "TEST C"));
