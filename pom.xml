@@ -355,6 +355,11 @@
           <artifactId>maven-source-plugin</artifactId>
           <version>2.2.1</version>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>cobertura-maven-plugin</artifactId>
+          <version>2.6</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -480,13 +485,11 @@
           <wtpversion>2.0</wtpversion>
           <downloadSources>true</downloadSources>
           <downloadJavadocs>true</downloadJavadocs>
-
           <sourceExcludes>
             <excludes>
               target/**
             </excludes>
           </sourceExcludes>
-
         </configuration>
       </plugin>
       <plugin>
@@ -518,6 +521,19 @@
             **/fit/proxy/v3/opentype/**/*.java,
             **/fit/proxy/v4/opentype/**/*.java,
             **/fit/proxy/v4/demo/**/*.java</excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <configuration>
+          <instrumentation>
+            <excludes>
+              <exclude>org/apache/olingo/**/tecsvc/**/*.class</exclude>
+              <exclude>org/apache/olingo/**/fit/**/*.class</exclude>
+              <exclude>org/apache/olingo/**/testutil/**/*.class</exclude>
+            </excludes>
+          </instrumentation>
         </configuration>
       </plugin>
       <plugin>
