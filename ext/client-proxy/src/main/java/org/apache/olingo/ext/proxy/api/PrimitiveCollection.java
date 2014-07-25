@@ -20,39 +20,10 @@ package org.apache.olingo.ext.proxy.api;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.concurrent.Future;
 
-public interface PrimitiveCollection<T extends Serializable> extends Collection<T>, Serializable {
-
-  /**
-   * Returns all instances.
-   *
-   * @return all instances
-   */
-  PrimitiveCollection<T> execute();
-
-  /**
-   * Asynchronously returns all instances.
-   *
-   * @return future handle on all instances
-   */
-  Future<PrimitiveCollection<T>> executeAsync();
-
-  /**
-   * Sets the maximum number of results to retrieve (<tt>$top</tt>).
-   *
-   * @param top maximum number of results to retrieve
-   * @return the same query instance.
-   * @throws IllegalArgumentException if the argument is negative
-   */
-  PrimitiveCollection<T> top(int top) throws IllegalArgumentException;
-
-  /**
-   * Sets the position of the first result to retrieve (<tt>$skip</tt>).
-   *
-   * @param skip position of the first result, numbered from 0
-   * @return the same query instance.
-   * @throws IllegalArgumentException if the argument is negative
-   */
-  PrimitiveCollection<T> skip(int skip) throws IllegalArgumentException;
+public interface PrimitiveCollection<T extends Serializable>
+        extends GenericCollection<T, PrimitiveCollection<T>>,
+        CollectionQuery<PrimitiveCollection<T>>,
+        Collection<T>,
+        Serializable {
 }

@@ -42,27 +42,28 @@ import org.apache.olingo.ext.proxy.api.AbstractSingleton;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.Search;
-import org.apache.olingo.ext.proxy.api.SingleQuery;
+import org.apache.olingo.ext.proxy.api.StructuredType;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
-class EntitySetInvocationHandler<
-        T extends EntityType, KEY extends Serializable, EC extends EntityCollection<T>>
+public class EntitySetInvocationHandler<
+        T extends EntityType<?>, KEY extends Serializable, EC extends EntityCollection<T, ?, ?>>
         extends AbstractEntityCollectionInvocationHandler<T, EC>
         implements AbstractEntitySet<T, KEY, EC> {
 
   private static final long serialVersionUID = 2629912294765040027L;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static EntitySetInvocationHandler getInstance(final Class<?> ref, final AbstractService<?> service) {
+  public static EntitySetInvocationHandler getInstance(final Class<?> ref, final AbstractService<?> service) {
     return new EntitySetInvocationHandler(ref, service, buildEntitySetURI(ref, service));
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static EntitySetInvocationHandler getInstance(final Class<?> ref, final AbstractService<?> service, final URI uri) {
+  public static EntitySetInvocationHandler getInstance(
+          final Class<?> ref, final AbstractService<?> service, final URI uri) {
     return new EntitySetInvocationHandler(ref, service, service.getClient().newURIBuilder(uri.toASCIIString()));
   }
 
@@ -104,7 +105,7 @@ class EntitySetInvocationHandler<
   @Override
   public Boolean exists(final KEY key) throws IllegalArgumentException {
     try {
-      SingleQuery.class.cast(getByKey(key)).load();
+      StructuredType.class.cast(getByKey(key)).load();
       return true;
     } catch (Exception e) {
       LOG.error("Could not check existence of {}({})", this.uri, key, e);
@@ -151,9 +152,8 @@ class EntitySetInvocationHandler<
     return execute(collItemRef);
   }
 
-  public <S extends T, SEC extends EntityCollection<S>> Future<SEC> executeAsync(final Class<SEC> collTypeRef) {
+  public <S extends T, SEC extends EntityCollection<S, ?, ?>> Future<SEC> executeAsync(final Class<SEC> collTypeRef) {
     return service.getClient().getConfiguration().getExecutor().submit(new Callable<SEC>() {
-
       @Override
       public SEC call() throws Exception {
         return execute(collTypeRef);
@@ -162,7 +162,7 @@ class EntitySetInvocationHandler<
   }
 
   @SuppressWarnings("unchecked")
-  public <S extends T, SEC extends EntityCollection<S>> SEC execute(final Class<SEC> collTypeRef) {
+  public <S extends T, SEC extends EntityCollection<S, ?, ?>> SEC execute(final Class<SEC> collTypeRef) {
     final Class<S> ref = (Class<S>) ClassUtils.extractTypeArg(collTypeRef,
             AbstractEntitySet.class, AbstractSingleton.class, EntityCollection.class);
     final Class<S> oref = (Class<S>) ClassUtils.extractTypeArg(this.collItemRef,
@@ -202,7 +202,7 @@ class EntitySetInvocationHandler<
 
   @Override
   @SuppressWarnings("unchecked")
-  public <S extends T, SEC extends EntityCollection<S>> Search<S, SEC> createSearch(final Class<SEC> reference) {
+  public <S extends T, SEC extends EntityCollection<S, ?, ?>> Search<S, SEC> createSearch(final Class<SEC> reference) {
 
     if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
       throw new UnsupportedInV3Exception();
@@ -215,7 +215,7 @@ class EntitySetInvocationHandler<
   }
 
   @SuppressWarnings("unchecked")
-  public <S extends T, SEC extends EntityCollection<S>> SEC fetchWholeEntitySet(
+  public <S extends T, SEC extends EntityCollection<S, ?, ?>> SEC fetchWholeEntitySet(
           final CommonURIBuilder<?> uriBuilder, final Class<S> typeRef, final Class<SEC> collTypeRef) {
 
     final List<S> res = new ArrayList<S>();

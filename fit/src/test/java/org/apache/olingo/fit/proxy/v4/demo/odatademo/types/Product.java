@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -32,7 +33,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         hasStream = false,
         isAbstract = false)
 public interface Product 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<Product> {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.ext.proxy.api.EntityType<Product>, org.apache.olingo.ext.proxy.api.StructuredQuery<Product>   {
 
 
     
@@ -231,19 +233,20 @@ public interface Product
     void setProductDetail(org.apache.olingo.fit.proxy.v4.demo.odatademo.types.ProductDetail _productDetail);
     
 
+
         Operations operations();
 
     interface Operations {
     
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "Discount",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "Discount",
                     type = OperationType.ACTION,
-                    returnType = "Edm.Double")
-      java.lang.Double discount(
+                    referenceType = java.lang.Double.class,                    returnType = "Edm.Double")
+      org.apache.olingo.ext.proxy.api.Invoker<java.lang.Double> discount(
                 @Parameter(name = "discountPercentage", type = "Edm.Int32", nullable = false) java.lang.Integer discountPercentage
             );
 
         }
-
     Annotations annotations();
 
     interface Annotations {

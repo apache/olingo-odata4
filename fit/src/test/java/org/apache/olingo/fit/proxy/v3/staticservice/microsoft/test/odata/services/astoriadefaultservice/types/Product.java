@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -32,7 +33,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         hasStream = false,
         isAbstract = false)
 public interface Product 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<Product> {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.ext.proxy.api.EntityType<Product>, org.apache.olingo.ext.proxy.api.StructuredQuery<Product>   {
 
 
     
@@ -241,18 +243,19 @@ public interface Product
     void setPhotos(org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductPhotoCollection _photos);
     
 
+
         Operations operations();
 
     interface Operations {
     
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ChangeProductDimensions",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ChangeProductDimensions",
                     type = OperationType.ACTION)
-      void changeProductDimensions(
+      org.apache.olingo.ext.proxy.api.Invoker<Void> changeProductDimensions(
                 @Parameter(name = "dimensions", type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions", nullable = true) org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions dimensions
             );
 
         }
-
     Annotations annotations();
 
     interface Annotations {

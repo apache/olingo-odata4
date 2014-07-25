@@ -48,53 +48,13 @@ import javax.xml.datatype.Duration;
 #set ( $javaComplexType = $utility.getJavaType($complexType) )
 
 public interface $utility.capitalize($complexType.Name)Collection extends 
-    org.apache.olingo.ext.proxy.api.StruncturedCollectionQuery<$javaComplexType, ${javaComplexType}Collection, ${javaComplexType}Collection>, org.apache.olingo.ext.proxy.api.ComplexCollection<$javaComplexType> {
+    org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<${javaComplexType}Collection>,
+    org.apache.olingo.ext.proxy.api.ComplexCollection<$javaComplexType, ${javaComplexType}Collection, ${javaComplexType}Collection> {
 #set( $functions = $utility.getFunctionsBoundTo($complexType.Name, true) )
 #set( $actions = $utility.getActionsBoundTo($complexType.Name, true) )
 #if( $functions.size() > 0 || $actions.size() > 0 )
-    Operations operations();
-
-    public interface Operations {
-
-    #foreach($operation in $functions)
-      @Operation(name = "$operation.Name",
-                    type = OperationType.FUNCTION,
-                    isComposable = $operation.Composable#if($operation.ReturnType),
-                    returnType = "#if( $operation.ReturnType.Collection )Collection(#end$operation.ReturnType.Type.FullQualifiedName.toString()#if( $operation.ReturnType.Collection ))#end"#end)
-      #if($operation.ReturnType)$utility.getJavaType($operation.ReturnType.Type, $operation.ReturnType.Collection)#{else}void#end $utility.uncapitalize($operation.Name)(
-      #if($operation.ParameterNames)
-        #set( $count = $operation.ParameterNames.size() )#*
-        *##foreach($paramName in $operation.ParameterNames)#*
-          *##set( $count = $count - 1 )#*
-          *##set( $param = $operation.getParameter($paramName) )#*
-          *##if( !$complexType.FullQualifiedName.equals($param.Type.FullQualifiedName) )#*
-        *#    @Parameter(name = "$param.Name", type = "#if( $param.Collection )Collection(#end$param.Type.FullQualifiedName.toString()#if( $param.Collection ))#end", nullable = $param.Nullable) $utility.getJavaType($param.Type, $param.Collection) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
-
-      #end
-      #end#*
-      *##end);
-
-    #end
-
-    #foreach($operation in $actions)
-      @Operation(name = "$operation.Name",
-                    type = OperationType.ACTION#if($operation.ReturnType),
-                    returnType = "#if( $operation.ReturnType.Collection )Collection(#end$operation.ReturnType.Type.FullQualifiedName.toString()#if( $operation.ReturnType.Collection ))#end"#end)
-      #if($operation.ReturnType)$utility.getJavaType($operation.ReturnType.Type, $operation.ReturnType.Collection)#{else}void#end $utility.uncapitalize($operation.Name)(
-      #if($operation.ParameterNames)
-        #set( $count = $operation.ParameterNames.size() )#*
-        *##foreach($paramName in $operation.ParameterNames)#*
-          *##set( $count = $count - 1 )#*
-          *##set( $param = $operation.getParameter($paramName) )#*
-          *##if( !$complexType.FullQualifiedName.equals($param.Type.FullQualifiedName) )#*
-        *#    @Parameter(name = "$param.Name", type = "#if( $param.Collection )Collection(#end$param.Type.FullQualifiedName.toString()#if( $param.Collection ))#end", nullable = $param.Nullable) $utility.getJavaType($param.Type, $param.Collection) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
-
-      #end
-      #end#*
-      *##end);
-
-    #end
-    }
+#set($structuredType = $complexType)
+#parse( "operation.vm" )
 #end
 
   Object getAnnotation(Class<? extends AbstractTerm> term);

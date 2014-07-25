@@ -37,18 +37,22 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.DefaultContainer;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetailsCollection;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection;
+import static org.apache.olingo.fit.proxy.v4.AbstractTestITCase.container;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AddressCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
@@ -308,8 +312,9 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     getContainer().flush(); // The first HTTP Request to create product and the linked product detail
 
     // the second HTTP Request to execute getProductDetails() operation.
-    final ProductDetailCollection result = container.getProducts().getByKey(1012).operations().getProductDetails(1);
-    assertEquals(1, result.size());
+    final StructuredCollectionInvoker<ProductDetailCollection> result =
+            container.getProducts().getByKey(1012).operations().getProductDetails(1);
+    assertEquals(1, result.execute().size());
   }
 
   @Test
@@ -319,7 +324,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     // ---------------------------------------
     org.apache.olingo.fit.proxy.v3.staticservice.Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> v3serv =
             org.apache.olingo.fit.proxy.v3.staticservice.Service.getV3(
-                    "http://localhost:9080/stub/StaticService/V30/Static.svc");
+            "http://localhost:9080/stub/StaticService/V30/Static.svc");
     v3serv.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     final DefaultContainer v3cont = v3serv.getEntityContainer(DefaultContainer.class);
     assertNotNull(v3cont);
@@ -375,5 +380,37 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
   @Test
   public void workingWithSingletons() {
     assertNotNull(container.getCompany().getVipCustomer().load().getPersonID());
+  }
+
+  @Test
+  public void workingWithOperations() {
+    // Primitive collections (available only skip and top)
+    container.operations().getProductsByAccessLevel(AccessLevel.None).
+            skip(2).
+            top(3).execute();
+
+    // Complex/Entity collection (available filter, select, expand, orderBy, skip and top)
+    container.operations().getAllProducts().
+            filter("name eq XXXX").
+            select("Name", "ProductDetail").
+            expand("ProductDetail").
+            orderBy("Name").skip(3).top(5).execute();
+
+    // Complex/Entity (available only select and expand)
+    container.operations().getPerson2("London").
+            select("Name").
+            expand("Order").execute();
+
+    // Primitive (no query option available)
+    container.getAccounts().getByKey(101).getMyGiftCard().operations().getActualAmount(1.1).execute();
+
+    // POST ...
+    final Address address = container.newComplexInstance(HomeAddress.class);
+    address.setStreet("Via Le Mani Dal Naso, 123");
+    address.setPostalCode("Tollo");
+    address.setCity("66010");
+
+    final AddressCollection ac = container.newComplexCollection(AddressCollection.class);
+    container.getCustomers().getByKey(2).operations().resetAddress(ac, 0).select("Name").expand("Orders").execute();
   }
 }

@@ -18,28 +18,12 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-public interface CommonQuery<T> {
-
-  /**
-   * Sets <tt>$expand</tt> expression.
-   *
-   * @param expand <tt>$expand</tt> expression items.
-   * @return the same query instance.
-   */
-  T expand(String... expand);
-
-  /**
-   * Sets <tt>$select</tt> expression.
-   *
-   * @param select <tt>$select</tt> expression items.
-   * @return the same query instance.
-   */
-  T select(String... select);
+public interface CommonQuery {
 
   /**
    * Remove all query options.
    *
    * @return the same query instance.
    */
-  T clearQueryOptions();
+  void clearQueryOptions();
 }

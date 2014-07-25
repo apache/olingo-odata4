@@ -1,0 +1,112 @@
+#*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *#
+    #if($inherited.size() > 0)
+    @Override
+    #end
+    Operations operations();
+
+    interface Operations #if($inherited.size() > 0)
+           extends ${utility.getJavaType($structuredType.getBaseType())}.Operations#end{
+    #foreach($operation in $functions)
+      #if($operation.ReturnType)#*
+        *##set($defaultType = $utility.getJavaType($operation.ReturnType.Type, $operation.ReturnType.Collection))#*
+        *##if(!($operation.getReturnType().isCollection() || ${operation.ReturnType.Type.Kind} == "ENTITY" || ${operation.ReturnType.Type.Kind} == "COMPLEX" || $utility.isStreamType($operation.ReturnType.Type)))#*
+          *##set($returnType = "org.apache.olingo.ext.proxy.api.Invoker<$defaultType>")#*
+        *##else#*
+          *##if(${operation.ReturnType.Type.Kind} == "ENTITY" || ${operation.ReturnType.Type.Kind} == "COMPLEX")#*
+            *##if($operation.getReturnType().isCollection())#*
+              *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker<$defaultType>")#*
+            *##{else}#*
+              *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredInvoker<$defaultType>")#*
+            *##end#*
+          *##{else}#*
+            *##if($operation.getReturnType().isCollection())#*
+              *##set($returnType = "org.apache.olingo.ext.proxy.api.PrimitiveCollectionInvoker<$defaultType>")#*
+            *##{else}#*
+              *##set($returnType = "org.apache.olingo.ext.proxy.api.Invoker<$defaultType>")#*
+            *##end#*
+          *##end#*
+        *##end#*
+      *##{else}#*
+        *##set($returnType = "org.apache.olingo.ext.proxy.api.Invoker<Void>")#*
+      *##end
+
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "$operation.Name",
+                    type = OperationType.FUNCTION,
+                    isComposable = $operation.Composable#if($operation.ReturnType),
+                    #if($operation.ReturnType)referenceType = ${defaultType.replaceAll("<.*>", "")}.class,#end
+                    returnType = "#if( $operation.ReturnType.Collection )Collection(#end$operation.ReturnType.Type.FullQualifiedName.toString()#if( $operation.ReturnType.Collection ))#end"#end)
+      $returnType $utility.uncapitalize($operation.Name)(
+      #if($operation.ParameterNames)
+        #set( $count = $operation.ParameterNames.size() )#*
+        *##foreach($paramName in $operation.ParameterNames)#*
+          *##set( $count = $count - 1 )#*
+          *##set( $param = $operation.getParameter($paramName) )#*
+          *##if( !$structuredType.FullQualifiedName.equals($param.Type.FullQualifiedName) )#*
+        *#    @Parameter(name = "$param.Name", type = "#if( $param.Collection )Collection(#end$param.Type.FullQualifiedName.toString()#if( $param.Collection ))#end", nullable = $param.Nullable) $utility.getJavaType($param.Type, $param.Collection) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
+
+      #end
+      #end#*
+      *##end);
+
+    #end
+
+    #foreach($operation in $actions)
+      #if($operation.ReturnType)#*
+        *##set($defaultType = $utility.getJavaType($operation.ReturnType.Type, $operation.ReturnType.Collection))#*
+        *##if(!($operation.getReturnType().isCollection() || ${operation.ReturnType.Type.Kind} == "ENTITY" || ${operation.ReturnType.Type.Kind} == "COMPLEX" || $utility.isStreamType($operation.ReturnType.Type)))#*
+          *##set($returnType = "org.apache.olingo.ext.proxy.api.Invoker<$defaultType>")#*
+        *##else#*
+          *##if(${operation.ReturnType.Type.Kind} == "ENTITY" || ${operation.ReturnType.Type.Kind} == "COMPLEX")#*
+            *##if($operation.getReturnType().isCollection())#*
+              *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker<$defaultType>")#*
+            *##{else}#*
+              *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredInvoker<$defaultType>")#*
+            *##end#*
+          *##{else}#*
+            *##if($operation.getReturnType().isCollection())#*
+              *##set($returnType = "org.apache.olingo.ext.proxy.api.PrimitiveCollectionInvoker<$defaultType>")#*
+            *##{else}#*
+              *##set($returnType = "org.apache.olingo.ext.proxy.api.Invoker<$defaultType>")#*
+            *##end#*
+          *##end#*
+        *##end#*
+      *##{else}#*
+        *##set($returnType = "org.apache.olingo.ext.proxy.api.Invoker<Void>")#*
+      *##end
+
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "$operation.Name",
+                    type = OperationType.ACTION#if($operation.ReturnType),
+                    #if($operation.ReturnType)referenceType = ${defaultType.replaceAll("<.*>", "")}.class,#end
+                    returnType = "#if( $operation.ReturnType.Collection )Collection(#end$operation.ReturnType.Type.FullQualifiedName.toString()#if( $operation.ReturnType.Collection ))#end"#end)
+      $returnType $utility.uncapitalize($operation.Name)(
+      #if($operation.ParameterNames)
+        #set( $count = $operation.ParameterNames.size() )#*
+        *##foreach($paramName in $operation.ParameterNames)#*
+          *##set( $count = $count - 1 )#*
+          *##set( $param = $operation.getParameter($paramName) )#*
+          *##if( !$structuredType.FullQualifiedName.equals($param.Type.FullQualifiedName) )#*
+        *#    @Parameter(name = "$param.Name", type = "#if( $param.Collection )Collection(#end$param.Type.FullQualifiedName.toString()#if( $param.Collection ))#end", nullable = $param.Nullable) $utility.getJavaType($param.Type, $param.Collection) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
+
+      #end
+      #end#*
+      *##end);
+
+    #end
+    }

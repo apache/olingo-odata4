@@ -19,12 +19,13 @@
 package org.apache.olingo.ext.proxy.api;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * Interface for synchronous CRUD operations on an EntitySet.
  */
 public interface AbstractEntitySet<
-        T extends EntityType, KEY extends Serializable, EC extends EntityCollection<T>>
+        T extends EntityType<?>, KEY extends Serializable, EC extends Collection<T>>
         extends Iterable<T>, Serializable {
 
   boolean add(final T entity);
@@ -104,5 +105,5 @@ public interface AbstractEntitySet<
    * @param reference
    * @return the new search instance
    */
-  <S extends T, SEC extends EntityCollection<S>> Search<S, SEC> createSearch(Class<SEC> reference);
+  <S extends T, SEC extends EntityCollection<S, ?, ?>> Search<S, SEC> createSearch(Class<SEC> reference);
 }

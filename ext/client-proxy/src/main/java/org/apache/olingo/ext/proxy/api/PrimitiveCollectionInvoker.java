@@ -18,17 +18,6 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-import java.util.concurrent.Future;
-
-public interface SingleQuery<T extends StructuredType> extends CommonQuery<T> {
-
-  /**
-   * @return structured type instance
-   */
-  T load();
-
-  /**
-   * @return future handle on structured type instance
-   */
-  Future<T> loadAsync();
+public interface PrimitiveCollectionInvoker<T extends CollectionQuery<?>>
+        extends CollectionQuery<PrimitiveCollectionInvoker<T>>, Invoker<T> {
 }

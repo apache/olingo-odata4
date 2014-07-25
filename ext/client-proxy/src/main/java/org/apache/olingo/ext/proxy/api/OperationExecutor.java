@@ -21,7 +21,7 @@ package org.apache.olingo.ext.proxy.api;
 import java.io.Serializable;
 
 /**
- * Interface for synchronous CRUD operations on an EntitySet.
+ * Interface for operation executions.
  */
 public interface OperationExecutor extends Serializable {
 }

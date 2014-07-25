@@ -34,6 +34,8 @@ public @interface Operation {
 
   String name();
 
+  Class<?> referenceType() default Void.class;
+
   /**
    * Operation type, function or action.
    *

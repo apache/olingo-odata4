@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -30,7 +31,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         hasStream = true,
         isAbstract = false)
 public interface Advertisement 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<Advertisement> {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.ext.proxy.api.EntityType<Advertisement>, org.apache.olingo.ext.proxy.api.StructuredQuery<Advertisement>   {
 
 
     

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -24,7 +25,7 @@ package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.servic
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "Phone")
 public interface Phone 
-    extends org.apache.olingo.ext.proxy.api.ComplexType,org.apache.olingo.ext.proxy.api.SingleQuery<Phone> {
+    extends org.apache.olingo.ext.proxy.api.ComplexType<Phone>, org.apache.olingo.ext.proxy.api.StructuredQuery<Phone> {
 
 
 
@@ -49,4 +50,6 @@ public interface Phone
     void setExtension(java.lang.String _extension);
 
     
+
+
 }

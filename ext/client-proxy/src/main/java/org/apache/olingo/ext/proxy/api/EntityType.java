@@ -18,5 +18,5 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-public interface EntityType extends StructuredType {
+public interface EntityType<T extends StructuredType<?>> extends StructuredType<T> {
 }

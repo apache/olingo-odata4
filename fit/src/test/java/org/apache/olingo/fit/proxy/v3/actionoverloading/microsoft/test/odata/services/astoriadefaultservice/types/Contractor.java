@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -32,7 +33,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.AstoriaDefaultService.Person")
 public interface Contractor 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Person {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Person   {
 
   @Override
   Contractor load();
@@ -190,18 +192,19 @@ public interface Contractor
     void setPersonMetadata(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PersonMetadataCollection _personMetadata);
     
 
+
         @Override
         Operations operations();
 
     interface Operations            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Person.Operations{
     
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "UpdatePersonInfo",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "UpdatePersonInfo",
                     type = OperationType.ACTION)
-      void updatePersonInfo(
+      org.apache.olingo.ext.proxy.api.Invoker<Void> updatePersonInfo(
             );
 
         }
-
     Annotations annotations();
 
     interface Annotations            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Person.Annotations{

@@ -40,9 +40,8 @@ import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.ComplexCollection;
 import org.apache.olingo.ext.proxy.api.ComplexType;
 
-public class ComplexCollectionInvocationHandler<T extends ComplexType>
-        extends AbstractCollectionInvocationHandler<T, ComplexCollection<T>>
-        implements ComplexCollection<T> {
+public class ComplexCollectionInvocationHandler<T extends ComplexType<?>>
+        extends AbstractCollectionInvocationHandler<T, ComplexCollection<T, ?, ?>> {
 
   private static final long serialVersionUID = 98078202642671756L;
 

@@ -18,23 +18,21 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-import java.util.Collection;
-
-public interface StruncturedCollectionQuery<
-        T extends StructuredType, EC extends Collection<T>, CT extends StruncturedCollectionQuery<T, EC, ?>>
-        extends CollectionQuery<T, EC, CT> {
+public interface StructuredQuery<T extends CommonQuery> extends CommonQuery {
 
   /**
-   * Explicit paging result handling.
+   * Sets <tt>$expand</tt> expression.
    *
-   * @return next page.
+   * @param expand <tt>$expand</tt> expression items.
+   * @return the same query instance.
    */
-  CT nextPage();
+  T expand(String... expand);
 
   /**
-   * Checks for next page existence.
+   * Sets <tt>$select</tt> expression.
    *
-   * @return <<tt>TRUE</tt> whether a next page exist; <tt>FALSE</tt> otherwise.
+   * @param select <tt>$select</tt> expression items.
+   * @return the same query instance.
    */
-  boolean hasNextPage();
+  T select(String... select);
 }

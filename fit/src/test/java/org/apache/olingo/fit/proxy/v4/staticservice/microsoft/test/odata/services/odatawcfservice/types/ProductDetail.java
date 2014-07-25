@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -32,7 +33,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         hasStream = false,
         isAbstract = false)
 public interface ProductDetail 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<ProductDetail> {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.ext.proxy.api.EntityType<ProductDetail>, org.apache.olingo.ext.proxy.api.StructuredQuery<ProductDetail>   {
 
 
         
@@ -152,19 +154,20 @@ public interface ProductDetail
     void setReviews(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductReviewCollection _reviews);
     
 
+
         Operations operations();
 
     interface Operations {
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetRelatedProduct",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetRelatedProduct",
                     type = OperationType.FUNCTION,
                     isComposable = true,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Product")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product getRelatedProduct(
+                    referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Product")
+      org.apache.olingo.ext.proxy.api.StructuredInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product> getRelatedProduct(
             );
 
     
         }
-
     Annotations annotations();
 
     interface Annotations {

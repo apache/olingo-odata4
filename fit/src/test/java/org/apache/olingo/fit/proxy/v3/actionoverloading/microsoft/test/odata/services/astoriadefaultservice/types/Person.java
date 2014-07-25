@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -31,7 +32,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         hasStream = false,
         isAbstract = false)
 public interface Person 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<Person> {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.ext.proxy.api.EntityType<Person>, org.apache.olingo.ext.proxy.api.StructuredQuery<Person>   {
 
 
     
@@ -95,17 +97,18 @@ public interface Person
     void setPersonMetadata(org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.PersonMetadataCollection _personMetadata);
     
 
+
         Operations operations();
 
     interface Operations {
     
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "UpdatePersonInfo",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "UpdatePersonInfo",
                     type = OperationType.ACTION)
-      void updatePersonInfo(
+      org.apache.olingo.ext.proxy.api.Invoker<Void> updatePersonInfo(
             );
 
         }
-
     Annotations annotations();
 
     interface Annotations {

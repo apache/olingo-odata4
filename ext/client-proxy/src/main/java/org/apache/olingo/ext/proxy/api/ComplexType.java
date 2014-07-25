@@ -18,5 +18,5 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-public interface ComplexType extends StructuredType {
+public interface ComplexType<T extends StructuredType<?>> extends StructuredType<T> {
 }

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -24,7 +25,7 @@ package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.servic
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "ComplexWithAllPrimitiveTypes")
 public interface ComplexWithAllPrimitiveTypes 
-    extends org.apache.olingo.ext.proxy.api.ComplexType,org.apache.olingo.ext.proxy.api.SingleQuery<ComplexWithAllPrimitiveTypes> {
+    extends org.apache.olingo.ext.proxy.api.ComplexType<ComplexWithAllPrimitiveTypes>, org.apache.olingo.ext.proxy.api.StructuredQuery<ComplexWithAllPrimitiveTypes> {
 
 
 
@@ -181,4 +182,6 @@ public interface ComplexWithAllPrimitiveTypes
     void setGeometryPoint(org.apache.olingo.commons.api.edm.geo.Point _geometryPoint);
 
     
+
+
 }

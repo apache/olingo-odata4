@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -32,7 +33,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         hasStream = false,
         isAbstract = false)
 public interface Person 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<Person> {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.ext.proxy.api.EntityType<Person>, org.apache.olingo.ext.proxy.api.StructuredQuery<Person>   {
 
 
     
@@ -234,27 +236,29 @@ public interface Person
     void setParent(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person _parent);
     
 
+
         Operations operations();
 
     interface Operations {
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetHomeAddress",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetHomeAddress",
                     type = OperationType.FUNCTION,
                     isComposable = true,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.HomeAddress")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress getHomeAddress(
+                    referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.HomeAddress")
+      org.apache.olingo.ext.proxy.api.StructuredInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress> getHomeAddress(
             );
 
     
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetAddress",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetAddress",
                     type = OperationType.ACTION,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Person")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person resetAddress(
+                    referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Person")
+      org.apache.olingo.ext.proxy.api.StructuredInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person> resetAddress(
                 @Parameter(name = "addresses", type = "Collection(Microsoft.Test.OData.Services.ODataWCFService.Address)", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AddressCollection addresses, 
                 @Parameter(name = "index", type = "Edm.Int32", nullable = false) java.lang.Integer index
             );
 
         }
-
     Annotations annotations();
 
     interface Annotations {

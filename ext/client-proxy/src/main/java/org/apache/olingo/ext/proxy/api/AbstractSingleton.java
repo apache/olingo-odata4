@@ -21,6 +21,6 @@ package org.apache.olingo.ext.proxy.api;
 import java.io.Serializable;
 
 public interface AbstractSingleton<
-        T extends EntityType, KEY extends Serializable, EC extends EntityCollection<T>>
+        T extends EntityType<?>, KEY extends Serializable, EC extends EntityCollection<T, ?, ?>>
         extends Serializable {
 }

@@ -24,6 +24,8 @@ import static org.junit.Assert.assertNotNull;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker;
+import org.apache.olingo.ext.proxy.api.StructuredInvoker;
 import org.junit.Test;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -48,8 +50,9 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void getProductDetails() {
-    final ProductDetailCollection result = container.getProducts().getByKey(5).operations().getProductDetails(1);
-    assertEquals(1, result.size());
+    final StructuredCollectionInvoker<ProductDetailCollection> result =
+            container.getProducts().getByKey(5).operations().getProductDetails(1);
+    assertEquals(1, result.execute().size());
   }
 
   @Test
@@ -58,38 +61,41 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     key.setProductID(6);
     key.setProductDetailID(1);
 
-    final Product product = container.getProductDetails().getByKey(key).operations().getRelatedProduct();
-    assertEquals(6, product.getProductID(), 0);
+    final StructuredInvoker<Product> product =
+            container.getProductDetails().getByKey(key).operations().getRelatedProduct();
+    assertEquals(6, product.execute().getProductID(), 0);
   }
 
   @Test
   public void getDefaultPI() {
-    final PaymentInstrument pi = container.getAccounts().getByKey(101).operations().getDefaultPI();
+    final PaymentInstrument pi = container.getAccounts().getByKey(101).operations().getDefaultPI().execute();
     assertEquals(101901, pi.getPaymentInstrumentID(), 0);
   }
 
   @Test
   public void getAccountInfo() {
-    final AccountInfo accountInfo = container.getAccounts().getByKey(101).operations().getAccountInfo();
-    assertNotNull(accountInfo);
+    final StructuredInvoker<AccountInfo> accountInfo =
+            container.getAccounts().getByKey(101).operations().getAccountInfo();
+    assertNotNull(accountInfo.execute());
   }
 
   @Test
   public void getActualAmount() {
-    final Double amount = container.getAccounts().getByKey(101).getMyGiftCard().operations().getActualAmount(1.1);
+    final Double amount =
+            container.getAccounts().getByKey(101).getMyGiftCard().operations().getActualAmount(1.1).execute();
     assertEquals(41.79, amount, 0);
   }
 
   @Test
   public void increaseRevenue() {
-    final Long result = container.getCompany().load().operations().increaseRevenue(12L);
+    final Long result = container.getCompany().load().operations().increaseRevenue(12L).execute();
     assertNotNull(result);
   }
 
   @Test
   public void addAccessRight() {
     final AccessLevel accessLevel =
-            container.getProducts().getByKey(5).operations().addAccessRight(AccessLevel.Execute);
+            container.getProducts().getByKey(5).operations().addAccessRight(AccessLevel.Execute).execute();
     assertNotNull(accessLevel);
   }
 
@@ -103,14 +109,14 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     final AddressCollection ac = container.newComplexCollection(AddressCollection.class);
     ac.add(address);
 
-    final Person person = container.getCustomers().getByKey(2).operations().resetAddress(ac, 0);
+    final Person person = container.getCustomers().getByKey(2).operations().resetAddress(ac, 0).execute();
     assertEquals(2, person.getPersonID(), 0);
   }
 
   @Test
   public void refreshDefaultPI() {
     final PaymentInstrument pi = container.getAccounts().getByKey(101).operations().
-            refreshDefaultPI(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+            refreshDefaultPI(new Timestamp(Calendar.getInstance().getTimeInMillis())).execute();
     assertEquals(101901, pi.getPaymentInstrumentID(), 0);
   }
 }

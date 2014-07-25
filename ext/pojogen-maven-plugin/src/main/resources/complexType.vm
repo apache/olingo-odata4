@@ -44,4 +44,13 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 #parse( "${odataVersion}/complexType.vm" )
+
+#set( $functions = $utility.getFunctionsBoundTo($complexType.Name, false) )
+#set( $actions = $utility.getActionsBoundTo($complexType.Name, false) )
+#set( $inherited = $utility.justInheritedOperationsBoundTo($complexType) )
+#if( $inherited.size() > 0 || $functions.size() > 0 || $actions.size() > 0 )
+#set($structuredType = $complexType)
+#parse( "operation.vm" )
+#end
+
 }

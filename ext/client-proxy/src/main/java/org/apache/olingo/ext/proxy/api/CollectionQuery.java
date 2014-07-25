@@ -18,62 +18,7 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-import java.util.Collection;
-import java.util.concurrent.Future;
-import org.apache.olingo.client.api.uri.URIFilter;
-
-public interface CollectionQuery<
-        T extends StructuredType, EC extends Collection<T>, CT extends CollectionQuery<T, EC, ?>>
-        extends CommonQuery<CollectionQuery<T, EC, CT>> {
-
-  /**
-   * Returns all instances.
-   *
-   * @return all instances
-   */
-  EC execute();
-
-  /**
-   * Asynchronously returns all instances.
-   *
-   * @return future handle on all instances
-   */
-  Future<EC> executeAsync();
-
-  /**
-   * Sets the <tt>$filter</tt> expression.
-   * <br/>
-   * Any of available operators and functions can be embodied here.
-   *
-   * @param filter the <tt>$filter</tt> expression.
-   * @return the same query instance.
-   */
-  CT filter(String filter);
-
-  /**
-   * Sets the filter generating the <tt>$filter</tt> expression.
-   *
-   * @param filter filter instance (to be obtained via factory): note that <tt>build()</tt> method will be immediately
-   * invoked.
-   * @return the same query instance.
-   */
-  CT filter(URIFilter filter);
-
-  /**
-   * Sets the <tt>$orderBy</tt> expression.
-   *
-   * @param sort sort options.
-   * @return the same query instance.
-   */
-  CT orderBy(Sort... sort);
-
-  /**
-   * Sets the <tt>$orderBy</tt> expression.
-   *
-   * @param orderBy the <tt>$orderBy</tt> expression.
-   * @return the same query instance.
-   */
-  CT orderBy(String orderBy);
+public interface CollectionQuery<CT extends CollectionQuery<?>> extends CommonQuery {
 
   /**
    * Sets the maximum number of results to retrieve (<tt>$top</tt>).

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -31,7 +32,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         isAbstract = false,
         baseType = "ODataDemo.Product")
 public interface FeaturedProduct 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product   {
 
   @Override
   FeaturedProduct load();
@@ -242,13 +244,13 @@ public interface FeaturedProduct
     void setAdvertisement(org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement _advertisement);
     
 
+
         @Override
         Operations operations();
 
     interface Operations            extends org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product.Operations{
     
         }
-
     Annotations annotations();
 
     interface Annotations            extends org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product.Annotations{

@@ -535,13 +535,23 @@ public final class CoreUtils {
       }
     }
 
+    return getObjectFromODataValue(value, internalRef, service);
+  }
+
+  public static Object getObjectFromODataValue(
+          final ODataValue value,
+          final Class<?> ref,
+          final AbstractService<?> service)
+          throws InstantiationException, IllegalAccessException {
+
+
     final Object res;
 
     if (value == null) {
       res = null;
     } else if (value.isComplex()) {
       // complex types supports inheritance in V4, best to re-read actual type
-      internalRef = getComplexTypeRef(service, value);
+      Class<?> internalRef = getComplexTypeRef(service, value);
       res = Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {internalRef},
@@ -553,9 +563,9 @@ public final class CoreUtils {
       while (collPropItor.hasNext()) {
         final ODataValue itemValue = collPropItor.next();
         if (itemValue.isPrimitive()) {
-          collection.add(CoreUtils.primitiveValueToObject(itemValue.asPrimitive(), internalRef));
+          collection.add(CoreUtils.primitiveValueToObject(itemValue.asPrimitive(), ref));
         } else if (itemValue.isComplex()) {
-          internalRef = getComplexTypeRef(service, value);
+          Class<?> internalRef = getComplexTypeRef(service, value);
           final Object collItem = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {internalRef},
@@ -567,12 +577,9 @@ public final class CoreUtils {
 
       res = collection;
     } else if (value instanceof ODataEnumValue) {
-      if (internalRef == null) {
-        internalRef = getEnumTypeRef(service, value);
-      }
-      res = enumValueToObject((ODataEnumValue) value, internalRef);
+      res = enumValueToObject((ODataEnumValue) value, ref == null ? getEnumTypeRef(service, value) : ref);
     } else {
-      res = primitiveValueToObject(value.asPrimitive(), internalRef);
+      res = primitiveValueToObject(value.asPrimitive(), ref);
     }
 
     return res;

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -32,7 +33,8 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
         hasStream = false,
         isAbstract = false)
 public interface Product 
-  extends org.apache.olingo.ext.proxy.api.EntityType,org.apache.olingo.ext.proxy.api.Annotatable,org.apache.olingo.ext.proxy.api.SingleQuery<Product> {
+  extends org.apache.olingo.ext.proxy.api.Annotatable,
+  org.apache.olingo.ext.proxy.api.EntityType<Product>, org.apache.olingo.ext.proxy.api.StructuredQuery<Product>   {
 
 
     
@@ -257,27 +259,29 @@ public interface Product
     void setDetails(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection _details);
     
 
+
         Operations operations();
 
     interface Operations {
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetProductDetails",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetProductDetails",
                     type = OperationType.FUNCTION,
                     isComposable = true,
-                    returnType = "Collection(Microsoft.Test.OData.Services.ODataWCFService.ProductDetail)")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection getProductDetails(
+                    referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection.class,                    returnType = "Collection(Microsoft.Test.OData.Services.ODataWCFService.ProductDetail)")
+      org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection> getProductDetails(
                 @Parameter(name = "count", type = "Edm.Int32", nullable = true) java.lang.Integer count
             );
 
     
-          @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "AddAccessRight",
+          
+      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "AddAccessRight",
                     type = OperationType.ACTION,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel addAccessRight(
+                    referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel")
+      org.apache.olingo.ext.proxy.api.Invoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel> addAccessRight(
                 @Parameter(name = "accessRight", type = "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", nullable = true) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel accessRight
             );
 
         }
-
     Annotations annotations();
 
     interface Annotations {

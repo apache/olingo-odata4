@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3;
 
 import static org.junit.Assert.assertEquals;
@@ -52,12 +53,12 @@ public class ActionOverloadingTestITCase extends AbstractTestITCase {
   public void retrieveProduct() {
     final DefaultContainer aocontainer = getContainer();
 
-    int res = aocontainer.operations().retrieveProduct();
+    int res = aocontainer.operations().retrieveProduct().execute();
     assertEquals(-10, res);
 
     service.getContext().detachAll();
 
-    res = aocontainer.getProduct().getByKey(-10).operations().retrieveProduct();
+    res = aocontainer.getProduct().getByKey(-10).operations().retrieveProduct().execute();
     assertEquals(-10, res);
 
     service.getContext().detachAll();
@@ -66,7 +67,7 @@ public class ActionOverloadingTestITCase extends AbstractTestITCase {
     key.setOrderId(-10);
     key.setProductId(-10);
 
-    res = aocontainer.getOrderLine().getByKey(key).operations().retrieveProduct();
+    res = aocontainer.getOrderLine().getByKey(key).operations().retrieveProduct().execute();
     assertEquals(-10, res);
   }
 
@@ -83,7 +84,7 @@ public class ActionOverloadingTestITCase extends AbstractTestITCase {
     empl.getPersonId();
     int salary = empl.getSalary();
 
-    ecoll.operations().increaseSalaries(5);
+    ecoll.operations().increaseSalaries(5).execute();
 
     // the invoke above changed the local entities, re-read
     service.getContext().detachAll();
@@ -101,7 +102,7 @@ public class ActionOverloadingTestITCase extends AbstractTestITCase {
     sempl.getPersonId();
     salary = sempl.getSalary();
 
-    secoll.operations().increaseSalaries(5);
+    secoll.operations().increaseSalaries(5).execute();
 
     // the invoke above changed the local entities, re-read
     service.getContext().detachAll();
