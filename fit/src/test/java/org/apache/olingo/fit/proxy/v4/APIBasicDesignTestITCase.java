@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
@@ -41,12 +40,12 @@ import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 import org.apache.olingo.ext.proxy.api.StructuredCollectionComposableInvoker;
 import org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker;
 import org.apache.olingo.ext.proxy.api.StructuredComposableInvoker;
+import org.junit.Test;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.DefaultContainer;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetailsCollection;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection;
-import static org.apache.olingo.fit.proxy.v4.AbstractTestITCase.container;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
@@ -63,7 +62,6 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
-import org.junit.Test;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public class APIBasicDesignTestITCase extends AbstractTestITCase {
@@ -329,7 +327,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     // ---------------------------------------
     org.apache.olingo.fit.proxy.v3.staticservice.Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> v3serv =
             org.apache.olingo.fit.proxy.v3.staticservice.Service.getV3(
-            "http://localhost:9080/stub/StaticService/V30/Static.svc");
+                    "http://localhost:9080/stub/StaticService/V30/Static.svc");
     v3serv.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     final DefaultContainer v3cont = v3serv.getEntityContainer(DefaultContainer.class);
     assertNotNull(v3cont);
@@ -390,24 +388,32 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
   @Test
   public void workingWithOperations() {
     // Primitive collections (available only skip and top)
-    container.operations().getProductsByAccessLevel(AccessLevel.None).
+    final PrimitiveCollection<String> prods1 = container.operations().
+            getProductsByAccessLevel(AccessLevel.None).
             skip(2).
             top(3).execute();
+    assertNotNull(prods1);
+    assertFalse(prods1.isEmpty());
 
     // Complex/Entity collection (available filter, select, expand, orderBy, skip and top)
-    container.operations().getAllProducts().
+    final ProductCollection prods2 = container.operations().getAllProducts().
             filter("name eq XXXX").
             select("Name", "ProductDetail").
             expand("ProductDetail").
             orderBy("Name").skip(3).top(5).execute();
+    assertNotNull(prods2);
+    assertFalse(prods2.isEmpty());
 
     // Complex/Entity (available only select and expand)
-    container.operations().getPerson2("London").
+    final Person person = container.operations().getPerson2("London").
             select("Name").
             expand("Order").execute();
+    assertNotNull(person);
 
     // Primitive (no query option available)
-    container.getAccounts().getByKey(101).getMyGiftCard().operations().getActualAmount(1.1).execute();
+    final Double amount = container.getAccounts().getByKey(101).getMyGiftCard().operations().
+            getActualAmount(1.1).execute();
+    assertNotNull(amount);
 
     // POST ...
     final Address address = container.newComplexInstance(HomeAddress.class);
@@ -416,14 +422,16 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     address.setCity("66010");
 
     final AddressCollection ac = container.newComplexCollection(AddressCollection.class);
-    container.getCustomers().getByKey(2).operations().resetAddress(ac, 0).select("Name").expand("Orders").execute();
+    final Person updated = container.getCustomers().getByKey(2).operations().
+            resetAddress(ac, 0).select("Name").expand("Orders").execute();
+    assertNotNull(person);
   }
 
   @Test
   public void workingWithComposableOperations() {
     final StructuredCollectionComposableInvoker<ProductCollection, ProductCollection.Operations> invoker1 =
             container.operations().getAllProducts();
-    
+
     // Complex/Entity collection (available filter, select, expand, orderBy, skip and top)
     invoker1.compose().discount(10). // discount is an operation of ProductCollecton
             filter("Name eq XXXX").

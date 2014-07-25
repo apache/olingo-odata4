@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
@@ -29,11 +28,14 @@ import org.junit.Test;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.ext.proxy.api.StructuredCollectionComposableInvoker;
+import org.apache.olingo.ext.proxy.api.StructuredComposableInvoker;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CustomerCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public class AsyncTestITCase extends AbstractTestITCase {
@@ -71,5 +73,31 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
     final Future<Person> futurePerson = container.getPeople().getByKey(1).loadAsync();
     assertEquals(randomFirstName, futurePerson.get().getFirstName());
+  }
+
+  @Test
+  public void invoke() throws Exception {
+    final StructuredCollectionComposableInvoker<ProductCollection, ProductCollection.Operations> invoker1 =
+            container.operations().getAllProducts();
+
+    final Future<ProductCollection> future1 = invoker1.compose().
+            discount(10).
+            filter("Name eq XXXX").
+            select("Name", "ProductDetail").
+            expand("ProductDetail").
+            orderBy("Name").skip(3).top(5).executeAsync();
+    while (!future1.isDone()) {
+      Thread.sleep(1000L);
+    }
+    assertFalse(future1.get().isEmpty());
+
+    final StructuredComposableInvoker<Person, Person.Operations> invoker2 = container.operations().getPerson2("London");
+
+    final Future<Person> future2 = invoker2.select("Name").
+            expand("Order").executeAsync();
+    while (!future2.isDone()) {
+      Thread.sleep(1000L);
+    }
+    assertNotNull(future2.get());
   }
 }

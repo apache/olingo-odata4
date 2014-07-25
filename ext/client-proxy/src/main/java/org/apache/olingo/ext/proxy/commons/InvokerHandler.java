@@ -25,6 +25,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
@@ -95,6 +97,16 @@ public class InvokerHandler<T, C> extends AbstractInvocationHandler {
 
   public C compose() {
     return null;
+  }
+
+  public Future<T> executeAsync() {
+    return service.getClient().getConfiguration().getExecutor().submit(new Callable<T>() {
+
+      @Override
+      public T call() throws Exception {
+        return execute();
+      }
+    });
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
@@ -172,10 +184,10 @@ public class InvokerHandler<T, C> extends AbstractInvocationHandler {
             res = Proxy.newProxyInstance(
                     Thread.currentThread().getContextClassLoader(),
                     new Class<?>[] {ref}, new ComplexCollectionInvocationHandler(
-                    service,
-                    items,
-                    itemRef,
-                    null));
+                            service,
+                            items,
+                            itemRef,
+                            null));
           } else {
             final List items = new ArrayList();
 
@@ -186,10 +198,10 @@ public class InvokerHandler<T, C> extends AbstractInvocationHandler {
             res = Proxy.newProxyInstance(
                     Thread.currentThread().getContextClassLoader(),
                     new Class<?>[] {PrimitiveCollection.class}, new PrimitiveCollectionInvocationHandler(
-                    service,
-                    items,
-                    null,
-                    null));
+                            service,
+                            items,
+                            null,
+                            null));
           }
         } else {
           if (edmType.isComplexType()) {
