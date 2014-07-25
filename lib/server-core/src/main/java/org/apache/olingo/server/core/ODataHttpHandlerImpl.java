@@ -29,11 +29,13 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.processor.Processor;
+import org.apache.olingo.server.api.serializer.ODataSerializerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -67,7 +69,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
     convertToHttp(response, odResponse);
   }
-  
+
   @Override
   public void setSplit(int split) {
     this.split = split;
@@ -77,9 +79,9 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     ODataResponse resp = new ODataResponse();
     if (e instanceof ODataTranslatedException) {
       ODataTranslatedException exp = (ODataTranslatedException) e;
-      if (exp.getMessageKey() == ODataTranslatedException.AMBIGUOUS_XHTTP_METHOD) {
+      if (exp.getMessageKey() == ODataTranslatedException.MessageKeys.AMBIGUOUS_XHTTP_METHOD) {
         resp.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
-      } else if (exp.getMessageKey() == ODataTranslatedException.HTTP_METHOD_NOT_IMPLEMENTED) {
+      } else if (exp.getMessageKey() == ODataTranslatedException.MessageKeys.HTTP_METHOD_NOT_IMPLEMENTED) {
         resp.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
       }
     }
@@ -131,8 +133,9 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       extractUri(odRequest, httpRequest, split);
 
       return odRequest;
-    } catch (IOException e) {
-      throw new ODataRuntimeException(e);
+    } catch (final IOException e) {
+      throw new ODataSerializerException("An I/O exception occurred.", e,
+          ODataSerializerException.MessageKeys.IO_EXCEPTION);
     }
   }
 
@@ -154,7 +157,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
         } else {
           if (!xHttpMethod.equalsIgnoreCase(xHttpMethodOverride)) {
             throw new ODataTranslatedException("Ambiguous X-HTTP-Methods",
-                ODataTranslatedException.AMBIGUOUS_XHTTP_METHOD, xHttpMethod, xHttpMethodOverride);
+                ODataTranslatedException.MessageKeys.AMBIGUOUS_XHTTP_METHOD, xHttpMethod, xHttpMethodOverride);
           }
           odRequest.setMethod(HttpMethod.valueOf(xHttpMethod));
         }
@@ -163,7 +166,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       }
     } catch (IllegalArgumentException e) {
       throw new ODataTranslatedException("Invalid http method" + httpRequest.getMethod(),
-          ODataTranslatedException.HTTP_METHOD_NOT_IMPLEMENTED, httpRequest.getMethod());
+          ODataTranslatedException.MessageKeys.HTTP_METHOD_NOT_IMPLEMENTED, httpRequest.getMethod());
     }
   }
 

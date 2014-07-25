@@ -23,11 +23,12 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
+import org.apache.olingo.server.api.serializer.ODataSerializerException;
 
 /**
- * Root object for serving factory tasks and support loosely coupling of implementation (core) from the api. This is not
- * a singleton (static variables) to avoid issues with synchronization, OSGi, hot deployment and so on. Each thread
- * (request) should keep its own instance.
+ * Root object for serving factory tasks and support loosely coupling of implementation (core) from the api.
+ * This is not a singleton (static variables) to avoid issues with synchronization, OSGi, hot deployment and so on.
+ * Each thread (request) should keep its own instance.
  */
 public abstract class OData {
 
@@ -46,26 +47,25 @@ public abstract class OData {
       return (OData) object;
 
     } catch (final Exception e) {
-      // TODO: Change to ODataRuntimeExcfeption
       throw new ODataRuntimeException(e);
     }
   }
 
   /**
-   * Create a new serializer object for rendering content in the specified format. Serializers are used in Processor
-   * implementations.
+   * Creates a new serializer object for rendering content in the specified format.
+   * Serializers are used in Processor implementations.
    * @param format - Any format supported by Olingo (XML, JSON ...)
    */
-  public abstract ODataSerializer createSerializer(ODataFormat format);
+  public abstract ODataSerializer createSerializer(ODataFormat format) throws ODataSerializerException;
 
   /**
-   * Create a new ODataHttpHandler for handling OData requests in a http context. 
+   * Creates a new ODataHttpHandler for handling OData requests in an HTTP context. 
    * @param edm - metadata object required to handle an OData request
    */
   public abstract ODataHttpHandler createHandler(Edm edm);
 
   /**
-   * Create an metadata object.
+   * Creates an metadata object.
    * @param edmProvider - A custom or default implementation for creating metadata
    */
   public abstract Edm createEdm(EdmProvider edmProvider);

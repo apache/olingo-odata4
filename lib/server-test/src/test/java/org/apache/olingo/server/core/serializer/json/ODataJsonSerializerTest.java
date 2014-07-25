@@ -117,7 +117,7 @@ public class ODataJsonSerializerTest {
           ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build());
       Assert.fail("Expected exception not thrown!");
     } catch (final ODataSerializerException e) {
-      Assert.assertEquals(ODataSerializerException.WRONG_PROPERTY_VALUE, e.getMessageKey());
+      Assert.assertEquals(ODataSerializerException.MessageKeys.WRONG_PROPERTY_VALUE, e.getMessageKey());
        final String message = e.getLocalizedMessage();
        Assert.assertThat(message, CoreMatchers.containsString("PropertyInt16"));
        Assert.assertThat(message, CoreMatchers.containsString("false"));

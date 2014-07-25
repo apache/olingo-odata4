@@ -25,6 +25,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.processor.CollectionProcessor;
 import org.apache.olingo.server.api.processor.CustomContentTypeSupportProcessor;
 import org.apache.olingo.server.api.processor.FormatContentTypeMapping;
@@ -105,28 +106,28 @@ public class ContentNegotiatorTest {
   private final static Logger LOG = LoggerFactory.getLogger(ContentNegotiatorTest.class);
 
   @Test
-  public void testServiceDocumentSingleCase() {
+  public void testServiceDocumentSingleCase() throws Exception {
     String[] useCase = { ACCEPT_CASE_MIN_UTF8, null, ACCEPT_CASE_MIN_UTF8, null, null };
 
     testContentNegotiation(useCase, ServiceDocumentProcessor.class);
   }
 
   @Test
-  public void testServiceDocument() {
+  public void testServiceDocument() throws Exception {
     for (String[] useCase : casesServiceDocument) {
       testContentNegotiation(useCase, ServiceDocumentProcessor.class);
     }
   }
 
   @Test
-  public void testMetadataSingleCase() {
+  public void testMetadataSingleCase() throws Exception {
     String[] useCase = { "application/xml", null, null, null, null };
 
     testContentNegotiation(useCase, MetadataProcessor.class);
   }
 
   @Test
-  public void testMetadata() {
+  public void testMetadata() throws Exception {
     for (String[] useCase : casesMetadata) {
       testContentNegotiation(useCase, MetadataProcessor.class);
     }
@@ -144,7 +145,8 @@ public class ContentNegotiatorTest {
     }
   }
 
-  public void testContentNegotiation(final String[] useCase, final Class<? extends Processor> processorClass) {
+  public void testContentNegotiation(final String[] useCase, final Class<? extends Processor> processorClass)
+      throws ODataTranslatedException {
 
     LOG.debug(Arrays.asList(useCase).toString());
 

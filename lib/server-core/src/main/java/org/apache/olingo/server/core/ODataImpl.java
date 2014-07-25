@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.server.core;
 
-import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
+import org.apache.olingo.server.api.serializer.ODataSerializerException;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.serializer.ODataXmlSerializerImpl;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
@@ -32,7 +32,7 @@ import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 public class ODataImpl extends OData {
 
   @Override
-  public ODataSerializer createSerializer(final ODataFormat format) {
+  public ODataSerializer createSerializer(final ODataFormat format) throws ODataSerializerException {
     ODataSerializer serializer;
     switch (format) {
     case JSON:
@@ -44,7 +44,8 @@ public class ODataImpl extends OData {
       serializer = new ODataXmlSerializerImpl();
       break;
     default:
-      throw new ODataRuntimeException("Unsupported format: " + format);
+      throw new ODataSerializerException("Unsupported format: " + format,
+          ODataSerializerException.MessageKeys.UNSUPPORTED_FORMAT, format.toString());
     }
 
     return serializer;
