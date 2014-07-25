@@ -29,6 +29,11 @@ public interface AliasesCollection extends
     org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AliasesCollection>,
     org.apache.olingo.ext.proxy.api.ComplexCollection<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Aliases, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AliasesCollection, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AliasesCollection> {
 
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }
   Object getAnnotation(Class<? extends AbstractTerm> term);
 
   Collection<Class<? extends AbstractTerm>> getAnnotationTerms();

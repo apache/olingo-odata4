@@ -31,4 +31,9 @@ public interface CustomerInfo
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<CustomerInfo>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfo, java.lang.Integer, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfoCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

@@ -297,7 +297,7 @@ public interface Employee
         @Override
         Operations operations();
 
-    interface Operations            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.Operations{
+    interface Operations extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.Operations{
     
         }
     Annotations annotations();

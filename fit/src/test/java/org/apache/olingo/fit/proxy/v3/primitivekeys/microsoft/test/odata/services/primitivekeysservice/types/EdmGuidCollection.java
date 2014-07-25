@@ -29,6 +29,11 @@ public interface EdmGuidCollection extends
     org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmGuidCollection>,
     org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmGuid, org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmGuidCollection, org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmGuidCollection> {
 
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }
   Object getAnnotation(Class<? extends AbstractTerm> term);
 
   Collection<Class<? extends AbstractTerm>> getAnnotationTerms();

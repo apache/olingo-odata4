@@ -137,6 +137,11 @@ public interface Login
     
 
 
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }
     Annotations annotations();
 
     interface Annotations {

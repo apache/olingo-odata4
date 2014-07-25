@@ -33,4 +33,9 @@ public interface ProductPhoto
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<ProductPhoto>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ProductPhoto, ProductPhotoKey, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ProductPhotoCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

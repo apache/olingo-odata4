@@ -31,4 +31,9 @@ public interface RowIndex
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<RowIndex>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndex, java.lang.Integer, org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndexCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

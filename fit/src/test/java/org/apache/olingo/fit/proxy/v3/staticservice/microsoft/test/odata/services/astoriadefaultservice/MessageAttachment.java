@@ -31,4 +31,9 @@ public interface MessageAttachment
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<MessageAttachment>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachment, java.util.UUID, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachmentCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

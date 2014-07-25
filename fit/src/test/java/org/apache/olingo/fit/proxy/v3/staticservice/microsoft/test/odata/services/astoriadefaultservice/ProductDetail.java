@@ -31,4 +31,9 @@ public interface ProductDetail
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<ProductDetail>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductDetail, java.lang.Integer, org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductDetailCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

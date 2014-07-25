@@ -20,15 +20,18 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.URIFilter;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
@@ -62,14 +65,16 @@ public class InvokerHandler<T, C> extends AbstractInvocationHandler {
 
   private final EdmOperation edmOperation;
 
-  private final Class<T> reference;
+  private final Class<T> targetRef;
+
+  private final Class<?> operationRef;
 
   public InvokerHandler(
           final URI uri,
           final Map<String, ODataValue> parameters,
           final Operation operation,
           final EdmOperation edmOperation,
-          final Class<T> reference,
+          final Type[] references,
           final AbstractService<?> service) {
 
     super(service);
@@ -79,7 +84,13 @@ public class InvokerHandler<T, C> extends AbstractInvocationHandler {
     this.parameters = parameters;
     this.edmOperation = edmOperation;
     this.operation = operation;
-    this.reference = reference;
+    if (references.length > 0) {
+      this.targetRef = ClassUtils.<T>getTypeClass(references[0]);
+      this.operationRef = references.length > 1 ? ClassUtils.<T>getTypeClass(references[1]) : null;
+    } else {
+      this.targetRef = null;
+      this.operationRef = null;
+    }
   }
 
   public C compose() {
@@ -116,11 +127,11 @@ public class InvokerHandler<T, C> extends AbstractInvocationHandler {
 
       if (edmType.isEntityType()) {
         if (edmType.isCollection()) {
-          final Class<?> collItemType = ClassUtils.extractTypeArg(reference, EntityCollection.class);
+          final Class<?> collItemType = ClassUtils.extractTypeArg(targetRef, EntityCollection.class);
           return (T) ProxyUtils.getEntityCollectionProxy(
                   service,
                   collItemType,
-                  reference,
+                  targetRef,
                   null,
                   (CommonODataEntitySet) result,
                   this.baseURI,
@@ -130,14 +141,14 @@ public class InvokerHandler<T, C> extends AbstractInvocationHandler {
                   service,
                   (CommonODataEntity) result,
                   null,
-                  reference,
+                  targetRef,
                   null,
                   false);
         }
       } else {
         Object res;
 
-        final Class<?> ref = ClassUtils.getTypeClass(reference);
+        final Class<?> ref = ClassUtils.getTypeClass(targetRef);
         final CommonODataProperty property = (CommonODataProperty) result;
 
         if (property == null || property.hasNullValue()) {
@@ -185,7 +196,7 @@ public class InvokerHandler<T, C> extends AbstractInvocationHandler {
             res = ProxyUtils.getComplex(
                     service, property.getName(), property.getValue().asComplex(), ref, null, null, false);
           } else {
-            res = CoreUtils.getObjectFromODataValue(property.getValue(), reference, service);
+            res = CoreUtils.getObjectFromODataValue(property.getValue(), targetRef, service);
           }
         }
 
@@ -216,6 +227,7 @@ public class InvokerHandler<T, C> extends AbstractInvocationHandler {
   }
 
   @Override
+  @SuppressWarnings({"unchecked", "rawtype"})
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     if ("filter".equals(method.getName())
             || "orderBy".equals(method.getName())
@@ -225,6 +237,37 @@ public class InvokerHandler<T, C> extends AbstractInvocationHandler {
             || "select".equals(method.getName())) {
       invokeSelfMethod(method, args);
       return proxy;
+    } else if ("compose".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
+
+      final EdmTypeInfo edmType = new EdmTypeInfo.Builder().
+              setEdm(service.getClient().getCachedEdm()).setTypeExpression(operation.returnType()).build();
+
+      final OperationInvocationHandler handler;
+
+      final URI prefixURI = URIUtils.buildInvokeRequestURI(this.baseURI, parameters, getClient().getServiceVersion());
+
+      if (edmType.isComplexType()) {
+        if (edmType.isCollection()) {
+          handler = OperationInvocationHandler.getInstance(new ComplexCollectionInvocationHandler(
+                  service, targetRef, getClient().newURIBuilder(prefixURI.toASCIIString())));
+        } else {
+          handler = OperationInvocationHandler.getInstance(ComplexInvocationHandler.getInstance(
+                  targetRef, service, getClient().newURIBuilder(prefixURI.toASCIIString())));
+        }
+      } else {
+        if (edmType.isCollection()) {
+          handler = OperationInvocationHandler.getInstance(new EntityCollectionInvocationHandler(
+                  service, null, targetRef, null, getClient().newURIBuilder(prefixURI.toASCIIString())));
+        } else {
+          handler = OperationInvocationHandler.getInstance(EntityInvocationHandler.getInstance(
+                  prefixURI, targetRef, service));
+        }
+      }
+
+      return Proxy.newProxyInstance(
+              Thread.currentThread().getContextClassLoader(),
+              new Class<?>[] {operationRef}, handler);
+
     } else if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
     } else {

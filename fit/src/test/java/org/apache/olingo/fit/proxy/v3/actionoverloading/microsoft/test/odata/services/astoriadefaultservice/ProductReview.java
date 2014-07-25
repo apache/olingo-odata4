@@ -33,4 +33,9 @@ public interface ProductReview
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<ProductReview>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ProductReview, ProductReviewKey, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ProductReviewCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

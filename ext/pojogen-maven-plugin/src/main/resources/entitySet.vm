@@ -63,8 +63,6 @@ public interface $utility.capitalize($entitySet.Name)
 
 #set( $functions = $utility.getFunctionsBoundTo("${container.Namespace}.${entitySet.Name}", false) )
 #set( $actions = $utility.getActionsBoundTo("${container.Namespace}.${entitySet.Name}", false) )
-#if( $functions.size() > 0 || $actions.size() > 0 )
 #set($structuredType = $entitySet.EntityType)
 #parse( "operation.vm" )
-#end
 }

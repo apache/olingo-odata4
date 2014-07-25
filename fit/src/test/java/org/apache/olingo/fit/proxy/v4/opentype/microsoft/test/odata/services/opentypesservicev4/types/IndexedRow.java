@@ -68,6 +68,12 @@ public interface IndexedRow
 
 
 
+        @Override
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row.Operations{
+    
+        }
     Annotations annotations();
 
     interface Annotations            extends org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row.Annotations{

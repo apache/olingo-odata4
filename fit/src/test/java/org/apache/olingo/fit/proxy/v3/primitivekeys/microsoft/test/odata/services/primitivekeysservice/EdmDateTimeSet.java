@@ -31,4 +31,9 @@ public interface EdmDateTimeSet
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<EdmDateTimeSet>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmDateTime, java.sql.Timestamp, org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmDateTimeCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

@@ -57,7 +57,7 @@ public interface DemoService extends PersistenceManager {
 
   Operations operations();
 
-  public interface Operations {
+  public interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
   
         
     @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "IncreaseSalaries",

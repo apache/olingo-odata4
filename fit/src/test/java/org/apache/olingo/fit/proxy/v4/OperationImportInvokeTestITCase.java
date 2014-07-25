@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
@@ -23,8 +24,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
-import org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker;
-import org.apache.olingo.ext.proxy.api.StructuredInvoker;
+import org.apache.olingo.ext.proxy.api.StructuredCollectionComposableInvoker;
+import org.apache.olingo.ext.proxy.api.StructuredComposableInvoker;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
@@ -45,7 +46,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void getPerson2() {
-    final StructuredInvoker<Person> person = container.operations().getPerson2("London");
+    final StructuredComposableInvoker<Person, Person.Operations> person = container.operations().getPerson2("London");
     assertEquals(1, person.execute().getPersonID(), 0);
   }
 
@@ -56,13 +57,14 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     address.setPostalCode("98052");
     address.setCity("London");
 
-    final StructuredInvoker<Person> person = container.operations().getPerson(address);
+    final StructuredComposableInvoker<Person, Person.Operations> person = container.operations().getPerson(address);
     assertEquals(1, person.execute().getPersonID(), 0);
   }
 
   @Test
   public void getAllProducts() {
-    final StructuredCollectionInvoker<ProductCollection> products = container.operations().getAllProducts();
+    final StructuredCollectionComposableInvoker<ProductCollection, ProductCollection.Operations> products =
+            container.operations().getAllProducts();
     assertEquals(5, products.execute().size());
   }
 

@@ -251,6 +251,12 @@ public interface CreditCardPI
         
 
 
+        @Override
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument.Operations{
+    
+        }
     Annotations annotations();
 
     interface Annotations            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument.Annotations{

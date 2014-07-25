@@ -112,6 +112,19 @@ public class V4Services extends AbstractServices {
     super(ODataServiceVersion.V40, metadata);
   }
 
+  @POST
+  @Path("/GetAllProducts()/Discount")
+  public Response discount() {
+    try {
+      final String basePath = "Products" + File.separatorChar + "feed";
+
+      final InputStream feed = FSManager.instance(version).readFile(basePath, Accept.JSON_FULLMETA);
+      return xml.createResponse(null, feed, Commons.getETag(basePath, version), Accept.JSON_FULLMETA);
+    } catch (Exception e) {
+      return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(version), e);
+    }
+  }
+
   @GET
   @Path("/redirect/{name}({id})")
   public Response conformanceRedirect(

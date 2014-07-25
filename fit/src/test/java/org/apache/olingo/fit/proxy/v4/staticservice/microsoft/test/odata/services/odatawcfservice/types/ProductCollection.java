@@ -26,24 +26,23 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import java.util.Collection;
 //CHECKSTYLE:ON (Maven checkstyle)
 
+public interface ProductCollection extends
+        org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection>,
+        org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection> {
 
-public interface ProductCollection extends 
-    org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection>,
-    org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection> {
+  Operations operations();
 
-        Operations operations();
+  public interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
 
-    interface Operations {
-    
-          
-      @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "Discount",
-                    type = OperationType.ACTION,
-                    referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection.class,                    returnType = "Collection(Microsoft.Test.OData.Services.ODataWCFService.Product)")
-      org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection> discount(
-                @Parameter(name = "percentage", type = "Edm.Int32", nullable = false) java.lang.Integer percentage
-            );
+    @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "Discount",
+            type = OperationType.ACTION,
+            referenceType =
+            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection.class,
+            returnType = "Collection(Microsoft.Test.OData.Services.ODataWCFService.Product)")
+    org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection> discount(
+            @Parameter(name = "percentage", type = "Edm.Int32", nullable = false) java.lang.Integer percentage);
+  }
 
-        }
   Object getAnnotation(Class<? extends AbstractTerm> term);
 
   Collection<Class<? extends AbstractTerm>> getAnnotationTerms();

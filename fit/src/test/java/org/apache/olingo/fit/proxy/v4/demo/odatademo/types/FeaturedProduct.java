@@ -248,7 +248,7 @@ public interface FeaturedProduct
         @Override
         Operations operations();
 
-    interface Operations            extends org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product.Operations{
+    interface Operations extends org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product.Operations{
     
         }
     Annotations annotations();

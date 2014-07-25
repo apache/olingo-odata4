@@ -262,7 +262,7 @@ public interface SpecialEmployee
         @Override
         Operations operations();
 
-    interface Operations            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Employee.Operations{
+    interface Operations extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Employee.Operations{
     
           
       @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "UpdatePersonInfo",

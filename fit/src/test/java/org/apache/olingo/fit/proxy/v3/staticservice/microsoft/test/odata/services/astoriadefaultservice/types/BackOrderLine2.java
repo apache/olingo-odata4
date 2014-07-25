@@ -180,6 +180,12 @@ public interface BackOrderLine2
     
 
 
+        @Override
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.BackOrderLine.Operations{
+    
+        }
     Annotations annotations();
 
     interface Annotations            extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.BackOrderLine.Annotations{

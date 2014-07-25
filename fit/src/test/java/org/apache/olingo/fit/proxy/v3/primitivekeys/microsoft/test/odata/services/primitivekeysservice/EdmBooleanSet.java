@@ -31,4 +31,9 @@ public interface EdmBooleanSet
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<EdmBooleanSet>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBoolean, java.lang.Boolean, org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBooleanCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

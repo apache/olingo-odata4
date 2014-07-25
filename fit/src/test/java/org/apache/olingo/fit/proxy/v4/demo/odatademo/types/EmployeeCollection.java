@@ -29,6 +29,11 @@ public interface EmployeeCollection extends
     org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.EmployeeCollection>,
     org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Employee, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.EmployeeCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.EmployeeCollection> {
 
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }
   Object getAnnotation(Class<? extends AbstractTerm> term);
 
   Collection<Class<? extends AbstractTerm>> getAnnotationTerms();

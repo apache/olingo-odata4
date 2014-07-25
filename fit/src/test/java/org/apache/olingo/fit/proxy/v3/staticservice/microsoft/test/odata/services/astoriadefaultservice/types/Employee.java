@@ -180,9 +180,10 @@ public interface Employee
     
 
 
+        @Override
         Operations operations();
 
-    interface Operations {
+    interface Operations extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Person.Operations{
     
           
       @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "Sack",

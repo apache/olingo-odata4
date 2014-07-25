@@ -216,7 +216,7 @@ public interface ComputerDetail
 
         Operations operations();
 
-    interface Operations {
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
     
           
       @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetComputerDetailsSpecifications",

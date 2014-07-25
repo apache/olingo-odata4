@@ -248,7 +248,7 @@ public interface PublicCompany
         @Override
         Operations operations();
 
-    interface Operations            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company.Operations{
+    interface Operations extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company.Operations{
     
         }
     Annotations annotations();

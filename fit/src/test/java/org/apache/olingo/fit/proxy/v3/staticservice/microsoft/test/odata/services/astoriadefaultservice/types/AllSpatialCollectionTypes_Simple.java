@@ -205,6 +205,12 @@ public interface AllSpatialCollectionTypes_Simple
 
 
 
+        @Override
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes.Operations{
+    
+        }
     Annotations annotations();
 
     interface Annotations            extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes.Annotations{

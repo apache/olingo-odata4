@@ -21,17 +21,11 @@ package org.apache.olingo.client.core.communication.request.invoke.v4;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.invoke.AbstractODataInvokeRequest;
-import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
-import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLEncoder;
-import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.core.uri.URIUtils;
 
 public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends AbstractODataInvokeRequest<T> {
 
@@ -56,39 +50,6 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends Abstrac
 
   @Override
   protected URI buildGETURI() {
-    final String rawQuery = this.uri.getRawQuery();
-    String baseURI = StringUtils.substringBefore(this.uri.toASCIIString(), "?" + rawQuery);
-    if (baseURI.endsWith("()")) {
-      baseURI = baseURI.substring(0, baseURI.length() - 2);
-    }
-
-    final StringBuilder inlineParams = new StringBuilder();
-    for (Map.Entry<String, ODataValue> param : parameters.entrySet()) {
-      inlineParams.append(param.getKey()).append("=");
-
-      Object value = null;
-      if (param.getValue().isPrimitive()) {
-        value = param.getValue().asPrimitive().toValue();
-      } else if (param.getValue().isComplex()) {
-        value = param.getValue().asComplex().asJavaMap();
-      } else if (param.getValue().isCollection()) {
-        value = param.getValue().asCollection().asJavaCollection();
-      } else if (param.getValue() instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
-              && ((org.apache.olingo.commons.api.domain.v4.ODataValue) param.getValue()).isEnum()) {
-
-        value = ((org.apache.olingo.commons.api.domain.v4.ODataValue) param.getValue()).asEnum().toString();
-      }
-
-      inlineParams.append(URIUtils.escape(odataClient.getServiceVersion(), value)).append(',');
-    }
-    inlineParams.deleteCharAt(inlineParams.length() - 1);
-
-    try {
-      return URI.create(baseURI + "(" + URLEncoder.encode(inlineParams.toString(), Constants.UTF8) + ")"
-              + (StringUtils.isNotBlank(rawQuery) ? "?" + rawQuery : StringUtils.EMPTY));
-
-    } catch (UnsupportedEncodingException e) {
-      throw new IllegalArgumentException("While adding GET parameters", e);
-    }
+    return URIUtils.buildInvokeRequestURI(this.uri, parameters, odataClient.getServiceVersion());
   }
 }

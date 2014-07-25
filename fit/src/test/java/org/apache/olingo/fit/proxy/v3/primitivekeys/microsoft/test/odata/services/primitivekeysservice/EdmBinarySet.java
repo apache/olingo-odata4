@@ -31,4 +31,9 @@ public interface EdmBinarySet
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<EdmBinarySet>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBinary, byte[], org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBinaryCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

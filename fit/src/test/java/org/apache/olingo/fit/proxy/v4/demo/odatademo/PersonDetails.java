@@ -31,4 +31,9 @@ public interface PersonDetails
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<PersonDetails>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetailCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

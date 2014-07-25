@@ -192,6 +192,12 @@ public interface Contractor
     
 
 
+        @Override
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Person.Operations{
+    
+        }
     Annotations annotations();
 
     interface Annotations            extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Person.Annotations{

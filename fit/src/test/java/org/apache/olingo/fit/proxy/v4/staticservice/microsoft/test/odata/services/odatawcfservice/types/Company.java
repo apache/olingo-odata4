@@ -201,7 +201,7 @@ public interface Company
 
         Operations operations();
 
-    interface Operations {
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
           
       @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "GetEmployeesCount",
                     type = OperationType.FUNCTION,

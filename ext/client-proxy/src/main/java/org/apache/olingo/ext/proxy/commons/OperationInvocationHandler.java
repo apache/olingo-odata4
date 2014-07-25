@@ -18,11 +18,8 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.EdmAction;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmOperation;
@@ -43,7 +40,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
@@ -61,6 +61,10 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
 
   static OperationInvocationHandler getInstance(final EntityInvocationHandler entityHandler) {
     return new OperationInvocationHandler(entityHandler);
+  }
+
+  static OperationInvocationHandler getInstance(final ComplexInvocationHandler complexHandler) {
+    return new OperationInvocationHandler(complexHandler);
   }
 
   static OperationInvocationHandler getInstance(final EntityCollectionInvocationHandler<?> collectionHandler) {
@@ -87,6 +91,13 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
 
     this.target = entityHandler;
     this.targetFQN = entityHandler.getEntity().getTypeName();
+  }
+
+  private OperationInvocationHandler(final ComplexInvocationHandler complexHandler) {
+    super(complexHandler.service);
+
+    this.target = complexHandler;
+    this.targetFQN = new FullQualifiedName(complexHandler.getComplex().getTypeName());
   }
 
   private OperationInvocationHandler(final EntityCollectionInvocationHandler<?> collectionHandler) {
@@ -184,12 +195,12 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
 
         return Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
-                new Class<?>[] {method.getReturnType()}, new InvokerHandler(
+                new Class<?>[] {ClassUtils.getTypeClass(method.getGenericReturnType())}, new InvokerHandler(
                 edmOperation.getKey(),
                 parameterValues,
                 operation,
                 edmOperation.getValue(),
-                operation.referenceType(),
+                ClassUtils.getTypeArguments(method.getGenericReturnType()),
                 service));
       } else {
         throw new NoSuchMethodException(method.getName());

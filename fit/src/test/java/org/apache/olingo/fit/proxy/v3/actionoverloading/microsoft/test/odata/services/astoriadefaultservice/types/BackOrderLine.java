@@ -183,7 +183,7 @@ public interface BackOrderLine
         @Override
         Operations operations();
 
-    interface Operations            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine.Operations{
+    interface Operations extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine.Operations{
     
         }
     Annotations annotations();

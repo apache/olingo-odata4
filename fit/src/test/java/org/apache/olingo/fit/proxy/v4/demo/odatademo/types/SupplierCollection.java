@@ -29,6 +29,11 @@ public interface SupplierCollection extends
     org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection>,
     org.apache.olingo.ext.proxy.api.EntityCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.SupplierCollection> {
 
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }
   Object getAnnotation(Class<? extends AbstractTerm> term);
 
   Collection<Class<? extends AbstractTerm>> getAnnotationTerms();

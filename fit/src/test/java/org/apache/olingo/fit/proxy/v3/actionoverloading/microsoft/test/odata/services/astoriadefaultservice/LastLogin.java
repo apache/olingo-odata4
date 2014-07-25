@@ -31,4 +31,9 @@ public interface LastLogin
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<LastLogin>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.LastLogin, java.lang.String, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.LastLoginCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

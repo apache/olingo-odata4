@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
@@ -37,7 +38,9 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.ext.proxy.api.StructuredCollectionComposableInvoker;
 import org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker;
+import org.apache.olingo.ext.proxy.api.StructuredComposableInvoker;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.DefaultContainer;
@@ -54,8 +57,10 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
 import org.junit.Test;
@@ -412,5 +417,24 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
     final AddressCollection ac = container.newComplexCollection(AddressCollection.class);
     container.getCustomers().getByKey(2).operations().resetAddress(ac, 0).select("Name").expand("Orders").execute();
+  }
+
+  @Test
+  public void workingWithComposableOperations() {
+    final StructuredCollectionComposableInvoker<ProductCollection, ProductCollection.Operations> invoker1 =
+            container.operations().getAllProducts();
+    
+    // Complex/Entity collection (available filter, select, expand, orderBy, skip and top)
+    invoker1.compose().discount(10). // discount is an operation of ProductCollecton
+            filter("Name eq XXXX").
+            select("Name", "ProductDetail").
+            expand("ProductDetail").
+            orderBy("Name").skip(3).top(5).execute();
+
+    final StructuredComposableInvoker<Person, Person.Operations> invoker2 = container.operations().getPerson2("London");
+
+    // Complex/Entity (available only select and expand: after query option composition is not available anymore)
+    invoker2.select("Name"). // after the first query option no composition is possible
+            expand("Order").execute();
   }
 }

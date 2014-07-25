@@ -196,7 +196,7 @@ public interface Contractor
         @Override
         Operations operations();
 
-    interface Operations            extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Person.Operations{
+    interface Operations extends org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Person.Operations{
     
           
       @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "UpdatePersonInfo",

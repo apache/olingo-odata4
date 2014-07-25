@@ -340,7 +340,7 @@ public interface DiscontinuedProduct
         @Override
         Operations operations();
 
-    interface Operations            extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product.Operations{
+    interface Operations extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product.Operations{
     
         }
     Annotations annotations();

@@ -123,6 +123,11 @@ public interface Advertisement
     org.apache.olingo.ext.proxy.api.EdmStreamValue loadStream();
 
 
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }
     Annotations annotations();
 
     interface Annotations {

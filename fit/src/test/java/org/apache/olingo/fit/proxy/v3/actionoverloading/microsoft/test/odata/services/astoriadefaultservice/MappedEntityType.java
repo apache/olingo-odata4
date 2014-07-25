@@ -31,4 +31,9 @@ public interface MappedEntityType
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<MappedEntityType>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.MappedEntityType, java.lang.Integer, org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.MappedEntityTypeCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

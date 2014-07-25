@@ -137,11 +137,9 @@ public interface $utility.capitalize($entityType.Name)
 
 #set( $functions = $utility.getFunctionsBoundTo($entityType.Name, false) )
 #set( $actions = $utility.getActionsBoundTo($entityType.Name, false) )
-#set( $inherited = $utility.justInheritedOperationsBoundTo($entityType) )
-#if( $inherited.size() > 0 || $functions.size() > 0 || $actions.size() > 0 )
+#set( $override = $entityType.getBaseType() )
 #set($structuredType = $entityType)
 #parse( "operation.vm" )
-#end
 
     Annotations annotations();
 

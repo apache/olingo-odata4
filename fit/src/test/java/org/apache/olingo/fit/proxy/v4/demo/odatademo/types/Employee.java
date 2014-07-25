@@ -169,6 +169,12 @@ public interface Employee
     
 
 
+        @Override
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person.Operations{
+    
+        }
     Annotations annotations();
 
     interface Annotations            extends org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person.Annotations{

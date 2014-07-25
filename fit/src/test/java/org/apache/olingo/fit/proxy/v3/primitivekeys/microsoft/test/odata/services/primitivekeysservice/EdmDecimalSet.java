@@ -31,4 +31,9 @@ public interface EdmDecimalSet
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<EdmDecimalSet>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmDecimal, java.math.BigDecimal, org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmDecimalCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

@@ -29,6 +29,11 @@ public interface AddressCollection extends
     org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AddressCollection>,
     org.apache.olingo.ext.proxy.api.ComplexCollection<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Address, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AddressCollection, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.AddressCollection> {
 
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }
   Object getAnnotation(Class<? extends AbstractTerm> term);
 
   Collection<Class<? extends AbstractTerm>> getAnnotationTerms();

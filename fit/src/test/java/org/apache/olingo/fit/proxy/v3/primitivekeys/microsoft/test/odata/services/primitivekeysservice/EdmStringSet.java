@@ -31,4 +31,9 @@ public interface EdmStringSet
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<EdmStringSet>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmString, java.lang.String, org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmStringCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

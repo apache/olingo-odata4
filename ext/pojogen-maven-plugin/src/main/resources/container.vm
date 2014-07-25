@@ -69,19 +69,24 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
 
   Operations operations();
 
-  public interface Operations {
+  public interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
   #foreach($operation in $container.FunctionImports)
   #foreach($function in $operation.UnboundFunctions)
     #if($function.ReturnType)#*
       *##set($defaultType = $utility.getJavaType($function.ReturnType.Type, $function.ReturnType.Collection))#*
+      *##if($function.Composable)#*
+        *##set($composable = "ComposableInvoker<$defaultType, ${defaultType}.Operations>")#*
+      *##{else}#*
+        *##set($composable = "Invoker<$defaultType>")#*
+      *##end#*
       *##if(!($function.getReturnType().isCollection() || ${function.ReturnType.Type.Kind} == "ENTITY" || ${function.ReturnType.Type.Kind} == "COMPLEX" || $utility.isStreamType($function.ReturnType.Type)))#*
         *##set($returnType = "org.apache.olingo.ext.proxy.api.Invoker<$defaultType>")#*
       *##else#*
         *##if(${function.ReturnType.Type.Kind} == "ENTITY" || ${function.ReturnType.Type.Kind} == "COMPLEX")#*
           *##if($function.getReturnType().isCollection())#*
-            *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker<$defaultType>")#*
+            *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredCollection${composable}")#*
           *##{else}#*
-            *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredInvoker<$defaultType>")#*
+            *##set($returnType = "org.apache.olingo.ext.proxy.api.Structured${composable}")#*
           *##end#*
         *##{else}#*
           *##if($function.getReturnType().isCollection())#*
@@ -119,14 +124,19 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
   #if($action)
     #if($action.ReturnType)#*
       *##set($defaultType = $utility.getJavaType($action.ReturnType.Type, $action.ReturnType.Collection))#*
+      *##if($action.Composable)#*
+        *##set($composable = "ComposableInvoker<$defaultType, ${defaultType}.Operations>")#*
+      *##{else}#*
+        *##set($composable = "Invoker<$defaultType>")#*
+      *##end#*
       *##if(!($action.getReturnType().isCollection() || ${action.ReturnType.Type.Kind} == "ENTITY" || ${action.ReturnType.Type.Kind} == "COMPLEX" || $utility.isStreamType($action.ReturnType.Type)))#*
         *##set($returnType = "org.apache.olingo.ext.proxy.api.Invoker<$defaultType>")#*
       *##else#*
         *##if(${action.ReturnType.Type.Kind} == "ENTITY" || ${action.ReturnType.Type.Kind} == "COMPLEX")#*
           *##if($action.getReturnType().isCollection())#*
-            *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker<$defaultType>")#*
+            *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredCollection${composable}")#*
           *##{else}#*
-            *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredInvoker<$defaultType>")#*
+            *##set($returnType = "org.apache.olingo.ext.proxy.api.Structured${composable}")#*
           *##end#*
         *##{else}#*
           *##if($action.getReturnType().isCollection())#*

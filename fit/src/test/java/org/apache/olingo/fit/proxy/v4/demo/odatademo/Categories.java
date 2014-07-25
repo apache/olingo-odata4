@@ -31,4 +31,9 @@ public interface Categories
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<Categories>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.CategoryCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

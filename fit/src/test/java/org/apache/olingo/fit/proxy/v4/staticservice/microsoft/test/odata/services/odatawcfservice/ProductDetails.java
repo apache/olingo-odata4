@@ -33,4 +33,9 @@ public interface ProductDetails
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<ProductDetails>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail, ProductDetailKey, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

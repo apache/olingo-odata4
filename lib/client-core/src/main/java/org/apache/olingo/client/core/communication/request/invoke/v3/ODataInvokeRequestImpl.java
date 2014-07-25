@@ -18,18 +18,14 @@
  */
 package org.apache.olingo.client.core.communication.request.invoke.v3;
 
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.invoke.AbstractODataInvokeRequest;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
-import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
 
 public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends AbstractODataInvokeRequest<T> {
 
@@ -46,20 +42,6 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends Abstrac
 
   @Override
   protected URI buildGETURI() {
-    final URIBuilder uriBuilder = new URIBuilder(this.uri);
-    for (Map.Entry<String, ODataValue> param : parameters.entrySet()) {
-      if (!param.getValue().isPrimitive()) {
-        throw new IllegalArgumentException("Only primitive values can be passed via GET");
-      }
-
-      uriBuilder.addParameter(param.getKey(), URIUtils.escape(odataClient.getServiceVersion(), param.getValue()));
-    }
-
-    try {
-      return uriBuilder.build();
-    } catch (URISyntaxException e) {
-      throw new IllegalArgumentException("While adding GET parameters", e);
-    }
+    return URIUtils.buildInvokeRequestURI(this.uri, parameters, odataClient.getServiceVersion());
   }
-
 }

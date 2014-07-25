@@ -52,10 +52,8 @@ public interface $utility.capitalize($entityType.Name)Collection extends
     org.apache.olingo.ext.proxy.api.EntityCollection<$javaEntityType, ${javaEntityType}Collection, ${javaEntityType}Collection> {
 #set( $functions = $utility.getFunctionsBoundTo($entityType.Name, true) )
 #set( $actions = $utility.getActionsBoundTo($entityType.Name, true) )
-#if( $functions.size() > 0 || $actions.size() > 0 )
 #set($structuredType = $entityType)
 #parse( "operation.vm" )
-#end
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 
