@@ -30,9 +30,9 @@ import org.junit.Test;
 public class TranslatedExceptionsTest {
 
   private static final String DEV = "devMessage";
-  private static final String BASIC = "BASIC";
-  private static final String ONEPARAM = "ONEPARAM";
-  private static final String TWOPARAM = "TWOPARAM";
+  private static enum Keys implements ODataTranslatedException.MessageKey {
+    BASIC, ONEPARAM, TWOPARAM, NOMESSAGE
+  }
 
   public TranslatedExceptionsTest() {
     // for test reason we assume a system with a default Locale.ENGLISH
@@ -41,7 +41,7 @@ public class TranslatedExceptionsTest {
 
   @Test
   public void basic() {
-    ODataTranslatedException exp = new ODataTranslatedException(DEV, BASIC);
+    ODataTranslatedException exp = new ODataTranslatedException(DEV, Keys.BASIC);
     assertEquals(DEV, exp.getMessage());
 
     ODataErrorMessage translatedMessage = exp.getTranslatedMessage(null);
@@ -70,7 +70,7 @@ public class TranslatedExceptionsTest {
 
   @Test
   public void unusedParametersMustNotResultInAnException() {
-    ODataTranslatedException exp = new ODataTranslatedException(DEV, BASIC, "unusedParam1", "unusedParam2");
+    ODataTranslatedException exp = new ODataTranslatedException(DEV, Keys.BASIC, "unusedParam1", "unusedParam2");
     assertEquals(DEV, exp.getMessage());
 
     ODataErrorMessage translatedMessage = exp.getTranslatedMessage(null);
@@ -80,7 +80,7 @@ public class TranslatedExceptionsTest {
 
   @Test
   public void useOneParameter() {
-    ODataTranslatedException exp = new ODataTranslatedException(DEV, ONEPARAM, "usedParam1");
+    ODataTranslatedException exp = new ODataTranslatedException(DEV, Keys.ONEPARAM, "usedParam1");
     assertEquals(DEV, exp.getMessage());
 
     ODataErrorMessage translatedMessage = exp.getTranslatedMessage(null);
@@ -90,7 +90,7 @@ public class TranslatedExceptionsTest {
 
   @Test
   public void useOneParameterExpectedButMultipleGiven() {
-    ODataTranslatedException exp = new ODataTranslatedException(DEV, ONEPARAM, "usedParam1", "unusedParam2");
+    ODataTranslatedException exp = new ODataTranslatedException(DEV, Keys.ONEPARAM, "usedParam1", "unusedParam2");
     assertEquals(DEV, exp.getMessage());
 
     ODataErrorMessage translatedMessage = exp.getTranslatedMessage(null);
@@ -100,7 +100,7 @@ public class TranslatedExceptionsTest {
 
   @Test
   public void useTwoParameter() {
-    ODataTranslatedException exp = new ODataTranslatedException(DEV, TWOPARAM, "usedParam1", "usedParam2");
+    ODataTranslatedException exp = new ODataTranslatedException(DEV, Keys.TWOPARAM, "usedParam1", "usedParam2");
     assertEquals(DEV, exp.getMessage());
 
     ODataErrorMessage translatedMessage = exp.getTranslatedMessage(null);
@@ -110,7 +110,7 @@ public class TranslatedExceptionsTest {
 
   @Test
   public void parametersNotGivenAltoughNeeded() {
-    ODataTranslatedException exp = new ODataTranslatedException(DEV, ONEPARAM);
+    ODataTranslatedException exp = new ODataTranslatedException(DEV, Keys.ONEPARAM);
     assertEquals(DEV, exp.getMessage());
 
     ODataErrorMessage translatedMessage = exp.getTranslatedMessage(null);
@@ -120,7 +120,7 @@ public class TranslatedExceptionsTest {
 
   @Test
   public void noMessageForKey() {
-    ODataTranslatedException exp = new ODataTranslatedException(DEV, "NOMESSAGE");
+    ODataTranslatedException exp = new ODataTranslatedException(DEV, Keys.NOMESSAGE);
     assertEquals(DEV, exp.getMessage());
 
     ODataErrorMessage translatedMessage = exp.getTranslatedMessage(null);
@@ -131,11 +131,11 @@ public class TranslatedExceptionsTest {
   @Test
   public void keyForRootBundleButNotPresentInDerivedBundle() {
     ODataTranslatedException exp =
-        new ODataTranslatedException(DEV, ODataTranslatedException.HTTP_METHOD_NOT_IMPLEMENTED, "param1");
+        new ODataTranslatedException(DEV, ODataTranslatedException.MessageKeys.HTTP_METHOD_NOT_IMPLEMENTED, "param1");
     assertEquals(DEV, exp.getMessage());
 
     ODataErrorMessage translatedMessage = exp.getTranslatedMessage(Locale.GERMAN);
     assertNotNull(translatedMessage);
-    assertEquals("Invalid http method given: 'param1'.", translatedMessage.getMessage());
+    assertEquals("Invalid HTTP method given: 'param1'.", translatedMessage.getMessage());
   }
 }

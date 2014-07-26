@@ -18,6 +18,6 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-public interface StructuredCollectionInvoker<CT extends StructuredCollectionQuery<?>>
+public interface StructuredCollectionInvoker<CT extends StructuredCollection<?, ?, ?>>
         extends StructuredCollectionQuery<StructuredCollectionInvoker<CT>>, Invoker<CT> {
 }

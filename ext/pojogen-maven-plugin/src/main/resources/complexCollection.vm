@@ -52,10 +52,8 @@ public interface $utility.capitalize($complexType.Name)Collection extends
     org.apache.olingo.ext.proxy.api.ComplexCollection<$javaComplexType, ${javaComplexType}Collection, ${javaComplexType}Collection> {
 #set( $functions = $utility.getFunctionsBoundTo($complexType.Name, true) )
 #set( $actions = $utility.getActionsBoundTo($complexType.Name, true) )
-#if( $functions.size() > 0 || $actions.size() > 0 )
 #set($structuredType = $complexType)
 #parse( "operation.vm" )
-#end
 
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

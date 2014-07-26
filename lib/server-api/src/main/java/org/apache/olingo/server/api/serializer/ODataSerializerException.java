@@ -24,27 +24,26 @@ public class ODataSerializerException extends ODataTranslatedException {
 
   private static final long serialVersionUID = 5358683245923127425L;
 
-  // MessageKeys
-  public static final String NOT_IMPLEMENTED = "ODataSerializerException.NOT_IMPLEMENTED";
-  public static final String JSON_METADATA = "ODataSerializerException.JSON_METADATA";
-  public static final String IO_EXCEPTION = "ODataSerializerException.IO_EXCEPTION";
-  public static final String NO_CONTEXT_URL = "ODataSerializerException.NO_CONTEXT_URL";
-  /** parameter: property name */
-  public static final String UNSUPPORTED_PROPERTY_TYPE = "ODataSerializerException.UNSUPPORTED_PROPERTY_TYPE";
-  /** parameter: property name */
-  public static final String INCONSISTENT_PROPERTY_TYPE = "ODataSerializerException.INCONSISTENT_PROPERTY_TYPE";
-  /** parameter: property name */
-  public static final String MISSING_PROPERTY = "ODataSerializerException.MISSING_PROPERTY";
-  /** parameters: property name, property value */
-  public static final String WRONG_PROPERTY_VALUE = "ODataSerializerException.WRONG_PROPERTY_VALUE";
+  public static enum MessageKeys implements MessageKey {
+    NOT_IMPLEMENTED,
+    /** parameter: format */ UNSUPPORTED_FORMAT,
+    JSON_METADATA,
+    IO_EXCEPTION,
+    NULL_INPUT,
+    NO_CONTEXT_URL,
+    /** parameter: property name */ UNSUPPORTED_PROPERTY_TYPE,
+    /** parameter: property name */ INCONSISTENT_PROPERTY_TYPE,
+    /** parameter: property name */ MISSING_PROPERTY,
+    /** parameters: property name, property value */ WRONG_PROPERTY_VALUE
+  }
 
   public ODataSerializerException(final String developmentMessage,
-      final String messageKey, final String... parameters) {
+      final MessageKey messageKey, final String... parameters) {
     super(developmentMessage, messageKey, parameters);
   }
 
   public ODataSerializerException(final String developmentMessage, final Throwable cause,
-      final String messageKey, final String... parameters) {
+      final MessageKey messageKey, final String... parameters) {
     super(developmentMessage, cause, messageKey, parameters);
   }
 }

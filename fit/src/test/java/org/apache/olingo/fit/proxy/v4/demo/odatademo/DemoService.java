@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.demo.odatademo;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -57,7 +56,7 @@ public interface DemoService extends PersistenceManager {
 
   Operations operations();
 
-  public interface Operations {
+  public interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
   
         
     @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "IncreaseSalaries",

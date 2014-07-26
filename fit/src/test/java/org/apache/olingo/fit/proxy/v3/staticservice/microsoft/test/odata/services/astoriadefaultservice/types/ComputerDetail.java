@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -216,7 +215,7 @@ public interface ComputerDetail
 
         Operations operations();
 
-    interface Operations {
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
     
           
       @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "ResetComputerDetailsSpecifications",

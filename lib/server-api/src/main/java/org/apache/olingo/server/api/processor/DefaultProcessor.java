@@ -52,9 +52,8 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
   @Override
   public void readServiceDocument(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) {
-    ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-
     try {
+      ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
       response.setContent(serializer.serviceDocument(edm, request.getRawBaseUri()));
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
@@ -66,8 +65,8 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
   @Override
   public void readMetadata(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) {
-    ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
     try {
+      ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
       response.setContent(serializer.metadataDocument(edm));
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());

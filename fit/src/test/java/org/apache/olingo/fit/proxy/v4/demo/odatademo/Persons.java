@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.demo.odatademo;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -31,4 +30,9 @@ public interface Persons
   org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<Persons>,
   AbstractEntitySet<org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person, java.lang.Integer, org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonCollection> {
 
-}
+
+        Operations operations();
+
+    interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
+    
+        }}

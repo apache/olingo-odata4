@@ -69,7 +69,8 @@ public abstract class AbstractService<C extends CommonEdmEnabledODataClient<?>> 
     ObjectInputStream ois = null;
     XMLMetadata metadata = null;
     try {
-      bais = new ByteArrayInputStream(Base64.decodeBase64(compressedMetadata));
+      // use commons codec's Base64 in this fashion to stay compatible with Android
+      bais = new ByteArrayInputStream(new Base64().decode(compressedMetadata.getBytes("UTF-8")));
       gzis = new GZIPInputStream(bais);
       ois = new ObjectInputStream(gzis);
       metadata = (XMLMetadata) ois.readObject();

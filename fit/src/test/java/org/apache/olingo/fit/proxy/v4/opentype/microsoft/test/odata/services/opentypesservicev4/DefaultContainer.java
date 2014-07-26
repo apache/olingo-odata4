@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -46,7 +45,7 @@ public interface DefaultContainer extends PersistenceManager {
 
   Operations operations();
 
-  public interface Operations {
+  public interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
   
     }
 

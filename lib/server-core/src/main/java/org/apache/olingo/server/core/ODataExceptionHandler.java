@@ -45,8 +45,8 @@ public class ODataExceptionHandler {
       error.setMessage(e.getMessage());
     }
 
-    ODataSerializer serializer = OData.newInstance().createSerializer(requestedFormat);
     try {
+      ODataSerializer serializer = OData.newInstance().createSerializer(requestedFormat);
       resp.setContent(serializer.error(error));
     } catch (final ODataSerializerException e1) {}
     // Set header

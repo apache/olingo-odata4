@@ -112,6 +112,14 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   public static EntityInvocationHandler getInstance(
+          final URI entityURI,
+          final Class<?> typeRef,
+          final AbstractService<?> service) {
+
+    return new EntityInvocationHandler(entityURI, typeRef, service);
+  }
+
+  public static EntityInvocationHandler getInstance(
           final Class<?> typeRef,
           final AbstractService<?> service) {
 
@@ -130,10 +138,26 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     this.internal = service.getClient().getObjectFactory().newEntity(new FullQualifiedName(namespace, name));
     CommonODataEntity.class.cast(this.internal).setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
 
-    this.uuid = new EntityUUID(
-            null,
-            typeRef,
-            null);
+    this.uuid = new EntityUUID(null, typeRef, null);
+  }
+
+  private EntityInvocationHandler(
+          final URI entityURI,
+          final Class<?> typeRef,
+          final AbstractService<?> service) {
+
+    super(typeRef, service);
+
+    final String name = typeRef.getAnnotation(org.apache.olingo.ext.proxy.api.annotations.EntityType.class).name();
+    final String namespace = typeRef.getAnnotation(Namespace.class).value();
+
+    this.internal = service.getClient().getObjectFactory().newEntity(new FullQualifiedName(namespace, name));
+    CommonODataEntity.class.cast(this.internal).setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
+
+    this.baseURI = entityURI;
+    this.uri = entityURI == null ? null : getClient().newURIBuilder(baseURI.toASCIIString());
+
+    this.uuid = new EntityUUID(null, typeRef, null);
   }
 
   private EntityInvocationHandler(

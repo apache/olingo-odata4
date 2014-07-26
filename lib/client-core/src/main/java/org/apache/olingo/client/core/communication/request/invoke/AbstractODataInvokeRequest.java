@@ -133,7 +133,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
 
           property = ((ODataClient) odataClient).getObjectFactory().
                   newEnumProperty(param.getKey(),
-                          ((org.apache.olingo.commons.api.domain.v4.ODataValue) param.getValue()).asEnum());
+                  ((org.apache.olingo.commons.api.domain.v4.ODataValue) param.getValue()).asEnum());
         }
 
         if (property != null) {
@@ -162,7 +162,10 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
 
     if (!this.parameters.isEmpty()) {
       if (this.method == HttpMethod.GET) {
-        ((HttpRequestBase) this.request).setURI(buildGETURI());
+
+        ((HttpRequestBase) this.request).setURI(
+                URIUtils.buildInvokeRequestURI(this.uri, parameters, odataClient.getServiceVersion()));
+
       } else if (this.method == HttpMethod.POST) {
         ((HttpPost) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 

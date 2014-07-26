@@ -30,10 +30,10 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.processor.CollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.ODataSerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -66,20 +66,20 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
       response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
       return;
     }
-    ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
     try {
+      final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
       final EntitySet entitySet = readEntitySetInternal(edmEntitySet, request.getRawBaseUri());
       if (entitySet == null) {
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
+        ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
         response.setContent(serializer.entitySet(edmEntitySet, entitySet, getContextUrl(edmEntitySet)));
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
         response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
       }
     } catch (final DataProvider.DataProviderException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final ODataSerializerException e) {
+    } catch (final ODataTranslatedException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     }
   }
@@ -91,20 +91,20 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
       response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
       return;
     }
-    ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
     try {
+      final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
       final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
       if (entity == null) {
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
+        ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
         response.setContent(serializer.entity(edmEntitySet, entity, getContextUrl(edmEntitySet)));
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
         response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
       }
     } catch (final DataProvider.DataProviderException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final ODataSerializerException e) {
+    } catch (final ODataTranslatedException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     }
   }
@@ -136,17 +136,20 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
         && uriInfo.getTopOption() == null;
   }
 
-  private EdmEntitySet getEdmEntitySet(final UriInfoResource uriInfo) {
+  private EdmEntitySet getEdmEntitySet(final UriInfoResource uriInfo) throws ODataTranslatedException {
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
     if (resourcePaths.size() != 1) {
-      throw new RuntimeException("Invalid resource path.");
+      throw new ODataTranslatedException("Invalid resource path.",
+          ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
     if (!(resourcePaths.get(0) instanceof UriResourceEntitySet)) {
-      throw new RuntimeException("Invalid resource type.");
+      throw new ODataTranslatedException("Invalid resource type.",
+          ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
     final UriResourceEntitySet uriResource = (UriResourceEntitySet) resourcePaths.get(0);
     if (uriResource.getTypeFilterOnCollection() != null || uriResource.getTypeFilterOnEntry() != null) {
-      throw new RuntimeException("Type filters are not supported.");
+      throw new ODataTranslatedException("Type filters are not supported.",
+          ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
     return uriResource.getEntitySet();
   }

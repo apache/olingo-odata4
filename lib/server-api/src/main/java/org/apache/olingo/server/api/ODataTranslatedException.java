@@ -34,24 +34,36 @@ public class ODataTranslatedException extends ODataException {
   private static final long serialVersionUID = -1210541002198287561L;
   private static final Logger log = LoggerFactory.getLogger(ODataTranslatedException.class);
   private static final String BUNDLE_NAME = "i18n";
-  
-  public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
-  // MessageKeys
-  public static final String AMBIGUOUS_XHTTP_METHOD = "ODataTranslatedException.AMBIGUOUS_XHTTP_METHOD";
-  public static final String HTTP_METHOD_NOT_IMPLEMENTED = "ODataTranslatedException.HTTP_METHOD_NOT_IMPLEMENTED";
-  public static final String PROCESSOR_NOT_IMPLEMENTED = "ODataTranslatedException.PROCESSOR_NOT_IMPLEMENTED";
-  public static final String ODATA_VERSION_NOT_SUPPORTED = "ODataTranslatedException.ODATA_VERSION_NOT_SUPPORTED";
 
-  private String messageKey;
+  public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
+
+  protected static interface MessageKey {}
+
+  public static enum MessageKeys implements MessageKey {
+    AMBIGUOUS_XHTTP_METHOD,
+    HTTP_METHOD_NOT_IMPLEMENTED,
+    PROCESSOR_NOT_IMPLEMENTED,
+    FUNCTIONALITY_NOT_IMPLEMENTED,
+    ODATA_VERSION_NOT_SUPPORTED,
+    /** parameters: HTTP header name, HTTP header value */
+    WRONG_CHARSET_IN_HEADER,
+    /** parameter: list of content-type ranges */
+    UNSUPPORTED_CONTENT_TYPES,
+    /** parameter: content type */
+    UNSUPPORTED_CONTENT_TYPE
+  }
+
+  private MessageKey messageKey;
   private Object[] parameters;
 
-  public ODataTranslatedException(String developmentMessage, String messageKey, String... parameters) {
+  public ODataTranslatedException(String developmentMessage, MessageKey messageKey, String... parameters) {
     super(developmentMessage);
     this.messageKey = messageKey;
     this.parameters = parameters;
   }
 
-  public ODataTranslatedException(String developmentMessage, Throwable cause, String messageKey, String... parameters) {
+  public ODataTranslatedException(String developmentMessage, Throwable cause, MessageKey messageKey,
+      String... parameters) {
     super(developmentMessage, cause);
     this.messageKey = messageKey;
     this.parameters = parameters;
@@ -67,7 +79,7 @@ public class ODataTranslatedException extends ODataException {
     return getMessage();
   }
 
-  public String getMessageKey() {
+  public MessageKey getMessageKey() {
     return messageKey;
   }
 
@@ -101,7 +113,7 @@ public class ODataTranslatedException extends ODataException {
     String message = null;
 
     try {
-      message = bundle.getString(messageKey);
+      message = bundle.getString(getClass().getSimpleName() + '.' + messageKey);
       StringBuilder builder = new StringBuilder();
       Formatter f = new Formatter(builder, locale);
       f.format(message, parameters);

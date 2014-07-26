@@ -29,6 +29,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
@@ -69,7 +70,7 @@ public class ODataHandler {
     ODataResponse response = new ODataResponse();
     try {
       validateODataVersion(request, response);
-      
+
       Parser parser = new Parser();
       String odUri =
           request.getRawODataPath() + (request.getRawQueryPath() == null ? "" : "?" + request.getRawQueryPath());
@@ -105,7 +106,8 @@ public class ODataHandler {
         handleResourceDispatching(request, response, uriInfo);
         break;
       default:
-        throw new ODataRuntimeException("not implemented");
+        throw new ODataTranslatedException("not implemented",
+            ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
       }
     } catch (ODataTranslatedException e) {
       Locale requestedLocale = null;
@@ -130,8 +132,8 @@ public class ODataHandler {
         requestedContentType = ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
       }
       exceptionProcessor.processException(request, response, serverError, requestedContentType);
-    } catch (ODataTranslatedException e1) {
-      throw new ODataRuntimeException("Could not instanciate ExceptionProcessor");
+    } catch (ODataTranslatedException e) {
+      throw new ODataRuntimeException("Could not instantiate ExceptionProcessor");
     }
   }
 
@@ -151,9 +153,8 @@ public class ODataHandler {
 //    }
 //  }
 
-  private void
-      handleResourceDispatching(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo)
-          throws ODataTranslatedException {
+  private void handleResourceDispatching(final ODataRequest request, final ODataResponse response,
+      final UriInfo uriInfo) throws ODataTranslatedException {
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
     ContentType requestedContentType = null;
@@ -169,7 +170,8 @@ public class ODataHandler {
 
           cp.readCollection(request, response, uriInfo, requestedContentType);
         } else {
-          throw new ODataRuntimeException("not implemented");
+          throw new ODataTranslatedException("not implemented",
+              ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
       } else {
         if (request.getMethod().equals(HttpMethod.GET)) {
@@ -180,7 +182,8 @@ public class ODataHandler {
 
           ep.readEntity(request, response, uriInfo, requestedContentType);
         } else {
-          throw new ODataRuntimeException("not implemented");
+          throw new ODataTranslatedException("not implemented",
+              ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
       }
       break;
@@ -194,7 +197,8 @@ public class ODataHandler {
 
           cp.readCollection(request, response, uriInfo, requestedContentType);
         } else {
-          throw new ODataRuntimeException("not implemented");
+          throw new ODataTranslatedException("not implemented",
+              ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
       } else {
         if (request.getMethod().equals(HttpMethod.GET)) {
@@ -205,12 +209,14 @@ public class ODataHandler {
 
           ep.readEntity(request, response, uriInfo, requestedContentType);
         } else {
-          throw new ODataRuntimeException("not implemented");
+          throw new ODataTranslatedException("not implemented",
+              ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
       }
       break;
     default:
-      throw new ODataRuntimeException("not implemented");
+      throw new ODataTranslatedException("not implemented",
+          ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
   }
 
@@ -223,7 +229,7 @@ public class ODataHandler {
       if (ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersion)) {
         response.setStatusCode(400);
         throw new ODataTranslatedException("ODataVersion not supported: " + maxVersion,
-            ODataTranslatedException.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
+            ODataTranslatedException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
       }
     }
   }
@@ -234,9 +240,9 @@ public class ODataHandler {
     T p = (T) processors.get(cls);
 
     if (p == null) {
-      response.setStatusCode(501);
+      response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
       throw new ODataTranslatedException("Processor: " + cls.getName() + " not registered.",
-          ODataTranslatedException.PROCESSOR_NOT_IMPLEMENTED, cls.getName());
+          ODataTranslatedException.MessageKeys.PROCESSOR_NOT_IMPLEMENTED, cls.getName());
     }
 
     return p;

@@ -33,6 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -157,7 +158,18 @@ public final class ClassUtils {
     return voidConstructor.newInstance();
   }
 
-  public static Class<?> getTypeClass(final Type type) {
+  public static Type[] getTypeArguments(final Type type) {
+    if (type instanceof ParameterizedType) {
+      return (ParameterizedType.class.cast(type).getActualTypeArguments());
+    } else if (type instanceof TypeVariable) {
+      return TypeVariable.class.cast(type).getBounds();
+    } else {
+      return new Type[] {};
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T> Class<T> getTypeClass(final Type type) {
     if (type instanceof ParameterizedType) {
       return getTypeClass(ParameterizedType.class.cast(type).getRawType());
     } else if (type instanceof Class) {

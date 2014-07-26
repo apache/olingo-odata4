@@ -59,10 +59,10 @@ public abstract class EdmProvider {
   }
 
   /**
-   * This method should return a {@link ComplexType} or <b>null</b> if nothing is found
+   * This method should return a {@link ComplexType} or <b>null</b> if nothing is found.
    * 
    * @param complexTypeName
-   * @return {@link StructuralType} for the given name
+   * @return {@link ComplexType} for the given name
    * @throws ODataException
    */
   public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
@@ -92,7 +92,12 @@ public abstract class EdmProvider {
     return null;
   }
 
-  // TODO: document
+  /**
+   * This method should return a {@link Term} for the FullQualifiedName or <b>null</b> if nothing is found.
+   * @param termName the name of the Term
+   * @return {@link Term} or null
+   * @throws ODataException
+   */
   public Term getTerm(final FullQualifiedName termName) throws ODataException {
     return null;
   }

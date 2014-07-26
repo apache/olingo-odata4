@@ -18,7 +18,11 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
+import java.util.concurrent.Future;
+
 public interface Invoker<T> {
 
   T execute();
+
+  Future<T> executeAsync();
 }
