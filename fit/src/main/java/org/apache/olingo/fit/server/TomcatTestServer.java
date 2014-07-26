@@ -116,8 +116,6 @@ public class TomcatTestServer {
     private TomcatTestServer server;
 
     private TestServerBuilder(int fixedPort) {
-      tomcat = new Tomcat();
-      tomcat.setPort(fixedPort);
       //baseDir = new File(System.getProperty("java.io.tmpdir"), "tomcat-test");
       projectTarget = new File(Thread.currentThread().getContextClassLoader().getResource(".").getFile());
       // projectTarget == ...fit/target/test-classes
@@ -125,11 +123,13 @@ public class TomcatTestServer {
       if(!baseDir.exists() && !baseDir.mkdirs()) {
         throw new RuntimeException("Unable to create temporary test directory at {" + baseDir.getAbsolutePath() + "}");
       }
+      //
+      tomcat = new Tomcat();
+      tomcat.setBaseDir(baseDir.getParentFile().getAbsolutePath());
+      tomcat.setPort(fixedPort);
       tomcat.getHost().setAutoDeploy(true);
       tomcat.getHost().setAppBase(baseDir.getAbsolutePath());
-      tomcat.setBaseDir(baseDir.getParentFile().getAbsolutePath());
       tomcat.getHost().setDeployOnStartup(true);
-      //   <user name="odatajclient" password="odatajclient" roles="odatajclient"/>
       tomcat.addUser("odatajclient", "odatajclient");
       tomcat.addRole("odatajclient", "odatajclient");
     }
