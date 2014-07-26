@@ -77,7 +77,7 @@
           <execution>
             <configuration>
               <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
-              <serviceRootURL>http://localhost:9080/stub/StaticService/V40/Static.svc</serviceRootURL>
+              <serviceRootURL>http://localhost:9180/stub/StaticService/V40/Static.svc</serviceRootURL>
               <basePackage>org.apache.olingo.fit.proxy.v4.staticservice</basePackage>
             </configuration>
             <id>v4pojoGen</id>

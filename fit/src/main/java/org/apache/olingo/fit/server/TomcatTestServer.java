@@ -58,7 +58,7 @@ public class TomcatTestServer {
   public static void main(String[] params) {
     try {
       LOG.trace("Start tomcat embedded server from main()");
-      TomcatTestServer server = TomcatTestServer.init(9080)
+      TomcatTestServer server = TomcatTestServer.init(9180)
           .addStaticContent("/stub/StaticService/V30/Static.svc/$metadata", "V30/metadata.xml")
           .addStaticContent("/stub/StaticService/V30/ActionOverloading.svc/$metadata",
               "V30/actionOverloadingMetadata.xml")
