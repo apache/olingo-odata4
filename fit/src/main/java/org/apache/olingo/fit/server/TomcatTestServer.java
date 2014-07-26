@@ -26,10 +26,17 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.naming.directory.DirContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
@@ -48,6 +55,52 @@ public class TomcatTestServer {
     this.tomcat = tomcat;
   }
 
+  public static void main(String[] params) {
+    try {
+      LOG.trace("Start tomcat embedded server from main()");
+      TomcatTestServer server = TomcatTestServer.init(9080)
+          .addStaticContent("/stub/StaticService/V30/Static.svc/$metadata", "V30/metadata.xml")
+          .addStaticContent("/stub/StaticService/V30/ActionOverloading.svc/$metadata",
+              "V30/actionOverloadingMetadata.xml")
+          .addStaticContent("/stub/StaticService/V30/OpenType.svc/$metadata", "V30/openTypeMetadata.xml")
+          .addStaticContent("/stub/StaticService/V30/PrimitiveKeys.svc/$metadata", "V30/primitiveKeysMetadata.xml")
+          .addStaticContent("/stub/StaticService/V40/OpenType.svc/$metadata", "V40/openTypeMetadata.xml")
+          .addStaticContent("/stub/StaticService/V40/Demo.svc/$metadata", "V40/demoMetadata.xml")
+          .addStaticContent("/stub/StaticService/V40/Static.svc/$metadata", "V40/metadata.xml")
+          .start();
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to start Tomcat server from main method.", e);
+    }
+  }
+
+  public static class StaticContent extends HttpServlet {
+    private final String uri;
+    private final String resource;
+
+    public StaticContent(String uri, String resource) {
+      this.uri = uri;
+      this.resource = resource;
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+
+      StringHelper.Stream st;
+      File resourcePath = new File(resource);
+      if(resourcePath.exists() && resourcePath.isFile()) {
+        FileInputStream fin = new FileInputStream(resourcePath);
+        st = StringHelper.toStream(fin);
+        LOG.info("Mapped uri '{}' to resource '{}'.", uri, resource);
+        LOG.trace("Resource content {\n\n{}\n\n}", st.asString());
+      } else {
+        LOG.debug("Unable to load resource for path {} as stream.", uri);
+        st = StringHelper.toStream("<html><head/><body>No resource for path found</body>");
+      }
+      resp.getOutputStream().write(st.asString().getBytes());
+    }
+  }
+
   private static TestServerBuilder builder;
   public static TestServerBuilder init(int port) {
     if(builder == null) {
@@ -59,13 +112,14 @@ public class TomcatTestServer {
   public static class TestServerBuilder {
     private final Tomcat tomcat;
     private final File baseDir;
+    private final File projectTarget;
     private TomcatTestServer server;
 
     private TestServerBuilder(int fixedPort) {
       tomcat = new Tomcat();
       tomcat.setPort(fixedPort);
       //baseDir = new File(System.getProperty("java.io.tmpdir"), "tomcat-test");
-      File projectTarget = new File(Thread.currentThread().getContextClassLoader().getResource(".").getFile());
+      projectTarget = new File(Thread.currentThread().getContextClassLoader().getResource(".").getFile());
       // projectTarget == ...fit/target/test-classes
       baseDir = new File(projectTarget, "../emb-tom-fit");
       if(!baseDir.exists() && !baseDir.mkdirs()) {
@@ -95,13 +149,26 @@ public class TomcatTestServer {
       FileUtils.copyDirectory(webAppProjectDir, webAppDir);
       File libDir = new File(webAppDir, "WEB-INF/lib");
       File classesDir = new File(webAppDir, "WEB-INF/classes");
-      String[] libs = new String[]{"olingo-client-proxy-0.1.0-SNAPSHOT.jar",
+      String[] libsToExtract = new String[]{
+          "olingo-client-proxy-0.1.0-SNAPSHOT.jar",
           "olingo-commons-api-0.1.0-SNAPSHOT.jar",
-          "olingo-commons-core-0.1.0-SNAPSHOT.jar"};
-      for (String lib : libs) {
+          "olingo-commons-core-0.1.0-SNAPSHOT.jar"
+      };
+      for (String lib : libsToExtract) {
         File libFile = new File(libDir, lib);
         extract(libFile, classesDir);
         FileUtils.forceDelete(libFile);
+      }
+
+      String[] libsToRemove = new String[]{
+          "javax.ws.rs-api-2.0.jar",
+          "maven-scm-api-1.4.jar",
+          "maven-scm-provider-svn-commons-1.4.jar",
+          "maven-scm-provider-svnexe-1.4.jar",
+          "tomcat-embed-logging-juli-7.0.54.jar",
+          "tomcat-embed-core-7.0.54.jar"};
+      for (String lib : libsToRemove) {
+        FileUtils.forceDelete(new File(libDir, lib));
       }
 
       String contextPath = "/stub"; // contextFile.getName()
@@ -122,6 +189,25 @@ public class TomcatTestServer {
       cxt.addServletMapping(path, odataServlet);
       //
       LOG.info("Added servlet {} at context {}.", odataServlet, path);
+      return this;
+    }
+
+    public TestServerBuilder addStaticContent(String uri, String resourceName) throws Exception {
+      String resource = new File(projectTarget, resourceName).getAbsolutePath();
+      LOG.info("Added static content from '{}' at uri '{}'.", resource, uri);
+      StaticContent staticContent = new StaticContent(uri, resource);
+      return addServlet(staticContent, String.valueOf(uri.hashCode()), uri);
+    }
+
+    public TestServerBuilder addServlet(HttpServlet httpServlet, String name, String path) throws Exception {
+      if(server != null) {
+        return this;
+      }
+      Context cxt = getContext();
+      Tomcat.addServlet(cxt, name, httpServlet);
+      cxt.addServletMapping(path, name);
+      //
+      LOG.info("Added servlet {} at context {}.", name, path);
       return this;
     }
 
@@ -191,17 +277,17 @@ public class TomcatTestServer {
   }
 
   private static void extract(File jarFile, File destDir) throws IOException {
-    JarFile jar = new java.util.jar.JarFile(jarFile);
-    java.util.Enumeration enumEntries = jar.entries();
+    JarFile jar = new JarFile(jarFile);
+    Enumeration<JarEntry> enumEntries = jar.entries();
     while (enumEntries.hasMoreElements()) {
-      java.util.jar.JarEntry file = (java.util.jar.JarEntry) enumEntries.nextElement();
-      java.io.File f = new java.io.File(destDir + java.io.File.separator + file.getName());
+      JarEntry file = enumEntries.nextElement();
+      File f = new File(destDir + File.separator + file.getName());
       if (file.isDirectory()) { // if its a directory, create it
         f.mkdir();
         continue;
       }
-      java.io.InputStream is = jar.getInputStream(file); // get the input stream
-      java.io.FileOutputStream fos = new java.io.FileOutputStream(f);
+      InputStream is = jar.getInputStream(file); // get the input stream
+      FileOutputStream fos = new FileOutputStream(f);
       while (is.available() > 0) {  // write contents of 'is' to 'fos'
         fos.write(is.read());
       }
