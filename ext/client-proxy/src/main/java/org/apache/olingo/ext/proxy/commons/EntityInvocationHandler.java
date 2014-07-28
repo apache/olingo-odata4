@@ -295,20 +295,9 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   public boolean isChanged(final boolean deep) {
-    boolean linkedChanges = false;
-    for (Map.Entry<NavigationProperty, Object> link : linkCache.entrySet()) {
-      final InvocationHandler handler = Proxy.getInvocationHandler(link.getValue());
-      if (handler instanceof EntityInvocationHandler) {
-        linkedChanges = linkedChanges || ((EntityInvocationHandler) handler).isChanged();
-      } else if (handler instanceof EntityCollectionInvocationHandler) {
-        linkedChanges = linkedChanges || ((EntityCollectionInvocationHandler) handler).isChanged();
-      }
-    }
-
     return this.linkChanges.hashCode() != this.linksTag
             || this.propertyChanges.hashCode() != this.propertiesTag
-            || (deep && (linkedChanges
-            || this.stream != null
+            || (deep && (this.stream != null
             || !this.streamedPropertyChanges.isEmpty()));
   }
 

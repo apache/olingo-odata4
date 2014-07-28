@@ -115,13 +115,6 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     container.getCustomers().getByKey(1).setOrders(orders);
     container.flush();
   }
-  
-  @Test
-  public void addViaReference2() {
-    final Order order = container.getOrders().getByKey(8).load();
-    container.getCustomers().getByKey(1).getOrders().addRef(order);
-    container.flush();
-  }
 
   @Test
   public void readAndCheckForPrimitive() {
@@ -489,6 +482,15 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     container.flush();
 
     assertEquals("new name", container.getCompany().load().getName());
+  }
+
+  @Test
+  public void createAndCallOperation() {
+    final Product product = container.newEntityInstance(Product.class);
+    product.setProductID(1001);
+    container.flush();
+
+    container.getProducts().getByKey(1000).operations().getProductDetails(1).execute();
   }
 
   @Test

@@ -56,8 +56,6 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
 
   protected Collection<String> referenceItems;
 
-  protected Collection<T> newest;
-
   protected final URI baseURI;
 
   protected CommonURIBuilder<?> uri;
@@ -82,7 +80,6 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
     this.itemRef = itemRef;
     this.items = items;
     this.referenceItems = new ArrayList<String>();
-    this.newest = new ArrayList<T>();
     this.uri = uri;
     this.baseURI = this.uri == null ? null : this.uri.build();
   }
@@ -182,7 +179,6 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
       }
     }
     changed = true;
-    newest.add(element);
     return items.add(element);
   }
 
@@ -258,7 +254,6 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
   @Override
   public boolean addAll(final Collection<? extends T> collection) {
     changed = true;
-    newest.addAll(collection);
     return items.addAll(collection);
   }
 
