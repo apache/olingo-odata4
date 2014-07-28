@@ -31,11 +31,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -110,16 +115,23 @@ public class TomcatTestServer {
   }
 
   public static class TestServerBuilder {
+    private static final String TOMCAT_BASE_DIR = "TOMCAT_BASE_DIR";
+    private static final String PROJECT_TARGET_DIR = "PROJECT_TARGET_DIR";
+    private static final String PROJECT_WEB_APP_DIR = "PROJECT_WEB_APP_DIR";
+    private static final String PROJECT_RESOURCES_DIR = "PROJECT_RESOURCES_DIR";
+
     private final Tomcat tomcat;
     private final File baseDir;
     private final File projectTarget;
     private TomcatTestServer server;
+    private Properties properties;
 
     private TestServerBuilder(int fixedPort) {
+      initializeProperties();
       //baseDir = new File(System.getProperty("java.io.tmpdir"), "tomcat-test");
-      projectTarget = new File(Thread.currentThread().getContextClassLoader().getResource(".").getFile());
+      projectTarget = getProjectTarget();
       // projectTarget == ...fit/target/test-classes
-      baseDir = new File(projectTarget, "../emb-tom-fit");
+      baseDir = getFileForDirProperty(TOMCAT_BASE_DIR);
       if(!baseDir.exists() && !baseDir.mkdirs()) {
         throw new RuntimeException("Unable to create temporary test directory at {" + baseDir.getAbsolutePath() + "}");
       }
@@ -134,13 +146,24 @@ public class TomcatTestServer {
       tomcat.addRole("odatajclient", "odatajclient");
     }
 
+    private void initializeProperties() {
+      InputStream propertiesFile =
+          Thread.currentThread().getContextClassLoader().getResourceAsStream("tomcat-fit.properties");
+      try {
+        properties = new Properties();
+        properties.load(propertiesFile);
+      } catch (IOException e) {
+        LOG.error("Unable to load properties for embedded tomcat test server.");
+        throw new RuntimeException("Unable to load properties for embedded tomcat test server.");
+      }
+    }
+
     public TestServerBuilder addWebApp() throws IOException {
       if(server != null) {
         return this;
       }
 
-      File projectTarget = new File(Thread.currentThread().getContextClassLoader().getResource(".").getFile());
-      File webAppProjectDir = new File(projectTarget, "../olingo-fit-0.1.0-SNAPSHOT");
+      File webAppProjectDir = getFileForDirProperty(PROJECT_WEB_APP_DIR);
       File webAppDir = new File(baseDir, webAppProjectDir.getName());
       FileUtils.deleteDirectory(webAppDir);
       if(!webAppDir.mkdirs()) {
@@ -149,24 +172,26 @@ public class TomcatTestServer {
       FileUtils.copyDirectory(webAppProjectDir, webAppDir);
       File libDir = new File(webAppDir, "WEB-INF/lib");
       File classesDir = new File(webAppDir, "WEB-INF/classes");
-      String[] libsToExtract = new String[]{
-          "olingo-client-proxy-0.1.0-SNAPSHOT.jar",
-          "olingo-commons-api-0.1.0-SNAPSHOT.jar",
-          "olingo-commons-core-0.1.0-SNAPSHOT.jar"
-      };
+      String[] libsToExtract = libDir.list(new FilenameFilter() {
+        @Override public boolean accept(File dir, String name) {
+          return name.toLowerCase(Locale.ENGLISH).contains("olingo")
+              && name.toLowerCase(Locale.ENGLISH).endsWith("jar");
+        }
+      });
       for (String lib : libsToExtract) {
         File libFile = new File(libDir, lib);
         extract(libFile, classesDir);
         FileUtils.forceDelete(libFile);
       }
 
-      String[] libsToRemove = new String[]{
-          "javax.ws.rs-api-2.0.jar",
-          "maven-scm-api-1.4.jar",
-          "maven-scm-provider-svn-commons-1.4.jar",
-          "maven-scm-provider-svnexe-1.4.jar",
-          "tomcat-embed-logging-juli-7.0.54.jar",
-          "tomcat-embed-core-7.0.54.jar"};
+      String[] libsToRemove = libDir.list(new FilenameFilter() {
+        @Override public boolean accept(File dir, String name) {
+          return
+              (name.toLowerCase(Locale.ENGLISH).contains("tomcat")
+              || name.toLowerCase(Locale.ENGLISH).contains("maven"))
+              && name.toLowerCase(Locale.ENGLISH).endsWith("jar");
+        }
+      });
       for (String lib : libsToRemove) {
         FileUtils.forceDelete(new File(libDir, lib));
       }
@@ -176,6 +201,26 @@ public class TomcatTestServer {
       LOG.info("Webapp {} at context {}.", webAppDir.getName(), contextPath);
 
       return this;
+    }
+
+    private File getProjectTarget() {
+      return getFileForDirProperty(PROJECT_TARGET_DIR);
+    }
+
+    private File getFileForDirProperty(String propertyName) {
+      File targetFile = new File(properties.getProperty(propertyName));
+      if(targetFile.exists() && targetFile.isDirectory()) {
+        return targetFile;
+      } else if(targetFile.mkdirs()) {
+        return targetFile;
+      }
+
+      URL targetURL = Thread.currentThread().getContextClassLoader().getResource(targetFile.getPath());
+      if(targetURL == null) {
+        throw new RuntimeException("Project target was not found at '" +
+            properties.getProperty(propertyName) + "'.");
+      }
+      return new File(targetURL.getFile());
     }
 
     public TestServerBuilder addServlet(final Class<? extends HttpServlet> factoryClass, String path) throws Exception {
@@ -193,7 +238,8 @@ public class TomcatTestServer {
     }
 
     public TestServerBuilder addStaticContent(String uri, String resourceName) throws Exception {
-      String resource = new File(projectTarget, resourceName).getAbsolutePath();
+      File targetResourcesDir = getFileForDirProperty(PROJECT_RESOURCES_DIR);
+      String resource = new File(targetResourcesDir, resourceName).getAbsolutePath();
       LOG.info("Added static content from '{}' at uri '{}'.", resource, uri);
       StaticContent staticContent = new StaticContent(uri, resource);
       return addServlet(staticContent, String.valueOf(uri.hashCode()), uri);
@@ -281,18 +327,20 @@ public class TomcatTestServer {
     Enumeration<JarEntry> enumEntries = jar.entries();
     while (enumEntries.hasMoreElements()) {
       JarEntry file = enumEntries.nextElement();
-      File f = new File(destDir + File.separator + file.getName());
-      if (file.isDirectory()) { // if its a directory, create it
-        f.mkdir();
-        continue;
+      File f = new File(destDir, file.getName());
+      if (file.isDirectory()) {
+        if(!f.exists() && !f.mkdir()) {
+          throw new IOException("Unable to create directory at path '" + f.getAbsolutePath() + "'.");
+        }
+      } else {
+        InputStream is = jar.getInputStream(file);
+        FileOutputStream fos = new FileOutputStream(f);
+        while (is.available() > 0) {
+          fos.write(is.read());
+        }
+        fos.close();
+        is.close();
       }
-      InputStream is = jar.getInputStream(file); // get the input stream
-      FileOutputStream fos = new FileOutputStream(f);
-      while (is.available() > 0) {  // write contents of 'is' to 'fos'
-        fos.write(is.read());
-      }
-      fos.close();
-      is.close();
     }
   }
 }
