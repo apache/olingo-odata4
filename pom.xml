@@ -532,8 +532,11 @@
               <exclude>org/apache/olingo/**/tecsvc/**/*.class</exclude>
               <exclude>org/apache/olingo/**/fit/**/*.class</exclude>
               <exclude>org/apache/olingo/**/testutil/**/*.class</exclude>
+              <exclude>org/apache/olingo/**/antlr/**/*.class</exclude>
             </excludes>
           </instrumentation>
+          <check/>
+          <aggregate>true</aggregate>
         </configuration>
       </plugin>
       <plugin>

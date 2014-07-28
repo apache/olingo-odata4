@@ -195,6 +195,8 @@
               <exclude>org/apache/olingo/**/antlr/**/*.class</exclude>
             </excludes>
           </instrumentation>
+          <check/>
+          <aggregate>true</aggregate>
         </configuration>
       </plugin>
 
