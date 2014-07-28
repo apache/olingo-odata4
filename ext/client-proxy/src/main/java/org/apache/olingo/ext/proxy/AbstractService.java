@@ -61,7 +61,7 @@ public abstract class AbstractService<C extends CommonEdmEnabledODataClient<?>> 
 
   private PersistenceManager persistenceManager;
 
-  protected AbstractService(final String compressedMetadata,
+  protected AbstractService(final String compressedMetadata, final String metadataETag,
           final ODataServiceVersion version, final String serviceRoot, final boolean transactional) {
 
     ByteArrayInputStream bais = null;
@@ -85,7 +85,7 @@ public abstract class AbstractService<C extends CommonEdmEnabledODataClient<?>> 
     final Edm edm = metadata == null ? null : new EdmClientImpl(version, metadata.getSchemaByNsOrAlias());
     this.client = version.compareTo(ODataServiceVersion.V40) < 0
             ? ODataClientFactory.getEdmEnabledV3(serviceRoot, edm)
-            : ODataClientFactory.getEdmEnabledV4(serviceRoot, edm);
+            : ODataClientFactory.getEdmEnabledV4(serviceRoot, edm, metadataETag);
     this.client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON_FULL_METADATA);
     this.transactional = transactional;
     this.context = new Context();

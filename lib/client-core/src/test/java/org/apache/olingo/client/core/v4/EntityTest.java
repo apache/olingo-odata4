@@ -18,6 +18,14 @@
  */
 package org.apache.olingo.client.core.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Iterator;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
@@ -26,12 +34,12 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValuable;
-import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -41,15 +49,6 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Iterator;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 public class EntityTest extends AbstractTest {
 
   @Override
@@ -58,7 +57,7 @@ public class EntityTest extends AbstractTest {
   }
 
   private EdmEnabledODataClient getEdmEnabledClient() {
-    return new EdmEnabledODataClientImpl(null, null) {
+    return new EdmEnabledODataClientImpl(null, null, null) {
 
       private Edm edm;
 
@@ -355,7 +354,7 @@ public class EntityTest extends AbstractTest {
   }
 
   private void derived(final ODataClient client, final ODataFormat format) throws ODataDeserializerException {
-    final InputStream input = getClass().getResourceAsStream("Customer." + getSuffix(format));    
+    final InputStream input = getClass().getResourceAsStream("Customer." + getSuffix(format));
     final ODataEntity entity = client.getBinder().getODataEntity(client.getDeserializer(format).toEntity(input));
     assertNotNull(entity);
 

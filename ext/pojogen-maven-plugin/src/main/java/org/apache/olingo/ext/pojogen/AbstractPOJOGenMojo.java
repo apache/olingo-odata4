@@ -36,14 +36,15 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
+import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
@@ -196,7 +197,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
 
   protected abstract CommonODataClient<?> getClient();
 
-  private Pair<XMLMetadata, Edm> getMetadata() throws FileNotFoundException {
+  private Triple<XMLMetadata, String, Edm> getMetadata() throws FileNotFoundException {
     if (StringUtils.isEmpty(serviceRootURL) && StringUtils.isEmpty(localEdm)) {
       throw new IllegalArgumentException("Must provide either serviceRootURL or localEdm");
     }
@@ -205,11 +206,14 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
     }
 
     XMLMetadata metadata = null;
+    String metadataETag = null;
     Edm edm = null;
     if (StringUtils.isNotEmpty(serviceRootURL)) {
       final EdmMetadataRequest req = getClient().getRetrieveRequestFactory().getMetadataRequest(serviceRootURL);
       metadata = req.getXMLMetadata();
-      edm = req.execute().getBody();
+      final ODataRetrieveResponse<Edm> res = req.execute();
+      metadataETag = res.getETag();
+      edm = res.getBody();
     } else if (StringUtils.isNotEmpty(localEdm)) {
       final FileInputStream fis = new FileInputStream(FileUtils.getFile(localEdm));
       try {
@@ -223,7 +227,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
     if (metadata == null || edm == null) {
       throw new IllegalStateException("Metadata not found");
     }
-    return new ImmutablePair<XMLMetadata, Edm>(metadata, edm);
+    return new ImmutableTriple<XMLMetadata, String, Edm>(metadata, metadataETag, edm);
   }
 
   @Override
@@ -237,7 +241,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
     Velocity.addProperty("class.resource.loader.class", ClasspathResourceLoader.class.getName());
 
     try {
-      final Pair<XMLMetadata, Edm> metadata = getMetadata();
+      final Triple<XMLMetadata, String, Edm> metadata = getMetadata();
 
       for (EdmSchema schema : metadata.getRight().getSchemas()) {
         namespaces.add(schema.getNamespace().toLowerCase());
@@ -361,6 +365,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
 
       objs.clear();
       objs.put("metadata", new String(Base64.encodeBase64(baos.toByteArray()), "UTF-8"));
+      objs.put("metadataETag", metadata.getMiddle());
       objs.put("complexTypes", complexTypeNames);
       objs.put("enumTypes", enumTypeNames);
       objs.put("terms", termNames);
