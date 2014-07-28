@@ -294,10 +294,21 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return isChanged(true);
   }
 
-  public boolean isChanged(final boolean includeMedia) {
+  public boolean isChanged(final boolean deep) {
+    boolean linkedChanges = false;
+    for (Map.Entry<NavigationProperty, Object> link : linkCache.entrySet()) {
+      final InvocationHandler handler = Proxy.getInvocationHandler(link.getValue());
+      if (handler instanceof EntityInvocationHandler) {
+        linkedChanges = linkedChanges || ((EntityInvocationHandler) handler).isChanged();
+      } else if (handler instanceof EntityCollectionInvocationHandler) {
+        linkedChanges = linkedChanges || ((EntityCollectionInvocationHandler) handler).isChanged();
+      }
+    }
+
     return this.linkChanges.hashCode() != this.linksTag
             || this.propertyChanges.hashCode() != this.propertiesTag
-            || (includeMedia && (this.stream != null
+            || (deep && (linkedChanges
+            || this.stream != null
             || !this.streamedPropertyChanges.isEmpty()));
   }
 
@@ -355,6 +366,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
     if (navPropValue != null) {
       cacheLink(property, navPropValue);
+      attach();
     }
 
     return navPropValue;

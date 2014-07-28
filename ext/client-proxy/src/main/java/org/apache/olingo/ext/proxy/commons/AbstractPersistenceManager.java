@@ -174,51 +174,13 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
               : ODataLinkType.ENTITY_NAVIGATION;
 
       final Set<EntityInvocationHandler> toBeLinked = new HashSet<EntityInvocationHandler>();
-
       for (Object proxy : type == ODataLinkType.ENTITY_SET_NAVIGATION
               ? (Collection<?>) property.getValue() : Collections.singleton(property.getValue())) {
 
         final EntityInvocationHandler target = (EntityInvocationHandler) Proxy.getInvocationHandler(proxy);
 
-        final AttachedEntityStatus status;
-        if (!service.getContext().entityContext().isAttached(target)) {
-          status = resolveNavigationLink(property.getKey(), target);
-        } else {
-          status = service.getContext().entityContext().getStatus(target);
-        }
-
-        LOG.debug("Found link to '{}({})'", target, status);
-
-        final URI editLink = target.getEntity().getEditLink();
-
-        if ((status == AttachedEntityStatus.ATTACHED || status == AttachedEntityStatus.LINKED) && !target.isChanged()) {
-          LOG.debug("Add link to '{}'", target);
-          entity.addLink(buildNavigationLink(
-                  property.getKey().name(),
-                  URIUtils.getURI(service.getClient().getServiceRoot(), editLink.toASCIIString()), type));
-        } else {
-          if (!items.contains(target)) {
-            pos = processEntityContext(target, pos, items, delayedUpdates, changeset);
-            pos++;
-          }
-
-          final Integer targetPos = items.get(target);
-          if (targetPos == null) {
-            // schedule update for the current object
-            LOG.debug("Schedule '{}' from '{}' to '{}'", type.name(), handler, target);
-            toBeLinked.add(target);
-          } else if (status == AttachedEntityStatus.CHANGED) {
-            LOG.debug("Changed: '{}' from '{}' to (${}) '{}'", type.name(), handler, targetPos, target);
-            entity.addLink(buildNavigationLink(
-                    property.getKey().name(),
-                    URIUtils.getURI(service.getClient().getServiceRoot(), editLink.toASCIIString()), type));
-          } else {
-            // create the link for the current object
-            LOG.debug("'{}' from '{}' to (${}) '{}'", type.name(), handler, targetPos, target);
-
-            entity.addLink(buildNavigationLink(property.getKey().name(), URI.create("$" + targetPos), type));
-          }
-        }
+        toBeLinked.addAll(processLinkChanges(
+                handler, target, property.getKey(), type, pos, items, delayedUpdates, changeset));
       }
 
       if (!toBeLinked.isEmpty()) {
@@ -229,6 +191,41 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
         final InvocationHandler target = Proxy.getInvocationHandler(property.getValue());
 
         if (target instanceof EntityCollectionInvocationHandler) {
+          for (String ref : ((EntityCollectionInvocationHandler<?>) target).referenceItems) {
+            delayedUpdates.add(new EntityLinkDesc(property.getKey().name(), handler, ref));
+          }
+        }
+      }
+    }
+
+    // Required by linking provided on existent object. Say: 
+    //                    container.getCustomers().getByKey(1).getOrders().add(order)
+    // Required by linking provided via entity reference ID. Say: 
+    //                    container.getCustomers().getByKey(1).getOrders().addRef(order)
+    for (Map.Entry<NavigationProperty, Object> property : handler.linkCache.entrySet()) {
+      if (property.getValue() instanceof Proxy) {
+        final InvocationHandler target = Proxy.getInvocationHandler(property.getValue());
+
+        if (target instanceof EntityCollectionInvocationHandler
+                && ((EntityCollectionInvocationHandler) target).isChanged()) {
+
+          final ODataLinkType type = Collection.class.isAssignableFrom(property.getValue().getClass())
+                  ? ODataLinkType.ENTITY_SET_NAVIGATION
+                  : ODataLinkType.ENTITY_NAVIGATION;
+
+          final Set<EntityInvocationHandler> toBeLinked = new HashSet<EntityInvocationHandler>();
+
+          for (Object proxy : ((EntityCollectionInvocationHandler) target).newest) {
+            final EntityInvocationHandler targetEntity = (EntityInvocationHandler) Proxy.getInvocationHandler(proxy);
+
+            toBeLinked.addAll(processLinkChanges(
+                    handler, targetEntity, property.getKey(), type, pos, items, delayedUpdates, changeset));
+          }
+
+          if (!toBeLinked.isEmpty()) {
+            delayedUpdates.add(new EntityLinkDesc(property.getKey().name(), handler, toBeLinked, type));
+          }
+
           for (String ref : ((EntityCollectionInvocationHandler<?>) target).referenceItems) {
             delayedUpdates.add(new EntityLinkDesc(property.getKey().name(), handler, ref));
           }
@@ -303,6 +300,62 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     }
 
     return pos;
+  }
+
+  protected Set<EntityInvocationHandler> processLinkChanges(
+          final EntityInvocationHandler source,
+          final EntityInvocationHandler target,
+          final NavigationProperty property,
+          final ODataLinkType type,
+          int pos,
+          final TransactionItems items,
+          final List<EntityLinkDesc> delayedUpdates,
+          final PersistenceChanges changeset) {
+
+    final Set<EntityInvocationHandler> toBeLinked = new HashSet<EntityInvocationHandler>();
+
+    final AttachedEntityStatus status;
+    if (!service.getContext().entityContext().isAttached(target)) {
+      status = resolveNavigationLink(property, target);
+    } else {
+      status = service.getContext().entityContext().getStatus(target);
+    }
+
+    LOG.debug("Found link to '{}({})'", target, status);
+
+    final URI editLink = target.getEntity().getEditLink();
+
+    if ((status == AttachedEntityStatus.ATTACHED || status == AttachedEntityStatus.LINKED) && !target.isChanged()) {
+      LOG.debug("Add link to '{}'", target);
+      source.getEntity().addLink(buildNavigationLink(
+              property.name(),
+              URIUtils.getURI(service.getClient().getServiceRoot(), editLink.toASCIIString()), type));
+    } else {
+      if (!items.contains(target)) {
+        pos = processEntityContext(target, pos, items, delayedUpdates, changeset);
+        pos++;
+      }
+
+      final Integer targetPos = items.get(target);
+      if (targetPos == null) {
+        // schedule update for the current object
+        LOG.debug("Schedule '{}' from '{}' to '{}'", type.name(), source, target);
+        toBeLinked.add(target);
+      } else if (status == AttachedEntityStatus.CHANGED) {
+        LOG.debug("Changed: '{}' from '{}' to (${}) '{}'", type.name(), source, targetPos, target);
+        source.getEntity().addLink(buildNavigationLink(
+                property.name(),
+                URIUtils.getURI(service.getClient().getServiceRoot(), editLink.toASCIIString()), type));
+      } else {
+        // create the link for the current object
+        LOG.debug("'{}' from '{}' to (${}) '{}'", type.name(), source, targetPos, target);
+
+        source.getEntity().addLink(
+                buildNavigationLink(property.name(), URI.create("$" + targetPos), type));
+      }
+    }
+
+    return toBeLinked;
   }
 
   protected void processDelayedUpdates(

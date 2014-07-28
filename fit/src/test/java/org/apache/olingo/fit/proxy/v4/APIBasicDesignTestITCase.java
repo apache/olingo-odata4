@@ -115,6 +115,13 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     container.getCustomers().getByKey(1).setOrders(orders);
     container.flush();
   }
+  
+  @Test
+  public void addViaReference2() {
+    final Order order = container.getOrders().getByKey(8).load();
+    container.getCustomers().getByKey(1).getOrders().addRef(order);
+    container.flush();
+  }
 
   @Test
   public void readAndCheckForPrimitive() {
