@@ -1365,6 +1365,17 @@ public class V4Services extends AbstractServices {
     return xml.createResponse(null, null, null, Status.NO_CONTENT);
   }
 
+  @POST
+  @Path("/Customers(1)/Orders/$ref")
+  public Response linkOrderViaRef(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          final String entity) {
+
+    return xml.createResponse(null, null, null, Status.NO_CONTENT);
+  }
+
   @DELETE
   @Path("/Products({productId})/Categories({categoryId})/$ref")
   public Response deleteLinked(

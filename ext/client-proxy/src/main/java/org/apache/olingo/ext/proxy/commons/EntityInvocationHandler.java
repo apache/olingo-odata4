@@ -508,6 +508,15 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return getEntity() == null ? null : getEntity().getProperty(name);
   }
 
+  public String getEntityReferenceID() {
+    URI id = getEntity() == null ? null
+            : getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
+            ? ((org.apache.olingo.commons.api.domain.v3.ODataEntity) getEntity()).getLink()
+            : ((org.apache.olingo.commons.api.domain.v4.ODataEntity) getEntity()).getId();
+
+    return id == null ? null : id.toASCIIString();
+  }
+
   @Override
   public String toString() {
     return uuid.toString();

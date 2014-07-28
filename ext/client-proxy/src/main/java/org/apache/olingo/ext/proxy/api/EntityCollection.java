@@ -23,4 +23,19 @@ import java.util.Collection;
 public interface EntityCollection<
         T extends StructuredType<?>, EC extends Collection<T>, CT extends StructuredCollection<T, EC, ?>>
         extends StructuredCollection<T, EC, CT> {
+
+  /**
+   * Appends ref segment to the URI.
+   *
+   * @return the same query instance.
+   */
+  CT refs();
+
+  /**
+   * Add entity by its reference ID.
+   *
+   * @param element entity to be linked.
+   * @return <tt>TRUE</tt> if correctly added; <tt>FALSE</tt> otherwise.
+   */
+  <ET extends EntityType<?>> boolean addRef(ET element);
 }

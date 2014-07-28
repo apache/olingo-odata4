@@ -59,8 +59,8 @@ public class EntityCollectionInvocationHandler<T extends EntityType<?>>
             || "expand".equals(method.getName())
             || "select".equals(method.getName())
             || "nextPage".equals(method.getName())
+            || "refs".equals(method.getName())
             || "execute".equals(method.getName())) {
-
       invokeSelfMethod(method, args);
       return proxy;
     } else if (isSelfMethod(method, args)) {

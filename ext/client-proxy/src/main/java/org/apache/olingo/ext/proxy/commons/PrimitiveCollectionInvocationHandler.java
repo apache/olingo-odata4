@@ -114,6 +114,13 @@ public class PrimitiveCollectionInvocationHandler<T extends Serializable>
             resItems, null, Collections.<ODataAnnotation>emptyList());
   }
 
+  public void delete() {
+    if (baseURI != null) {
+      getContext().entityContext().addFurtherDeletes(
+              getClient().newURIBuilder(baseURI.toASCIIString()).appendValueSegment().build());
+    }
+  }
+
   @Override
   public boolean equals(final Object obj) {
     if (obj instanceof Proxy) {

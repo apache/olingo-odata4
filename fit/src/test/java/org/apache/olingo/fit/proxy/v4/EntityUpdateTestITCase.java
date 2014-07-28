@@ -62,7 +62,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void update() {
-    Person person = getContainer().getPeople().getByKey(1).load();
+    Person person = getContainer().getPeople().getByKey(1);
 
     final Address address = person.getHomeAddress();
     address.setCity("XXX");

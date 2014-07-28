@@ -16,16 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.ext.proxy.api;
+package org.apache.olingo.client.api.communication.request.cud.v4;
 
-import java.io.Serializable;
-import java.util.Collection;
+import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
+import org.apache.olingo.client.api.communication.response.v4.ODataReferenceAddingResponse;
 
-public interface PrimitiveCollection<T extends Serializable>
-        extends GenericCollection<T, PrimitiveCollection<T>>,
-        CollectionQuery<PrimitiveCollection<T>>,
-        Collection<T>,
-        Serializable {
-
-  void delete();
+/**
+ * This class implements an OData delete request.
+ */
+public interface ODataReferenceAddingRequest
+        extends ODataBasicRequest<ODataReferenceAddingResponse>, ODataBatchableRequest {
 }

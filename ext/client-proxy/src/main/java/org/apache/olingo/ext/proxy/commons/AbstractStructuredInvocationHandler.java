@@ -37,6 +37,7 @@ import java.util.concurrent.Callable;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
@@ -47,6 +48,7 @@ import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.ComplexCollection;
@@ -156,7 +158,9 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   @Override
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-    if ("expand".equals(method.getName()) || "select".equals(method.getName())) {
+    if ("expand".equals(method.getName())
+            || "select".equals(method.getName())
+            || "refs".equals(method.getName())) {
       invokeSelfMethod(method, args);
       return proxy;
     } else if (isSelfMethod(method, args)) {
@@ -238,7 +242,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   public void delete(final String name) {
     if (baseURI != null) {
       getContext().entityContext().addFurtherDeletes(
-              getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name).build());
+              getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name).appendValueSegment().
+              build());
     }
   }
 
@@ -254,7 +259,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
         entityContext.attach(handler, AttachedEntityStatus.DELETED);
       }
     } else if (baseURI != null) {
-      entityContext.addFurtherDeletes(baseURI);
+      entityContext.addFurtherDeletes(
+              getClient().newURIBuilder(baseURI.toASCIIString()).appendValueSegment().build());
     }
   }
 
@@ -630,6 +636,12 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   public void select(final String... select) {
     this.uri.select(select);
+  }
+
+  public void refs() {
+    if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V40) >= 0) {
+      ((URIBuilder) this.uri).appendRefSegment();
+    }
   }
 
   public void clearQueryOptions() {
