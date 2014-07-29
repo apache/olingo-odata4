@@ -93,7 +93,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     productsReq.setFormat(format);
     final ODataEntitySet products = productsReq.execute().getBody();
     assertNotNull(products);
-    assertEquals(5, products.getCount());
+    assertEquals(5, products.getEntities().size());
 
     // GetProductsByAccessLevel
     final ODataEnumValue accessLevel = getClient().getObjectFactory().
@@ -165,7 +165,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
         getFunctionImportInvokeRequest("GetAllProducts");
     final ODataEntitySet products = productsReq.execute().getBody();
     assertNotNull(products);
-    assertEquals(5, products.getCount());
+    assertEquals(5, products.getEntities().size());
 
     // GetProductsByAccessLevel
     final ODataEnumValue accessLevel = getClient().getObjectFactory().

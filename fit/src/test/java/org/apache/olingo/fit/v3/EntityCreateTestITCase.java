@@ -318,7 +318,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     final ODataEntitySet entitySet = res.getBody();
     assertNotNull(entitySet);
-    assertEquals(2, entitySet.getCount());
+    assertEquals(2, entitySet.getEntities().size());
 
     for (ODataEntity entity : entitySet.getEntities()) {
       final Integer key = entity.getProperty("OrderId").getPrimitiveValue().toCastValue(Integer.class);

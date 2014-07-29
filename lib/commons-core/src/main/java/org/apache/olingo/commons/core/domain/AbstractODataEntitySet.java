@@ -59,11 +59,9 @@ public abstract class AbstractODataEntitySet extends AbstractODataPayload implem
     return next;
   }
 
-  protected abstract int getEntitiesSize();
-
   @Override
-  public int getCount() {
-    return count == null ? getEntitiesSize() : count;
+  public Integer getCount() {
+    return count;
   }
 
   @Override

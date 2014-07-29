@@ -45,7 +45,7 @@ public interface CommonODataEntitySet extends ODataInvokeResult {
    * 
    * @return in-line count value.
    */
-  int getCount();
+  Integer getCount();
 
   /**
    * Sets in-line count.

@@ -156,7 +156,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     assertNotNull(res);
 
     final ResWrap<ODataEntitySet> entitySet = res.getBodyAs(ODataEntitySet.class);
-    assertEquals(10, entitySet.getPayload().getCount());
+    assertEquals(Integer.valueOf(10), entitySet.getPayload().getCount());
   }
 
   private void rawRequest(final ODataFormat format) {

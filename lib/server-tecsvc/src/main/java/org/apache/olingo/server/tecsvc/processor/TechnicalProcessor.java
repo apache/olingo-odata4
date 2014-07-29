@@ -40,7 +40,6 @@ import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
-import java.net.URI;
 import java.util.List;
 
 public class TechnicalProcessor implements CollectionProcessor, EntityProcessor {
@@ -112,7 +111,7 @@ public class TechnicalProcessor implements CollectionProcessor, EntityProcessor 
   private EntitySet readEntitySetInternal(final EdmEntitySet edmEntitySet, final String serviceRoot)
       throws DataProvider.DataProviderException {
     EntitySet entitySet = dataProvider.readAll(edmEntitySet);
-    entitySet.setNext(URI.create(serviceRoot + "/" + edmEntitySet.getEntityType().getName()));
+    // TODO: set count and next link
     return entitySet;
   }
 

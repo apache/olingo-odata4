@@ -88,7 +88,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     getProductDetailsReq.setFormat(format);
     final ODataEntitySet getProductDetailsRes = getProductDetailsReq.execute().getBody();
     assertNotNull(getProductDetailsRes);
-    assertEquals(1, getProductDetailsRes.getCount());
+    assertEquals(1, getProductDetailsRes.getEntities().size());
 
     // GetRelatedProduct
     final Map<String, Object> keyMap = new LinkedHashMap<String, Object>();
@@ -202,7 +202,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
             Collections.<String, ODataValue> singletonMap("count", count));
     final ODataEntitySet getProductDetailsRes = getProductDetailsReq.execute().getBody();
     assertNotNull(getProductDetailsRes);
-    assertEquals(1, getProductDetailsRes.getCount());
+    assertEquals(1, getProductDetailsRes.getEntities().size());
 
     // GetRelatedProduct
     final Map<String, Object> keyMap = new LinkedHashMap<String, Object>();

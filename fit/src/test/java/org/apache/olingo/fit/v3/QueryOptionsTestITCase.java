@@ -155,7 +155,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     req.setFormat(ODataFormat.ATOM);
     final ODataEntitySet feed = req.execute().getBody();
     assertNotNull(feed);
-    assertEquals(feed.getEntities().size(), feed.getCount());
+    assertEquals(Integer.valueOf(feed.getEntities().size()), feed.getCount());
   }
 
   /**

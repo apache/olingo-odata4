@@ -18,19 +18,33 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
+import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,20 +63,18 @@ public class BasicITCase {
 
   @Test
   public void readServiceDocument() {
-    ODataServiceDocumentRequest request =
-            odata.getRetrieveRequestFactory().getServiceDocumentRequest(SERVICE_URI);
+    ODataServiceDocumentRequest request = odata.getRetrieveRequestFactory().getServiceDocumentRequest(SERVICE_URI);
     assertNotNull(request);
 
     ODataRetrieveResponse<ODataServiceDocument> response = request.execute();
-
-    assertEquals(200, response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     ODataServiceDocument serviceDocument = response.getBody();
     assertNotNull(serviceDocument);
 
-    assertTrue(serviceDocument.getEntitySetNames().contains("ESAllPrim"));
-    assertTrue(serviceDocument.getFunctionImportNames().contains("FICRTCollCTTwoPrim"));
-    assertTrue(serviceDocument.getSingletonNames().contains("SIMedia"));
+    assertThat(serviceDocument.getEntitySetNames(), hasItem("ESAllPrim"));
+    assertThat(serviceDocument.getFunctionImportNames(), hasItem("FICRTCollCTTwoPrim"));
+    assertThat(serviceDocument.getSingletonNames(), hasItem("SIMedia"));
   }
 
   @Test
@@ -71,7 +83,7 @@ public class BasicITCase {
     assertNotNull(request);
 
     ODataRetrieveResponse<Edm> response = request.execute();
-    assertEquals(200, response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     Edm edm = response.getBody();
 
@@ -80,5 +92,34 @@ public class BasicITCase {
     assertEquals("Namespace1_Alias", edm.getSchema("com.sap.odata.test1").getAlias());
     assertNotNull(edm.getTerm(new FullQualifiedName("Core.Description")));
     assertEquals(2, edm.getSchemas().size());
+  }
+
+  @Test
+  public void readEntitySet() {
+    final ODataEntitySetRequest<ODataEntitySet> request = odata.getRetrieveRequestFactory()
+        .getEntitySetRequest(URI.create(SERVICE_URI + "/ESMixPrimCollComp"));
+    assertNotNull(request);
+
+    final ODataRetrieveResponse<ODataEntitySet> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
+
+    final ODataEntitySet entitySet = response.getBody();
+    assertNotNull(entitySet);
+
+    assertNull(entitySet.getCount());
+    assertNull(entitySet.getNext());
+    assertEquals(Collections.<ODataAnnotation> emptyList(), entitySet.getAnnotations());
+    assertNull(entitySet.getDeltaLink());
+
+    final List<ODataEntity> entities = entitySet.getEntities();
+    assertNotNull(entities);
+    assertEquals(3, entities.size());
+    final ODataEntity entity = entities.get(2);
+    assertNotNull(entity);
+    final ODataProperty property = entity.getProperty("PropertyInt16");
+    assertNotNull(property);
+    assertNotNull(property.getPrimitiveValue());
+    assertEquals(0, property.getPrimitiveValue().toValue());
   }
 }
