@@ -47,6 +47,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-runtime</artifactId>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
@@ -80,8 +84,9 @@
               <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
-              <includes>**/olingo/**/*.class</includes>
-              <excludes>**/*.properties</excludes>
+              <!--<includes>**/olingo/**/*.class</includes>-->
+              <!--<excludes>**/*.properties</excludes>-->
+              <includeGroupIds>${project.groupId}</includeGroupIds>
               <outputDirectory>${project.build.directory}/classes</outputDirectory>
               <overWriteReleases>true</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>

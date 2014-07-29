@@ -229,6 +229,17 @@
         <version>${spring.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-core</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-logging-juli</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+
       <!-- Pojogen Maven Plugin depenencies -->
       <dependency>
         <groupId>org.apache.velocity</groupId>
@@ -346,11 +357,6 @@
           <version>2.9.1</version>
         </plugin>
         <plugin>
-          <groupId>org.codehaus.cargo</groupId>
-          <artifactId>cargo-maven2-plugin</artifactId>
-          <version>1.4.8</version>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
           <version>2.2.1</version>
@@ -446,22 +452,6 @@
           <delimiters>
             <delimiter>${*}</delimiter>
           </delimiters>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.cargo</groupId>
-        <artifactId>cargo-maven2-plugin</artifactId>
-        <configuration>
-          <container>
-            <containerId>tomcat7x</containerId>
-            <zipUrlInstaller>
-              <url>http://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip</url>
-              <downloadDir>${settings.localRepository}/org/codehaus/cargo/cargo-container-archives</downloadDir>
-              <extractDir>${project.build.directory}/cargo/extract</extractDir>
-            </zipUrlInstaller>
-            <log>${cargo.log}</log>
-            <output>${cargo.output}</output>
-          </container>
         </configuration>
       </plugin>
       <plugin>

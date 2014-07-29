@@ -81,14 +81,10 @@
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-core</artifactId>
-      <version>7.0.54</version>
-      <!--<version>8.0.9</version>-->
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-logging-juli</artifactId>
-      <version>7.0.54</version>
-      <!--<version>8.0.9</version>-->
     </dependency>
 
     <dependency>
@@ -173,8 +169,7 @@
               <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
-              <includes>**/olingo/**/*.class</includes>
-              <excludes>**/*.properties</excludes>
+              <includeGroupIds>${project.groupId}</includeGroupIds>
               <outputDirectory>${project.build.directory}/classes</outputDirectory>
               <overWriteReleases>true</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
