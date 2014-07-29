@@ -307,7 +307,6 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
         return res;
       } else {
-
         if (propertyChanges.containsKey(name)) {
           res = propertyChanges.get(name);
         } else if (propertyCache.containsKey(name)) {
@@ -325,7 +324,6 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
                     false);
 
           } else if (ref != null && ComplexCollection.class.isAssignableFrom(ref)) {
-
             final ComplexCollectionInvocationHandler<?> collectionHandler;
             final Class<?> itemRef = ClassUtils.extractTypeArg(ref, ComplexCollection.class);
 
@@ -361,8 +359,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
                     new Class<?>[] {ref}, collectionHandler);
 
           } else if (ref != null && PrimitiveCollection.class.isAssignableFrom(ref)) {
-            final PrimitiveCollectionInvocationHandler collectionHandler;
-
+            PrimitiveCollectionInvocationHandler collectionHandler;
             if (property == null || property.hasNullValue()) {
               collectionHandler = new PrimitiveCollectionInvocationHandler(
                       service,
