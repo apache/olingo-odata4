@@ -18,6 +18,12 @@
  */
 package org.apache.olingo.client.core.serialization;
 
+import java.io.StringWriter;
+import java.net.URI;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.data.ServiceDocument;
@@ -54,6 +60,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmSchema;
@@ -67,14 +74,10 @@ import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.serialization.ContextURLParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.StringWriter;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class AbstractODataBinder implements CommonODataBinder {
 
@@ -257,9 +260,9 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       LOG.debug("EntitySet -> ODataEntitySet:\n{}", writer.toString());
     }
 
-    final URI base = resource.getContextURL() == null ?
-        resource.getPayload().getBaseURI() :
-        ContextURLParser.parse(resource.getContextURL()).getServiceRoot();
+    final URI base = resource.getContextURL() == null
+            ? resource.getPayload().getBaseURI()
+            : ContextURLParser.parse(resource.getContextURL()).getServiceRoot();
 
     final URI next = resource.getPayload().getNext();
 
@@ -414,9 +417,9 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     }
 
     final ContextURL contextURL = ContextURLParser.parse(resource.getContextURL());
-    final URI base = resource.getContextURL() == null ?
-        resource.getPayload().getBaseURI() :
-        contextURL.getServiceRoot();
+    final URI base = resource.getContextURL() == null
+            ? resource.getPayload().getBaseURI()
+            : contextURL.getServiceRoot();
     final EdmType edmType = findType(contextURL, resource.getMetadataETag());
     FullQualifiedName typeName = null;
     if (resource.getPayload().getType() == null) {
@@ -519,18 +522,40 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
 
     ODataValue value = null;
     if (valuable.isGeospatial()) {
-      value = client.getObjectFactory().newPrimitiveValueBuilder()
-              .setValue(valuable.asGeospatial())
-              .setType(type == null
+      value = client.getObjectFactory().newPrimitiveValueBuilder().
+              setValue(valuable.asGeospatial()).
+              setType(type == null
                       || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(type)
                       || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(type)
                       ? valuable.asGeospatial().getEdmPrimitiveTypeKind()
-                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).build();
+                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).
+              build();
     } else if (valuable.isPrimitive() || valuable.getValueType() == null) {
-      value = client.getObjectFactory().newPrimitiveValueBuilder()
-              .setValue(valuable.asPrimitive())
-              .setType(type == null || !EdmPrimitiveType.EDM_NAMESPACE.equals(type.getNamespace()) ? null
-                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).build();
+      // fixes non-string values treated as string when no type information is available at de-serialization level
+      if (type != null && !EdmPrimitiveTypeKind.String.getFullQualifiedName().equals(type)
+              && EdmPrimitiveType.EDM_NAMESPACE.equals(type.getNamespace())
+              && valuable.asPrimitive() instanceof String) {
+
+        final EdmPrimitiveType primitiveType =
+                EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.valueOf(type.getName()));
+        final Class<?> returnType = primitiveType.getDefaultType().isAssignableFrom(Calendar.class)
+                ? Timestamp.class : primitiveType.getDefaultType();
+        try {
+          valuable.setValue(valuable.getValueType(),
+                  primitiveType.valueOfString(valuable.asPrimitive().toString(),
+                          null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
+                          returnType));
+        } catch (EdmPrimitiveTypeException e) {
+          throw new IllegalArgumentException(e);
+        }
+      }
+
+      value = client.getObjectFactory().newPrimitiveValueBuilder().
+              setValue(valuable.asPrimitive()).
+              setType(type == null || !EdmPrimitiveType.EDM_NAMESPACE.equals(type.getNamespace())
+                      ? null
+                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).
+              build();
     } else if (valuable.isComplex() || valuable.isLinkedComplex()) {
       value = client.getObjectFactory().newComplexValue(type == null ? null : type.toString());
       if (!valuable.isNull()) {
