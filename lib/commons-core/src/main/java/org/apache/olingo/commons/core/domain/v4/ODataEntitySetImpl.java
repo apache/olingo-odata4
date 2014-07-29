@@ -44,11 +44,6 @@ public class ODataEntitySetImpl extends AbstractODataEntitySet implements ODataE
   }
 
   @Override
-  protected int getEntitiesSize() {
-    return entities.size();
-  }
-
-  @Override
   public List<ODataEntity> getEntities() {
     return entities;
   }

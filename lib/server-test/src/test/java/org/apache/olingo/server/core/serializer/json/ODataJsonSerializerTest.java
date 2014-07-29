@@ -134,12 +134,11 @@ public class ODataJsonSerializerTest {
         ContextURL.Builder.create().entitySet(edmEntitySet).build());
     final String resultString = IOUtils.toString(result);
 
-    Assert.assertTrue(resultString.matches("\\{"
-        + "\"@odata\\.context\":\"\\$metadata#ESAllPrim\","
-        + "\"@odata\\.count\":3,"
-        + "\"value\":\\[.*\\],"
-        + "\"@odata\\.nextLink\":\"/next\""
-        + "\\}"));
+    Assert.assertThat(resultString, CoreMatchers.startsWith("{"
+        + "\"@odata.context\":\"$metadata#ESAllPrim\","
+        + "\"@odata.count\":3,\"value\":["));
+    Assert.assertThat(resultString, CoreMatchers.endsWith("],"
+        + "\"@odata.nextLink\":\"/next\"}"));
 
     int count = 0;
     int index = -1;

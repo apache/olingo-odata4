@@ -222,7 +222,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     ODataEntitySet employees = getClient().getRetrieveRequestFactory().
         getEntitySetRequest(employeesURI).execute().getBody();
     assertFalse(employees.getEntities().isEmpty());
-    final Map<Integer, Integer> preSalaries = new HashMap<Integer, Integer>(employees.getCount());
+    final Map<Integer, Integer> preSalaries = new HashMap<Integer, Integer>(employees.getEntities().size());
     for (ODataEntity employee : employees.getEntities()) {
       preSalaries.put(employee.getProperty("PersonId").getPrimitiveValue().toCastValue(Integer.class),
           employee.getProperty("Salary").getPrimitiveValue().toCastValue(Integer.class));

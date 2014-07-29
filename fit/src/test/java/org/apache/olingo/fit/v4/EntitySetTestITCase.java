@@ -80,7 +80,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     assertNotNull(res);
 
     final ResWrap<ODataEntitySet> entitySet = res.getBodyAs(ODataEntitySet.class);
-    assertEquals(5, entitySet.getPayload().getCount());
+    assertEquals(5, entitySet.getPayload().getEntities().size());
 
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Address",
         entitySet.getPayload().getEntities().get(2).getProperty("HomeAddress").getComplexValue().getTypeName());
