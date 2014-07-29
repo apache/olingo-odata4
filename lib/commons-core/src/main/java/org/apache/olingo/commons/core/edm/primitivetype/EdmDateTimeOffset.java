@@ -41,7 +41,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
   };
 
   private static final Pattern PATTERN = Pattern.compile(
-      "(-?\\p{Digit}{4,})-(\\p{Digit}{2})-(\\p{Digit}{2})"
+          "(-?\\p{Digit}{4,})-(\\p{Digit}{2})-(\\p{Digit}{2})"
           + "T(\\p{Digit}{2}):(\\p{Digit}{2})(?::(\\p{Digit}{2})(\\.(\\p{Digit}{0,12}?)0*)?)?"
           + "(Z|([-+]\\p{Digit}{2}:\\p{Digit}{2}))?");
 
@@ -58,51 +58,51 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
 
   @Override
   protected <T> T internalValueOfString(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
 
     final Matcher matcher = PATTERN.matcher(value);
     if (!matcher.matches()) {
       throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
     }
 
-    final String timeZoneOffset = matcher.group(9) != null && matcher.group(10) != null
-        && !matcher.group(10).matches("[-+]0+:0+") ? matcher.group(10) : null;
+    final String timeZoneOffset = matcher.group(9) == null || matcher.group(10) == null
+            || matcher.group(10).matches("[-+]0+:0+") ? null : matcher.group(10);
     final Calendar dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT" + timeZoneOffset));
     if (dateTimeValue.get(Calendar.ZONE_OFFSET) == 0 && timeZoneOffset != null) {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+              "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
     }
     dateTimeValue.clear();
 
     dateTimeValue.set(
-        Short.parseShort(matcher.group(1)),
-        Byte.parseByte(matcher.group(2)) - 1, // month is zero-based
-        Byte.parseByte(matcher.group(3)),
-        Byte.parseByte(matcher.group(4)),
-        Byte.parseByte(matcher.group(5)),
-        matcher.group(6) == null ? 0 : Byte.parseByte(matcher.group(6)));
+            Short.parseShort(matcher.group(1)),
+            Byte.parseByte(matcher.group(2)) - 1, // month is zero-based
+            Byte.parseByte(matcher.group(3)),
+            Byte.parseByte(matcher.group(4)),
+            Byte.parseByte(matcher.group(5)),
+            matcher.group(6) == null ? 0 : Byte.parseByte(matcher.group(6)));
 
     int nanoSeconds = 0;
     if (matcher.group(7) != null) {
       if (matcher.group(7).length() == 1 || matcher.group(7).length() > 13) {
         throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+                "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
       }
       final String decimals = matcher.group(8);
       if (decimals.length() > (precision == null ? 0 : precision)) {
         throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
+                "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
       }
       if (returnType.isAssignableFrom(Timestamp.class)) {
         if (!decimals.isEmpty()) {
-          nanoSeconds = Integer.parseInt(decimals.length() > 9 ? decimals.substring(0, 9) :
-              decimals + "000000000".substring(decimals.length()));
+          nanoSeconds = Integer.parseInt(decimals.length() > 9 ? decimals.substring(0, 9)
+                  : decimals + "000000000".substring(decimals.length()));
         }
       } else {
-        final String milliSeconds = decimals.length() > 3 ?
-            decimals.substring(0, 3) :
-            decimals + "000".substring(decimals.length());
+        final String milliSeconds = decimals.length() > 3
+                ? decimals.substring(0, 3)
+                : decimals + "000".substring(decimals.length());
         dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
       }
     }
@@ -111,26 +111,26 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       return convertDateTime(dateTimeValue, nanoSeconds, returnType);
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
+              "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
     } catch (final ClassCastException e) {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)", e);
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)", e);
     }
   }
 
   /**
    * Converts a {@link Calendar} value into the requested return type if possible.
-   * 
+   *
    * @param dateTimeValue the value
    * @param nanoSeconds nanoseconds part of the value; only used for the {@link Timestamp} return type
-   * @param returnType the class of the returned value;
-   * it must be one of {@link Calendar}, {@link Long}, {@link Date}, or {@link Timestamp}
+   * @param returnType the class of the returned value; it must be one of {@link Calendar}, {@link Long}, {@link Date},
+   * or {@link Timestamp}
    * @return the converted value
    * @throws IllegalArgumentException if the Calendar value is not valid
    * @throws ClassCastException if the return type is not allowed
    */
   protected static <T> T convertDateTime(final Calendar dateTimeValue, final int nanoSeconds,
-      final Class<T> returnType) throws IllegalArgumentException, ClassCastException {
+          final Class<T> returnType) throws IllegalArgumentException, ClassCastException {
 
     // The Calendar class does not check any values until a get method is called,
     // so we do just that to validate the fields that may have been set,
@@ -159,8 +159,8 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
 
   @Override
   protected <T> String internalValueToString(final T value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     final Calendar dateTimeValue;
     final int fractionalSecs;
@@ -197,11 +197,11 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       }
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)", e);
+              "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)", e);
     }
 
     final int offsetInMinutes = (dateTimeValue.get(Calendar.ZONE_OFFSET)
-        + dateTimeValue.get(Calendar.DST_OFFSET)) / 60 / 1000;
+            + dateTimeValue.get(Calendar.DST_OFFSET)) / 60 / 1000;
     final int offsetHours = offsetInMinutes / 60;
     final int offsetMinutes = Math.abs(offsetInMinutes % 60);
     final String offsetString = offsetInMinutes == 0 ? "Z" : String.format("%+03d:%02d", offsetHours, offsetMinutes);
@@ -212,7 +212,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
 
   /**
    * Creates a date/time value from the given value.
-   * 
+   *
    * @param value the value as {@link Calendar}, {@link Date}, or {@link Long}
    * @return the value as {@link Calendar}
    * @throws EdmPrimitiveTypeException if the type of the value is not supported
@@ -232,7 +232,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       dateTimeValue.setTimeInMillis((Long) value);
     } else {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(" + value.getClass().getName() + ")");
     }
     return dateTimeValue;
   }
@@ -240,7 +240,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
   /**
    * Appends the given number to the given string builder, assuming that the number has at most two digits,
    * performance-optimized.
-   * 
+   *
    * @param result a {@link StringBuilder}
    * @param number an integer that must satisfy <code>0 <= number <= 99</code>
    */
@@ -252,14 +252,14 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
   /**
    * Appends the given number of milliseconds to the given string builder, assuming that the number has at most three
    * digits, performance-optimized.
-   * 
+   *
    * @param result a {@link StringBuilder}
    * @param milliseconds an integer that must satisfy <code>0 &lt;= milliseconds &lt;= 999</code>
    * @param precision the upper limit for decimal digits (optional, defaults to zero)
    * @throws IllegalArgumentException if precision is not met
    */
   protected static void appendMilliseconds(final StringBuilder result, final int milliseconds,
-      final Integer precision) throws IllegalArgumentException {
+          final Integer precision) throws IllegalArgumentException {
 
     final int digits = milliseconds % 1000 == 0 ? 0 : milliseconds % 100 == 0 ? 1 : milliseconds % 10 == 0 ? 2 : 3;
     if (digits > 0) {
@@ -279,14 +279,14 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
 
   /**
    * Appends the given fractional seconds to the given string builder.
-   * 
+   *
    * @param result a {@link StringBuilder}
    * @param fractionalSeconds fractional seconds
    * @param precision the upper limit for decimal digits (optional, defaults to zero)
    * @throws IllegalArgumentException if precision is not met
    */
   protected static void appendFractionalSeconds(final StringBuilder result, final int fractionalSeconds,
-      final Integer precision) throws IllegalArgumentException {
+          final Integer precision) throws IllegalArgumentException {
 
     if (fractionalSeconds > 0) {
       String formatted = NANO_FORMAT.get().format(fractionalSeconds);

@@ -38,9 +38,8 @@ public interface CUDRequestFactory extends CommonCUDRequestFactory<UpdateType> {
    * appropriate format document for details. On successful completion, the response MUST be 204 No Content and contain
    * an empty body.
    *
-   * @param <E> concrete ODataEntity implementation
-   * @param targetURI entity set URI.
-   * @param entity entity to be created.
+   * @param targetURI entity set URI
+   * @param reference entity reference
    * @return new ODataEntityCreateRequest instance.
    */
   ODataReferenceAddingRequest getReferenceAddingRequest(URI targetURI, URI reference);

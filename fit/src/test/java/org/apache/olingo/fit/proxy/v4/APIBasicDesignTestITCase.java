@@ -361,8 +361,8 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void getProductDetails() {
-    Product product = getContainer().newEntityInstance(Product.class);
+  public void boundOperationsAfterCreate() {
+    final Product product = getContainer().newEntityInstance(Product.class);
     product.setProductID(1012);
     product.setName("Latte");
     product.setQuantityPerUnit("100g Bag");
@@ -390,9 +390,14 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     product.setDetails(detailCollection);
 
     getContainer().getProducts().add(product);
-    getContainer().flush(); // The first HTTP Request to create product and the linked product detail
+    
+    // The first HTTP Request to create product and the linked product detail
+    getContainer().flush();
 
-    // the second HTTP Request to execute getProductDetails() operation.
+    // The second HTTP request to access a bound operation via the local object
+    assertNotNull(product.operations().addAccessRight(AccessLevel.None).execute());
+
+    // The third HTTP Request to access a bound operation via entity URL
     final StructuredCollectionInvoker<ProductDetailCollection> result =
             container.getProducts().getByKey(1012).operations().getProductDetails(1);
     assertEquals(1, result.execute().size());
@@ -405,7 +410,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     // ---------------------------------------
     org.apache.olingo.fit.proxy.v3.staticservice.Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> v3serv =
             org.apache.olingo.fit.proxy.v3.staticservice.Service.getV3(
-            "http://localhost:9080/stub/StaticService/V30/Static.svc");
+                    "http://localhost:9080/stub/StaticService/V30/Static.svc");
     v3serv.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     final DefaultContainer v3cont = v3serv.getEntityContainer(DefaultContainer.class);
     assertNotNull(v3cont);
@@ -456,7 +461,6 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     // container.getOrders().getByKey(1).getCustomerForOrder().getEmails().execute().isEmpty());
     // Not supported by the test service BTW generates a single request as expected: 
     // <service root>/Orders(1)/CustomerForOrder/Emails
-
     emails.add("fabio.martelli@tirasa.net");
     container.getPeople().getByKey(1).setEmails(emails);
 
