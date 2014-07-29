@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -63,7 +62,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void update() {
-    Person person = getContainer().getPeople().getByKey(1).load();
+    Person person = getContainer().getPeople().getByKey(1);
 
     final Address address = person.getHomeAddress();
     address.setCity("XXX");

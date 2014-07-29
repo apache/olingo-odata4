@@ -54,8 +54,10 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AddressCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CustomerCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
@@ -72,6 +74,46 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
   protected InMemoryEntities getContainer() {
     return container;
+  }
+
+  @Test
+  public void readEntitySet() {
+    final OrderCollection orders = container.getOrders().execute();
+    assertFalse(orders.isEmpty());
+
+    final CustomerCollection customers = container.getCustomers().
+            orderBy("PersonID").
+            select("FirstName", "LastName", "Orders").
+            expand("Orders").
+            execute();
+
+    assertEquals(2, customers.size());
+    for (Customer customer : customers) {
+      assertNotNull(customer.getFirstName());
+      assertNotNull(customer.getLastName());
+    }
+  }
+
+  @Test
+  public void readWithReferences() {
+    final Person person = container.getOrders().getByKey(8).getCustomerForOrder().refs().load();
+    assertEquals("http://localhost:9080/stub/StaticService/V40/Static.svc/Customers(PersonID=1)",
+            person.getEntityReferenceID());
+
+    final OrderCollection orders = container.getCustomers().getByKey(1).getOrders().refs().execute();
+    assertEquals("http://localhost:9080/stub/StaticService/V40/Static.svc/Orders(7)",
+            orders.iterator().next().getEntityReferenceID());
+  }
+
+  @Test
+  public void addViaReference() {
+    final Order order = container.getOrders().getByKey(8).load();
+
+    final OrderCollection orders = container.newEntityCollection(OrderCollection.class);
+    orders.addRef(order);
+
+    container.getCustomers().getByKey(1).setOrders(orders);
+    container.flush();
   }
 
   @Test
@@ -244,6 +286,42 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
   }
 
   @Test
+  public void deleteSingleProperty() {
+    container.getCustomers().getByKey(1).delete("City");
+    container.flush();
+  }
+
+  @Test
+  public void deleteComplex() {
+    container.getCustomers().getByKey(1).getHomeAddress().delete();
+    container.flush();
+  }
+
+  @Test
+  public void deleteCollection() {
+    container.getCustomers().getByKey(1).getEmails().delete();
+    container.flush();
+  }
+
+  @Test
+  public void deleteEdmStreamProperty() throws IOException {
+    // ---------------------------------------
+    // Instantiate Demo Service
+    // ---------------------------------------
+    final org.apache.olingo.fit.proxy.v4.demo.Service<EdmEnabledODataClient> dservice =
+            org.apache.olingo.fit.proxy.v4.demo.Service.getV4(testDemoServiceRootURL);
+    dservice.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    final DemoService dcontainer = dservice.getEntityContainer(DemoService.class);
+    assertNotNull(dcontainer);
+    dservice.getContext().detachAll();
+    // ---------------------------------------
+    dcontainer.getPersonDetails().getByKey(1).delete("Photo");
+    dcontainer.flush();
+
+    dservice.getContext().detachAll(); // avoid influences
+  }
+
+  @Test
   public void updateComplexProperty() {
     Address homeAddress = container.getCustomers().getByKey(1).getHomeAddress();
     homeAddress.setCity("Pescara");
@@ -327,7 +405,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     // ---------------------------------------
     org.apache.olingo.fit.proxy.v3.staticservice.Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> v3serv =
             org.apache.olingo.fit.proxy.v3.staticservice.Service.getV3(
-                    "http://localhost:9080/stub/StaticService/V30/Static.svc");
+            "http://localhost:9080/stub/StaticService/V30/Static.svc");
     v3serv.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     final DefaultContainer v3cont = v3serv.getEntityContainer(DefaultContainer.class);
     assertNotNull(v3cont);
@@ -378,11 +456,41 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     // container.getOrders().getByKey(1).getCustomerForOrder().getEmails().execute().isEmpty());
     // Not supported by the test service BTW generates a single request as expected: 
     // <service root>/Orders(1)/CustomerForOrder/Emails
+
+    emails.add("fabio.martelli@tirasa.net");
+    container.getPeople().getByKey(1).setEmails(emails);
+
+    container.flush();
+
+    boolean found = false;
+    for (String email : container.getPeople().getByKey(1).getEmails().execute()) {
+      if (email.equals("fabio.martelli@tirasa.net")) {
+        found = true;
+      }
+    }
+
+    assertTrue(found);
+
+    getService().getContext().detachAll();
   }
 
   @Test
   public void workingWithSingletons() {
     assertNotNull(container.getCompany().getVipCustomer().load().getPersonID());
+
+    container.getCompany().setName("new name");
+    container.flush();
+
+    assertEquals("new name", container.getCompany().load().getName());
+  }
+
+  @Test
+  public void createAndCallOperation() {
+    final Product product = container.newEntityInstance(Product.class);
+    product.setProductID(1001);
+    container.flush();
+
+    container.getProducts().getByKey(1000).operations().getProductDetails(1).execute();
   }
 
   @Test
@@ -424,7 +532,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     final AddressCollection ac = container.newComplexCollection(AddressCollection.class);
     final Person updated = container.getCustomers().getByKey(2).operations().
             resetAddress(ac, 0).select("Name").expand("Orders").execute();
-    assertNotNull(person);
+    assertNotNull(updated);
   }
 
   @Test

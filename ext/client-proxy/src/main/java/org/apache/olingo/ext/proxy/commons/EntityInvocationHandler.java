@@ -294,10 +294,10 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return isChanged(true);
   }
 
-  public boolean isChanged(final boolean includeMedia) {
+  public boolean isChanged(final boolean deep) {
     return this.linkChanges.hashCode() != this.linksTag
             || this.propertyChanges.hashCode() != this.propertiesTag
-            || (includeMedia && (this.stream != null
+            || (deep && (this.stream != null
             || !this.streamedPropertyChanges.isEmpty()));
   }
 
@@ -355,6 +355,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
     if (navPropValue != null) {
       cacheLink(property, navPropValue);
+      attach();
     }
 
     return navPropValue;
@@ -506,6 +507,15 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   @Override
   protected CommonODataProperty getInternalProperty(final String name) {
     return getEntity() == null ? null : getEntity().getProperty(name);
+  }
+
+  public String getEntityReferenceID() {
+    URI id = getEntity() == null ? null
+            : getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
+            ? ((org.apache.olingo.commons.api.domain.v3.ODataEntity) getEntity()).getLink()
+            : ((org.apache.olingo.commons.api.domain.v4.ODataEntity) getEntity()).getId();
+
+    return id == null ? null : id.toASCIIString();
   }
 
   @Override

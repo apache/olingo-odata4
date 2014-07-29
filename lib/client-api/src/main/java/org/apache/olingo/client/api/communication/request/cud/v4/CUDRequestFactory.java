@@ -32,4 +32,16 @@ public interface CUDRequestFactory extends CommonCUDRequestFactory<UpdateType> {
   ODataEntityUpdateRequest<ODataSingleton> getSingletonUpdateRequest(
           UpdateType type, ODataSingleton entity);
 
+  /**
+   * A successful POST request to a navigation property's references collection adds a relationship to an existing
+   * entity. The request body MUST contain a single entity reference that identifies the entity to be added. See the
+   * appropriate format document for details. On successful completion, the response MUST be 204 No Content and contain
+   * an empty body.
+   *
+   * @param <E> concrete ODataEntity implementation
+   * @param targetURI entity set URI.
+   * @param entity entity to be created.
+   * @return new ODataEntityCreateRequest instance.
+   */
+  ODataReferenceAddingRequest getReferenceAddingRequest(URI targetURI, URI reference);
 }

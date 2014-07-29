@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.core.v4;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.invoke.EdmEnabledInvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -38,12 +37,12 @@ public class EdmEnabledODataClientImpl extends ODataClientImpl implements EdmEna
 
   private EdmEnabledInvokeRequestFactory edmEnabledInvokeRequestFactory;
 
-  public EdmEnabledODataClientImpl(final String serviceRoot, final Edm edm) {
+  public EdmEnabledODataClientImpl(final String serviceRoot, final Edm edm, final String metadataETag) {
     super();
 
     this.serviceRoot = serviceRoot;
     this.edm = edm;
-    this.metadataETag = StringUtils.EMPTY;
+    this.metadataETag = metadataETag;
   }
 
   @Override
@@ -54,7 +53,7 @@ public class EdmEnabledODataClientImpl extends ODataClientImpl implements EdmEna
   @Override
   public Edm getEdm(final String metadataETag) {
     synchronized (this) {
-      if (this.metadataETag != null && !this.metadataETag.equals(metadataETag)) {
+      if (this.edm == null || (metadataETag != null && !metadataETag.equals(this.metadataETag))) {
         final EdmMetadataRequest metadataReq = getRetrieveRequestFactory().getMetadataRequest(serviceRoot);
         final ODataRetrieveResponse<Edm> metadataRes = metadataReq.execute();
         this.metadataETag = metadataRes.getETag();
@@ -66,7 +65,7 @@ public class EdmEnabledODataClientImpl extends ODataClientImpl implements EdmEna
 
   @Override
   public Edm getCachedEdm() {
-    if (edm == null) {
+    if (this.edm == null) {
       getEdm(null);
     }
     return this.edm;

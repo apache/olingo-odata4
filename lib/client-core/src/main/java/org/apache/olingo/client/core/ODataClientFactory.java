@@ -45,14 +45,14 @@ public final class ODataClientFactory {
   }
 
   public static org.apache.olingo.client.api.v4.EdmEnabledODataClient getEdmEnabledV4(final String serviceRoot) {
-    return getEdmEnabledV4(serviceRoot, null);
+    return getEdmEnabledV4(serviceRoot, null, null);
   }
 
   public static org.apache.olingo.client.api.v4.EdmEnabledODataClient getEdmEnabledV4(
-          final String serviceRoot, final Edm edm) {
+          final String serviceRoot, final Edm edm, final String metadataETag) {
 
     final org.apache.olingo.client.api.v4.EdmEnabledODataClient instance =
-            new org.apache.olingo.client.core.v4.EdmEnabledODataClientImpl(serviceRoot, edm);
+            new org.apache.olingo.client.core.v4.EdmEnabledODataClientImpl(serviceRoot, edm, metadataETag);
     instance.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
     return instance;
   }

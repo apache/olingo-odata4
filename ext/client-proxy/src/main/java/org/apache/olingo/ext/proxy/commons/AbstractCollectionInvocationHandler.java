@@ -33,9 +33,13 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.uri.URIFilter;
+import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
+import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.Sort;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.Term;
@@ -50,6 +54,8 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
 
   protected Collection<T> items;
 
+  protected Collection<String> referenceItems;
+
   protected final URI baseURI;
 
   protected CommonURIBuilder<?> uri;
@@ -61,6 +67,8 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
   private final Map<Class<? extends AbstractTerm>, Object> annotationsByTerm =
           new HashMap<Class<? extends AbstractTerm>, Object>();
 
+  private boolean changed = false;
+
   public AbstractCollectionInvocationHandler(
           final AbstractService<?> service,
           final Collection<T> items,
@@ -71,13 +79,13 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
 
     this.itemRef = itemRef;
     this.items = items;
+    this.referenceItems = new ArrayList<String>();
     this.uri = uri;
     this.baseURI = this.uri == null ? null : this.uri.build();
   }
 
   public Future<Collection<T>> executeAsync() {
     return service.getClient().getConfiguration().getExecutor().submit(new Callable<Collection<T>>() {
-
       @Override
       public Collection<T> call() throws Exception {
         return execute();
@@ -170,7 +178,33 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
         service.getContext().entityContext().attachNew(handler);
       }
     }
+    changed = true;
     return items.add(element);
+  }
+
+  public <ET extends EntityType<?>> boolean addRef(final ET element) {
+    if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
+      return false;
+    }
+
+    if (element instanceof Proxy && Proxy.getInvocationHandler(element) instanceof EntityInvocationHandler) {
+      final EntityInvocationHandler handler = EntityInvocationHandler.class.cast(Proxy.getInvocationHandler(element));
+      final URI id = ((ODataEntity) handler.getEntity()).getId();
+      if (id == null) {
+        return false;
+      }
+
+      changed = true;
+      return referenceItems.add(id.toASCIIString());
+    }
+
+    return false;
+  }
+
+  public void refs() {
+    if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V40) >= 0) {
+      ((URIBuilder) this.uri).appendRefSegment();
+    }
   }
 
   @Override
@@ -219,6 +253,7 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
 
   @Override
   public boolean addAll(final Collection<? extends T> collection) {
+    changed = true;
     return items.addAll(collection);
   }
 
@@ -294,5 +329,9 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
   public void clearQueryOptions() {
     this.uri = this.baseURI == null ? null : getClient().newURIBuilder(baseURI.toASCIIString());
     this.nextPageURI = null;
+  }
+
+  public boolean isChanged() {
+    return changed;
   }
 }

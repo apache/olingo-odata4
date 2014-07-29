@@ -26,4 +26,6 @@ public interface PrimitiveCollection<T extends Serializable>
         CollectionQuery<PrimitiveCollection<T>>,
         Collection<T>,
         Serializable {
+
+  void delete();
 }

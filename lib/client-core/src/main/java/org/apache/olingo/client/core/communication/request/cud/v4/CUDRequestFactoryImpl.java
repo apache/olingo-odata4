@@ -22,7 +22,9 @@ import java.net.URI;
 
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFactory;
+import org.apache.olingo.client.api.communication.request.cud.v4.ODataReferenceAddingRequest;
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
+import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.communication.request.cud.AbstractCUDRequestFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
@@ -47,4 +49,8 @@ public class CUDRequestFactoryImpl extends AbstractCUDRequestFactory<UpdateType>
     return super.getEntityUpdateRequest(targetURI, type, changes);
   }
 
+  @Override
+  public ODataReferenceAddingRequest getReferenceAddingRequest(final URI targetURI, final URI reference) {
+    return new ODataReferenceAddingRequestImpl(client, HttpMethod.POST, targetURI, reference);
+  }
 }

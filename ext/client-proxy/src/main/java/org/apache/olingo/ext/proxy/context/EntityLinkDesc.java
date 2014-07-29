@@ -41,6 +41,8 @@ public class EntityLinkDesc implements Serializable {
 
   private final ODataLinkType type;
 
+  private final String reference;
+
   public EntityLinkDesc(
           final String sourceName,
           final EntityInvocationHandler source,
@@ -50,6 +52,7 @@ public class EntityLinkDesc implements Serializable {
     this.source = source;
     this.targets = target;
     this.type = type;
+    this.reference = null;
   }
 
   public EntityLinkDesc(
@@ -61,6 +64,18 @@ public class EntityLinkDesc implements Serializable {
     this.source = source;
     this.targets = Collections.<EntityInvocationHandler>singleton(target);
     this.type = type;
+    this.reference = null;
+  }
+
+  public EntityLinkDesc(
+          final String sourceName,
+          final EntityInvocationHandler source,
+          final String targetRef) {
+    this.sourceName = sourceName;
+    this.source = source;
+    this.targets = null;
+    this.type = null;
+    this.reference = targetRef;
   }
 
   public String getSourceName() {
@@ -77,6 +92,10 @@ public class EntityLinkDesc implements Serializable {
 
   public ODataLinkType getType() {
     return type;
+  }
+
+  public String getReference() {
+    return reference;
   }
 
   /**

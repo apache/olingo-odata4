@@ -19,4 +19,18 @@
 package org.apache.olingo.ext.proxy.api;
 
 public interface EntityType<T extends StructuredType<?>> extends StructuredType<T> {
+
+  /**
+   * Appends ref segment to the URI.
+   *
+   * @return the same query instance.
+   */
+  T refs();
+
+  /**
+   * Gets entity reference ID.
+   *
+   * @return entity reference ID.
+   */
+  String getEntityReferenceID();
 }

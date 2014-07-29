@@ -32,6 +32,7 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
 
   //CHECKSTYLE:OFF (Maven checkstyle)
   private static final String COMPRESSED_METADATA = "$metadata";
+  private static final String METADATA_ETAG = #if($metadataETag)"$metadataETag"#{else}null#{end};
   //CHECKSTYLE:ON (Maven checkstyle)
 
   private static final Map<String, Service<?>> SERVICES = new ConcurrentHashMap<String, Service<?>>();
@@ -41,7 +42,8 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
           final ODataServiceVersion version, final String serviceRoot, final boolean transactional) {
 
     if (!SERVICES.containsKey(serviceRoot)) {
-      final Service<C> instance = new Service<C>(COMPRESSED_METADATA, version, serviceRoot, transactional);
+      final Service<C> instance = new Service<C>(COMPRESSED_METADATA, METADATA_ETAG, 
+          version, serviceRoot, transactional);
       SERVICES.put(serviceRoot, instance);
     }
 
@@ -104,10 +106,10 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
 
   private final Map<String, Class<? extends AbstractTerm>> terms = new HashMap<String, Class<? extends AbstractTerm>>();
 
-  public Service(final String compressedMetadata,
+  public Service(final String compressedMetadata, final String metadataETag,
           final ODataServiceVersion version, final String serviceRoot, final boolean transactional) {
 
-    super(compressedMetadata, version, serviceRoot, transactional);
+    super(compressedMetadata, metadataETag,version, serviceRoot, transactional);
 
     //CHECKSTYLE:OFF (Maven checkstyle)
 #foreach ($complexType in $complexTypes.entrySet())
