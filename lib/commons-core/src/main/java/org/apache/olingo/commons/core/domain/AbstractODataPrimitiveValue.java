@@ -59,15 +59,15 @@ public abstract class AbstractODataPrimitiveValue extends AbstractODataValue imp
     public AbstractBuilder setType(final EdmPrimitiveTypeKind type) {
       if (type != null && !type.getSupportedVersions().contains(version)) {
         throw new IllegalArgumentException(String.format(
-            "Type %s not supported by OData version %s", type.toString(), version));
+                "Type %s not supported by OData version %s", type.toString(), version));
       }
       if (type == EdmPrimitiveTypeKind.Stream) {
         throw new IllegalArgumentException(String.format(
-            "Cannot build a primitive value for %s", EdmPrimitiveTypeKind.Stream.toString()));
+                "Cannot build a primitive value for %s", EdmPrimitiveTypeKind.Stream.toString()));
       }
       if (type == EdmPrimitiveTypeKind.Geography || type == EdmPrimitiveTypeKind.Geometry) {
         throw new IllegalArgumentException(
-            type + "is not an instantiable type. "
+                type + "is not an instantiable type. "
                 + "An entity can declare a property to be of type Geometry. "
                 + "An instance of an entity MUST NOT have a value of type Geometry. "
                 + "Each value MUST be of some subtype.");
@@ -186,14 +186,10 @@ public abstract class AbstractODataPrimitiveValue extends AbstractODataValue imp
     } else if (typeKind.isGeospatial()) {
       return reference.cast(value);
     } else {
-      try {
-        // TODO: when Edm is available, set facets when calling this method
-        return type.valueOfString(type.valueToString(value,
-            null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-            null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, reference);
-      } catch (EdmPrimitiveTypeException e) {
-        throw new IllegalArgumentException(e);
-      }
+      // TODO: set facets
+      return type.valueOfString(type.valueToString(value,
+              null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
+              null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, reference);
     }
   }
 
@@ -205,7 +201,7 @@ public abstract class AbstractODataPrimitiveValue extends AbstractODataValue imp
       return value.toString();
     } else {
       try {
-        // TODO: when Edm is available, set facets when calling this method
+      // TODO: set facets
         return type.valueToString(value, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
       } catch (EdmPrimitiveTypeException e) {
         throw new IllegalArgumentException(e);
