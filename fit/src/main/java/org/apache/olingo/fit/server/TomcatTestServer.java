@@ -21,6 +21,7 @@ package org.apache.olingo.fit.server;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
+import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -31,7 +32,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -50,10 +50,6 @@ import java.util.jar.JarFile;
 public class TomcatTestServer {
   private static final Logger LOG = LoggerFactory.getLogger(TomcatTestServer.class);
 
-//  private static final int PORT_MIN = 19000;
-//  private static final int PORT_MAX = 19200;
-//  private static final int PORT_INC = 1;
-
   private final Tomcat tomcat;
 
   private TomcatTestServer(Tomcat tomcat) {
@@ -63,7 +59,7 @@ public class TomcatTestServer {
   public static void main(String[] params) {
     try {
       LOG.trace("Start tomcat embedded server from main()");
-      TomcatTestServer server = TomcatTestServer.init(9180)
+      TestServerBuilder server = TomcatTestServer.init(9180)
           .addStaticContent("/stub/StaticService/V30/Static.svc/$metadata", "V30/metadata.xml")
           .addStaticContent("/stub/StaticService/V30/ActionOverloading.svc/$metadata",
               "V30/actionOverloadingMetadata.xml")
@@ -71,11 +67,44 @@ public class TomcatTestServer {
           .addStaticContent("/stub/StaticService/V30/PrimitiveKeys.svc/$metadata", "V30/primitiveKeysMetadata.xml")
           .addStaticContent("/stub/StaticService/V40/OpenType.svc/$metadata", "V40/openTypeMetadata.xml")
           .addStaticContent("/stub/StaticService/V40/Demo.svc/$metadata", "V40/demoMetadata.xml")
-          .addStaticContent("/stub/StaticService/V40/Static.svc/$metadata", "V40/metadata.xml")
-          .start();
+          .addStaticContent("/stub/StaticService/V40/Static.svc/$metadata", "V40/metadata.xml");
+
+      boolean keepRunning = false;
+      for (String param : params) {
+        if(param.equalsIgnoreCase("keeprunning")) {
+          keepRunning = true;
+        } else if(param.equalsIgnoreCase("addwebapp")) {
+          server.addWebApp();
+        } else if(param.startsWith("port")) {
+          server.atPort(extractPortParam(param));
+        }
+      }
+
+      if(keepRunning) {
+        LOG.info("...and keep server running.");
+        server.startAndWait();
+      } else {
+        LOG.info("...and run as long as the thread is running.");
+        server.start();
+      }
     } catch (Exception e) {
       throw new RuntimeException("Failed to start Tomcat server from main method.", e);
     }
+  }
+
+  public static int extractPortParam(String portParameter) {
+    String[] portParam = portParameter.split("=");
+    if(portParam.length == 2) {
+      try {
+
+        return Integer.parseInt(portParam[1]);
+      } catch (NumberFormatException e) {
+        throw new IllegalArgumentException("Port parameter (" + portParameter +
+            ") could not be parsed.");
+      }
+    }
+    throw new IllegalArgumentException("Port parameter (" + portParameter +
+        ") could not be parsed.");
   }
 
   public static class StaticContent extends HttpServlet {
@@ -116,21 +145,17 @@ public class TomcatTestServer {
 
   public static class TestServerBuilder {
     private static final String TOMCAT_BASE_DIR = "TOMCAT_BASE_DIR";
-    private static final String PROJECT_TARGET_DIR = "PROJECT_TARGET_DIR";
     private static final String PROJECT_WEB_APP_DIR = "PROJECT_WEB_APP_DIR";
     private static final String PROJECT_RESOURCES_DIR = "PROJECT_RESOURCES_DIR";
 
     private final Tomcat tomcat;
     private final File baseDir;
-    private final File projectTarget;
     private TomcatTestServer server;
     private Properties properties;
 
     private TestServerBuilder(int fixedPort) {
       initializeProperties();
       //baseDir = new File(System.getProperty("java.io.tmpdir"), "tomcat-test");
-      projectTarget = getProjectTarget();
-      // projectTarget == ...fit/target/test-classes
       baseDir = getFileForDirProperty(TOMCAT_BASE_DIR);
       if(!baseDir.exists() && !baseDir.mkdirs()) {
         throw new RuntimeException("Unable to create temporary test directory at {" + baseDir.getAbsolutePath() + "}");
@@ -156,6 +181,10 @@ public class TomcatTestServer {
         LOG.error("Unable to load properties for embedded tomcat test server.");
         throw new RuntimeException("Unable to load properties for embedded tomcat test server.");
       }
+    }
+
+    public void atPort(int port) {
+      tomcat.setPort(port);
     }
 
     public TestServerBuilder addWebApp() throws IOException {
@@ -184,27 +213,28 @@ public class TomcatTestServer {
         FileUtils.forceDelete(libFile);
       }
 
-      String[] libsToRemove = libDir.list(new FilenameFilter() {
-        @Override public boolean accept(File dir, String name) {
-          return
-              (name.toLowerCase(Locale.ENGLISH).contains("tomcat")
-              || name.toLowerCase(Locale.ENGLISH).contains("maven"))
-              && name.toLowerCase(Locale.ENGLISH).endsWith("jar");
-        }
-      });
-      for (String lib : libsToRemove) {
-        FileUtils.forceDelete(new File(libDir, lib));
-      }
+//      String[] libsToRemove = libDir.list(new FilenameFilter() {
+//        @Override public boolean accept(File dir, String name) {
+//          return
+//              (name.toLowerCase(Locale.ENGLISH).contains("tomcat")
+//              || name.toLowerCase(Locale.ENGLISH).contains("maven"))
+//              && name.toLowerCase(Locale.ENGLISH).endsWith("jar");
+//        }
+//      });
+//      for (String lib : libsToRemove) {
+//        FileUtils.forceDelete(new File(libDir, lib));
+//      }
 
       String contextPath = "/stub"; // contextFile.getName()
-      tomcat.addWebapp(tomcat.getHost(), contextPath, webAppDir.getAbsolutePath());
+      Context context = tomcat.addWebapp(tomcat.getHost(), contextPath, webAppDir.getAbsolutePath());
       LOG.info("Webapp {} at context {}.", webAppDir.getName(), contextPath);
 
-      return this;
-    }
+      //
+      WebappLoader solrLoader = new WebappLoader(Thread.currentThread().getContextClassLoader());
+      context.setLoader(solrLoader);
+      //
 
-    private File getProjectTarget() {
-      return getFileForDirProperty(PROJECT_TARGET_DIR);
+      return this;
     }
 
     private File getFileForDirProperty(String propertyName) {
@@ -272,45 +302,19 @@ public class TomcatTestServer {
       }
       tomcat.start();
 
-      LOG.info("Started server at endpoint " + tomcat.getServer().getAddress());
+      LOG.info("Started server at endpoint "
+          + tomcat.getServer().getAddress() + ":" + tomcat.getConnector().getPort() +
+          " (with base dir: " + baseDir.getAbsolutePath());
 
-//      tomcat.getServer().await();
-      tomcat.getServer().getState();
       server = new TomcatTestServer(tomcat);
       return server;
     }
+
+    public void startAndWait() throws LifecycleException {
+      start();
+      tomcat.getServer().await();
+    }
   }
-
-//  public boolean start(final Class<? extends HttpServlet> factoryClass, final String context) {
-//    try {
-//      init(9080).addServlet(factoryClass, context).start();
-//      return true;
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//      return false;
-//    }
-//  }
-
-//  public void start(final Class<? extends HttpServlet> factoryClass) {
-//    try {
-//      for (int port = PORT_MIN; port <= PORT_MAX; port += PORT_INC) {
-//        LifecycleState state = startInternal(factoryClass, port);
-//        if(state == LifecycleState.STARTED) {
-//          LOG.info("Tomcat in state :[" + state + "]");
-//          break;
-//        } else {
-//          LOG.info("port is busy... " + port + " [" + state + "]");
-//        }
-//      }
-//
-//      if (!tomcat.getServer().getState().isAvailable()) {
-//        throw new BindException("no free port in range of [" + PORT_MIN + ".." + PORT_MAX + "]");
-//      }
-//    } catch (final Exception e) {
-//      LOG.error("server start failed", e);
-//      throw new RuntimeException(e);
-//    }
-//  }
 
   public void stop() throws LifecycleException {
     if (tomcat.getServer() != null
