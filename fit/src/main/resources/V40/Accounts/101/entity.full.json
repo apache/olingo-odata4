@@ -1,8 +1,8 @@
 {
-  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Accounts/$entity",
+  "@odata.context": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Accounts/$entity",
   "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Account",
-  "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)",
-  "@odata.editLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)",
+  "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)",
+  "@odata.editLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)",
   "AccountID": 101,
   "Country": "US",
   "AccountInfo": {
@@ -11,24 +11,24 @@
     "LastName": "Green",
     "MiddleName": "Hood"
   },
-  "MyGiftCard@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/MyGiftCard/$ref",
-  "MyGiftCard@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/MyGiftCard",
-  "MyPaymentInstruments@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/MyPaymentInstruments/$ref",
-  "MyPaymentInstruments@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/MyPaymentInstruments",
-  "ActiveSubscriptions@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/ActiveSubscriptions/$ref",
-  "ActiveSubscriptions@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/ActiveSubscriptions",
-  "AvailableSubscriptionTemplatess@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/AvailableSubscriptionTemplatess/$ref",
-  "AvailableSubscriptionTemplatess@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/AvailableSubscriptionTemplatess",
+  "MyGiftCard@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/MyGiftCard/$ref",
+  "MyGiftCard@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/MyGiftCard",
+  "MyPaymentInstruments@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/MyPaymentInstruments/$ref",
+  "MyPaymentInstruments@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/MyPaymentInstruments",
+  "ActiveSubscriptions@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/ActiveSubscriptions/$ref",
+  "ActiveSubscriptions@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/ActiveSubscriptions",
+  "AvailableSubscriptionTemplatess@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/AvailableSubscriptionTemplatess/$ref",
+  "AvailableSubscriptionTemplatess@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/AvailableSubscriptionTemplatess",
   "#Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI": {
     "title": "Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI",
-    "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI"
+    "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI"
   },
   "#Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI": {
     "title": "Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI",
-    "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI"
+    "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI"
   },
   "#Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo": {
     "title": "Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo",
-    "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo"
+    "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo"
   }
 }

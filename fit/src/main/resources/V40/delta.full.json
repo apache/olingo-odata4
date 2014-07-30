@@ -1,5 +1,5 @@
 {
-  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Customers/$delta",
+  "@odata.context": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Customers/$delta",
   "@odata.count": 5,
   "value":
           [

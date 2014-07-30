@@ -19,14 +19,14 @@
     under the License.
 
 -->
-<entry xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/" 
+<entry xml:base="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/" 
        xmlns="http://www.w3.org/2005/Atom" 
        xmlns:d="http://docs.oasis-open.org/odata/ns/data" 
        xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" 
        xmlns:georss="http://www.georss.org/georss" 
        xmlns:gml="http://www.opengis.net/gml" 
-       m:context="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#ProductDetail/$entity">
-  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/ProductDetails(1)</id>
+       m:context="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#ProductDetail/$entity">
+  <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/ProductDetails(1)</id>
   <category term="#ODataDemo.ProductDetail" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
   <link rel="edit" title="ProductDetails" href="ProductDetails(1)" />
   <link rel="http://docs.oasis-open.org/odata/ns/edit-media/Photo" title="Photo" href="ProductDetails(1)/Photo" />

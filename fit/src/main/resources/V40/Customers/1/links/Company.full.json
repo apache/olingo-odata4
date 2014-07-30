@@ -1,4 +1,4 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Customer/$links/Info",
-  "url": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Company"
+  "odata.metadata": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Customer/$links/Info",
+  "url": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Company"
 }

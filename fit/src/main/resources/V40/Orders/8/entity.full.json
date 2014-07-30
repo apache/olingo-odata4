@@ -1,8 +1,8 @@
 {
-  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Orders/$entity",
+  "@odata.context": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Orders/$entity",
   "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Order",
-  "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)",
-  "@odata.editLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)",
+  "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)",
+  "@odata.editLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)",
   "@odata.etag": "W/\"123456789001\"",
   "OrderID": 8,
   "OrderDate@odata.type": "#DateTimeOffset",
@@ -14,10 +14,10 @@
           [
             "PT0.0000001S"
           ],
-  "LoggedInEmployee@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)/LoggedInEmployee/$ref",
-  "LoggedInEmployee@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)/LoggedInEmployee",
-  "CustomerForOrder@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)/CustomerForOrder/$ref",
-  "CustomerForOrder@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)/CustomerForOrder",
-  "OrderDetails@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)/OrderDetails/$ref",
-  "OrderDetails@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)/OrderDetails"
+  "LoggedInEmployee@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)/LoggedInEmployee/$ref",
+  "LoggedInEmployee@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)/LoggedInEmployee",
+  "CustomerForOrder@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)/CustomerForOrder/$ref",
+  "CustomerForOrder@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)/CustomerForOrder",
+  "OrderDetails@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)/OrderDetails/$ref",
+  "OrderDetails@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Orders(8)/OrderDetails"
 }

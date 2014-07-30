@@ -1,8 +1,8 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#CustomerInfo",
+  "odata.metadata": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#CustomerInfo",
   "value": [{
       "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo",
-      "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(11)",
+      "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(11)",
       "odata.editLink": "CustomerInfo(11)",
       "odata.mediaEditLink": "CustomerInfo(11)/$value",
       "odata.mediaReadLink": "CustomerInfo(11)/$value",
@@ -11,7 +11,7 @@
       "Information": "\u3073\u9ed1\u30dd\u755a\u305c\u30de\u30c1\uff9d\u30cf\u6b79\u9ed1\uff5a\u30af\uff66\uff88\u30dc\u30a1\u305f\u30b0\uff66\u9ed1\u30bd\u042f\u6b79\u3074\u305b\u30dd\uff5a\u30bc\u5f0c\u305e\u305b\u305c\u30bc\u4e9c\u042f\u30af\u3042\u30bd\u4e9c\u30bc\u305d\u305b\u73f1\u30a1\u30bf\u3072\u30b0\u30bc\u7e37\u044f\u3041\u30be\u9ed1\u30de\u30df\u88f9\u66a6\u30dd\u044f"
     }, {
       "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo",
-      "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(12)",
+      "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(12)",
       "odata.editLink": "CustomerInfo(12)",
       "odata.mediaEditLink": "CustomerInfo(12)/$value",
       "odata.mediaReadLink": "CustomerInfo(12)/$value",
@@ -20,7 +20,7 @@
       "Information": "frubhbngipuuveyneosslslbtr\u00dfqjujnssgcxuuzdbeu\u00dfeaductgqbvhpussktbzzfuqvkxajzckmkzluthcjsku"
     }, {
       "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo",
-      "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(13)",
+      "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(13)",
       "odata.editLink": "CustomerInfo(13)",
       "odata.mediaEditLink": "CustomerInfo(13)/$value",
       "odata.mediaReadLink": "CustomerInfo(13)/$value",
@@ -29,7 +29,7 @@
       "Information": null
     }, {
       "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo",
-      "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(14)",
+      "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(14)",
       "odata.editLink": "CustomerInfo(14)",
       "odata.mediaEditLink": "CustomerInfo(14)/$value",
       "odata.mediaReadLink": "CustomerInfo(14)/$value",
@@ -38,7 +38,7 @@
       "Information": "\u7e37\u30a1\u30be\u6b79\uff9d\u88f9\u30df\u30df\u4e5d\u3092\u30bd\u30bf\u30dc\u0451\uff88\u307b\u3072\u30df\u30d0\u30bc\u755a\u042f\u30bd\u30dd\u4e9c\u307b\u30df\u307a\u307e\uff41\u30bf\u755a\u5f0c\u531a\u305e\u30b0\u307c\u305d\u755a\u30bd\uff9d\u30bc\u30bc\u3079\u30c1\u30c1\u305e\u30df\u30df\u30bc\u30de\u30bf\u9ed1\u30c0\u044f\u7e37\u7e37\u73f1\u305b\u4e9c\u3074\u30be\u30bd\u6b32\u531a\u30cf\u4e5d\u755a\u88f9\u30cf\uff88\u0451\u6b79\u305f\u30bc\u30bd\u30c1\u307b\u305b\u3073\u305c\uff9d\u30be\u73f1\u307c\uff88\uff66\u307c\u4e5d\u307c"
     }, {
       "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo",
-      "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(15)",
+      "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(15)",
       "odata.editLink": "CustomerInfo(15)",
       "odata.mediaEditLink": "CustomerInfo(15)/$value",
       "odata.mediaReadLink": "CustomerInfo(15)/$value",
@@ -47,7 +47,7 @@
       "Information": ""
     }, {
       "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo",
-      "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(16)",
+      "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(16)",
       "odata.editLink": "CustomerInfo(16)",
       "odata.mediaEditLink": "CustomerInfo(16)/$value",
       "odata.mediaReadLink": "CustomerInfo(16)/$value",
@@ -56,7 +56,7 @@
       "Information": "uuvoqobtxfgtnzugqjsocbhjkynsjafonxuxmcrnyldkxvpnuezalvpyhjpsmkgxacuruxtjruusxylndzxgefpscvk"
     }, {
       "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo",
-      "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(17)",
+      "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(17)",
       "odata.editLink": "CustomerInfo(17)",
       "odata.mediaEditLink": "CustomerInfo(17)/$value",
       "odata.mediaReadLink": "CustomerInfo(17)/$value",
@@ -65,7 +65,7 @@
       "Information": null
     }, {
       "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo",
-      "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(18)",
+      "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(18)",
       "odata.editLink": "CustomerInfo(18)",
       "odata.mediaEditLink": "CustomerInfo(18)/$value",
       "odata.mediaReadLink": "CustomerInfo(18)/$value",
@@ -74,7 +74,7 @@
       "Information": null
     }, {
       "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo",
-      "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(19)",
+      "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(19)",
       "odata.editLink": "CustomerInfo(19)",
       "odata.mediaEditLink": "CustomerInfo(19)/$value",
       "odata.mediaReadLink": "CustomerInfo(19)/$value",
@@ -83,7 +83,7 @@
       "Information": "ebmfxjikutjvmudp"
     }, {
       "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo",
-      "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(20)",
+      "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(20)",
       "odata.editLink": "CustomerInfo(20)",
       "odata.mediaEditLink": "CustomerInfo(20)/$value",
       "odata.mediaReadLink": "CustomerInfo(20)/$value",

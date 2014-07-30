@@ -19,13 +19,13 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
-  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer</id>
+<feed xml:base="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+  <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer</id>
   <title type="text">Computer</title>
   <updated>2014-05-08T10:00:26Z</updated>
   <link rel="self" title="Computer" href="Computer" />
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(11)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(11)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Computer" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Computer" href="Computer(11)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ComputerDetail" type="application/atom+xml;type=entry" title="ComputerDetail" href="Computer(11)/ComputerDetail" />
@@ -34,7 +34,7 @@
     <author>
       <name />
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(11)/GetComputer" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(11)/GetComputer" />
     <content type="application/xml">
       <m:properties>
         <d:ComputerId m:type="Edm.Int32">11</d:ComputerId>
@@ -43,7 +43,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(12)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(12)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Computer" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Computer" href="Computer(12)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ComputerDetail" type="application/atom+xml;type=entry" title="ComputerDetail" href="Computer(12)/ComputerDetail" />
@@ -52,7 +52,7 @@
     <author>
       <name />
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(12)/GetComputer" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(12)/GetComputer" />
     <content type="application/xml">
       <m:properties>
         <d:ComputerId m:type="Edm.Int32">12</d:ComputerId>
@@ -61,7 +61,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(13)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(13)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Computer" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Computer" href="Computer(13)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ComputerDetail" type="application/atom+xml;type=entry" title="ComputerDetail" href="Computer(13)/ComputerDetail" />
@@ -70,7 +70,7 @@
     <author>
       <name />
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(13)/GetComputer" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(13)/GetComputer" />
     <content type="application/xml">
       <m:properties>
         <d:ComputerId m:type="Edm.Int32">13</d:ComputerId>
@@ -79,7 +79,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(14)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(14)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Computer" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Computer" href="Computer(14)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ComputerDetail" type="application/atom+xml;type=entry" title="ComputerDetail" href="Computer(14)/ComputerDetail" />
@@ -88,7 +88,7 @@
     <author>
       <name />
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(14)/GetComputer" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(14)/GetComputer" />
     <content type="application/xml">
       <m:properties>
         <d:ComputerId m:type="Edm.Int32">14</d:ComputerId>
@@ -97,7 +97,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(15)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(15)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Computer" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Computer" href="Computer(15)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ComputerDetail" type="application/atom+xml;type=entry" title="ComputerDetail" href="Computer(15)/ComputerDetail" />
@@ -106,7 +106,7 @@
     <author>
       <name />
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(15)/GetComputer" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(15)/GetComputer" />
     <content type="application/xml">
       <m:properties>
         <d:ComputerId m:type="Edm.Int32">15</d:ComputerId>
@@ -115,7 +115,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(16)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(16)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Computer" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Computer" href="Computer(16)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ComputerDetail" type="application/atom+xml;type=entry" title="ComputerDetail" href="Computer(16)/ComputerDetail" />
@@ -124,7 +124,7 @@
     <author>
       <name />
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(16)/GetComputer" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(16)/GetComputer" />
     <content type="application/xml">
       <m:properties>
         <d:ComputerId m:type="Edm.Int32">16</d:ComputerId>
@@ -133,7 +133,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(17)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(17)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Computer" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Computer" href="Computer(17)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ComputerDetail" type="application/atom+xml;type=entry" title="ComputerDetail" href="Computer(17)/ComputerDetail" />
@@ -142,7 +142,7 @@
     <author>
       <name />
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(17)/GetComputer" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(17)/GetComputer" />
     <content type="application/xml">
       <m:properties>
         <d:ComputerId m:type="Edm.Int32">17</d:ComputerId>
@@ -151,7 +151,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(18)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(18)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Computer" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Computer" href="Computer(18)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ComputerDetail" type="application/atom+xml;type=entry" title="ComputerDetail" href="Computer(18)/ComputerDetail" />
@@ -160,7 +160,7 @@
     <author>
       <name />
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(18)/GetComputer" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(18)/GetComputer" />
     <content type="application/xml">
       <m:properties>
         <d:ComputerId m:type="Edm.Int32">18</d:ComputerId>
@@ -169,7 +169,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(19)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(19)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Computer" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Computer" href="Computer(19)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ComputerDetail" type="application/atom+xml;type=entry" title="ComputerDetail" href="Computer(19)/ComputerDetail" />
@@ -178,7 +178,7 @@
     <author>
       <name />
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(19)/GetComputer" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(19)/GetComputer" />
     <content type="application/xml">
       <m:properties>
         <d:ComputerId m:type="Edm.Int32">19</d:ComputerId>
@@ -187,7 +187,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(20)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(20)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Computer" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Computer" href="Computer(20)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ComputerDetail" type="application/atom+xml;type=entry" title="ComputerDetail" href="Computer(20)/ComputerDetail" />
@@ -196,7 +196,7 @@
     <author>
       <name />
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Computer(20)/GetComputer" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.GetComputer" title="GetComputer" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Computer(20)/GetComputer" />
     <content type="application/xml">
       <m:properties>
         <d:ComputerId m:type="Edm.Int32">20</d:ComputerId>

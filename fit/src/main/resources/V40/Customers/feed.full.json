@@ -1,10 +1,10 @@
 {
-  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Customers",
+  "@odata.context": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Customers",
   "value":
           [
             {
-              "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=1)",
-              "@odata.editLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=1)",
+              "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=1)",
+              "@odata.editLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=1)",
               "PersonID": 1,
               "FirstName": "Bob",
               "LastName": "Cat",
@@ -51,8 +51,8 @@
               "TimeBetweenLastTwoOrders": "PT0.0000001S"
             },
             {
-              "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=2)",
-              "@odata.editLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=2)",
+              "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=2)",
+              "@odata.editLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=2)",
               "PersonID": 2,
               "FirstName": "Jill",
               "LastName": "Jones",

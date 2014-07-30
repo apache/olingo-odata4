@@ -1,8 +1,8 @@
 {
-  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/$metadata#Advertisements",
+  "@odata.context": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Demo.svc/$metadata#Advertisements",
   "value": [{
       "@odata.type": "#ODataDemo.Advertisement",
-      "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)",
+      "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)",
       "@odata.editLink": "Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)",
       "@odata.mediaEditLink": "Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)/$value",
       "@odata.mediaContentType": "*/*",
@@ -16,7 +16,7 @@
       "FeaturedProduct@odata.navigationLink": "Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)/FeaturedProduct"
     }, {
       "@odata.type": "#ODataDemo.Advertisement",
-      "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements(db2d2186-1c29-4d1e-88ef-a127f521b9c6)",
+      "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements(db2d2186-1c29-4d1e-88ef-a127f521b9c6)",
       "@odata.editLink": "Advertisements(db2d2186-1c29-4d1e-88ef-a127f521b9c6)",
       "@odata.mediaEditLink": "Advertisements(db2d2186-1c29-4d1e-88ef-a127f521b9c6)/$value",
       "@odata.mediaContentType": "*/*",

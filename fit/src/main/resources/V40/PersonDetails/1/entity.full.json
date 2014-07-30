@@ -1,7 +1,7 @@
 {
-  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#ProductDetail/$entity",
+  "@odata.context": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#ProductDetail/$entity",
   "@odata.type": "ODataDemo.ProductDetail",
-  "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/ProductDetails(1)",
+  "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/ProductDetails(1)",
   "@odata.editLink": "ProductDetails(1)",
   "Photo@odata.mediaEditLink": "ProductDetails(1)/Photo",
   "PersonID": 12

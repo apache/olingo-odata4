@@ -19,10 +19,10 @@
   under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom"
+<feed xml:base="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom"
   xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
   xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
-  <id>http://localhost:x${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car</id>
+  <id>http://localhost:x${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car</id>
   <title type="text">Car</title>
   <updated>2014-02-13T14:31:04Z</updated>
   <link rel="self" title="Car" href="Car" />

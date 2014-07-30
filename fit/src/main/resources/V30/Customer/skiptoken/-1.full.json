@@ -1,5 +1,5 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#Customer",
+  "odata.metadata": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#Customer",
   "value":
           [
           ]

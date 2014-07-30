@@ -19,13 +19,13 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
-  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Message</id>
+<feed xml:base="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+  <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Message</id>
   <title type="text">Message</title>
   <updated>2014-05-08T09:55:45Z</updated>
   <link rel="self" title="Message" href="Message" />
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='1',MessageId=-10)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='1',MessageId=-10)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Message" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Message" href="Message(FromUsername='1',MessageId=-10)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Sender" type="application/atom+xml;type=entry" title="Sender" href="Message(FromUsername='1',MessageId=-10)/Sender" />
@@ -50,7 +50,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='2',MessageId=-9)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='2',MessageId=-9)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Message" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Message" href="Message(FromUsername='2',MessageId=-9)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Sender" type="application/atom+xml;type=entry" title="Sender" href="Message(FromUsername='2',MessageId=-9)/Sender" />
@@ -75,7 +75,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='3',MessageId=-8)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='3',MessageId=-8)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Message" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Message" href="Message(FromUsername='3',MessageId=-8)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Sender" type="application/atom+xml;type=entry" title="Sender" href="Message(FromUsername='3',MessageId=-8)/Sender" />
@@ -100,7 +100,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='4',MessageId=-7)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='4',MessageId=-7)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Message" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Message" href="Message(FromUsername='4',MessageId=-7)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Sender" type="application/atom+xml;type=entry" title="Sender" href="Message(FromUsername='4',MessageId=-7)/Sender" />
@@ -125,7 +125,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='5',MessageId=-6)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='5',MessageId=-6)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Message" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Message" href="Message(FromUsername='5',MessageId=-6)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Sender" type="application/atom+xml;type=entry" title="Sender" href="Message(FromUsername='5',MessageId=-6)/Sender" />
@@ -150,7 +150,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='6',MessageId=-5)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='6',MessageId=-5)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Message" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Message" href="Message(FromUsername='6',MessageId=-5)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Sender" type="application/atom+xml;type=entry" title="Sender" href="Message(FromUsername='6',MessageId=-5)/Sender" />
@@ -175,7 +175,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='7',MessageId=-4)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='7',MessageId=-4)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Message" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Message" href="Message(FromUsername='7',MessageId=-4)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Sender" type="application/atom+xml;type=entry" title="Sender" href="Message(FromUsername='7',MessageId=-4)/Sender" />
@@ -200,7 +200,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='8',MessageId=-3)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='8',MessageId=-3)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Message" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Message" href="Message(FromUsername='8',MessageId=-3)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Sender" type="application/atom+xml;type=entry" title="Sender" href="Message(FromUsername='8',MessageId=-3)/Sender" />
@@ -225,7 +225,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='9',MessageId=-2)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='9',MessageId=-2)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Message" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Message" href="Message(FromUsername='9',MessageId=-2)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Sender" type="application/atom+xml;type=entry" title="Sender" href="Message(FromUsername='9',MessageId=-2)/Sender" />
@@ -250,7 +250,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='10',MessageId=-1)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Message(FromUsername='10',MessageId=-1)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Message" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Message" href="Message(FromUsername='10',MessageId=-1)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Sender" type="application/atom+xml;type=entry" title="Sender" href="Message(FromUsername='10',MessageId=-1)/Sender" />

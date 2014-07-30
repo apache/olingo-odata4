@@ -19,4 +19,4 @@
     under the License.
 
 -->
-<m:ref m:context="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#$ref" id="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=1)" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" />
+<m:ref m:context="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#$ref" id="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=1)" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" />

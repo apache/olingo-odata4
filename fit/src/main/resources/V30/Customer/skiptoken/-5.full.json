@@ -1,10 +1,10 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#Customer",
+  "odata.metadata": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#Customer",
   "value":
           [
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Customer",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Customer(-4)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Customer(-4)",
               "odata.editLink": "Customer(-4)",
               "Orders@odata.navigationLinkUrl": "Customer(-4)/Orders",
               "Logins@odata.navigationLinkUrl": "Customer(-4)/Logins",
@@ -779,7 +779,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Customer",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Customer(-3)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Customer(-3)",
               "odata.editLink": "Customer(-3)",
               "Orders@odata.navigationLinkUrl": "Customer(-3)/Orders",
               "Logins@odata.navigationLinkUrl": "Customer(-3)/Logins",

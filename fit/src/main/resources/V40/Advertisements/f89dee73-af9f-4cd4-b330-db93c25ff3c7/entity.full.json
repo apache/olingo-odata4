@@ -1,7 +1,7 @@
 {
-  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/$metadata#Advertisements/$entity",
+  "@odata.context": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Demo.svc/$metadata#Advertisements/$entity",
   "@odata.type": "#ODataDemo.Advertisement",
-  "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)",
+  "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)",
   "@odata.editLink": "Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)",
   "@odata.mediaEditLink": "Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)/$value",
   "@odata.mediaContentType": "*/*",

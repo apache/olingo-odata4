@@ -19,13 +19,13 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/$metadata#Advertisements">
-  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements</id>
+<feed xml:base="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Demo.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Demo.svc/$metadata#Advertisements">
+  <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements</id>
   <title type="text">Advertisements</title>
   <updated>2014-05-07T13:39:27Z</updated>
   <link rel="self" title="Advertisements" href="Advertisements"/>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)</id>
     <category term="#ODataDemo.Advertisement" scheme="http://docs.oasis-open.org/odata/ns/scheme"/>
     <link rel="edit" title="Advertisement" href="Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)"/>
     <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/FeaturedProduct" type="application/xml" title="FeaturedProduct" href="Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)/FeaturedProduct/$ref"/>
@@ -44,7 +44,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements(db2d2186-1c29-4d1e-88ef-a127f521b9c6)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements(db2d2186-1c29-4d1e-88ef-a127f521b9c6)</id>
     <category term="#ODataDemo.Advertisement" scheme="http://docs.oasis-open.org/odata/ns/scheme"/>
     <link rel="edit" title="Advertisement" href="Advertisements(db2d2186-1c29-4d1e-88ef-a127f521b9c6)"/>
     <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/FeaturedProduct" type="application/xml" title="FeaturedProduct" href="Advertisements(db2d2186-1c29-4d1e-88ef-a127f521b9c6)/FeaturedProduct/$ref"/>

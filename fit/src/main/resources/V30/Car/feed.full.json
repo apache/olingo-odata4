@@ -1,10 +1,10 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#Car",
+  "odata.metadata": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#Car",
   "value":
           [
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(11)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(11)",
               "odata.editLink": "Car(11)",
               "odata.mediaEditLink": "Car(11)/$value",
               "odata.mediaReadLink": "Car(11)/$value",
@@ -16,7 +16,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(12)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(12)",
               "odata.editLink": "Car(12)",
               "odata.mediaEditLink": "Car(12)/$value",
               "odata.mediaReadLink": "Car(12)/$value",
@@ -28,7 +28,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(13)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(13)",
               "odata.editLink": "Car(13)",
               "odata.mediaEditLink": "Car(13)/$value",
               "odata.mediaReadLink": "Car(13)/$value",
@@ -40,7 +40,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(14)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(14)",
               "odata.editLink": "Car(14)",
               "odata.mediaEditLink": "Car(14)/$value",
               "odata.mediaReadLink": "Car(14)/$value",
@@ -52,7 +52,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(15)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(15)",
               "odata.editLink": "Car(15)",
               "odata.mediaEditLink": "Car(15)/$value",
               "odata.mediaReadLink": "Car(15)/$value",
@@ -64,7 +64,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(16)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(16)",
               "odata.editLink": "Car(16)",
               "odata.mediaEditLink": "Car(16)/$value",
               "odata.mediaReadLink": "Car(16)/$value",
@@ -77,7 +77,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(17)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(17)",
               "odata.editLink": "Car(17)",
               "odata.mediaEditLink": "Car(17)/$value",
               "odata.mediaReadLink": "Car(17)/$value",
@@ -89,7 +89,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(18)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(18)",
               "odata.editLink": "Car(18)",
               "odata.mediaEditLink": "Car(18)/$value",
               "odata.mediaReadLink": "Car(18)/$value",
@@ -101,7 +101,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(19)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(19)",
               "odata.editLink": "Car(19)",
               "odata.mediaEditLink": "Car(19)/$value",
               "odata.mediaReadLink": "Car(19)/$value",
@@ -113,7 +113,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(20)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(20)",
               "odata.editLink": "Car(20)",
               "odata.mediaEditLink": "Car(20)/$value",
               "odata.mediaReadLink": "Car(20)/$value",
@@ -125,7 +125,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(21)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(21)",
               "odata.editLink": "Car(21)",
               "odata.mediaEditLink": "Car(21)/$value",
               "odata.mediaReadLink": "Car(21)/$value",
@@ -137,7 +137,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(22)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(22)",
               "odata.editLink": "Car(22)",
               "odata.mediaEditLink": "Car(22)/$value",
               "odata.mediaReadLink": "Car(22)/$value",
@@ -149,7 +149,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(27)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(27)",
               "odata.editLink": "Car(27)",
               "odata.mediaEditLink": "Car(27)/$value",
               "odata.mediaReadLink": "Car(27)/$value",
@@ -161,7 +161,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(30)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(30)",
               "odata.editLink": "Car(30)",
               "odata.mediaEditLink": "Car(30)/$value",
               "odata.mediaReadLink": "Car(30)/$value",
@@ -173,7 +173,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(31)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(31)",
               "odata.editLink": "Car(31)",
               "odata.mediaEditLink": "Car(31)/$value",
               "odata.mediaReadLink": "Car(31)/$value",
@@ -185,7 +185,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(32)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(32)",
               "odata.editLink": "Car(32)",
               "odata.mediaEditLink": "Car(32)/$value",
               "odata.mediaReadLink": "Car(32)/$value",
@@ -197,7 +197,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(33)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(33)",
               "odata.editLink": "Car(33)",
               "odata.mediaEditLink": "Car(33)/$value",
               "odata.mediaReadLink": "Car(33)/$value",
@@ -210,7 +210,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(34)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(34)",
               "odata.editLink": "Car(34)",
               "odata.mediaEditLink": "Car(34)/$value",
               "odata.mediaReadLink": "Car(34)/$value",
@@ -222,7 +222,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(35)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(35)",
               "odata.editLink": "Car(35)",
               "odata.mediaEditLink": "Car(35)/$value",
               "odata.mediaReadLink": "Car(35)/$value",
@@ -234,7 +234,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(40)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(40)",
               "odata.editLink": "Car(40)",
               "odata.mediaEditLink": "Car(40)/$value",
               "odata.mediaReadLink": "Car(40)/$value",
@@ -246,7 +246,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(43)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(43)",
               "odata.editLink": "Car(43)",
               "odata.mediaEditLink": "Car(43)/$value",
               "odata.mediaReadLink": "Car(43)/$value",
@@ -258,7 +258,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(44)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(44)",
               "odata.editLink": "Car(44)",
               "odata.mediaEditLink": "Car(44)/$value",
               "odata.mediaReadLink": "Car(44)/$value",
@@ -270,7 +270,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(45)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(45)",
               "odata.editLink": "Car(45)",
               "odata.mediaEditLink": "Car(45)/$value",
               "odata.mediaReadLink": "Car(45)/$value",
@@ -282,7 +282,7 @@
             },
             {
               "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(46)",
+              "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(46)",
               "odata.editLink": "Car(46)",
               "odata.mediaEditLink": "Car(46)/$value",
               "odata.mediaReadLink": "Car(46)/$value",

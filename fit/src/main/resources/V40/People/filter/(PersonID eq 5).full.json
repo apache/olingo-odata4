@@ -1,11 +1,11 @@
 {
-  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#People",
+  "@odata.context": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#People",
   "value":
           [
             {
               "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Customer",
-              "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)",
-              "@odata.editLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)/Microsoft.Test.OData.Services.ODataWCFService.Customer",
+              "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(5)",
+              "@odata.editLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(5)/Microsoft.Test.OData.Services.ODataWCFService.Customer",
               "PersonID": 5,
               "FirstName": "Bob",
               "LastName": "Cat",

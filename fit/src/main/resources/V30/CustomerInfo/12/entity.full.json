@@ -1,7 +1,7 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#CustomerInfo/@Element",
+  "odata.metadata": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#CustomerInfo/@Element",
   "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo",
-  "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(12)",
+  "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/CustomerInfo(12)",
   "odata.editLink": "CustomerInfo(12)",
   "odata.mediaEditLink": "CustomerInfo(12)/$value",
   "odata.mediaReadLink": "CustomerInfo(12)/$value",

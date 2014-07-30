@@ -1,8 +1,8 @@
 {
-  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Products/$entity",
+  "@odata.context": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Products/$entity",
   "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Product",
-  "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)",
-  "@odata.editLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)",
+  "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)",
+  "@odata.editLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)",
   "ProductID": 6,
   "Name": "Mushrooms",
   "QuantityPerUnit": "Pound",
@@ -16,14 +16,14 @@
   "SkinColor": "Blue",
   "CoverColors@odata.type": "#Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)",
   "CoverColors": ["Red", "Blue"],
-  "Details@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)/Details/$ref",
-  "Details@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)/Details",
+  "Details@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)/Details/$ref",
+  "Details@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)/Details",
   "#Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight": {
     "title": "Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight",
-    "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight"
+    "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight"
   },
   "#Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails": {
     "title": "Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails",
-    "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails"
+    "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails"
   }
 }

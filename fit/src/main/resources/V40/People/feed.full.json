@@ -1,11 +1,11 @@
 {
-  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#People",
+  "@odata.context": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#People",
   "value":
           [
             {
               "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Customer",
-              "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(1)",
-              "@odata.editLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer",
+              "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(1)",
+              "@odata.editLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer",
               "PersonID": 1,
               "FirstName": "Bob",
               "LastName": "Cat",
@@ -51,27 +51,27 @@
               "Birthday": "1957-04-03T00:00:00Z",
               "TimeBetweenLastTwoOrders@odata.type": "#Duration",
               "TimeBetweenLastTwoOrders": "PT0.0000001S",
-              "Parent@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Parent/$ref",
-              "Parent@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Parent",
-              "Orders@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Orders/$ref",
-              "Orders@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Orders",
-              "Company@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Company/$ref",
-              "Company@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Company",
+              "Parent@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Parent/$ref",
+              "Parent@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Parent",
+              "Orders@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Orders/$ref",
+              "Orders@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Orders",
+              "Company@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Company/$ref",
+              "Company@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Company",
               "#Microsoft.Test.OData.Services.ODataWCFService.ResetAddress":
                       {
                         "title": "Microsoft.Test.OData.Services.ODataWCFService.ResetAddress",
-                        "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"
+                        "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"
                       },
               "#Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress":
                       {
                         "title": "Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress",
-                        "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
+                        "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(1)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
                       }
             },
             {
               "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Customer",
-              "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(2)",
-              "@odata.editLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer",
+              "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(2)",
+              "@odata.editLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer",
               "PersonID": 2,
               "FirstName": "Jill",
               "LastName": "Jones",
@@ -108,27 +108,27 @@
               "Birthday": "1983-01-15T00:00:00Z",
               "TimeBetweenLastTwoOrders@odata.type": "#Duration",
               "TimeBetweenLastTwoOrders": "PT0.0000002S",
-              "Parent@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Parent/$ref",
-              "Parent@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Parent",
-              "Orders@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Orders/$ref",
-              "Orders@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Orders",
-              "Company@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Company/$ref",
-              "Company@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Company",
+              "Parent@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Parent/$ref",
+              "Parent@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Parent",
+              "Orders@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Orders/$ref",
+              "Orders@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Orders",
+              "Company@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Company/$ref",
+              "Company@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Company",
               "#Microsoft.Test.OData.Services.ODataWCFService.ResetAddress":
                       {
                         "title": "Microsoft.Test.OData.Services.ODataWCFService.ResetAddress",
-                        "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"
+                        "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"
                       },
               "#Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress":
                       {
                         "title": "Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress",
-                        "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
+                        "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(2)/Microsoft.Test.OData.Services.ODataWCFService.Customer/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
                       }
             },
             {
               "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Employee",
-              "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(3)",
-              "@odata.editLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee",
+              "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(3)",
+              "@odata.editLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee",
               "PersonID": 3,
               "FirstName": "Jacob",
               "LastName": "Zip",
@@ -188,25 +188,25 @@
                                           }
                                 }
                       },
-              "Parent@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Parent/$ref",
-              "Parent@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Parent",
-              "Company@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Company/$ref",
-              "Company@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Company",
+              "Parent@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Parent/$ref",
+              "Parent@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Parent",
+              "Company@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Company/$ref",
+              "Company@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Company",
               "#Microsoft.Test.OData.Services.ODataWCFService.ResetAddress":
                       {
                         "title": "Microsoft.Test.OData.Services.ODataWCFService.ResetAddress",
-                        "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"
+                        "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"
                       },
               "#Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress":
                       {
                         "title": "Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress",
-                        "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
+                        "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
                       }
             },
             {
               "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Employee",
-              "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(4)",
-              "@odata.editLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee",
+              "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(4)",
+              "@odata.editLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee",
               "PersonID": 4,
               "FirstName": "Elmo",
               "LastName": "Rogers",
@@ -263,25 +263,25 @@
                                           }
                                 }
                       },
-              "Parent@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Parent/$ref",
-              "Parent@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Parent",
-              "Company@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Company/$ref",
-              "Company@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Company",
+              "Parent@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Parent/$ref",
+              "Parent@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Parent",
+              "Company@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Company/$ref",
+              "Company@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Company",
               "#Microsoft.Test.OData.Services.ODataWCFService.ResetAddress":
                       {
                         "title": "Microsoft.Test.OData.Services.ODataWCFService.ResetAddress",
-                        "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"
+                        "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"
                       },
               "#Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress":
                       {
                         "title": "Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress",
-                        "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
+                        "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
                       }
             },
             {
               "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Person",
-              "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)",
-              "@odata.editLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)",
+              "@odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(5)",
+              "@odata.editLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(5)",
               "PersonID": 5,
               "FirstName": "Peter",
               "LastName": "Bee",
@@ -315,17 +315,17 @@
                       [
                         "def@test.msn"
                       ],
-              "Parent@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)/Parent/$ref",
-              "Parent@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)/Parent",
+              "Parent@odata.associationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(5)/Parent/$ref",
+              "Parent@odata.navigationLink": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(5)/Parent",
               "#Microsoft.Test.OData.Services.ODataWCFService.ResetAddress":
                       {
                         "title": "Microsoft.Test.OData.Services.ODataWCFService.ResetAddress",
-                        "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"
+                        "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(5)/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"
                       },
               "#Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress":
                       {
                         "title": "Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress",
-                        "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
+                        "target": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/People(5)/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
                       }
             }
           ],

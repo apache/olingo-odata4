@@ -19,13 +19,13 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
-  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/ComputerDetail</id>
+<feed xml:base="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/ComputerDetail</id>
   <title type="text">ComputerDetail</title>
   <updated>2014-02-13T12:09:32Z</updated>
   <link rel="self" title="ComputerDetail" href="ComputerDetail" />
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/ComputerDetail(-1)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/ComputerDetail(-1)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.ComputerDetail" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="ComputerDetail" href="ComputerDetail(-1)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Computer" type="application/atom+xml;type=entry" title="Computer" href="ComputerDetail(-1)/Computer" />
@@ -36,7 +36,7 @@
       <uri>mfhgyißxesckygsslbksqvcpohjienkcfbtrssp</uri>
       <email>cybsycxhjrazcaxf</email>
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.ResetComputerDetailsSpecifications" title="ResetComputerDetailsSpecifications" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/ComputerDetail(-1)/ResetComputerDetailsSpecifications" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.ResetComputerDetailsSpecifications" title="ResetComputerDetailsSpecifications" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/ComputerDetail(-1)/ResetComputerDetailsSpecifications" />
     <content type="application/xml">
       <m:properties>
         <d:ComputerDetailId m:type="Edm.Int32">-1</d:ComputerDetailId>

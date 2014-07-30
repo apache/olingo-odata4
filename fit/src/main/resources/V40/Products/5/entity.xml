@@ -19,22 +19,22 @@
     under the License.
 
 -->
-<entry xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Products/$entity">
-  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(5)</id>
+<entry xml:base="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Products/$entity">
+  <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Products(5)</id>
   <category term="#Microsoft.Test.OData.Services.ODataWCFService.Product" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
-  <link rel="edit" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(5)" />
-  <link rel="http://docs.oasis-open.org/odata/ns/related/Details" type="application/atom+xml;type=feed" title="Details" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(5)/Details" />
+  <link rel="edit" href="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Products(5)" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Details" type="application/atom+xml;type=feed" title="Details" href="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Products(5)/Details" />
   <title />
   <updated>2014-04-23T11:54:53Z</updated>
   <author>
     <name />
   </author>
-  <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight" 
+  <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight" 
             title="Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight" 
-            target="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(5)/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight"/>
-  <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails" 
+            target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Products(5)/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight"/>
+  <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails" 
             title="Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails" 
-            target="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(5)/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails"/>
+            target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/Static.svc/Products(5)/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails"/>
   <content type="application/xml">
     <m:properties>
       <d:ProductID m:type="Int32">5</d:ProductID>

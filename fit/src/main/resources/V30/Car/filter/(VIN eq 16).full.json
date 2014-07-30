@@ -1,8 +1,8 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#Car",
+  "odata.metadata": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#Car",
   "value": [{
       "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-      "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(16)",
+      "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Car(16)",
       "odata.editLink": "Car(16)",
       "odata.mediaEditLink": "Car(16)/$value",
       "odata.mediaReadLink": "Car(16)/$value",

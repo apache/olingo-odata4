@@ -19,13 +19,13 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
-  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Person</id>
+<feed xml:base="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+  <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Person</id>
   <title type="text">Person</title>
   <updated>2014-02-13T12:09:32Z</updated>
   <link rel="self" title="Person" href="Person" />
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Person(-10)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Person(-10)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Person" href="Person(-10)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/PersonMetadata" type="application/atom+xml;type=feed" title="PersonMetadata" href="Person(-10)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/PersonMetadata" />
@@ -36,7 +36,7 @@
     <author>
       <name />
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.Sack" title="Sack" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Person(-10)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/Sack" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.Sack" title="Sack" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Person(-10)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/Sack" />
     <content type="application/xml">
       <m:properties>
         <d:PersonId m:type="Edm.Int32">-10</d:PersonId>
@@ -51,7 +51,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Person(-9)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Person(-9)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Person" href="Person(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/PersonMetadata" type="application/atom+xml;type=feed" title="PersonMetadata" href="Person(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/PersonMetadata" />
@@ -62,7 +62,7 @@
     <author>
       <name />
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.Sack" title="Sack" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Person(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/Sack" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.Sack" title="Sack" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Person(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/Sack" />
     <content type="application/xml">
       <m:properties>
         <d:PersonId m:type="Edm.Int32">-9</d:PersonId>
@@ -77,7 +77,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Person(-8)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Person(-8)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Person" href="Person(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/PersonMetadata" type="application/atom+xml;type=feed" title="PersonMetadata" href="Person(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/PersonMetadata" />
@@ -88,7 +88,7 @@
     <author>
       <name />
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.Sack" title="Sack" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Person(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/Sack" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.Sack" title="Sack" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Person(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/Sack" />
     <content type="application/xml">
       <m:properties>
         <d:PersonId m:type="Edm.Int32">-8</d:PersonId>
@@ -103,7 +103,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Person(-7)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Person(-7)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Person" href="Person(-7)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/PersonMetadata" type="application/atom+xml;type=feed" title="PersonMetadata" href="Person(-7)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/PersonMetadata" />
@@ -114,7 +114,7 @@
     <author>
       <name />
     </author>
-    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.Sack" title="Sack" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Person(-7)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/Sack" />
+    <m:action metadata="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.Sack" title="Sack" target="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/Person(-7)/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/Sack" />
     <content type="application/xml">
       <m:properties>
         <d:PersonId m:type="Edm.Int32">-7</d:PersonId>

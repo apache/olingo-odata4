@@ -19,13 +19,13 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
-  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet</id>
+<feed xml:base="http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet</id>
   <title type="text">AllGeoTypesSet</title>
   <updated>2014-05-08T12:26:29Z</updated>
   <link rel="self" title="AllGeoTypesSet" href="AllGeoTypesSet" />
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-10)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-10)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialTypes" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="AllSpatialTypes" href="AllGeoTypesSet(-10)" />
     <title />
@@ -165,7 +165,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-9)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-9)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialTypes" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="AllSpatialTypes" href="AllGeoTypesSet(-9)" />
     <title />
@@ -272,7 +272,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-8)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-8)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialTypes" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="AllSpatialTypes" href="AllGeoTypesSet(-8)" />
     <title />
@@ -422,7 +422,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-7)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-7)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialTypes" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="AllSpatialTypes" href="AllGeoTypesSet(-7)" />
     <title />
@@ -524,7 +524,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-6)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-6)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialTypes" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="AllSpatialTypes" href="AllGeoTypesSet(-6)" />
     <title />
@@ -652,7 +652,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-5)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-5)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialTypes" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="AllSpatialTypes" href="AllGeoTypesSet(-5)" />
     <title />
@@ -807,7 +807,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-4)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-4)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialTypes" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="AllSpatialTypes" href="AllGeoTypesSet(-4)" />
     <title />
@@ -967,7 +967,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-3)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-3)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialTypes" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="AllSpatialTypes" href="AllGeoTypesSet(-3)" />
     <title />
@@ -1095,7 +1095,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-2)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-2)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialTypes" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="AllSpatialTypes" href="AllGeoTypesSet(-2)" />
     <title />
@@ -1222,7 +1222,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-1)</id>
+    <id>http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-1)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialTypes" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="AllSpatialTypes" href="AllGeoTypesSet(-1)" />
     <title />

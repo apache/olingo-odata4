@@ -20,7 +20,7 @@
 
 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
-  <edmx:Reference Uri="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/NorthWindExt.svc/$metadata">
+  <edmx:Reference Uri="http://localhost:${tomcat.servlet.port}/stub/StaticService/V40/NorthWindExt.svc/$metadata">
     <edmx:Include Namespace="NorthwindModel"/>
   </edmx:Reference>
   <edmx:DataServices>
