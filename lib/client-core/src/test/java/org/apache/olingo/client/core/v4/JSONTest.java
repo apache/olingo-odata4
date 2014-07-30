@@ -25,21 +25,27 @@ import static org.junit.Assert.assertTrue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.v4.ODataClient;
-import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Delta;
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.io.IOUtils;
+import org.apache.olingo.client.api.v4.ODataClient;
+import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Delta;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
+import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataValue;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.junit.Test;
 
 public class JSONTest extends AbstractTest {
 
@@ -217,5 +223,38 @@ public class JSONTest extends AbstractTest {
   @Test
   public void deltas() throws Exception {
     delta("delta", getODataPubFormat());
+  }
+
+  @Test
+  public void issueOLINGO390() throws Exception {
+    final ODataEntity message = getClient().getObjectFactory().
+            newEntity(new FullQualifiedName("Microsoft.Exchange.Services.OData.Model.Message"));
+
+    final ODataComplexValue<ODataProperty> toRecipient = getClient().getObjectFactory().
+            newComplexValue("Microsoft.Exchange.Services.OData.Model.Recipient");
+    toRecipient.add(getClient().getObjectFactory().newPrimitiveProperty("Name",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("challen_olingo_client")));
+    toRecipient.add(getClient().getObjectFactory().newPrimitiveProperty("Address",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("challenh@microsoft.com")));
+    final ODataCollectionValue<ODataValue> toRecipients = getClient().getObjectFactory().
+            newCollectionValue("Microsoft.Exchange.Services.OData.Model.Recipient");
+    toRecipients.add(toRecipient);
+    message.getProperties().add(getClient().getObjectFactory().newCollectionProperty("ToRecipients", toRecipients));
+
+    final ODataComplexValue<ODataProperty> body =
+            getClient().getObjectFactory().newComplexValue("Microsoft.Exchange.Services.OData.Model.ItemBody");
+    body.add(getClient().getObjectFactory().newPrimitiveProperty("Content",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().
+            buildString("this is a simple email body content")));
+    body.add(getClient().getObjectFactory().newEnumProperty("ContentType",
+            getClient().getObjectFactory().newEnumValue("Microsoft.Exchange.Services.OData.Model.BodyType", "text")));
+    message.getProperties().add(getClient().getObjectFactory().newComplexProperty("Body", body));
+
+    final String actual = IOUtils.toString(getClient().getWriter().writeEntity(message, ODataFormat.JSON));
+    final JsonNode expected = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream("olingo390.json")).
+            replace(getClient().getServiceVersion().getJsonName(ODataServiceVersion.JsonKey.NAVIGATION_LINK),
+                    Constants.JSON_BIND_LINK_SUFFIX));
+    final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
+    assertEquals(expected, actualNode);
   }
 }

@@ -1,0 +1,18 @@
+{
+  "@odata.type": "#Microsoft.Exchange.Services.OData.Model.Message",
+  "ToRecipients@odata.type": "#Collection(Microsoft.Exchange.Services.OData.Model.Recipient)",
+  "ToRecipients": [{
+      "@odata.type": "#Microsoft.Exchange.Services.OData.Model.Recipient",
+      "Name@odata.type": "String",
+      "Name": "challen_olingo_client",
+      "Address@odata.type": "String",
+      "Address": "challenh@microsoft.com"
+    }],
+  "Body": {
+    "@odata.type": "#Microsoft.Exchange.Services.OData.Model.ItemBody",
+    "Content@odata.type": "String",
+    "Content": "this is a simple email body content",
+    "ContentType@odata.type": "#Microsoft.Exchange.Services.OData.Model.BodyType",
+    "ContentType": "text"
+  }
+}

@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -30,7 +30,6 @@ import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-
 import java.io.IOException;
 import java.net.URI;
 
@@ -44,12 +43,13 @@ public class JsonEntitySerializer extends JsonSerializer {
   }
 
   protected void doSerialize(final Entity entity, final JsonGenerator jgen)
-      throws IOException, EdmPrimitiveTypeException {
+          throws IOException, EdmPrimitiveTypeException {
+
     doContainerSerialize(new ResWrap<Entity>((URI) null, null, entity), jgen);
   }
 
   protected void doContainerSerialize(final ResWrap<Entity> container, final JsonGenerator jgen)
-      throws IOException, EdmPrimitiveTypeException {
+          throws IOException, EdmPrimitiveTypeException {
 
     final Entity entity = container.getPayload();
 
@@ -58,8 +58,8 @@ public class JsonEntitySerializer extends JsonSerializer {
     if (serverMode) {
       if (container.getContextURL() != null) {
         jgen.writeStringField(version.compareTo(ODataServiceVersion.V40) >= 0
-            ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
-            container.getContextURL().toASCIIString());
+                ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
+                container.getContextURL().toASCIIString());
       }
       if (version.compareTo(ODataServiceVersion.V40) >= 0 && StringUtils.isNotBlank(container.getMetadataETag())) {
         jgen.writeStringField(Constants.JSON_METADATA_ETAG, container.getMetadataETag());
@@ -72,7 +72,7 @@ public class JsonEntitySerializer extends JsonSerializer {
 
     if (StringUtils.isNotBlank(entity.getType())) {
       jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.TYPE),
-          new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external(version));
+              new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external(version));
     }
 
     if (entity.getId() != null) {
@@ -89,11 +89,11 @@ public class JsonEntitySerializer extends JsonSerializer {
 
     if (serverMode && entity.getEditLink() != null && StringUtils.isNotBlank(entity.getEditLink().getHref())) {
       jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.EDIT_LINK),
-          entity.getEditLink().getHref());
+              entity.getEditLink().getHref());
 
       if (entity.isMediaEntity()) {
         jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_READ_LINK),
-            entity.getEditLink().getHref() + "/$value");
+                entity.getEditLink().getHref() + "/$value");
       }
     }
 
