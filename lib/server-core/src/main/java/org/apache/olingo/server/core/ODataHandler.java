@@ -126,32 +126,17 @@ public class ODataHandler {
 
   private void handleException(ODataRequest request, ODataResponse response, ODataServerError serverError,
       ContentType requestedContentType) {
+    ExceptionProcessor exceptionProcessor;
     try {
-      ExceptionProcessor exceptionProcessor = selectProcessor(ExceptionProcessor.class, response);
+      exceptionProcessor = selectProcessor(ExceptionProcessor.class, response);
+    } catch (ODataTranslatedException e) {
+      exceptionProcessor = new DefaultProcessor();
+    }
       if (requestedContentType == null) {
         requestedContentType = ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
       }
       exceptionProcessor.processException(request, response, serverError, requestedContentType);
-    } catch (ODataTranslatedException e) {
-      throw new ODataRuntimeException("Could not instantiate ExceptionProcessor");
-    }
   }
-
-//  private void handleException(ODataRequest request, ODataResponse response, ODataTranslatedException e,
-//      ContentType requestedContentType) {
-//    try {
-//      ExceptionProcessor exceptionProcessor = selectProcessor(ExceptionProcessor.class, response);
-//      Locale requestedLocale = null;
-//      ODataServerError serverError =
-//          ODataExceptionHelper.createServerErrorObject(e, response.getStatusCode(), requestedLocale);
-//      if (requestedContentType == null) {
-//        requestedContentType = ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
-//      }
-//      exceptionProcessor.processException(request, response, serverError, requestedContentType);
-//    } catch (ODataTranslatedException e1) {
-//      throw new ODataRuntimeException("Could not instanciate ExceptionProcessor", e);
-//    }
-//  }
 
   private void handleResourceDispatching(final ODataRequest request, final ODataResponse response,
       final UriInfo uriInfo) throws ODataTranslatedException {
