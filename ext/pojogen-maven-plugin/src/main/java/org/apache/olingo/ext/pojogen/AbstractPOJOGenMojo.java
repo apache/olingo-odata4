@@ -247,6 +247,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
         namespaces.add(schema.getNamespace().toLowerCase());
       }
 
+      final Map<String, String> entityTypeNames = new HashMap<String, String>();
       final Map<String, String> complexTypeNames = new HashMap<String, String>();
       final Map<String, String> enumTypeNames = new HashMap<String, String>();
       final Map<String, String> termNames = new HashMap<String, String>();
@@ -298,6 +299,9 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
         }
 
         for (EdmEntityType entity : schema.getEntityTypes()) {
+          final String className = utility.capitalize(entity.getName());
+          entityTypeNames.put(entity.getFullQualifiedName().toString(), typesPkg + "." + className);
+
           objs.clear();
           objs.put("entityType", entity);
 
@@ -328,10 +332,8 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
             }
           }
 
-          parseObj(typesBaseDir, typesPkg, "entityType",
-                  utility.capitalize(entity.getName()) + ".java", objs);
-          parseObj(typesBaseDir, typesPkg, "entityCollection",
-                  utility.capitalize(entity.getName()) + "Collection.java", objs);
+          parseObj(typesBaseDir, typesPkg, "entityType", className + ".java", objs);
+          parseObj(typesBaseDir, typesPkg, "entityCollection", className + "Collection.java", objs);
         }
 
         // write container and top entity sets into the base package
@@ -366,6 +368,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
       objs.clear();
       objs.put("metadata", new String(Base64.encodeBase64(baos.toByteArray()), "UTF-8"));
       objs.put("metadataETag", metadata.getMiddle());
+      objs.put("entityTypes", entityTypeNames);
       objs.put("complexTypes", complexTypeNames);
       objs.put("enumTypes", enumTypeNames);
       objs.put("terms", termNames);

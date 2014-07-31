@@ -98,6 +98,8 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
     return getInstance(ODataServiceVersion.V40, serviceRoot, transactional);
   }
 
+  private final Map<String, Class<?>> entityTypes = new HashMap<String, Class<?>>();
+
   private final Map<String, Class<?>> complexTypes = new HashMap<String, Class<?>>();
 
   private final Map<String, Class<?>> enumTypes = new HashMap<String, Class<?>>();
@@ -110,8 +112,23 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
     super(compressedMetadata, metadataETag,version, serviceRoot, transactional);
 
     //CHECKSTYLE:OFF (Maven checkstyle)
+    entityTypes.put("ODataDemo.Customer", org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Customer.class);
+    entityTypes.put("ODataDemo.PersonDetail", org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail.class);
+    entityTypes.put("ODataDemo.ProductDetail", org.apache.olingo.fit.proxy.v4.demo.odatademo.types.ProductDetail.class);
+    entityTypes.put("ODataDemo.Employee", org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Employee.class);
+    entityTypes.put("ODataDemo.Product", org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Product.class);
+    entityTypes.put("ODataDemo.Advertisement", org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Advertisement.class);
+    entityTypes.put("ODataDemo.Category", org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Category.class);
+    entityTypes.put("ODataDemo.Person", org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person.class);
+    entityTypes.put("ODataDemo.Supplier", org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Supplier.class);
+    entityTypes.put("ODataDemo.FeaturedProduct", org.apache.olingo.fit.proxy.v4.demo.odatademo.types.FeaturedProduct.class);
     complexTypes.put("ODataDemo.Address", org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Address.class);
     //CHECKSTYLE:ON (Maven checkstyle)
+  }
+
+  @Override
+  public Class<?> getEntityTypeClass(final String name) {
+    return entityTypes.get(name);
   }
 
   @Override

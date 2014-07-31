@@ -98,6 +98,8 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
     return getInstance(ODataServiceVersion.V40, serviceRoot, transactional);
   }
 
+  private final Map<String, Class<?>> entityTypes = new HashMap<String, Class<?>>();
+
   private final Map<String, Class<?>> complexTypes = new HashMap<String, Class<?>>();
 
   private final Map<String, Class<?>> enumTypes = new HashMap<String, Class<?>>();
@@ -110,7 +112,27 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
     super(compressedMetadata, metadataETag,version, serviceRoot, transactional);
 
     //CHECKSTYLE:OFF (Maven checkstyle)
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.EdmDateTime", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmDateTime.class);
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.EdmDouble", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmDouble.class);
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.EdmString", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmString.class);
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.Folder", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.Folder.class);
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.EdmByte", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmByte.class);
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.EdmGuid", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmGuid.class);
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.EdmTime", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmTime.class);
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.EdmDateTimeOffset", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmDateTimeOffset.class);
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.EdmInt64", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmInt64.class);
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.EdmBoolean", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBoolean.class);
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.EdmInt16", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmInt16.class);
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.EdmDecimal", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmDecimal.class);
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.EdmSingle", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmSingle.class);
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.EdmBinary", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmBinary.class);
+    entityTypes.put("Microsoft.Test.OData.Services.PrimitiveKeysService.EdmInt32", org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.EdmInt32.class);
     //CHECKSTYLE:ON (Maven checkstyle)
+  }
+
+  @Override
+  public Class<?> getEntityTypeClass(final String name) {
+    return entityTypes.get(name);
   }
 
   @Override

@@ -98,6 +98,8 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
     return getInstance(ODataServiceVersion.V40, serviceRoot, transactional);
   }
 
+  private final Map<String, Class<?>> entityTypes = new HashMap<String, Class<?>>();
+
   private final Map<String, Class<?>> complexTypes = new HashMap<String, Class<?>>();
 
   private final Map<String, Class<?>> enumTypes = new HashMap<String, Class<?>>();
@@ -110,6 +112,38 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
     super(compressedMetadata, metadataETag,version, serviceRoot, transactional);
 
     //CHECKSTYLE:OFF (Maven checkstyle)
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.ProductDetail", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductDetail.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.License", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.License.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.ProductReview", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductReview.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialCollectionTypes_Simple", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes_Simple.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.Customer", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialTypes", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialTypes.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.DiscontinuedProduct.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.Driver", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Driver.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.Login", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.PageView", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PageView.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.LastLogin", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.LastLogin.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.PersonMetadata", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PersonMetadata.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.SpecialEmployee.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.ProductPageView", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductPageView.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.Car", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Car.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.MappedEntityType", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MappedEntityType.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.MessageAttachment", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachment.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.Employee", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Employee.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.BackOrderLine2", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.BackOrderLine2.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.Computer", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Computer.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.Message", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Message.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.ProductPhoto", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductPhoto.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.ComputerDetail", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComputerDetail.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.CustomerInfo.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.Product", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.OrderLine", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.OrderLine.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.Contractor", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Contractor.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.Person", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Person.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.Order", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Order.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.RSAToken", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.RSAToken.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialCollectionTypes", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes.class);
+    entityTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.BackOrderLine", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.BackOrderLine.class);
     complexTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.ComplexToCategory", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory.class);
     complexTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails.class);
     complexTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.ComplexWithAllPrimitiveTypes", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComplexWithAllPrimitiveTypes.class);
@@ -119,6 +153,11 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
     complexTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.Aliases", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Aliases.class);
     complexTypes.put("Microsoft.Test.OData.Services.AstoriaDefaultService.Phone", org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone.class);
     //CHECKSTYLE:ON (Maven checkstyle)
+  }
+
+  @Override
+  public Class<?> getEntityTypeClass(final String name) {
+    return entityTypes.get(name);
   }
 
   @Override

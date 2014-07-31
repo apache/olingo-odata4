@@ -91,6 +91,8 @@ public abstract class AbstractService<C extends CommonEdmEnabledODataClient<?>> 
     this.context = new Context();
   }
 
+  public abstract Class<?> getEntityTypeClass(String name);
+  
   public abstract Class<?> getComplexTypeClass(String name);
 
   public abstract Class<?> getEnumTypeClass(String name);

@@ -100,6 +100,8 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
     return getInstance(ODataServiceVersion.V40, serviceRoot, transactional);
   }
 
+  private final Map<String, Class<?>> entityTypes = new HashMap<String, Class<?>>();
+
   private final Map<String, Class<?>> complexTypes = new HashMap<String, Class<?>>();
 
   private final Map<String, Class<?>> enumTypes = new HashMap<String, Class<?>>();
@@ -112,6 +114,9 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
     super(compressedMetadata, metadataETag,version, serviceRoot, transactional);
 
     //CHECKSTYLE:OFF (Maven checkstyle)
+#foreach ($entityType in $entityTypes.entrySet())
+    entityTypes.put("$entityType.key", ${entityType.value}.class);
+#end
 #foreach ($complexType in $complexTypes.entrySet())
     complexTypes.put("$complexType.key", ${complexType.value}.class);
 #end
@@ -122,6 +127,11 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
     terms.put("$term.key", ${term.value}.class);
 #end
     //CHECKSTYLE:ON (Maven checkstyle)
+  }
+
+  @Override
+  public Class<?> getEntityTypeClass(final String name) {
+    return entityTypes.get(name);
   }
 
   @Override

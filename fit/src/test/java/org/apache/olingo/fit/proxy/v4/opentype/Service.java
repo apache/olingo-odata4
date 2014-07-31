@@ -98,6 +98,8 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
     return getInstance(ODataServiceVersion.V40, serviceRoot, transactional);
   }
 
+  private final Map<String, Class<?>> entityTypes = new HashMap<String, Class<?>>();
+
   private final Map<String, Class<?>> complexTypes = new HashMap<String, Class<?>>();
 
   private final Map<String, Class<?>> enumTypes = new HashMap<String, Class<?>>();
@@ -110,10 +112,18 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
     super(compressedMetadata, metadataETag,version, serviceRoot, transactional);
 
     //CHECKSTYLE:OFF (Maven checkstyle)
+    entityTypes.put("Microsoft.Test.OData.Services.OpenTypesServiceV4.Row", org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row.class);
+    entityTypes.put("Microsoft.Test.OData.Services.OpenTypesServiceV4.IndexedRow", org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.IndexedRow.class);
+    entityTypes.put("Microsoft.Test.OData.Services.OpenTypesServiceV4.RowIndex", org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndex.class);
     complexTypes.put("Microsoft.Test.OData.Services.OpenTypesServiceV4.AccountInfo", org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.AccountInfo.class);
     complexTypes.put("Microsoft.Test.OData.Services.OpenTypesServiceV4.ContactDetails", org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.ContactDetails.class);
     enumTypes.put("Microsoft.Test.OData.Services.OpenTypesServiceV4.Color", org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Color.class);
     //CHECKSTYLE:ON (Maven checkstyle)
+  }
+
+  @Override
+  public Class<?> getEntityTypeClass(final String name) {
+    return entityTypes.get(name);
   }
 
   @Override

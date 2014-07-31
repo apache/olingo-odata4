@@ -93,7 +93,6 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
     });
   }
 
-  @SuppressWarnings("unchecked")
   public Collection<T> execute() {
     if (this.uri != null) {
       final Triple<List<T>, URI, List<ODataAnnotation>> res = fetchPartial(this.uri.build(), itemRef);

@@ -101,9 +101,9 @@ public class PrimitiveCollectionInvocationHandler<T extends Serializable>
 
     final ODataRetrieveResponse<org.apache.olingo.commons.api.domain.v4.ODataProperty> res = req.execute();
 
-    List<T> resItems = new ArrayList<T>();
+    final List<T> resItems = new ArrayList<T>();
 
-    org.apache.olingo.commons.api.domain.v4.ODataProperty property = res.getBody();
+    final org.apache.olingo.commons.api.domain.v4.ODataProperty property = res.getBody();
     if (property != null && !property.hasNullValue()) {
       for (ODataValue item : property.getCollectionValue()) {
         resItems.add((T) item.asPrimitive().toValue());

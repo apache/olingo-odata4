@@ -129,23 +129,31 @@ public abstract class AbstractEntityCollectionInvocationHandler<
     final List<T> res = new ArrayList<T>(entities.size());
 
     for (CommonODataEntity entity : entities) {
+      Class<?> actualRef = null;
+      if (entity.getTypeName() != null) {
+        actualRef = service.getEntityTypeClass(entity.getTypeName().toString());
+      }
+      if (actualRef == null) {
+        actualRef = typeRef;
+      }
+      
       final EntityInvocationHandler handler =
               this instanceof EntitySetInvocationHandler
               ? EntityInvocationHandler.getInstance(
               entity,
               EntitySetInvocationHandler.class.cast(this),
-              typeRef)
+              actualRef)
               : EntityInvocationHandler.getInstance(
               entity,
               targetEntitySetURI,
-              typeRef,
+              actualRef,
               service);
 
       final EntityInvocationHandler handlerInTheContext = getContext().entityContext().getEntity(handler.getUUID());
 
       res.add((T) Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
-              new Class<?>[] {typeRef},
+              new Class<?>[] {actualRef},
               handlerInTheContext == null ? handler : handlerInTheContext));
     }
 

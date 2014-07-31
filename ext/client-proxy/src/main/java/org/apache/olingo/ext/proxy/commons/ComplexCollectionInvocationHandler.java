@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
@@ -110,7 +111,15 @@ public class ComplexCollectionInvocationHandler<T extends ComplexType<?>>
     final CommonODataProperty property = res.getBody();
     if (property != null && property.hasCollectionValue()) {
       for (ODataValue item : (ODataCollectionValue<ODataValue>) property.getValue()) {
-        resItems.add((T) getComplex(property.getName(), item, typeRef, null, null, true));
+        Class<?> actualRef = null;
+        if (StringUtils.isNotBlank(item.getTypeName())) {
+          actualRef = service.getComplexTypeClass(item.getTypeName());
+        }
+        if (actualRef == null) {
+          actualRef = typeRef;
+        }
+
+        resItems.add((T) getComplex(property.getName(), item, actualRef, null, null, true));
       }
     }
 
