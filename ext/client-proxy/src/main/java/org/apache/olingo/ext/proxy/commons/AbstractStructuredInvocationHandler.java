@@ -286,7 +286,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   protected Object getPropertyValue(final String name, final Type type) {
     try {
       Object res;
-      Class<?> ref = ClassUtils.getTypeClass(type);
+      final Class<?> ref = ClassUtils.getTypeClass(type);
 
       if (ref == EdmStreamValue.class) {
         if (streamedPropertyCache.containsKey(name)) {

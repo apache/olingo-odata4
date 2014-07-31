@@ -19,6 +19,8 @@
 package org.apache.olingo.commons.core.serialization;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
@@ -36,7 +38,9 @@ public class ContextURLParser {
 
     String contextURLasString = contextURL.toASCIIString();
 
+    boolean isEntity = false;
     if (contextURLasString.endsWith("/$entity") || contextURLasString.endsWith("/@Element")) {
+      isEntity = true;
       builder.suffix(Suffix.ENTITY);
       contextURLasString = contextURLasString.replace("/$entity", StringUtils.EMPTY).
               replace("/@Element", StringUtils.EMPTY);
@@ -69,13 +73,17 @@ public class ContextURLParser {
     } else {
       final int openParIdx = rest.indexOf('(');
       if (openParIdx == -1) {
-        firstToken = StringUtils.substringBefore(rest, "/");
+        firstToken = StringUtils.substringBeforeLast(rest, "/");
 
         entitySetOrSingletonOrType = firstToken;
       } else {
-        firstToken = StringUtils.substringBeforeLast(rest, ")") + ")";
+        firstToken = isEntity ? rest : StringUtils.substringBeforeLast(rest, ")") + ")";
 
-        entitySetOrSingletonOrType = firstToken.substring(0, openParIdx);
+        final List<String> parts = new ArrayList<String>();
+        for (String split : firstToken.split("\\)/")) {
+          parts.add(split.replaceAll("\\(.*", ""));
+        }
+        entitySetOrSingletonOrType = StringUtils.join(parts, '/');
         final int commaIdx = firstToken.indexOf(',');
         if (commaIdx != -1) {
           builder.selectList(firstToken.substring(openParIdx + 1, firstToken.length() - 1));

@@ -19,7 +19,6 @@
 package org.apache.olingo.commons.core.serialization;
 
 import org.apache.olingo.commons.api.data.ContextURL;
-import org.apache.olingo.commons.core.serialization.ContextURLParser;
 import org.junit.Test;
 
 import java.net.URI;
@@ -68,10 +67,19 @@ public class ContextURLParserTest {
 
     contextURL = ContextURLParser.parse(URI.create("http://host/service/$metadata#Orders(4711)/Items/$entity"));
 
-    assertEquals("Orders", contextURL.getEntitySetOrSingletonOrType());
+    assertEquals("Orders/Items", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
     assertNull(contextURL.getSelectList());
-    assertEquals("Items", contextURL.getNavOrPropertyPath());
+    assertNull(contextURL.getNavOrPropertyPath());
+    assertTrue(contextURL.isEntity());
+
+    contextURL = ContextURLParser.parse(
+            URI.create("http://host/service/$metadata#Users('user')/Messages('message')/Attachments/$entity"));
+
+    assertEquals("Users/Messages/Attachments", contextURL.getEntitySetOrSingletonOrType());
+    assertNull(contextURL.getDerivedEntity());
+    assertNull(contextURL.getSelectList());
+    assertNull(contextURL.getNavOrPropertyPath());
     assertTrue(contextURL.isEntity());
 
     // v3
@@ -98,7 +106,7 @@ public class ContextURLParserTest {
   @Test
   public void collectionOfDerivedEntities() {
     final ContextURL contextURL = ContextURLParser.parse(
-        URI.create("http://host/service/$metadata#Customers/Model.VipCustomer"));
+            URI.create("http://host/service/$metadata#Customers/Model.VipCustomer"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertEquals("Model.VipCustomer", contextURL.getDerivedEntity());
@@ -110,7 +118,7 @@ public class ContextURLParserTest {
   @Test
   public void derivedEntity() {
     final ContextURL contextURL = ContextURLParser.parse(
-        URI.create("http://host/service/$metadata#Customers/Model.VipCustomer/$entity"));
+            URI.create("http://host/service/$metadata#Customers/Model.VipCustomer/$entity"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertEquals("Model.VipCustomer", contextURL.getDerivedEntity());
@@ -122,7 +130,7 @@ public class ContextURLParserTest {
   @Test
   public void collectionOfProjectedEntities() {
     final ContextURL contextURL = ContextURLParser.parse(
-        URI.create("http://host/service/$metadata#Customers(Address,Orders)"));
+            URI.create("http://host/service/$metadata#Customers(Address,Orders)"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -134,7 +142,7 @@ public class ContextURLParserTest {
   @Test
   public void projectedEntity() {
     ContextURL contextURL = ContextURLParser.parse(
-        URI.create("http://host/service/$metadata#Customers(Name,Rating)/$entity"));
+            URI.create("http://host/service/$metadata#Customers(Name,Rating)/$entity"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -143,7 +151,7 @@ public class ContextURLParserTest {
     assertTrue(contextURL.isEntity());
 
     contextURL = ContextURLParser.parse(
-        URI.create("http://host/service/$metadata#Customers(Name,Address/Country)"));
+            URI.create("http://host/service/$metadata#Customers(Name,Address/Country)"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -155,8 +163,8 @@ public class ContextURLParserTest {
   @Test
   public void collectionOfProjectedExpandedEntities() {
     final ContextURL contextURL = ContextURLParser.parse(
-        URI.create("http://host/service/$metadata#Employees/"
-            + "Sales.Manager(DirectReports,DirectReports+(FirstName,LastName))"));
+            URI.create("http://host/service/$metadata#Employees/"
+                    + "Sales.Manager(DirectReports,DirectReports+(FirstName,LastName))"));
 
     assertEquals("Employees", contextURL.getEntitySetOrSingletonOrType());
     assertEquals("Sales.Manager", contextURL.getDerivedEntity());
@@ -168,7 +176,7 @@ public class ContextURLParserTest {
   @Test
   public void propertyValue() {
     final ContextURL contextURL = ContextURLParser.parse(
-        URI.create("http://host/service/$metadata#Customers(1)/Addresses"));
+            URI.create("http://host/service/$metadata#Customers(1)/Addresses"));
 
     assertEquals("Customers", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());
@@ -180,7 +188,7 @@ public class ContextURLParserTest {
   @Test
   public void CollectionOfComplexOrPrimitiveTypes() {
     final ContextURL contextURL = ContextURLParser.parse(
-        URI.create("http://host/service/$metadata#Collection(Edm.String)"));
+            URI.create("http://host/service/$metadata#Collection(Edm.String)"));
 
     assertEquals("Collection(Edm.String)", contextURL.getEntitySetOrSingletonOrType());
     assertNull(contextURL.getDerivedEntity());

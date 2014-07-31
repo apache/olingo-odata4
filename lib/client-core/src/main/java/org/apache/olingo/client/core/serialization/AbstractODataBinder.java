@@ -362,42 +362,47 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   /**
    * Infer type name from various sources of information including Edm and context URL, if available.
    *
+   * @param candidateTypeName type name as provided by the service
    * @param contextURL context URL
    * @param metadataETag metadata ETag
    * @return Edm type information
    */
-  private EdmType findType(final ContextURL contextURL, final String metadataETag) {
+  private EdmType findType(final String candidateTypeName, final ContextURL contextURL, final String metadataETag) {
     EdmType type = null;
 
-    if (client instanceof EdmEnabledODataClient && contextURL != null) {
+    if (client instanceof EdmEnabledODataClient) {
       final Edm edm = ((EdmEnabledODataClient) client).getEdm(metadataETag);
+      if (StringUtils.isNotBlank(candidateTypeName)) {
+        type = edm.getEntityType(new FullQualifiedName(candidateTypeName));
+      }
+      if (type == null && contextURL != null) {
+        if (contextURL.getDerivedEntity() == null) {
+          for (EdmSchema schema : edm.getSchemas()) {
+            final EdmEntityContainer container = schema.getEntityContainer();
+            if (container != null) {
+              final EdmEntityType entityType = findEntityType(contextURL.getEntitySetOrSingletonOrType(), container);
 
-      if (contextURL.getDerivedEntity() == null) {
-        for (EdmSchema schema : edm.getSchemas()) {
-          final EdmEntityContainer container = schema.getEntityContainer();
-          if (container != null) {
-            final EdmEntityType entityType = findEntityType(contextURL.getEntitySetOrSingletonOrType(), container);
+              if (entityType != null) {
+                if (contextURL.getNavOrPropertyPath() == null) {
+                  type = entityType;
+                } else {
+                  final EdmNavigationProperty navProp =
+                          entityType.getNavigationProperty(contextURL.getNavOrPropertyPath());
 
-            if (entityType != null) {
-              if (contextURL.getNavOrPropertyPath() == null) {
-                type = entityType;
-              } else {
-                final EdmNavigationProperty navProp =
-                        entityType.getNavigationProperty(contextURL.getNavOrPropertyPath());
-
-                type = navProp == null
-                        ? entityType
-                        : navProp.getType();
+                  type = navProp == null
+                          ? entityType
+                          : navProp.getType();
+                }
               }
             }
           }
+          if (type == null) {
+            type = new EdmTypeInfo.Builder().setEdm(edm).
+                    setTypeExpression(contextURL.getEntitySetOrSingletonOrType()).build().getType();
+          }
+        } else {
+          type = edm.getEntityType(new FullQualifiedName(contextURL.getDerivedEntity()));
         }
-        if (type == null) {
-          type = new EdmTypeInfo.Builder().setEdm(edm).
-                  setTypeExpression(contextURL.getEntitySetOrSingletonOrType()).build().getType();
-        }
-      } else {
-        type = edm.getEntityType(new FullQualifiedName(contextURL.getDerivedEntity()));
       }
     }
 
@@ -420,7 +425,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     final URI base = resource.getContextURL() == null
             ? resource.getPayload().getBaseURI()
             : contextURL.getServiceRoot();
-    final EdmType edmType = findType(contextURL, resource.getMetadataETag());
+    final EdmType edmType = findType(resource.getPayload().getType(), contextURL, resource.getMetadataETag());
     FullQualifiedName typeName = null;
     if (resource.getPayload().getType() == null) {
       if (edmType != null) {
@@ -485,7 +490,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
           final String propertyName, final String propertyType) {
 
     FullQualifiedName typeName = null;
-    final EdmType type = findType(contextURL, metadataETag);
+    final EdmType type = findType(null, contextURL, metadataETag);
     if (type instanceof EdmStructuredType) {
       final EdmProperty edmProperty = ((EdmStructuredType) type).getStructuralProperty(propertyName);
       if (edmProperty != null) {
