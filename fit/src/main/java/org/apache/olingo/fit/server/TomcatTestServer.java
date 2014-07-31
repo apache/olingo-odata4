@@ -34,13 +34,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.Locale;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -96,7 +95,6 @@ public class TomcatTestServer {
     String[] portParam = portParameter.split("=");
     if(portParam.length == 2) {
       try {
-
         return Integer.parseInt(portParam[1]);
       } catch (NumberFormatException e) {
         throw new IllegalArgumentException("Port parameter (" + portParameter +
@@ -199,40 +197,11 @@ public class TomcatTestServer {
         throw new RuntimeException("Unable to create temporary directory at {" + webAppDir.getAbsolutePath() + "}");
       }
       FileUtils.copyDirectory(webAppProjectDir, webAppDir);
-      File libDir = new File(webAppDir, "WEB-INF/lib");
-      File classesDir = new File(webAppDir, "WEB-INF/classes");
-      String[] libsToExtract = libDir.list(new FilenameFilter() {
-        @Override public boolean accept(File dir, String name) {
-          return name.toLowerCase(Locale.ENGLISH).contains("olingo")
-              && name.toLowerCase(Locale.ENGLISH).endsWith("jar");
-        }
-      });
-      for (String lib : libsToExtract) {
-        File libFile = new File(libDir, lib);
-        extract(libFile, classesDir);
-        FileUtils.forceDelete(libFile);
-      }
 
-//      String[] libsToRemove = libDir.list(new FilenameFilter() {
-//        @Override public boolean accept(File dir, String name) {
-//          return
-//              (name.toLowerCase(Locale.ENGLISH).contains("tomcat")
-//              || name.toLowerCase(Locale.ENGLISH).contains("maven"))
-//              && name.toLowerCase(Locale.ENGLISH).endsWith("jar");
-//        }
-//      });
-//      for (String lib : libsToRemove) {
-//        FileUtils.forceDelete(new File(libDir, lib));
-//      }
-
-      String contextPath = "/stub"; // contextFile.getName()
+      String contextPath = "/stub";
       Context context = tomcat.addWebapp(tomcat.getHost(), contextPath, webAppDir.getAbsolutePath());
+      context.setLoader(new WebappLoader(Thread.currentThread().getContextClassLoader()));
       LOG.info("Webapp {} at context {}.", webAppDir.getName(), contextPath);
-
-      //
-      WebappLoader solrLoader = new WebappLoader(Thread.currentThread().getContextClassLoader());
-      context.setLoader(solrLoader);
-      //
 
       return this;
     }
@@ -260,10 +229,11 @@ public class TomcatTestServer {
       String odataServlet = factoryClass.getName();
       HttpServlet httpServlet = (HttpServlet) Class.forName(odataServlet).newInstance();
       Context cxt = getContext();
-      Tomcat.addServlet(cxt, odataServlet, httpServlet);
-      cxt.addServletMapping(path, odataServlet);
+      String randomServletId = UUID.randomUUID().toString();
+      Tomcat.addServlet(cxt, randomServletId, httpServlet);
+      cxt.addServletMapping(path, randomServletId);
       //
-      LOG.info("Added servlet {} at context {}.", odataServlet, path);
+      LOG.info("Added servlet {} at context {} (mapping id={}).", odataServlet, path, randomServletId);
       return this;
     }
 
