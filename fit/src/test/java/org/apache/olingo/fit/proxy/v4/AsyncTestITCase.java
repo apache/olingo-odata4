@@ -71,7 +71,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
       Thread.sleep(1000L);
     }
 
-    final Future<Person> futurePerson = container.getPeople().getByKey(1).loadAsync();
+    final Future<? extends Person> futurePerson = container.getPeople().getByKey(1).loadAsync();
     assertEquals(randomFirstName, futurePerson.get().getFirstName());
   }
 

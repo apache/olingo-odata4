@@ -22,6 +22,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import java.util.concurrent.Future;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -37,6 +38,18 @@ public interface IndexedRow
 
   @Override
   IndexedRow load();
+
+  @Override
+  Future<? extends IndexedRow> loadAsync();
+
+  @Override
+  IndexedRow refs();
+
+  @Override
+  IndexedRow expand(String... expand);
+
+  @Override
+  IndexedRow select(String... select);
 
     
 

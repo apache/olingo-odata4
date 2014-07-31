@@ -21,6 +21,7 @@ package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import java.util.concurrent.Future;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -36,6 +37,18 @@ public interface FeaturedProduct
 
   @Override
   FeaturedProduct load();
+
+  @Override
+  Future<? extends FeaturedProduct> loadAsync();
+
+  @Override
+  FeaturedProduct refs();
+
+  @Override
+  FeaturedProduct expand(String... expand);
+
+  @Override
+  FeaturedProduct select(String... select);
 
     
 

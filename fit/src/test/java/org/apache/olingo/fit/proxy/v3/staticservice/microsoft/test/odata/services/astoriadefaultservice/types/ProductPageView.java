@@ -21,6 +21,7 @@ package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.servic
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import java.util.concurrent.Future;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -36,6 +37,18 @@ public interface ProductPageView
 
   @Override
   ProductPageView load();
+
+  @Override
+  Future<? extends ProductPageView> loadAsync();
+
+  @Override
+  ProductPageView refs();
+
+  @Override
+  ProductPageView expand(String... expand);
+
+  @Override
+  ProductPageView select(String... select);
 
     
 

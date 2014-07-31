@@ -41,11 +41,7 @@ import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection;
 
-import org.apache.olingo.fit.server.TomcatTestServer;
-import org.apache.olingo.server.tecsvc.TechnicalServlet;
 import org.junit.BeforeClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public abstract class AbstractTestITCase extends AbstractBaseTestITCase {

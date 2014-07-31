@@ -22,6 +22,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import java.util.concurrent.Future;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 @KeyRef(OrderLineKey.class)
@@ -37,6 +38,18 @@ public interface BackOrderLine2
 
   @Override
   BackOrderLine2 load();
+
+  @Override
+  Future<? extends BackOrderLine2> loadAsync();
+
+  @Override
+  BackOrderLine2 refs();
+
+  @Override
+  BackOrderLine2 expand(String... expand);
+
+  @Override
+  BackOrderLine2 select(String... select);
 
         
 

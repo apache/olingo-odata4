@@ -22,6 +22,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import java.util.concurrent.Future;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -37,6 +38,18 @@ public interface CreditCardPI
 
   @Override
   CreditCardPI load();
+
+  @Override
+  Future<? extends CreditCardPI> loadAsync();
+
+  @Override
+  CreditCardPI refs();
+
+  @Override
+  CreditCardPI expand(String... expand);
+
+  @Override
+  CreditCardPI select(String... select);
 
     
 

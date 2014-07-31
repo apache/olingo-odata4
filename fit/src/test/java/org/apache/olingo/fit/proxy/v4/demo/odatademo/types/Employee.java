@@ -21,6 +21,7 @@ package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import java.util.concurrent.Future;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -36,6 +37,18 @@ public interface Employee
 
   @Override
   Employee load();
+
+  @Override
+  Future<? extends Employee> loadAsync();
+
+  @Override
+  Employee refs();
+
+  @Override
+  Employee expand(String... expand);
+
+  @Override
+  Employee select(String... select);
 
     
 

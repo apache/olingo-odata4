@@ -70,7 +70,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
       Thread.sleep(1000L);
     }
 
-    final Future<Product> futureProd = container.getProduct().getByKey(-10).loadAsync();
+    final Future<? extends Product> futureProd = container.getProduct().getByKey(-10).loadAsync();
     assertEquals("AsyncTest#updateEntity " + random, futureProd.get().load().getDescription());
   }
 

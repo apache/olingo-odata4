@@ -22,6 +22,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import java.util.concurrent.Future;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -37,6 +38,18 @@ public interface SpecialEmployee
 
   @Override
   SpecialEmployee load();
+
+  @Override
+  Future<? extends SpecialEmployee> loadAsync();
+
+  @Override
+  SpecialEmployee refs();
+
+  @Override
+  SpecialEmployee expand(String... expand);
+
+  @Override
+  SpecialEmployee select(String... select);
 
     
 

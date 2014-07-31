@@ -23,6 +23,7 @@ import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import java.util.concurrent.Future;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -38,6 +39,18 @@ public interface PublicCompany
 
   @Override
   PublicCompany load();
+
+  @Override
+  Future<? extends PublicCompany> loadAsync();
+
+  @Override
+  PublicCompany refs();
+
+  @Override
+  PublicCompany expand(String... expand);
+
+  @Override
+  PublicCompany select(String... select);
 
     
 

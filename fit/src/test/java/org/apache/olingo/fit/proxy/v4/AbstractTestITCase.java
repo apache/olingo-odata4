@@ -39,11 +39,7 @@ import org.apache.olingo.fit.proxy.v4.staticservice.Service;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
-import org.apache.olingo.fit.server.TomcatTestServer;
-import org.apache.olingo.server.tecsvc.TechnicalServlet;
 import org.junit.BeforeClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 

@@ -34,7 +34,7 @@ public interface StructuredType<T> extends Serializable {
   /**
    * @return future handle on structured type instance
    */
-  Future<T> loadAsync();
+  Future<? extends T> loadAsync();
 
   /**
    * Delete object.
@@ -43,6 +43,7 @@ public interface StructuredType<T> extends Serializable {
 
   /**
    * Delete a specific property.
+   * @param name property name
    */
   void delete(String name);
 }

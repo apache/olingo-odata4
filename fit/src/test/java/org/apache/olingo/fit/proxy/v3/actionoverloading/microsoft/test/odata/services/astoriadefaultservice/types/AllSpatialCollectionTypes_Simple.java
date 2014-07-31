@@ -21,6 +21,7 @@ package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.se
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import java.util.concurrent.Future;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -36,6 +37,18 @@ public interface AllSpatialCollectionTypes_Simple
 
   @Override
   AllSpatialCollectionTypes_Simple load();
+
+  @Override
+  Future<? extends AllSpatialCollectionTypes_Simple> loadAsync();
+
+  @Override
+  AllSpatialCollectionTypes_Simple refs();
+
+  @Override
+  AllSpatialCollectionTypes_Simple expand(String... expand);
+
+  @Override
+  AllSpatialCollectionTypes_Simple select(String... select);
 
     
 

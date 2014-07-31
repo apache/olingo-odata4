@@ -48,6 +48,7 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
+import java.util.concurrent.Future;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 #if( $keyRef )@KeyRef(${keyRef}.class)#end
@@ -66,6 +67,18 @@ public interface $utility.capitalize($entityType.Name)
 #if( $entityType.getBaseType() )
   @Override
   $utility.capitalize($entityType.Name) load();
+
+  @Override
+  Future<? extends $utility.capitalize($entityType.Name)> loadAsync();
+
+  @Override
+  $utility.capitalize($entityType.Name) refs();
+
+  @Override
+  $utility.capitalize($entityType.Name) expand(String... expand);
+
+  @Override
+  $utility.capitalize($entityType.Name) select(String... select);
 #end
 
 #set( $keys = [] )

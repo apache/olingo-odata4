@@ -21,6 +21,7 @@ package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.servic
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import java.util.concurrent.Future;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -36,6 +37,18 @@ public interface Customer
 
   @Override
   Customer load();
+
+  @Override
+  Future<? extends Customer> loadAsync();
+
+  @Override
+  Customer refs();
+
+  @Override
+  Customer expand(String... expand);
+
+  @Override
+  Customer select(String... select);
 
     
 

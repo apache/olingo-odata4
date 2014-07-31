@@ -22,8 +22,6 @@ public interface CommonQuery {
 
   /**
    * Remove all query options.
-   *
-   * @return the same query instance.
    */
   void clearQueryOptions();
 }
