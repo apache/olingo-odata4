@@ -26,7 +26,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
 /**
  * Processor interface for handling collections of entities (collections, EntitySets or feeds).
  */
-public interface CollectionProcessor extends Processor {
+public interface EntityCollectionProcessor extends Processor {
 
   /**
    * Read entities data from persistency and puts serialized content and status into the response.

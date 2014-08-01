@@ -31,7 +31,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataTranslatedException;
-import org.apache.olingo.server.api.processor.CollectionProcessor;
+import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.uri.UriInfo;
@@ -42,7 +42,7 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
 
 import java.util.List;
 
-public class TechnicalProcessor implements CollectionProcessor, EntityProcessor {
+public class TechnicalProcessor implements EntityCollectionProcessor, EntityProcessor {
 
   private OData odata;
   private Edm edm;

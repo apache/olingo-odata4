@@ -45,12 +45,6 @@ public class ODataTranslatedException extends ODataException {
     PROCESSOR_NOT_IMPLEMENTED,
     FUNCTIONALITY_NOT_IMPLEMENTED,
     ODATA_VERSION_NOT_SUPPORTED,
-    /** parameters: HTTP header name, HTTP header value */
-    WRONG_CHARSET_IN_HEADER,
-    /** parameter: list of content-type ranges */
-    UNSUPPORTED_CONTENT_TYPES,
-    /** parameter: content type */
-    UNSUPPORTED_CONTENT_TYPE
   }
 
   private MessageKey messageKey;

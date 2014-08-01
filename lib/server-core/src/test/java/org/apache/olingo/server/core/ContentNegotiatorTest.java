@@ -18,6 +18,17 @@
  */
 package org.apache.olingo.server.core;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -25,8 +36,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataTranslatedException;
-import org.apache.olingo.server.api.processor.CollectionProcessor;
+import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.CustomContentTypeSupportProcessor;
 import org.apache.olingo.server.api.processor.FormatContentTypeMapping;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
@@ -35,19 +45,6 @@ import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ContentNegotiatorTest {
 
@@ -103,8 +100,6 @@ public class ContentNegotiatorTest {
   //CHECKSTYLE:ON
   //@formatter:on
 
-  private final static Logger LOG = LoggerFactory.getLogger(ContentNegotiatorTest.class);
-
   @Test
   public void testServiceDocumentSingleCase() throws Exception {
     String[] useCase = { ACCEPT_CASE_MIN_UTF8, null, ACCEPT_CASE_MIN_UTF8, null, null };
@@ -139,17 +134,17 @@ public class ContentNegotiatorTest {
       try {
         testContentNegotiation(useCase, MetadataProcessor.class);
         fail("Exeption expected!");
-      } catch (Exception e) {
+      } catch (ContentNegotiatorException e) {
 
+      }catch (Exception e) {
+        e.printStackTrace();
+        fail("Wrong Exception: " + e.getClass().getName());
       }
     }
   }
 
   public void testContentNegotiation(final String[] useCase, final Class<? extends Processor> processorClass)
-      throws ODataTranslatedException {
-
-    LOG.debug(Arrays.asList(useCase).toString());
-
+      throws Exception {
     ODataRequest request = new ODataRequest();
     request.setMethod(HttpMethod.GET);
     request.setRawODataPath("/" + (useCase[1] == null ? "" : "?$format=" + useCase[1]));
@@ -194,7 +189,7 @@ public class ContentNegotiatorTest {
   }
 
   private class ProcessorStub implements ServiceDocumentProcessor, MetadataProcessor,
-      CollectionProcessor,
+      EntityCollectionProcessor,
       CustomContentTypeSupportProcessor {
 
     List<FormatContentTypeMapping> customMapping;

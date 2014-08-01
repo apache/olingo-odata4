@@ -18,27 +18,22 @@
  */
 package org.apache.olingo.server.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.AcceptType;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.processor.CustomContentTypeSupportProcessor;
 import org.apache.olingo.server.api.processor.FormatContentTypeMapping;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ContentNegotiator {
-
-  private final static Logger LOG = LoggerFactory.getLogger(ContentNegotiator.class);
 
   private ContentNegotiator() {}
 
@@ -71,7 +66,7 @@ public class ContentNegotiator {
   }
 
   public static ContentType doContentNegotiation(final FormatOption formatOption, final ODataRequest request,
-      final Processor processor, final Class<? extends Processor> processorClass) throws ODataTranslatedException {
+      final Processor processor, final Class<? extends Processor> processorClass) throws ContentNegotiatorException {
     ContentType requestedContentType = null;
 
     List<FormatContentTypeMapping> supportedContentTypes = getSupportedContentTypes(processor, processorClass);
@@ -81,7 +76,6 @@ public class ContentNegotiator {
     boolean supported = false;
 
     if (formatOption != null) {
-
       if ("json".equalsIgnoreCase(formatOption.getText().trim())) {
         requestedContentType = ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
         for (FormatContentTypeMapping entry : supportedContentTypes) {
@@ -107,6 +101,10 @@ public class ContentNegotiator {
           }
         }
       }
+      if (!supported) {
+        throw new ContentNegotiatorException("Unsupported $format = " + formatOption.getText(),
+            ContentNegotiatorException.MessageKeys.UNSUPPORTED_FORMAT_OPTION, formatOption.getText());
+      }
     } else if (acceptHeaderValue != null) {
       List<AcceptType> acceptedContentTypes = AcceptType.create(acceptHeaderValue);
 
@@ -119,8 +117,8 @@ public class ContentNegotiator {
             if ("utf8".equalsIgnoreCase(value) || "utf-8".equalsIgnoreCase(value)) {
               ct = ContentType.create(ct, ContentType.PARAMETER_CHARSET_UTF8);
             } else {
-              throw new ODataTranslatedException("charset in accept header not supported: " + acceptHeaderValue,
-                  ODataTranslatedException.MessageKeys.WRONG_CHARSET_IN_HEADER, HttpHeader.ACCEPT, acceptHeaderValue);
+              throw new ContentNegotiatorException("charset in accept header not supported: " + acceptHeaderValue,
+                  ContentNegotiatorException.MessageKeys.WRONG_CHARSET_IN_HEADER, HttpHeader.ACCEPT, acceptHeaderValue);
             }
           }
 
@@ -135,13 +133,12 @@ public class ContentNegotiator {
         }
       }
 
-      if (requestedContentType == null) {
-        throw new ODataTranslatedException(
+      if (!supported) {
+        throw new ContentNegotiatorException(
             "unsupported accept content type: " + acceptedContentTypes + " != " + supportedContentTypes,
-            ODataTranslatedException.MessageKeys.UNSUPPORTED_CONTENT_TYPES, acceptedContentTypes.toString());
+            ContentNegotiatorException.MessageKeys.UNSUPPORTED_CONTENT_TYPES, acceptedContentTypes.toString());
       }
     } else {
-
       if (processorClass == MetadataProcessor.class) {
         requestedContentType = ContentType.APPLICATION_XML;
       } else {
@@ -157,12 +154,10 @@ public class ContentNegotiator {
     }
 
     if (!supported) {
-      throw new ODataTranslatedException(
+      throw new ContentNegotiatorException(
           "unsupported accept content type: " + requestedContentType + " != " + supportedContentTypes,
-          ODataTranslatedException.MessageKeys.UNSUPPORTED_CONTENT_TYPE, requestedContentType.toContentTypeString());
+          ContentNegotiatorException.MessageKeys.UNSUPPORTED_CONTENT_TYPE, requestedContentType.toContentTypeString());
     }
-
-    LOG.debug("requested content type: " + requestedContentType);
 
     return requestedContentType;
   }

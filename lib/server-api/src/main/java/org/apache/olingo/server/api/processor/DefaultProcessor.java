@@ -87,7 +87,9 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
     } catch (Exception e) {
       // This should never happen but to be sure we have this catch here to prevent sending a stacktrace to a client.
       String responseContent =
-          "An unexpected exception occoured during error processing with message: \"" + e.getMessage() + "\"";
+          "{\"error\":{\"code\":null,\"message\":\"An unexpected exception occoured during " +
+              "error processing with message: "
+              + e.getMessage() + "\"}}";
       response.setContent(new ByteArrayInputStream(responseContent.getBytes()));
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_JSON.toContentTypeString());

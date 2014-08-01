@@ -29,12 +29,8 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ODataHttpHandlerImplTest {
-
-  private final Logger LOG = LoggerFactory.getLogger(ODataHttpHandlerImplTest.class);
 
   @Test
   public void extractMethod() throws Exception {
@@ -148,8 +144,6 @@ public class ODataHttpHandlerImplTest {
       String requestUrl = p[0] + p[1] + p[2] + p[3] + p[4];
       String requestUri = p[1] + p[2] + p[3] + p[4];
       String queryString = p[5].isEmpty() ? null : p[5];
-
-      LOG.debug(requestUrl + (queryString == null ? "" : "?" + queryString));
 
       when(hr.getRequestURL()).thenReturn(new StringBuffer(requestUrl));
       when(hr.getRequestURI()).thenReturn(requestUri);
