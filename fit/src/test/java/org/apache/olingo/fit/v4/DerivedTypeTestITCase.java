@@ -107,7 +107,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
         client.getObjectFactory().newCollectionValue("Edm.String")));
     customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("City",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("Pescara")));
-    Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    final Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     dateTime.set(1977, 8, 8, 0, 0, 0);
     customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Birthday",
         client.getObjectFactory().newPrimitiveValueBuilder().

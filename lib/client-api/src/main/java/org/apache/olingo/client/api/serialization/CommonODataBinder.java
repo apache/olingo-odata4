@@ -27,7 +27,6 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 
@@ -64,14 +63,6 @@ public interface CommonODataBinder {
    * @return <tt>Property</tt> object.
    */
   Property getProperty(CommonODataProperty property);
-
-  /**
-   * Adds the given property to the given complex value.
-   *
-   * @param complex OData complex value.
-   * @param property OData property.
-   */
-  void add(ODataComplexValue<CommonODataProperty> complex, CommonODataProperty property);
 
   /**
    * Adds the given property to the given entity.

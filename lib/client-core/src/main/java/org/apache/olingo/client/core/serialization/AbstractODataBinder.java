@@ -55,6 +55,7 @@ import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
+import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -561,15 +562,32 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
                       ? null
                       : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).
               build();
-    } else if (valuable.isComplex() || valuable.isLinkedComplex()) {
-      value = client.getObjectFactory().newComplexValue(type == null ? null : type.toString());
+    } else if (valuable.isComplex()) {
+      @SuppressWarnings("unchecked")
+      final ODataComplexValue<CommonODataProperty> cValue =
+              (ODataComplexValue<CommonODataProperty>) client.getObjectFactory().
+              newComplexValue(type == null ? null : type.toString());
+
       if (!valuable.isNull()) {
-        final List<Property> properties = valuable.isLinkedComplex()
-                ? valuable.asLinkedComplex().getValue() : valuable.asComplex();
-        for (Property property : properties) {
-          value.asComplex().add(getODataProperty(new ResWrap<Property>(contextURL, metadataETag, property)));
+        EdmComplexType edmType = null;
+        if (client instanceof EdmEnabledODataClient && type != null) {
+          edmType = ((EdmEnabledODataClient) client).getEdm(metadataETag).getComplexType(type);
+        }
+
+        for (Property property : valuable.asComplex()) {
+          EdmType edmPropertyType = null;
+          if (edmType != null) {
+            final EdmElement edmProp = edmType.getProperty(property.getName());
+            if (edmProp != null) {
+              edmPropertyType = edmProp.getType();
+            }
+          }
+
+          cValue.add(getODataProperty(edmPropertyType, property));
         }
       }
+
+      value = cValue;
     } else if (valuable.isCollection()) {
       value = client.getObjectFactory().newCollectionValue(type == null ? null : "Collection(" + type.toString() + ")");
 
