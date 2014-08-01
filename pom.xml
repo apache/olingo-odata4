@@ -230,8 +230,18 @@
       </dependency>
       <dependency>
         <groupId>org.apache.tomcat.embed</groupId>
-        <artifactId>tomcat-embed-logging-juli</artifactId>
+        <artifactId>tomcat-embed-logging-log4j</artifactId>
         <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-jasper</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>${sl4j.version}</version>
       </dependency>
 
       <!-- Pojogen Maven Plugin depenencies -->

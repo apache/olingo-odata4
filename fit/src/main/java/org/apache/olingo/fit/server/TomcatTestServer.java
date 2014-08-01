@@ -42,6 +42,10 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.SimpleFormatter;
 
 /**
  *  
@@ -53,6 +57,19 @@ public class TomcatTestServer {
 
   private TomcatTestServer(Tomcat tomcat) {
     this.tomcat = tomcat;
+    enableLogging();
+  }
+
+  private void enableLogging() {
+    java.util.logging.Logger logger = java.util.logging.Logger.getLogger("");
+    try {
+      Handler fileHandler = new FileHandler(tomcat.getHost().getAppBase() + "/catalina.out", true);
+      fileHandler.setFormatter(new SimpleFormatter());
+      fileHandler.setLevel(Level.ALL);
+      logger.addHandler(fileHandler);
+    } catch (IOException e) {
+      throw new RuntimeException("Unable to configure embedded tomcat logging.");
+    }
   }
 
   public static void main(String[] params) {
