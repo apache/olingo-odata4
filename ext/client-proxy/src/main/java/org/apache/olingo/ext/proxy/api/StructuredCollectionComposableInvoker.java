@@ -19,6 +19,5 @@
 package org.apache.olingo.ext.proxy.api;
 
 public interface StructuredCollectionComposableInvoker<CT extends StructuredCollection<?, ?, ?>, O extends Operations>
-        extends StructuredCollectionQuery<StructuredCollectionInvoker<CT>>, StructuredCollectionInvoker<CT>,
-        ComposableInvoker<CT, O> {
+        extends StructuredCollectionInvoker<CT>, ComposableInvoker<CT, O> {
 }
