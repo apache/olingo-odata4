@@ -80,7 +80,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
     final StructuredCollectionComposableInvoker<ProductCollection, ProductCollection.Operations> invoker1 =
             container.operations().getAllProducts();
 
-    final Future<ProductCollection> future1 = invoker1.compose().
+    final Future<ProductCollection> future1 = invoker1.operations().
             discount(10).
             filter("Name eq XXXX").
             select("Name", "ProductDetail").

@@ -23,9 +23,7 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.invoke.AbstractODataInvokeRequest;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.format.ODataFormat;
-
 import java.net.URI;
-import org.apache.olingo.client.core.uri.URIUtils;
 
 public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends AbstractODataInvokeRequest<T> {
 
@@ -46,10 +44,5 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends Abstrac
   @Override
   protected ODataFormat getPOSTParameterFormat() {
     return format == null ? getDefaultFormat() : format;
-  }
-
-  @Override
-  protected URI buildGETURI() {
-    return URIUtils.buildInvokeRequestURI(this.uri, parameters, odataClient.getServiceVersion());
   }
 }

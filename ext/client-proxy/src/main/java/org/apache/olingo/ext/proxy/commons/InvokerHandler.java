@@ -55,7 +55,7 @@ import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 import org.apache.olingo.ext.proxy.utils.ProxyUtils;
 
-public class InvokerHandler<T, C> extends AbstractInvocationHandler {
+public class InvokerHandler<T, O> extends AbstractInvocationHandler {
 
   private final URI baseURI;
 
@@ -93,10 +93,6 @@ public class InvokerHandler<T, C> extends AbstractInvocationHandler {
       this.targetRef = null;
       this.operationRef = null;
     }
-  }
-
-  public C compose() {
-    return null;
   }
 
   public Future<T> executeAsync() {
@@ -249,25 +245,24 @@ public class InvokerHandler<T, C> extends AbstractInvocationHandler {
             || "select".equals(method.getName())) {
       invokeSelfMethod(method, args);
       return proxy;
-    } else if ("compose".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
-
-      final EdmTypeInfo edmType = new EdmTypeInfo.Builder().
+    } else if ("operations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
+      final EdmTypeInfo returnType = new EdmTypeInfo.Builder().
               setEdm(service.getClient().getCachedEdm()).setTypeExpression(operation.returnType()).build();
 
-      final OperationInvocationHandler handler;
+      final URI prefixURI = URIUtils.buildFunctionInvokeURI(this.baseURI, parameters, getClient().getServiceVersion());
 
-      final URI prefixURI = URIUtils.buildInvokeRequestURI(this.baseURI, parameters, getClient().getServiceVersion());
+      OperationInvocationHandler handler;
 
-      if (edmType.isComplexType()) {
-        if (edmType.isCollection()) {
+      if (returnType.isComplexType()) {
+        if (returnType.isCollection()) {
           handler = OperationInvocationHandler.getInstance(new ComplexCollectionInvocationHandler(
-                  service, targetRef, getClient().newURIBuilder(prefixURI.toASCIIString())));
+                  targetRef, service, getClient().newURIBuilder(prefixURI.toASCIIString())));
         } else {
           handler = OperationInvocationHandler.getInstance(ComplexInvocationHandler.getInstance(
                   targetRef, service, getClient().newURIBuilder(prefixURI.toASCIIString())));
         }
       } else {
-        if (edmType.isCollection()) {
+        if (returnType.isCollection()) {
           handler = OperationInvocationHandler.getInstance(new EntityCollectionInvocationHandler(
                   service, null, targetRef, null, getClient().newURIBuilder(prefixURI.toASCIIString())));
         } else {
@@ -279,7 +274,6 @@ public class InvokerHandler<T, C> extends AbstractInvocationHandler {
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {operationRef}, handler);
-
     } else if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
     } else {

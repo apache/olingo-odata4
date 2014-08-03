@@ -151,8 +151,6 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
     return null;
   }
 
-  protected abstract URI buildGETURI();
-
   /**
    * {@inheritDoc }
    */
@@ -162,10 +160,8 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
 
     if (!this.parameters.isEmpty()) {
       if (this.method == HttpMethod.GET) {
-
         ((HttpRequestBase) this.request).setURI(
-                URIUtils.buildInvokeRequestURI(this.uri, parameters, odataClient.getServiceVersion()));
-
+                URIUtils.buildFunctionInvokeURI(this.uri, parameters, odataClient.getServiceVersion()));
       } else if (this.method == HttpMethod.POST) {
         ((HttpPost) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 

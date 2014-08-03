@@ -112,7 +112,7 @@ public interface InMemoryEntities extends PersistenceManager {
                     type = OperationType.FUNCTION,
                     isComposable = true,
                     referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Person")
-    org.apache.olingo.ext.proxy.api.StructuredComposableInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.Operations> getPerson2(
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonComposableInvoker getPerson2(
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "city", type = "Edm.String", nullable = false) java.lang.String city
     );
 
@@ -129,7 +129,7 @@ public interface InMemoryEntities extends PersistenceManager {
                     type = OperationType.FUNCTION,
                     isComposable = true,
                     referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Person")
-    org.apache.olingo.ext.proxy.api.StructuredComposableInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.Operations> getPerson(
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonComposableInvoker getPerson(
         @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "address", type = "Microsoft.Test.OData.Services.ODataWCFService.Address", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address address
     );
 
@@ -147,7 +147,7 @@ public interface InMemoryEntities extends PersistenceManager {
                     type = OperationType.FUNCTION,
                     isComposable = true,
                     referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection.class,                    returnType = "Collection(Microsoft.Test.OData.Services.ODataWCFService.Product)")
-    org.apache.olingo.ext.proxy.api.StructuredCollectionComposableInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection.Operations> getAllProducts(
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollectionComposableInvoker getAllProducts(
     );
 
     

@@ -139,7 +139,6 @@ final class OperationInvocationHandler extends AbstractInvocationHandler {
     } else {
       final Operation operation = method.getAnnotation(Operation.class);
       if (operation != null) {
-
         final Annotation[][] annotations = method.getParameterAnnotations();
         final List<String> parameterNames;
         final LinkedHashMap<Parameter, Object> parameters = new LinkedHashMap<Parameter, Object>();
@@ -175,25 +174,25 @@ final class OperationInvocationHandler extends AbstractInvocationHandler {
 
         final Map<String, ODataValue> parameterValues = new LinkedHashMap<String, ODataValue>();
         for (Map.Entry<Parameter, Object> parameter : parameters.entrySet()) {
-
           if (!parameter.getKey().nullable() && parameter.getValue() == null) {
             throw new IllegalArgumentException(
                     "Parameter " + parameter.getKey().name() + " is not nullable but a null value was provided");
           }
 
-          final EdmTypeInfo type = new EdmTypeInfo.Builder().
+          final EdmTypeInfo parameterType = new EdmTypeInfo.Builder().
                   setEdm(service.getClient().getCachedEdm()).setTypeExpression(parameter.getKey().type()).build();
 
           final ODataValue paramValue = parameter.getValue() == null
                   ? null
-                  : CoreUtils.getODataValue(service.getClient(), type, parameter.getValue());
-
+                  : CoreUtils.getODataValue(service.getClient(), parameterType, parameter.getValue());
+          
           parameterValues.put(parameter.getKey().name(), paramValue);
         }
 
         return Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
-                new Class<?>[] {ClassUtils.getTypeClass(method.getGenericReturnType())}, new InvokerHandler(
+                new Class<?>[] {ClassUtils.getTypeClass(method.getGenericReturnType())}, 
+                new InvokerHandler(
                         edmOperation.getKey(),
                         parameterValues,
                         operation,
@@ -301,7 +300,6 @@ final class OperationInvocationHandler extends AbstractInvocationHandler {
     return new AbstractMap.SimpleEntry<URI, EdmOperation>(boundOp.getTarget(), edmOperation);
   }
 
-  @SuppressWarnings("unchecked")
   private Map.Entry<URI, EdmOperation> getCollectionBoundOperation(
           final Operation operation, final List<String> parameterNames) {
 

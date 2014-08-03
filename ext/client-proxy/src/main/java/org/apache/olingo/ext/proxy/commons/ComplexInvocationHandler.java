@@ -27,27 +27,26 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.ext.proxy.AbstractService;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class ComplexInvocationHandler extends AbstractStructuredInvocationHandler {
 
   private static Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init(
-          final AbstractService<?> service,
-          final Class<?> reference) {
+          final Class<?> typeRef,
+          final AbstractService<?> service) {
 
     final Class<?> complexTypeRef;
-    if (Collection.class.isAssignableFrom(reference)) {
-      complexTypeRef = ClassUtils.extractTypeArg(reference);
+    if (Collection.class.isAssignableFrom(typeRef)) {
+      complexTypeRef = ClassUtils.extractTypeArg(typeRef);
     } else {
-      complexTypeRef = reference;
+      complexTypeRef = typeRef;
     }
 
     final ComplexType annotation = complexTypeRef.getAnnotation(ComplexType.class);
@@ -57,7 +56,6 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
 
     final FullQualifiedName typeName =
             new FullQualifiedName(ClassUtils.getNamespace(complexTypeRef), annotation.name());
-
     final ODataComplexValue<? extends CommonODataProperty> complex =
             service.getClient().getObjectFactory().newComplexValue(typeName.toString());
 
@@ -66,42 +64,45 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
 
   public static ComplexInvocationHandler getInstance(
           final String propertyName,
-          final Class<?> reference,
-          final EntityInvocationHandler handler) {
+          final EntityInvocationHandler handler,
+          final Class<?> typeRef) {
 
-    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(handler.service, reference);
+    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(typeRef, handler.service);
     return new ComplexInvocationHandler(init.getLeft(), init.getRight(), handler);
   }
 
   public static ComplexInvocationHandler getInstance(
           final ODataComplexValue<?> complex,
-          final Class<?> reference,
+          final Class<?> typeRef,
           final AbstractService<?> service) {
 
-    return new ComplexInvocationHandler(complex, reference, service);
+    return new ComplexInvocationHandler(complex, typeRef, service);
   }
 
   public static ComplexInvocationHandler getInstance(
           final Class<?> typeRef,
           final AbstractService<?> service) {
-    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(service, typeRef);
+      
+    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(typeRef, service);
     return new ComplexInvocationHandler(init.getLeft(), init.getRight(), service);
   }
 
   public static ComplexInvocationHandler getInstance(
-          final Class<?> reference,
+          final Class<?> typeRef,
           final AbstractService<?> service,
           final CommonURIBuilder<?> uri) {
-    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(service, reference);
+      
+    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(typeRef, service);
     return new ComplexInvocationHandler(init.getLeft(), init.getRight(), service, uri);
   }
 
   public static ComplexInvocationHandler getInstance(
           final ODataComplexValue<? extends CommonODataProperty> complex,
-          final Class<?> reference,
+          final Class<?> typeRef,
           final AbstractService<?> service,
           final CommonURIBuilder<?> uri) {
-    return new ComplexInvocationHandler(complex, reference, service, uri);
+      
+    return new ComplexInvocationHandler(complex, typeRef, service, uri);
   }
 
   private ComplexInvocationHandler(
@@ -184,7 +185,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   }
 
   @Override
-  protected CommonODataProperty getInternalProperty(String name) {
+  protected CommonODataProperty getInternalProperty(final String name) {
     return getComplex() == null ? null : getComplex().get(name);
   }
 }

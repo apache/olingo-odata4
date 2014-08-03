@@ -53,9 +53,10 @@ public class ComplexCollectionInvocationHandler<T extends ComplexType<?>>
   }
 
   public ComplexCollectionInvocationHandler(
-          final AbstractService<?> service,
           final Class<T> itemRef,
+          final AbstractService<?> service,
           final CommonURIBuilder<?> uri) {
+      
     this(service, new ArrayList<T>(), itemRef, uri);
   }
 

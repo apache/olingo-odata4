@@ -329,8 +329,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
             if (property == null || property.hasNullValue()) {
               collectionHandler = new ComplexCollectionInvocationHandler(
-                      service,
                       itemRef,
+                      service,
                       baseURI == null
                       ? null : getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name));
             } else {

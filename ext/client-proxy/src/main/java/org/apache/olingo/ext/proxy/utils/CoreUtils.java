@@ -479,7 +479,7 @@ public final class CoreUtils {
               final Object complex = Proxy.newProxyInstance(
                       Thread.currentThread().getContextClassLoader(),
                       new Class<?>[] {getter.getReturnType()},
-                      ComplexInvocationHandler.getInstance(property.getName(), getter.getReturnType(), typeHandler));
+                      ComplexInvocationHandler.getInstance(property.getName(), typeHandler, getter.getReturnType()));
 
               populate(client, typeHandler, complex, Property.class, property.getValue().asComplex().iterator());
               setPropertyValue(bean, getter, complex);
@@ -503,7 +503,7 @@ public final class CoreUtils {
                   final Object collItem = Proxy.newProxyInstance(
                           Thread.currentThread().getContextClassLoader(),
                           new Class<?>[] {collItemClass},
-                          ComplexInvocationHandler.getInstance(property.getName(), collItemClass, typeHandler));
+                          ComplexInvocationHandler.getInstance(property.getName(), typeHandler, collItemClass));
 
                   populate(client, typeHandler, collItem, Property.class, value.asComplex().iterator());
                   collection.add(collItem);

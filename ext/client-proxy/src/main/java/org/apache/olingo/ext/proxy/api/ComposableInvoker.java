@@ -20,5 +20,5 @@ package org.apache.olingo.ext.proxy.api;
 
 public interface ComposableInvoker<T, O extends Operations> extends Invoker<T> {
 
-  O compose();
+  O operations();
 }

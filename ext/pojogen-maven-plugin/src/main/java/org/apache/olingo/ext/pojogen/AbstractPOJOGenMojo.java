@@ -294,8 +294,15 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
           complexTypeNames.put(complex.getFullQualifiedName().toString(), typesPkg + "." + className);
           objs.clear();
           objs.put("complexType", complex);
-          parseObj(typesBaseDir, typesPkg, "complexType", className + ".java", objs);
-          parseObj(typesBaseDir, typesPkg, "complexCollection", className + "Collection.java", objs);
+          
+          parseObj(typesBaseDir, typesPkg, 
+                  "complexType", className + ".java", objs);
+          parseObj(typesBaseDir, typesPkg, 
+                  "complexTypeComposableInvoker", className + "ComposableInvoker.java", objs);
+          parseObj(typesBaseDir, typesPkg, 
+                  "complexCollection", className + "Collection.java", objs);
+          parseObj(typesBaseDir, typesPkg, 
+                  "complexCollectionComposableInvoker", className + "CollectionComposableInvoker.java", objs);
         }
 
         for (EdmEntityType entity : schema.getEntityTypes()) {
@@ -332,8 +339,14 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
             }
           }
 
-          parseObj(typesBaseDir, typesPkg, "entityType", className + ".java", objs);
-          parseObj(typesBaseDir, typesPkg, "entityCollection", className + "Collection.java", objs);
+          parseObj(typesBaseDir, typesPkg, 
+                  "entityType", className + ".java", objs);
+          parseObj(typesBaseDir, typesPkg, 
+                  "entityComposableInvoker", className + "ComposableInvoker.java", objs);
+          parseObj(typesBaseDir, typesPkg, 
+                  "entityCollection", className + "Collection.java", objs);
+          parseObj(typesBaseDir, typesPkg, 
+                  "entityCollectionComposableInvoker", className + "CollectionComposableInvoker.java", objs);
         }
 
         // write container and top entity sets into the base package

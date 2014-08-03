@@ -507,7 +507,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     assertNotNull(prods1);
     assertFalse(prods1.isEmpty());
 
-    // Complex/Entity collection (available filter, select, expand, orderBy, skip and top)
+    // Complex/Entity collection
     final ProductCollection prods2 = container.operations().getAllProducts().
             filter("name eq XXXX").
             select("Name", "ProductDetail").
@@ -516,7 +516,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     assertNotNull(prods2);
     assertFalse(prods2.isEmpty());
 
-    // Complex/Entity (available only select and expand)
+    // Complex/Entity
     final Person person = container.operations().getPerson2("London").
             select("Name").
             expand("Order").execute();
@@ -545,7 +545,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
             container.operations().getAllProducts();
 
     // Complex/Entity collection (available filter, select, expand, orderBy, skip and top)
-    invoker1.compose().discount(10). // discount is an operation of ProductCollecton
+    invoker1.operations().discount(10). // discount is an operation of ProductCollecton
             filter("Name eq XXXX").
             select("Name", "ProductDetail").
             expand("ProductDetail").

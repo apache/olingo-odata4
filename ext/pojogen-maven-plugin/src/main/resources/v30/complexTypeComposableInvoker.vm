@@ -1,0 +1,51 @@
+#*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *#
+public interface $utility.capitalize($complexType.Name)ComposableInvoker 
+  extends org.apache.olingo.ext.proxy.api.StructuredComposableInvoker<$utility.capitalize($complexType.Name), ${utility.capitalize($complexType.Name)}.Operations> {
+
+  @Override
+  $utility.capitalize($complexType.Name)ComposableInvoker select(String... select);
+
+  @Override
+  $utility.capitalize($complexType.Name)ComposableInvoker expand(String... expand);
+
+#set( $complexProps = [] )
+#foreach($propertyName in $complexType.PropertyNames)
+    #set($property = $complexType.getProperty($propertyName))#*
+
+    *##if($property.Type.FullQualifiedName.toString().equals("Edm.Stream"))#*
+      *##set( $returnType = "org.apache.olingo.ext.proxy.api.EdmStreamValue" )#*
+    *##else#*
+      *##set( $returnType = $utility.getJavaType($property.Type, $property.Collection) )#*
+    *##end
+
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(
+                name = "$property.Name", 
+                type = "$property.Type.FullQualifiedName.toString()", 
+                nullable = $property.Nullable)
+    $returnType get$utility.capitalize($property.Name)();
+
+    void set$utility.capitalize($property.Name)($returnType _$utility.uncapitalize($property.Name));
+
+    #if($utility.isComplex($property.Type.FullQualifiedName))#*
+      *##set( $adding = $complexProps.add($property) )
+    #end
+
+#end

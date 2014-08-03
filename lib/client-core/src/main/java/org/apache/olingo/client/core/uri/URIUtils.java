@@ -402,7 +402,7 @@ public final class URIUtils {
     return res;
   }
 
-  public static URI buildInvokeRequestURI(
+  public static URI buildFunctionInvokeURI(
           final URI uri, final Map<String, ODataValue> parameters, final ODataServiceVersion serviceVersion) {
 
     if (serviceVersion.compareTo(ODataServiceVersion.V40) >= 0) {
