@@ -550,10 +550,26 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
             expand("ProductDetail").
             orderBy("Name").skip(3).top(5).execute();
 
+    // Complex/Entity
     final PersonComposableInvoker invoker2 = container.operations().getPerson2("London");
 
-    // Complex/Entity (available only select and expand: after query option composition is not available anymore)
-    invoker2.select("Name"). // after the first query option no composition is possible
-            expand("Order").execute();
+    // a. whole entity
+    final Person person = invoker2.select("Name").expand("Order").execute();
+    assertNotNull(person);
+    assertEquals(1, person.getPersonID(), 0);
+
+    // b. primitive collection property
+    final PrimitiveCollection<String> emails = invoker2.getEmails().execute();
+    assertNotNull(emails);
+    assertFalse(emails.isEmpty());
+
+    // c. complex property
+    final Address homeAddress = invoker2.getHomeAddress().load();
+    assertNotNull(homeAddress);
+
+    // d. navigation property
+    final Person parent = invoker2.getParent().load();
+    assertNotNull(parent);
+    assertEquals(2, parent.getPersonID(), 0);
   }
 }
