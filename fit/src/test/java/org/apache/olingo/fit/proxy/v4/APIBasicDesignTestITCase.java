@@ -37,9 +37,6 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
-import org.apache.olingo.ext.proxy.api.StructuredCollectionComposableInvoker;
-import org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker;
-import org.apache.olingo.ext.proxy.api.StructuredComposableInvoker;
 import org.junit.Test;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -60,10 +57,13 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonComposableInvoker;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollectionComposableInvoker;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollectionComposableInvoker;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public class APIBasicDesignTestITCase extends AbstractTestITCase {
@@ -390,7 +390,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     product.setDetails(detailCollection);
 
     getContainer().getProducts().add(product);
-    
+
     // The first HTTP Request to create product and the linked product detail
     getContainer().flush();
 
@@ -398,7 +398,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     assertNotNull(product.operations().addAccessRight(AccessLevel.None).execute());
 
     // The third HTTP Request to access a bound operation via entity URL
-    final StructuredCollectionInvoker<ProductDetailCollection> result =
+    final ProductDetailCollectionComposableInvoker result =
             container.getProducts().getByKey(1012).operations().getProductDetails(1);
     assertEquals(1, result.execute().size());
   }
@@ -541,8 +541,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
   @Test
   public void workingWithComposableOperations() {
-    final StructuredCollectionComposableInvoker<ProductCollection, ProductCollection.Operations> invoker1 =
-            container.operations().getAllProducts();
+    final ProductCollectionComposableInvoker invoker1 = container.operations().getAllProducts();
 
     // Complex/Entity collection (available filter, select, expand, orderBy, skip and top)
     invoker1.operations().discount(10). // discount is an operation of ProductCollecton
@@ -551,7 +550,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
             expand("ProductDetail").
             orderBy("Name").skip(3).top(5).execute();
 
-    final StructuredComposableInvoker<Person, Person.Operations> invoker2 = container.operations().getPerson2("London");
+    final PersonComposableInvoker invoker2 = container.operations().getPerson2("London");
 
     // Complex/Entity (available only select and expand: after query option composition is not available anymore)
     invoker2.select("Name"). // after the first query option no composition is possible

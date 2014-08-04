@@ -48,6 +48,7 @@ import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.ComplexCollection;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.Operations;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 import org.apache.olingo.ext.proxy.api.Sort;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
@@ -55,7 +56,7 @@ import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 import org.apache.olingo.ext.proxy.utils.ProxyUtils;
 
-public class InvokerHandler<T, O> extends AbstractInvocationHandler {
+public class InvokerInvocationHandler<T, O extends Operations> extends AbstractInvocationHandler {
 
   private final URI baseURI;
 
@@ -67,11 +68,11 @@ public class InvokerHandler<T, O> extends AbstractInvocationHandler {
 
   private final EdmOperation edmOperation;
 
-  private final Class<T> targetRef;
+  protected final Class<T> targetRef;
 
   private final Class<?> operationRef;
 
-  public InvokerHandler(
+  public InvokerInvocationHandler(
           final URI uri,
           final Map<String, ODataValue> parameters,
           final Operation operation,
@@ -84,8 +85,8 @@ public class InvokerHandler<T, O> extends AbstractInvocationHandler {
     this.baseURI = uri;
     this.uri = this.baseURI == null ? null : service.getClient().newURIBuilder(this.baseURI.toASCIIString());
     this.parameters = parameters;
-    this.edmOperation = edmOperation;
     this.operation = operation;
+    this.edmOperation = edmOperation;
     if (references.length > 0) {
       this.targetRef = ClassUtils.<T>getTypeClass(references[0]);
       this.operationRef = references.length > 1 ? ClassUtils.<T>getTypeClass(references[1]) : null;
@@ -130,11 +131,11 @@ public class InvokerHandler<T, O> extends AbstractInvocationHandler {
         return (T) ClassUtils.returnVoid();
       }
 
-      final EdmTypeInfo edmType = new EdmTypeInfo.Builder().
+      final EdmTypeInfo returnType = new EdmTypeInfo.Builder().
               setEdm(service.getClient().getCachedEdm()).setTypeExpression(operation.returnType()).build();
 
-      if (edmType.isEntityType()) {
-        if (edmType.isCollection()) {
+      if (returnType.isEntityType()) {
+        if (returnType.isCollection()) {
           final Class<?> collItemType = ClassUtils.extractTypeArg(targetRef, EntityCollection.class);
           return (T) ProxyUtils.getEntityCollectionProxy(
                   service,
@@ -161,13 +162,13 @@ public class InvokerHandler<T, O> extends AbstractInvocationHandler {
 
         if (property == null || property.hasNullValue()) {
           res = null;
-        } else if (edmType.isCollection()) {
-          if (edmType.isComplexType()) {
+        } else if (returnType.isCollection()) {
+          if (returnType.isComplexType()) {
             final Class<?> itemRef = ClassUtils.extractTypeArg(ref, ComplexCollection.class);
             final List items = new ArrayList();
 
             for (ODataValue item : property.getValue().asCollection()) {
-              items.add(ProxyUtils.getComplex(
+              items.add(ProxyUtils.getComplexProxy(
                       service,
                       property.getName(),
                       item,
@@ -200,8 +201,8 @@ public class InvokerHandler<T, O> extends AbstractInvocationHandler {
                             null));
           }
         } else {
-          if (edmType.isComplexType()) {
-            res = ProxyUtils.getComplex(
+          if (returnType.isComplexType()) {
+            res = ProxyUtils.getComplexProxy(
                     service, property.getName(), property.getValue().asComplex(), ref, null, null, false);
           } else {
             res = CoreUtils.getObjectFromODataValue(property.getValue(), targetRef, service);

@@ -25,7 +25,6 @@ import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.ext.proxy.AbstractService;
-import org.apache.olingo.ext.proxy.api.ComplexType;
 import org.apache.olingo.ext.proxy.commons.ComplexInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.EntityCollectionInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
@@ -55,7 +54,7 @@ public class ProxyUtils {
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {typeCollectionRef},
             new EntityCollectionInvocationHandler(service, items, typeCollectionRef, targetEntitySetURI,
-            uri == null ? null : service.getClient().newURIBuilder(uri.toASCIIString())));
+                    uri == null ? null : service.getClient().newURIBuilder(uri.toASCIIString())));
   }
 
   public static Object getEntitySetProxy(
@@ -95,7 +94,7 @@ public class ProxyUtils {
             handler);
   }
 
-  public static ComplexType getComplex(
+  public static Object getComplexProxy(
           final AbstractService<?> service,
           final String name,
           final ODataValue value,
@@ -130,10 +129,8 @@ public class ProxyUtils {
 
     complexHandler.setEntityHandler(handler);
 
-    final ComplexType res = ComplexType.class.cast(Proxy.newProxyInstance(
+    return Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
-            new Class<?>[] {actualRef}, complexHandler));
-
-    return res;
+            new Class<?>[] {actualRef}, complexHandler);
   }
 }

@@ -23,16 +23,14 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
-import org.apache.olingo.ext.proxy.api.StructuredCollectionComposableInvoker;
-import org.apache.olingo.ext.proxy.api.StructuredComposableInvoker;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonComposableInvoker;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollectionComposableInvoker;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public class OperationImportInvokeTestITCase extends AbstractTestITCase {
@@ -45,7 +43,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void getPerson2() {
-    final StructuredComposableInvoker<Person, Person.Operations> person = container.operations().getPerson2("London");
+    final PersonComposableInvoker person = container.operations().getPerson2("London");
     assertEquals(1, person.execute().getPersonID(), 0);
   }
 
@@ -56,14 +54,13 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     address.setPostalCode("98052");
     address.setCity("London");
 
-    final StructuredComposableInvoker<Person, Person.Operations> person = container.operations().getPerson(address);
+    final PersonComposableInvoker person = container.operations().getPerson(address);
     assertEquals(1, person.execute().getPersonID(), 0);
   }
 
   @Test
   public void getAllProducts() {
-    final StructuredCollectionComposableInvoker<ProductCollection, ProductCollection.Operations> products =
-            container.operations().getAllProducts();
+    final ProductCollectionComposableInvoker products = container.operations().getAllProducts();
     assertEquals(5, products.execute().size());
   }
 

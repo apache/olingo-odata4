@@ -267,7 +267,7 @@ public interface Product
                     type = OperationType.FUNCTION,
                     isComposable = true,
                     referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection.class,                    returnType = "Collection(Microsoft.Test.OData.Services.ODataWCFService.ProductDetail)")
-      org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection> getProductDetails(
+      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollectionComposableInvoker getProductDetails(
                 @Parameter(name = "count", type = "Edm.Int32", nullable = true) java.lang.Integer count
             );
 

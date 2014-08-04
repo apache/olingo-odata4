@@ -162,7 +162,7 @@ public interface ProductDetail
                     type = OperationType.FUNCTION,
                     isComposable = true,
                     referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Product")
-      org.apache.olingo.ext.proxy.api.StructuredInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product> getRelatedProduct(
+      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductComposableInvoker getRelatedProduct(
             );
 
     

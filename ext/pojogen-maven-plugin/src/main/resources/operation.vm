@@ -30,13 +30,13 @@
         *##else#*
           *##if(${operation.ReturnType.Type.Kind} == "ENTITY" || ${operation.ReturnType.Type.Kind} == "COMPLEX")#*
             *##if($operation.getReturnType().isCollection())#*
-              *##if($operationComposable)#*
+              *##if($operation.Composable)#*
                 *##set($returnType = "${defaultType}ComposableInvoker")#*
               *##{else}#*
                 *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker<$defaultType>")#*
               *##end#*
             *##{else}#*
-              *##if($operationComposable)#*
+              *##if($operation.Composable)#*
                 *##set($returnType = "${defaultType}ComposableInvoker")#*
               *##{else}#*
               *##set($returnType = "org.apache.olingo.ext.proxy.api.StructuredInvoker<$defaultType>")#*

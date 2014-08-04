@@ -23,21 +23,19 @@ import static org.junit.Assert.assertNotNull;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import org.apache.olingo.ext.proxy.api.StructuredCollectionInvoker;
-import org.apache.olingo.ext.proxy.api.StructuredInvoker;
 import org.junit.Test;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfoComposableInvoker;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailKey;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AddressCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductComposableInvoker;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollectionComposableInvoker;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
@@ -49,7 +47,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void getProductDetails() {
-    final StructuredCollectionInvoker<ProductDetailCollection> result =
+    final ProductDetailCollectionComposableInvoker result =
             container.getProducts().getByKey(5).operations().getProductDetails(1);
     assertEquals(1, result.execute().size());
   }
@@ -60,7 +58,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     key.setProductID(6);
     key.setProductDetailID(1);
 
-    final StructuredInvoker<Product> product =
+    final ProductComposableInvoker product =
             container.getProductDetails().getByKey(key).operations().getRelatedProduct();
     assertEquals(6, product.execute().getProductID(), 0);
   }
@@ -73,7 +71,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void getAccountInfo() {
-    final StructuredInvoker<AccountInfo> accountInfo =
+    final AccountInfoComposableInvoker accountInfo =
             container.getAccounts().getByKey(101).operations().getAccountInfo();
     assertNotNull(accountInfo.execute());
   }

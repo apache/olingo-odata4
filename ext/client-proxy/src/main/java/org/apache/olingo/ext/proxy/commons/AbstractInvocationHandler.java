@@ -84,6 +84,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
   protected Object invokeSelfMethod(final Method method, final Object[] args)
           throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+
     return getClass().getMethod(method.getName(), method.getParameterTypes()).invoke(this, args);
   }
 

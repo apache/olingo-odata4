@@ -28,14 +28,14 @@ import org.junit.Test;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.ext.proxy.api.StructuredCollectionComposableInvoker;
-import org.apache.olingo.ext.proxy.api.StructuredComposableInvoker;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CustomerCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonComposableInvoker;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollectionComposableInvoker;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public class AsyncTestITCase extends AbstractTestITCase {
@@ -77,8 +77,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   @Test
   public void invoke() throws Exception {
-    final StructuredCollectionComposableInvoker<ProductCollection, ProductCollection.Operations> invoker1 =
-            container.operations().getAllProducts();
+    final ProductCollectionComposableInvoker invoker1 = container.operations().getAllProducts();
 
     final Future<ProductCollection> future1 = invoker1.operations().
             discount(10).
@@ -91,7 +90,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
     }
     assertFalse(future1.get().isEmpty());
 
-    final StructuredComposableInvoker<Person, Person.Operations> invoker2 = container.operations().getPerson2("London");
+    final PersonComposableInvoker invoker2 = container.operations().getPerson2("London");
 
     final Future<Person> future2 = invoker2.select("Name").
             expand("Order").executeAsync();

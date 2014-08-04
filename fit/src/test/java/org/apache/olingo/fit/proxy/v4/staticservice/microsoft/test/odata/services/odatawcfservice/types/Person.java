@@ -244,7 +244,7 @@ public interface Person
                     type = OperationType.FUNCTION,
                     isComposable = true,
                     referenceType = org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress.class,                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.HomeAddress")
-      org.apache.olingo.ext.proxy.api.StructuredInvoker<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress> getHomeAddress(
+      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddressComposableInvoker getHomeAddress(
             );
 
     

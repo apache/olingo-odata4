@@ -297,10 +297,10 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
           res = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {EdmStreamValue.class}, new EdmStreamValueHandler(
-                  baseURI == null
-                  ? null
-                  : getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name).build(),
-                  service));
+                          baseURI == null
+                          ? null
+                          : getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name).build(),
+                          service));
 
           streamedPropertyCache.put(name, EdmStreamValue.class.cast(res));
         }
@@ -322,7 +322,6 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
                     getEntityHandler(),
                     baseURI,
                     false);
-
           } else if (ref != null && ComplexCollection.class.isAssignableFrom(ref)) {
             final ComplexCollectionInvocationHandler<?> collectionHandler;
             final Class<?> itemRef = ClassUtils.extractTypeArg(ref, ComplexCollection.class);

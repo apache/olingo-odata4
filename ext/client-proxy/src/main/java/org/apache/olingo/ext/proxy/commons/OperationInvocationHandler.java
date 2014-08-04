@@ -185,20 +185,36 @@ final class OperationInvocationHandler extends AbstractInvocationHandler {
           final ODataValue paramValue = parameter.getValue() == null
                   ? null
                   : CoreUtils.getODataValue(service.getClient(), parameterType, parameter.getValue());
-          
+
           parameterValues.put(parameter.getKey().name(), paramValue);
         }
 
-        return Proxy.newProxyInstance(
-                Thread.currentThread().getContextClassLoader(),
-                new Class<?>[] {ClassUtils.getTypeClass(method.getGenericReturnType())}, 
-                new InvokerHandler(
+        final EdmTypeInfo returnType = edmOperation.getValue().getReturnType() == null
+                ? null
+                : new EdmTypeInfo.Builder().setEdm(service.getClient().getCachedEdm()).setTypeExpression(
+                        edmOperation.getValue().getReturnType().getType().getFullQualifiedName().toString()).build();
+
+        final InvokerInvocationHandler handler = returnType != null
+                && (returnType.isEntityType() || returnType.isComplexType()) && operation.isComposable()
+                ? new StructuredComposableInvokerInvocationHandler(
+                        edmOperation.getKey(),
+                        parameterValues,
+                        operation,
+                        edmOperation.getValue(),
+                        ClassUtils.getTypeArguments(method.getReturnType().getGenericInterfaces()[0]),
+                        returnType,
+                        service)
+                : new InvokerInvocationHandler(
                         edmOperation.getKey(),
                         parameterValues,
                         operation,
                         edmOperation.getValue(),
                         ClassUtils.getTypeArguments(method.getGenericReturnType()),
-                        service));
+                        service);
+        return Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[] {ClassUtils.getTypeClass(method.getGenericReturnType())},
+                handler);
       } else {
         throw new NoSuchMethodException(method.getName());
       }
