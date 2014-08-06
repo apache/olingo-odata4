@@ -331,6 +331,12 @@ public class UriValidatorTest {
     parseAndValidate(uri, HttpMethod.GET);
   }
 
+  @Test(expected = UriValidationException.class)
+  public void validateKeyPredicatesWrongValueTypeForValidateMethod() throws Exception {
+    String uri = "ESTwoKeyNav(PropertyInt16='abc', PropertyString='abc')";
+    parseAndValidate(uri, HttpMethod.GET);
+  }
+  
   @Test
   public void checkValidSystemQueryOption() throws Exception {
     String[] uris = constructUri(urisWithValidSystemQueryOptions);

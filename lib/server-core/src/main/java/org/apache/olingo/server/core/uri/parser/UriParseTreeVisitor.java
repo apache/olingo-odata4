@@ -343,7 +343,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
             tmp += (tmp.length() != 0 ? "," : "") + name;
           }
           throw wrap(new UriParserSemanticException("Function of functionimport '" + edmFunctionImport.getName()
-              + "' with parameters [" + tmp + "] not found"));
+              + "' with parameters [" + tmp + "] not found", UriParserSemanticException.MessageKeys.TEST));
         }
 
         uriResource.setFunction(edmFunctionImport.getUnboundFunction(names));
@@ -358,7 +358,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     if (lastResourcePart == null) {
       if (context.contextTypes.size() == 0) {
         throw wrap(new UriParserSemanticException("Resource part '" + odi + "' can only applied on typed "
-            + "resource parts"));
+            + "resource parts", UriParserSemanticException.MessageKeys.TEST));
       }
       source = context.contextTypes.peek();
     } else {
@@ -366,7 +366,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
       if (source.type == null) {
         throw wrap(new UriParserSemanticException("Resource part '" + odi + "' can only applied on typed "
-            + "resource parts"));
+            + "resource parts", UriParserSemanticException.MessageKeys.TEST));
       }
     }
 
@@ -385,7 +385,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
       if (!(source.type instanceof EdmStructuredType)) {
         throw wrap(new UriParserSemanticException("Can not parse'" + odi
-            + "'Previous path segment not a structural type."));
+            + "'Previous path segment not a structural type.", UriParserSemanticException.MessageKeys.TEST));
       }
 
       EdmStructuredType structType = (EdmStructuredType) source.type;
@@ -393,7 +393,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       EdmElement property = structType.getProperty(odi);
       if (property == null) {
         throw wrap(new UriParserSemanticException("Property '" + odi + "' not found in type '"
-            + structType.getNamespace() + "." + structType.getName() + "'"));
+            + structType.getNamespace() + "." + structType.getName() + "'", 
+            UriParserSemanticException.MessageKeys.TEST));
       }
 
       if (property instanceof EdmProperty) {
@@ -417,7 +418,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         context.contextUriInfo.addResourcePart(navigationResource);
         return null;
       } else {
-        throw wrap(new UriParserSemanticException("Unkown type for property '" + property + "'"));
+        throw wrap(new UriParserSemanticException("Unkown type for property '" + property + "'",
+            UriParserSemanticException.MessageKeys.TEST));
       }
 
     } else { // with namespace
@@ -432,7 +434,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
           // is entity type cast
           if (!(filterEntityType.compatibleTo(source.type))) {
             throw wrap(new UriParserSemanticException(
-                "Entity typefilter not compatible to previous path segment: " + fullFilterName.toString()));
+                "Entity typefilter not compatible to previous path segment: " + fullFilterName.toString(),
+                UriParserSemanticException.MessageKeys.TEST));
           }
 
           if (lastResourcePart == null) {
@@ -457,7 +460,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
                 if (lastPartWithKeys.getTypeFilterOnEntry() != null) {
                   throw wrap(new UriParserSemanticException("Entry typefilters are not chainable, used '"
                       + getName(filterEntityType) + "' behind '"
-                      + getName(lastPartWithKeys.getTypeFilterOnEntry()) + "'"));
+                      + getName(lastPartWithKeys.getTypeFilterOnEntry()) + "'",
+                      UriParserSemanticException.MessageKeys.TEST));
                 }
                 lastPartWithKeys.setEntryTypeFilter(filterEntityType);
                 return null;
@@ -465,7 +469,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
                 if (lastPartWithKeys.getTypeFilterOnCollection() != null) {
                   throw wrap(new UriParserSemanticException("Collection typefilters are not chainable, used '"
                       + getName(filterEntityType) + "' behind '"
-                      + getName(lastPartWithKeys.getTypeFilterOnCollection()) + "'"));
+                      + getName(lastPartWithKeys.getTypeFilterOnCollection()) + "'",
+                      UriParserSemanticException.MessageKeys.TEST));
                 }
                 lastPartWithKeys.setCollectionTypeFilter(filterEntityType);
                 return null;
@@ -475,14 +480,14 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
               if (lastPartTyped.getTypeFilter() != null) {
                 throw wrap(new UriParserSemanticException("Typefilters are not chainable, used '"
                     + getName(filterEntityType) + "' behind '"
-                    + getName(lastPartTyped.getTypeFilter()) + "'"));
+                    + getName(lastPartTyped.getTypeFilter()) + "'", UriParserSemanticException.MessageKeys.TEST));
               }
 
               lastPartTyped.setTypeFilter(filterEntityType);
               return null;
             } else {
               throw wrap(new UriParserSemanticException("Path segment before '" + getName(filterEntityType)
-                  + "' not typed"));
+                  + "' not typed", UriParserSemanticException.MessageKeys.TEST));
             }
           }
         }
@@ -497,7 +502,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
           if (!(filterComplexType.compatibleTo(source.type))) {
             throw wrap(new UriParserSemanticException(
                 "Complex typefilter '" + getName(source.type) + "'not compatible type of previous path segment '"
-                    + getName(filterComplexType) + "'"));
+                    + getName(filterComplexType) + "'", UriParserSemanticException.MessageKeys.TEST));
           }
 
           // is simple complex type cast
@@ -523,7 +528,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
                 if (lastPartWithKeys.getTypeFilterOnEntry() != null) {
                   throw wrap(new UriParserSemanticException("Entry typefilters are not chainable, used '"
                       + getName(filterComplexType) + "' behind '"
-                      + getName(lastPartWithKeys.getTypeFilterOnEntry()) + "'"));
+                      + getName(lastPartWithKeys.getTypeFilterOnEntry()) + "'",
+                      UriParserSemanticException.MessageKeys.TEST));
                 }
                 lastPartWithKeys.setEntryTypeFilter(filterComplexType);
                 return null;
@@ -531,7 +537,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
                 if (lastPartWithKeys.getTypeFilterOnCollection() != null) {
                   throw wrap(new UriParserSemanticException("Collection typefilters are not chainable, used '"
                       + getName(filterComplexType) + "' behind '"
-                      + getName(lastPartWithKeys.getTypeFilterOnCollection()) + "'"));
+                      + getName(lastPartWithKeys.getTypeFilterOnCollection()) + "'",
+                      UriParserSemanticException.MessageKeys.TEST));
                 }
                 lastPartWithKeys.setCollectionTypeFilter(filterComplexType);
                 return null;
@@ -542,14 +549,14 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
               if (lastPartTyped.getTypeFilter() != null) {
                 throw wrap(new UriParserSemanticException("Typefilters are not chainable, used '"
                     + getName(filterComplexType) + "' behind '"
-                    + getName(lastPartTyped.getTypeFilter()) + "'"));
+                    + getName(lastPartTyped.getTypeFilter()) + "'", UriParserSemanticException.MessageKeys.TEST));
               }
 
               lastPartTyped.setTypeFilter(filterComplexType);
               return null;
             } else {
               throw wrap(new UriParserSemanticException("Path segment before '" + getName(filterComplexType)
-                  + "' not typed"));
+                  + "' not typed", UriParserSemanticException.MessageKeys.TEST));
             }
           }
         }
@@ -569,7 +576,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       // do a check for bound functions (which requires a parameter list)
       if (ctx.vlNVO.size() == 0) {
         throw wrap(new UriParserSemanticException("Expected function parameters for '" + fullBindingTypeName.toString()
-            + "'"));
+            + "'", UriParserSemanticException.MessageKeys.TEST));
       }
 
       context.contextReadingFunctionParameters = true;
@@ -610,7 +617,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         return null;
       }
 
-      throw wrap(new UriParserSemanticException("Unknown resource path segment:" + fullFilterName.toString()));
+      throw wrap(new UriParserSemanticException("Unknown resource path segment:" + fullFilterName.toString(),
+          UriParserSemanticException.MessageKeys.TEST));
     }
   }
 
@@ -631,7 +639,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     UriResource obj = context.contextUriInfo.getLastResourcePart();
     if (!(obj instanceof UriResourcePartTyped)) {
-      throw wrap(new UriParserSemanticException("any only allowed on typed path segments"));
+      throw wrap(new UriParserSemanticException("any only allowed on typed path segments",
+          UriParserSemanticException.MessageKeys.TEST));
     }
 
     UriContext.LambdaVariables var = new UriContext.LambdaVariables();
@@ -770,7 +779,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     EdmEntityType type = edm.getEntityType(fullName);
     if (type == null) {
-      throw wrap(new UriParserSemanticException("Expected EntityTypeName"));
+      throw wrap(new UriParserSemanticException("Expected EntityTypeName",
+          UriParserSemanticException.MessageKeys.TEST));
     }
     context.contextUriInfo.setEntityTypeCast(type);
 
@@ -855,7 +865,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     if (ctx.vLV != null) {
       UriResourceImpl lastResourcePart = (UriResourceImpl) context.contextUriInfo.getLastResourcePart();
       if (!(lastResourcePart instanceof UriResourcePartTyped)) {
-        throw wrap(new UriParserSemanticException("any only allowed on typed path segments"));
+        throw wrap(new UriParserSemanticException("any only allowed on typed path segments",
+            UriParserSemanticException.MessageKeys.TEST));
       }
 
       UriContext.LambdaVariables var = new UriContext.LambdaVariables();
@@ -957,11 +968,13 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         if (!((UriResourcePartTyped) pathInfo).isCollection()) {
           context.contextUriInfo.addResourcePart(new UriResourceValueImpl());
         } else {
-          throw wrap(new UriParserSemanticException("$value only allowed on typed path segments"));
+          throw wrap(new UriParserSemanticException("$value only allowed on typed path segments",
+              UriParserSemanticException.MessageKeys.TEST));
         }
         return null;
       } else {
-        throw wrap(new UriParserSemanticException("$value only allowed on typed path segments"));
+        throw wrap(new UriParserSemanticException("$value only allowed on typed path segments",
+            UriParserSemanticException.MessageKeys.TEST));
       }
 
     } else if (ctx.vC != null) {
@@ -969,10 +982,12 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         if (((UriResourcePartTyped) pathInfo).isCollection()) {
           context.contextUriInfo.addResourcePart(new UriResourceCountImpl());
         } else {
-          throw wrap(new UriParserSemanticException("$count only allowed on collection properties"));
+          throw wrap(new UriParserSemanticException("$count only allowed on collection properties",
+              UriParserSemanticException.MessageKeys.TEST));
         }
       } else {
-        throw wrap(new UriParserSemanticException("$count only allowed on typed properties"));
+        throw wrap(new UriParserSemanticException("$count only allowed on typed properties",
+            UriParserSemanticException.MessageKeys.TEST));
       }
     } else if (ctx.vR != null) {
       if (pathInfo instanceof UriResourcePartTyped) {
@@ -980,10 +995,12 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         if (type instanceof EdmEntityType) {
           context.contextUriInfo.addResourcePart(new UriResourceRefImpl());
         } else {
-          throw wrap(new UriParserSemanticException("$ref only allowed on endity types"));
+          throw wrap(new UriParserSemanticException("$ref only allowed on endity types",
+              UriParserSemanticException.MessageKeys.TEST));
         }
       } else {
-        throw wrap(new UriParserSemanticException("$ref only allowed on typed properties"));
+        throw wrap(new UriParserSemanticException("$ref only allowed on typed properties",
+            UriParserSemanticException.MessageKeys.TEST));
       }
 
     } else if (ctx.vAll != null) {
@@ -1393,13 +1410,15 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       try {
         expression = (ExpressionImpl) ctx.vVO.accept(this);
       } catch (Exception ex) {
-        throw wrap(new UriParserSemanticException("Invalid key value: " + valueText));
+        throw wrap(new UriParserSemanticException("Invalid key value: " + valueText,
+            UriParserSemanticException.MessageKeys.TEST));
       }
 
       // get type of last resource part
       UriResource last = context.contextUriInfo.getLastResourcePart();
       if (!(last instanceof UriResourcePartTyped)) {
-        throw wrap(new UriParserSemanticException("Paramterslist on untyped resource path segement not allowed"));
+        throw wrap(new UriParserSemanticException("Paramterslist on untyped resource path segement not allowed",
+            UriParserSemanticException.MessageKeys.TEST));
       }
       EdmEntityType lastType = (EdmEntityType) ((UriResourcePartTyped) last).getType();
 
@@ -1420,14 +1439,16 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       // key.
       // for using referential constrains the last resource part must be a navigation property
       if (!(context.contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl)) {
-        throw wrap(new UriParserSemanticException("Not enougth keyproperties defined"));
+        throw wrap(new UriParserSemanticException("Not enougth keyproperties defined",
+            UriParserSemanticException.MessageKeys.TEST));
       }
       UriResourceNavigationPropertyImpl lastNav = (UriResourceNavigationPropertyImpl) last;
 
       // get the partner of the navigation property
       EdmNavigationProperty partner = lastNav.getProperty().getPartner();
       if (partner == null) {
-        throw wrap(new UriParserSemanticException("Not enougth keyproperties defined"));
+        throw wrap(new UriParserSemanticException("Not enougth keyproperties defined",
+            UriParserSemanticException.MessageKeys.TEST));
       }
 
       // create the keylist
@@ -1445,7 +1466,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
             missedKey = item;
           } else {
             // two of more keys are missing
-            throw wrap(new UriParserSemanticException("Not enougth referntial contrains defined"));
+            throw wrap(new UriParserSemanticException("Not enougth referntial contrains defined",
+                UriParserSemanticException.MessageKeys.TEST));
           }
         }
       }
@@ -1479,7 +1501,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
       // get type of last resource part
       if (!(last instanceof UriResourcePartTyped)) {
-        throw wrap(new UriParserSemanticException("Parameterslist on untyped resource path segement not allowed"));
+        throw wrap(new UriParserSemanticException("Parameterslist on untyped resource path segement not allowed",
+            UriParserSemanticException.MessageKeys.TEST));
       }
       EdmEntityType lastType = (EdmEntityType) ((UriResourcePartTyped) last).getType();
 
@@ -1494,14 +1517,16 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       // if not, check if the missing key predicates can be satisfied with help of the defined referential constrains
       // for using referential constrains the last resource part must be a navigation property
       if (!(context.contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl)) {
-        throw wrap(new UriParserSemanticException("Not enougth keyproperties defined"));
+        throw wrap(new UriParserSemanticException("Not enougth keyproperties defined",
+            UriParserSemanticException.MessageKeys.TEST));
       }
       UriResourceNavigationPropertyImpl lastNav = (UriResourceNavigationPropertyImpl) last;
 
       // get the partner of the navigation property
       EdmNavigationProperty partner = lastNav.getProperty().getPartner();
       if (partner == null) {
-        throw wrap(new UriParserSemanticException("Not enougth keyproperties defined"));
+        throw wrap(new UriParserSemanticException("Not enougth keyproperties defined",
+            UriParserSemanticException.MessageKeys.TEST));
       }
 
       // fill missing keys from referential constrains
@@ -1528,7 +1553,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         return list;
       }
 
-      throw wrap(new UriParserSemanticException("Not enougth keyproperties defined"));
+      throw wrap(new UriParserSemanticException("Not enougth keyproperties defined",
+          UriParserSemanticException.MessageKeys.TEST));
     }
     return new ArrayList<String>();
   }
@@ -1542,7 +1568,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       uriParameter.setText(ctx.vCOM.getText());
       uriParameter.setExpression((ExpressionImpl) ctx.vCOM.accept(this));
     } else {
-      uriParameter.setAlias(ctx.vALI.getText());
+      uriParameter.setAlias("@" + ctx.vALI.getText());
     }
 
     return uriParameter;
@@ -1631,7 +1657,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         ((UriResourceWithKeysImpl) pathInfoSegment)
             .setKeyPredicates(list);
       } else {
-        throw wrap(new UriParserSemanticException("Key properties not allowed"));
+        throw wrap(new UriParserSemanticException("Key properties not allowed",
+            UriParserSemanticException.MessageKeys.TEST));
         // throw UriSemanticError.addKrepredicatesNotAllowed();
       }
     }
@@ -1698,7 +1725,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     UriResource lastResource = context.contextUriInfo.getLastResourcePart();
 
     if (!(lastResource instanceof UriResourcePartTyped)) {
-      throw wrap(new UriParserSemanticException("Resource path not typed"));
+      throw wrap(new UriParserSemanticException("Resource path not typed",
+          UriParserSemanticException.MessageKeys.TEST));
     }
 
     UriResourcePartTyped lastType = (UriResourcePartTyped) lastResource;
@@ -1803,18 +1831,21 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
         prevType = getTypeInformation(last).type;
         if (prevType == null) {
-          throw wrap(new UriParserSemanticException("prev segement not typed"));
+          throw wrap(new UriParserSemanticException("prev segement not typed",
+              UriParserSemanticException.MessageKeys.TEST));
         }
       }
 
       if (!(prevType instanceof EdmStructuredType)) {
-        throw wrap(new UriParserSemanticException("Previous select item is not a structural type"));
+        throw wrap(new UriParserSemanticException("Previous select item is not a structural type",
+            UriParserSemanticException.MessageKeys.TEST));
       }
 
       EdmStructuredType structType = (EdmStructuredType) prevType;
       EdmElement element = structType.getProperty(odi);
       if (element == null) {
-        throw wrap(new UriParserSemanticException("Previous select item has not property: " + odi));
+        throw wrap(new UriParserSemanticException("Previous select item has not property: " + odi,
+            UriParserSemanticException.MessageKeys.TEST));
       }
 
       // create new segment
@@ -1864,7 +1895,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
           return this;
         }
       } else {
-        throw wrap(new UriParserSemanticException("Only Simple and Complex properties within select allowed"));
+        throw wrap(new UriParserSemanticException("Only Simple and Complex properties within select allowed",
+            UriParserSemanticException.MessageKeys.TEST));
       }
     } else {
       String namespace = ctx.vNS.getText();
@@ -1916,14 +1948,16 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
             }
           }
         } else {
-          throw wrap(new UriParserSemanticException("prev segement must be comlex of entity type"));
+          throw wrap(new UriParserSemanticException("prev segement must be comlex of entity type",
+              UriParserSemanticException.MessageKeys.TEST));
         }
 
       } else {
         UriInfoImpl uriInfo = (UriInfoImpl) context.contextSelectItem.getResourcePath();
         UriResource last = uriInfo.getLastResourcePart();
         if (!(last instanceof UriResourceTypedImpl)) {
-          throw wrap(new UriParserSemanticException("prev segement typed"));
+          throw wrap(new UriParserSemanticException("prev segement typed",
+              UriParserSemanticException.MessageKeys.TEST));
         }
         EdmType prevType = getTypeInformation(last).type;
 
@@ -1939,7 +1973,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
             }
           }
         } else if (prevType instanceof EdmEntityType) {
-          throw wrap(new UriParserSemanticException("Error"));
+          throw wrap(new UriParserSemanticException("Error", UriParserSemanticException.MessageKeys.TEST));
           /*
            * EdmEntityType et = edm.getEntityType(fullName);
            * if (et != null) {
@@ -1953,7 +1987,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
            * }
            */
         } else {
-          throw wrap(new UriParserSemanticException("prev segement must be comlex of entity type"));
+          throw wrap(new UriParserSemanticException("prev segement must be comlex of entity type",
+              UriParserSemanticException.MessageKeys.TEST));
         }
       }
 
@@ -1964,7 +1999,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         UriInfoImpl uriInfo = (UriInfoImpl) context.contextSelectItem.getResourcePath();
         UriResource last = uriInfo.getLastResourcePart();
         if (!(last instanceof UriResourceTypedImpl)) {
-          throw wrap(new UriParserSemanticException("prev segement typed"));
+          throw wrap(new UriParserSemanticException("prev segement typed",
+              UriParserSemanticException.MessageKeys.TEST));
         }
         prevType = getTypeInformation(last).type;
       }

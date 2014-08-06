@@ -29,7 +29,9 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpContentType;
@@ -40,11 +42,14 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.edm.provider.EdmProvider;
+import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ODataHandlerTest {
@@ -220,6 +225,18 @@ public class ODataHandlerTest {
   }
 
   @Test
+  public void testUnregisteredProcessor() {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("ESAllPrim");
+
+    ODataResponse response = handler.process(request);
+    assertNotNull(response);
+    assertEquals(501, response.getStatusCode());
+  }
+
+  @Test
   public void testWithApplicationExceptionInProcessor() throws Exception {
     ODataRequest request = new ODataRequest();
 
@@ -227,13 +244,65 @@ public class ODataHandlerTest {
     request.setRawODataPath("$metadata");
 
     MetadataProcessor metadataProcessor = mock(MetadataProcessor.class);
-    doThrow(new ODataApplicationException("msg", 412, Locale.ENGLISH)).when(metadataProcessor).readMetadata(
+    doThrow(new ODataApplicationException("msg", 425, Locale.ENGLISH)).when(metadataProcessor).readMetadata(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
     handler.register(metadataProcessor);
 
     ODataResponse response = handler.process(request);
     assertNotNull(response);
-    assertEquals(412, response.getStatusCode());
+    assertEquals(425, response.getStatusCode());
+  }
+  
+  //TODO: Use this test
+  @Ignore
+  @Test
+  public void testUriParserExceptionResultsInRightResponseNotFound() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("NotFound");
+
+    ODataResponse response = handler.process(request);
+    assertNotNull(response);
+    assertEquals(404, response.getStatusCode());
+  }
+  
+  //TODO: Use this test
+  @Ignore
+  @Test
+  public void testUriParserExceptionResultsInRightResponseBadRequest() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("ESAllPrim()");
+
+    ODataResponse response = handler.process(request);
+    assertNotNull(response);
+    assertEquals(404, response.getStatusCode());
+  }
+  
+  @Test
+  public void testUriParserExceptionResultsInRightResponseEdmCause() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("EdmException");
+
+    OData odata = OData.newInstance();
+    Edm edm = odata.createEdm(new EdmProvider() {
+      public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
+          throws ODataException {
+        throw new ODataException("msg");
+      }
+    });
+
+    ODataHandler localHandler = new ODataHandler(odata, edm);
+    
+    ODataResponse response = localHandler.process(request);
+    assertNotNull(response);
+    assertEquals(500, response.getStatusCode());
+    // TODO: Check for message in case of EdmException
+    // System.out.println(IOUtils.toString(response.getContent()));
   }
 }

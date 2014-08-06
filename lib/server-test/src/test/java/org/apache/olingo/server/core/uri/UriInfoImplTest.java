@@ -148,21 +148,21 @@ public class UriInfoImplTest {
 
     QueryOptionImpl queryOption = new QueryOptionImpl();
 
-    queryOptions.add(expand);
-    queryOptions.add(filter);
-    queryOptions.add(format);
-    queryOptions.add(id);
-    queryOptions.add(inlinecount);
-    queryOptions.add(orderby);
-    queryOptions.add(search);
-    queryOptions.add(select);
-    queryOptions.add(skip);
-    queryOptions.add(skipToken);
-    queryOptions.add(top);
-    queryOptions.add(customOption0);
-    queryOptions.add(customOption1);
-    queryOptions.add(levels);// not stored
-    queryOptions.add(queryOption);// not stored
+    queryOptions.add(expand.setName(""));
+    queryOptions.add(filter.setName(""));
+    queryOptions.add(format.setName(""));
+    queryOptions.add(id.setName(""));
+    queryOptions.add(inlinecount.setName(""));
+    queryOptions.add(orderby.setName(""));
+    queryOptions.add(search.setName(""));
+    queryOptions.add(select.setName(""));
+    queryOptions.add(skip.setName(""));
+    queryOptions.add(skipToken.setName(""));
+    queryOptions.add(top.setName(""));
+    queryOptions.add(customOption0.setName(""));
+    queryOptions.add(customOption1.setName(""));
+    queryOptions.add(levels.setName(""));// not stored
+    queryOptions.add(queryOption.setName(""));// not stored
     uriInfo.setQueryOptions(queryOptions);
 
     assertEquals(expand, uriInfo.getExpandOption());

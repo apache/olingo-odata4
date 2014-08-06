@@ -20,17 +20,18 @@ package org.apache.olingo.server.core.uri.parser;
 
 public class UriParserSyntaxException extends UriParserException {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 5887744747812478226L;
 
-  public UriParserSyntaxException(final String message, final Throwable cause) {
-    super(message, cause);
+  public static enum MessageKeys implements MessageKey {
+    TEST
+  }
+  
+  public UriParserSyntaxException(String developmentMessage, MessageKey messageKey, String... parameters) {
+    super(developmentMessage, messageKey, parameters);
   }
 
-  public UriParserSyntaxException(final String message) {
-    super(message, null);
+  public UriParserSyntaxException(String developmentMessage, Throwable cause, MessageKey messageKey,
+      String... parameters) {
+    super(developmentMessage, cause, messageKey, parameters);
   }
-
 }

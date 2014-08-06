@@ -115,4 +115,10 @@ public interface UriInfoResource {
    */
   List<UriResource> getUriResourceParts();
 
+  /**
+   * @param alias
+   * @return the value for the given alias or null if no value is defined
+   */
+  String getValueForAlias(String alias);
+
 }

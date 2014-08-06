@@ -47,14 +47,14 @@ public class TestUriParserImpl {
   private final String PropertyDate = "PropertyDate=2013-09-25";
   private final String PropertyDateTimeOffset = "PropertyDateTimeOffset=2002-10-10T12:00:00-05:00";
   private final String PropertyDecimal = "PropertyDecimal=12";
-  private final String PropertyDuration = "PropertyDuration=duration'P10DT5H34M21.123456789012S'";
+  private final String PropertyDuration = "PropertyDuration=duration'P50903316DT2H25M4S'";
   private final String PropertyGuid = "PropertyGuid=12345678-1234-1234-1234-123456789012";
   private final String PropertyInt16 = "PropertyInt16=1";
   private final String PropertyInt32 = "PropertyInt32=12";
   private final String PropertyInt64 = "PropertyInt64=64";
   private final String PropertySByte = "PropertySByte=1";
   private final String PropertyString = "PropertyString='ABC'";
-  private final String PropertyTimeOfDay = "PropertyTimeOfDay=12:34:55.123456789012";
+  private final String PropertyTimeOfDay = "PropertyTimeOfDay=12:34:55";
 
   private final String allKeys = PropertyString + "," + PropertyInt16 + "," + PropertyBoolean + "," + PropertyByte
       + "," + PropertySByte + "," + PropertyInt32 + "," + PropertyInt64 + "," + PropertyDecimal + "," + PropertyDate
@@ -358,9 +358,9 @@ public class TestUriParserImpl {
         .isKeyPredicate(7, "PropertyDecimal", "12")
         .isKeyPredicate(8, "PropertyDate", "2013-09-25")
         .isKeyPredicate(9, "PropertyDateTimeOffset", "2002-10-10T12:00:00-05:00")
-        .isKeyPredicate(10, "PropertyDuration", "duration'P10DT5H34M21.123456789012S'")
+        .isKeyPredicate(10, "PropertyDuration", "duration'P50903316DT2H25M4S'")
         .isKeyPredicate(11, "PropertyGuid", "12345678-1234-1234-1234-123456789012")
-        .isKeyPredicate(12, "PropertyTimeOfDay", "12:34:55.123456789012");
+        .isKeyPredicate(12, "PropertyTimeOfDay", "12:34:55");
   }
 
   @Test

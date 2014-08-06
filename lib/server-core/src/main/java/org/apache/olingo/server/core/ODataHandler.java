@@ -74,7 +74,7 @@ public class ODataHandler {
       processInternal(request, requestedContentType, response);
 
     } catch (UriParserException e) {
-
+      e.printStackTrace();
     } catch (ContentNegotiatorException e) {
       Locale requestedLocale = null;
       ODataServerError serverError =

@@ -1067,21 +1067,18 @@ public class TestFullResourcePath {
         .isKeyPredicate(2, "KeyAlias2", "'3'")
         .isKeyPredicate(3, "KeyAlias3", "'4'");
 
-    testUri.run("ESCollAllPrim(null)")
-        .isKind(UriInfoKind.resource).goPath()
-        .first()
-        .isEntitySet("ESCollAllPrim");
+    testUri.runEx("ESCollAllPrim(null)").isExValidation("");
   }
 
   @Test
   public void runEsNameParaKeys() throws Exception {
     testUri.run(encode("ESAllKey(PropertyString='O''Neil',PropertyBoolean=true,PropertyByte=255,"
         + "PropertySByte=-128,PropertyInt16=-32768,PropertyInt32=-2147483648,"
-        + "PropertyInt64=-9223372036854775808,PropertyDecimal=0.1,PropertyDate=2013-09-25,"
+        + "PropertyInt64=-9223372036854775808,PropertyDecimal=1,PropertyDate=2013-09-25,"
         + "PropertyDateTimeOffset=2002-10-10T12:00:00-05:00,"
-        + "PropertyDuration=duration'P10DT5H34M21.123456789012S',"
+        + "PropertyDuration=duration'P50903316DT2H25M4S',"
         + "PropertyGuid=12345678-1234-1234-1234-123456789012,"
-        + "PropertyTimeOfDay=12:34:55.123456789012)"))
+        + "PropertyTimeOfDay=12:34:55)"))
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESAllKey")
@@ -1092,12 +1089,12 @@ public class TestFullResourcePath {
         .isKeyPredicate(4, "PropertyInt16", "-32768")
         .isKeyPredicate(5, "PropertyInt32", "-2147483648")
         .isKeyPredicate(6, "PropertyInt64", "-9223372036854775808")
-        .isKeyPredicate(7, "PropertyDecimal", "0.1")
+        .isKeyPredicate(7, "PropertyDecimal", "1")
         .isKeyPredicate(8, "PropertyDate", "2013-09-25")
         .isKeyPredicate(9, "PropertyDateTimeOffset", "2002-10-10T12:00:00-05:00")
-        .isKeyPredicate(10, "PropertyDuration", "duration'P10DT5H34M21.123456789012S'")
+        .isKeyPredicate(10, "PropertyDuration", "duration'P50903316DT2H25M4S'")
         .isKeyPredicate(11, "PropertyGuid", "12345678-1234-1234-1234-123456789012")
-        .isKeyPredicate(12, "PropertyTimeOfDay", "12:34:55.123456789012");
+        .isKeyPredicate(12, "PropertyTimeOfDay", "12:34:55");
   }
 
   @Test
@@ -3321,7 +3318,7 @@ public class TestFullResourcePath {
         .goPath()
         .first()
         .isFunction("UFCRTETTwoKeyNavParamCTTwoPrim")
-        .isParameterAlias(0, "ParameterCTTwoPrim", "ParamAlias");
+        .isParameterAlias(0, "ParameterCTTwoPrim", "@ParamAlias");
 
     testFilter.runOnETTwoKeyNav("PropertyComp"
         + "/com.sap.odata.test1.BFCCTPrimCompRTESTwoKeyNavParam"
@@ -3446,7 +3443,7 @@ public class TestFullResourcePath {
         .root().left().goPath()
         .first()
         .isFunction("UFCRTETTwoKeyNavParam")
-        .isParameterAlias(0, "ParameterInt16", "Param1Alias")
+        .isParameterAlias(0, "ParameterInt16", "@Param1Alias")
         .n()
         .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
@@ -5091,7 +5088,8 @@ public class TestFullResourcePath {
   public void testAlias() throws Exception {
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString=@A)?@A='2'").goPath()
         .isKeyPredicate(0, "PropertyInt16", "1")
-        .isKeyPredicateAlias(1, "PropertyString", "A")
+        .isKeyPredicateAlias(1, "PropertyString", "@A")
+        .isInAliasToValueMap("@A", "'2'")
         .goUpUriValidator()
         .isCustomParameter(0, "@A", "'2'");
 

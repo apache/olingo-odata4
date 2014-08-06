@@ -68,7 +68,8 @@ public final class EdmDecimal extends SingletonPrimitiveType {
   }
 
   private static boolean validateLiteral(final String value) {
-    return PATTERN.matcher(value).matches();
+    boolean valid = PATTERN.matcher(value).matches();
+    return valid;
   }
 
   private static final boolean validatePrecisionAndScale(final String value, final Integer precision,

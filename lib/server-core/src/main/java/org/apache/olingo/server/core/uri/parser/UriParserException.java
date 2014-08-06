@@ -18,18 +18,18 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
-public class UriParserException extends Exception {
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+import org.apache.olingo.server.api.ODataTranslatedException;
 
-  public UriParserException(final String message, final Throwable cause) {
-    super(message, cause);
+public class UriParserException extends ODataTranslatedException {
+
+  private static final long serialVersionUID = -6438700016830955949L;
+
+  public UriParserException(String developmentMessage, MessageKey messageKey, String... parameters) {
+    super(developmentMessage, messageKey, parameters);
   }
 
-  public UriParserException(final String message) {
-    super(message, null);
+  public UriParserException(String developmentMessage, Throwable cause, MessageKey messageKey,
+      String... parameters) {
+    super(developmentMessage, cause, messageKey, parameters);
   }
-
 }

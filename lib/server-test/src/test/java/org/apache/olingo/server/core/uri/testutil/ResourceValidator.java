@@ -597,4 +597,10 @@ public class ResourceValidator implements TestValidator {
     return this;
   }
 
+  public ResourceValidator isInAliasToValueMap(String alias, String value) {
+    String valueForAlias = uriInfo.getValueForAlias(alias);
+    assertEquals(value, valueForAlias);
+    return this;
+  }
+
 }

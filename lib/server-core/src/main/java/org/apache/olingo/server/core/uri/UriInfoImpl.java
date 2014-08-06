@@ -62,6 +62,7 @@ public class UriInfoImpl implements UriInfo {
   private EdmEntityType entityTypeCast; // for $entity
 
   private List<CustomQueryOptionImpl> customQueryOptions = new ArrayList<CustomQueryOptionImpl>();
+  private HashMap<String, String> aliasToValue = new HashMap<String, String>();
 
   HashMap<SystemQueryOptionKind, SystemQueryOption> systemQueryOptions =
       new HashMap<SystemQueryOptionKind, SystemQueryOption>();
@@ -132,6 +133,11 @@ public class UriInfoImpl implements UriInfo {
       retList.add(item);
     }
     return retList;
+  }
+
+  @Override
+  public String getValueForAlias(String alias) {
+    return aliasToValue.get(alias);
   }
 
   @Override
@@ -228,6 +234,9 @@ public class UriInfoImpl implements UriInfo {
 
   public void addCustomQueryOption(final QueryOptionImpl item) {
     customQueryOptions.add((CustomQueryOptionImpl) item);
+    if (item.getName().startsWith("@")) {
+      aliasToValue.put(item.getName(), item.getText());
+    }
   }
 
   public UriInfoImpl setSystemQueryOption(final SystemQueryOptionImpl systemOption) {

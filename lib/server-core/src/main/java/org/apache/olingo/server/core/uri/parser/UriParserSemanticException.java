@@ -20,14 +20,18 @@ package org.apache.olingo.server.core.uri.parser;
 
 public class UriParserSemanticException extends UriParserException {
 
-  private static final long serialVersionUID = 1L;
-
-  public UriParserSemanticException(final String message, final Throwable cause) {
-    super(message, cause);
+  private static final long serialVersionUID = 3850285860949809622L;
+  
+  public static enum MessageKeys implements MessageKey {
+    TEST
   }
 
-  public UriParserSemanticException(final String message) {
-    super(message, null);
+  public UriParserSemanticException(String developmentMessage, MessageKey messageKey, String... parameters) {
+    super(developmentMessage, messageKey, parameters);
   }
 
+  public UriParserSemanticException(String developmentMessage, Throwable cause, MessageKey messageKey,
+      String... parameters) {
+    super(developmentMessage, cause, messageKey, parameters);
+  }
 }

@@ -18,17 +18,47 @@
  */
 package org.apache.olingo.server.core.uri.validator;
 
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.server.api.ODataTranslatedException;
 
-public class UriValidationException extends Exception {
+public class UriValidationException extends ODataTranslatedException {
 
   private static final long serialVersionUID = -3179078078053564742L;
 
-  public UriValidationException(final String msg) {
-    super(msg);
+  public static enum MessageKeys implements MessageKey {
+    /** parameter: unsupported query option */
+    UNSUPPORTED_QUERY_OPTION,
+    /** parameter: unsupported uri kind */
+    UNSUPPORTED_URI_KIND,
+    /** parameter: unsupported uri resource kind */
+    UNSUPPORTED_URI_RESOURCE_KIND,
+    /** parameter: unsupported function return type */
+    UNSUPPORTED_FUNCTION_RETURN_TYPE,
+    /** parameter: unsupported action return type */
+    UNSUPPORTED_ACTION_RETURN_TYPE,
+    /** parameter: unsupported http method */
+    UNSUPPORTED_HTTP_METHOD,
+    /** parameter: system query option */
+    SYSTEM_QUERY_OPTION_NOT_ALLOWED,
+    /** parameters: system query option, http method */
+    SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD,
+    /** parameter: invalid key property */
+    INVALID_KEY_PROPERTY,
+    /** parameter: untyped segment name */
+    LAST_SEGMENT_NOT_TYPED,
+    /** parameter: untyped segment name */
+    SECOND_LAST_SEGMENT_NOT_TYPED,
+    /** parameter: unallowed kind before $value */
+    UNALLOWED_KIND_BEFORE_VALUE,
+    /** parameter: unallowed kind before $count */
+    UNALLOWED_KIND_BEFORE_COUNT,
+  }
+  
+  public UriValidationException(String developmentMessage, MessageKey messageKey, String... parameters) {
+    super(developmentMessage, messageKey, parameters);
   }
 
-  public UriValidationException(final EdmPrimitiveTypeException e) {
-    super(e);
+  public UriValidationException(String developmentMessage, Throwable cause, MessageKey messageKey,
+      String... parameters) {
+    super(developmentMessage, cause, messageKey, parameters);
   }
 }

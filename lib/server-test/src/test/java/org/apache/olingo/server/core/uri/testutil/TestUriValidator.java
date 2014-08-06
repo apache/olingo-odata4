@@ -71,8 +71,11 @@ public class TestUriValidator implements TestValidator {
     uriInfo = null;
     try {
       uriInfo = (UriInfoImpl) parser.parseUri(uri, edm);
+      new UriValidator().validate(uriInfo, HttpMethod.GET);
       fail("Exception expected");
     } catch (UriParserException e) {
+      exception = e;
+    } catch (UriValidationException e) {
       exception = e;
     }
 
@@ -249,6 +252,11 @@ public class TestUriValidator implements TestValidator {
 
     SelectItem item = select.getSelectItems().get(index);
     assertEquals(fqn.toString(), item.getAllOperationsInSchemaNameSpace().toString());
+    return this;
+  }
+
+  public TestUriValidator isExValidation(String string) {
+    assertEquals(UriValidationException.class, exception.getClass());
     return this;
   }
 

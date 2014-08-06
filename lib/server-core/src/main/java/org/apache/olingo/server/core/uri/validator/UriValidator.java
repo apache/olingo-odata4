@@ -41,6 +41,7 @@ import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
+import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
@@ -219,7 +220,8 @@ public class UriValidator {
       idx = ColumnIndex.top;
       break;
     default:
-      throw new UriValidationException("Unsupported option: " + queryOptionKind);
+      throw new UriValidationException("Unsupported option: " + queryOptionKind.toString(),
+          UriValidationException.MessageKeys.UNSUPPORTED_QUERY_OPTION, queryOptionKind.toString());
     }
 
     return idx;
@@ -251,7 +253,8 @@ public class UriValidator {
       idx = RowIndexForUriType.service;
       break;
     default:
-      throw new UriValidationException("Unsupported uriInfo kind: " + uriInfo.getKind());
+      throw new UriValidationException("Unsupported uriInfo kind: " + uriInfo.getKind(),
+          UriValidationException.MessageKeys.UNSUPPORTED_URI_KIND, uriInfo.getKind().toString());
     }
 
     return idx;
@@ -300,7 +303,8 @@ public class UriValidator {
       idx = rowIndexForValue(uriInfo);
       break;
     default:
-      throw new UriValidationException("Unsupported uriResource kind: " + lastPathSegment.getKind());
+      throw new UriValidationException("Unsupported uriResource kind: " + lastPathSegment.getKind(),
+          UriValidationException.MessageKeys.UNSUPPORTED_URI_RESOURCE_KIND, lastPathSegment.getKind().toString());
     }
 
     return idx;
@@ -367,7 +371,8 @@ public class UriValidator {
       break;
     default:
       throw new UriValidationException("Unexpected kind in path segment before $value: "
-          + secondLastPathSegment.getKind());
+          + secondLastPathSegment.getKind(), UriValidationException.MessageKeys.UNALLOWED_KIND_BEFORE_VALUE,
+          secondLastPathSegment.toString());
     }
     return idx;
   }
@@ -388,7 +393,8 @@ public class UriValidator {
       idx = isCollection ? RowIndexForUriType.propertyPrimitiveCollection : RowIndexForUriType.propertyPrimitive;
       break;
     default:
-      throw new UriValidationException("Unsupported function return type: " + functionReturnTypeKind);
+      throw new UriValidationException("Unsupported function return type: " + functionReturnTypeKind,
+          UriValidationException.MessageKeys.UNSUPPORTED_FUNCTION_RETURN_TYPE, functionReturnTypeKind.toString());
     }
     return idx;
   }
@@ -405,7 +411,8 @@ public class UriValidator {
               : RowIndexForUriType.reference;
     } else {
       throw new UriValidationException("secondLastPathSegment not a class of UriResourcePartTyped: "
-          + lastPathSegment.getClass());
+          + lastPathSegment.getClass(), UriValidationException.MessageKeys.LAST_SEGMENT_NOT_TYPED, lastPathSegment
+          .toString());
     }
 
     return idx;
@@ -420,7 +427,8 @@ public class UriValidator {
               : RowIndexForUriType.propertyPrimitive;
     } else {
       throw new UriValidationException("lastPathSegment not a class of UriResourcePartTyped: "
-          + lastPathSegment.getClass());
+          + lastPathSegment.getClass(), UriValidationException.MessageKeys.LAST_SEGMENT_NOT_TYPED, lastPathSegment
+          .toString());
     }
     return idx;
   }
@@ -444,7 +452,9 @@ public class UriValidator {
       idx = rt.isCollection() ? RowIndexForUriType.propertyComplexCollection : RowIndexForUriType.propertyComplex;
       break;
     default:
-      throw new UriValidationException("Unsupported function return type: " + rt.getType().getKind());
+      throw new UriValidationException("Unsupported function return type: " + rt.getType().getKind(),
+          UriValidationException.MessageKeys.UNSUPPORTED_FUNCTION_RETURN_TYPE,
+          rt.getType().getKind().toString());
     }
 
     return idx;
@@ -458,7 +468,8 @@ public class UriValidator {
               : RowIndexForUriType.entity;
     } else {
       throw new UriValidationException("lastPathSegment not a class of UriResourcePartTyped: "
-          + lastPathSegment.getClass());
+          + lastPathSegment.getClass(), UriValidationException.MessageKeys.LAST_SEGMENT_NOT_TYPED, lastPathSegment
+          .toString());
     }
     return idx;
   }
@@ -472,7 +483,8 @@ public class UriValidator {
               : RowIndexForUriType.propertyComplex;
     } else {
       throw new UriValidationException("lastPathSegment not a class of UriResourcePartTyped: "
-          + lastPathSegment.getClass());
+          + lastPathSegment.getClass(), UriValidationException.MessageKeys.LAST_SEGMENT_NOT_TYPED, lastPathSegment
+          .toString());
     }
     return idx;
   }
@@ -496,7 +508,8 @@ public class UriValidator {
       idx = rt.isCollection() ? RowIndexForUriType.propertyComplexCollection : RowIndexForUriType.propertyComplex;
       break;
     default:
-      throw new UriValidationException("Unsupported action return type: " + rt.getType().getKind());
+      throw new UriValidationException("Unsupported action return type: " + rt.getType().getKind(),
+          UriValidationException.MessageKeys.UNSUPPORTED_ACTION_RETURN_TYPE, rt.getType().getKind().toString());
     }
 
     return idx;
@@ -535,7 +548,8 @@ public class UriValidator {
       idx = determineReturnType(functionReturnTypeKind, isCollection);
       break;
     default:
-      throw new UriValidationException("Illegal path part kind: " + secondLastPathSegment.getKind());
+      throw new UriValidationException("Illegal path part kind before $count: " + secondLastPathSegment.getKind(),
+          UriValidationException.MessageKeys.UNALLOWED_KIND_BEFORE_COUNT, secondLastPathSegment.toString());
     }
 
     return idx;
@@ -548,7 +562,8 @@ public class UriValidator {
       ColumnIndex col = colIndex(option.getKind());
 
       if (!decisionMatrix[row.getIndex()][col.getIndex()]) {
-        throw new UriValidationException("System query option not allowed: " + option.getName());
+        throw new UriValidationException("System query option not allowed: " + option.getName(),
+            UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED, option.getName());
       }
     }
 
@@ -561,7 +576,8 @@ public class UriValidator {
       ColumnIndex col = colIndex(option.getKind());
       if (!decisionMatrixForHttpMethod[row.getIndex()][col.getIndex()]) {
         throw new UriValidationException("System query option " + option.getName() + " not allowed for method "
-            + httpMethod);
+            + httpMethod, UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD, option
+            .getName(), httpMethod.toString());
       }
     }
 
@@ -590,7 +606,8 @@ public class UriValidator {
       idx = RowIndexForHttpMethod.MERGE;
       break;
     default:
-      throw new UriValidationException("HTTP method not supported: " + httpMethod);
+      throw new UriValidationException("HTTP method not supported: " + httpMethod,
+          UriValidationException.MessageKeys.UNSUPPORTED_HTTP_METHOD, httpMethod.toString());
     }
 
     return idx;
@@ -619,26 +636,39 @@ public class UriValidator {
 
             for (UriParameter keyPredicate : keyPredicates) {
               String name = keyPredicate.getName();
+              String alias = keyPredicate.getAlias();
               String value = keyPredicate.getText();
+              if (alias != null) {
+                value = uriInfo.getValueForAlias(alias);
+              }
               EdmKeyPropertyRef edmKey = edmKeys.get(name);
 
               if (edmKey == null) {
-                throw new UriValidationException("Unknown key property: " + name);
+                throw new UriValidationException("Unknown key property: " + name,
+                    UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
               }
 
               EdmType edmType = edmKey.getProperty().getType();
               EdmPrimitiveType edmPrimitiveType = (EdmPrimitiveType) edmType;
 
               String edmLiteral = edmPrimitiveType.fromUriLiteral(value);
-              edmPrimitiveType.validate(edmLiteral, edmKey.getProperty().isNullable(), edmKey.getProperty()
-                  .getMaxLength(), edmKey.getProperty().getPrecision(), edmKey.getProperty().getScale(), edmKey
-                  .getProperty().isUnicode());
+              boolean isValid =
+                  edmPrimitiveType.validate(edmLiteral, edmKey.getProperty().isNullable(), edmKey.getProperty()
+                      .getMaxLength(), edmKey.getProperty().getPrecision(), edmKey.getProperty().getScale(), edmKey
+                      .getProperty().isUnicode());
+              if (!isValid) {
+                // TODO: Check exception here
+                throw new UriValidationException("PrimitiveTypeException",
+                    UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+              }
             }
           }
         }
       }
     } catch (EdmPrimitiveTypeException e) {
-      throw new UriValidationException(e);
+      // TODO: Check exception here
+      throw new UriValidationException("PrimitiveTypeException", e,
+          UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     }
   }
 }

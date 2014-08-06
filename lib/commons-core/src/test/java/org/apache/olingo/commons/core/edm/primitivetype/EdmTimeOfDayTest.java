@@ -90,4 +90,10 @@ public class EdmTimeOfDayTest extends PrimitiveTypeBaseTest {
 
     expectTypeErrorInValueOfString(instance, "11:12:13");
   }
+
+  @Test
+  public void tests() throws Exception {
+    instance.validate("12:34:55", null, null, null, null, null);
+  }
+
 }

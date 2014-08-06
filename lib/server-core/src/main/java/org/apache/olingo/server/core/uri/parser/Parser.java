@@ -221,7 +221,8 @@ public class Parser {
             try {
               inlineCountOption.setValue(Integer.parseInt(option.value));
             } catch (final NumberFormatException e) {
-              throw new UriParserSemanticException("Illegal value of $skip option!", e);
+              throw new UriParserSemanticException("Illegal value of $skip option!", e,
+                  UriParserSemanticException.MessageKeys.TEST);
             }
             context.contextUriInfo.setSystemQueryOption(inlineCountOption);
           } else if (option.name.equals("$skiptoken")) {
@@ -237,7 +238,8 @@ public class Parser {
             try {
               inlineCountOption.setValue(Integer.parseInt(option.value));
             } catch (final NumberFormatException e) {
-              throw new UriParserSemanticException("Illegal value of $top option!", e);
+              throw new UriParserSemanticException("Illegal value of $top option!", e,
+                  UriParserSemanticException.MessageKeys.TEST);
             }
             context.contextUriInfo.setSystemQueryOption(inlineCountOption);
           } else if (option.name.equals("$count")) {
@@ -248,7 +250,8 @@ public class Parser {
             if (option.value.equals("true") || option.value.equals("false")) {
               inlineCountOption.setValue(Boolean.parseBoolean(option.value));
             } else {
-              throw new UriParserSemanticException("Illegal value of $count option!");
+              throw new UriParserSemanticException("Illegal value of $count option!",
+                  UriParserSemanticException.MessageKeys.TEST);
             }
             context.contextUriInfo.setSystemQueryOption(inlineCountOption);
           }
@@ -396,12 +399,12 @@ public class Parser {
         }
 
       } catch (Exception weakException) {
-        throw new UriParserSyntaxException("Error in syntax", weakException);
+        throw new UriParserSyntaxException("Error in syntax", weakException, UriParserSyntaxException.MessageKeys.TEST);
 
         // exceptionOnStage = 2;
       }
     } catch (Exception hardException) {
-      throw new UriParserSyntaxException("Error in syntax", hardException);
+      throw new UriParserSyntaxException("Error in syntax", hardException, UriParserSyntaxException.MessageKeys.TEST);
     }
 
     return ret;
