@@ -18,11 +18,18 @@
  */
 package org.apache.olingo.server.core.uri.testutil;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
@@ -38,16 +45,11 @@ import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 public class TestUriValidator implements TestValidator {
   private Edm edm;
 
-  private UriInfoImpl uriInfo;
-  private Exception exception;
+  private UriInfo uriInfo;
+  private ODataTranslatedException exception;
 
   // Setup
   public TestUriValidator setEdm(final Edm edm) {
@@ -60,8 +62,7 @@ public class TestUriValidator implements TestValidator {
     Parser parser = new Parser();
     UriValidator validator = new UriValidator();
 
-    uriInfo = null;
-    uriInfo = (UriInfoImpl) parser.parseUri(uri, edm);
+    uriInfo = parser.parseUri(uri, edm);
     validator.validate(uriInfo, HttpMethod.GET);
     return this;
   }
@@ -70,7 +71,7 @@ public class TestUriValidator implements TestValidator {
     Parser parser = new Parser();
     uriInfo = null;
     try {
-      uriInfo = (UriInfoImpl) parser.parseUri(uri, edm);
+      uriInfo = parser.parseUri(uri, edm);
       new UriValidator().validate(uriInfo, HttpMethod.GET);
       fail("Exception expected");
     } catch (UriParserException e) {
@@ -87,8 +88,7 @@ public class TestUriValidator implements TestValidator {
     parserTest.setLogLevel(1);
     uriInfo = null;
     try {
-      // uriInfoTmp = new UriParserImpl(edm).ParseUri(uri);
-      uriInfo = (UriInfoImpl) parserTest.parseUri(uri, edm);
+      uriInfo = parserTest.parseUri(uri, edm);
     } catch (UriParserException e) {
       fail("Exception occured while parsing the URI: " + uri + "\n"
           + " Exception: " + e.getMessage());
@@ -164,7 +164,7 @@ public class TestUriValidator implements TestValidator {
 
     List<CustomQueryOption> list = uriInfo.getCustomQueryOptions();
     if (list.size() <= index) {
-      fail("not enought queryParameters");
+      fail("not enough queryParameters");
     }
 
     CustomQueryOptionImpl option = (CustomQueryOptionImpl) list.get(index);
@@ -186,13 +186,21 @@ public class TestUriValidator implements TestValidator {
 
   }
 
-  public TestUriValidator isExSyntax(final long errorID) {
+  public TestUriValidator isExSyntax(final UriParserSyntaxException.MessageKeys messageKey) {
     assertEquals(UriParserSyntaxException.class, exception.getClass());
+    assertEquals(messageKey, exception.getMessageKey());
     return this;
   }
 
-  public TestUriValidator isExSemantic(final long errorID) {
+  public TestUriValidator isExSemantic(final UriParserSemanticException.MessageKeys messageKey) {
     assertEquals(UriParserSemanticException.class, exception.getClass());
+    assertEquals(messageKey, exception.getMessageKey());
+    return this;
+  }
+
+  public TestUriValidator isExValidation(final UriValidationException.MessageKeys messageKey) {
+    assertEquals(UriValidationException.class, exception.getClass());
+    assertEquals(messageKey, exception.getMessageKey());
     return this;
   }
 
@@ -254,10 +262,4 @@ public class TestUriValidator implements TestValidator {
     assertEquals(fqn.toString(), item.getAllOperationsInSchemaNameSpace().toString());
     return this;
   }
-
-  public TestUriValidator isExValidation(String string) {
-    assertEquals(UriValidationException.class, exception.getClass());
-    return this;
-  }
-
 }

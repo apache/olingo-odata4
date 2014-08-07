@@ -491,13 +491,15 @@ public class FilterValidator implements TestValidator {
     return this;
   }
 
-  public FilterValidator isExSyntax(final long errorID) {
+  public FilterValidator isExSyntax(final UriParserSyntaxException.MessageKeys messageKey) {
     assertEquals(UriParserSyntaxException.class, exception.getClass());
+    assertEquals(messageKey, exception.getMessageKey());
     return this;
   }
 
-  public FilterValidator isExSemantic(final long errorID) {
+  public FilterValidator isExSemantic(final UriParserSemanticException.MessageKeys messageKey) {
     assertEquals(UriParserSemanticException.class, exception.getClass());
+    assertEquals(messageKey, exception.getMessageKey());
     return this;
   }
 

@@ -24,16 +24,19 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
+import org.apache.olingo.server.api.uri.queryoption.FilterOption;
+import org.apache.olingo.server.api.uri.queryoption.QueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
+import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.OrderByOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.QueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ExpandValidator implements TestValidator {
@@ -127,19 +130,19 @@ public class ExpandValidator implements TestValidator {
     try {
       expandItem = expandOption.getExpandItems().get(expandItemIndex);
     } catch (IndexOutOfBoundsException ex) {
-      fail("not enought segments");
+      fail("not enough segments");
     }
     return this;
 
   }
 
-  public ExpandValidator isSegmentStar(final int index) {
-    assertEquals(true, expandItem.isStar());
+  public ExpandValidator isSegmentStar() {
+    assertTrue(expandItem.isStar());
     return this;
   }
 
-  public ExpandValidator isSegmentRef(final int index) {
-    assertEquals(true, expandItem.isRef());
+  public ExpandValidator isSegmentRef() {
+    assertTrue(expandItem.isRef());
     return this;
   }
 
@@ -174,38 +177,36 @@ public class ExpandValidator implements TestValidator {
   }
 
   public ExpandValidator isSelectItemStar(final int index) {
-    SelectOptionImpl select = (SelectOptionImpl) expandItem.getSelectOption();
-
+    SelectOption select = expandItem.getSelectOption();
     SelectItem item = select.getSelectItems().get(index);
-    assertEquals(true, item.isStar());
+    assertTrue(item.isStar());
     return this;
   }
 
   public ExpandValidator isSelectItemAllOperations(final int index, final FullQualifiedName fqn) {
-    SelectOptionImpl select = (SelectOptionImpl) expandItem.getSelectOption();
-
+    SelectOption select = expandItem.getSelectOption();
     SelectItem item = select.getSelectItems().get(index);
     assertEquals(fqn.toString(), item.getAllOperationsInSchemaNameSpace().toString());
     return this;
   }
 
   public ExpandValidator isFilterOptionText(final String text) {
-    QueryOptionImpl option = (QueryOptionImpl) expandItem.getFilterOption();
+    QueryOption option = expandItem.getFilterOption();
     assertEquals(text, option.getText());
     return this;
   }
 
   public ExpandValidator isFilterSerialized(final String serialized) {
-    FilterOptionImpl filter = (FilterOptionImpl) expandItem.getFilterOption();
+    FilterOption filter = expandItem.getFilterOption();
 
     try {
       String tmp = FilterTreeToText.Serialize(filter);
       assertEquals(serialized, tmp);
     } catch (ExpressionVisitException e) {
-      fail("Exception occured while converting the filterTree into text" + "\n"
+      fail("Exception occurred while converting the filterTree into text" + "\n"
           + " Exception: " + e.getMessage());
     } catch (ODataApplicationException e) {
-      fail("Exception occured while converting the filterTree into text" + "\n"
+      fail("Exception occurred while converting the filterTree into text" + "\n"
           + " Exception: " + e.getMessage());
     }
 

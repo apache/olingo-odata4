@@ -18,6 +18,10 @@
  */
 package org.apache.olingo.server.core.uri.antlr;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Arrays;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.uri.UriInfoKind;
@@ -25,6 +29,7 @@ import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
+import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
@@ -34,10 +39,6 @@ import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
 import org.junit.Test;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Arrays;
 
 public class TestUriParserImpl {
   Edm edm = null;
@@ -188,7 +189,7 @@ public class TestUriParserImpl {
         .isAction("UARTETParam")
         .isType(EntityTypeProvider.nameETTwoKeyTwoPrim, false);
 
-    testUri.runEx("AIRTPrimParam/invalidElement").isExSemantic(0);
+    testUri.runEx("AIRTPrimParam/invalidElement").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
   }
 
   @Test
@@ -316,7 +317,7 @@ public class TestUriParserImpl {
         .isEntityType(EntityTypeProvider.nameETBase)
         .isIdText("ESTwoPrim")
         .isExpandText("*")
-        .goExpand().first().isSegmentStar(0);
+        .goExpand().first().isSegmentStar();
 
   }
 

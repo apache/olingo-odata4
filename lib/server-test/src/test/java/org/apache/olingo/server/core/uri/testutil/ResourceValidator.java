@@ -76,7 +76,7 @@ public class ResourceValidator implements TestValidator {
     return this;
   }
 
-  public ResourceValidator setUriInfoImplPath(final UriInfoImpl uriInfoPath) {
+  public ResourceValidator setUriInfoImplPath(final UriInfo uriInfoPath) {
     uriInfo = uriInfoPath;
     last();
     return this;
@@ -87,10 +87,10 @@ public class ResourceValidator implements TestValidator {
   public ResourceValidator run(final String uri) {
     ParserWithLogging testParser = new ParserWithLogging();
 
-    UriInfoImpl uriInfoTmp = null;
+    UriInfo uriInfoTmp = null;
     uriPathInfo = null;
     try {
-      uriInfoTmp = (UriInfoImpl) testParser.parseUri(uri, edm);
+      uriInfoTmp = testParser.parseUri(uri, edm);
 
       UriValidator uriValidator = new UriValidator();
       uriValidator.validate(uriInfoTmp, HttpMethod.GET);

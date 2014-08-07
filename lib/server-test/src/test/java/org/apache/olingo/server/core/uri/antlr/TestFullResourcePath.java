@@ -28,6 +28,9 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
+import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
+import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
+import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
@@ -896,10 +899,11 @@ public class TestFullResourcePath {
 
   @Test
   public void runCrossjoinError() throws Exception {
-    testUri.runEx("$crossjoin").isExSyntax(0);
-    testUri.runEx("$crossjoin/error").isExSyntax(0);
-    testUri.runEx("$crossjoin()").isExSyntax(0);
-    // testUri.runEx("$crossjoin(ESKeyNav, ESTwoKeyNav)/invalid").isExSyntax(0);
+    testUri.runEx("$crossjoin").isExSyntax(UriParserSyntaxException.MessageKeys.TEST);
+    testUri.runEx("$crossjoin/error").isExSyntax(UriParserSyntaxException.MessageKeys.TEST);
+    testUri.runEx("$crossjoin()").isExSyntax(UriParserSyntaxException.MessageKeys.TEST);
+    // testUri.runEx("$crossjoin(ESKeyNav, ESTwoKeyNav)/invalid")
+    //     .isExSyntax(UriParserSyntaxException.MessageKeys.TEST);
   }
 
   @Test
@@ -942,43 +946,44 @@ public class TestFullResourcePath {
   @Test
   public void runEsNameError() {
 
-    testUri.runEx("ESAllPrim/$count/$ref").isExSemantic(0);
-    testUri.runEx("ESAllPrim/$ref/$count").isExSemantic(0);
-    testUri.runEx("ESAllPrim/$ref/invalid").isExSemantic(0);
-    testUri.runEx("ESAllPrim/$count/invalid").isExSemantic(0);
-    testUri.runEx("ESAllPrim(1)/whatever").isExSemantic(0);
-    // testUri.runEx("ESAllPrim(PropertyInt16='1')").isExSemantic(0);
-    testUri.runEx("ESAllPrim(PropertyInt16)").isExSemantic(0);
-    testUri.runEx("ESAllPrim(PropertyInt16=)").isExSyntax(0);
-    testUri.runEx("ESAllPrim(PropertyInt16=1,Invalid='1')").isExSemantic(0);
+    testUri.runEx("ESAllPrim/$count/$ref").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("ESAllPrim/$ref/$count").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("ESAllPrim/$ref/invalid").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("ESAllPrim/$count/invalid").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("ESAllPrim(1)/whatever").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    // testUri.runEx("ESAllPrim(PropertyInt16='1')").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("ESAllPrim(PropertyInt16)").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("ESAllPrim(PropertyInt16=)").isExSyntax(UriParserSyntaxException.MessageKeys.TEST);
+    testUri.runEx("ESAllPrim(PropertyInt16=1,Invalid='1')").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim/com.sap.odata.test1.ETBaseTwoKeyTwoPrim"
-        + "/com.sap.odata.test1.ETTwoBaseTwoKeyTwoPrim").isExSemantic(0);
+        + "/com.sap.odata.test1.ETTwoBaseTwoKeyTwoPrim").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim/com.sap.odata.test1.ETBaseTwoKeyTwoPrim(1)/com.sap.odata.test1.ETAllKey")
-        .isExSemantic(0);
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim(1)/com.sap.odata.test1.ETBaseTwoKeyTwoPrim('1')/com.sap.odata.test1.ETAllKey")
-        .isExSemantic(0);
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim(1)/com.sap.odata.test1.ETBaseTwoKeyTwoPrim"
         + "/com.sap.odata.test1.ETTwoBaseTwoKeyTwoPrim")
-        .isExSemantic(0);
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim/com.sap.odata.test1.ETBaseTwoKeyTwoPrim"
         + "/com.sap.odata.test1.ETTwoBaseTwoKeyTwoPrim(1)")
-        .isExSemantic(0);
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim/com.sap.odata.test1.ETAllKey")
-        .isExSemantic(0);
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim()")
-        .isExSemantic(0);
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     testUri.runEx("ESAllNullable(1)/CollPropertyString/$value")
-        .isExSemantic(0);
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
-    testUri.runEx("ETMixPrimCollComp(1)/ComplexProperty/$value").isExSemantic(0);
+    testUri.runEx("ETMixPrimCollComp(1)/ComplexProperty/$value")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
   }
 
   @Test
@@ -1067,7 +1072,7 @@ public class TestFullResourcePath {
         .isKeyPredicate(2, "KeyAlias2", "'3'")
         .isKeyPredicate(3, "KeyAlias3", "'4'");
 
-    testUri.runEx("ESCollAllPrim(null)").isExValidation("");
+    testUri.runEx("ESCollAllPrim(null)").isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
   }
 
   @Test
@@ -1800,8 +1805,8 @@ public class TestFullResourcePath {
 
   @Test
   public void runFunctionImpError() {
-    testUri.runEx("FICRTCollCTTwoPrimParam()").isExSemantic(0);
-    testUri.runEx("FICRTCollCTTwoPrimParam(invalidParam=2)").isExSemantic(0);
+    testUri.runEx("FICRTCollCTTwoPrimParam()").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("FICRTCollCTTwoPrimParam(invalidParam=2)").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
   }
 
   @Test
@@ -2049,18 +2054,18 @@ public class TestFullResourcePath {
     testUri.run("ESKeyNav(1)?$expand=*")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
-        .isSegmentStar(0);
+        .isSegmentStar();
 
     testUri.run("ESKeyNav(1)?$expand=*/$ref")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
-        .isSegmentStar(0)
-        .isSegmentRef(1);
+        .isSegmentStar()
+        .isSegmentRef();
 
     testUri.run("ESKeyNav(1)?$expand=*/$ref,NavPropertyETKeyNavMany")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
-        .isSegmentStar(0).isSegmentRef(1)
+        .isSegmentStar().isSegmentRef()
         .next()
         .goPath().first()
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
@@ -2068,13 +2073,13 @@ public class TestFullResourcePath {
     testUri.run("ESKeyNav(1)?$expand=*($levels=3)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
-        .isSegmentStar(0)
+        .isSegmentStar()
         .isLevelText("3");
 
     testUri.run("ESKeyNav(1)?$expand=*($levels=max)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
-        .isSegmentStar(0)
+        .isSegmentStar()
         .isLevelText("max");
 
     testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref")
@@ -2882,14 +2887,19 @@ public class TestFullResourcePath {
         .root().right()
         .isLiteral("'SomeString'");
 
-    testFilter.runOnETTwoKeyNavEx("invalid").isExSemantic(0);
-    testFilter.runOnETTwoKeyNavEx("PropertyComp/invalid").isExSemantic(0);
-    testFilter.runOnETTwoKeyNavEx("concat('a','b')/invalid").isExSyntax(0);
-    testFilter.runOnETTwoKeyNavEx("PropertyComp/concat('a','b')").isExSyntax(0);
-    testFilter.runOnETTwoKeyNavEx("PropertyCompAllPrim/PropertyInt16 eq '1'").isExSemantic(0);
-    testFilter.runOnETTwoKeyNavEx("PropertyCompAllPrim/PropertyDate eq 1").isExSemantic(0);
-    testFilter.runOnETTwoKeyNavEx("PropertyCompAllPrim/PropertyString eq 1").isExSemantic(0);
-    testFilter.runOnETTwoKeyNavEx("PropertyCompAllPrim/PropertyDate eq 1").isExSemantic(0);
+    testFilter.runOnETTwoKeyNavEx("invalid").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testFilter.runOnETTwoKeyNavEx("PropertyComp/invalid").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testFilter.runOnETTwoKeyNavEx("concat('a','b')/invalid").isExSyntax(UriParserSyntaxException.MessageKeys.TEST);
+    testFilter.runOnETTwoKeyNavEx("PropertyComp/concat('a','b')")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.TEST);
+    testFilter.runOnETTwoKeyNavEx("PropertyCompAllPrim/PropertyInt16 eq '1'")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testFilter.runOnETTwoKeyNavEx("PropertyCompAllPrim/PropertyDate eq 1")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testFilter.runOnETTwoKeyNavEx("PropertyCompAllPrim/PropertyString eq 1")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testFilter.runOnETTwoKeyNavEx("PropertyCompAllPrim/PropertyDate eq 1")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     testFilter.runOnETAllPrim("PropertySByte eq PropertySByte")
         .is("<<PropertySByte> eq <PropertySByte>>")
@@ -4087,7 +4097,8 @@ public class TestFullResourcePath {
         .goUpFilterValidator().root()
         .goParameter(1).isTypedLiteral(EntityTypeProvider.nameETKeyPrimNav);
 
-    testFilter.runOnETKeyNavEx("cast(NavPropertyETKeyPrimNavOne,com.sap.odata.test1.ETKeyNav)").isExSemantic(0);
+    testFilter.runOnETKeyNavEx("cast(NavPropertyETKeyPrimNavOne,com.sap.odata.test1.ETKeyNav)")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
     testFilter.runOnETKeyNav("any()")
         .isMember().goPath().first().isUriPathInfoKind(UriResourceKind.lambdaAny);
 
@@ -5000,10 +5011,14 @@ public class TestFullResourcePath {
         .goOrder(0).left().goPath().isComplex("PropertyEnumString").goUpFilterValidator()
         .goOrder(0).right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
-    testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 1").isExSyntax(0);
-    testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16, PropertyInt32 PropertyDuration").isExSyntax(0);
-    testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 PropertyInt32, PropertyDuration desc").isExSyntax(0);
-    testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 asc, PropertyInt32 PropertyDuration desc").isExSyntax(0);
+    testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 1")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.TEST);
+    testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16, PropertyInt32 PropertyDuration")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.TEST);
+    testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 PropertyInt32, PropertyDuration desc")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.TEST);
+    testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 asc, PropertyInt32 PropertyDuration desc")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.TEST);
   }
 
   @Test
@@ -5045,43 +5060,53 @@ public class TestFullResourcePath {
 
   @Test
   public void testErrors() {
-    testUri.runEx("FICRTString(wrong1='ABC')/com.sap.odata.test1.BFCStringRTESTwoKeyNav()").isExSemantic(0);
-    testUri.runEx("FICRTString(wrong1='ABC', wrong2=1)/com.sap.odata.test1.BFCStringRTESTwoKeyNav()").isExSemantic(0);
+    testUri.runEx("FICRTString(wrong1='ABC')/com.sap.odata.test1.BFCStringRTESTwoKeyNav()")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("FICRTString(wrong1='ABC', wrong2=1)/com.sap.odata.test1.BFCStringRTESTwoKeyNav()")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     // type filter for entity incompatible
-    testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBase").isExSemantic(0);
+    testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBase")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     // type filter for entity double on entry
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')"
-        + "/com.sap.odata.test1.ETBaseTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav").isExSemantic(0);
+        + "/com.sap.odata.test1.ETBaseTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
     // type filter for entity double on collection
     testUri.runEx("ESTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav")
-        .isExSemantic(0);
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
     // type filter for entity double on non key pred
-    testUri.runEx("SINav/com.sap.odata.test1.ETBaseTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav").isExSemantic(0);
+    testUri.runEx("SINav/com.sap.odata.test1.ETBaseTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     // type filter for complex incompatible
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim"
-        + "/com.sap.odata.test1.CTCollAllPrim").isExSemantic(0);
+        + "/com.sap.odata.test1.CTCollAllPrim").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     // type filter for complex double on entry
     testUri.runEx("FICRTCTTwoPrimParam(ParameterInt16=1,ParameterString='2')"
-        + "/com.sap.odata.test1.CTBase/com.sap.odata.test1.CTBase").isExSemantic(0);
+        + "/com.sap.odata.test1.CTBase/com.sap.odata.test1.CTBase")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     // type filter for complex double on collection
     testUri.runEx("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')"
-        + "/com.sap.odata.test1.CTBase/com.sap.odata.test1.CTBase").isExSemantic(0);
+        + "/com.sap.odata.test1.CTBase/com.sap.odata.test1.CTBase")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     // type filter for complex double on non key pred
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim"
-        + "/com.sap.odata.test1.CTBase/com.sap.odata.test1.CTBase").isExSemantic(0);
+        + "/com.sap.odata.test1.CTBase/com.sap.odata.test1.CTBase")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
-    testUri.runEx("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav").isExSemantic(0);
+    testUri.runEx("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
 
     // $ref
-    testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim/$ref").isExSemantic(0);
-    testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim/$count").isExSemantic(0);
-
+    testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim/$ref")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim/$count")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
   }
 
   @Test
@@ -5092,12 +5117,9 @@ public class TestFullResourcePath {
         .isInAliasToValueMap("@A", "'2'")
         .goUpUriValidator()
         .isCustomParameter(0, "@A", "'2'");
-
   }
 
   public static String encode(final String decoded) throws UnsupportedEncodingException {
     return Encoder.encode(decoded);
-
   }
-
 }
