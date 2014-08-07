@@ -20,6 +20,8 @@ package org.apache.olingo.server.api.processor;
 
 import java.util.List;
 
+import org.apache.olingo.commons.api.format.ContentType;
+
 /**
  * A processor which supports custom content types can implement this interface. The processor can also remove default
  * content types if the default serializer of Olingo are not used. By default this interface is not implemented and
@@ -35,7 +37,7 @@ public interface CustomContentTypeSupportProcessor {
    * @return modified list of supported content types
    * 
    */
-  public List<FormatContentTypeMapping> modifySupportedContentTypes(
-      List<FormatContentTypeMapping> defaultContentTypes, Class<? extends Processor> processorClass);
+  public List<ContentType> modifySupportedContentTypes(
+      List<ContentType> defaultContentTypes, Class<? extends Processor> processorClass);
 
 }

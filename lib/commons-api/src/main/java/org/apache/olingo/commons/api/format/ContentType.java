@@ -302,22 +302,15 @@ public final class ContentType {
   }
 
   /**
-   * {@link ContentType}s are <b>compatible</b>
-   * <ul>
-   * <li>if <code>type</code>, <code>subtype</code> have the same value.</li>
-   * <li>if <code>type</code> and/or <code>subtype</code> is set to "*"</li>
-   * </ul>
-   * The set <code>parameters</code> are <b>always</b> ignored (for compare with parameters see {@link #equals(Object)}
-   * ).
-   *
+   * <p>{@link ContentType}s are <b>compatible</b>
+   * if <code>type</code> and <code>subtype</code> have the same value.</p>
+   * <p>The set <code>parameters</code> are <b>always</b> ignored
+   * (for compare with parameters see {@link #equals(Object)}).</p>
    * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code>.
    */
   public boolean isCompatible(final ContentType obj) {
-    Boolean compatible = isEqualWithoutParameters(obj);
-    if (compatible == null) {
-      return true;
-    }
-    return compatible.booleanValue();
+    final Boolean compatible = isEqualWithoutParameters(obj);
+    return compatible == null || compatible.booleanValue();
   }
 
   /**

@@ -78,7 +78,7 @@ public class ODataHandlerTest {
     ODataResponse response = handler.process(request);
 
     assertNotNull(response);
-    assertEquals(500, response.getStatusCode());
+    assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
   }
 
   @Test
@@ -92,7 +92,7 @@ public class ODataHandlerTest {
     ODataResponse response = handler.process(request);
 
     assertNotNull(response);
-    assertEquals(200, response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     String ct = response.getHeaders().get(HttpHeader.CONTENT_TYPE);
     assertTrue(ct.contains("application/json"));
@@ -134,7 +134,7 @@ public class ODataHandlerTest {
     ODataResponse response = handler.process(request);
 
     assertNotNull(response);
-    assertEquals(500, response.getStatusCode());
+    assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
   }
 
   @Test
@@ -147,7 +147,7 @@ public class ODataHandlerTest {
     ODataResponse response = handler.process(request);
 
     assertNotNull(response);
-    assertEquals(200, response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertEquals(HttpContentType.APPLICATION_XML, response.getHeaders().get(HttpHeader.CONTENT_TYPE));
 
     assertNotNull(response.getContent());
@@ -195,7 +195,7 @@ public class ODataHandlerTest {
     assertNotNull(response);
 
     assertEquals(ODataServiceVersion.V40.toString(), response.getHeaders().get(HttpHeader.ODATA_VERSION));
-    assertEquals(400, response.getStatusCode());
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), response.getStatusCode());
   }
 
   @Test
@@ -208,7 +208,7 @@ public class ODataHandlerTest {
 
     ODataResponse response = handler.process(request);
     assertNotNull(response);
-    assertEquals(200, response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
   }
 
   @Test
@@ -217,11 +217,11 @@ public class ODataHandlerTest {
 
     request.setMethod(HttpMethod.GET);
     request.setRawODataPath("$metadata");
-    request.setRawQueryPath("$format=notSupported");
+    request.setRawQueryPath("$format=not/Supported");
 
     ODataResponse response = handler.process(request);
     assertNotNull(response);
-    assertEquals(406, response.getStatusCode());
+    assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), response.getStatusCode());
   }
 
   @Test
@@ -233,7 +233,7 @@ public class ODataHandlerTest {
 
     ODataResponse response = handler.process(request);
     assertNotNull(response);
-    assertEquals(501, response.getStatusCode());
+    assertEquals(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), response.getStatusCode());
   }
 
   @Test
@@ -265,7 +265,7 @@ public class ODataHandlerTest {
 
     ODataResponse response = handler.process(request);
     assertNotNull(response);
-    assertEquals(404, response.getStatusCode());
+    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), response.getStatusCode());
   }
   
   //TODO: Use this test
@@ -279,7 +279,7 @@ public class ODataHandlerTest {
 
     ODataResponse response = handler.process(request);
     assertNotNull(response);
-    assertEquals(404, response.getStatusCode());
+    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), response.getStatusCode());
   }
   
   @Test
@@ -301,7 +301,7 @@ public class ODataHandlerTest {
     
     ODataResponse response = localHandler.process(request);
     assertNotNull(response);
-    assertEquals(500, response.getStatusCode());
+    assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
     // TODO: Check for message in case of EdmException
     // System.out.println(IOUtils.toString(response.getContent()));
   }

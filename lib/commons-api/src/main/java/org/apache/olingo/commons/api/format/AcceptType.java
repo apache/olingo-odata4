@@ -45,9 +45,6 @@ import java.util.TreeMap;
  */
 public class AcceptType {
 
-//  public static final AcceptType WILDCARD = new AcceptType(TypeUtil.MEDIA_TYPE_WILDCARD, TypeUtil.MEDIA_TYPE_WILDCARD,
-//      createParameterMap(), 1.0F);
-
   private final String type;
   private final String subtype;
   private final Map<String, String> parameters;
@@ -98,8 +95,8 @@ public class AcceptType {
     }
   }
 
-  private static void
-      parse(final String format, final List<String> typeSubtype, final Map<String, String> parameters) {
+  private static void parse(final String format, final List<String> typeSubtype,
+      final Map<String, String> parameters) {
     
     final String[] typesAndParameters = format.split(TypeUtil.PARAMETER_SEPARATOR, 2);
     final String types = typesAndParameters[0];
@@ -127,9 +124,9 @@ public class AcceptType {
   }
 
   /**
-   * Create an {@link AcceptType} based on given input string (<code>format</code>).
-   * @param format
-   * @return a new <code>AcceptType</code> object
+   * Create a list of {@link AcceptType} objects based on given input string (<code>format</code>).
+   * @param format accept types, comma-separated, as specified for the HTTP header <code>Accept</code>
+   * @return a list of <code>AcceptType</code> objects
    * @throws IllegalArgumentException if input string is not parseable
    */
   public static List<AcceptType> create(final String format) {
@@ -216,7 +213,7 @@ public class AcceptType {
    * as defined in RFC 7231, chapters 3.1.1.1, 5.3.1, and 5.3.2.
    * @param toSort list which is sorted and hence re-arranged
    */
-  private static void sort(final List<AcceptType> toSort) {
+  private static void sort(List<AcceptType> toSort) {
     Collections.sort(toSort,
         new Comparator<AcceptType>() {
           @Override

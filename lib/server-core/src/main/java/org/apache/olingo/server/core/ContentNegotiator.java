@@ -28,7 +28,6 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.processor.CustomContentTypeSupportProcessor;
-import org.apache.olingo.server.api.processor.FormatContentTypeMapping;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
@@ -37,29 +36,28 @@ public class ContentNegotiator {
 
   private ContentNegotiator() {}
 
-  private static List<FormatContentTypeMapping>
+  private static List<ContentType>
       getDefaultSupportedContentTypes(final Class<? extends Processor> processorClass) {
-    List<FormatContentTypeMapping> defaults = new ArrayList<FormatContentTypeMapping>();
+    List<ContentType> defaults = new ArrayList<ContentType>();
 
     if (processorClass == MetadataProcessor.class) {
-      defaults.add(new FormatContentTypeMapping("xml", ContentType.APPLICATION_XML.toContentTypeString()));
+      defaults.add(ODataFormat.XML.getContentType(ODataServiceVersion.V40));
     } else {
-      defaults.add(new FormatContentTypeMapping("json",
-          ODataFormat.JSON.getContentType(ODataServiceVersion.V40).toContentTypeString()));
+      defaults.add(ODataFormat.JSON.getContentType(ODataServiceVersion.V40));
+      defaults.add(ODataFormat.JSON_NO_METADATA.getContentType(ODataServiceVersion.V40));
     }
 
     return defaults;
   }
 
-  private static List<FormatContentTypeMapping> getSupportedContentTypes(final Processor processor,
+  private static List<ContentType> getSupportedContentTypes(final Processor processor,
       final Class<? extends Processor> processorClass) {
 
-    List<FormatContentTypeMapping> supportedContentTypes = getDefaultSupportedContentTypes(processorClass);
+    List<ContentType> supportedContentTypes = getDefaultSupportedContentTypes(processorClass);
 
     if (processor instanceof CustomContentTypeSupportProcessor) {
-      supportedContentTypes =
-          ((CustomContentTypeSupportProcessor) processor).modifySupportedContentTypes(supportedContentTypes,
-              processorClass);
+      supportedContentTypes = ((CustomContentTypeSupportProcessor) processor)
+          .modifySupportedContentTypes(supportedContentTypes, processorClass);
     }
 
     return supportedContentTypes;
@@ -67,98 +65,73 @@ public class ContentNegotiator {
 
   public static ContentType doContentNegotiation(final FormatOption formatOption, final ODataRequest request,
       final Processor processor, final Class<? extends Processor> processorClass) throws ContentNegotiatorException {
-    ContentType requestedContentType = null;
+    final List<ContentType> supportedContentTypes = getSupportedContentTypes(processor, processorClass);
+    final String acceptHeaderValue = request.getHeader(HttpHeader.ACCEPT);
+    ContentType result = null;
 
-    List<FormatContentTypeMapping> supportedContentTypes = getSupportedContentTypes(processor, processorClass);
-
-    String acceptHeaderValue = request.getHeader(HttpHeader.ACCEPT);
-
-    boolean supported = false;
-
-    if (formatOption != null) {
-      if ("json".equalsIgnoreCase(formatOption.getText().trim())) {
-        requestedContentType = ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
-        for (FormatContentTypeMapping entry : supportedContentTypes) {
-          if (requestedContentType.isCompatible(ContentType.create(entry.getContentType().trim()))) {
-            supported = true;
-            break;
-          }
-        }
-      } else if ("xml".equalsIgnoreCase(formatOption.getText().trim())) {
-        requestedContentType = ContentType.APPLICATION_XML;
-        for (FormatContentTypeMapping entry : supportedContentTypes) {
-          if (requestedContentType.isCompatible(ContentType.create(entry.getContentType().trim()))) {
-            supported = true;
-            break;
-          }
-        }
-      } else {
-        for (FormatContentTypeMapping entry : supportedContentTypes) {
-          if (formatOption.getText().equalsIgnoreCase(entry.getFormatAlias().trim())) {
-            requestedContentType = ContentType.create(entry.getContentType().trim());
-            supported = true;
-            break;
-          }
-        }
-      }
-      if (!supported) {
-        throw new ContentNegotiatorException("Unsupported $format = " + formatOption.getText(),
-            ContentNegotiatorException.MessageKeys.UNSUPPORTED_FORMAT_OPTION, formatOption.getText());
+    if (formatOption != null && formatOption.getFormat() != null) {
+      final String formatString = formatOption.getFormat().trim();
+      final ODataFormat format =
+          ODataFormat.JSON.name().equalsIgnoreCase(formatString) ? ODataFormat.JSON :
+          ODataFormat.XML.name().equalsIgnoreCase(formatString) ? ODataFormat.XML :
+          ODataFormat.ATOM.name().equalsIgnoreCase(formatString) ? ODataFormat.ATOM : null;
+      result = getSupportedContentType(format == null ?
+          ContentType.create(formatOption.getFormat()) : format.getContentType(ODataServiceVersion.V40),
+          supportedContentTypes);
+      if (result == null) {
+        throw new ContentNegotiatorException("Unsupported $format = " + formatString,
+            ContentNegotiatorException.MessageKeys.UNSUPPORTED_FORMAT_OPTION, formatString);
       }
     } else if (acceptHeaderValue != null) {
-      List<AcceptType> acceptedContentTypes = AcceptType.create(acceptHeaderValue);
-
+      final List<AcceptType> acceptedContentTypes = AcceptType.create(acceptHeaderValue);
       for (AcceptType acceptedType : acceptedContentTypes) {
-        for (FormatContentTypeMapping supportedType : supportedContentTypes) {
-
-          ContentType ct = ContentType.create(supportedType.getContentType());
+        for (final ContentType supportedContentType : supportedContentTypes) {
+          ContentType contentType = supportedContentType;
           if (acceptedType.getParameters().containsKey("charset")) {
-            String value = acceptedType.getParameters().get("charset");
+            final String value = acceptedType.getParameters().get("charset");
             if ("utf8".equalsIgnoreCase(value) || "utf-8".equalsIgnoreCase(value)) {
-              ct = ContentType.create(ct, ContentType.PARAMETER_CHARSET_UTF8);
+              contentType = ContentType.create(contentType, ContentType.PARAMETER_CHARSET_UTF8);
             } else {
               throw new ContentNegotiatorException("charset in accept header not supported: " + acceptHeaderValue,
                   ContentNegotiatorException.MessageKeys.WRONG_CHARSET_IN_HEADER, HttpHeader.ACCEPT, acceptHeaderValue);
             }
           }
-
-          if (acceptedType.matches(ct)) {
-            requestedContentType = ct;
-            supported = true;
+          if (acceptedType.matches(contentType)) {
+            result = contentType;
             break;
           }
         }
-        if (supported) {
+        if (result != null) {
           break;
         }
       }
-
-      if (!supported) {
+      if (result == null) {
         throw new ContentNegotiatorException(
             "unsupported accept content type: " + acceptedContentTypes + " != " + supportedContentTypes,
             ContentNegotiatorException.MessageKeys.UNSUPPORTED_CONTENT_TYPES, acceptedContentTypes.toString());
       }
     } else {
-      if (processorClass == MetadataProcessor.class) {
-        requestedContentType = ContentType.APPLICATION_XML;
-      } else {
-        requestedContentType = ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
-      }
-
-      for (FormatContentTypeMapping entry : supportedContentTypes) {
-        if (requestedContentType.isCompatible(ContentType.create(entry.getContentType().trim()))) {
-          supported = true;
-          break;
-        }
+      final ContentType requestedContentType = processorClass == MetadataProcessor.class ?
+          ODataFormat.XML.getContentType(ODataServiceVersion.V40) :
+          ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
+      result = getSupportedContentType(requestedContentType, supportedContentTypes);
+      if (result == null) {
+        throw new ContentNegotiatorException(
+            "unsupported accept content type: " + requestedContentType + " != " + supportedContentTypes,
+            ContentNegotiatorException.MessageKeys.UNSUPPORTED_CONTENT_TYPE,
+            requestedContentType.toContentTypeString());
       }
     }
+    return result;
+  }
 
-    if (!supported) {
-      throw new ContentNegotiatorException(
-          "unsupported accept content type: " + requestedContentType + " != " + supportedContentTypes,
-          ContentNegotiatorException.MessageKeys.UNSUPPORTED_CONTENT_TYPE, requestedContentType.toContentTypeString());
+  private static ContentType getSupportedContentType(final ContentType requestedContentType,
+      final List<ContentType> supportedContentTypes) {
+    for (final ContentType supportedContentType : supportedContentTypes) {
+      if (requestedContentType.isCompatible(supportedContentType)) {
+        return supportedContentType;
+      }
     }
-
-    return requestedContentType;
+    return null;
   }
 }
