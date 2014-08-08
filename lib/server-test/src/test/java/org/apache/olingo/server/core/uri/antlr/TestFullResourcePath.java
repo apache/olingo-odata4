@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.uri.antlr;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriInfoKind;
@@ -1106,13 +1107,13 @@ public class TestFullResourcePath {
   public void runEsNameKeyCast() throws Exception {
     /*
      * testUri.runEx("ESTwoPrim(1)/com.sap.odata.test1.ETBase(1)")
-     * .isExSemantic(0);
+     * .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
      * 
      * testUri.runEx("ESTwoPrim/com.sap.odata.test1.ETBase(1)/com.sap.odata.test1.ETTwoBase(1)")
-     * .isExSemantic(0);
+     * .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
      * 
      * testUri.runEx("ESBase/com.sap.odata.test1.ETTwoPrim(1)")
-     * .isExSemantic(0);
+     * .isExSemantic(UriParserSemanticException.MessageKeys.TEST);
      */
 
     testUri.run("ESTwoPrim(1)/com.sap.odata.test1.ETBase")
@@ -2513,6 +2514,9 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .isEntitySet("ESKeyNav")
         .isTopText("-3");
+
+    testUri.runEx("ESKeyNav?$top=undefined").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("ESKeyNav?$top=").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
   }
 
   @Test
@@ -2533,6 +2537,14 @@ public class TestFullResourcePath {
     testUri.run("ESKeyNav(1)?$format=Test_all_valid_signsSpecified_for_format_signs%26-._~$@%27/Aa123%26-._~$@%27")
         .isKind(UriInfoKind.resource).goPath()
         .isFormatText("Test_all_valid_signsSpecified_for_format_signs&-._~$@'/Aa123&-._~$@'");
+    testUri.run("ESKeyNav(1)?$format=" + HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8)
+        .isKind(UriInfoKind.resource).goPath()
+        .isFormatText(HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8);
+    testUri.runEx("ESKeyNav(1)?$format=noSlash").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("ESKeyNav(1)?$format=slashAtEnd/").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("ESKeyNav(1)?$format=/startsWithSlash").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("ESKeyNav(1)?$format=two/Slashes/tooMuch").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("ESKeyNav(1)?$format=").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
   }
 
   @Test
@@ -2544,6 +2556,8 @@ public class TestFullResourcePath {
     testUri.run("ESAllPrim?$count=false")
         .isKind(UriInfoKind.resource).goPath()
         .isInlineCountText("false");
+    testUri.runEx("ESAllPrim?$count=undefined").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("ESAllPrim?$count=").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
   }
 
   @Test
@@ -2558,14 +2572,20 @@ public class TestFullResourcePath {
     testUri.run("ESAllPrim?$skip=-3")
         .isKind(UriInfoKind.resource).goPath()
         .isSkipText("-3");
+    testUri.runEx("ESAllPrim?$skip=F").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("ESAllPrim?$skip=").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
   }
 
   @Test
   public void skiptoken() throws Exception {
-
     testUri.run("ESAllPrim?$skiptoken=foo")
         .isKind(UriInfoKind.resource).goPath()
         .isSkipTokenText("foo");
+  }
+
+  @Test
+  public void notExistingSystemQueryOption() throws Exception {
+    testUri.runEx("ESAllPrim?$wrong=error").isExSyntax(UriParserSyntaxException.MessageKeys.TEST);
   }
 
   @Test

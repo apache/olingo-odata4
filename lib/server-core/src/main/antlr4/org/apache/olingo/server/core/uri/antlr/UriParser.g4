@@ -146,7 +146,7 @@ orderByItem         : vC=commonExpr ( WSP ( vA=ASC | vD=DESC ) )?;
 
 skip                : SKIP EQ INT;
 top                 : TOP EQ INT;
-//format              : FORMAT EQ ( ATOM | JSON | XML | PCHARS ( SLASH PCHARS)?);
+//format              : FORMAT EQ ( ATOM | JSON | XML | PCHARS SLASH PCHARS);
 
 inlinecount         : COUNT EQ booleanNonCase;
 

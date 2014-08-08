@@ -62,7 +62,7 @@ public class UriValidatorTest {
   private static final String URI_NAV_ENTITY_SET = "/ESKeyNav/NavPropertyETKeyNavMany";
 
   private static final String QO_FILTER = "$filter='1' eq '1'";
-  private static final String QO_FORMAT = "$format=bla";
+  private static final String QO_FORMAT = "$format=bla/bla";
   private static final String QO_EXPAND = "$expand=*";
   private static final String QO_ID = "$id=Products(0)";
   private static final String QO_COUNT = "$count=true";
@@ -381,7 +381,7 @@ public class UriValidatorTest {
       }
       uris.add(uri);
     }
-    return uris.toArray(new String[0]);
+    return uris.toArray(new String[uris.size()]);
   }
 
   private void parseAndValidate(final String uri, final HttpMethod method)
