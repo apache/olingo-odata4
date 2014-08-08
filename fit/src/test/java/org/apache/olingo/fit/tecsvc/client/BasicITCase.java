@@ -25,12 +25,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -47,6 +49,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.fit.server.StringHelper;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Before;
 import org.junit.Test;
@@ -124,6 +127,44 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertNotNull(property);
     assertNotNull(property.getPrimitiveValue());
     assertEquals(0, property.getPrimitiveValue().toValue());
+  }
+
+  @Test
+  public void readEntityRawResult() throws IOException {
+    final ODataEntityRequest<ODataEntity> request = odata.getRetrieveRequestFactory()
+        .getEntityRequest(URI.create(SERVICE_URI + "/ESCollAllPrim(1)"));
+    assertNotNull(request);
+
+    final ODataRetrieveResponse<ODataEntity> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
+
+    //
+    final String expectedResult = "{"
+        + "\"@odata.context\":\"$metadata#ESCollAllPrim/$entity\","
+        + "\"PropertyInt16\":1,"
+        + "\"CollPropertyString\":"
+        + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
+        + "\"CollPropertyBoolean\":[true,false,true],"
+        + "\"CollPropertyByte\":[50,200,249],"
+        + "\"CollPropertySByte\":[-120,120,126],"
+        + "\"CollPropertyInt16\":[1000,2000,30112],"
+        + "\"CollPropertyInt32\":[23232323,11223355,10000001],"
+        + "\"CollPropertyInt64\":[929292929292,333333333333,444444444444],"
+        + "\"CollPropertySingle\":[1790.0,26600.0,3210.0],"
+        + "\"CollPropertyDouble\":[-17900.0,-2.78E7,3210.0],"
+        + "\"CollPropertyDecimal\":[12,-2,1234],"
+        + "\"CollPropertyBinary\":[\"q83v\",\"ASNF\",\"VGeJ\"],"
+        + "\"CollPropertyDate\":[\"1958-12-03\",\"1999-08-05\",\"2013-06-25\"],"
+        + "\"CollPropertyDateTimeOffset\":[\"2015-08-12T03:08:34Z\",\"1970-03-28T12:11:10Z\","
+        + "\"1948-02-17T09:09:09Z\"],"
+        + "\"CollPropertyDuration\":[\"PT13S\",\"PT5H28M0S\",\"PT1H0S\"],"
+        + "\"CollPropertyGuid\":[\"ffffff67-89ab-cdef-0123-456789aaaaaa\",\"eeeeee67-89ab-cdef-0123-456789bbbbbb\","
+        + "\"cccccc67-89ab-cdef-0123-456789cccccc\"],"
+        + "\"CollPropertyTimeOfDay\":[\"04:14:13\",\"23:59:59\",\"01:12:33\"]"
+        + "}";
+    StringHelper.Stream s = StringHelper.toStream(response.getRawResponse());
+    assertEquals(expectedResult, s.asString());
   }
 
   @Override protected CommonODataClient getClient() {

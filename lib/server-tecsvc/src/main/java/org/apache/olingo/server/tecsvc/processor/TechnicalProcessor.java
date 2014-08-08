@@ -21,6 +21,7 @@ package org.apache.olingo.server.tecsvc.processor;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -72,7 +73,7 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
         ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-        response.setContent(serializer.entitySet(edmEntitySet, entitySet, getContextUrl(edmEntitySet)));
+        response.setContent(serializer.entitySet(edmEntitySet, entitySet, getContextUrl(edmEntitySet, false)));
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
         response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
       }
@@ -97,7 +98,7 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
         ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-        response.setContent(serializer.entity(edmEntitySet, entity, getContextUrl(edmEntitySet)));
+        response.setContent(serializer.entity(edmEntitySet, entity, getContextUrl(edmEntitySet, true)));
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
         response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
       }
@@ -153,7 +154,7 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
     return uriResource.getEntitySet();
   }
 
-  private ContextURL getContextUrl(final EdmEntitySet entitySet) {
-    return ContextURL.Builder.create().entitySet(entitySet).build();
+  private ContextURL getContextUrl(final EdmEntitySet entitySet, final boolean isSingleEntity) {
+    return ContextURL.Builder.create().entitySet(entitySet).suffix(isSingleEntity ? Suffix.ENTITY : null).build();
   }
 }
