@@ -32,16 +32,20 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.ComplexType;
+import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.Singleton;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.Context;
+import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,7 +134,52 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
   }
 
   protected boolean isDeleted(final EntityInvocationHandler handler) {
-    return getContext().entityContext().getStatus(handler) == AttachedEntityStatus.DELETED;
+    return (getContext().entityContext().isAttached(handler)
+            && getContext().entityContext().getStatus(handler) == AttachedEntityStatus.DELETED)
+            || getContext().entityContext().getFurtherDeletes().contains(handler.getEntityURI());
+  }
+
+  protected <S extends EntityType<?>> void deleteEntity(final EntityInvocationHandler handler, final URI entitySetURI) {
+    final EntityContext entityContext = getContext().entityContext();
+
+    final URI baseURI = entitySetURI == null ? handler.getEntitySetURI() : entitySetURI;
+
+    if (baseURI == null) {
+      throw new IllegalStateException("Entity base URI not available");
+    }
+
+    final String name = handler.getUUID().getType().
+            getAnnotation(org.apache.olingo.ext.proxy.api.annotations.EntityType.class).name();
+
+    final String namespace = handler.getUUID().getType().getAnnotation(Namespace.class).value();
+
+    final CommonODataEntity template;
+
+    final URI entityURI;
+    if (handler.getEntityURI() == null || handler.getUUID().getKey() == null) {
+      template = service.getClient().getObjectFactory().newEntity(new FullQualifiedName(namespace, name));
+      CoreUtils.addProperties(getClient(), handler.getPropertyChanges(), template);
+      final Object key = CoreUtils.getKey(getClient(), handler, handler.getUUID().getType(), template);
+
+      entityURI = CoreUtils.buildEditLink(getClient(), baseURI.toASCIIString(), template, key).build();
+      template.setEditLink(entityURI);
+    } else {
+      entityURI = handler.getEntityURI();
+      template = handler.getEntity();
+    }
+
+    // https://issues.apache.org/jira/browse/OLINGO-395
+    if (entityContext.isAttached(handler)) {
+      entityContext.addFurtherDeletes(entityURI);
+    } else {
+      if (handler.getUUID().getKey() == null) {
+        // objects created ad-hoc to generate deletion requests
+        handler.updateEntityUUID(baseURI, handler.getUUID().getType(), template);
+      } else {
+        handler.updateUUID(baseURI, handler.getUUID().getType(), handler.getUUID().getKey());
+      }
+      entityContext.attach(handler, AttachedEntityStatus.DELETED, true);
+    }
   }
 
   protected static CommonURIBuilder<?> buildEntitySetURI(

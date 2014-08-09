@@ -30,8 +30,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
@@ -62,6 +65,7 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
 import org.apache.olingo.ext.proxy.api.annotations.EnumType;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -395,6 +399,55 @@ public final class CoreUtils {
       LOG.error("Could not determine the Java type of {}", propertyName, e);
     }
     return propertyClass;
+  }
+
+  public static CommonURIBuilder<?> buildEditLink(
+          final CommonEdmEnabledODataClient<?> client,
+          final String entitySetURI,
+          final CommonODataEntity entity,
+          final Object key) {
+
+    if (key == null) {
+      return null;
+    }
+
+    final CommonURIBuilder<?> uriBuilder = StringUtils.isNotBlank(entitySetURI)
+            ? client.newURIBuilder(entitySetURI)
+            : client.newURIBuilder();
+
+    if (key.getClass().getAnnotation(CompoundKey.class) == null) {
+      LOG.debug("Append key segment '{}'", key);
+      uriBuilder.appendKeySegment(key);
+    } else {
+      LOG.debug("Append compound key segment '{}'", key);
+      uriBuilder.appendKeySegment(CoreUtils.getCompoundKey(key));
+    }
+
+    return uriBuilder;
+  }
+
+  public static Map<String, Object> getCompoundKey(final Object key) {
+    final Set<CompoundKeyElementWrapper> elements = new TreeSet<CompoundKeyElementWrapper>();
+
+    for (Method method : key.getClass().getMethods()) {
+      final Annotation annotation = method.getAnnotation(CompoundKeyElement.class);
+      if (annotation instanceof CompoundKeyElement) {
+        elements.add(new CompoundKeyElementWrapper(
+                ((CompoundKeyElement) annotation).name(), method, ((CompoundKeyElement) annotation).position()));
+      }
+    }
+
+    final LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+
+    for (CompoundKeyElementWrapper element : elements) {
+      try {
+        map.put(element.getName(), element.getMethod().invoke(key));
+      } catch (Exception e) {
+        LOG.warn("Error retrieving compound key element '{}' value", element.getName(), e);
+      }
+    }
+
+    return map;
   }
 
   public static Object getKey(

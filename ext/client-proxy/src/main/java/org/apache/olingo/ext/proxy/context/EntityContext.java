@@ -93,11 +93,24 @@ public class EntityContext implements Iterable<AttachedEntity> {
    * @param status status.
    */
   public void attach(final EntityInvocationHandler entity, final AttachedEntityStatus status) {
+    attach(entity, status, false);
+  }
+
+  /**
+   * Attaches an entity with specified status.
+   * <br/>
+   * Use this method to attach an existing entity.
+   *
+   * @param entity entity to be attached.
+   * @param status status.
+   * @param force force attach.
+   */
+  public void attach(final EntityInvocationHandler entity, final AttachedEntityStatus status, final boolean force) {
     if (isAttached(entity)) {
       throw new IllegalStateException("An entity with the same profile has already been attached");
     }
 
-    if (entity.getUUID().getEntitySetURI() != null) {
+    if (force || entity.getUUID().getEntitySetURI() != null) {
       allAttachedEntities.put(entity, status);
 
       if (entity.getUUID().getKey() != null) {

@@ -528,20 +528,17 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
           final CommonODataEntity entity,
           final PersistenceChanges changeset) {
     final URI deleteURI = entity.getEditLink() == null ? handler.getEntityURI() : entity.getEditLink();
-    changeset.addChange(buildDeleteRequest(deleteURI, handler.getETag(), changeset), handler);
+    changeset.addChange(buildDeleteRequest(deleteURI, handler.getETag()), handler);
   }
 
   private void queueDelete(
           final URI deleteURI,
           final String etag,
           final PersistenceChanges changeset) {
-    changeset.addChange(buildDeleteRequest(deleteURI, etag, changeset), null);
+    changeset.addChange(buildDeleteRequest(deleteURI, etag), null);
   }
 
-  private ODataDeleteRequest buildDeleteRequest(
-          final URI deleteURI,
-          final String etag,
-          final PersistenceChanges changeset) {
+  private ODataDeleteRequest buildDeleteRequest(final URI deleteURI, final String etag) {
 
     LOG.debug("Delete '{}'", deleteURI);
 

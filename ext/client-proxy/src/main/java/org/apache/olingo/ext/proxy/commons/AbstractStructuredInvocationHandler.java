@@ -251,13 +251,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     final EntityContext entityContext = getContext().entityContext();
 
     if (this instanceof EntityInvocationHandler) {
-      final EntityInvocationHandler handler = EntityInvocationHandler.class.cast(this);
-
-      if (entityContext.isAttached(handler)) {
-        entityContext.setStatus(handler, AttachedEntityStatus.DELETED);
-      } else {
-        entityContext.attach(handler, AttachedEntityStatus.DELETED);
-      }
+      deleteEntity(EntityInvocationHandler.class.cast(this), null);
     } else if (baseURI != null) {
       entityContext.addFurtherDeletes(
               getClient().newURIBuilder(baseURI.toASCIIString()).appendValueSegment().build());
@@ -297,10 +291,10 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
           res = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {EdmStreamValue.class}, new EdmStreamValueHandler(
-                          baseURI == null
-                          ? null
-                          : getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name).build(),
-                          service));
+                  baseURI == null
+                  ? null
+                  : getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name).build(),
+                  service));
 
           streamedPropertyCache.put(name, EdmStreamValue.class.cast(res));
         }

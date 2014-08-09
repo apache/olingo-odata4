@@ -135,16 +135,18 @@ public class EntitySetInvocationHandler<
               typeRef.getAnnotation(Namespace.class).value(), ClassUtils.getEntityTypeName(typeRef)));
 
       handler = EntityInvocationHandler.getInstance(key, entity, this.baseURI, typeRef, service);
-    } else if (isDeleted(handler)) {
-      // object deleted
-      LOG.debug("Object '{}({})' has been deleted", typeRef.getSimpleName(), uuid);
-      handler = null;
     }
 
-    return handler == null ? null : (S) Proxy.newProxyInstance(
-            Thread.currentThread().getContextClassLoader(),
-            new Class<?>[] {typeRef},
-            handler);
+    if (isDeleted(handler)) {
+      // object deleted
+      LOG.debug("Object '{}({})' has been deleted", typeRef.getSimpleName(), uuid);
+      return null;
+    } else {
+      return (S) Proxy.newProxyInstance(
+              Thread.currentThread().getContextClassLoader(),
+              new Class<?>[] {typeRef},
+              handler);
+    }
   }
 
   @Override
@@ -257,14 +259,7 @@ public class EntitySetInvocationHandler<
 
   @Override
   public <S extends T> void delete(final S entity) {
-    final EntityContext entityContext = getContext().entityContext();
-
-    final EntityInvocationHandler handler = (EntityInvocationHandler) Proxy.getInvocationHandler(entity);
-    if (entityContext.isAttached(handler)) {
-      entityContext.setStatus(handler, AttachedEntityStatus.DELETED);
-    } else {
-      entityContext.attach(handler, AttachedEntityStatus.DELETED);
-    }
+    deleteEntity((EntityInvocationHandler) Proxy.getInvocationHandler(entity), this.baseURI);
   }
 
   @Override

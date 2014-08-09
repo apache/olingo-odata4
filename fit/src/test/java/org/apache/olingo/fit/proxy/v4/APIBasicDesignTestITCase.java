@@ -29,10 +29,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
@@ -278,7 +280,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
     service.getContext().detachAll();
     try {
-      getContainer().getOrders().getByKey(105).load();
+      getContainer().getOrders().getByKey(1105).load();
       fail();
     } catch (IllegalArgumentException e) {
     }
@@ -410,7 +412,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     // ---------------------------------------
     org.apache.olingo.fit.proxy.v3.staticservice.Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> v3serv =
             org.apache.olingo.fit.proxy.v3.staticservice.Service.getV3(
-                    "http://localhost:9080/stub/StaticService/V30/Static.svc");
+            "http://localhost:9080/stub/StaticService/V30/Static.svc");
     v3serv.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     final DefaultContainer v3cont = v3serv.getEntityContainer(DefaultContainer.class);
     assertNotNull(v3cont);
@@ -571,5 +573,57 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     final Person parent = invoker2.getParent().load();
     assertNotNull(parent);
     assertEquals(2, parent.getPersonID(), 0);
+  }
+
+  /**
+   * Java client should support the deletion based on locally created entity.
+   *
+   * @see https://issues.apache.org/jira/browse/OLINGO-395
+   */
+  @Test
+  public void issueOLINGO395() {
+    Order order = getContainer().newEntityInstance(Order.class);
+    order.setOrderID(1105);
+
+    final Calendar orderDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    orderDate.clear();
+    orderDate.set(2011, 3, 4, 16, 3, 57);
+    order.setOrderDate(new Timestamp(orderDate.getTimeInMillis()));
+
+    order.setShelfLife(BigDecimal.ZERO);
+
+    final PrimitiveCollection<BigDecimal> osl = getContainer().newPrimitiveCollection(BigDecimal.class);
+    osl.add(BigDecimal.TEN.negate());
+    osl.add(BigDecimal.TEN);
+
+    order.setOrderShelfLifes(osl);
+
+    getContainer().getOrders().add(order);
+    getContainer().getOrders().delete(order);
+
+    List<ODataRuntimeException> res = getContainer().flush();
+    assertTrue(res.isEmpty() || res.iterator().next() == null);
+
+    service.getContext().detachAll();
+    try {
+      getContainer().getOrders().getByKey(1105).load();
+      fail();
+    } catch (IllegalArgumentException e) {
+    }
+    service.getContext().detachAll(); // avoid influences
+
+    order = getContainer().newEntityInstance(Order.class);
+    order.setOrderID(1105);
+
+    getContainer().getOrders().delete(order);
+    getContainer().flush(); // test service doesn't fail for delete requests about unexisting objects
+
+    service.getContext().detachAll();
+    try {
+      getContainer().getOrders().getByKey(1105).load();
+      fail();
+    } catch (IllegalArgumentException e) {
+    }
+    service.getContext().detachAll(); // avoid influences
   }
 }

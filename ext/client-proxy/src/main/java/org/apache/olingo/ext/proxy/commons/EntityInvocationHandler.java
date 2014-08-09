@@ -19,7 +19,6 @@
 package org.apache.olingo.ext.proxy.commons;
 
 import java.io.InputStream;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -27,11 +26,8 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
@@ -48,8 +44,6 @@ import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
-import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
-import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -197,15 +191,8 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
       this.baseURI = entity.getEditLink();
       this.uri = getClient().newURIBuilder(baseURI.toASCIIString());
     } else if (key != null) {
-      final CommonURIBuilder<?> uriBuilder = getClient().newURIBuilder(entitySetURI.toASCIIString());
-
-      if (key.getClass().getAnnotation(CompoundKey.class) == null) {
-        LOG.debug("Append key segment '{}'", key);
-        uriBuilder.appendKeySegment(key);
-      } else {
-        LOG.debug("Append compound key segment '{}'", key);
-        uriBuilder.appendKeySegment(getCompoundKey(key));
-      }
+      final CommonURIBuilder<?> uriBuilder =
+              CoreUtils.buildEditLink(getClient(), entitySetURI.toASCIIString(), entity, key);
 
       this.uri = uriBuilder;
       this.baseURI = this.uri.build();
@@ -225,15 +212,19 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     this.internal = entity;
     getEntity().setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
 
-    this.uuid = new EntityUUID(
-            getUUID().getEntitySetURI(),
-            getUUID().getType(),
-            CoreUtils.getKey(getClient(), this, typeRef, entity));
+    final Object key = CoreUtils.getKey(getClient(), this, typeRef, entity);
+
+    this.uuid = new EntityUUID(getUUID().getEntitySetURI(), getUUID().getType(), key);
 
     // fix for OLINGO-353
     if (this.uri == null) {
-      this.baseURI = entity.getEditLink();
-      this.uri = this.baseURI == null ? null : getClient().newURIBuilder(this.baseURI.toASCIIString());
+      final CommonURIBuilder<?> uriBuilder =
+              entity.getEditLink() == null
+              ? CoreUtils.buildEditLink(getClient(), getUUID().getEntitySetURI().toASCIIString(), entity, key)
+              : getClient().newURIBuilder(entity.getEditLink().toASCIIString());
+
+      this.uri = uriBuilder;
+      this.baseURI = this.uri == null ? null : this.uri.build();
     }
 
     this.streamedPropertyChanges.clear();
@@ -250,8 +241,25 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return uuid;
   }
 
+  public EntityUUID updateEntityUUID(final URI entitySetURI, final Class<?> type, final CommonODataEntity entity) {
+    CoreUtils.addProperties(service.getClient(), this.getPropertyChanges(), entity);
+    final Object key = CoreUtils.getKey(getClient(), this, this.getUUID().getType(), entity);
+    return updateUUID(entitySetURI, type, key);
+  }
+
   public EntityUUID updateUUID(final URI entitySetURI, final Class<?> type, final Object key) {
     this.uuid = new EntityUUID(entitySetURI, type, key);
+
+    if (this.uri == null) {
+      final CommonURIBuilder<?> uriBuilder =
+              getEntity().getEditLink() == null
+              ? CoreUtils.buildEditLink(getClient(), entitySetURI.toASCIIString(), getEntity(), key)
+              : getClient().newURIBuilder(getEntity().getEditLink().toASCIIString());
+
+      this.uri = uriBuilder;
+      this.baseURI = this.uri == null ? null : this.uri.build();
+    }
+
     return this.uuid;
   }
 
@@ -472,30 +480,6 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
       LOG.warn("Error retrieving entity '" + uuid + "'", e);
       throw new IllegalArgumentException("Error retrieving " + typeRef.getSimpleName() + "(" + key + ")", e);
     }
-  }
-
-  private Map<String, Object> getCompoundKey(final Object key) {
-    final Set<CompoundKeyElementWrapper> elements = new TreeSet<CompoundKeyElementWrapper>();
-
-    for (Method method : key.getClass().getMethods()) {
-      final Annotation annotation = method.getAnnotation(CompoundKeyElement.class);
-      if (annotation instanceof CompoundKeyElement) {
-        elements.add(new CompoundKeyElementWrapper(
-                ((CompoundKeyElement) annotation).name(), method, ((CompoundKeyElement) annotation).position()));
-      }
-    }
-
-    final LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-
-    for (CompoundKeyElementWrapper element : elements) {
-      try {
-        map.put(element.getName(), element.getMethod().invoke(key));
-      } catch (Exception e) {
-        LOG.warn("Error retrieving compound key element '{}' value", element.getName(), e);
-      }
-    }
-
-    return map;
   }
 
   @Override

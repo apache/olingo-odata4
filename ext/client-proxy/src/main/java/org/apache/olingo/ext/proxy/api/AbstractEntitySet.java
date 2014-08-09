@@ -78,9 +78,9 @@ public interface AbstractEntitySet<
    * Deletes the given entity in a batch.
    *
    * @param <S>
-   * @param entities to be deleted
+   * @param entity to be deleted
    */
-  <S extends T> void delete(S entities);
+  <S extends T> void delete(S entity);
 
   /**
    * Deletes the given entities in a batch.
