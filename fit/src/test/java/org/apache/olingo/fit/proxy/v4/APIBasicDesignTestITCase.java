@@ -35,7 +35,7 @@ import java.util.TimeZone;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ODataResponseError;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
@@ -604,7 +604,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     getContainer().getOrders().add(order);
     getContainer().getOrders().delete(order);
 
-    List<ODataRuntimeException> res = getContainer().flush();
+    List<ODataResponseError> res = getContainer().flush();
     assertTrue(res.isEmpty() || res.iterator().next() == null);
 
     service.getContext().detachAll();

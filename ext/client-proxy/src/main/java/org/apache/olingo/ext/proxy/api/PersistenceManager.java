@@ -21,7 +21,7 @@ package org.apache.olingo.ext.proxy.api;
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.Future;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ODataResponseError;
 
 /**
  * Interface for container operations.
@@ -34,7 +34,7 @@ public interface PersistenceManager extends Serializable {
    * @return a list where n-th item is either null (if corresponding request went out successfully) or the exception
    * bearing the error returned from the service.
    */
-  List<ODataRuntimeException> flush();
+  List<ODataResponseError> flush();
 
   /**
    * Asynchronously flushes all pending changes to the OData service.
@@ -42,5 +42,5 @@ public interface PersistenceManager extends Serializable {
    * @return a future handle for a list where n-th item is either null (if corresponding request went out successfully)
    * or the exception bearing the error returned from the service.
    */
-  Future<List<ODataRuntimeException>> flushAsync();
+  Future<List<ODataResponseError>> flushAsync();
 }

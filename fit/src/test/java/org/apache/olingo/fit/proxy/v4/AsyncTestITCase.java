@@ -27,7 +27,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ODataResponseError;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
@@ -64,7 +64,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
     final Person person = container.getPeople().getByKey(1);
     person.setFirstName(randomFirstName);
 
-    final Future<List<ODataRuntimeException>> futureFlush = container.flushAsync();
+    final Future<List<ODataResponseError>> futureFlush = container.flushAsync();
     assertNotNull(futureFlush);
 
     while (!futureFlush.isDone()) {

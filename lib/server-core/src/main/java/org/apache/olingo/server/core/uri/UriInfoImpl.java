@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.core.uri;
 
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ODataResponseError;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoAll;
@@ -266,7 +266,7 @@ public class UriInfoImpl implements UriInfo {
     } else if (systemOption.getKind() == SystemQueryOptionKind.LEVELS) {
       systemQueryOptions.put(SystemQueryOptionKind.LEVELS, systemOption);
     } else {
-      throw new ODataRuntimeException("Unsupported System Query Option: " + systemOption.getName());
+      throw new ODataResponseError("Unsupported System Query Option: " + systemOption.getName());
     }
 
     return this;

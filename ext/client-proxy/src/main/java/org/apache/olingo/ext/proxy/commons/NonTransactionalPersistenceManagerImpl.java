@@ -30,7 +30,7 @@ import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ODataResponseError;
 import org.apache.olingo.ext.proxy.AbstractService;
 
 /**
@@ -46,8 +46,8 @@ public class NonTransactionalPersistenceManagerImpl extends AbstractPersistenceM
   }
 
   @Override
-  protected List<ODataRuntimeException> doFlush(final PersistenceChanges changes, final TransactionItems items) {
-    final List<ODataRuntimeException> result = new ArrayList<ODataRuntimeException>();
+  protected List<ODataResponseError> doFlush(final PersistenceChanges changes, final TransactionItems items) {
+    final List<ODataResponseError> result = new ArrayList<ODataResponseError>();
 
     final Map<Integer, URI> responses = new HashMap<Integer, URI>();
     int virtualContentID = 0;
@@ -89,7 +89,7 @@ public class NonTransactionalPersistenceManagerImpl extends AbstractPersistenceM
         }
 
         result.add(null);
-      } catch (ODataRuntimeException e) {
+      } catch (ODataResponseError e) {
         LOG.error("While performing {}", entry.getKey().getURI(), e);
 
         if (service.getClient().getConfiguration().isContinueOnError()) {
