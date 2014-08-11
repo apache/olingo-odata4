@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ODataResponseError;
 import org.junit.Test;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -63,7 +63,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
     final Product product = container.getProduct().getByKey(-10);
     product.setDescription("AsyncTest#updateEntity " + random);
 
-    final Future<List<ODataRuntimeException>> futureFlush = container.flushAsync();
+    final Future<List<ODataResponseError>> futureFlush = container.flushAsync();
     assertNotNull(futureFlush);
 
     while (!futureFlush.isDone()) {

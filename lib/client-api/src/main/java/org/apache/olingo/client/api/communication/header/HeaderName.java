@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.header;
 
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ODataResponseError;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 import java.util.Arrays;
@@ -214,7 +214,7 @@ public enum HeaderName {
 
   final void isSupportedBy(final ODataServiceVersion serviceVersion) {
     if (!supportedVersions.contains(serviceVersion)) {
-      throw new ODataRuntimeException("Unsupported header " + this.toString());
+      throw new ODataResponseError("Unsupported header " + this.toString());
     }
   }
 

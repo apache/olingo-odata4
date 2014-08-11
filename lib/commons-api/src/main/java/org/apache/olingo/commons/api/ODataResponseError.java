@@ -18,19 +18,19 @@
  */
 package org.apache.olingo.commons.api;
 
-public class ODataRuntimeException extends RuntimeException {
+public class ODataResponseError extends RuntimeException {
 
   private static final long serialVersionUID = 5492375572049190883L;
 
-  public ODataRuntimeException(final String msg) {
+  public ODataResponseError(final String msg) {
     super(msg);
   }
 
-  public ODataRuntimeException(final String msg, final Exception cause) {
+  public ODataResponseError(final String msg, final Exception cause) {
     super(msg, cause);
   }
 
-  public ODataRuntimeException(final Exception cause) {
+  public ODataResponseError(final Exception cause) {
     super(cause);
   }
 

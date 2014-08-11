@@ -38,7 +38,7 @@ import org.apache.olingo.client.api.communication.request.cud.v4.ODataReferenceA
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ODataResponseError;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
@@ -71,19 +71,19 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
   }
 
   @Override
-  public Future<List<ODataRuntimeException>> flushAsync() {
-    return service.getClient().getConfiguration().getExecutor().submit(new Callable<List<ODataRuntimeException>>() {
+  public Future<List<ODataResponseError>> flushAsync() {
+    return service.getClient().getConfiguration().getExecutor().submit(new Callable<List<ODataResponseError>>() {
       @Override
-      public List<ODataRuntimeException> call() throws Exception {
+      public List<ODataResponseError> call() throws Exception {
         return flush();
       }
     });
   }
 
-  protected abstract List<ODataRuntimeException> doFlush(PersistenceChanges changes, TransactionItems items);
+  protected abstract List<ODataResponseError> doFlush(PersistenceChanges changes, TransactionItems items);
 
   @Override
-  public List<ODataRuntimeException> flush() {
+  public List<ODataResponseError> flush() {
     final PersistenceChanges changes = new PersistenceChanges();
     final TransactionItems items = new TransactionItems();
 
@@ -110,7 +110,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
       items.put(null, pos);
     }
 
-    final List<ODataRuntimeException> result = new ArrayList<ODataRuntimeException>();
+    final List<ODataResponseError> result = new ArrayList<ODataResponseError>();
     if (!items.isEmpty()) {
       result.addAll(doFlush(changes, items));
     }

@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.TimeZone;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ODataResponseError;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.Service;
@@ -70,7 +70,7 @@ public class ContextTestITCase extends AbstractTestITCase {
 
     container.getPeople().add(employee);
 
-    final List<ODataRuntimeException> result = container.flush();
+    final List<ODataResponseError> result = container.flush();
 
     assertEquals(2, result.size());
     assertTrue(result.get(0) instanceof ODataClientErrorException);

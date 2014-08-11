@@ -37,7 +37,7 @@ import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResp
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.core.communication.header.ODataErrorResponseChecker;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ODataResponseError;
 import org.apache.olingo.ext.proxy.AbstractService;
 
 /**
@@ -57,7 +57,7 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
    * Transactional changes commit.
    */
   @Override
-  protected List<ODataRuntimeException> doFlush(final PersistenceChanges changes, final TransactionItems items) {
+  protected List<ODataResponseError> doFlush(final PersistenceChanges changes, final TransactionItems items) {
     final CommonODataBatchRequest request =
             service.getClient().getBatchRequestFactory().getBatchRequest(service.getClient().getServiceRoot());
     ((ODataRequest) request).setAccept(
@@ -78,7 +78,7 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
       throw new IllegalStateException("Operation failed");
     }
 
-    final List<ODataRuntimeException> result = new ArrayList<ODataRuntimeException>();
+    final List<ODataResponseError> result = new ArrayList<ODataResponseError>();
 
     if (!items.isEmpty()) {
       final Iterator<ODataBatchResponseItem> batchResItor = response.getBody();
