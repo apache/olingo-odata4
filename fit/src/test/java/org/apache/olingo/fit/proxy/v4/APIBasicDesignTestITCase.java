@@ -41,7 +41,6 @@ import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 import org.apache.olingo.ext.proxy.commons.AbstractCollectionInvocationHandler;
-import org.apache.olingo.ext.proxy.commons.EntitySetInvocationHandler;
 import org.junit.Test;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
