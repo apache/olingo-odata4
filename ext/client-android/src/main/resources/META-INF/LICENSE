@@ -650,19 +650,19 @@ org.apache.httpcomponents:httpclient:jar:4.2.6 License: Apache License
 org.apache.httpcomponents:httpcore:jar:4.2.5 License: Apache License
 (LICENSE.txt) - olingo-client-api
 (http://olingo.apache.org/olingo-lib/olingo-client-api)
-org.apache.olingo:olingo-client-api:jar:0.1.0-SNAPSHOT License: The Apache
+org.apache.olingo:olingo-client-api:jar:4.0.0-beta-01-SNAPSHOT License: The Apache
 Software License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
 - olingo-client-core (http://olingo.apache.org/olingo-lib/olingo-client-core)
-org.apache.olingo:olingo-client-core:jar:0.1.0-SNAPSHOT License: The Apache
+org.apache.olingo:olingo-client-core:jar:4.0.0-beta-01-SNAPSHOT License: The Apache
 Software License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
 - olingo-client-proxy (http://olingo.apache.org/olingo-ext/olingo-client-proxy)
-org.apache.olingo:olingo-client-proxy:jar:0.1.0-SNAPSHOT License: The Apache
+org.apache.olingo:olingo-client-proxy:jar:4.0.0-beta-01-SNAPSHOT License: The Apache
 Software License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
 - olingo-commons-api (http://olingo.apache.org/olingo-lib/olingo-commons-api)
-org.apache.olingo:olingo-commons-api:jar:0.1.0-SNAPSHOT License: The Apache
+org.apache.olingo:olingo-commons-api:jar:4.0.0-beta-01-SNAPSHOT License: The Apache
 Software License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
 - olingo-commons-core (http://olingo.apache.org/olingo-lib/olingo-commons-core)
-org.apache.olingo:olingo-commons-core:jar:0.1.0-SNAPSHOT License: The Apache
+org.apache.olingo:olingo-commons-core:jar:4.0.0-beta-01-SNAPSHOT License: The Apache
 Software License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 
