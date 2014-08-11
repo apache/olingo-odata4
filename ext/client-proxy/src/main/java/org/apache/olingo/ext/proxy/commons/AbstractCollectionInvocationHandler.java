@@ -31,7 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
+import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
@@ -315,14 +317,18 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
 
   public void expand(final String... expand) {
     if (this.uri != null) {
-      this.uri.expand(expand);
+      this.uri.replaceQueryOption(QueryOption.EXPAND, StringUtils.join(expand, ","));
     }
   }
 
   public void select(final String... select) {
     if (this.uri != null) {
-      this.uri.select(select);
+      this.uri.replaceQueryOption(QueryOption.SELECT, StringUtils.join(select, ","));
     }
+  }
+
+  public URI getRequestURI() {
+    return this.uri == null ? null : this.uri.build();
   }
 
   public void clearQueryOptions() {

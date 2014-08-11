@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -39,6 +40,8 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
+import org.apache.olingo.ext.proxy.commons.AbstractCollectionInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.EntitySetInvocationHandler;
 import org.junit.Test;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -625,5 +628,30 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     } catch (IllegalArgumentException e) {
     }
     service.getContext().detachAll(); // avoid influences
+  }
+
+  @Test
+  public void issueOLINGO398() {
+    AbstractCollectionInvocationHandler<?, ?> handler = AbstractCollectionInvocationHandler.class.cast(
+            Proxy.getInvocationHandler(container.getCustomers().getByKey(1).getOrders().
+            select("OrderID", "CustomerForOrder").
+            expand("CustomerForOrder").
+            top(1).
+            skip(2)));
+
+    assertEquals("http://localhost:9080/stub/StaticService/V40/Static.svc/Customers(1)/Orders?"
+            + "%24select=OrderID%2CCustomerForOrder&%24expand=CustomerForOrder&%24top=1&%24skip=2",
+            handler.getRequestURI().toASCIIString());
+
+    handler = AbstractCollectionInvocationHandler.class.cast(
+            Proxy.getInvocationHandler(container.getCustomers().getByKey(1).getOrders().
+            select("OrderID", "CustomerForOrder").
+            expand("CustomerForOrder").
+            top(1).
+            skip(2)));
+
+    assertEquals("http://localhost:9080/stub/StaticService/V40/Static.svc/Customers(1)/Orders?%24"
+            + "select=OrderID%2CCustomerForOrder&%24expand=CustomerForOrder&%24top=1&%24skip=2",
+            handler.getRequestURI().toASCIIString());
   }
 }

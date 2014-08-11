@@ -28,21 +28,33 @@ public interface CommonURIBuilder<UB extends CommonURIBuilder<?>> {
 
   /**
    * Adds the specified query option to the URI.
+   * <br />
+   * Concatenates value if the specified query option already exists.
    *
    * @param option query option.
    * @param value query option value.
    * @return current URIBuilder instance
    */
   UB addQueryOption(QueryOption option, String value);
-
+  
   /**
-   * Adds the specified (custom) query option to the URI.
+   * Adds/replaces the specified query option to the URI.
    *
    * @param option query option.
    * @param value query option value.
+   * @return current URIBuilder instance
+   */
+  UB replaceQueryOption(QueryOption option, String value);
+
+  /**
+   * Adds/Replaces the specified (custom) query option to the URI.
+   *
+   * @param option query option.
+   * @param value query option value.
+   * @param replace if <tt>true</tt> then replace existing one.
    * @return current URIBuilder instance.
    */
-  UB addQueryOption(String option, String value);
+  UB addQueryOption(String option, String value, boolean replace);
 
   /**
    * Adds the specified (custom) parameter alias to the URI.

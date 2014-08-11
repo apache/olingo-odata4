@@ -62,7 +62,6 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
       return value;
     }
   }
-
   /**
    * Logger.
    */
@@ -102,13 +101,18 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   @Override
   public UB addQueryOption(final QueryOption option, final String value) {
-    return addQueryOption(option.toString(), value);
+    return addQueryOption(option.toString(), value, false);
   }
 
   @Override
-  public UB addQueryOption(final String option, final String value) {
+  public UB replaceQueryOption(final QueryOption option, final String value) {
+    return addQueryOption(option.toString(), value, true);
+  }
+
+  @Override
+  public UB addQueryOption(final String option, final String value, final boolean replace) {
     final StringBuilder builder = new StringBuilder();
-    if (queryOptions.containsKey(option)) {
+    if (!replace && queryOptions.containsKey(option)) {
       builder.append(queryOptions.get(option)).append(',');
     }
     builder.append(value);
@@ -212,7 +216,7 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   @Override
   public UB format(final String format) {
-    return addQueryOption(QueryOption.FORMAT, format);
+    return replaceQueryOption(QueryOption.FORMAT, format);
   }
 
   @Override
@@ -229,7 +233,7 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   @Override
   public UB filter(final String filter) {
-    return addQueryOption(QueryOption.FILTER, filter);
+    return replaceQueryOption(QueryOption.FILTER, filter);
   }
 
   @Override
@@ -239,22 +243,22 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   @Override
   public UB orderBy(final String order) {
-    return addQueryOption(QueryOption.ORDERBY, order);
+    return replaceQueryOption(QueryOption.ORDERBY, order);
   }
 
   @Override
   public UB top(final int top) {
-    return addQueryOption(QueryOption.TOP, String.valueOf(top));
+    return replaceQueryOption(QueryOption.TOP, String.valueOf(top));
   }
 
   @Override
   public UB skip(final int skip) {
-    return addQueryOption(QueryOption.SKIP, String.valueOf(skip));
+    return replaceQueryOption(QueryOption.SKIP, String.valueOf(skip));
   }
 
   @Override
   public UB skipToken(final String skipToken) {
-    return addQueryOption(QueryOption.SKIPTOKEN, skipToken);
+    return replaceQueryOption(QueryOption.SKIPTOKEN, skipToken);
   }
 
   protected abstract char getBoundOperationSeparator();
@@ -272,7 +276,7 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
             break;
 
           default:
-            if(segmentsBuilder.length() > 0 && segmentsBuilder.charAt(segmentsBuilder.length()-1) != '/') {
+            if (segmentsBuilder.length() > 0 && segmentsBuilder.charAt(segmentsBuilder.length() - 1) != '/') {
               segmentsBuilder.append('/');
             }
         }
@@ -290,24 +294,24 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
     try {
       StringBuilder sb = segmentsBuilder;
-      if((queryOptions.size() + parameters.size()) > 0){
-          sb.append("?");
-          List<NameValuePair> list1 = new LinkedList<NameValuePair>();
-          for (Map.Entry<String, String> option : queryOptions.entrySet()) {
-        	list1.add(new BasicNameValuePair("$" + option.getKey(), option.getValue()));
-          }
-          for (Map.Entry<String, String> parameter : parameters.entrySet()) {
-    		list1.add(new BasicNameValuePair("@" + parameter.getKey(), parameter.getValue()));
-          }
+      if ((queryOptions.size() + parameters.size()) > 0) {
+        sb.append("?");
+        List<NameValuePair> list1 = new LinkedList<NameValuePair>();
+        for (Map.Entry<String, String> option : queryOptions.entrySet()) {
+          list1.add(new BasicNameValuePair("$" + option.getKey(), option.getValue()));
+        }
+        for (Map.Entry<String, String> parameter : parameters.entrySet()) {
+          list1.add(new BasicNameValuePair("@" + parameter.getKey(), parameter.getValue()));
+        }
 
-          // don't use UriBuilder.build():
-          // it will try to call URLEncodedUtils.format(Iterable<>,Charset) method,
-          // which works in desktop java application, however, throws NoSuchMethodError in android OS,
-          // so here manually construct the URL by its overload URLEncodedUtils.format(List<>,String).
-          String queryStr = URLEncodedUtils.format(list1, "UTF-8");
-          sb.append(queryStr);
+        // don't use UriBuilder.build():
+        // it will try to call URLEncodedUtils.format(Iterable<>,Charset) method,
+        // which works in desktop java application, however, throws NoSuchMethodError in android OS,
+        // so here manually construct the URL by its overload URLEncodedUtils.format(List<>,String).
+        String queryStr = URLEncodedUtils.format(list1, "UTF-8");
+        sb.append(queryStr);
       }
-      
+
       return URI.create(sb.toString());
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("Could not build valid URI", e);

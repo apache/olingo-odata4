@@ -142,6 +142,8 @@ public class EntitySetInvocationHandler<
       LOG.debug("Object '{}({})' has been deleted", typeRef.getSimpleName(), uuid);
       return null;
     } else {
+      // clear query options
+      handler.clearQueryOptions();
       return (S) Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {typeRef},

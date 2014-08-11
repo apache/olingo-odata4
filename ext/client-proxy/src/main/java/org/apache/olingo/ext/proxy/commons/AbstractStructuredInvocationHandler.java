@@ -36,7 +36,9 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
@@ -621,11 +623,11 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   }
 
   public void expand(final String... expand) {
-    this.uri.expand(expand);
+    this.uri.replaceQueryOption(QueryOption.EXPAND, StringUtils.join(expand, ","));
   }
 
   public void select(final String... select) {
-    this.uri.select(select);
+    this.uri.replaceQueryOption(QueryOption.SELECT, StringUtils.join(select, ","));
   }
 
   public void refs() {
