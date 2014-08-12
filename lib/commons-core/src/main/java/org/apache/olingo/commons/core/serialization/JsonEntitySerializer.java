@@ -29,6 +29,7 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import java.io.IOException;
 import java.net.URI;
@@ -40,6 +41,10 @@ public class JsonEntitySerializer extends JsonSerializer {
 
   public JsonEntitySerializer(final ODataServiceVersion version, final boolean serverMode) {
     super(version, serverMode);
+  }
+
+  public JsonEntitySerializer(ODataServiceVersion version, boolean serverMode, ODataFormat format) {
+    super(version, serverMode, format);
   }
 
   protected void doSerialize(final Entity entity, final JsonGenerator jgen)
@@ -70,12 +75,12 @@ public class JsonEntitySerializer extends JsonSerializer {
       }
     }
 
-    if (StringUtils.isNotBlank(entity.getType())) {
+    if (StringUtils.isNotBlank(entity.getType()) && format == ODataFormat.JSON_FULL_METADATA) {
       jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.TYPE),
               new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external(version));
     }
 
-    if (entity.getId() != null) {
+    if (entity.getId() != null && format != ODataFormat.JSON_NO_METADATA) {
       jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.ID), entity.getId().toASCIIString());
     }
 
@@ -97,7 +102,9 @@ public class JsonEntitySerializer extends JsonSerializer {
       }
     }
 
-    links(entity, jgen);
+    if (format != ODataFormat.JSON_NO_METADATA) {
+      links(entity, jgen);
+    }
 
     for (Link link : entity.getMediaEditLinks()) {
       if (link.getTitle() == null) {
