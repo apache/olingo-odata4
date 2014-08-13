@@ -369,7 +369,17 @@ public final class URIUtils {
     HttpEntity entity;
 
     if (!shouldUseRepeatableHttpBodyEntry(client)) {
-      entity = new InputStreamEntity(input, -1);
+      // If the final length is not known (e.g. -1) then chunked encoding will be used
+      // regardless of what the configuration says.
+      int length = -1;
+      try {
+        length = input.available();
+      } catch (IOException e) {
+        // let negative length trickle through
+        LOG.warn("Could not determine length - request will be sent as chunked.");
+      }
+      entity = new InputStreamEntity(input, length);
+
     } else {
       byte[] bytes = new byte[0];
       try {
@@ -384,6 +394,11 @@ public final class URIUtils {
 
     // both entities can be sent in chunked way or not
     ((AbstractHttpEntity) entity).setChunked(client.getConfiguration().isUseChuncked());
+
+    if (!entity.isChunked() && entity.getContentLength() < 0) {
+      LOG.error("Could not determine length - request will be sent as chunked.");
+    }
+
     return entity;
   }
 
