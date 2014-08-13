@@ -18,12 +18,38 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
+/** Exception thrown during URI parsing in cases where an URI part is invalid according to the Entity Data Model. */
 public class UriParserSemanticException extends UriParserException {
 
   private static final long serialVersionUID = 3850285860949809622L;
-  
+
   public static enum MessageKeys implements MessageKey {
-    TEST
+    /** parameters: function-import name, function parameters */ FUNCTION_NOT_FOUND,
+    /** parameter: resource part */ RESOURCE_PART_ONLY_FOR_TYPED_PARTS,
+    /** parameter: resource part */ RESOURCE_PART_MUST_BE_PRECEDED_BY_STRUCTURAL_TYPE,
+    /** parameters: type name, property name */ PROPERTY_NOT_IN_TYPE,
+    /** parameter: property name */ UNKNOWN_PROPERTY_TYPE,
+    /** parameter: type filter */ INCOMPATIBLE_TYPE_FILTER,
+    /** parameters: previous type filter, last type filter */ TYPE_FILTER_NOT_CHAINABLE,
+    /** parameter: type filter */ PREVIOUS_PART_NOT_TYPED,
+    /** parameter: type */ FUNCTION_PARAMETERS_EXPECTED,
+    /** parameter: resource part */ UNKNOWN_PART,
+    /** parameter: expression */ ONLY_FOR_TYPED_PARTS,
+    /** parameter: entity type name */ UNKNOWN_ENTITY_TYPE,
+    /** parameter: expression */ ONLY_FOR_COLLECTIONS,
+    /** parameter: expression */ ONLY_FOR_ENTITY_TYPES,
+    /** parameter: expression */ ONLY_FOR_STRUCTURAL_TYPES,
+    /** parameter: expression */ ONLY_FOR_TYPED_PROPERTIES,
+    /** parameter: value */ INVALID_KEY_VALUE,
+    PARAMETERS_LIST_ONLY_FOR_TYPED_PARTS,
+    NOT_ENOUGH_KEY_PROPERTIES,
+    NOT_ENOUGH_REFERENTIAL_CONSTRAINTS,
+    KEY_NOT_ALLOWED,
+    RESOURCE_PATH_NOT_TYPED,
+    ONLY_SIMPLE_AND_COMPLEX_PROPERTIES_IN_SELECT,
+    COMPLEX_PROPERTY_OF_ENTITY_TYPE_EXPECTED,
+    NOT_FOR_ENTITY_TYPE,
+    PREVIOUS_PART_TYPED
   }
 
   public UriParserSemanticException(String developmentMessage, MessageKey messageKey, String... parameters) {

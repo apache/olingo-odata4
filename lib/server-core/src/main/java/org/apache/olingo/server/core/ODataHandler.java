@@ -73,8 +73,10 @@ public class ODataHandler {
 
       processInternal(request, requestedContentType, response);
 
-    } catch (UriParserException e) {
-      e.printStackTrace();
+    } catch (final UriParserException e) {
+      handleException(request, response,
+          ODataExceptionHelper.createServerErrorObject(e, HttpStatusCode.BAD_REQUEST.getStatusCode()),
+          requestedContentType);      
     } catch (ContentNegotiatorException e) {
       Locale requestedLocale = null;
       ODataServerError serverError =
@@ -138,8 +140,8 @@ public class ODataHandler {
       break;
     default:
       response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
-      throw new ODataTranslatedException("not implemented",
-          ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+      throw new ODataHandlerException("not implemented",
+          ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
   }
 
@@ -176,8 +178,8 @@ public class ODataHandler {
           cp.readCollection(request, response, uriInfo, requestedContentType);
         } else {
           response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
-          throw new ODataTranslatedException("not implemented",
-              ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+          throw new ODataHandlerException("not implemented",
+              ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
       } else {
         if (request.getMethod().equals(HttpMethod.GET)) {
@@ -189,8 +191,8 @@ public class ODataHandler {
           ep.readEntity(request, response, uriInfo, requestedContentType);
         } else {
           response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
-          throw new ODataTranslatedException("not implemented",
-              ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+          throw new ODataHandlerException("not implemented",
+              ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
       }
       break;
@@ -206,8 +208,8 @@ public class ODataHandler {
           cp.readCollection(request, response, uriInfo, requestedContentType);
         } else {
           response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
-          throw new ODataTranslatedException("not implemented",
-              ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+          throw new ODataHandlerException("not implemented",
+              ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
       } else {
         if (request.getMethod().equals(HttpMethod.GET)) {
@@ -219,15 +221,15 @@ public class ODataHandler {
           ep.readEntity(request, response, uriInfo, requestedContentType);
         } else {
           response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
-          throw new ODataTranslatedException("not implemented",
-              ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+          throw new ODataHandlerException("not implemented",
+              ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
       }
       break;
     default:
       response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
-      throw new ODataTranslatedException("not implemented",
-          ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+      throw new ODataHandlerException("not implemented",
+          ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
   }
 
@@ -239,8 +241,8 @@ public class ODataHandler {
     if (maxVersion != null) {
       if (ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersion)) {
         response.setStatusCode(400);
-        throw new ODataTranslatedException("ODataVersion not supported: " + maxVersion,
-            ODataTranslatedException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
+        throw new ODataHandlerException("ODataVersion not supported: " + maxVersion,
+            ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
       }
     }
   }
@@ -252,8 +254,8 @@ public class ODataHandler {
 
     if (p == null) {
       response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
-      throw new ODataTranslatedException("Processor: " + cls.getName() + " not registered.",
-          ODataTranslatedException.MessageKeys.PROCESSOR_NOT_IMPLEMENTED, cls.getName());
+      throw new ODataHandlerException("Processor: " + cls.getName() + " not registered.",
+          ODataHandlerException.MessageKeys.PROCESSOR_NOT_IMPLEMENTED, cls.getName());
     }
 
     return p;

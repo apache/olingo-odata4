@@ -20,7 +20,7 @@ package org.apache.olingo.server.core.uri.parser;
 
 import org.apache.olingo.server.api.ODataTranslatedException;
 
-public class UriParserException extends ODataTranslatedException {
+abstract public class UriParserException extends ODataTranslatedException {
 
   private static final long serialVersionUID = -6438700016830955949L;
 

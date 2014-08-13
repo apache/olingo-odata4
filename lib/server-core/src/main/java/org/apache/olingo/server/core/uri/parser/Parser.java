@@ -23,6 +23,7 @@ import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
@@ -140,7 +141,7 @@ public class Parser {
         context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
 
         for (PathSegmentEOFContext ctxPathSegment : ctxPathSegments) {
-          // add checks for batcvh entity metadata, all crossjsoin
+          // add checks for batch, entity, metadata, all, crossjoin
           uriParseTreeVisitor.visitPathSegmentEOF(ctxPathSegment);
         }
 
@@ -186,8 +187,9 @@ public class Parser {
                 || isFormatSyntaxValid(option)) {
               formatOption.setFormat(option.value);
             } else {
-              throw new UriParserSemanticException("Illegal value of $format option!",
-                  UriParserSemanticException.MessageKeys.TEST);
+              throw new UriParserSyntaxException("Illegal value of $format option!",
+                  UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+                  option.name, option.value);
             }
             context.contextUriInfo.setSystemQueryOption(formatOption);
 
@@ -208,13 +210,13 @@ public class Parser {
             context.contextUriInfo.setSystemQueryOption(idOption);
           } else if (option.name.equals(SystemQueryOptionKind.LEVELS.toString())) {
             throw new UriParserSyntaxException("System query option '$levels' is allowed only inside '$expand'!",
-                UriParserSyntaxException.MessageKeys.TEST);
+                UriParserSyntaxException.MessageKeys.SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE);
           } else if (option.name.equals(SystemQueryOptionKind.ORDERBY.toString())) {
-            OrderByEOFContext ctxFilterExpression =
+            OrderByEOFContext ctxOrderByExpression =
                 (OrderByEOFContext) parseRule(option.value, ParserEntryRules.Orderby);
 
             OrderByOptionImpl orderByOption =
-                (OrderByOptionImpl) uriParseTreeVisitor.visitOrderByEOF(ctxFilterExpression);
+                (OrderByOptionImpl) uriParseTreeVisitor.visitOrderByEOF(ctxOrderByExpression);
 
             context.contextUriInfo.setSystemQueryOption(orderByOption);
           } else if (option.name.equals(SystemQueryOptionKind.SEARCH.toString())) {
@@ -234,8 +236,9 @@ public class Parser {
             try {
               skipOption.setValue(Integer.parseInt(option.value));
             } catch (final NumberFormatException e) {
-              throw new UriParserSemanticException("Illegal value of $skip option!", e,
-                  UriParserSemanticException.MessageKeys.TEST);
+              throw new UriParserSyntaxException("Illegal value of $skip option!", e,
+                  UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+                  option.name, option.value);
             }
             context.contextUriInfo.setSystemQueryOption(skipOption);
           } else if (option.name.equals(SystemQueryOptionKind.SKIPTOKEN.toString())) {
@@ -251,8 +254,9 @@ public class Parser {
             try {
               topOption.setValue(Integer.parseInt(option.value));
             } catch (final NumberFormatException e) {
-              throw new UriParserSemanticException("Illegal value of $top option!", e,
-                  UriParserSemanticException.MessageKeys.TEST);
+              throw new UriParserSyntaxException("Illegal value of $top option!", e,
+                  UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+                  option.name, option.value);
             }
             context.contextUriInfo.setSystemQueryOption(topOption);
           } else if (option.name.equals(SystemQueryOptionKind.COUNT.toString())) {
@@ -262,13 +266,14 @@ public class Parser {
             if (option.value.equals("true") || option.value.equals("false")) {
               inlineCountOption.setValue(Boolean.parseBoolean(option.value));
             } else {
-              throw new UriParserSemanticException("Illegal value of $count option!",
-                  UriParserSemanticException.MessageKeys.TEST);
+              throw new UriParserSyntaxException("Illegal value of $count option!",
+                  UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+                  option.name, option.value);
             }
             context.contextUriInfo.setSystemQueryOption(inlineCountOption);
           } else {
             throw new UriParserSyntaxException("Unknown system query option!",
-                UriParserSyntaxException.MessageKeys.TEST);
+                UriParserSyntaxException.MessageKeys.UNKNOWN_SYSTEM_QUERY_OPTION, option.name);
           }
         }
       }
@@ -279,12 +284,10 @@ public class Parser {
 
       return context.contextUriInfo;
     } catch (ParseCancellationException e) {
-      Throwable cause = e.getCause();
-      if (cause instanceof UriParserException) {
-        throw (UriParserException) cause;
-      }
+      throw e.getCause() instanceof UriParserException ?
+          (UriParserException) e.getCause() :
+          new UriParserSyntaxException("Syntax error", e, UriParserSyntaxException.MessageKeys.SYNTAX);
     }
-    return null;
   }
 
   private boolean isFormatSyntaxValid(RawUri.QueryOption option) {
@@ -418,13 +421,15 @@ public class Parser {
           break;
         }
 
-      } catch (Exception weakException) {
-        throw new UriParserSyntaxException("Error in syntax", weakException, UriParserSyntaxException.MessageKeys.TEST);
+      } catch (final RecognitionException weakException) {
+        throw new UriParserSyntaxException("Error in syntax", weakException,
+            UriParserSyntaxException.MessageKeys.SYNTAX);
 
         // exceptionOnStage = 2;
       }
-    } catch (Exception hardException) {
-      throw new UriParserSyntaxException("Error in syntax", hardException, UriParserSyntaxException.MessageKeys.TEST);
+    } catch (final RecognitionException hardException) {
+      throw new UriParserSyntaxException("Error in syntax", hardException,
+          UriParserSyntaxException.MessageKeys.SYNTAX);
     }
 
     return ret;

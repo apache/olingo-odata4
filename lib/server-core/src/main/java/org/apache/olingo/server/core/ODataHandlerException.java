@@ -16,26 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.uri.parser;
+package org.apache.olingo.server.core;
 
-/** Exception thrown during URI parsing in cases where the URI violates the URI construction rules. */
-public class UriParserSyntaxException extends UriParserException {
+import org.apache.olingo.server.api.ODataTranslatedException;
 
-  private static final long serialVersionUID = 5887744747812478226L;
+/** Exception thrown during basic request handling. */
+public class ODataHandlerException extends ODataTranslatedException {
+  private static final long serialVersionUID = -907752788975531134L;
 
   public static enum MessageKeys implements MessageKey {
-    /** parameter: query-option name */ UNKNOWN_SYSTEM_QUERY_OPTION,
-    /** parameters: query-option name, query-option value */ WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
-    SYNTAX,
-    SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE
+    /** parameters: HTTP method, HTTP method */ AMBIGUOUS_XHTTP_METHOD,
+    /** parameter: HTTP method */ HTTP_METHOD_NOT_IMPLEMENTED,
+    /** parameter: processor interface */ PROCESSOR_NOT_IMPLEMENTED,
+    FUNCTIONALITY_NOT_IMPLEMENTED,
+    /** parameter: version */ ODATA_VERSION_NOT_SUPPORTED
   }
 
-  public UriParserSyntaxException(String developmentMessage, MessageKey messageKey, String... parameters) {
+  public ODataHandlerException(final String developmentMessage, final MessageKey messageKey,
+      final String... parameters) {
     super(developmentMessage, messageKey, parameters);
   }
 
-  public UriParserSyntaxException(String developmentMessage, Throwable cause, MessageKey messageKey,
-      String... parameters) {
+  public ODataHandlerException(final String developmentMessage, final Throwable cause, final MessageKey messageKey,
+      final String... parameters) {
     super(developmentMessage, cause, messageKey, parameters);
   }
 }

@@ -189,7 +189,8 @@ public class TestUriParserImpl {
         .isAction("UARTETParam")
         .isType(EntityTypeProvider.nameETTwoKeyTwoPrim, false);
 
-    testUri.runEx("AIRTPrimParam/invalidElement").isExSemantic(UriParserSemanticException.MessageKeys.TEST);
+    testUri.runEx("AIRTPrimParam/invalidElement")
+        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_MUST_BE_PRECEDED_BY_STRUCTURAL_TYPE);
   }
 
   @Test

@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.ODataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ODataTranslatedException extends ODataException {
+public abstract class ODataTranslatedException extends ODataException {
 
   private static final long serialVersionUID = -1210541002198287561L;
   private static final Logger log = LoggerFactory.getLogger(ODataTranslatedException.class);
@@ -39,24 +39,16 @@ public class ODataTranslatedException extends ODataException {
 
   protected static interface MessageKey {}
 
-  public static enum MessageKeys implements MessageKey {
-    AMBIGUOUS_XHTTP_METHOD,
-    HTTP_METHOD_NOT_IMPLEMENTED,
-    PROCESSOR_NOT_IMPLEMENTED,
-    FUNCTIONALITY_NOT_IMPLEMENTED,
-    ODATA_VERSION_NOT_SUPPORTED,
-  }
-
   private MessageKey messageKey;
   private Object[] parameters;
 
-  public ODataTranslatedException(String developmentMessage, MessageKey messageKey, String... parameters) {
+  protected ODataTranslatedException(String developmentMessage, MessageKey messageKey, String... parameters) {
     super(developmentMessage);
     this.messageKey = messageKey;
     this.parameters = parameters;
   }
 
-  public ODataTranslatedException(String developmentMessage, Throwable cause, MessageKey messageKey,
+  protected ODataTranslatedException(String developmentMessage, Throwable cause, MessageKey messageKey,
       String... parameters) {
     super(developmentMessage, cause);
     this.messageKey = messageKey;
@@ -90,17 +82,12 @@ public class ODataTranslatedException extends ODataException {
   }
 
   private ResourceBundle createResourceBundle(final Locale locale) {
-    ResourceBundle bundle = null;
     try {
-      if (locale == null) {
-        bundle = ResourceBundle.getBundle(BUNDLE_NAME, DEFAULT_LOCALE);
-      } else {
-        bundle = ResourceBundle.getBundle(BUNDLE_NAME, locale);
-      }
-    } catch (final Exception e) {
+      return ResourceBundle.getBundle(BUNDLE_NAME, locale == null ? DEFAULT_LOCALE : locale);
+    } catch (final MissingResourceException e) {
       log.error(e.getMessage(), e);
+      return null;
     }
-    return bundle;
   }
 
   private ODataErrorMessage buildMessage(ResourceBundle bundle, Locale locale) {
@@ -113,7 +100,7 @@ public class ODataTranslatedException extends ODataException {
       f.format(message, parameters);
       f.close();
       Locale usedLocale = bundle.getLocale();
-      if (usedLocale == Locale.ROOT || Locale.ROOT.equals(usedLocale)) {
+      if (Locale.ROOT.equals(usedLocale)) {
         usedLocale = DEFAULT_LOCALE;
       }
       return new ODataErrorMessage(builder.toString(), usedLocale);

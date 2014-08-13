@@ -77,11 +77,11 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
   private ODataResponse handleException(Exception e) {
     ODataResponse resp = new ODataResponse();
-    if (e instanceof ODataTranslatedException) {
-      ODataTranslatedException exp = (ODataTranslatedException) e;
-      if (exp.getMessageKey() == ODataTranslatedException.MessageKeys.AMBIGUOUS_XHTTP_METHOD) {
+    if (e instanceof ODataHandlerException) {
+      ODataHandlerException exp = (ODataHandlerException) e;
+      if (exp.getMessageKey() == ODataHandlerException.MessageKeys.AMBIGUOUS_XHTTP_METHOD) {
         resp.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
-      } else if (exp.getMessageKey() == ODataTranslatedException.MessageKeys.HTTP_METHOD_NOT_IMPLEMENTED) {
+      } else if (exp.getMessageKey() == ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_IMPLEMENTED) {
         resp.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
       }
     }
@@ -156,8 +156,8 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
           odRequest.setMethod(HttpMethod.valueOf(xHttpMethod));
         } else {
           if (!xHttpMethod.equalsIgnoreCase(xHttpMethodOverride)) {
-            throw new ODataTranslatedException("Ambiguous X-HTTP-Methods",
-                ODataTranslatedException.MessageKeys.AMBIGUOUS_XHTTP_METHOD, xHttpMethod, xHttpMethodOverride);
+            throw new ODataHandlerException("Ambiguous X-HTTP-Methods",
+                ODataHandlerException.MessageKeys.AMBIGUOUS_XHTTP_METHOD, xHttpMethod, xHttpMethodOverride);
           }
           odRequest.setMethod(HttpMethod.valueOf(xHttpMethod));
         }
@@ -165,8 +165,8 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
         odRequest.setMethod(httpRequestMethod);
       }
     } catch (IllegalArgumentException e) {
-      throw new ODataTranslatedException("Invalid http method" + httpRequest.getMethod(),
-          ODataTranslatedException.MessageKeys.HTTP_METHOD_NOT_IMPLEMENTED, httpRequest.getMethod());
+      throw new ODataHandlerException("Invalid HTTP method" + httpRequest.getMethod(),
+          ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_IMPLEMENTED, httpRequest.getMethod());
     }
   }
 

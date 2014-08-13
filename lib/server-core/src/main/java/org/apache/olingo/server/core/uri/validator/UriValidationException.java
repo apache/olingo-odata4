@@ -50,7 +50,7 @@ public class UriValidationException extends ODataTranslatedException {
     /** parameter: unallowed kind before $value */
     UNALLOWED_KIND_BEFORE_VALUE,
     /** parameter: unallowed kind before $count */
-    UNALLOWED_KIND_BEFORE_COUNT,
+    UNALLOWED_KIND_BEFORE_COUNT
   }
   
   public UriValidationException(String developmentMessage, MessageKey messageKey, String... parameters) {

@@ -25,6 +25,7 @@ import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
+import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Before;
 import org.junit.Test;
@@ -298,17 +299,17 @@ public class UriValidatorTest {
     parseAndValidate(uri, HttpMethod.GET);
   }
 
-  @Test(expected = UriParserSemanticException.class)
+  @Test(expected = UriParserSyntaxException.class)
   public void validateCountInvalid() throws Exception {
     parseAndValidate("ESAllPrim?$count=foo", HttpMethod.GET);
   }
 
-  @Test(expected = UriParserSemanticException.class)
+  @Test(expected = UriParserSyntaxException.class)
   public void validateTopInvalid() throws Exception {
     parseAndValidate("ESAllPrim?$top=foo", HttpMethod.GET);
   }
 
-  @Test(expected = UriParserSemanticException.class)
+  @Test(expected = UriParserSyntaxException.class)
   public void validateSkipInvalid() throws Exception {
     parseAndValidate("ESAllPrim?$skip=foo", HttpMethod.GET);
   }

@@ -29,6 +29,7 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataTranslatedException;
@@ -42,6 +43,7 @@ import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
 import java.util.List;
+import java.util.Locale;
 
 public class TechnicalProcessor implements EntityCollectionProcessor, EntityProcessor {
 
@@ -81,6 +83,8 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     } catch (final ODataTranslatedException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
+    } catch (final ODataApplicationException e) {
+      response.setStatusCode(e.getStatusCode());
     }
   }
 
@@ -106,6 +110,8 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     } catch (final ODataTranslatedException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
+    } catch (final ODataApplicationException e) {
+      response.setStatusCode(e.getStatusCode());
     }
   }
 
@@ -136,20 +142,20 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
         && uriInfo.getTopOption() == null;
   }
 
-  private EdmEntitySet getEdmEntitySet(final UriInfoResource uriInfo) throws ODataTranslatedException {
+  private EdmEntitySet getEdmEntitySet(final UriInfoResource uriInfo) throws ODataApplicationException {
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
     if (resourcePaths.size() != 1) {
-      throw new ODataTranslatedException("Invalid resource path.",
-          ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+      throw new ODataApplicationException("Invalid resource path.",
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
     if (!(resourcePaths.get(0) instanceof UriResourceEntitySet)) {
-      throw new ODataTranslatedException("Invalid resource type.",
-          ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+      throw new ODataApplicationException("Invalid resource type.",
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
     final UriResourceEntitySet uriResource = (UriResourceEntitySet) resourcePaths.get(0);
     if (uriResource.getTypeFilterOnCollection() != null || uriResource.getTypeFilterOnEntry() != null) {
-      throw new ODataTranslatedException("Type filters are not supported.",
-          ODataTranslatedException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+      throw new ODataApplicationException("Type filters are not supported.",
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
     return uriResource.getEntitySet();
   }
