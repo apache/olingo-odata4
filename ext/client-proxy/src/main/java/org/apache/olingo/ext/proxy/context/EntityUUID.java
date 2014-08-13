@@ -56,13 +56,11 @@ public class EntityUUID implements Serializable {
     if (type == null || !Serializable.class.isAssignableFrom(type)) {
       throw new IllegalArgumentException("Invalid Entity type class: " + type);
     }
-    for (Class<?> clazz : ClassUtils.hierarchy(type, ClassUtils.Interfaces.INCLUDE)) {
-      if (this.type == null
-              && (clazz.getInterfaces().length == 0
-              || ArrayUtils.contains(clazz.getInterfaces(), Serializable.class)
-              || ArrayUtils.contains(clazz.getInterfaces(), EntityType.class))) {
-
-        this.type = clazz;
+    if (this.type == null) {
+      for (Class<?> clazz : ClassUtils.hierarchy(type, ClassUtils.Interfaces.INCLUDE)) {
+        if (ArrayUtils.contains(clazz.getInterfaces(), EntityType.class)) {
+          this.type = clazz;
+        }
       }
     }
   }
