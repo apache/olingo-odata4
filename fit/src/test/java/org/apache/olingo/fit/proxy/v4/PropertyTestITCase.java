@@ -18,9 +18,11 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import org.apache.olingo.ext.proxy.api.ODataFlushException;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI;
 import org.junit.Test;
@@ -47,9 +49,9 @@ public class PropertyTestITCase extends AbstractTestITCase {
     try {
       container.flush();
       fail();
-    } catch (IllegalStateException e) {
-      // ignore and detach all
-      service.getContext().detachAll();
+    } catch (ODataFlushException e) {
+      assertNotNull(e);
     }
+    service.getContext().detachAll();
   }
 }

@@ -18,12 +18,14 @@
  */
 package org.apache.olingo.fit.proxy.v3;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
+import org.apache.olingo.ext.proxy.api.ODataFlushException;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Driver;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Order;
 import org.junit.Test;
-
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * This is the unit test class to check actions overloading.
@@ -47,9 +49,9 @@ public class PropertyTestITCase extends AbstractTestITCase {
     try {
       container.flush();
       fail();
-    } catch (IllegalStateException e) {
-      // ignore and detach all
-      service.getContext().detachAll();
+    } catch (ODataFlushException e) {
+      assertNotNull(e);
     }
+    service.getContext().detachAll();
   }
 }

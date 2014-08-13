@@ -42,7 +42,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.util.Collection;
-import org.apache.olingo.commons.api.ODataResponseError;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 
 /**
  * Abstract representation of an OData request. Get instance by using factories.
@@ -322,7 +322,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
 
     try {
       checkResponse(odataClient, response, getAccept());
-    } catch (ODataResponseError e) {
+    } catch (ODataRuntimeException e) {
       odataClient.getConfiguration().getHttpClientFactory().close(httpClient);
       throw e;
     }

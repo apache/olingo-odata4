@@ -20,7 +20,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.core.communication.header.ODataErrorResponseChecker;
-import org.apache.olingo.commons.api.ODataResponseError;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
@@ -50,7 +50,7 @@ public abstract class AbstractRequest {
 
     if (response.getStatusLine().getStatusCode() >= 400) {
       try {
-        final ODataResponseError exception = ODataErrorResponseChecker.checkResponse(
+        final ODataRuntimeException exception = ODataErrorResponseChecker.checkResponse(
                 odataClient,
                 response.getStatusLine(),
                 response.getEntity() == null ? null : response.getEntity().getContent(),
@@ -59,7 +59,7 @@ public abstract class AbstractRequest {
           throw exception;
         }
       } catch (IOException e) {
-        throw new ODataResponseError(
+        throw new ODataRuntimeException(
                 "Received '" + response.getStatusLine() + "' but could not extract error body", e);
       }
     }

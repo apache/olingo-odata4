@@ -19,17 +19,15 @@
 package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.List;
 import java.util.TimeZone;
-import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.commons.api.ODataResponseError;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.ext.proxy.api.ODataFlushException;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.Service;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
@@ -70,11 +68,16 @@ public class ContextTestITCase extends AbstractTestITCase {
 
     container.getPeople().add(employee);
 
-    final List<ODataResponseError> result = container.flush();
-
-    assertEquals(2, result.size());
-    assertTrue(result.get(0) instanceof ODataClientErrorException);
-    assertNull(result.get(1));
+    try {
+      container.flush();
+      fail();
+    } catch (ODataFlushException e) {
+      assertEquals(1, e.getErrors().size());
+      assertEquals(0, e.getErrors().get(0).getIndex());
+      assertNotNull(e.getErrors().get(0).getRequest());
+    }
+    
+    service.getContext().detachAll();
   }
 
   @Test

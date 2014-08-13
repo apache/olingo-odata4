@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.core;
 
-import org.apache.olingo.commons.api.ODataResponseError;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -109,13 +109,13 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
         }
       } catch (IOException e) {
         LOG.error(e.getMessage(), e);
-        throw new ODataResponseError(e);
+        throw new ODataRuntimeException(e);
       } finally {
         if (input != null) {
           try {
             input.close();
           } catch (IOException e) {
-            throw new ODataResponseError(e);
+            throw new ODataRuntimeException(e);
           }
         }
       }

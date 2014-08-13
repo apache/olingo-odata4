@@ -46,7 +46,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
-import org.apache.olingo.commons.api.ODataResponseError;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 
 /**
  * Abstract representation of an OData response.
@@ -183,7 +183,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
       this.payload = res.getEntity() == null ? null : res.getEntity().getContent();
     } catch (Exception e) {
       LOG.error("Error retrieving payload", e);
-      throw new ODataResponseError(e);
+      throw new ODataRuntimeException(e);
     }
 
     for (Header header : res.getAllHeaders()) {

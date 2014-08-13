@@ -18,26 +18,29 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-import java.io.Serializable;
-import java.util.concurrent.Future;
+import java.util.List;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 
-/**
- * Interface for container operations.
- */
-public interface PersistenceManager extends Serializable {
+public class ODataFlushException extends ODataRuntimeException {
 
-  /**
-   * Flushes all pending changes to the OData service.
-   *
-   * @throws ODataFlushException in case of errors
-   */
-  void flush();
+  private static final long serialVersionUID = 6077239115913182327L;
 
-  /**
-   * Asynchronously flushes all pending changes to the OData service.
-   *
-   * @return a future handle
-   * @throws ODataFlushException in case of errors
-   */
-  Future<Void> flushAsync();
+  private final int statusCode;
+
+  private final List<ODataResponseError> errors;
+
+  public ODataFlushException(final int statusCode, final List<ODataResponseError> errors) {
+    super("Errors found during flush()");
+    this.statusCode = statusCode;
+    this.errors = errors;
+  }
+
+  public int getStatusCode() {
+    return statusCode;
+  }
+
+  public List<ODataResponseError> getErrors() {
+    return errors;
+  }
+
 }

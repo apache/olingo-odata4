@@ -92,7 +92,8 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
     if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
     } else if ("flush".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
-      return service.getPersistenceManager().flush();
+      service.getPersistenceManager().flush();
+      return ClassUtils.returnVoid();
     } else if ("flushAsync".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       return service.getPersistenceManager().flushAsync();
     } else if ("operations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {

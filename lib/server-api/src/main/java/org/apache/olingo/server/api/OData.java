@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.api;
 
-import org.apache.olingo.commons.api.ODataResponseError;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
@@ -47,7 +47,7 @@ public abstract class OData {
       return (OData) object;
 
     } catch (final Exception e) {
-      throw new ODataResponseError(e);
+      throw new ODataRuntimeException(e);
     }
   }
 

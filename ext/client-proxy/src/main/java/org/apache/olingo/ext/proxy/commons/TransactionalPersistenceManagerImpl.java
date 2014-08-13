@@ -22,8 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.StatusLine;
+import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
@@ -37,8 +36,9 @@ import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResp
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.core.communication.header.ODataErrorResponseChecker;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
-import org.apache.olingo.commons.api.ODataResponseError;
 import org.apache.olingo.ext.proxy.AbstractService;
+import org.apache.olingo.ext.proxy.api.ODataFlushException;
+import org.apache.olingo.ext.proxy.api.ODataResponseError;
 
 /**
  * {@link org.apache.olingo.ext.proxy.api.PersistenceManager} implementation using OData batch requests to implement
@@ -57,7 +57,7 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
    * Transactional changes commit.
    */
   @Override
-  protected List<ODataResponseError> doFlush(final PersistenceChanges changes, final TransactionItems items) {
+  protected void doFlush(final PersistenceChanges changes, final TransactionItems items) {
     final CommonODataBatchRequest request =
             service.getClient().getBatchRequestFactory().getBatchRequest(service.getClient().getServiceRoot());
     ((ODataRequest) request).setAccept(
@@ -65,9 +65,11 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
 
     final BatchManager batchManager = (BatchManager) ((ODataStreamedRequest) request).payloadManager();
 
+    final List<ODataRequest> requests = new ArrayList<ODataRequest>(changes.getChanges().size());
     final ODataChangeset changeset = batchManager.addChangeset();
     for (Map.Entry<ODataBatchableRequest, EntityInvocationHandler> entry : changes.getChanges().entrySet()) {
       changeset.addRequest(entry.getKey());
+      requests.add(entry.getKey());
     }
 
     final ODataBatchResponse response = batchManager.getResponse();
@@ -75,12 +77,12 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
     // This should be 202 for service version <= 3.0 and 200 for service version >= 4.0 but it seems that
     // many service implementations are not fully compliant in this respect.
     if (response.getStatusCode() != 202 && response.getStatusCode() != 200) {
-      throw new IllegalStateException("Operation failed");
+      throw new ODataServerErrorException(new ResponseStatusLine(response));
     }
 
-    final List<ODataResponseError> result = new ArrayList<ODataResponseError>();
-
     if (!items.isEmpty()) {
+      final List<ODataResponseError> errors = new ArrayList<ODataResponseError>();
+
       final Iterator<ODataBatchResponseItem> batchResItor = response.getBody();
       if (!batchResItor.hasNext()) {
         throw new IllegalStateException("Unexpected operation result");
@@ -93,38 +95,21 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
 
       final ODataChangesetResponseItem chgres = (ODataChangesetResponseItem) item;
 
-      for (final Iterator<Integer> itor = items.sortedValues().iterator(); itor.hasNext();) {
+      int index = 0;
+      for (final Iterator<Integer> itor = items.sortedValues().iterator(); itor.hasNext(); index++) {
         final Integer changesetItemId = itor.next();
         LOG.debug("Expected changeset item {}", changesetItemId);
 
         final ODataResponse res = chgres.next();
         if (res.getStatusCode() >= 400) {
-          if (service.getClient().getConfiguration().isContinueOnError()) {
-            result.add(ODataErrorResponseChecker.checkResponse(
-                    service.getClient(),
-                    new StatusLine() {
-                      @Override
-                      public ProtocolVersion getProtocolVersion() {
-                        return null;
-                      }
-
-                      @Override
-                      public int getStatusCode() {
-                        return res.getStatusCode();
-                      }
-
-                      @Override
-                      public String getReasonPhrase() {
-                        return res.getStatusMessage();
-                      }
-                    },
-                    res.getRawResponse(),
-                    ((ODataRequest) request).getAccept()));
-          } else {
-            throw new IllegalStateException("Transaction failed: " + res.getStatusMessage());
+          errors.add(new ODataResponseError(ODataErrorResponseChecker.checkResponse(
+                  service.getClient(),
+                  new ResponseStatusLine(res),
+                  res.getRawResponse(),
+                  ((ODataRequest) request).getAccept()), index, requests.get(index)));
+          if (!service.getClient().getConfiguration().isContinueOnError()) {
+            throw new ODataFlushException(response.getStatusCode(), errors);
           }
-        } else {
-          result.add(null);
         }
 
         final EntityInvocationHandler handler = items.get(changesetItemId);
@@ -139,9 +124,11 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
           }
         }
       }
+
+      if (!errors.isEmpty()) {
+        throw new ODataFlushException(response.getStatusCode(), errors);
+      }
     }
     response.close();
-
-    return result;
   }
 }

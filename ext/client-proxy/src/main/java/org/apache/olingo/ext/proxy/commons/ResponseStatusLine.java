@@ -16,28 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.ext.proxy.api;
+package org.apache.olingo.ext.proxy.commons;
 
-import java.io.Serializable;
-import java.util.concurrent.Future;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.StatusLine;
+import org.apache.olingo.client.api.communication.response.ODataResponse;
 
-/**
- * Interface for container operations.
- */
-public interface PersistenceManager extends Serializable {
+class ResponseStatusLine implements StatusLine {
 
-  /**
-   * Flushes all pending changes to the OData service.
-   *
-   * @throws ODataFlushException in case of errors
-   */
-  void flush();
+  private final ODataResponse response;
 
-  /**
-   * Asynchronously flushes all pending changes to the OData service.
-   *
-   * @return a future handle
-   * @throws ODataFlushException in case of errors
-   */
-  Future<Void> flushAsync();
+  public ResponseStatusLine(final ODataResponse response) {
+    this.response = response;
+  }
+
+  @Override
+  public ProtocolVersion getProtocolVersion() {
+    return null;
+  }
+
+  @Override
+  public int getStatusCode() {
+    return response.getStatusCode();
+  }
+
+  @Override
+  public String getReasonPhrase() {
+    return response.getStatusMessage();
+  }
+
 }

@@ -30,12 +30,10 @@ import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.List;
 import java.util.TimeZone;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.commons.api.ODataResponseError;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
@@ -414,7 +412,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     // ---------------------------------------
     org.apache.olingo.fit.proxy.v3.staticservice.Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> v3serv =
             org.apache.olingo.fit.proxy.v3.staticservice.Service.getV3(
-            "http://localhost:9080/stub/StaticService/V30/Static.svc");
+                    "http://localhost:9080/stub/StaticService/V30/Static.svc");
     v3serv.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     final DefaultContainer v3cont = v3serv.getEntityContainer(DefaultContainer.class);
     assertNotNull(v3cont);
@@ -603,8 +601,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     getContainer().getOrders().add(order);
     getContainer().getOrders().delete(order);
 
-    List<ODataResponseError> res = getContainer().flush();
-    assertTrue(res.isEmpty() || res.iterator().next() == null);
+    getContainer().flush();
 
     service.getContext().detachAll();
     try {
@@ -633,10 +630,10 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
   public void issueOLINGO398() {
     AbstractCollectionInvocationHandler<?, ?> handler = AbstractCollectionInvocationHandler.class.cast(
             Proxy.getInvocationHandler(container.getCustomers().getByKey(1).getOrders().
-            select("OrderID", "CustomerForOrder").
-            expand("CustomerForOrder").
-            top(1).
-            skip(2)));
+                    select("OrderID", "CustomerForOrder").
+                    expand("CustomerForOrder").
+                    top(1).
+                    skip(2)));
 
     assertEquals("http://localhost:9080/stub/StaticService/V40/Static.svc/Customers(1)/Orders?"
             + "%24select=OrderID%2CCustomerForOrder&%24expand=CustomerForOrder&%24top=1&%24skip=2",
@@ -644,10 +641,10 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
     handler = AbstractCollectionInvocationHandler.class.cast(
             Proxy.getInvocationHandler(container.getCustomers().getByKey(1).getOrders().
-            select("OrderID", "CustomerForOrder").
-            expand("CustomerForOrder").
-            top(1).
-            skip(2)));
+                    select("OrderID", "CustomerForOrder").
+                    expand("CustomerForOrder").
+                    top(1).
+                    skip(2)));
 
     assertEquals("http://localhost:9080/stub/StaticService/V40/Static.svc/Customers(1)/Orders?%24"
             + "select=OrderID%2CCustomerForOrder&%24expand=CustomerForOrder&%24top=1&%24skip=2",

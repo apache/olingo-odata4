@@ -23,11 +23,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import org.apache.olingo.commons.api.ODataResponseError;
 import org.junit.Test;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
@@ -63,7 +61,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
     final Product product = container.getProduct().getByKey(-10);
     product.setDescription("AsyncTest#updateEntity " + random);
 
-    final Future<List<ODataResponseError>> futureFlush = container.flushAsync();
+    final Future<Void> futureFlush = container.flushAsync();
     assertNotNull(futureFlush);
 
     while (!futureFlush.isDone()) {

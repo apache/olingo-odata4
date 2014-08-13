@@ -19,12 +19,12 @@
 package org.apache.olingo.client.api.communication;
 
 import org.apache.http.StatusLine;
-import org.apache.olingo.commons.api.ODataResponseError;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 
 /**
  * Represents a server error in OData.
  */
-public class ODataServerErrorException extends ODataResponseError {
+public class ODataServerErrorException extends ODataRuntimeException {
 
   private static final long serialVersionUID = -6423014532618680135L;
 

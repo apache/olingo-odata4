@@ -30,7 +30,7 @@ import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.http.AbstractHttpClientFactory;
-import org.apache.olingo.commons.api.ODataResponseError;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 
 /**
  * Shows how to customize the way how the underlying network socket are managed by the HTTP component; the specific
@@ -61,7 +61,7 @@ public class SocketFactoryHttpClientFactory extends AbstractHttpClientFactory {
               new SSLSocketFactory(acceptTrustStrategy, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
       registry.register(new Scheme(uri.getScheme(), uri.getPort(), ssf));
     } catch (Exception e) {
-      throw new ODataResponseError(e);
+      throw new ODataRuntimeException(e);
     }
 
     final DefaultHttpClient httpClient = new DefaultHttpClient(new BasicClientConnectionManager(registry));
