@@ -39,6 +39,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -65,9 +66,16 @@ public class JsonSerializer implements ODataSerializer {
 
   protected boolean serverMode;
 
+  protected ODataFormat format;
+
   public JsonSerializer(final ODataServiceVersion version, final boolean serverMode) {
+    this(version, serverMode, ODataFormat.JSON_FULL_METADATA);
+  }
+
+  public JsonSerializer(final ODataServiceVersion version, final boolean serverMode, ODataFormat format) {
     this.version = version;
     this.serverMode = serverMode;
+    this.format = format;
   }
 
   @Override
@@ -77,7 +85,7 @@ public class JsonSerializer implements ODataSerializer {
       if (obj instanceof EntitySet) {
         new JsonEntitySetSerializer(version, serverMode).doSerialize((EntitySet) obj, json);
       } else if (obj instanceof Entity) {
-        new JsonEntitySerializer(version, serverMode).doSerialize((Entity) obj, json);
+        new JsonEntitySerializer(version, serverMode, format).doSerialize((Entity) obj, json);
       } else if (obj instanceof Property) {
         new JsonPropertySerializer(version, serverMode).doSerialize((Property) obj, json);
       } else if (obj instanceof Link) {
@@ -304,7 +312,7 @@ public class JsonSerializer implements ODataSerializer {
           throws IOException, EdmPrimitiveTypeException {
     jgen.writeStartObject();
 
-    if (typeInfo != null) {
+    if (typeInfo != null && format == ODataFormat.JSON_FULL_METADATA) {
       jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.TYPE), typeInfo.external(version));
     }
 
@@ -351,7 +359,7 @@ public class JsonSerializer implements ODataSerializer {
       if (StringUtils.isBlank(type) && valuable.isPrimitive() || valuable.isNull()) {
         type = EdmPrimitiveTypeKind.String.getFullQualifiedName().toString();
       }
-      if (StringUtils.isNotBlank(type)) {
+      if (StringUtils.isNotBlank(type) && format == ODataFormat.JSON_FULL_METADATA) {
         jgen.writeFieldName(
                 name + StringUtils.prependIfMissing(version.getJsonName(ODataServiceVersion.JsonKey.TYPE), "@"));
         jgen.writeString(new EdmTypeInfo.Builder().setTypeExpression(type).build().external(version));
