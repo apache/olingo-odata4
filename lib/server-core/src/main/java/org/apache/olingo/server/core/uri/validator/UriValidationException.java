@@ -50,7 +50,12 @@ public class UriValidationException extends ODataTranslatedException {
     /** parameter: unallowed kind before $value */
     UNALLOWED_KIND_BEFORE_VALUE,
     /** parameter: unallowed kind before $count */
-    UNALLOWED_KIND_BEFORE_COUNT
+    UNALLOWED_KIND_BEFORE_COUNT;
+
+    @Override
+    public String getKey() {
+      return name();
+    }
   }
   
   public UriValidationException(String developmentMessage, MessageKey messageKey, String... parameters) {
@@ -60,5 +65,10 @@ public class UriValidationException extends ODataTranslatedException {
   public UriValidationException(String developmentMessage, Throwable cause, MessageKey messageKey,
       String... parameters) {
     super(developmentMessage, cause, messageKey, parameters);
+  }
+
+  @Override
+  protected String getBundleName() {
+    return "server-core-exceptions-i18n";
   }
 }

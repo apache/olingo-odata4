@@ -34,7 +34,12 @@ public class ODataSerializerException extends ODataTranslatedException {
     /** parameter: property name */ UNSUPPORTED_PROPERTY_TYPE,
     /** parameter: property name */ INCONSISTENT_PROPERTY_TYPE,
     /** parameter: property name */ MISSING_PROPERTY,
-    /** parameters: property name, property value */ WRONG_PROPERTY_VALUE
+    /** parameters: property name, property value */ WRONG_PROPERTY_VALUE;
+
+    @Override
+    public String getKey() {
+      return name();
+    }
   }
 
   public ODataSerializerException(final String developmentMessage,
@@ -45,5 +50,10 @@ public class ODataSerializerException extends ODataTranslatedException {
   public ODataSerializerException(final String developmentMessage, final Throwable cause,
       final MessageKey messageKey, final String... parameters) {
     super(developmentMessage, cause, messageKey, parameters);
+  }
+
+  @Override
+  protected String getBundleName() {
+    return "server-core-exceptions-i18n";
   }
 }

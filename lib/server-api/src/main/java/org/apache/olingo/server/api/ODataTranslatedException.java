@@ -29,15 +29,18 @@ import org.apache.olingo.commons.api.ODataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Abstract superclass of all translatable server exceptions.
+ */
 public abstract class ODataTranslatedException extends ODataException {
 
   private static final long serialVersionUID = -1210541002198287561L;
   private static final Logger log = LoggerFactory.getLogger(ODataTranslatedException.class);
-  private static final String BUNDLE_NAME = "i18n";
+  private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
-  public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
-
-  protected static interface MessageKey {}
+  public static interface MessageKey {
+    public String getKey();
+  }
 
   private MessageKey messageKey;
   private Object[] parameters;
@@ -81,9 +84,17 @@ public abstract class ODataTranslatedException extends ODataException {
     return buildMessage(bundle, locale);
   }
 
+  /**
+   * <p>Gets the name of the {@link ResourceBundle} containing the exception texts.</p>
+   * <p>The key for an exception text is the concatenation of the exception-class name and
+   * the {@link MessageKey}, separated by a dot.</p>
+   * @return the name of the resource bundle
+   */
+  protected abstract String getBundleName();
+
   private ResourceBundle createResourceBundle(final Locale locale) {
     try {
-      return ResourceBundle.getBundle(BUNDLE_NAME, locale == null ? DEFAULT_LOCALE : locale);
+      return ResourceBundle.getBundle(getBundleName(), locale == null ? DEFAULT_LOCALE : locale);
     } catch (final MissingResourceException e) {
       log.error(e.getMessage(), e);
       return null;
@@ -94,7 +105,7 @@ public abstract class ODataTranslatedException extends ODataException {
     String message = null;
 
     try {
-      message = bundle.getString(getClass().getSimpleName() + '.' + messageKey);
+      message = bundle.getString(getClass().getSimpleName() + '.' + messageKey.getKey());
       StringBuilder builder = new StringBuilder();
       Formatter f = new Formatter(builder, locale);
       f.format(message, parameters);
@@ -105,7 +116,7 @@ public abstract class ODataTranslatedException extends ODataException {
       }
       return new ODataErrorMessage(builder.toString(), usedLocale);
     } catch (MissingResourceException e) {
-      return new ODataErrorMessage("Missing message for key '" + messageKey + "'!", DEFAULT_LOCALE);
+      return new ODataErrorMessage("Missing message for key '" + messageKey.getKey() + "'!", DEFAULT_LOCALE);
     } catch (MissingFormatArgumentException e) {
       return new ODataErrorMessage("Missing replacement for place holder in message '" + message +
           "' for following arguments '" + Arrays.toString(parameters) + "'!", DEFAULT_LOCALE);

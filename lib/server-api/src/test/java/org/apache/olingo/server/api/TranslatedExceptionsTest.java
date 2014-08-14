@@ -35,10 +35,18 @@ public class TranslatedExceptionsTest {
   private static class TestException extends ODataTranslatedException {
     private static final long serialVersionUID = -7199975861656921724L;
     public static enum Keys implements MessageKey {
-      BASIC, ONEPARAM, TWOPARAM, NOMESSAGE, ONLY_ROOT, ONLY_GERMAN
+      BASIC, ONEPARAM, TWOPARAM, NOMESSAGE, ONLY_ROOT, ONLY_GERMAN;
+      @Override
+      public String getKey() {
+        return name();
+      }
     }
     protected TestException(final MessageKey messageKey, final String... parameters) {
       super(DEV, messageKey, parameters);
+    }
+    @Override
+    protected String getBundleName() {
+      return "i18n";
     }
   }
 

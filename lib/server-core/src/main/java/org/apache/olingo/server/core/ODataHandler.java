@@ -75,7 +75,11 @@ public class ODataHandler {
 
     } catch (final UriParserException e) {
       handleException(request, response,
-          ODataExceptionHelper.createServerErrorObject(e, HttpStatusCode.BAD_REQUEST.getStatusCode()),
+          ODataExceptionHelper.createServerErrorObject(e, HttpStatusCode.BAD_REQUEST.getStatusCode(), null),
+          requestedContentType);      
+    } catch (final UriValidationException e) {
+      handleException(request, response,
+          ODataExceptionHelper.createServerErrorObject(e, HttpStatusCode.BAD_REQUEST.getStatusCode(), null),
           requestedContentType);      
     } catch (ContentNegotiatorException e) {
       Locale requestedLocale = null;

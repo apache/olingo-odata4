@@ -31,7 +31,12 @@ public class ContentNegotiatorException extends ODataTranslatedException {
     /** parameter: content type */
     UNSUPPORTED_CONTENT_TYPE,
     /** parameter: format string */
-    UNSUPPORTED_FORMAT_OPTION
+    UNSUPPORTED_FORMAT_OPTION;
+
+    @Override
+    public String getKey() {
+      return name();
+    }
   }
 
   public ContentNegotiatorException(String developmentMessage, MessageKey messageKey, String... parameters) {
@@ -41,5 +46,10 @@ public class ContentNegotiatorException extends ODataTranslatedException {
   public ContentNegotiatorException(String developmentMessage, Throwable cause, MessageKey messageKey,
       String... parameters) {
     super(developmentMessage, cause, messageKey, parameters);
+  }
+
+  @Override
+  protected String getBundleName() {
+    return "server-core-exceptions-i18n";
   }
 }

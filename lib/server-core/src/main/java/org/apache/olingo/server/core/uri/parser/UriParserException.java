@@ -32,4 +32,9 @@ abstract public class UriParserException extends ODataTranslatedException {
       String... parameters) {
     super(developmentMessage, cause, messageKey, parameters);
   }
+
+  @Override
+  protected String getBundleName() {
+    return "server-core-exceptions-i18n";
+  }
 }

@@ -49,7 +49,12 @@ public class UriParserSemanticException extends UriParserException {
     ONLY_SIMPLE_AND_COMPLEX_PROPERTIES_IN_SELECT,
     COMPLEX_PROPERTY_OF_ENTITY_TYPE_EXPECTED,
     NOT_FOR_ENTITY_TYPE,
-    PREVIOUS_PART_TYPED
+    PREVIOUS_PART_TYPED;
+
+    @Override
+    public String getKey() {
+      return name();
+    }
   }
 
   public UriParserSemanticException(String developmentMessage, MessageKey messageKey, String... parameters) {

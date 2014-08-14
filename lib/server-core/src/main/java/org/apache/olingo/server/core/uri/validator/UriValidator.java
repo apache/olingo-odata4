@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.server.core.uri.validator;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -26,9 +29,9 @@ import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
-import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.uri.UriInfo;
@@ -43,9 +46,6 @@ import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
-
-import java.util.HashMap;
-import java.util.List;
 
 public class UriValidator {
 
@@ -613,61 +613,57 @@ public class UriValidator {
   }
 
   private void validateKeyPredicateTypes(final UriInfo uriInfo) throws UriValidationException {
-    try {
-      for (UriResource pathSegment : uriInfo.getUriResourceParts()) {
-        if (pathSegment.getKind() == UriResourceKind.entitySet) {
-          UriResourceEntitySet pathEntitySet = (UriResourceEntitySet) pathSegment;
+    for (UriResource pathSegment : uriInfo.getUriResourceParts()) {
+      if (pathSegment.getKind() == UriResourceKind.entitySet) {
+        UriResourceEntitySet pathEntitySet = (UriResourceEntitySet) pathSegment;
 
-          EdmEntityType type = pathEntitySet.getEntityType();
-          List<EdmKeyPropertyRef> keys = type.getKeyPropertyRefs();
-          List<UriParameter> keyPredicates = pathEntitySet.getKeyPredicates();
+        EdmEntityType type = pathEntitySet.getEntityType();
+        List<EdmKeyPropertyRef> keys = type.getKeyPropertyRefs();
+        List<UriParameter> keyPredicates = pathEntitySet.getKeyPredicates();
 
-          if (null != keyPredicates) {
+        if (null != keyPredicates) {
 
-            HashMap<String, EdmKeyPropertyRef> edmKeys = new HashMap<String, EdmKeyPropertyRef>();
-            for (EdmKeyPropertyRef key : keys) {
-              edmKeys.put(key.getKeyPropertyName(), key);
-              String alias = key.getAlias();
-              if (null != alias) {
-                edmKeys.put(alias, key);
-              }
+          HashMap<String, EdmKeyPropertyRef> edmKeys = new HashMap<String, EdmKeyPropertyRef>();
+          for (EdmKeyPropertyRef key : keys) {
+            edmKeys.put(key.getKeyPropertyName(), key);
+            String alias = key.getAlias();
+            if (null != alias) {
+              edmKeys.put(alias, key);
+            }
+          }
+
+          for (UriParameter keyPredicate : keyPredicates) {
+            String name = keyPredicate.getName();
+            String alias = keyPredicate.getAlias();
+            String value = keyPredicate.getText();
+            if (alias != null) {
+              value = uriInfo.getValueForAlias(alias);
+            }
+            EdmKeyPropertyRef edmKey = edmKeys.get(name);
+
+            if (edmKey == null) {
+              throw new UriValidationException("Unknown key property: " + name,
+                  UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
             }
 
-            for (UriParameter keyPredicate : keyPredicates) {
-              String name = keyPredicate.getName();
-              String alias = keyPredicate.getAlias();
-              String value = keyPredicate.getText();
-              if (alias != null) {
-                value = uriInfo.getValueForAlias(alias);
-              }
-              EdmKeyPropertyRef edmKey = edmKeys.get(name);
-
-              if (edmKey == null) {
-                throw new UriValidationException("Unknown key property: " + name,
-                    UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
-              }
-
-              EdmType edmType = edmKey.getProperty().getType();
-              EdmPrimitiveType edmPrimitiveType = (EdmPrimitiveType) edmType;
-
-              String edmLiteral = edmPrimitiveType.fromUriLiteral(value);
-              boolean isValid =
-                  edmPrimitiveType.validate(edmLiteral, edmKey.getProperty().isNullable(), edmKey.getProperty()
-                      .getMaxLength(), edmKey.getProperty().getPrecision(), edmKey.getProperty().getScale(), edmKey
-                      .getProperty().isUnicode());
-              if (!isValid) {
+            final EdmProperty property = edmKey.getProperty();
+            final EdmPrimitiveType edmPrimitiveType = (EdmPrimitiveType) property.getType();
+            try {
+              if (!edmPrimitiveType.validate(edmPrimitiveType.fromUriLiteral(value),
+                  property.isNullable(), property.getMaxLength(),
+                  property.getPrecision(), property.getScale(), property.isUnicode())) {
                 // TODO: Check exception here
                 throw new UriValidationException("PrimitiveTypeException",
-                    UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+                    UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
               }
+            } catch (EdmPrimitiveTypeException e) {
+              // TODO: Check exception here
+              throw new UriValidationException("PrimitiveTypeException", e,
+                  UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
             }
           }
         }
       }
-    } catch (EdmPrimitiveTypeException e) {
-      // TODO: Check exception here
-      throw new UriValidationException("PrimitiveTypeException", e,
-          UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     }
   }
 }

@@ -29,7 +29,12 @@ public class ODataHandlerException extends ODataTranslatedException {
     /** parameter: HTTP method */ HTTP_METHOD_NOT_IMPLEMENTED,
     /** parameter: processor interface */ PROCESSOR_NOT_IMPLEMENTED,
     FUNCTIONALITY_NOT_IMPLEMENTED,
-    /** parameter: version */ ODATA_VERSION_NOT_SUPPORTED
+    /** parameter: version */ ODATA_VERSION_NOT_SUPPORTED;
+
+    @Override
+    public String getKey() {
+      return name();
+    }
   }
 
   public ODataHandlerException(final String developmentMessage, final MessageKey messageKey,
@@ -37,8 +42,8 @@ public class ODataHandlerException extends ODataTranslatedException {
     super(developmentMessage, messageKey, parameters);
   }
 
-  public ODataHandlerException(final String developmentMessage, final Throwable cause, final MessageKey messageKey,
-      final String... parameters) {
-    super(developmentMessage, cause, messageKey, parameters);
+  @Override
+  protected String getBundleName() {
+    return "server-core-exceptions-i18n";
   }
 }
