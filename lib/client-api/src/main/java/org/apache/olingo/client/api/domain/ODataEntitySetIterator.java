@@ -56,13 +56,13 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
    */
   private static final Logger LOG = LoggerFactory.getLogger(ODataEntitySetIterator.class);
 
-  private final CommonODataClient<?> odataClient;
+  protected final CommonODataClient<?> odataClient;
+
+  protected ResWrap<Entity> cached;
 
   private final InputStream stream;
 
   private final ODataFormat format;
-
-  private ResWrap<Entity> cached;
 
   private ES entitySet;
 
