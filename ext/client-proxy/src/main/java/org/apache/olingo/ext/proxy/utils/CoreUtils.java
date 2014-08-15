@@ -64,6 +64,8 @@ import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
+import org.apache.olingo.ext.proxy.api.ComplexCollection;
+import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
@@ -266,7 +268,8 @@ public final class CoreUtils {
     final EdmTypeInfo.Builder edmTypeInfo = new EdmTypeInfo.Builder().setEdm(client.getCachedEdm());
 
     if (Collection.class.isAssignableFrom(obj.getClass())) {
-      final EdmTypeInfo type = guessPrimitiveType(client, ClassUtils.extractTypeArg(obj.getClass()));
+      final EdmTypeInfo type = guessPrimitiveType(client, ClassUtils.extractTypeArg(obj.getClass(), 
+              EntityCollection.class, ComplexCollection.class, Collection.class));
       return edmTypeInfo.setTypeExpression("Collection(" + type.getFullQualifiedName() + ")").build();
     } else if (obj instanceof Proxy) {
       final Class<?> typeRef = obj.getClass().getInterfaces()[0];
