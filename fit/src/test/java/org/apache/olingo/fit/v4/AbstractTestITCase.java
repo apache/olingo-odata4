@@ -36,6 +36,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.domain.v4.ODataEntityImpl;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
+import org.hamcrest.CoreMatchers;
 import org.junit.BeforeClass;
 
 import java.io.IOException;
@@ -44,8 +45,12 @@ import java.net.URI;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
@@ -147,6 +152,18 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     final ODataEntity created = req.execute().getBody();
     assertNotNull(created);
     assertEquals(2, created.getProperty("OrderShelfLifes").getCollectionValue().size());
+
+    if(format == ODataFormat.JSON_NO_METADATA) {
+      assertEquals(0, created.getNavigationLinks().size());
+      assertNull(created.getEditLink());
+    } else if(format == ODataFormat.JSON_FULL_METADATA) {
+      assertEquals(3, created.getNavigationLinks().size());
+      assertThat(created.getTypeName().getNamespace(), is("Microsoft.Test.OData.Services.ODataWCFService"));
+      assertThat(created.getEditLink().toASCIIString(), startsWith("http://localhost:9080/stub/StaticService"));
+    } else if(format == ODataFormat.JSON || format == ODataFormat.APPLICATION_JSON) {
+      assertEquals(0, created.getNavigationLinks().size());
+      assertNull(created.getEditLink());
+    }
 
     final URI deleteURI = getClient().newURIBuilder(serviceRoot).
             appendEntitySetSegment("Orders").appendKeySegment(id).build();
