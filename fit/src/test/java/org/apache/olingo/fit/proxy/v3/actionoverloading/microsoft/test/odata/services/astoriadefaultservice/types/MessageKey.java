@@ -26,7 +26,9 @@ import org.apache.olingo.ext.proxy.api.AbstractEntityKey;
 @org.apache.olingo.ext.proxy.api.annotations.CompoundKey
 public class MessageKey extends AbstractEntityKey {
 
-    private java.lang.String _fromUsername;
+  private static final long serialVersionUID = 3366500795925894331L;
+
+  private java.lang.String _fromUsername;
 
     @CompoundKeyElement(name = "FromUsername", position = 0)
     public java.lang.String getFromUsername() {

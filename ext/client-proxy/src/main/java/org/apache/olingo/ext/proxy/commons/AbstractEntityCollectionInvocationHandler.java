@@ -46,8 +46,6 @@ public abstract class AbstractEntityCollectionInvocationHandler<
         T extends EntityType<?>, EC extends EntityCollection<T, ?, ?>>
         extends AbstractCollectionInvocationHandler<T, EC> {
 
-  private static final long serialVersionUID = 98078202642671727L;
-
   protected URI targetEntitySetURI;
 
   private boolean isSingleton = false;

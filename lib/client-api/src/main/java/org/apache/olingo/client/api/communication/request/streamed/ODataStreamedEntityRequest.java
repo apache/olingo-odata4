@@ -36,7 +36,7 @@ public interface ODataStreamedEntityRequest<V extends ODataResponse, T extends O
    * Returns resource representation format.
    *
    * @return the configured format (or default if not specified).
-   * @see org.apache.olingo.client.api.CommonConfiguration#getDefaultPubFormat()
+   * @see org.apache.olingo.client.api.Configuration#getDefaultPubFormat()
    */
   ODataFormat getFormat();
 

@@ -42,8 +42,6 @@ import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 public class PrimitiveCollectionInvocationHandler<T extends Serializable>
         extends AbstractCollectionInvocationHandler<T, PrimitiveCollection<T>> {
 
-  private static final long serialVersionUID = 98078202642671756L;
-
   public PrimitiveCollectionInvocationHandler(
           final AbstractService<?> service,
           final Class<T> itemRef) {

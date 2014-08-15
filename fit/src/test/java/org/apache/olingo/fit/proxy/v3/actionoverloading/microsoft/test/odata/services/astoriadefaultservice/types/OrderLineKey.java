@@ -26,7 +26,9 @@ import org.apache.olingo.ext.proxy.api.AbstractEntityKey;
 @org.apache.olingo.ext.proxy.api.annotations.CompoundKey
 public class OrderLineKey extends AbstractEntityKey {
 
-    private java.lang.Integer _orderId;
+  private static final long serialVersionUID = -1727537164739906574L;
+
+  private java.lang.Integer _orderId;
 
     @CompoundKeyElement(name = "OrderId", position = 0)
     public java.lang.Integer getOrderId() {

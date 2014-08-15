@@ -19,13 +19,10 @@
 package org.apache.olingo.ext.proxy.api;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 public interface PrimitiveCollection<T extends Serializable>
         extends GenericCollection<T, PrimitiveCollection<T>>,
-        CollectionQuery<PrimitiveCollection<T>>,
-        Collection<T>,
-        Serializable {
+        CollectionQuery<PrimitiveCollection<T>> {
 
   void delete();
 }

@@ -34,7 +34,6 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -50,11 +49,9 @@ public class DataProvider {
 
   private static final UUID GUID = UUID.fromString("01234567-89ab-cdef-0123-456789abcdef");
 
-  private final Edm edm;
   private Map<String, EntitySet> data;
 
-  public DataProvider(final Edm edm) {
-    this.edm = edm;
+  public DataProvider() {
     data = new HashMap<String, EntitySet>();
     data.put("ESTwoPrim", createESTwoPrim());
     data.put("ESAllPrim", createESAllPrim());

@@ -577,8 +577,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
   /**
    * Java client should support the deletion based on locally created entity.
-   *
-   * @see https://issues.apache.org/jira/browse/OLINGO-395
+   * See also <a href="https://issues.apache.org/jira/browse/OLINGO-395">Olingo Issue 395</a>.
    */
   @Test
   public void issueOLINGO395() {

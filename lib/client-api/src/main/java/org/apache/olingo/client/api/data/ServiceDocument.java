@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * REST resource for an <tt>ODataServiceDocument</tt>.
  *
- * @see org.apache.olingo.client.api.domain.ODataServiceDocument
+ * @see org.apache.olingo.commons.api.domain.ODataServiceDocument
  */
 public interface ServiceDocument {
 
@@ -59,7 +59,7 @@ public interface ServiceDocument {
    */
   List<ServiceDocumentItem> getFunctionImports();
 
-  /*
+  /**
    * Gets top level function import set with given name.
    *
    * @param name function import name

@@ -32,10 +32,8 @@ import java.util.Collection;
  * @see org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFactory
  * @see org.apache.olingo.client.api.communication.request.batch.v3.BatchRequestFactory
  * @see org.apache.olingo.client.api.communication.request.batch.v4.BatchRequestFactory
- * @see org.apache.olingo.client.api.communication.request.invoke.v3.InvokeRequestFactory
- * @see org.apache.olingo.client.api.communication.request.invoke.v4.InvokeRequestFactory
- * @see org.apache.olingo.client.api.communication.request.streamed.v3.StreamedRequestFactory
- * @see org.apache.olingo.client.api.communication.request.streamed.v4.StreamedRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.streamed.StreamedRequestFactory
  */
 public interface ODataRequest {
 
@@ -50,7 +48,6 @@ public interface ODataRequest {
    * Sets OData request target URI.
    *
    * @param uri target URI.
-   * @return OData request target URI.
    */
   void setURI(URI uri);
 
@@ -81,7 +78,7 @@ public interface ODataRequest {
    *
    * @param value header value.
    * @return current object
-   * @see org.apache.olingo.client.core.communication.header.ODataHeaders.HeaderName#accept
+   * @see org.apache.olingo.client.api.communication.header.HeaderName#accept
    */
   ODataRequest setAccept(final String value);
 
@@ -89,7 +86,7 @@ public interface ODataRequest {
    * Gets <tt>Accept</tt> OData request header.
    *
    * @return header value.
-   * @see org.apache.olingo.client.core.communication.header.ODataHeaders.HeaderName#accept
+   * @see org.apache.olingo.client.api.communication.header.HeaderName#accept
    */
   String getAccept();
 
@@ -98,7 +95,7 @@ public interface ODataRequest {
    *
    * @param value header value.
    * @return current object
-   * @see org.apache.olingo.client.core.communication.header.ODataHeaders.HeaderName#ifMatch
+   * @see org.apache.olingo.client.api.communication.header.HeaderName#ifMatch
    */
   ODataRequest setIfMatch(final String value);
 
@@ -106,7 +103,7 @@ public interface ODataRequest {
    * Gets <tt>If-Match</tt> OData request header.
    *
    * @return header value.
-   * @see org.apache.olingo.client.core.communication.header.ODataHeaders.HeaderName#ifMatch
+   * @see org.apache.olingo.client.api.communication.header.HeaderName#ifMatch
    */
   String getIfMatch();
 
@@ -115,7 +112,7 @@ public interface ODataRequest {
    *
    * @param value header value.
    * @return current object
-   * @see org.apache.olingo.client.core.communication.header.ODataHeaders.HeaderName#ifNoneMatch
+   * @see org.apache.olingo.client.api.communication.header.HeaderName#ifNoneMatch
    */
   ODataRequest setIfNoneMatch(final String value);
 
@@ -123,7 +120,7 @@ public interface ODataRequest {
    * Gets <tt>If-None-Match</tt> OData request header.
    *
    * @return header value.
-   * @see org.apache.olingo.client.core.communication.header.ODataHeaders.HeaderName#ifNoneMatch
+   * @see org.apache.olingo.client.api.communication.header.HeaderName#ifNoneMatch
    */
   String getIfNoneMatch();
 
@@ -132,7 +129,7 @@ public interface ODataRequest {
    *
    * @param value header value.
    * @return current object
-   * @see org.apache.olingo.client.core.communication.header.ODataHeaders.HeaderName#prefer
+   * @see org.apache.olingo.client.api.communication.header.HeaderName#prefer
    */
   ODataRequest setPrefer(final String value);
 
@@ -140,7 +137,7 @@ public interface ODataRequest {
    * Gets <tt>Prefer</tt> OData request header.
    *
    * @return header value.
-   * @see org.apache.olingo.client.core.communication.header.ODataHeaders.HeaderName#prefer
+   * @see org.apache.olingo.client.api.communication.header.HeaderName#prefer
    */
   String getPrefer();
 
@@ -149,7 +146,7 @@ public interface ODataRequest {
    *
    * @param value header value.
    * @return current object
-   * @see org.apache.olingo.client.core.communication.header.ODataHeaders.HeaderName#contentType
+   * @see org.apache.olingo.client.api.communication.header.HeaderName#contentType
    */
   ODataRequest setContentType(final String value);
 
@@ -157,7 +154,7 @@ public interface ODataRequest {
    * Gets <tt>contentType</tt> OData request header.
    *
    * @return header value.
-   * @see org.apache.olingo.client.core.communication.header.ODataHeaders.HeaderName#contentType
+   * @see org.apache.olingo.client.api.communication.header.HeaderName#contentType
    */
   String getContentType();
 
@@ -166,7 +163,7 @@ public interface ODataRequest {
    *
    * @param value header value.
    * @return current object
-   * @see org.apache.olingo.client.core.communication.header.ODataHeaders.HeaderName#slug
+   * @see org.apache.olingo.client.api.communication.header.HeaderName#slug
    */
   ODataRequest setSlug(final String value);
 
@@ -175,7 +172,7 @@ public interface ODataRequest {
    *
    * @param value header value.
    * @return current object
-   * @see org.apache.olingo.client.core.communication.header.ODataHeaders.HeaderName#xHttpMethod
+   * @see org.apache.olingo.client.api.communication.header.HeaderName#xHttpMethod
    */
   ODataRequest setXHTTPMethod(final String value);
 

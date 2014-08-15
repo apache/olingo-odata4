@@ -21,6 +21,7 @@ package org.apache.olingo.commons.core.edm.primitivetype;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Implementation of the EDM primitive type Stream as URI.
@@ -49,7 +50,7 @@ public final class EdmStream extends SingletonPrimitiveType {
     try {
       new URI(value);
       return true;
-    } catch (Exception e) {
+    } catch (final URISyntaxException e) {
       return false;
     }
   }
@@ -62,7 +63,7 @@ public final class EdmStream extends SingletonPrimitiveType {
     URI stream = null;
     try {
       stream = new URI(value);
-    } catch (Exception e) {
+    } catch (final URISyntaxException e) {
       throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
     }
 

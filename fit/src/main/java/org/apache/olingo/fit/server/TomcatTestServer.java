@@ -35,22 +35,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.Properties;
 import java.util.UUID;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.SimpleFormatter;
 
 /**
- *  
+ * Server for integration tests.
  */
 public class TomcatTestServer {
   private static final Logger LOG = LoggerFactory.getLogger(TomcatTestServer.class);
@@ -105,7 +101,9 @@ public class TomcatTestServer {
         LOG.info("...and run as long as the thread is running.");
         server.start();
       }
-    } catch (Exception e) {
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to start Tomcat server from main method.", e);
+    } catch (LifecycleException e) {
       throw new RuntimeException("Failed to start Tomcat server from main method.", e);
     }
   }
@@ -257,7 +255,7 @@ public class TomcatTestServer {
       return this;
     }
 
-    public TestServerBuilder addStaticContent(String uri, String resourceName) throws Exception {
+    public TestServerBuilder addStaticContent(String uri, String resourceName) throws IOException {
       File targetResourcesDir = getFileForDirProperty(PROJECT_RESOURCES_DIR);
       String resource = new File(targetResourcesDir, resourceName).getAbsolutePath();
       LOG.info("Added static content from '{}' at uri '{}'.", resource, uri);
@@ -265,7 +263,7 @@ public class TomcatTestServer {
       return addServlet(staticContent, String.valueOf(uri.hashCode()), uri);
     }
 
-    public TestServerBuilder addServlet(HttpServlet httpServlet, String name, String path) throws Exception {
+    public TestServerBuilder addServlet(HttpServlet httpServlet, String name, String path) throws IOException {
       if(server != null) {
         return this;
       }
@@ -313,28 +311,6 @@ public class TomcatTestServer {
         tomcat.stop();
       }
       tomcat.destroy();
-    }
-  }
-
-  private static void extract(File jarFile, File destDir) throws IOException {
-    JarFile jar = new JarFile(jarFile);
-    Enumeration<JarEntry> enumEntries = jar.entries();
-    while (enumEntries.hasMoreElements()) {
-      JarEntry file = enumEntries.nextElement();
-      File f = new File(destDir, file.getName());
-      if (file.isDirectory()) {
-        if(!f.exists() && !f.mkdir()) {
-          throw new IOException("Unable to create directory at path '" + f.getAbsolutePath() + "'.");
-        }
-      } else {
-        InputStream is = jar.getInputStream(file);
-        FileOutputStream fos = new FileOutputStream(f);
-        while (is.available() > 0) {
-          fos.write(is.read());
-        }
-        fos.close();
-        is.close();
-      }
     }
   }
 }

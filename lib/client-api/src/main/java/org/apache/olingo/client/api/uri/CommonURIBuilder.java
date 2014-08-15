@@ -170,12 +170,12 @@ public interface CommonURIBuilder<UB extends CommonURIBuilder<?>> {
   /**
    * Adds filter for filter query option.
    *
-   * @param filter filter instance (to be obtained via <tt>ODataFilterFactory</tt>): note that <tt>build()</tt> method
-   * will be immediately invoked.
+   * @param filter filter instance (to be obtained via <tt>FilterFactory</tt>);
+   *               note that <tt>build()</tt> method will be immediately invoked.
    * @return current URIBuilder instance
    * @see QueryOption#FILTER
    * @see URIFilter
-   * @see org.apache.olingo.client.api.uri.filter.FilterFactory
+   * @see org.apache.olingo.client.api.uri.CommonFilterFactory
    */
   UB filter(URIFilter filter);
 

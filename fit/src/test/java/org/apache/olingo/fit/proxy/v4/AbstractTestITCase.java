@@ -142,7 +142,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
   }
 
   @Override
-  protected CommonODataClient getClient() {
+  protected CommonODataClient<?> getClient() {
     throw new RuntimeException("This method should not be used from proxy tests.");
   }
 }

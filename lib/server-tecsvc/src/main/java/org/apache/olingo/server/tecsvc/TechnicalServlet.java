@@ -49,7 +49,7 @@ public class TechnicalServlet extends HttpServlet {
       HttpSession session = req.getSession(true);
       DataProvider dataProvider = (DataProvider) session.getAttribute(DataProvider.class.getName());
       if (dataProvider == null) {
-        dataProvider = new DataProvider(edm);
+        dataProvider = new DataProvider();
         session.setAttribute(DataProvider.class.getName(), dataProvider);
         LOG.info("Created new data provider.");
       }
@@ -57,7 +57,7 @@ public class TechnicalServlet extends HttpServlet {
       ODataHttpHandler handler = odata.createHandler(edm);
       handler.register(new TechnicalProcessor(dataProvider));
       handler.process(req, resp);
-    } catch (Exception e) {
+    } catch (RuntimeException e) {
       LOG.error("Server Error", e);
       throw new ServletException(e);
     }

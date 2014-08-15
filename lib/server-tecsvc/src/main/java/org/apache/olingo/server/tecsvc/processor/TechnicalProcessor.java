@@ -48,7 +48,6 @@ import java.util.Locale;
 public class TechnicalProcessor implements EntityCollectionProcessor, EntityProcessor {
 
   private OData odata;
-  private Edm edm;
   private DataProvider dataProvider;
 
   public TechnicalProcessor(final DataProvider dataProvider) {
@@ -58,7 +57,6 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
   @Override
   public void init(final OData odata, final Edm edm) {
     this.odata = odata;
-    this.edm = edm;
   }
 
   @Override
@@ -70,7 +68,7 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
     }
     try {
       final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
-      final EntitySet entitySet = readEntitySetInternal(edmEntitySet, request.getRawBaseUri());
+      final EntitySet entitySet = readEntitySetInternal(edmEntitySet);
       if (entitySet == null) {
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
@@ -115,8 +113,7 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
     }
   }
 
-  private EntitySet readEntitySetInternal(final EdmEntitySet edmEntitySet, final String serviceRoot)
-      throws DataProvider.DataProviderException {
+  private EntitySet readEntitySetInternal(final EdmEntitySet edmEntitySet) throws DataProvider.DataProviderException {
     EntitySet entitySet = dataProvider.readAll(edmEntitySet);
     // TODO: set count and next link
     return entitySet;

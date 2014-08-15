@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.tecsvc.data;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
@@ -25,22 +26,16 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmComplexType;
-import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
+import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
-/**
- */
 public class DataProviderTest {
 
   private final Edm edm = OData.newInstance().createEdm(new EdmTechProvider());
@@ -61,16 +56,19 @@ public class DataProviderTest {
 
   @Test
   public void esAllPrimEntity() throws Exception {
-    DataProvider jdp = getDataProvider();
-    Entity first = jdp.readAll(esAllPrim).getEntities().get(0);
-
+    final DataProvider dataProvider = new DataProvider();
+    Entity first = dataProvider.readAll(esAllPrim).getEntities().get(0);
     Assert.assertEquals(16, first.getProperties().size());
+
+    UriParameter parameter = Mockito.mock(UriParameter.class);
+    Mockito.when(parameter.getName()).thenReturn("PropertyInt16");
+    Mockito.when(parameter.getText()).thenReturn(Short.toString(Short.MAX_VALUE));
+    Assert.assertEquals(first, dataProvider.read(esAllPrim, Arrays.asList(parameter)));
   }
 
   @Test
   public void esAllPrim() throws Exception {
-    DataProvider jdp = getDataProvider();
-    EntitySet outSet = jdp.readAll(esAllPrim);
+    EntitySet outSet = new DataProvider().readAll(esAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
     Entity first = outSet.getEntities().get(0);
@@ -81,8 +79,7 @@ public class DataProviderTest {
 
   @Test
   public void esCollAllPrim() throws Exception {
-    DataProvider jdp = getDataProvider();
-    EntitySet outSet = jdp.readAll(esCollAllPrim);
+    EntitySet outSet = new DataProvider().readAll(esCollAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
     Assert.assertEquals(17, outSet.getEntities().get(0).getProperties().size());
@@ -95,8 +92,7 @@ public class DataProviderTest {
 
   @Test
   public void esCompAllPrim() throws Exception {
-    DataProvider jdp = getDataProvider();
-    EntitySet outSet = jdp.readAll(esCompAllPrim);
+    EntitySet outSet = new DataProvider().readAll(esCompAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
     Assert.assertEquals(2, outSet.getEntities().get(0).getProperties().size());
@@ -109,8 +105,7 @@ public class DataProviderTest {
 
   @Test
   public void esMixPrimCollComp() throws Exception {
-    DataProvider jdp = getDataProvider();
-    EntitySet outSet = jdp.readAll(esMixPrimCollAllPrim);
+    EntitySet outSet = new DataProvider().readAll(esMixPrimCollAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
     Assert.assertEquals(4, outSet.getEntities().get(0).getProperties().size());
@@ -129,42 +124,5 @@ public class DataProviderTest {
     //
     Assert.assertEquals(4, outSet.getEntities().get(1).getProperties().size());
     Assert.assertEquals(4, outSet.getEntities().get(2).getProperties().size());
-  }
-
-  private DataProvider getDataProvider() throws DataProvider.DataProviderException {
-    OData odata = OData.newInstance();
-    Edm edm = odata.createEdm(new EdmTechProvider());
-    return new DataProvider(edm);
-  }
-
-  @Test
-  public void edm() {
-    OData odata = OData.newInstance();
-    Edm edm = odata.createEdm(new EdmTechProvider());
-    EdmEntitySet edmEntitySet =
-        edm.getEntityContainer(ContainerProvider.nameContainer).getEntitySet("ESCompAllPrim");
-
-    EdmEntityType et = edmEntitySet.getEntityType();
-    printType(edm, et);
-  }
-
-  private void printType(Edm edm, EdmStructuredType type) {
-
-    List<String> propNames = type.getPropertyNames();
-
-    for (String propName : propNames) {
-      EdmElement element = type.getProperty(propName);
-      if(element instanceof EdmProperty) {
-        EdmProperty property = (EdmProperty) element;
-        if(property.isPrimitive()) {
-          System.out.println("Primitive name/type: " + property.getName() + "/" + property.getType());
-        } else {
-          // recursion
-          EdmComplexType complex = edm.getComplexType(property.getType().getFullQualifiedName());
-          System.out.println("Complex name/type [" + property.getName() + "/" + property.getType() + "]");
-          printType(edm, complex);
-        }
-      }
-    }
   }
 }

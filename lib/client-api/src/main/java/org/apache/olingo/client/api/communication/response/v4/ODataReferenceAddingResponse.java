@@ -23,7 +23,7 @@ import org.apache.olingo.client.api.communication.response.*;
 /**
  * This class implements the response to an OData delete request.
  *
- * @see org.apache.olingo.client.core.communication.request.cud.ODataDeleteRequest
+ * @see org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest
  */
 public interface ODataReferenceAddingResponse extends ODataResponse {
 }

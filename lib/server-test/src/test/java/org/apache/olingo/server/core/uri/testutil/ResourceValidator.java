@@ -44,10 +44,12 @@ import org.apache.olingo.server.core.uri.UriResourceNavigationPropertyImpl;
 import org.apache.olingo.server.core.uri.UriResourcePrimitivePropertyImpl;
 import org.apache.olingo.server.core.uri.UriResourceSingletonImpl;
 import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
+import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
+import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 
 import java.util.List;
@@ -91,11 +93,15 @@ public class ResourceValidator implements TestValidator {
     uriPathInfo = null;
     try {
       uriInfoTmp = testParser.parseUri(uri, edm);
+    } catch (final UriParserException e) {
+      fail("Exception occurred while parsing the URI: " + uri + "\n"
+          + " Message: " + e.getMessage());
+    }
 
-      UriValidator uriValidator = new UriValidator();
-      uriValidator.validate(uriInfoTmp, HttpMethod.GET);
-    } catch (Exception e) {
-      fail("Exception occured while parsing the URI: " + uri + "\n"
+    try {
+      new UriValidator().validate(uriInfoTmp, HttpMethod.GET);
+    } catch (final UriValidationException e) {
+      fail("Exception occurred while validating the URI: " + uri + "\n"
           + " Message: " + e.getMessage());
     }
 

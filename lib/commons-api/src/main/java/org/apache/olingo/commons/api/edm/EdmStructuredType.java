@@ -73,10 +73,10 @@ public interface EdmStructuredType extends EdmType, EdmAnnotationsTarget, EdmAnn
   EdmStructuredType getBaseType();
 
   /**
-   * Checks if this type is convertible to parameter {@link targetType}
+   * Checks if this type is convertible to parameter {@code targetType}
    * 
    * @param targetType
-   * @return true if this type is compatible to the testType ( i.e. this type is a subtype of targetType )
+   * @return true if this type is compatible to the testType (i.e., this type is a subtype of targetType)
    */
   boolean compatibleTo(EdmType targetType);
 

@@ -26,7 +26,9 @@ import org.apache.olingo.ext.proxy.api.AbstractEntityKey;
 @org.apache.olingo.ext.proxy.api.annotations.CompoundKey
 public class ProductPhotoKey extends AbstractEntityKey {
 
-    private java.lang.Integer _photoId;
+  private static final long serialVersionUID = -3057054846709839639L;
+
+  private java.lang.Integer _photoId;
 
     @CompoundKeyElement(name = "PhotoId", position = 0)
     public java.lang.Integer getPhotoId() {

@@ -23,8 +23,8 @@ import java.util.Collection;
 /**
  * ODataHeaders wraps OData request/response headers.
  *
- * @see org.apache.olingo.client.core.communication.request.ODataRequest
- * @see org.apache.olingo.client.core.communication.response.ODataResponse
+ * @see org.apache.olingo.client.api.communication.request.ODataRequest
+ * @see org.apache.olingo.client.api.communication.response.ODataResponse
  */
 public interface ODataHeaders {
 

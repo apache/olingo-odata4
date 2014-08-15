@@ -23,7 +23,7 @@ import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 /**
  * This class implements the response to an OData update entity property request.
  *
- * @see org.apache.olingo.client.core.communication.request.cud.ODataPropertyUpdateRequest
+ * @see org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest
  */
 public interface ODataValueUpdateResponse extends ODataResponse {
 

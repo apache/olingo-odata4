@@ -32,8 +32,6 @@ import org.apache.olingo.ext.proxy.api.EntityType;
 public class EntityCollectionInvocationHandler<T extends EntityType<?>>
         extends AbstractEntityCollectionInvocationHandler<T, EntityCollection<T, ?, ?>> {
 
-  private static final long serialVersionUID = 98078202642671726L;
-
   public EntityCollectionInvocationHandler(
           final AbstractService<?> service, final Class<? extends EntityCollection<T, ?, ?>> collItemRef) {
     this(service, new ArrayList<T>(), collItemRef, null, null);

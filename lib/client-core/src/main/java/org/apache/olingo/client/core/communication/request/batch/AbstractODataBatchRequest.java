@@ -70,9 +70,6 @@ public abstract class AbstractODataBatchRequest<V extends ODataResponse, T exten
     expectedResItems.add(item);
   }
 
-  /**
-   * {@inheritDoc }
-   */
   public PipedOutputStream getOutputStream() {
     return getPayloadManager().getBodyStreamWriter();
   }

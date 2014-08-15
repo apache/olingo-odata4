@@ -50,8 +50,6 @@ import org.apache.olingo.ext.proxy.utils.CoreUtils;
 public abstract class AbstractCollectionInvocationHandler<T extends Serializable, EC extends Collection<T>>
         extends AbstractInvocationHandler implements Collection<T> {
 
-  private static final long serialVersionUID = 98078202642671726L;
-
   protected URI nextPageURI = null;
 
   protected Collection<T> items;
@@ -234,7 +232,7 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
   }
 
   @Override
-  public <T> T[] toArray(final T[] array) {
+  public <U> U[] toArray(final U[] array) {
     return items.toArray(array);
   }
 

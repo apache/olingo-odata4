@@ -28,8 +28,6 @@ import org.apache.olingo.ext.proxy.AbstractService;
 
 public class AnnotatationsInvocationHandler extends AbstractInvocationHandler {
 
-  private static final long serialVersionUID = -1993362719908718985L;
-
   private final EntityInvocationHandler entityHandler;
 
   private final AbstractStructuredInvocationHandler targetHandler;

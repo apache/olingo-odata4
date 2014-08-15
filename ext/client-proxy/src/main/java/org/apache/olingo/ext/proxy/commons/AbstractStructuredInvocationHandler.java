@@ -70,8 +70,6 @@ import org.apache.olingo.ext.proxy.utils.ProxyUtils;
 
 public abstract class AbstractStructuredInvocationHandler extends AbstractInvocationHandler {
 
-  private static final long serialVersionUID = 2629912294765040037L;
-
   protected CommonURIBuilder<?> uri;
 
   protected URI baseURI;

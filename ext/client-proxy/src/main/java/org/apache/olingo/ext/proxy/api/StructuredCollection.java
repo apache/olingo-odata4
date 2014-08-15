@@ -25,7 +25,7 @@ import java.util.Collection;
  */
 public interface StructuredCollection<
         T extends StructuredType<?>, EC extends Collection<T>, CT extends StructuredCollection<T, EC, ?>>
-        extends GenericCollection<T, EC>, java.io.Serializable {
+        extends GenericCollection<T, EC> {
 
   /**
    * Explicit paging result handling.

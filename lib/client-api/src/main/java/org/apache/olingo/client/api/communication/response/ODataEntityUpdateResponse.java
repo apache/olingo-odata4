@@ -24,7 +24,7 @@ import org.apache.olingo.commons.api.domain.CommonODataEntity;
  * This class implements the response to an OData update request.
  *
  * @param <E> concrete ODataEntity implementation
- * @see org.apache.olingo.client.core.communication.request.cud.ODataEntityUpdateRequest
+ * @see org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest
  */
 public interface ODataEntityUpdateResponse<E extends CommonODataEntity> extends ODataResponse {
 

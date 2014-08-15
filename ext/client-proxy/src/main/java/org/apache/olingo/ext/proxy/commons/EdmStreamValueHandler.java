@@ -27,8 +27,6 @@ import org.apache.olingo.ext.proxy.AbstractService;
 
 public class EdmStreamValueHandler extends AbstractInvocationHandler {
 
-  private static final long serialVersionUID = 2629912294765040047L;
-
   private URI uri;
 
   private InputStream stream;

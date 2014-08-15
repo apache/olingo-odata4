@@ -26,7 +26,9 @@ import org.apache.olingo.ext.proxy.api.AbstractEntityKey;
 @org.apache.olingo.ext.proxy.api.annotations.CompoundKey
 public class ProductDetailKey extends AbstractEntityKey {
 
-    private java.lang.Integer _productID;
+  private static final long serialVersionUID = -6268946147639590355L;
+
+  private java.lang.Integer _productID;
 
     @CompoundKeyElement(name = "ProductID", position = 0)
     public java.lang.Integer getProductID() {

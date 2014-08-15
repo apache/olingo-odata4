@@ -47,8 +47,6 @@ import java.util.Map;
 
 final class OperationInvocationHandler extends AbstractInvocationHandler {
 
-  private static final long serialVersionUID = 2629912294765040027L;
-
   private final InvocationHandler target;
 
   private final FullQualifiedName targetFQN;

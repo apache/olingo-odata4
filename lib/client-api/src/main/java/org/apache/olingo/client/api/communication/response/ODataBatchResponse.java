@@ -25,7 +25,7 @@ import java.util.Iterator;
 /**
  * This class implements a response to a batch request.
  *
- * @see org.apache.olingo.client.core.communication.request.batch.ODataBatchRequest
+ * @see org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest
  */
 public interface ODataBatchResponse extends ODataResponse {
 

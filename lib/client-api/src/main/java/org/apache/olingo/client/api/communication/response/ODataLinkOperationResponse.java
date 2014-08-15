@@ -21,8 +21,8 @@ package org.apache.olingo.client.api.communication.response;
 /**
  * This interface defines the response to an OData link operation request.
  *
- * @see org.apache.olingo.client.core.communication.request.cud.ODataLinkCreateRequest
- * @see org.apache.olingo.client.core.communication.request.cud.ODataLinkUpdateRequest
+ * @see org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkCreateRequest
+ * @see org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkUpdateRequest
  */
 public interface ODataLinkOperationResponse extends ODataResponse {
 }

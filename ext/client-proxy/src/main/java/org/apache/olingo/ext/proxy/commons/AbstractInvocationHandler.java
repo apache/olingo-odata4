@@ -52,8 +52,6 @@ import org.slf4j.LoggerFactory;
 
 abstract class AbstractInvocationHandler implements InvocationHandler {
 
-  private static final long serialVersionUID = 358520026931462958L;
-
   /**
    * Logger.
    */
