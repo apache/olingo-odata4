@@ -38,7 +38,6 @@ import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
 
 import java.net.URI;
 
-@SuppressWarnings("unchecked")
 public class RetrieveRequestFactoryImpl extends AbstractRetrieveRequestFactory
         implements RetrieveRequestFactory {
 

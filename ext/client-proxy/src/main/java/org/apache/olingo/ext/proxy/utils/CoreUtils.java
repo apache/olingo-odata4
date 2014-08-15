@@ -320,7 +320,6 @@ public final class CoreUtils {
     }
   }
 
-  @SuppressWarnings("unchecked")
   public static void addProperties(
           final CommonEdmEnabledODataClient<?> client,
           final Map<String, Object> changes,
@@ -638,7 +637,6 @@ public final class CoreUtils {
     return res;
   }
 
-  @SuppressWarnings("unchecked")
   public static Collection<Class<? extends AbstractTerm>> getAnnotationTerms(
           final AbstractService<?> service, final List<ODataAnnotation> annotations) {
 

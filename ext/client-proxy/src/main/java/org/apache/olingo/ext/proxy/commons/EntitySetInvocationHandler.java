@@ -67,7 +67,6 @@ public class EntitySetInvocationHandler<
     return new EntitySetInvocationHandler(ref, service, service.getClient().newURIBuilder(uri.toASCIIString()));
   }
 
-  @SuppressWarnings("unchecked")
   protected EntitySetInvocationHandler(
           final Class<?> ref,
           final AbstractService<?> service,

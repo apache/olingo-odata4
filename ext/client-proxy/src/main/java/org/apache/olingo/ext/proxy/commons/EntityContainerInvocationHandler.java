@@ -43,10 +43,7 @@ import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
 public final class EntityContainerInvocationHandler extends AbstractInvocationHandler {
 
-  private static final long serialVersionUID = 7379006755693410764L;
-
   protected final String namespace;
-
   private final String name;
 
   private final boolean defaultEC;
@@ -192,7 +189,6 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
             new PrimitiveCollectionInvocationHandler<T>(getService(), ref));
   }
 
-  @SuppressWarnings("unchecked")
   public EdmStreamValue newEdmStreamValue(
           final String contentType, final InputStream stream) {
 

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
@@ -51,7 +52,6 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
-import org.apache.olingo.fit.server.StringHelper;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Before;
 import org.junit.Test;
@@ -184,8 +184,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         + "\"cccccc67-89ab-cdef-0123-456789cccccc\"],"
         + "\"CollPropertyTimeOfDay\":[\"04:14:13\",\"23:59:59\",\"01:12:33\"]"
         + "}";
-    StringHelper.Stream s = StringHelper.toStream(response.getRawResponse());
-    assertEquals(expectedResult, s.asString());
+    assertEquals(expectedResult, IOUtils.toString(response.getRawResponse(), "UTF-8"));
   }
 
   @Override protected CommonODataClient<?> getClient() {

@@ -24,6 +24,7 @@ import org.apache.catalina.LifecycleState;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -123,6 +125,7 @@ public class TomcatTestServer {
   }
 
   public static class StaticContent extends HttpServlet {
+    private static final long serialVersionUID = 6850459331131987539L;
     private final String uri;
     private final String resource;
 
@@ -135,18 +138,18 @@ public class TomcatTestServer {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException {
 
-      StringHelper.Stream st;
+      String result;
       File resourcePath = new File(resource);
       if(resourcePath.exists() && resourcePath.isFile()) {
         FileInputStream fin = new FileInputStream(resourcePath);
-        st = StringHelper.toStream(fin);
+        result = IOUtils.toString(fin, "UTF-8");
         LOG.info("Mapped uri '{}' to resource '{}'.", uri, resource);
-        LOG.trace("Resource content {\n\n{}\n\n}", st.asString());
+        LOG.trace("Resource content {\n\n{}\n\n}", result);
       } else {
         LOG.debug("Unable to load resource for path {} as stream.", uri);
-        st = StringHelper.toStream("<html><head/><body>No resource for path found</body>");
+        result = "<html><head/><body>No resource for path found</body>";
       }
-      resp.getOutputStream().write(st.asString().getBytes());
+      resp.getOutputStream().write(result.getBytes());
     }
   }
 

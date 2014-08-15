@@ -68,17 +68,20 @@ public class TranslatedExceptionSubclassesTest {
       Assert.assertNotNull("No value found for message key '" + propKey + "'", value);
       //
       int paraCount = countParameters(value);
-      Constructor ctor = clazz.getConstructor(String.class, ODataTranslatedException.MessageKey.class, String[].class);
+      Constructor<? extends ODataTranslatedException> ctor =
+          clazz.getConstructor(String.class, ODataTranslatedException.MessageKey.class, String[].class);
       String[] paras = new String[paraCount];
       for (int i = 0; i < paras.length; i++) {
           paras[i] = "470" + i;
       }
       String developerMessage = UUID.randomUUID().toString();
-      ODataTranslatedException e = (ODataTranslatedException) ctor.newInstance(developerMessage, messageKey, paras);
+      ODataTranslatedException e = ctor.newInstance(developerMessage, messageKey, paras);
       try {
         throw e;
       } catch (ODataTranslatedException translatedException) {
-        String formattedValue = new Formatter().format(value, paras).toString();
+        Formatter formatter = new Formatter();
+        String formattedValue = formatter.format(value, (Object[]) paras).toString();
+        formatter.close();
         Assert.assertEquals(formattedValue, translatedException.getTranslatedMessage(null).getMessage());
         Assert.assertEquals(formattedValue, translatedException.getLocalizedMessage());
         Assert.assertEquals(developerMessage, translatedException.getMessage());

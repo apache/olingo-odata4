@@ -156,14 +156,14 @@ public class V4Services extends AbstractServices {
 
   @DELETE
   @Path("/monitor/{name}")
-  public Response removeMonitor(@Context final UriInfo uriInfo, @PathParam("name") final String name) {
+  public Response removeMonitor(@PathParam("name") final String name) {
     providedAsync.remove(name);
     return xml.createResponse(null, null, null, Status.NO_CONTENT);
   }
 
   @GET
   @Path("/monitor/{name}")
-  public Response async(@Context final UriInfo uriInfo, @PathParam("name") final String name) {
+  public Response async(@PathParam("name") final String name) {
     try {
       if (!providedAsync.containsKey(name)) {
         throw new NotFoundException();
@@ -657,7 +657,6 @@ public class V4Services extends AbstractServices {
   @POST
   @Path("/Accounts({entityId})/Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI{paren:[\\(\\)]*}")
   public Response actionRefreshDefaultPI(
-          @Context final UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
           @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
           @PathParam("entityId") final String entityId,
@@ -1150,7 +1149,6 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/GetPerson2({param:.*})/Emails")
   public Response functionGetPerson2Emails(
-          @Context final UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
@@ -1160,7 +1158,6 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/GetPerson2({param:.*})/HomeAddress")
   public Response functionGetPerson2HomeAddress(
-          @Context final UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
@@ -1202,7 +1199,6 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/GetProductsByAccessLevel({param:.*})")
   public Response functionGetProductsByAccessLevel(
-          @Context final UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
@@ -1235,7 +1231,6 @@ public class V4Services extends AbstractServices {
   @GET
   @Path("/GetBossEmails({param:.*})")
   public Response functionGetBossEmails(
-          @Context final UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 

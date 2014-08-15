@@ -236,7 +236,7 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
   }
 
   @Override
-  @SuppressWarnings({"unchecked", "rawtype"})
+  @SuppressWarnings({"unchecked", "rawtypes"})
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     if ("filter".equals(method.getName())
             || "orderBy".equals(method.getName())

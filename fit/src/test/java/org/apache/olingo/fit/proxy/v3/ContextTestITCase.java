@@ -213,7 +213,7 @@ public class ContextTestITCase extends AbstractTestITCase {
 
     assertTrue(service.getContext().entityContext().isAttached(source));
     assertEquals(AttachedEntityStatus.NEW, service.getContext().entityContext().getStatus(source));
-    assertEquals(3, ((Collection) (source.getLinkChanges().entrySet().iterator().next().getValue())).size());
+    assertEquals(3, ((Collection<?>) (source.getLinkChanges().entrySet().iterator().next().getValue())).size());
 
     for (Order order : toBeLinked) {
       final EntityInvocationHandler target = (EntityInvocationHandler) Proxy.getInvocationHandler(order);
@@ -487,14 +487,13 @@ public class ContextTestITCase extends AbstractTestITCase {
       if (property.getKey().name().equals(sourceName)) {
         if (isCollection) {
           found = false;
-          for (Object proxy : (Collection) property.getValue()) {
-            if (target.equals((EntityInvocationHandler) Proxy.getInvocationHandler(proxy))) {
+          for (Object proxy : (Collection<?>) property.getValue()) {
+            if (target.equals(Proxy.getInvocationHandler(proxy))) {
               found = true;
             }
           }
         } else {
-          found = target.equals(
-                  (EntityInvocationHandler) Proxy.getInvocationHandler(property.getValue()));
+          found = target.equals(Proxy.getInvocationHandler(property.getValue()));
         }
       }
     }

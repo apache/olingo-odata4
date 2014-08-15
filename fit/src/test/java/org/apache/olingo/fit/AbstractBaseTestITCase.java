@@ -27,7 +27,6 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
-import org.apache.olingo.fit.server.StringHelper;
 import org.apache.olingo.fit.server.TomcatTestServer;
 import org.apache.olingo.server.tecsvc.TechnicalServlet;
 import org.junit.BeforeClass;
@@ -55,7 +54,7 @@ public abstract class AbstractBaseTestITCase {
 
   @BeforeClass
   public static void init() throws Exception {
-    TomcatTestServer server = TomcatTestServer.init(9080)
+    TomcatTestServer.init(9080)
         .addServlet(TechnicalServlet.class, "/olingo-server-tecsvc/odata.svc/*")
         .addServlet(StaticContent.class, "/olingo-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml")
         .addWebApp()
@@ -128,12 +127,11 @@ public abstract class AbstractBaseTestITCase {
   }
 
   public static class StaticContent extends HttpServlet {
+    private static final long serialVersionUID = -6663569573355398997L;
     @Override protected void doGet(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException {
-
-      StringHelper.Stream st = StringHelper.toStream(
-          Thread.currentThread().getContextClassLoader().getResourceAsStream("org-odata-core-v1.xml"));
-      resp.getOutputStream().write(st.asArray());
+      resp.getOutputStream().write(IOUtils.toByteArray(
+          Thread.currentThread().getContextClassLoader().getResourceAsStream("org-odata-core-v1.xml")));
     }
   }
 }
