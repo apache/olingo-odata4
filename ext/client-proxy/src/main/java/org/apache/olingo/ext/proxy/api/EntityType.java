@@ -32,5 +32,6 @@ public interface EntityType<T extends StructuredType<?>> extends StructuredType<
    *
    * @return entity reference ID.
    */
-  String getEntityReferenceID();
+  // use read- instead of get- for .invoke() to distinguish it from entity property getter.
+  String readEntityReferenceID();
 }

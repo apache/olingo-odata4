@@ -72,11 +72,11 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   @Test
   public void read() {
     Row row = otcontainer.getRow().getByKey(UUID.fromString("71f7d0dc-ede4-45eb-b421-555a2aa1e58f")).load();
-    assertEquals(Double.class, row.getAdditionalProperty("Double").getClass());
+    assertEquals(Double.class, row.readAdditionalProperty("Double").getClass());
     assertEquals("71f7d0dc-ede4-45eb-b421-555a2aa1e58f", row.getId().toString());
 
     row = otcontainer.getRow().getByKey(UUID.fromString("672b8250-1e6e-4785-80cf-b94b572e42b3")).load();
-    assertEquals(BigDecimal.class, row.getAdditionalProperty("Decimal").getClass());
+    assertEquals(BigDecimal.class, row.readAdditionalProperty("Decimal").getClass());
   }
 
   @Test
@@ -119,13 +119,13 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     otcontainer.flush();
 
     rowIndex = otcontainer.getRowIndex().getByKey(id).load();
-    assertEquals(String.class, rowIndex.getAdditionalProperty("aString").getClass());
-    assertEquals(Boolean.class, rowIndex.getAdditionalProperty("aBoolean").getClass());
-    assertEquals(Double.class, rowIndex.getAdditionalProperty("aDouble").getClass());
-    assertEquals(Byte.class, rowIndex.getAdditionalProperty("aByte").getClass());
-    assertEquals(Byte.MAX_VALUE, rowIndex.getAdditionalProperty("aByte"));
-    assertTrue(Timestamp.class.isAssignableFrom(rowIndex.getAdditionalProperty("aDate").getClass()));
-    assertEquals(ContactDetails.class, rowIndex.getAdditionalProperty("aContact").getClass().getInterfaces()[0]);
+    assertEquals(String.class, rowIndex.readAdditionalProperty("aString").getClass());
+    assertEquals(Boolean.class, rowIndex.readAdditionalProperty("aBoolean").getClass());
+    assertEquals(Double.class, rowIndex.readAdditionalProperty("aDouble").getClass());
+    assertEquals(Byte.class, rowIndex.readAdditionalProperty("aByte").getClass());
+    assertEquals(Byte.MAX_VALUE, rowIndex.readAdditionalProperty("aByte"));
+    assertTrue(Timestamp.class.isAssignableFrom(rowIndex.readAdditionalProperty("aDate").getClass()));
+    assertEquals(ContactDetails.class, rowIndex.readAdditionalProperty("aContact").getClass().getInterfaces()[0]);
 
     otservice.getContext().detachAll();
 

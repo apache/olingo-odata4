@@ -141,7 +141,7 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
   }
 
   @Override
-  public Object getAnnotation(final Class<? extends AbstractTerm> term) {
+  public Object readAnnotation(final Class<? extends AbstractTerm> term) {
     Object res = null;
 
     if (annotations.containsKey(term)) {
@@ -171,7 +171,7 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
   }
 
   @Override
-  public Collection<Class<? extends AbstractTerm>> getAnnotationTerms() {
+  public Collection<Class<? extends AbstractTerm>> readAnnotationTerms() {
     return entityHandler.getEntity() instanceof ODataEntity
             ? CoreUtils.getAnnotationTerms(service, internalAnnotations())
             : Collections.<Class<? extends AbstractTerm>>emptyList();

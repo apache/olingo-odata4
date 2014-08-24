@@ -158,41 +158,13 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   @Override
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-    if ("expand".equals(method.getName())
-            || "select".equals(method.getName())
-            || "refs".equals(method.getName())) {
-      invokeSelfMethod(method, args);
-      return proxy;
-    } else if (isSelfMethod(method, args)) {
-      return invokeSelfMethod(method, args);
-    } else if ("load".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
-      load();
-      return proxy;
-    } else if ("loadAsync".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
-      return service.getClient().getConfiguration().getExecutor().submit(new Callable<Object>() {
-        @Override
-        public Object call() throws Exception {
-          load();
-          return proxy;
-        }
-      });
-    } else if ("operations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
-      final Class<?> returnType = method.getReturnType();
+  	if (method.getName().startsWith("get")) {  
+  		// Here need check "get"/"set" first for better get-/set- performance because
+  		// the below if-statements are really time-consuming, even twice slower than "get" body.
 
-      return Proxy.newProxyInstance(
-              Thread.currentThread().getContextClassLoader(),
-              new Class<?>[] {returnType},
-              OperationInvocationHandler.getInstance(getEntityHandler()));
-    } else if ("annotations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
-      final Class<?> returnType = method.getReturnType();
-
-      return Proxy.newProxyInstance(
-              Thread.currentThread().getContextClassLoader(),
-              new Class<?>[] {returnType},
-              AnnotatationsInvocationHandler.getInstance(getEntityHandler(), this));
-    } else if (method.getName().startsWith("get")) {
-      // Assumption: for each getter will always exist a setter and viceversa.
+  		// Assumption: for each getter will always exist a setter and viceversa.
       // get method annotation and check if it exists as expected
+
       final Object res;
       final Method getter = typeRef.getMethod(method.getName());
 
@@ -234,6 +206,38 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       }
 
       return ClassUtils.returnVoid();
+    } else if ("expand".equals(method.getName())
+            || "select".equals(method.getName())
+            || "refs".equals(method.getName())) {
+      invokeSelfMethod(method, args);
+      return proxy;
+    } else if (isSelfMethod(method, args)) {
+      return invokeSelfMethod(method, args);
+    } else if ("load".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
+      load();
+      return proxy;
+    } else if ("loadAsync".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
+      return service.getClient().getConfiguration().getExecutor().submit(new Callable<Object>() {
+        @Override
+        public Object call() throws Exception {
+          load();
+          return proxy;
+        }
+      });
+    } else if ("operations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
+      final Class<?> returnType = method.getReturnType();
+
+      return Proxy.newProxyInstance(
+              Thread.currentThread().getContextClassLoader(),
+              new Class<?>[] {returnType},
+              OperationInvocationHandler.getInstance(getEntityHandler()));
+    } else if ("annotations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
+      final Class<?> returnType = method.getReturnType();
+
+      return Proxy.newProxyInstance(
+              Thread.currentThread().getContextClassLoader(),
+              new Class<?>[] {returnType},
+              AnnotatationsInvocationHandler.getInstance(getEntityHandler(), this));
     } else {
       throw new NoSuchMethodException(method.getName());
     }
@@ -517,7 +521,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     return navPropValue;
   }
 
-  public Object getAdditionalProperty(final String name) {
+  // use read- instead of get- for .invoke() to distinguish it from entity property getter.
+  public Object readAdditionalProperty(final String name) {
     return getPropertyValue(name, null);
   }
 
@@ -525,7 +530,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     return propertyChanges;
   }
 
-  public Collection<String> getAdditionalPropertyNames() {
+  public Collection<String> readAdditionalPropertyNames() {
     final Set<String> res = new HashSet<String>(propertyChanges.keySet());
     final Set<String> propertyNames = new HashSet<String>();
     for (Method method : typeRef.getMethods()) {

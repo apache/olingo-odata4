@@ -51,26 +51,26 @@ public class SingletonTestITCase extends AbstractTestITCase {
   @Test
   public void readWithAnnotations() {
     final Company company = container.getCompany().load();
-    assertTrue(company.getAnnotationTerms().isEmpty());
+    assertTrue(company.readAnnotationTerms().isEmpty());
 
     final Person boss = container.getBoss().load();
     assertEquals(2, boss.getPersonID(), 0);
 
-    assertEquals(1, boss.getAnnotationTerms().size());
-    Object isBoss = boss.getAnnotation(IsBoss.class);
+    assertEquals(1, boss.readAnnotationTerms().size());
+    Object isBoss = boss.readAnnotation(IsBoss.class);
     assertTrue(isBoss instanceof Boolean);
     assertTrue((Boolean) isBoss);
 
     Annotatable annotations = boss.annotations().getFirstNameAnnotations();
-    assertTrue(annotations.getAnnotationTerms().isEmpty());
+    assertTrue(annotations.readAnnotationTerms().isEmpty());
 
     annotations = boss.annotations().getLastNameAnnotations();
-    isBoss = annotations.getAnnotation(IsBoss.class);
+    isBoss = annotations.readAnnotation(IsBoss.class);
     assertTrue(isBoss instanceof Boolean);
     assertFalse((Boolean) isBoss);
 
     annotations = boss.annotations().getParentAnnotations();
-    isBoss = annotations.getAnnotation(IsBoss.class);
+    isBoss = annotations.readAnnotation(IsBoss.class);
     assertTrue(isBoss instanceof Boolean);
     assertFalse((Boolean) isBoss);
   }

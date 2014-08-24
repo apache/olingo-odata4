@@ -26,7 +26,9 @@ public interface AbstractOpenType {
 
   void removeAdditionalProperty(String name);
 
-  Object getAdditionalProperty(String name);
+  // use read- instead of get- for .invoke() to distinguish it from entity property getter.
+  Object readAdditionalProperty(String name);
 
-  Collection<String> getAdditionalPropertyNames();
+  // use read- instead of get- for .invoke() to distinguish it from entity property getter.
+  Collection<String> readAdditionalPropertyNames();
 }
