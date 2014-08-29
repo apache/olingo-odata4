@@ -19,7 +19,6 @@
 package org.apache.olingo.server.core;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
@@ -28,15 +27,14 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
-import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.DefaultProcessor;
+import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.ExceptionProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
@@ -48,6 +46,8 @@ import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
+import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
+import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 
@@ -73,30 +73,33 @@ public class ODataHandler {
 
       processInternal(request, requestedContentType, response);
 
-    } catch (final UriParserException e) {
-      handleException(request, response,
-          ODataExceptionHelper.createServerErrorObject(e, HttpStatusCode.BAD_REQUEST.getStatusCode(), null),
-          requestedContentType);      
     } catch (final UriValidationException e) {
-      handleException(request, response,
-          ODataExceptionHelper.createServerErrorObject(e, HttpStatusCode.BAD_REQUEST.getStatusCode(), null),
-          requestedContentType);      
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      handleException(request, response, serverError, null);
+    } catch (final UriParserSemanticException e) {
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      handleException(request, response, serverError, null);
+    } catch (final UriParserSyntaxException e) {
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      handleException(request, response, serverError, null);
+    } catch (final UriParserException e) {
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      handleException(request, response, serverError, null);
     } catch (ContentNegotiatorException e) {
-      Locale requestedLocale = null;
-      ODataServerError serverError =
-          ODataExceptionHelper.createServerErrorObject(e, HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(),
-              requestedLocale);
-      handleException(request, response, serverError, requestedContentType);
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      handleException(request, response, serverError, null);
+    } catch (ODataHandlerException e) {
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      handleException(request, response, serverError, null);
     } catch (ODataTranslatedException e) {
-      Locale requestedLocale = null;
-      ODataServerError serverError =
-          ODataExceptionHelper.createServerErrorObject(e, response.getStatusCode(), requestedLocale);
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError, requestedContentType);
     } catch (ODataApplicationException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
       handleException(request, response, serverError, requestedContentType);
     } catch (Exception e) {
-      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, response.getStatusCode());
+      e.printStackTrace();
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
       handleException(request, response, serverError, requestedContentType);
     }
     return response;
@@ -118,7 +121,7 @@ public class ODataHandler {
 
     switch (uriInfo.getKind()) {
     case metadata:
-      MetadataProcessor mp = selectProcessor(MetadataProcessor.class, response);
+      MetadataProcessor mp = selectProcessor(MetadataProcessor.class);
 
       requestedContentType =
           ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, mp, MetadataProcessor.class);
@@ -127,10 +130,10 @@ public class ODataHandler {
       break;
     case service:
       if ("".equals(request.getRawODataPath())) {
-        RedirectProcessor rdp = selectProcessor(RedirectProcessor.class, response);
+        RedirectProcessor rdp = selectProcessor(RedirectProcessor.class);
         rdp.redirect(request, response);
       } else {
-        ServiceDocumentProcessor sdp = selectProcessor(ServiceDocumentProcessor.class, response);
+        ServiceDocumentProcessor sdp = selectProcessor(ServiceDocumentProcessor.class);
 
         requestedContentType =
             ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, sdp,
@@ -143,7 +146,6 @@ public class ODataHandler {
       handleResourceDispatching(request, response, uriInfo);
       break;
     default:
-      response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
       throw new ODataHandlerException("not implemented",
           ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
@@ -153,7 +155,7 @@ public class ODataHandler {
       ContentType requestedContentType) {
     ExceptionProcessor exceptionProcessor;
     try {
-      exceptionProcessor = selectProcessor(ExceptionProcessor.class, response);
+      exceptionProcessor = selectProcessor(ExceptionProcessor.class);
     } catch (ODataTranslatedException e) {
       exceptionProcessor = new DefaultProcessor();
     }
@@ -173,7 +175,7 @@ public class ODataHandler {
     case entitySet:
       if (((UriResourcePartTyped) lastPathSegment).isCollection()) {
         if (request.getMethod().equals(HttpMethod.GET)) {
-          EntityCollectionProcessor cp = selectProcessor(EntityCollectionProcessor.class, response);
+          EntityCollectionProcessor cp = selectProcessor(EntityCollectionProcessor.class);
 
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp,
@@ -181,20 +183,18 @@ public class ODataHandler {
 
           cp.readCollection(request, response, uriInfo, requestedContentType);
         } else {
-          response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
           throw new ODataHandlerException("not implemented",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
       } else {
         if (request.getMethod().equals(HttpMethod.GET)) {
-          EntityProcessor ep = selectProcessor(EntityProcessor.class, response);
+          EntityProcessor ep = selectProcessor(EntityProcessor.class);
 
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
 
           ep.readEntity(request, response, uriInfo, requestedContentType);
         } else {
-          response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
           throw new ODataHandlerException("not implemented",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
@@ -203,7 +203,7 @@ public class ODataHandler {
     case navigationProperty:
       if (((UriResourceNavigation) lastPathSegment).isCollection()) {
         if (request.getMethod().equals(HttpMethod.GET)) {
-          EntityCollectionProcessor cp = selectProcessor(EntityCollectionProcessor.class, response);
+          EntityCollectionProcessor cp = selectProcessor(EntityCollectionProcessor.class);
 
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp,
@@ -211,27 +211,24 @@ public class ODataHandler {
 
           cp.readCollection(request, response, uriInfo, requestedContentType);
         } else {
-          response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
           throw new ODataHandlerException("not implemented",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
       } else {
         if (request.getMethod().equals(HttpMethod.GET)) {
-          EntityProcessor ep = selectProcessor(EntityProcessor.class, response);
+          EntityProcessor ep = selectProcessor(EntityProcessor.class);
 
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
 
           ep.readEntity(request, response, uriInfo, requestedContentType);
         } else {
-          response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
           throw new ODataHandlerException("not implemented",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
       }
       break;
     default:
-      response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
       throw new ODataHandlerException("not implemented",
           ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
@@ -244,20 +241,18 @@ public class ODataHandler {
 
     if (maxVersion != null) {
       if (ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersion)) {
-        response.setStatusCode(400);
         throw new ODataHandlerException("ODataVersion not supported: " + maxVersion,
             ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
       }
     }
   }
 
-  private <T extends Processor> T selectProcessor(final Class<T> cls, ODataResponse response)
+  private <T extends Processor> T selectProcessor(final Class<T> cls)
       throws ODataTranslatedException {
     @SuppressWarnings("unchecked")
     T p = (T) processors.get(cls);
 
     if (p == null) {
-      response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
       throw new ODataHandlerException("Processor: " + cls.getName() + " not registered.",
           ODataHandlerException.MessageKeys.PROCESSOR_NOT_IMPLEMENTED, cls.getName());
     }

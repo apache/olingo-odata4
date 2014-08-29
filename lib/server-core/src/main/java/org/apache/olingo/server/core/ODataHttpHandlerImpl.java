@@ -20,6 +20,8 @@ package org.apache.olingo.server.core;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -27,8 +29,10 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.processor.Processor;
+import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +40,14 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 
 public class ODataHttpHandlerImpl implements ODataHttpHandler {
@@ -85,8 +91,27 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
         resp.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
       }
     }
-    ODataExceptionHandler exceptionHandler = new ODataExceptionHandler();
-    exceptionHandler.handle(resp, e);
+    
+    ODataServerError error = new ODataServerError();
+    if (e instanceof ODataTranslatedException) {
+      error.setMessage(((ODataTranslatedException) e).getTranslatedMessage(Locale.ENGLISH).getMessage());
+    } else {
+      error.setMessage(e.getMessage());
+    }
+
+    try {
+      ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.JSON);
+      resp.setContent(serializer.error(error));
+    } catch (final ODataSerializerException e1) {
+      // This should never happen but to be sure we have this catch here to prevent sending a stacktrace to a client.
+      String responseContent =
+          "{\"error\":{\"code\":null,\"message\":\"An unexpected exception occurred in the ODataHttpHandler during " +
+              "error processing with message: " + e.getMessage() + "\"}}";
+      resp.setContent(new ByteArrayInputStream(responseContent.getBytes()));
+      resp.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
+    }
+    // Set header
+    resp.setHeader(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_JSON.toContentTypeString());
     return resp;
   }
 

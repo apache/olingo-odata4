@@ -49,7 +49,8 @@ public class UriParserSemanticException extends UriParserException {
     ONLY_SIMPLE_AND_COMPLEX_PROPERTIES_IN_SELECT,
     COMPLEX_PROPERTY_OF_ENTITY_TYPE_EXPECTED,
     NOT_FOR_ENTITY_TYPE,
-    PREVIOUS_PART_TYPED;
+    PREVIOUS_PART_TYPED, 
+    /** parameter: resource_name */RESOURCE_NOT_FOUND;
 
     @Override
     public String getKey() {
