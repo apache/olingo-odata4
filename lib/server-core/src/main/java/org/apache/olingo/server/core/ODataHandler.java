@@ -98,7 +98,6 @@ public class ODataHandler {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
       handleException(request, response, serverError, requestedContentType);
     } catch (Exception e) {
-      e.printStackTrace();
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
       handleException(request, response, serverError, requestedContentType);
     }
