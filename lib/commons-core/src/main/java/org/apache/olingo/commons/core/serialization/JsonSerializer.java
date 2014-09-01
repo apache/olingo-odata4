@@ -314,7 +314,7 @@ public class JsonSerializer implements ODataSerializer {
       throws IOException, EdmPrimitiveTypeException {
     jgen.writeStartObject();
 
-    if (typeInfo != null && format == ODataFormat.JSON_FULL_METADATA) {
+    if (typeInfo != null && format != ODataFormat.JSON_NO_METADATA) {
       jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.TYPE), typeInfo.external(version));
     }
 
@@ -361,7 +361,7 @@ public class JsonSerializer implements ODataSerializer {
       if (StringUtils.isBlank(type) && valuable.isPrimitive() || valuable.isNull()) {
         type = EdmPrimitiveTypeKind.String.getFullQualifiedName().toString();
       }
-      if (StringUtils.isNotBlank(type) && format == ODataFormat.JSON_FULL_METADATA) {
+      if (StringUtils.isNotBlank(type) && format != ODataFormat.JSON_NO_METADATA) {
         jgen.writeFieldName(
                 name + StringUtils.prependIfMissing(version.getJsonName(ODataServiceVersion.JsonKey.TYPE), "@"));
         jgen.writeString(new EdmTypeInfo.Builder().setTypeExpression(type).build().external(version));

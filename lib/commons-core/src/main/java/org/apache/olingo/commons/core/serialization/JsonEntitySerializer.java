@@ -74,7 +74,7 @@ public class JsonEntitySerializer extends JsonSerializer {
       }
     }
 
-    if (StringUtils.isNotBlank(entity.getType()) && format == ODataFormat.JSON_FULL_METADATA) {
+    if (StringUtils.isNotBlank(entity.getType()) && format != ODataFormat.JSON_NO_METADATA) {
       jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.TYPE),
               new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external(version));
     }
