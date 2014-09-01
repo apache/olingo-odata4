@@ -100,11 +100,11 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
   public void readWithReferences() {
     final Person person = container.getOrders().getByKey(8).getCustomerForOrder().refs().load();
     assertEquals("http://localhost:9080/stub/StaticService/V40/Static.svc/Customers(PersonID=1)",
-            person.getEntityReferenceID());
+            person.readEntityReferenceID());
 
     final OrderCollection orders = container.getCustomers().getByKey(1).getOrders().refs().execute();
     assertEquals("http://localhost:9080/stub/StaticService/V40/Static.svc/Orders(7)",
-            orders.iterator().next().getEntityReferenceID());
+            orders.iterator().next().readEntityReferenceID());
   }
 
   @Test

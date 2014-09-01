@@ -968,33 +968,33 @@ public class TestFullResourcePath {
 
     testUri.runEx("ETBaseTwoKeyTwoPrim/com.sap.odata.test1.ETBaseTwoKeyTwoPrim"
         + "/com.sap.odata.test1.ETTwoBaseTwoKeyTwoPrim")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim/com.sap.odata.test1.ETBaseTwoKeyTwoPrim(1)/com.sap.odata.test1.ETAllKey")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim(1)/com.sap.odata.test1.ETBaseTwoKeyTwoPrim('1')/com.sap.odata.test1.ETAllKey")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim(1)/com.sap.odata.test1.ETBaseTwoKeyTwoPrim"
         + "/com.sap.odata.test1.ETTwoBaseTwoKeyTwoPrim")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim/com.sap.odata.test1.ETBaseTwoKeyTwoPrim"
         + "/com.sap.odata.test1.ETTwoBaseTwoKeyTwoPrim(1)")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim/com.sap.odata.test1.ETAllKey")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim()")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
 
     testUri.runEx("ESAllNullable(1)/CollPropertyString/$value")
         .isExSemantic(UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS);
 
     testUri.runEx("ETMixPrimCollComp(1)/ComplexProperty/$value")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
   }
 
   @Test
@@ -2553,15 +2553,15 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .isFormatText(HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8);
     testUri.runEx("ESKeyNav(1)?$format=noSlash")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_VALUE);
     testUri.runEx("ESKeyNav(1)?$format=slashAtEnd/")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_VALUE);
     testUri.runEx("ESKeyNav(1)?$format=/startsWithSlash")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_VALUE);
     testUri.runEx("ESKeyNav(1)?$format=two/Slashes/tooMuch")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_VALUE);
     testUri.runEx("ESKeyNav(1)?$format=")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_VALUE);
   }
 
   @Test

@@ -406,7 +406,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   @Override
-  public Object getAnnotation(final Class<? extends AbstractTerm> term) {
+  public Object readAnnotation(final Class<? extends AbstractTerm> term) {
     Object res = null;
 
     if (annotations.containsKey(term)) {
@@ -436,7 +436,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   @Override
-  public Collection<Class<? extends AbstractTerm>> getAnnotationTerms() {
+  public Collection<Class<? extends AbstractTerm>> readAnnotationTerms() {
     return getEntity() instanceof ODataEntity
             ? CoreUtils.getAnnotationTerms(service, ((ODataEntity) getEntity()).getAnnotations())
             : Collections.<Class<? extends AbstractTerm>>emptyList();
@@ -493,7 +493,8 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return getEntity() == null ? null : getEntity().getProperty(name);
   }
 
-  public String getEntityReferenceID() {
+  // use read- instead of get- for .invoke() to distinguish it from entity property getter.
+  public String readEntityReferenceID() {   
     URI id = getEntity() == null ? null
             : getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.commons.api.domain.v3.ODataEntity) getEntity()).getLink()

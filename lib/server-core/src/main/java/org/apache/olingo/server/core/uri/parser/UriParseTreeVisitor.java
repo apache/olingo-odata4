@@ -358,6 +358,11 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     if (lastResourcePart == null) {
       if (context.contextTypes.size() == 0) {
+        if(checkFirst && ctx.vNS == null){
+          throw wrap(new UriParserSemanticException(
+              "Cannot find EntitySet, Singleton, ActionImport or FunctionImport with name '" + odi + "'.",
+              UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND, odi));
+        }
         throw wrap(new UriParserSemanticException("Resource part '" + odi + "' can only applied on typed "
             + "resource parts",
             UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS, odi));
@@ -396,9 +401,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       EdmElement property = structType.getProperty(odi);
       if (property == null) {
         throw wrap(new UriParserSemanticException("Property '" + odi + "' not found in type '"
-            + structType.getNamespace() + "." + structType.getName() + "'", 
+            + structType.getNamespace() + "." + structType.getName() + "'",
             UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE,
-                structType.getFullQualifiedName().toString(), odi));
+            structType.getFullQualifiedName().toString(), odi));
       }
 
       if (property instanceof EdmProperty) {
@@ -466,7 +471,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
                       + getName(filterEntityType) + "' behind '"
                       + getName(lastPartWithKeys.getTypeFilterOnEntry()) + "'",
                       UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE,
-                          getName(lastPartWithKeys.getTypeFilterOnEntry()), getName(filterEntityType)));
+                      getName(lastPartWithKeys.getTypeFilterOnEntry()), getName(filterEntityType)));
                 }
                 lastPartWithKeys.setEntryTypeFilter(filterEntityType);
                 return null;
@@ -476,7 +481,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
                       + getName(filterEntityType) + "' behind '"
                       + getName(lastPartWithKeys.getTypeFilterOnCollection()) + "'",
                       UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE,
-                          getName(lastPartWithKeys.getTypeFilterOnCollection()), getName(filterEntityType)));
+                      getName(lastPartWithKeys.getTypeFilterOnCollection()), getName(filterEntityType)));
                 }
                 lastPartWithKeys.setCollectionTypeFilter(filterEntityType);
                 return null;
@@ -488,7 +493,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
                     + getName(filterEntityType) + "' behind '"
                     + getName(lastPartTyped.getTypeFilter()) + "'",
                     UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE,
-                        getName(lastPartTyped.getTypeFilter()), getName(filterEntityType)));
+                    getName(lastPartTyped.getTypeFilter()), getName(filterEntityType)));
               }
 
               lastPartTyped.setTypeFilter(filterEntityType);
@@ -512,7 +517,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
             throw wrap(new UriParserSemanticException(
                 "Complex typefilter '" + getName(source.type) + "'not compatible type of previous path segment '"
                     + getName(filterComplexType) + "'",
-                    UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER, getName(source.type)));
+                UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER, getName(source.type)));
           }
 
           // is simple complex type cast
@@ -540,7 +545,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
                       + getName(filterComplexType) + "' behind '"
                       + getName(lastPartWithKeys.getTypeFilterOnEntry()) + "'",
                       UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE,
-                          getName(lastPartWithKeys.getTypeFilterOnEntry()), getName(filterComplexType)));
+                      getName(lastPartWithKeys.getTypeFilterOnEntry()), getName(filterComplexType)));
                 }
                 lastPartWithKeys.setEntryTypeFilter(filterComplexType);
                 return null;
@@ -550,7 +555,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
                       + getName(filterComplexType) + "' behind '"
                       + getName(lastPartWithKeys.getTypeFilterOnCollection()) + "'",
                       UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE,
-                          getName(lastPartWithKeys.getTypeFilterOnCollection()), getName(filterComplexType)));
+                      getName(lastPartWithKeys.getTypeFilterOnCollection()), getName(filterComplexType)));
                 }
                 lastPartWithKeys.setCollectionTypeFilter(filterComplexType);
                 return null;
@@ -563,7 +568,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
                     + getName(filterComplexType) + "' behind '"
                     + getName(lastPartTyped.getTypeFilter()) + "'",
                     UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE,
-                        getName(lastPartTyped.getTypeFilter()), getName(filterComplexType)));
+                    getName(lastPartTyped.getTypeFilter()), getName(filterComplexType)));
               }
 
               lastPartTyped.setTypeFilter(filterComplexType);

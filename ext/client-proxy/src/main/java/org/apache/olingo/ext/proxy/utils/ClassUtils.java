@@ -32,6 +32,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.HashSet;
@@ -49,6 +50,10 @@ public final class ClassUtils {
   }
 
   public static Type[] extractGenericType(final Class<?> paramType, final Class<?>... references) {
+    if (Proxy.class.isAssignableFrom(paramType)) {
+      return extractGenericType(Class.class.cast(paramType.getGenericInterfaces()[0]), references);
+    }
+
     if (paramType.getGenericInterfaces().length > 0) {
       if (references == null || references.length == 0) {
         return ((ParameterizedType) paramType.getGenericInterfaces()[0]).getActualTypeArguments();

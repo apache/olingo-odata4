@@ -27,7 +27,8 @@ public class UriParserSyntaxException extends UriParserException {
     /** parameter: query-option name */ UNKNOWN_SYSTEM_QUERY_OPTION,
     /** parameters: query-option name, query-option value */ WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
     SYNTAX,
-    SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE;
+    SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE, 
+    /** parameter: query-option value */ WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_VALUE;
 
     @Override
     public String getKey() {

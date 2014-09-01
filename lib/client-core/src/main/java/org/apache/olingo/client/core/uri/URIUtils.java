@@ -366,11 +366,10 @@ public final class URIUtils {
   }
 
   public static HttpEntity buildInputStreamEntity(final CommonODataClient<?> client, final InputStream input) {
-    HttpEntity entity;
+    AbstractHttpEntity entity;
+    boolean useChunked = client.getConfiguration().isUseChuncked();
 
-    if (!shouldUseRepeatableHttpBodyEntry(client)) {
-      entity = new InputStreamEntity(input, -1);
-    } else {
+    if (shouldUseRepeatableHttpBodyEntry(client) || !useChunked) {
       byte[] bytes = new byte[0];
       try {
         bytes = IOUtils.toByteArray(input);
@@ -380,10 +379,18 @@ public final class URIUtils {
       }
 
       entity = new ByteArrayEntity(bytes);
+    } else {
+      entity = new InputStreamEntity(input, -1);
     }
 
+
+    if (!useChunked && entity.getContentLength() < 0) {
+      LOG.error("Could not determine length - request will be sent as chunked.");
+      useChunked = true;
+    }
     // both entities can be sent in chunked way or not
-    ((AbstractHttpEntity) entity).setChunked(client.getConfiguration().isUseChuncked());
+    entity.setChunked(useChunked);
+
     return entity;
   }
 

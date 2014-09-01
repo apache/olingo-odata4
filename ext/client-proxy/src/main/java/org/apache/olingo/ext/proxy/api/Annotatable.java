@@ -27,8 +27,10 @@ public interface Annotatable extends Serializable {
 
   void removeAnnotation(Class<? extends AbstractTerm> term);
 
-  Object getAnnotation(Class<? extends AbstractTerm> term);
+  // use read- instead of get- for .invoke() to distinguish it from entity property getter.
+  Object readAnnotation(Class<? extends AbstractTerm> term);  
 
-  Collection<Class<? extends AbstractTerm>> getAnnotationTerms();
+  // use read- instead of get- for .invoke() to distinguish it from entity property getter.
+  Collection<Class<? extends AbstractTerm>> readAnnotationTerms();
 
 }
