@@ -44,6 +44,6 @@ public class ODataHandlerException extends ODataTranslatedException {
 
   @Override
   protected String getBundleName() {
-    return "server-core-exceptions-i18n";
+    return DEFAULT_SERVER_BUNDLE_NAME;
   }
 }

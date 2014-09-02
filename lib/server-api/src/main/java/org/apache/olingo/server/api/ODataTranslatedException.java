@@ -35,8 +35,10 @@ import org.slf4j.LoggerFactory;
 public abstract class ODataTranslatedException extends ODataException {
 
   private static final long serialVersionUID = -1210541002198287561L;
-  private static final Logger log = LoggerFactory.getLogger(ODataTranslatedException.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ODataTranslatedException.class);
   private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
+
+  protected static final String DEFAULT_SERVER_BUNDLE_NAME = "server-core-exceptions-i18n";
 
   public static interface MessageKey {
     public String getKey();
@@ -96,7 +98,7 @@ public abstract class ODataTranslatedException extends ODataException {
     try {
       return ResourceBundle.getBundle(getBundleName(), locale == null ? DEFAULT_LOCALE : locale);
     } catch (final MissingResourceException e) {
-      log.error(e.getMessage(), e);
+      LOG.error(e.getMessage(), e);
       return null;
     }
   }
