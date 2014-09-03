@@ -52,15 +52,13 @@ public final class EdmString extends SingletonPrimitiveType {
 
     if (isUnicode != null && !isUnicode && !PATTERN_ASCII.matcher(value).matches()
         || maxLength != null && maxLength < value.length()) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' does not match the facets' constraints.");
     }
 
     if (returnType.isAssignableFrom(String.class)) {
       return returnType.cast(value);
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
     }
   }
 
@@ -73,8 +71,7 @@ public final class EdmString extends SingletonPrimitiveType {
 
     if (isUnicode != null && !isUnicode && !PATTERN_ASCII.matcher(result).matches()
         || maxLength != null && maxLength < result.length()) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
+      throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.");
     }
 
     return result;

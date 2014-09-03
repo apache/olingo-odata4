@@ -63,15 +63,14 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
 
     final Matcher matcher = PATTERN.matcher(value);
     if (!matcher.matches()) {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
     }
 
     final String timeZoneOffset = matcher.group(9) == null || matcher.group(10) == null
             || matcher.group(10).matches("[-+]0+:0+") ? null : matcher.group(10);
     final Calendar dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT" + timeZoneOffset));
     if (dateTimeValue.get(Calendar.ZONE_OFFSET) == 0 && timeZoneOffset != null) {
-      throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
     }
     dateTimeValue.clear();
 
@@ -86,13 +85,11 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
     int nanoSeconds = 0;
     if (matcher.group(7) != null) {
       if (matcher.group(7).length() == 1 || matcher.group(7).length() > 13) {
-        throw new EdmPrimitiveTypeException(
-                "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+        throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
       }
       final String decimals = matcher.group(8);
       if (decimals.length() > (precision == null ? 0 : precision)) {
-        throw new EdmPrimitiveTypeException(
-                "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
+        throw new EdmPrimitiveTypeException("The literal '" + value + "' does not match the facets' constraints.");
       }
       if (returnType.isAssignableFrom(Timestamp.class)) {
         if (!decimals.isEmpty()) {
@@ -110,11 +107,9 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
     try {
       return convertDateTime(dateTimeValue, nanoSeconds, returnType);
     } catch (final IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.", e);
     } catch (final ClassCastException e) {
-      throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)", e);
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.", e);
     }
   }
 
@@ -196,8 +191,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
         appendMilliseconds(result, fractionalSecs, precision);
       }
     } catch (final IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)", e);
+      throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.", e);
     }
 
     final int offsetInMinutes = (dateTimeValue.get(Calendar.ZONE_OFFSET)
@@ -231,8 +225,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
       dateTimeValue.setTimeInMillis((Long) value);
     } else {
-      throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(" + value.getClass().getName() + ")");
+      throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
     }
     return dateTimeValue;
   }

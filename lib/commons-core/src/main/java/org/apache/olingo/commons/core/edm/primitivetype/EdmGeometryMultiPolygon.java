@@ -45,8 +45,7 @@ public final class EdmGeometryMultiPolygon extends AbstractGeospatialType<MultiP
     if (returnType.isAssignableFrom(MultiPolygon.class)) {
       return returnType.cast(multiPolygon);
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
     }
   }
 
@@ -58,7 +57,6 @@ public final class EdmGeometryMultiPolygon extends AbstractGeospatialType<MultiP
       return toString((MultiPolygon) value, isNullable, maxLength, precision, scale, isUnicode);
     }
 
-    throw new EdmPrimitiveTypeException(
-        "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+    throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
   }
 }

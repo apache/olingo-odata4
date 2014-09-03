@@ -19,6 +19,8 @@
 package org.apache.olingo.server.core.edm.provider;
 
 import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
@@ -27,47 +29,39 @@ import org.apache.olingo.server.api.edm.provider.EnumMember;
 import org.apache.olingo.server.api.edm.provider.EnumType;
 import org.junit.Test;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
-public class EdmEnumTest extends PrimitiveTypeBaseTest {
+public class EdmEnumTest {
 
   private final EdmEnumType instance;
   private final EdmEnumType nonFlagsInstance;
 
   public EdmEnumTest() {
-    List<EnumMember> memberList = new ArrayList<EnumMember>();
-    memberList.add(new EnumMember().setName("first").setValue("1"));
-    memberList.add(new EnumMember().setName("second").setValue("64"));
+    final List<EnumMember> memberList = Arrays.asList(
+        new EnumMember().setName("first").setValue("1"),
+        new EnumMember().setName("second").setValue("64"));
 
-    EnumType enumType =
-        new EnumType().setName("name").setMembers(memberList).setFlags(true).setUnderlyingType(
-            EdmPrimitiveTypeKind.SByte.getFullQualifiedName());
+    final FullQualifiedName enumName = new FullQualifiedName("namespace", "name");
 
-    FullQualifiedName enumName = new FullQualifiedName("namespace", "name");
-    instance = new EdmEnumTypeImpl(mock(EdmProviderImpl.class), enumName, enumType);
+    instance = new EdmEnumTypeImpl(mock(EdmProviderImpl.class), enumName,
+        new EnumType().setName("name").setMembers(memberList).setFlags(true)
+            .setUnderlyingType(EdmPrimitiveTypeKind.SByte.getFullQualifiedName()));
 
-    EnumType enumType2 = new EnumType().setName("name").setMembers(memberList).setFlags(false).setUnderlyingType(
-        EdmPrimitiveTypeKind.SByte.getFullQualifiedName());
-    nonFlagsInstance = new EdmEnumTypeImpl(mock(EdmProviderImpl.class), enumName, enumType2);
-
-//    EdmMember member1 = mock(EdmMember.class);
-//    when(member1.getName()).thenReturn("first");
-//    when(member1.getValue()).thenReturn("1");
-//    EdmMember member2 = mock(EdmMember.class);
-//    when(member2.getName()).thenReturn("second");
-//    when(member2.getValue()).thenReturn("64");
-//    instance = new EdmEnumImpl("namespace", "name",
-//        EdmPrimitiveTypeKind.SByte),
-//        Arrays.asList(member1, member2),
-//        true);
+    nonFlagsInstance = new EdmEnumTypeImpl(mock(EdmProviderImpl.class), enumName,
+        new EnumType().setName("name").setMembers(memberList).setFlags(false)
+            .setUnderlyingType(EdmPrimitiveTypeKind.SByte.getFullQualifiedName()));
   }
 
   @Test
@@ -174,5 +168,69 @@ public class EdmEnumTest extends PrimitiveTypeBaseTest {
     expectContentErrorInValueOfString(instance, "1,");
     expectContentErrorInValueOfString(instance, ",1");
     expectTypeErrorInValueOfString(instance, "1");
+  }
+
+  protected void expectErrorInFromUriLiteral(final EdmPrimitiveType instance, final String value) {
+    try {
+      instance.fromUriLiteral(value);
+      fail("Expected exception not thrown");
+    } catch (final EdmPrimitiveTypeException e) {
+      assertNotNull(e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage(), containsString("' has illegal content."));
+    }
+  }
+
+  private void expectErrorInValueToString(final EdmPrimitiveType instance,
+      final Object value, final Boolean isNullable, final Integer maxLength,
+      final Integer precision, final Integer scale, final Boolean isUnicode,
+      final String message) {
+    try {
+      instance.valueToString(value, isNullable, maxLength, precision, scale, isUnicode);
+      fail("Expected exception not thrown");
+    } catch (final EdmPrimitiveTypeException e) {
+      assertNotNull(e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage(), containsString(message));
+    }
+  }
+
+  protected void expectNullErrorInValueToString(final EdmPrimitiveType instance) {
+    expectErrorInValueToString(instance, null, false, null, null, null, null, "The value NULL is not allowed.");
+  }
+
+  protected void expectTypeErrorInValueToString(final EdmPrimitiveType instance, final Object value) {
+    expectErrorInValueToString(instance, value, null, null, null, null, null, "value type");
+  }
+
+  protected void expectContentErrorInValueToString(final EdmPrimitiveType instance, final Object value) {
+    expectErrorInValueToString(instance, value, null, null, null, null, null, "' is not valid.");
+  }
+
+  private void expectErrorInValueOfString(final EdmPrimitiveType instance,
+      final String value, final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final Integer scale, final Boolean isUnicode, final Class<?> returnType,
+      final String message) {
+
+    try {
+      instance.valueOfString(value, isNullable, maxLength, precision, scale, isUnicode, returnType);
+      fail("Expected exception not thrown");
+    } catch (final EdmPrimitiveTypeException e) {
+      assertNotNull(e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage(), containsString(message));
+    }
+  }
+
+  protected void expectTypeErrorInValueOfString(final EdmPrimitiveType instance, final String value) {
+    expectErrorInValueOfString(instance, value, null, null, null, null, null, Class.class,
+        "The value type class java.lang.Class is not supported.");
+  }
+
+  protected void expectContentErrorInValueOfString(final EdmPrimitiveType instance, final String value) {
+    expectErrorInValueOfString(instance, value, null, null, null, null, null, instance.getDefaultType(),
+        "illegal content");
+  }
+
+  protected void expectNullErrorInValueOfString(final EdmPrimitiveType instance) {
+    expectErrorInValueOfString(instance, null, false, null, null, null, null, instance.getDefaultType(),
+        "The literal 'null' is not allowed.");
   }
 }

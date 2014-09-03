@@ -49,7 +49,7 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
 
     final Matcher matcher = PATTERN.matcher(value);
     if (!matcher.matches()) {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
     }
 
     final Calendar dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -61,12 +61,11 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
     int nanoSeconds = 0;
     if (matcher.group(4) != null) {
       if (matcher.group(4).length() == 1 || matcher.group(4).length() > 13) {
-        throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+        throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
       }
       final String decimals = matcher.group(5);
       if (decimals.length() > (precision == null ? 0 : precision)) {
-        throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
+        throw new EdmPrimitiveTypeException("The literal '" + value + "' does not match the facets' constraints.");
       }
       final String milliSeconds = decimals.length() > 3 ?
           decimals.substring(0, 3) :
@@ -82,11 +81,9 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
     try {
       return EdmDateTimeOffset.convertDateTime(dateTimeValue, nanoSeconds, returnType);
     } catch (final IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.", e);
     } catch (final ClassCastException e) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)", e);
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.", e);
     }
   }
 
@@ -121,8 +118,7 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
         EdmDateTimeOffset.appendMilliseconds(result, fractionalSecs, precision);
       }
     } catch (final IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)", e);
+      throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.", e);
     }
 
     return result.toString();

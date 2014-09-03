@@ -54,15 +54,13 @@ public final class EdmSByte extends SingletonPrimitiveType {
     try {
       valueByte = Byte.parseByte(value);
     } catch (final NumberFormatException e) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.", e);
     }
 
     try {
       return EdmInt64.convertNumber(valueByte, returnType);
     } catch (final ClassCastException e) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.", e);
     }
   }
 
@@ -77,19 +75,16 @@ public final class EdmSByte extends SingletonPrimitiveType {
       if (((Number) value).longValue() >= Byte.MIN_VALUE && ((Number) value).longValue() <= Byte.MAX_VALUE) {
         return value.toString();
       } else {
-        throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+        throw new EdmPrimitiveTypeException("The value '" + value + "' is not valid.");
       }
     } else if (value instanceof BigInteger) {
       if (((BigInteger) value).bitLength() < Byte.SIZE) {
         return value.toString();
       } else {
-        throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+        throw new EdmPrimitiveTypeException("The value '" + value + "' is not valid.");
       }
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+      throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
     }
   }
 }

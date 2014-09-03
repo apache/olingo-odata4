@@ -38,16 +38,12 @@ public final class EdmGeography extends AbstractGeospatialType<Geospatial> {
   protected <T> T internalValueOfString(final String value, final Boolean isNullable, final Integer maxLength,
       final Integer precision, final Integer scale, final Boolean isUnicode, final Class<T> returnType)
       throws EdmPrimitiveTypeException {
-
-    throw new EdmPrimitiveTypeException(
-        "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+    throw new EdmPrimitiveTypeException("Not implemented!");
   }
 
   @Override
   protected <T> String internalValueToString(final T value, final Boolean isNullable, final Integer maxLength,
       final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
-
-    throw new EdmPrimitiveTypeException(
-        "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+    throw new EdmPrimitiveTypeException("Not implemented!");
   }
 }

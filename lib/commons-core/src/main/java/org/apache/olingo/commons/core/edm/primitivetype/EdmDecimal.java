@@ -89,21 +89,19 @@ public final class EdmDecimal extends SingletonPrimitiveType {
       final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
 
     if (!validateLiteral(value)) {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
     }
     if (!validatePrecisionAndScale(value, precision, scale)) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' does not match the facets' constraints.");
     }
 
     try {
       return convertDecimal(new BigDecimal(value), returnType);
     } catch (final IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
+      throw new EdmPrimitiveTypeException("The literal '" + value
+          + "' cannot be converted to value type " + returnType + ".", e);
     } catch (final ClassCastException e) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.", e);
     }
   }
 
@@ -168,8 +166,7 @@ public final class EdmDecimal extends SingletonPrimitiveType {
       result = value.toString();
       final int digits = result.startsWith("-") ? result.length() - 1 : result.length();
       if (precision != null && precision < digits) {
-        throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
+        throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.");
       }
 
     } else if (value instanceof Double || value instanceof Float || value instanceof BigDecimal) {
@@ -178,7 +175,7 @@ public final class EdmDecimal extends SingletonPrimitiveType {
         bigDecimalValue = value instanceof Double ? BigDecimal.valueOf((Double) value)
             : value instanceof Float ? BigDecimal.valueOf((Float) value) : (BigDecimal) value;
       } catch (final NumberFormatException e) {
-        throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)", e);
+        throw new EdmPrimitiveTypeException("The value '" + value + "' is not valid.", e);
       }
 
       final int digits = bigDecimalValue.scale() >= 0
@@ -187,13 +184,11 @@ public final class EdmDecimal extends SingletonPrimitiveType {
       if ((precision == null || precision >= digits) && (bigDecimalValue.scale() <= (scale == null ? 0 : scale))) {
         result = bigDecimalValue.toPlainString();
       } else {
-        throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
+        throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.");
       }
 
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+      throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
     }
 
     return result;

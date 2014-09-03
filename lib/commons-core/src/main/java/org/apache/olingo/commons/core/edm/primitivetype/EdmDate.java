@@ -53,7 +53,7 @@ public final class EdmDate extends SingletonPrimitiveType {
 
     final Matcher matcher = PATTERN.matcher(value);
     if (!matcher.matches()) {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
     }
 
     dateTimeValue.set(
@@ -64,11 +64,9 @@ public final class EdmDate extends SingletonPrimitiveType {
     try {
       return EdmDateTimeOffset.convertDateTime(dateTimeValue, 0, returnType);
     } catch (final IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.", e);
     } catch (final ClassCastException e) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)", e);
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.", e);
     }
   }
 

@@ -71,7 +71,7 @@ public final class EdmSingle extends SingletonPrimitiveType {
     } else {
       // Now only "normal" numbers remain.
       if (!PATTERN.matcher(value).matches()) {
-        throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+        throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
       }
 
       // The number format is checked above, so we don't have to catch NumberFormatException.
@@ -80,7 +80,7 @@ public final class EdmSingle extends SingletonPrimitiveType {
       // "Real" infinite values have been treated already above, so we can throw an exception
       // if the conversion to a float results in an infinite value.
       if (result.isInfinite() || bigDecimalValue.compareTo(new BigDecimal(result.toString())) != 0) {
-        throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+        throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
       }
     }
 
@@ -90,18 +90,17 @@ public final class EdmSingle extends SingletonPrimitiveType {
       if (returnType.isAssignableFrom(Double.class)) {
         return returnType.cast(result.doubleValue());
       } else {
-        throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType)");
+        throw new EdmPrimitiveTypeException("The literal '" + value
+            + "' cannot be converted to value type " + returnType + ".");
       }
     } else {
       try {
         return EdmDecimal.convertDecimal(bigDecimalValue, returnType);
       } catch (final IllegalArgumentException e) {
-        throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
+        throw new EdmPrimitiveTypeException("The literal '" + value
+            + "' cannot be converted to value type " + returnType + ".", e);
       } catch (final ClassCastException e) {
-        throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
+        throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.", e);
       }
     }
   }
@@ -115,7 +114,7 @@ public final class EdmSingle extends SingletonPrimitiveType {
       if (Math.abs(((Number) value).longValue()) < 1L << 22) {
         return value.toString();
       } else {
-        throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+        throw new EdmPrimitiveTypeException("The value '" + value + "' is not valid.");
       }
     } else if (value instanceof Short || value instanceof Byte) {
       return value.toString();
@@ -127,7 +126,7 @@ public final class EdmSingle extends SingletonPrimitiveType {
         if (floatString.equals(((Double) value).toString())) {
           return floatString;
         } else {
-          throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+          throw new EdmPrimitiveTypeException("The value '" + value + "' is not valid.");
         }
       }
     } else if (value instanceof Float) {
@@ -138,11 +137,10 @@ public final class EdmSingle extends SingletonPrimitiveType {
       if (!Float.isInfinite(floatValue) && BigDecimal.valueOf(floatValue).compareTo((BigDecimal) value) == 0) {
         return ((BigDecimal) value).toString();
       } else {
-        throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+        throw new EdmPrimitiveTypeException("The value '" + value + "' is not valid.");
       }
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+      throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
     }
   }
 }

@@ -44,8 +44,7 @@ public final class EdmGeometryLineString extends AbstractGeospatialType<LineStri
     if (returnType.isAssignableFrom(LineString.class)) {
       return returnType.cast(lineString);
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
     }
   }
 
@@ -57,7 +56,6 @@ public final class EdmGeometryLineString extends AbstractGeospatialType<LineStri
       return toString((LineString) value, isNullable, maxLength, precision, scale, isUnicode);
     }
 
-    throw new EdmPrimitiveTypeException(
-        "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+    throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
   }
 }

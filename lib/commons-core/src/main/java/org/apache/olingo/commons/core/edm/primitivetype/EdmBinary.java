@@ -163,11 +163,10 @@ public class EdmBinary extends SingletonPrimitiveType {
           final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
 
     if (value == null || !isBase64(value.getBytes(UTF_8))) {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
     }
     if (!validateMaxLength(value, maxLength)) {
-      throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' does not match the facets' constraints.");
     }
 
     final byte[] result = Base64.decodeBase64(value.getBytes(UTF_8));
@@ -181,7 +180,7 @@ public class EdmBinary extends SingletonPrimitiveType {
       }
       return returnType.cast(byteArray);
     } else {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
     }
   }
 
@@ -200,13 +199,11 @@ public class EdmBinary extends SingletonPrimitiveType {
         byteArrayValue[i] = ((Byte[]) value)[i].byteValue();
       }
     } else {
-      throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+      throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
     }
 
     if (maxLength != null && byteArrayValue.length > maxLength) {
-      throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
+      throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.");
     }
 
     return new String(Base64.encodeBase64(byteArrayValue, false), UTF_8);

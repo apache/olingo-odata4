@@ -61,7 +61,7 @@ public final class EdmDateTime extends SingletonPrimitiveType {
     try {
       date = DATE_FORMAT.get().parse(dateParts[0]);
     } catch (ParseException e) {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.", e);
     }
 
     TimeZone timezone = null;
@@ -85,8 +85,7 @@ public final class EdmDateTime extends SingletonPrimitiveType {
 
     if (decimals != null) {
       if (decimals.length() > (precision == null ? 0 : precision)) {
-        throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
+        throw new EdmPrimitiveTypeException("The literal '" + value + "' does not match the facets' constraints.");
       }
       final String milliSeconds = decimals.length() > 3
           ? decimals.substring(0, 3)
@@ -105,8 +104,8 @@ public final class EdmDateTime extends SingletonPrimitiveType {
     } else if (returnType.isAssignableFrom(Timestamp.class)) {
       return returnType.cast(timestamp);
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType)");
+      throw new EdmPrimitiveTypeException("The literal '" + value
+          + "' cannot be converted to value type " + returnType + ".");
     }
   }
 
@@ -130,7 +129,7 @@ public final class EdmDateTime extends SingletonPrimitiveType {
       EdmDateTimeOffset.appendFractionalSeconds(result, fractionalSecs, precision);
       return result.toString();
     } else {
-      throw new EdmPrimitiveTypeException("EdmDateTime only supports conversion from Calendar and Timestamp");
+      throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
     }
   }
 }

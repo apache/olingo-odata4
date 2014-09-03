@@ -56,8 +56,7 @@ public class EdmDuration extends SingletonPrimitiveType {
     if (!matcher.matches()
         || matcher.group(1) == null && matcher.group(2) == null && matcher.group(3) == null
         && matcher.group(4) == null) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(literal)");
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
     }
 
     BigDecimal result = (matcher.group(1) == null ? BigDecimal.ZERO
@@ -71,18 +70,16 @@ public class EdmDuration extends SingletonPrimitiveType {
     if (result.scale() <= (precision == null ? 0 : precision)) {
       result = value.charAt(0) == '-' ? result.negate() : result;
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(literal, facets)");
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' does not match the facets' constraints.");
     }
 
     try {
       return EdmDecimal.convertDecimal(result, returnType);
     } catch (final IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
+      throw new EdmPrimitiveTypeException("The literal '" + value
+          + "' cannot be converted to value type " + returnType + ".", e);
     } catch (final ClassCastException e) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.", e);
     }
   }
 
@@ -99,13 +96,11 @@ public class EdmDuration extends SingletonPrimitiveType {
     } else if (value instanceof BigInteger) {
       valueDecimal = new BigDecimal((BigInteger) value);
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+      throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
     }
 
     if (valueDecimal.scale() > (precision == null ? 0 : precision)) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
+      throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.");
     }
 
     final StringBuilder result = new StringBuilder();

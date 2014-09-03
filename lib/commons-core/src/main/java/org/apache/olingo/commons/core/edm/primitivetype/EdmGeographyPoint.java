@@ -44,8 +44,7 @@ public final class EdmGeographyPoint extends AbstractGeospatialType<Point> {
     if (returnType.isAssignableFrom(Point.class)) {
       return returnType.cast(point);
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
     }
   }
 
@@ -57,8 +56,7 @@ public final class EdmGeographyPoint extends AbstractGeospatialType<Point> {
       return toString((Point) value, isNullable, maxLength, precision, scale, isUnicode);
     }
 
-    throw new EdmPrimitiveTypeException(
-        "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+    throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
   }
 
 }

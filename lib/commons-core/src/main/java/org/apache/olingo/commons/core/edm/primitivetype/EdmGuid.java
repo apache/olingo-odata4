@@ -61,15 +61,13 @@ public final class EdmGuid extends SingletonPrimitiveType {
     if (validateLiteral(value)) {
       result = UUID.fromString(value);
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
     }
 
     if (returnType.isAssignableFrom(UUID.class)) {
       return returnType.cast(result);
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
     }
   }
 
@@ -81,8 +79,7 @@ public final class EdmGuid extends SingletonPrimitiveType {
     if (value instanceof UUID) {
       return ((UUID) value).toString();
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+      throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
     }
   }
 }

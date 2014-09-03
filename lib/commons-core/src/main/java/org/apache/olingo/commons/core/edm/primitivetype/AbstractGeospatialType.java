@@ -67,7 +67,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
   private Matcher getMatcher(final Pattern pattern, final String value) throws EdmPrimitiveTypeException {
     final Matcher matcher = pattern.matcher(value);
     if (!matcher.matches()) {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
     }
 
     Geospatial.Dimension _dimension = null;
@@ -76,10 +76,10 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       _dimension = Geospatial.Dimension.valueOf(matcher.group(1).toUpperCase());
       _type = Geospatial.Type.valueOf(matcher.group(3).toUpperCase());
     } catch (IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.", e);
     }
     if (_dimension != this.dimension || (!pattern.equals(COLLECTION_PATTERN) && _type != this.type)) {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
     }
 
     return matcher;
@@ -91,7 +91,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     final String[] pointCoo = StringUtils.split(point, ' ');
     if (pointCoo == null || pointCoo.length != 2) {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The literal '" + point + "' has illegal content.");
     }
 
     final Point result = new Point(this.dimension, srid);
@@ -309,8 +309,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (dimension != point.getDimension()) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The value '" + point + "' is not valid.");
     }
 
     return toStringBuilder(point.getSrid()).
@@ -325,8 +324,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (dimension != multiPoint.getDimension()) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The value '" + multiPoint + "' is not valid.");
     }
 
     final StringBuilder result = toStringBuilder(multiPoint.getSrid()).
@@ -365,8 +363,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (dimension != lineString.getDimension()) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The value '" + lineString + "' is not valid.");
     }
 
     return toStringBuilder(lineString.getSrid()).
@@ -380,8 +377,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (dimension != multiLineString.getDimension()) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The value '" + multiLineString + "' is not valid.");
     }
 
     final StringBuilder result = toStringBuilder(multiLineString.getSrid()).
@@ -428,8 +424,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (dimension != polygon.getDimension()) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The value '" + polygon + "' is not valid.");
     }
 
     return toStringBuilder(polygon.getSrid()).
@@ -443,8 +438,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (dimension != multiPolygon.getDimension()) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The value '" + multiPolygon + "' is not valid.");
     }
 
     final StringBuilder result = toStringBuilder(multiPolygon.getSrid()).
@@ -467,12 +461,10 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     if (dimension != collection.getDimension()) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The value '" + collection + "' is not valid.");
     }
 
-    final StringBuilder result = toStringBuilder(collection.getSrid()).
-        append("Collection(");
+    StringBuilder result = toStringBuilder(collection.getSrid()).append("Collection(");
 
     if (collection.iterator().hasNext()) {
       final Geospatial item = collection.iterator().next();

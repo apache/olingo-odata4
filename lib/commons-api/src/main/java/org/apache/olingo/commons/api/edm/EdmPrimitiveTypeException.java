@@ -18,7 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm;
 
-public class EdmPrimitiveTypeException extends Exception {
+import org.apache.olingo.commons.api.ODataException;
+
+public class EdmPrimitiveTypeException extends ODataException {
 
   private static final long serialVersionUID = -93578822384514620L;
 

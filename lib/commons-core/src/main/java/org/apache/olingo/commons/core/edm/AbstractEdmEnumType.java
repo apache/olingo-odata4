@@ -112,8 +112,7 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
         }
       }
       if (memberValueLong == null) {
-        throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+        throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
       }
       result = result == null ? memberValueLong : result | memberValueLong;
     }
@@ -127,7 +126,7 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
 
     if (value == null) {
       if (isNullable != null && !isNullable) {
-        throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_NULL_NOT_ALLOWED");
+        throw new EdmPrimitiveTypeException("The literal 'null' is not allowed.");
       }
       return null;
     }
@@ -135,11 +134,10 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
     try {
       return EdmInt64.convertNumber(parseEnumValue(value), returnType);
     } catch (final IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
+      throw new EdmPrimitiveTypeException("The literal '" + value
+          + "' cannot be converted to value type " + returnType + ".", e);
     } catch (final ClassCastException e) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.", e);
     }
   }
 
@@ -159,8 +157,7 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
     }
 
     if (remaining != 0) {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+      throw new EdmPrimitiveTypeException("The value '" + value + "' is not valid.");
     }
     return result.toString();
   }
@@ -171,15 +168,14 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
 
     if (value == null) {
       if (isNullable != null && !isNullable) {
-        throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.VALUE_NULL_NOT_ALLOWED");
+        throw new EdmPrimitiveTypeException("The value NULL is not allowed.");
       }
       return null;
     }
     if (value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long) {
       return constructEnumValue(((Number) value).longValue());
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+      throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
     }
   }
 
@@ -199,7 +195,7 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
         && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
       return literal.substring(uriPrefix.length(), literal.length() - uriSuffix.length());
     } else {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(literal)");
+      throw new EdmPrimitiveTypeException("The literal '" + literal + "' has illegal content.");
     }
   }
 

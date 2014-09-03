@@ -62,7 +62,7 @@ abstract class AbstractPrimitiveType implements EdmPrimitiveType {
 
     if (value == null) {
       if (isNullable != null && !isNullable) {
-        throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_NULL_NOT_ALLOWED");
+        throw new EdmPrimitiveTypeException("The literal 'null' is not allowed.");
       }
       return null;
     }
@@ -79,7 +79,7 @@ abstract class AbstractPrimitiveType implements EdmPrimitiveType {
       final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
     if (value == null) {
       if (isNullable != null && !isNullable) {
-        throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.VALUE_NULL_NOT_ALLOWED");
+        throw new EdmPrimitiveTypeException("The value NULL is not allowed.");
       }
       return null;
     }
@@ -92,11 +92,8 @@ abstract class AbstractPrimitiveType implements EdmPrimitiveType {
 
   @Override
   public String toUriLiteral(final String literal) {
-    return literal == null
-        ? null
-        : uriPrefix.isEmpty() && uriSuffix.isEmpty()
-            ? literal
-            : uriPrefix + literal + uriSuffix;
+    return literal == null ? null :
+        uriPrefix.isEmpty() && uriSuffix.isEmpty() ? literal : uriPrefix + literal + uriSuffix;
   }
 
   @Override
@@ -110,7 +107,7 @@ abstract class AbstractPrimitiveType implements EdmPrimitiveType {
 
       return literal.substring(uriPrefix.length(), literal.length() - uriSuffix.length());
     } else {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(literal)");
+      throw new EdmPrimitiveTypeException("The literal '" + literal + "' has illegal content.");
     }
   }
 

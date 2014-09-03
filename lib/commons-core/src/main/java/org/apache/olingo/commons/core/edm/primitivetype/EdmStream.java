@@ -64,14 +64,13 @@ public final class EdmStream extends SingletonPrimitiveType {
     try {
       stream = new URI(value);
     } catch (final URISyntaxException e) {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.", e);
     }
 
     if (returnType.isAssignableFrom(URI.class)) {
       return returnType.cast(stream);
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
     }
   }
 
@@ -83,8 +82,7 @@ public final class EdmStream extends SingletonPrimitiveType {
     if (value instanceof URI) {
       return ((URI) value).toASCIIString();
     } else {
-      throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+      throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
     }
   }
 }
