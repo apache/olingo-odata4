@@ -28,28 +28,28 @@ import java.util.Arrays;
 
 public class ComplexTypeProvider {
 
-  public static final FullQualifiedName nameCTAllPrim = new FullQualifiedName(SchemaProvider.nameSpace, "CTAllPrim");
-  public static final FullQualifiedName nameCTBase = new FullQualifiedName(SchemaProvider.nameSpace, "CTBase");
-  public static final FullQualifiedName nameCTBasePrimCompNav = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameCTAllPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTAllPrim");
+  public static final FullQualifiedName nameCTBase = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTBase");
+  public static final FullQualifiedName nameCTBasePrimCompNav = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "CTBasePrimCompNav");
-  public static final FullQualifiedName nameCTCollAllPrim = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameCTCollAllPrim = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "CTCollAllPrim");
-  public static final FullQualifiedName nameCTCompCollComp = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameCTCompCollComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "CTCompCollComp");
-  public static final FullQualifiedName nameCTCompComp = new FullQualifiedName(SchemaProvider.nameSpace, "CTCompComp");
-  public static final FullQualifiedName nameCTCompNav = new FullQualifiedName(SchemaProvider.nameSpace, "CTCompNav");
+  public static final FullQualifiedName nameCTCompComp = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTCompComp");
+  public static final FullQualifiedName nameCTCompNav = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTCompNav");
 
-  public static final FullQualifiedName nameCTMixPrimCollComp = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameCTMixPrimCollComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "CTMixPrimCollComp");
-  public static final FullQualifiedName nameCTNavFiveProp = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameCTNavFiveProp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "CTNavFiveProp");
-  public static final FullQualifiedName nameCTPrim = new FullQualifiedName(SchemaProvider.nameSpace, "CTPrim");
-  public static final FullQualifiedName nameCTPrimComp = new FullQualifiedName(SchemaProvider.nameSpace, "CTPrimComp");
-  public static final FullQualifiedName nameCTPrimEnum = new FullQualifiedName(SchemaProvider.nameSpace, "CTPrimEnum");
-  public static final FullQualifiedName nameCTTwoBase = new FullQualifiedName(SchemaProvider.nameSpace, "CTTwoBase");
+  public static final FullQualifiedName nameCTPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTPrim");
+  public static final FullQualifiedName nameCTPrimComp = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTPrimComp");
+  public static final FullQualifiedName nameCTPrimEnum = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTPrimEnum");
+  public static final FullQualifiedName nameCTTwoBase = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTTwoBase");
   public static final FullQualifiedName nameCTTwoBasePrimCompNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "CTTwoBasePrimCompNav");
-  public static final FullQualifiedName nameCTTwoPrim = new FullQualifiedName(SchemaProvider.nameSpace, "CTTwoPrim");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "CTTwoBasePrimCompNav");
+  public static final FullQualifiedName nameCTTwoPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTTwoPrim");
 
   public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
 

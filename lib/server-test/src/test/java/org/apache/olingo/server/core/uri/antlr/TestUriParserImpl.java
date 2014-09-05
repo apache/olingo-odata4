@@ -76,12 +76,12 @@ public class TestUriParserImpl {
   public void testBoundFunctionImport_VarParameters() {
 
     // no input
-    testRes.run("ESKeyNav(1)/com.sap.odata.test1.BFCETKeyNavRTETKeyNav()")
+    testRes.run("ESKeyNav(1)/olingo.odata.test1.BFCETKeyNavRTETKeyNav()")
         .at(0).isUriPathInfoKind(UriResourceKind.entitySet)
         .at(1).isUriPathInfoKind(UriResourceKind.function);
 
     // one input
-    testRes.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='ABC')")
+    testRes.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='ABC')")
         .at(0).isUriPathInfoKind(UriResourceKind.entitySet)
         .at(1).isUriPathInfoKind(UriResourceKind.function)
         .isParameter(0, "ParameterString", "'ABC'");
@@ -100,7 +100,7 @@ public class TestUriParserImpl {
     String esTwoKeyNav = "ESTwoKeyNav(PropertyInt16=1,PropertyString='ABC')";
 
     // returning primitive
-    testRes.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTString()")
+    testRes.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTString()")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
         .isType(EntityTypeProvider.nameETTwoKeyNav, true)
@@ -109,7 +109,7 @@ public class TestUriParserImpl {
         .isType(PropertyProvider.nameString, false);
 
     // returning collection of primitive
-    testRes.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTCollString()")
+    testRes.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCollString()")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
         .isType(EntityTypeProvider.nameETTwoKeyNav, true)
@@ -118,7 +118,7 @@ public class TestUriParserImpl {
         .isType(PropertyProvider.nameString, true);
 
     // returning single complex
-    testRes.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTCTTwoPrim()")
+    testRes.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCTTwoPrim()")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
         .isType(EntityTypeProvider.nameETTwoKeyNav, true)
@@ -127,7 +127,7 @@ public class TestUriParserImpl {
         .isType(ComplexTypeProvider.nameCTTwoPrim, false);
 
     // returning collection of complex
-    testRes.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTCollCTTwoPrim()")
+    testRes.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCollCTTwoPrim()")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
         .isType(EntityTypeProvider.nameETTwoKeyNav, true)
@@ -137,7 +137,7 @@ public class TestUriParserImpl {
 
     // returning single entity
     testRes.run(
-        esTwoKeyNav + "/com.sap.odata.test1.ETBaseTwoKeyNav/com.sap.odata.test1.BFCETBaseTwoKeyNavRTETTwoKeyNav()")
+        esTwoKeyNav + "/olingo.odata.test1.ETBaseTwoKeyNav/olingo.odata.test1.BFCETBaseTwoKeyNavRTETTwoKeyNav()")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
         .isType(EntityTypeProvider.nameETTwoKeyNav, false)
@@ -147,7 +147,7 @@ public class TestUriParserImpl {
         .isType(EntityTypeProvider.nameETTwoKeyNav, false);
 
     // returning collection of entity (aka entitySet)
-    testRes.run(esTwoKeyNav + "/com.sap.odata.test1.BFCSINavRTESTwoKeyNav()")
+    testRes.run(esTwoKeyNav + "/olingo.odata.test1.BFCSINavRTESTwoKeyNav()")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
         .isType(EntityTypeProvider.nameETTwoKeyNav, false)
@@ -235,7 +235,7 @@ public class TestUriParserImpl {
   @Test(expected = UriValidationException.class)
   public void testEntityFailOnValidation1() throws Exception {
     // simple entity set; with qualifiedentityTypeName; with filter
-    testUri.run("$entity/com.sap.odata.test1.ETTwoPrim?$filter=PropertyInt16 eq 123&$id=ESAllKey")
+    testUri.run("$entity/olingo.odata.test1.ETTwoPrim?$filter=PropertyInt16 eq 123&$id=ESAllKey")
         .isIdText("ESAllKey")
         .goFilter().is("<<PropertyInt16> eq <123>>");
   }
@@ -243,7 +243,7 @@ public class TestUriParserImpl {
   @Test(expected = UriValidationException.class)
   public void testEntityFailOnValidation2() throws Exception {
     // simple entity set; with qualifiedentityTypeName; with 2xformat(before and after), expand, filter
-    testUri.run("$entity/com.sap.odata.test1.ETTwoPrim?"
+    testUri.run("$entity/olingo.odata.test1.ETTwoPrim?"
         + "$format=xml&$expand=*&abc=123&$id=ESBase&xyz=987&$filter=PropertyInt16 eq 123&$format=atom&$select=*")
         .isFormatText("atom")
         .isCustomParameter(0, "abc", "123")
@@ -288,32 +288,32 @@ public class TestUriParserImpl {
         .isCustomParameter(0, "abc", "123");
 
     // simple entity set; with qualifiedentityTypeName
-    testUri.run("$entity/com.sap.odata.test1.ETTwoPrim?$id=ESBase")
+    testUri.run("$entity/olingo.odata.test1.ETTwoPrim?$id=ESBase")
         .isEntityType(EntityTypeProvider.nameETTwoPrim)
         .isIdText("ESBase");
 
     // simple entity set; with qualifiedentityTypeName;
-    testUri.run("$entity/com.sap.odata.test1.ETBase?$id=ESTwoPrim")
+    testUri.run("$entity/olingo.odata.test1.ETBase?$id=ESTwoPrim")
         .isEntityType(EntityTypeProvider.nameETBase)
         .isKind(UriInfoKind.entityId)
         .isIdText("ESTwoPrim");
 
     // simple entity set; with qualifiedentityTypeName; with format
-    testUri.run("$entity/com.sap.odata.test1.ETBase?$id=ESTwoPrim&$format=atom")
+    testUri.run("$entity/olingo.odata.test1.ETBase?$id=ESTwoPrim&$format=atom")
         .isKind(UriInfoKind.entityId)
         .isEntityType(EntityTypeProvider.nameETBase)
         .isIdText("ESTwoPrim")
         .isFormatText("atom");
 
     // simple entity set; with qualifiedentityTypeName; with select
-    testUri.run("$entity/com.sap.odata.test1.ETBase?$id=ESTwoPrim&$select=*")
+    testUri.run("$entity/olingo.odata.test1.ETBase?$id=ESTwoPrim&$select=*")
         .isKind(UriInfoKind.entityId)
         .isEntityType(EntityTypeProvider.nameETBase)
         .isIdText("ESTwoPrim")
         .isSelectItemStar(0);
 
     // simple entity set; with qualifiedentityTypeName; with expand
-    testUri.run("$entity/com.sap.odata.test1.ETBase?$id=ESTwoPrim&$expand=*")
+    testUri.run("$entity/olingo.odata.test1.ETBase?$id=ESTwoPrim&$expand=*")
         .isKind(UriInfoKind.entityId)
         .isEntityType(EntityTypeProvider.nameETBase)
         .isIdText("ESTwoPrim")
@@ -508,7 +508,7 @@ public class TestUriParserImpl {
   public void testEntitySet_TypeFilter() {
 
     // filter
-    testRes.run("ESTwoPrim/com.sap.odata.test1.ETBase")
+    testRes.run("ESTwoPrim/olingo.odata.test1.ETBase")
         .at(0)
         .isEntitySet("ESTwoPrim")
         .isType(EntityTypeProvider.nameETTwoPrim, true)
@@ -516,7 +516,7 @@ public class TestUriParserImpl {
         .isTypeFilterOnEntry(null);
 
     // filter before key predicate
-    testRes.run("ESTwoPrim/com.sap.odata.test1.ETBase(PropertyInt16=1)")
+    testRes.run("ESTwoPrim/olingo.odata.test1.ETBase(PropertyInt16=1)")
         .at(0)
         .isEntitySet("ESTwoPrim")
         .isUriPathInfoKind(UriResourceKind.entitySet)
@@ -528,7 +528,7 @@ public class TestUriParserImpl {
         .isKeyPredicate(0, "PropertyInt16", "1");
 
     // filter before key predicate; property of sub type
-    testRes.run("ESTwoPrim/com.sap.odata.test1.ETBase(PropertyInt16=1)/AdditionalPropertyString_5")
+    testRes.run("ESTwoPrim/olingo.odata.test1.ETBase(PropertyInt16=1)/AdditionalPropertyString_5")
         .at(0)
         .isEntitySet("ESTwoPrim")
         .isUriPathInfoKind(UriResourceKind.entitySet)
@@ -541,7 +541,7 @@ public class TestUriParserImpl {
         .isPrimitiveProperty("AdditionalPropertyString_5", PropertyProvider.nameString, false);
 
     // filter after key predicate
-    testRes.run("ESTwoPrim(PropertyInt16=1)/com.sap.odata.test1.ETBase")
+    testRes.run("ESTwoPrim(PropertyInt16=1)/olingo.odata.test1.ETBase")
         .at(0)
         .isEntitySet("ESTwoPrim")
         .isUriPathInfoKind(UriResourceKind.entitySet)
@@ -551,7 +551,7 @@ public class TestUriParserImpl {
         .isKeyPredicate(0, "PropertyInt16", "1");
 
     // filter after key predicate; property of sub type
-    testRes.run("ESTwoPrim(PropertyInt16=1)/com.sap.odata.test1.ETBase/AdditionalPropertyString_5")
+    testRes.run("ESTwoPrim(PropertyInt16=1)/olingo.odata.test1.ETBase/AdditionalPropertyString_5")
         .at(0)
         .isEntitySet("ESTwoPrim")
         .isUriPathInfoKind(UriResourceKind.entitySet)
@@ -770,20 +770,20 @@ public class TestUriParserImpl {
         .isFormatText("atom")
         .isFragmentText("SINav/NavPropertyETKeyNavMany(1)/PropertyInt16");
 
-    testUri.run("$metadata?$format=atom#SINav/com.sap.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16")
+    testUri.run("$metadata?$format=atom#SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
-        .isFragmentText("SINav/com.sap.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16");
+        .isFragmentText("SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16");
 
-    testUri.run("$metadata?$format=atom#SINav/com.sap.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16")
+    testUri.run("$metadata?$format=atom#SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
-        .isFragmentText("SINav/com.sap.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16");
+        .isFragmentText("SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16");
 
-    testUri.run("$metadata?$format=atom#com.sap.odata.test1.ETAllKey")
+    testUri.run("$metadata?$format=atom#olingo.odata.test1.ETAllKey")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
-        .isFragmentText("com.sap.odata.test1.ETAllKey");
+        .isFragmentText("olingo.odata.test1.ETAllKey");
 
     testUri.run("$metadata?$format=atom#ESTwoPrim/$deletedEntity")
         .isKind(UriInfoKind.metadata)
@@ -830,16 +830,16 @@ public class TestUriParserImpl {
         .isFormatText("atom")
         .isFragmentText("ESKeyNav/NavPropertyETKeyNavMany(1)/PropertyInt16");
 
-    testUri.run("$metadata?$format=atom#ESKeyNav/com.sap.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16")
+    testUri.run("$metadata?$format=atom#ESKeyNav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
-        .isFragmentText("ESKeyNav/com.sap.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16");
+        .isFragmentText("ESKeyNav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16");
 
     testUri.run(
-        "$metadata?$format=atom#ESKeyNav/com.sap.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16")
+        "$metadata?$format=atom#ESKeyNav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
-        .isFragmentText("ESKeyNav/com.sap.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16");
+        .isFragmentText("ESKeyNav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16");
 
     testUri.run("$metadata?$format=atom#ESKeyNav(PropertyInt16,PropertyString)")
         .isKind(UriInfoKind.metadata)
@@ -995,7 +995,7 @@ public class TestUriParserImpl {
   public void testMemberStartingWithCastFailOnValidation1() throws Exception {
     // on EntityType entry
     testUri.run("ESTwoKeyNav(ParameterInt16=1,PropertyString='ABC')?"
-        + "$filter=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate")
+        + "$filter=olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate")
         .goFilter().root().isMember()
         .isMemberStartType(EntityTypeProvider.nameETBaseTwoKeyNav).goPath()
         // .at(0)
@@ -1008,7 +1008,7 @@ public class TestUriParserImpl {
   @Test(expected = UriValidationException.class)
   public void testMemberStartingWithCastFailOnValidation2() throws Exception {
     testUri.run("FICRTCTTwoPrimParam(ParameterInt16=1,ParameterString='2')?"
-        + "$filter=com.sap.odata.test1.CTBase/AdditionalPropString")
+        + "$filter=olingo.odata.test1.CTBase/AdditionalPropString")
         .goFilter().root().isMember()
         .isMemberStartType(ComplexTypeProvider.nameCTBase).goPath()
         // .at(0)
@@ -1022,7 +1022,7 @@ public class TestUriParserImpl {
   public void testMemberStartingWithCast() throws Exception {
 
     // on EntityType collection
-    testUri.run("ESTwoKeyNav?$filter=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate")
+    testUri.run("ESTwoKeyNav?$filter=olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate")
         .goFilter().root().isMember()
         .isMemberStartType(EntityTypeProvider.nameETBaseTwoKeyNav).goPath()
         // .at(0)
@@ -1033,7 +1033,7 @@ public class TestUriParserImpl {
 
     // on Complex collection
     testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')?"
-        + "$filter=com.sap.odata.test1.CTBase/AdditionalPropString")
+        + "$filter=olingo.odata.test1.CTBase/AdditionalPropString")
         .goFilter().root().isMember()
         .isMemberStartType(ComplexTypeProvider.nameCTBase).goPath()
         // .at(0)
@@ -1046,7 +1046,7 @@ public class TestUriParserImpl {
 
   @Test
   public void testComplexTypeCastFollowingAsCollection() throws Exception {
-    testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')/com.sap.odata.test1.CTBase");
+    testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')/olingo.odata.test1.CTBase");
   }
 
   @Test
@@ -1094,8 +1094,8 @@ public class TestUriParserImpl {
     testUri.run("ESTwoKeyNav?$select=*")
         .isSelectItemStar(0);
 
-    testUri.run("ESTwoKeyNav?$select=com.sap.odata.test1.*")
-        .isSelectItemAllOp(0, new FullQualifiedName("com.sap.odata.test1", "*"));
+    testUri.run("ESTwoKeyNav?$select=olingo.odata.test1.*")
+        .isSelectItemAllOp(0, new FullQualifiedName("olingo.odata.test1", "*"));
 
     testUri.run("ESTwoKeyNav?$select=PropertyString")
         .goSelectItemPath(0).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
@@ -1117,13 +1117,13 @@ public class TestUriParserImpl {
         .n()
         .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false);
 
-    testUri.run("ESTwoKeyNav?$select=com.sap.odata.test1.ETBaseTwoKeyNav")
+    testUri.run("ESTwoKeyNav?$select=olingo.odata.test1.ETBaseTwoKeyNav")
         .isSelectStartType(0, EntityTypeProvider.nameETBaseTwoKeyNav);
 
-    testUri.run("ESTwoKeyNav/PropertyCompNav?$select=com.sap.odata.test1.CTTwoBasePrimCompNav")
+    testUri.run("ESTwoKeyNav/PropertyCompNav?$select=olingo.odata.test1.CTTwoBasePrimCompNav")
         .isSelectStartType(0, ComplexTypeProvider.nameCTTwoBasePrimCompNav);
 
-    testUri.run("ESTwoKeyNav?$select=PropertyCompNav/com.sap.odata.test1.CTTwoBasePrimCompNav")
+    testUri.run("ESTwoKeyNav?$select=PropertyCompNav/olingo.odata.test1.CTTwoBasePrimCompNav")
         .goSelectItemPath(0)
         .first()
         .isComplexProperty("PropertyCompNav", ComplexTypeProvider.nameCTBasePrimCompNav, false)

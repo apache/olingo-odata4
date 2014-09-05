@@ -40,7 +40,7 @@ public class DataProviderTest {
 
   private final Edm edm = OData.newInstance().createEdm(new EdmTechProvider());
   private final EdmEntityContainer entityContainer = edm.getEntityContainer(
-          new FullQualifiedName("com.sap.odata.test1", "Container"));
+          new FullQualifiedName("olingo.odata.test1", "Container"));
 
   private final EdmEntitySet esAllPrim;
   private final EdmEntitySet esCompAllPrim;

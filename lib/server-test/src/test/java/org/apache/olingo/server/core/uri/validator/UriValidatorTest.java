@@ -151,8 +151,8 @@ public class UriValidatorTest {
       { "FICRTCollCTTwoPrim()" },
       { "FICRTETMedia()" },
 
-      { "ESTwoKeyNav/com.sap.odata.test1.BAESTwoKeyNavRTESTwoKeyNav" },
-      { "ESAllPrim/com.sap.odata.test1.BAESAllPrimRTETAllPrim" },
+      { "ESTwoKeyNav/olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav" },
+      { "ESAllPrim/olingo.odata.test1.BAESAllPrimRTETAllPrim" },
       { "AIRTPrimCollParam" },
       { "AIRTETParam" },
       { "AIRTPrimParam" },

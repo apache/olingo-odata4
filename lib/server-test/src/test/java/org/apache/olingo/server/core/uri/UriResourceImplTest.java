@@ -279,11 +279,11 @@ public class UriResourceImplTest {
     impl.setCollectionTypeFilter(entityTypeBaseColl);
     assertEquals(entityTypeBaseColl, impl.getTypeFilterOnCollection());
     assertEquals("mock", impl.toString(false));
-    assertEquals("mock/com.sap.odata.test1.ETBaseTwoKeyNav", impl.toString(true));
+    assertEquals("mock/olingo.odata.test1.ETBaseTwoKeyNav", impl.toString(true));
     impl.setEntryTypeFilter(entityTypeBaseEntry);
     assertEquals(entityTypeBaseEntry, impl.getTypeFilterOnEntry());
     assertEquals("mock", impl.toString(false));
-    assertEquals("mock/com.sap.odata.test1.ETBaseTwoKeyNav/()com.sap.odata.test1.ETTwoBaseTwoKeyNav",
+    assertEquals("mock/olingo.odata.test1.ETBaseTwoKeyNav/()olingo.odata.test1.ETTwoBaseTwoKeyNav",
         impl.toString(true));
 
     // set entry
@@ -292,7 +292,7 @@ public class UriResourceImplTest {
     impl.setEntryTypeFilter(entityTypeBaseEntry);
     assertEquals(entityTypeBaseEntry, impl.getTypeFilterOnEntry());
     assertEquals("mock", impl.toString(false));
-    assertEquals("mock/com.sap.odata.test1.ETTwoBaseTwoKeyNav", impl.toString(true));
+    assertEquals("mock/olingo.odata.test1.ETTwoBaseTwoKeyNav", impl.toString(true));
 
     // set collection
     impl = new Mock();
@@ -300,7 +300,7 @@ public class UriResourceImplTest {
     impl.setCollectionTypeFilter(entityTypeBaseColl);
     assertEquals(entityTypeBaseColl, impl.getTypeFilterOnCollection());
     assertEquals("mock", impl.toString(false));
-    assertEquals("mock/com.sap.odata.test1.ETBaseTwoKeyNav", impl.toString(true));
+    assertEquals("mock/olingo.odata.test1.ETBaseTwoKeyNav", impl.toString(true));
 
     impl = new Mock();
     UriParameterImpl parameter = new UriParameterImpl().setName("ParameterInt16");
@@ -357,7 +357,7 @@ public class UriResourceImplTest {
     impl.setTypeFilter(entityTypeBaseColl);
     assertEquals(entityTypeBaseColl, impl.getTypeFilter());
     assertEquals("mock", impl.toString());
-    assertEquals("mock/com.sap.odata.test1.ETBaseTwoKeyNav", impl.toString(true));
+    assertEquals("mock/olingo.odata.test1.ETBaseTwoKeyNav", impl.toString(true));
     assertEquals("mock", impl.toString(false));
     //
   }
@@ -491,7 +491,7 @@ public class UriResourceImplTest {
     EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETTwoKeyNav);
 
     impl.setType(entityType);
-    assertEquals("com.sap.odata.test1.ETTwoKeyNav", impl.toString());
+    assertEquals("olingo.odata.test1.ETTwoKeyNav", impl.toString());
     assertEquals(entityType, impl.getType());
 
     UriParameterImpl parameter = new UriParameterImpl().setName("ParameterInt16");

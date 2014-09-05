@@ -31,34 +31,34 @@ public class ActionProvider {
 
   // Bound Actions
   public static final FullQualifiedName nameBAESAllPrimRTETAllPrim =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BAESAllPrimRTETAllPrim");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAESAllPrimRTETAllPrim");
 
   public static final FullQualifiedName nameBAESTwoKeyNavRTESTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BAESTwoKeyNavRTESTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAESTwoKeyNavRTESTwoKeyNav");
 
   public static final FullQualifiedName nameBAETBaseTwoKeyNavRTETBaseTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BAETBaseTwoKeyNavRTETBaseTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETBaseTwoKeyNavRTETBaseTwoKeyNav");
 
   public static final FullQualifiedName nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav");
 
   public static final FullQualifiedName nameBAETTwoKeyNavRTETTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BAETTwoKeyNavRTETTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETTwoKeyNavRTETTwoKeyNav");
 
   // Unbound Actions
-  public static final FullQualifiedName nameUARTCompCollParam = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameUARTCompCollParam = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UARTCompCollParam");
-  public static final FullQualifiedName nameUARTCompParam = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameUARTCompParam = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UARTCompParam");
   public static final FullQualifiedName nameUARTESParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UARTESParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTESParam");
 
   public static final FullQualifiedName nameUARTETParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UARTETParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTETParam");
 
-  public static final FullQualifiedName nameUARTPrimParam = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameUARTPrimParam = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UARTPrimParam");
-  public static final FullQualifiedName nameUARTPrimCollParam = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameUARTPrimCollParam = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UARTPrimCollParam");
 
   public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {

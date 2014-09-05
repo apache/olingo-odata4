@@ -40,8 +40,8 @@ import java.util.List;
 public class EdmTechTestProvider extends EdmTechProvider {
 
   private static final FullQualifiedName nameInt16 = EdmPrimitiveTypeKind.Int16.getFullQualifiedName();
-  public static final String nameSpace = "com.sap.odata.test1";
-  public static final FullQualifiedName nameContainer = new FullQualifiedName(nameSpace, "Container");
+  public static final String NAMESPACE = "olingo.odata.test1";
+  public static final FullQualifiedName nameContainer = new FullQualifiedName(NAMESPACE, "Container");
 
   Property propertyAInt16 = new Property().setName("a").setType(nameInt16);
   Property propertyBInt16 = new Property().setName("b").setType(nameInt16);
@@ -50,8 +50,8 @@ public class EdmTechTestProvider extends EdmTechProvider {
   Property propertyEInt16 = new Property().setName("e").setType(nameInt16);
   Property propertyFInt16 = new Property().setName("f").setType(nameInt16);
 
-  public static final FullQualifiedName nameCTabc = new FullQualifiedName(nameSpace, "CTabc");
-  public static final FullQualifiedName nameETabc = new FullQualifiedName(nameSpace, "ETabc");
+  public static final FullQualifiedName nameCTabc = new FullQualifiedName(NAMESPACE, "CTabc");
+  public static final FullQualifiedName nameETabc = new FullQualifiedName(NAMESPACE, "ETabc");
 
   @Override
   public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {

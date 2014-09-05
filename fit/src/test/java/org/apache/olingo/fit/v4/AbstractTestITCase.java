@@ -36,7 +36,6 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.domain.v4.ODataEntityImpl;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
-import org.hamcrest.CoreMatchers;
 import org.junit.BeforeClass;
 
 import java.io.IOException;

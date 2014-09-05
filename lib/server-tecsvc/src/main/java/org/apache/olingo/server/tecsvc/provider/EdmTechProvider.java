@@ -42,7 +42,7 @@ import java.util.List;
 
 public class EdmTechProvider extends EdmProvider {
 
-  public static final String nameSpace = "com.sap.odata.test1";
+  public static final String nameSpace = "olingo.odata.test1";
 
   private final SchemaProvider schemaProvider;
   private final EntityTypeProvider entityTypeProvider;

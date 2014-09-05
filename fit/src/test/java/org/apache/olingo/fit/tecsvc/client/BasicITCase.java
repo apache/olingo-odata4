@@ -96,8 +96,8 @@ public class BasicITCase extends AbstractBaseTestITCase {
     Edm edm = response.getBody();
 
     assertNotNull(edm);
-    assertEquals("com.sap.odata.test1", edm.getSchema("com.sap.odata.test1").getNamespace());
-    assertEquals("Namespace1_Alias", edm.getSchema("com.sap.odata.test1").getAlias());
+    assertEquals("olingo.odata.test1", edm.getSchema("olingo.odata.test1").getNamespace());
+    assertEquals("Namespace1_Alias", edm.getSchema("olingo.odata.test1").getAlias());
     assertNotNull(edm.getTerm(new FullQualifiedName("Core.Description")));
     assertEquals(2, edm.getSchemas().size());
   }

@@ -35,7 +35,7 @@ import java.util.List;
 
 public class ContainerProvider {
 
-  public static final FullQualifiedName nameContainer = new FullQualifiedName(SchemaProvider.nameSpace, "Container");
+  public static final FullQualifiedName nameContainer = new FullQualifiedName(SchemaProvider.NAMESPACE, "Container");
 
   EntityContainerInfo entityContainerInfoTest1 =
       new EntityContainerInfo().setContainerName(nameContainer);

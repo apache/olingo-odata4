@@ -46,7 +46,7 @@ public class ODataJsonSerializerTest {
 
   private final Edm edm = OData.newInstance().createEdm(new EdmTechProvider());
   private final EdmEntityContainer entityContainer = edm.getEntityContainer(
-      new FullQualifiedName("com.sap.odata.test1", "Container"));
+      new FullQualifiedName("olingo.odata.test1", "Container"));
   private final DataProvider data = new DataProvider();
   private ODataSerializer serializer = new ODataJsonSerializer(ODataFormat.JSON);
 

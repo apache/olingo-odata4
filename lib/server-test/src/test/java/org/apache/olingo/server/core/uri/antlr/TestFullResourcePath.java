@@ -62,7 +62,7 @@ public class TestFullResourcePath {
   @Test
   public void testFunctionBound_varOverloading() throws Exception {
     // on ESTwoKeyNav
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()").goPath()
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()").goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
         .isType(EntityTypeProvider.nameETTwoKeyNav, true)
@@ -71,7 +71,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     // with string parameter
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='ABC')").goPath()
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='ABC')").goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
         .isType(EntityTypeProvider.nameETTwoKeyNav, true)
@@ -80,7 +80,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     // with string parameter
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()").goPath()
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()").goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
         .isType(EntityTypeProvider.nameETTwoKeyNav, true)
@@ -92,8 +92,8 @@ public class TestFullResourcePath {
   @Test
   public void runBfuncBnCpropCastRtEs() throws Exception {
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
-        + "/PropertyComp/com.sap.odata.test1.BFCCTPrimCompRTESBaseTwoKeyNav()")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav"
+        + "/PropertyComp/olingo.odata.test1.BFCCTPrimCompRTESBaseTwoKeyNav()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -107,8 +107,8 @@ public class TestFullResourcePath {
         .n()
         .isFunction("BFCCTPrimCompRTESBaseTwoKeyNav");
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
-        + "/PropertyComp/com.sap.odata.test1.BFCCTPrimCompRTESBaseTwoKeyNav()/$count")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav"
+        + "/PropertyComp/olingo.odata.test1.BFCCTPrimCompRTESBaseTwoKeyNav()/$count")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -129,7 +129,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runBfuncBnCpropCollRtEs() throws Exception {
-    testUri.run("ESKeyNav(PropertyInt16=1)/CollPropertyComp/com.sap.odata.test1.BFCCollCTPrimCompRTESAllPrim()")
+    testUri.run("ESKeyNav(PropertyInt16=1)/CollPropertyComp/olingo.odata.test1.BFCCollCTPrimCompRTESAllPrim()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -142,7 +142,7 @@ public class TestFullResourcePath {
         .isFunction("BFCCollCTPrimCompRTESAllPrim");
 
     testUri
-        .run("ESKeyNav(PropertyInt16=1)/CollPropertyComp/com.sap.odata.test1.BFCCollCTPrimCompRTESAllPrim()/$count")
+        .run("ESKeyNav(PropertyInt16=1)/CollPropertyComp/olingo.odata.test1.BFCCollCTPrimCompRTESAllPrim()/$count")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -161,7 +161,7 @@ public class TestFullResourcePath {
   @Test
   public void runBfuncBnCpropRtEs() throws Exception {
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')"
-        + "/PropertyComp/com.sap.odata.test1.BFCCTPrimCompRTESTwoKeyNav()")
+        + "/PropertyComp/olingo.odata.test1.BFCCTPrimCompRTESTwoKeyNav()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -175,7 +175,7 @@ public class TestFullResourcePath {
         .isFunction("BFCCTPrimCompRTESTwoKeyNav");
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')"
-        + "/PropertyComp/com.sap.odata.test1.BFCCTPrimCompRTESTwoKeyNav()/$count")
+        + "/PropertyComp/olingo.odata.test1.BFCCTPrimCompRTESTwoKeyNav()/$count")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -195,7 +195,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runBfuncBnEntityRtEs() throws Exception {
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.BFCETTwoKeyNavRTESTwoKeyNav()")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.BFCETTwoKeyNavRTESTwoKeyNav()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -208,8 +208,8 @@ public class TestFullResourcePath {
   @Test
   public void runBfuncBnEntityCastRtEs() throws Exception {
     testUri
-        .run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
-            + "/com.sap.odata.test1.BFCETBaseTwoKeyNavRTESTwoKeyNav()")
+        .run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav"
+            + "/olingo.odata.test1.BFCETBaseTwoKeyNavRTESTwoKeyNav()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -221,8 +221,8 @@ public class TestFullResourcePath {
         .isFunction("BFCETBaseTwoKeyNavRTESTwoKeyNav");
 
     testUri
-        .run("ESTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=1,PropertyString='(''2'')')"
-            + "/com.sap.odata.test1.BFCETBaseTwoKeyNavRTESTwoKeyNav()")
+        .run("ESTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav(PropertyInt16=1,PropertyString='(''2'')')"
+            + "/olingo.odata.test1.BFCETBaseTwoKeyNavRTESTwoKeyNav()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -236,8 +236,8 @@ public class TestFullResourcePath {
 
   @Test
   public void runBfuncBnEsCastRtEs() throws Exception {
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav"
-        + "/com.sap.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav"
+        + "/olingo.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -246,9 +246,9 @@ public class TestFullResourcePath {
         .n()
         .isFunction("BFCESBaseTwoKeyNavRTESBaseTwoKey");
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav"
-        + "/com.sap.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()"
-        + "/com.sap.odata.test1.ETTwoBaseTwoKeyNav")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav"
+        + "/olingo.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()"
+        + "/olingo.odata.test1.ETTwoBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -260,9 +260,9 @@ public class TestFullResourcePath {
         .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
 
     testUri.run("ESTwoKeyNav"
-        + "/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()"
-        + "/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=1,PropertyString='2')"
-        + "/com.sap.odata.test1.ETTwoBaseTwoKeyNav")
+        + "/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()"
+        + "/olingo.odata.test1.ETBaseTwoKeyNav(PropertyInt16=1,PropertyString='2')"
+        + "/olingo.odata.test1.ETTwoBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -277,7 +277,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runBfuncBnEsRtCprop() throws Exception {
-    testUri.run("ESAllPrim/com.sap.odata.test1.BFCESAllPrimRTCTAllPrim()")
+    testUri.run("ESAllPrim/olingo.odata.test1.BFCESAllPrimRTCTAllPrim()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESAllPrim")
@@ -285,7 +285,7 @@ public class TestFullResourcePath {
         .isFunction("BFCESAllPrimRTCTAllPrim")
         .isType(ComplexTypeProvider.nameCTAllPrim);
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTCTTwoPrim()/com.sap.odata.test1.CTBase")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCTTwoPrim()/olingo.odata.test1.CTBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -297,7 +297,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runBfuncBnEsRtCpropColl() throws Exception {
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTCollCTTwoPrim()")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCollCTTwoPrim()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -305,7 +305,7 @@ public class TestFullResourcePath {
         .isFunction("BFCESTwoKeyNavRTCollCTTwoPrim")
         .isType(ComplexTypeProvider.nameCTTwoPrim, true);
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTCollCTTwoPrim()/$count")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCollCTTwoPrim()/$count")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -318,7 +318,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runBfuncBnEsRtEntityPpNp() throws Exception {
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTTwoKeyNav()/NavPropertyETKeyNavOne")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTTwoKeyNav()/NavPropertyETKeyNavOne")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -327,7 +327,7 @@ public class TestFullResourcePath {
         .n()
         .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false);
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTTwoKeyNav()/NavPropertyETKeyNavOne/$ref")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTTwoKeyNav()/NavPropertyETKeyNavOne/$ref")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -338,7 +338,7 @@ public class TestFullResourcePath {
         .n()
         .isUriPathInfoKind(UriResourceKind.ref);
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNav()/NavPropertyETMediaOne/$value")
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNav()/NavPropertyETMediaOne/$value")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -349,7 +349,7 @@ public class TestFullResourcePath {
         .n()
         .isValue();
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
         + "/NavPropertyETTwoKeyNavOne")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -360,7 +360,7 @@ public class TestFullResourcePath {
         .n()
         .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
         + "/NavPropertyETTwoKeyNavOne/PropertyComp")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -374,7 +374,7 @@ public class TestFullResourcePath {
         .isComplex("PropertyComp")
         .isType(ComplexTypeProvider.nameCTPrimComp);
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
         + "/NavPropertyETTwoKeyNavOne/PropertyComp/PropertyComp")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -391,7 +391,7 @@ public class TestFullResourcePath {
         .isComplex("PropertyComp")
         .isType(ComplexTypeProvider.nameCTAllPrim);
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
         + "/NavPropertyETTwoKeyNavOne/PropertyString")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -404,7 +404,7 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
         + "/NavPropertyETTwoKeyNavMany(PropertyInt16=2,PropertyString='3')/PropertyString")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -422,8 +422,8 @@ public class TestFullResourcePath {
 
   @Test
   public void runBfuncBnEsRtEntyPpNpCast() throws Exception {
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTTwoKeyNav()"
-        + "/NavPropertyETTwoKeyNavOne/com.sap.odata.test1.ETBaseTwoKeyNav")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTTwoKeyNav()"
+        + "/NavPropertyETTwoKeyNavOne/olingo.odata.test1.ETBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -435,8 +435,8 @@ public class TestFullResourcePath {
         .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testUri
-        .run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()(PropertyInt16=1,PropertyString='2')"
-            + "/NavPropertyETTwoKeyNavOne/com.sap.odata.test1.ETTwoBaseTwoKeyNav")
+        .run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()(PropertyInt16=1,PropertyString='2')"
+            + "/NavPropertyETTwoKeyNavOne/olingo.odata.test1.ETTwoBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -455,7 +455,7 @@ public class TestFullResourcePath {
   @Test
   public void runBfuncBnEsRtEntityPpCp() throws Exception {
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNav()/PropertyComp")
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNav()/PropertyComp")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -465,7 +465,7 @@ public class TestFullResourcePath {
         .isComplex("PropertyComp")
         .isType(ComplexTypeProvider.nameCTNavFiveProp);
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNav()/PropertyComp/PropertyInt16")
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNav()/PropertyComp/PropertyInt16")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -477,7 +477,7 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNav()/PropertyComp/PropertyInt16/$value")
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNav()/PropertyComp/PropertyInt16/$value")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -496,8 +496,8 @@ public class TestFullResourcePath {
   @Test
   public void runBfuncBnEsRtEntyPpCpCast() throws Exception {
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
-        + "/PropertyCompTwoPrim/com.sap.odata.test1.CTTwoBase")
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
+        + "/PropertyCompTwoPrim/olingo.odata.test1.CTTwoBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -509,9 +509,9 @@ public class TestFullResourcePath {
         .isType(ComplexTypeProvider.nameCTTwoPrim)
         .isTypeFilter(ComplexTypeProvider.nameCTTwoBase);
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
         + "/NavPropertyETTwoKeyNavMany(PropertyInt16=2,PropertyString='3')"
-        + "/PropertyCompTwoPrim/com.sap.odata.test1.CTTwoBase")
+        + "/PropertyCompTwoPrim/olingo.odata.test1.CTTwoBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -530,7 +530,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runBfuncBnEsRtEntityPpSp() throws Exception {
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNav()/PropertyInt16")
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNav()/PropertyInt16")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -539,7 +539,7 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNav()/PropertyInt16/$value")
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNav()/PropertyInt16/$value")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -555,7 +555,7 @@ public class TestFullResourcePath {
   @Test
   public void runBfuncBnEsRtEs() throws Exception {
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -563,7 +563,7 @@ public class TestFullResourcePath {
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='2')")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='2')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -572,7 +572,7 @@ public class TestFullResourcePath {
         .isParameter(0, "ParameterString", "'2'")
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -580,7 +580,7 @@ public class TestFullResourcePath {
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='3')")
+    testUri.run("ESKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='3')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -589,7 +589,7 @@ public class TestFullResourcePath {
         .isParameter(0, "ParameterString", "'3'")
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()/$count")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()/$count")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -599,7 +599,7 @@ public class TestFullResourcePath {
         .n()
         .isCount();
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()(PropertyInt16=1,PropertyString='2')")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()(PropertyInt16=1,PropertyString='2')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -614,7 +614,7 @@ public class TestFullResourcePath {
   public void runBfuncBnEsRtEsBa() throws Exception {
 
     testUri.run("ESKeyNav(PropertyInt16=1)/CollPropertyComp"
-        + "/com.sap.odata.test1.BFCCollCTPrimCompRTESAllPrim()/com.sap.odata.test1.BAESAllPrimRTETAllPrim")
+        + "/olingo.odata.test1.BFCCollCTPrimCompRTESAllPrim()/olingo.odata.test1.BAESAllPrimRTETAllPrim")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -631,14 +631,14 @@ public class TestFullResourcePath {
 
   @Test
   public void runBfuncBnEsRtPrim() throws Exception {
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTString()")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTString()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTString");
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTString()/$value")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTString()/$value")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -651,7 +651,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runbfuncBnEsRtPrimColl() throws Exception {
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTCollString()")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCollString()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -659,7 +659,7 @@ public class TestFullResourcePath {
         .isFunction("BFCESTwoKeyNavRTCollString")
         .isType(PropertyProvider.nameString, true);
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTCollString()/$count")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCollString()/$count")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -672,7 +672,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runBfuncBnPpropCollRtEs() throws Exception {
-    testUri.run("ESKeyNav(1)/CollPropertyString/com.sap.odata.test1.BFCCollStringRTESTwoKeyNav()")
+    testUri.run("ESKeyNav(1)/CollPropertyString/olingo.odata.test1.BFCCollStringRTESTwoKeyNav()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -683,7 +683,7 @@ public class TestFullResourcePath {
         .isFunction("BFCCollStringRTESTwoKeyNav")
         .isType(EntityTypeProvider.nameETTwoKeyNav, true);
 
-    testUri.run("ESKeyNav(1)/CollPropertyString/com.sap.odata.test1.BFCCollStringRTESTwoKeyNav()/$count")
+    testUri.run("ESKeyNav(1)/CollPropertyString/olingo.odata.test1.BFCCollStringRTESTwoKeyNav()/$count")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -700,7 +700,7 @@ public class TestFullResourcePath {
   @Test
   public void runBfuncBnPpropRtEs() throws Exception {
 
-    testUri.run("ESKeyNav(1)/PropertyString/com.sap.odata.test1.BFCStringRTESTwoKeyNav()")
+    testUri.run("ESKeyNav(1)/PropertyString/olingo.odata.test1.BFCStringRTESTwoKeyNav()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -711,7 +711,7 @@ public class TestFullResourcePath {
         .isFunction("BFCStringRTESTwoKeyNav")
         .isType(EntityTypeProvider.nameETTwoKeyNav, true);
 
-    testUri.run("ESKeyNav(1)/PropertyString/com.sap.odata.test1.BFCStringRTESTwoKeyNav()/$count")
+    testUri.run("ESKeyNav(1)/PropertyString/olingo.odata.test1.BFCStringRTESTwoKeyNav()/$count")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -724,7 +724,7 @@ public class TestFullResourcePath {
         .n()
         .isCount();
 
-    testUri.run("ESKeyNav(1)/PropertyString/com.sap.odata.test1.BFCStringRTESTwoKeyNav()/$ref")
+    testUri.run("ESKeyNav(1)/PropertyString/olingo.odata.test1.BFCStringRTESTwoKeyNav()/$ref")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -741,7 +741,7 @@ public class TestFullResourcePath {
   @Test
   public void runBfuncBnSingleRtEs() throws Exception {
 
-    testUri.run("SINav/com.sap.odata.test1.BFCSINavRTESTwoKeyNav()")
+    testUri.run("SINav/olingo.odata.test1.BFCSINavRTESTwoKeyNav()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
@@ -752,7 +752,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runBfuncBnSingleCastRtEs() throws Exception {
-    testUri.run("SINav/com.sap.odata.test1.ETBaseTwoKeyNav/com.sap.odata.test1.BFCETBaseTwoKeyNavRTESBaseTwoKey()")
+    testUri.run("SINav/olingo.odata.test1.ETBaseTwoKeyNav/olingo.odata.test1.BFCETBaseTwoKeyNavRTESBaseTwoKey()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
@@ -765,7 +765,7 @@ public class TestFullResourcePath {
   @Test
   public void runActionBound_on_EntityEntry() throws Exception {
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.BAETTwoKeyNavRTETTwoKeyNav")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.BAETTwoKeyNavRTETTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -774,7 +774,7 @@ public class TestFullResourcePath {
         .n()
         .isAction("BAETTwoKeyNavRTETTwoKeyNav");
 
-    testUri.run("ESKeyNav(PropertyInt16=1)/com.sap.odata.test1.BAETTwoKeyNavRTETTwoKeyNav")
+    testUri.run("ESKeyNav(PropertyInt16=1)/olingo.odata.test1.BAETTwoKeyNavRTETTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -785,7 +785,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runActionBound_on_EntityCollection() throws Exception {
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BAESTwoKeyNavRTESTwoKeyNav")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -797,7 +797,7 @@ public class TestFullResourcePath {
   public void runFunctionBound_on_var_Types() throws Exception {
 
     // on primitive
-    testUri.run("ESAllPrim(1)/PropertyString/com.sap.odata.test1.BFCStringRTESTwoKeyNav()")
+    testUri.run("ESAllPrim(1)/PropertyString/olingo.odata.test1.BFCStringRTESTwoKeyNav()")
         .goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
@@ -807,7 +807,7 @@ public class TestFullResourcePath {
         .isType(PropertyProvider.nameString);
 
     // on collection of primitive
-    testUri.run("ESCollAllPrim(1)/CollPropertyString/com.sap.odata.test1.BFCCollStringRTESTwoKeyNav()")
+    testUri.run("ESCollAllPrim(1)/CollPropertyString/olingo.odata.test1.BFCCollStringRTESTwoKeyNav()")
         .goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
@@ -818,7 +818,7 @@ public class TestFullResourcePath {
 
     // on complex
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='ABC')"
-        + "/PropertyComp/com.sap.odata.test1.BFCCTPrimCompRTESTwoKeyNav()")
+        + "/PropertyComp/olingo.odata.test1.BFCCTPrimCompRTESTwoKeyNav()")
         .goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
@@ -829,7 +829,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     // on collection of complex
-    testUri.run("ESKeyNav(1)/CollPropertyComp/com.sap.odata.test1.BFCCollCTPrimCompRTESAllPrim()")
+    testUri.run("ESKeyNav(1)/CollPropertyComp/olingo.odata.test1.BFCCollCTPrimCompRTESAllPrim()")
         .goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
@@ -841,7 +841,7 @@ public class TestFullResourcePath {
 
     // on entity
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='ABC')"
-        + "/com.sap.odata.test1.BFCETTwoKeyNavRTESTwoKeyNav()")
+        + "/olingo.odata.test1.BFCETTwoKeyNavRTESTwoKeyNav()")
         .goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
@@ -851,7 +851,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     // on collection of entity
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
         .goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
@@ -863,8 +863,8 @@ public class TestFullResourcePath {
   @Test
   public void runActionBound_on_EntityCast() throws Exception {
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
-        + "/com.sap.odata.test1.BAETBaseTwoKeyNavRTETBaseTwoKeyNav")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav"
+        + "/olingo.odata.test1.BAETBaseTwoKeyNavRTETBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -874,8 +874,8 @@ public class TestFullResourcePath {
         .n()
         .isAction("BAETBaseTwoKeyNavRTETBaseTwoKeyNav");
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=1,PropertyString='2')"
-        + "/com.sap.odata.test1.ETTwoBaseTwoKeyNav/com.sap.odata.test1.BAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav(PropertyInt16=1,PropertyString='2')"
+        + "/olingo.odata.test1.ETTwoBaseTwoKeyNav/olingo.odata.test1.BAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -912,7 +912,7 @@ public class TestFullResourcePath {
     testUri.run("$entity?$id=ESKeyNav(1)")
         .isKind(UriInfoKind.entityId)
         .isIdText("ESKeyNav(1)");
-    testUri.run("$entity/com.sap.odata.test1.ETKeyNav?$id=ESKeyNav(1)")
+    testUri.run("$entity/olingo.odata.test1.ETKeyNav?$id=ESKeyNav(1)")
         .isKind(UriInfoKind.entityId)
         .isEntityType(EntityTypeProvider.nameETKeyNav)
         .isIdText("ESKeyNav(1)");
@@ -923,7 +923,7 @@ public class TestFullResourcePath {
     // TODO planned: move to validator
     // testUri.runEx("$entity").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     // testUri.runEx("$entity?$idfalse=ESKeyNav(1)").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-    // testUri.runEx("$entity/com.sap.odata.test1.invalidType?$id=ESKeyNav(1)").isExSemantic();
+    // testUri.runEx("$entity/olingo.odata.test1.invalidType?$id=ESKeyNav(1)").isExSemantic();
     // testUri.runEx("$entity/invalid?$id=ESKeyNav(1)").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
@@ -966,25 +966,25 @@ public class TestFullResourcePath {
     testUri.runEx("ESAllPrim(PropertyInt16=1,Invalid='1')")
         .isExSemantic(UriParserSemanticException.MessageKeys.NOT_ENOUGH_KEY_PROPERTIES);
 
-    testUri.runEx("ETBaseTwoKeyTwoPrim/com.sap.odata.test1.ETBaseTwoKeyTwoPrim"
-        + "/com.sap.odata.test1.ETTwoBaseTwoKeyTwoPrim")
+    testUri.runEx("ETBaseTwoKeyTwoPrim/olingo.odata.test1.ETBaseTwoKeyTwoPrim"
+        + "/olingo.odata.test1.ETTwoBaseTwoKeyTwoPrim")
         .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
 
-    testUri.runEx("ETBaseTwoKeyTwoPrim/com.sap.odata.test1.ETBaseTwoKeyTwoPrim(1)/com.sap.odata.test1.ETAllKey")
+    testUri.runEx("ETBaseTwoKeyTwoPrim/olingo.odata.test1.ETBaseTwoKeyTwoPrim(1)/olingo.odata.test1.ETAllKey")
         .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
 
-    testUri.runEx("ETBaseTwoKeyTwoPrim(1)/com.sap.odata.test1.ETBaseTwoKeyTwoPrim('1')/com.sap.odata.test1.ETAllKey")
+    testUri.runEx("ETBaseTwoKeyTwoPrim(1)/olingo.odata.test1.ETBaseTwoKeyTwoPrim('1')/olingo.odata.test1.ETAllKey")
         .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
 
-    testUri.runEx("ETBaseTwoKeyTwoPrim(1)/com.sap.odata.test1.ETBaseTwoKeyTwoPrim"
-        + "/com.sap.odata.test1.ETTwoBaseTwoKeyTwoPrim")
+    testUri.runEx("ETBaseTwoKeyTwoPrim(1)/olingo.odata.test1.ETBaseTwoKeyTwoPrim"
+        + "/olingo.odata.test1.ETTwoBaseTwoKeyTwoPrim")
         .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
 
-    testUri.runEx("ETBaseTwoKeyTwoPrim/com.sap.odata.test1.ETBaseTwoKeyTwoPrim"
-        + "/com.sap.odata.test1.ETTwoBaseTwoKeyTwoPrim(1)")
+    testUri.runEx("ETBaseTwoKeyTwoPrim/olingo.odata.test1.ETBaseTwoKeyTwoPrim"
+        + "/olingo.odata.test1.ETTwoBaseTwoKeyTwoPrim(1)")
         .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
 
-    testUri.runEx("ETBaseTwoKeyTwoPrim/com.sap.odata.test1.ETAllKey")
+    testUri.runEx("ETBaseTwoKeyTwoPrim/olingo.odata.test1.ETAllKey")
         .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim()")
@@ -999,14 +999,14 @@ public class TestFullResourcePath {
 
   @Test
   public void runEsNameCast() throws Exception {
-    testUri.run("ESTwoPrim/com.sap.odata.test1.ETBase")
+    testUri.run("ESTwoPrim/olingo.odata.test1.ETBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
         .isType(EntityTypeProvider.nameETTwoPrim, true)
         .isTypeFilterOnCollection(EntityTypeProvider.nameETBase);
 
-    testUri.run("ESTwoPrim/com.sap.odata.test1.ETBase(-32768)/com.sap.odata.test1.ETTwoBase")
+    testUri.run("ESTwoPrim/olingo.odata.test1.ETBase(-32768)/olingo.odata.test1.ETTwoBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
@@ -1015,7 +1015,7 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "-32768")
         .isTypeFilterOnEntry(EntityTypeProvider.nameETTwoBase);
 
-    testUri.run("ESTwoPrim/com.sap.odata.test1.ETTwoBase(-32768)")
+    testUri.run("ESTwoPrim/olingo.odata.test1.ETTwoBase(-32768)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
@@ -1036,7 +1036,7 @@ public class TestFullResourcePath {
   @Test
   public void runEsNamePpSpCast() throws Exception {
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -1047,7 +1047,7 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false);
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav"
         + "/PropertyComp/PropertyInt16")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -1115,16 +1115,16 @@ public class TestFullResourcePath {
 
   @Test
   public void runEsNameKeyCast() throws Exception {
-    // testUri.runEx("ESTwoPrim(1)/com.sap.odata.test1.ETBase(1)")
+    // testUri.runEx("ESTwoPrim(1)/olingo.odata.test1.ETBase(1)")
     //    .isExSemantic(UriParserSemanticException.MessageKeys.xxx);
 
-    // testUri.runEx("ESTwoPrim/com.sap.odata.test1.ETBase(1)/com.sap.odata.test1.ETTwoBase(1)")
+    // testUri.runEx("ESTwoPrim/olingo.odata.test1.ETBase(1)/olingo.odata.test1.ETTwoBase(1)")
     //     .isExSemantic(UriParserSemanticException.MessageKeys.xxx);
 
-    testUri.runEx("ESBase/com.sap.odata.test1.ETTwoPrim(1)")
+    testUri.runEx("ESBase/olingo.odata.test1.ETTwoPrim(1)")
         .isExSemantic(UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER);
 
-    testUri.run("ESTwoPrim(1)/com.sap.odata.test1.ETBase")
+    testUri.run("ESTwoPrim(1)/olingo.odata.test1.ETBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
@@ -1132,7 +1132,7 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isTypeFilterOnEntry(EntityTypeProvider.nameETBase);
 
-    testUri.run("ESTwoPrim(1)/com.sap.odata.test1.ETTwoBase")
+    testUri.run("ESTwoPrim(1)/olingo.odata.test1.ETTwoBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
@@ -1140,7 +1140,7 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isTypeFilterOnEntry(EntityTypeProvider.nameETTwoBase);
 
-    testUri.run("ESTwoPrim/com.sap.odata.test1.ETBase(1)")
+    testUri.run("ESTwoPrim/olingo.odata.test1.ETBase(1)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
@@ -1148,7 +1148,7 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isTypeFilterOnCollection(EntityTypeProvider.nameETBase);
 
-    testUri.run("ESTwoPrim/com.sap.odata.test1.ETTwoBase(1)")
+    testUri.run("ESTwoPrim/olingo.odata.test1.ETTwoBase(1)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
@@ -1156,7 +1156,7 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBase);
 
-    testUri.run("ESTwoPrim/com.sap.odata.test1.ETBase(1)/com.sap.odata.test1.ETTwoBase")
+    testUri.run("ESTwoPrim/olingo.odata.test1.ETBase(1)/olingo.odata.test1.ETTwoBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
@@ -1164,7 +1164,7 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isTypeFilterOnCollection(EntityTypeProvider.nameETBase);
 
-    testUri.run("ESTwoPrim/com.sap.odata.test1.ETTwoBase")
+    testUri.run("ESTwoPrim/olingo.odata.test1.ETTwoBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
@@ -1174,7 +1174,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runEsNameParaKeysCast() throws Exception {
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -1183,7 +1183,7 @@ public class TestFullResourcePath {
         .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav);
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=1,PropertyString='2')")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav(PropertyInt16=1,PropertyString='2')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -1252,7 +1252,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runEsNamePpCpCast() throws Exception {
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyComp")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav/PropertyComp")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -1264,7 +1264,7 @@ public class TestFullResourcePath {
         .isComplex("PropertyComp");
 
     testUri
-        .run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
+        .run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav"
             + "/PropertyComp/PropertyComp")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -1279,8 +1279,8 @@ public class TestFullResourcePath {
         .isComplex("PropertyComp");
 
     testUri
-        .run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
-            + "/PropertyCompTwoPrim/com.sap.odata.test1.CTBase")
+        .run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav"
+            + "/PropertyCompTwoPrim/olingo.odata.test1.CTBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -1295,8 +1295,8 @@ public class TestFullResourcePath {
         .isTypeFilter(ComplexTypeProvider.nameCTBase);
 
     testUri
-        .run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
-            + "/PropertyCompTwoPrim/com.sap.odata.test1.CTTwoBase")
+        .run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav"
+            + "/PropertyCompTwoPrim/olingo.odata.test1.CTTwoBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -1458,7 +1458,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runEsNamePpNpCast() throws Exception {
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav"
         + "/NavPropertyETKeyNavMany")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -1470,7 +1470,7 @@ public class TestFullResourcePath {
         .n()
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav"
         + "/NavPropertyETKeyNavMany(3)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -1483,8 +1483,8 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "3");
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
-        + "/NavPropertyETTwoKeyNavMany/com.sap.odata.test1.ETTwoBaseTwoKeyNav(PropertyInt16=3,PropertyString='4')")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav"
+        + "/NavPropertyETTwoKeyNavMany/olingo.odata.test1.ETTwoBaseTwoKeyNav(PropertyInt16=3,PropertyString='4')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -1499,8 +1499,8 @@ public class TestFullResourcePath {
         .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
 
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=2,PropertyString='3')"
-        + "/NavPropertyETTwoKeyNavMany/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=4,PropertyString='5')"
-        + "/com.sap.odata.test1.ETTwoBaseTwoKeyNav/NavPropertyETBaseTwoKeyNavMany")
+        + "/NavPropertyETTwoKeyNavMany/olingo.odata.test1.ETBaseTwoKeyNav(PropertyInt16=4,PropertyString='5')"
+        + "/olingo.odata.test1.ETTwoBaseTwoKeyNav/NavPropertyETBaseTwoKeyNavMany")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
@@ -1520,7 +1520,7 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETBaseTwoKeyNavMany", EntityTypeProvider.nameETBaseTwoKeyNav, true);
 
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=2,PropertyString='3')/"
-        + "NavPropertyETTwoKeyNavMany/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=4,PropertyString='5')/"
+        + "NavPropertyETTwoKeyNavMany/olingo.odata.test1.ETBaseTwoKeyNav(PropertyInt16=4,PropertyString='5')/"
         + "NavPropertyETKeyNavMany")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -1670,14 +1670,14 @@ public class TestFullResourcePath {
   @Test
   public void runFunctionImpBf() throws Exception {
 
-    testUri.run("FICRTString()/com.sap.odata.test1.BFCStringRTESTwoKeyNav()");
+    testUri.run("FICRTString()/olingo.odata.test1.BFCStringRTESTwoKeyNav()");
   }
 
   @Test
   public void runFunctionImpCastBf() throws Exception {
 
-    testUri.run("FICRTETTwoKeyNavParam(ParameterInt16=1)/com.sap.odata.test1.ETBaseTwoKeyNav"
-        + "/com.sap.odata.test1.BFCETBaseTwoKeyNavRTETTwoKeyNav()")
+    testUri.run("FICRTETTwoKeyNavParam(ParameterInt16=1)/olingo.odata.test1.ETBaseTwoKeyNav"
+        + "/olingo.odata.test1.BFCETBaseTwoKeyNavRTETTwoKeyNav()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isFunctionImport("FICRTETTwoKeyNavParam")
@@ -1689,8 +1689,8 @@ public class TestFullResourcePath {
         .isFunction("BFCETBaseTwoKeyNavRTETTwoKeyNav");
 
     testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=1)"
-        + "/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=2,PropertyString='3')"
-        + "/com.sap.odata.test1.BFCETBaseTwoKeyNavRTETTwoKeyNav()")
+        + "/olingo.odata.test1.ETBaseTwoKeyNav(PropertyInt16=2,PropertyString='3')"
+        + "/olingo.odata.test1.BFCETBaseTwoKeyNavRTETTwoKeyNav()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isFunctionImport("FICRTESTwoKeyNavParam")
@@ -1745,7 +1745,7 @@ public class TestFullResourcePath {
         .n()
         .isRef();
 
-    testUri.run("FICRTETTwoKeyNavParam(ParameterInt16=1)/com.sap.odata.test1.ETBaseTwoKeyNav")
+    testUri.run("FICRTETTwoKeyNavParam(ParameterInt16=1)/olingo.odata.test1.ETBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isFunctionImport("FICRTETTwoKeyNavParam")
@@ -1755,7 +1755,7 @@ public class TestFullResourcePath {
         .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testUri.run("FICRTETTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=2,PropertyString='3')"
-        + "/com.sap.odata.test1.ETBaseTwoKeyNav")
+        + "/olingo.odata.test1.ETBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isFunctionImport("FICRTETTwoKeyNavParam")
@@ -1767,7 +1767,7 @@ public class TestFullResourcePath {
         .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=1)"
-        + "/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=2,PropertyString='3')")
+        + "/olingo.odata.test1.ETBaseTwoKeyNav(PropertyInt16=2,PropertyString='3')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isFunctionImport("FICRTESTwoKeyNavParam")
@@ -1831,7 +1831,7 @@ public class TestFullResourcePath {
   @Test
   public void runFunctionImpEsCast() throws Exception {
 
-    testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=1)/com.sap.odata.test1.ETBaseTwoKeyNav")
+    testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=1)/olingo.odata.test1.ETBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isFunctionImport("FICRTESTwoKeyNavParam")
@@ -1840,7 +1840,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav);
 
-    testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=1)/com.sap.odata.test1.ETBaseTwoKeyNav/$count")
+    testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=1)/olingo.odata.test1.ETBaseTwoKeyNav/$count")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isFunctionImport("FICRTESTwoKeyNavParam")
@@ -1852,7 +1852,7 @@ public class TestFullResourcePath {
         .isCount();
 
     testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=1)"
-        + "/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=2,PropertyString='3')")
+        + "/olingo.odata.test1.ETBaseTwoKeyNav(PropertyInt16=2,PropertyString='3')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isFunctionImport("FICRTESTwoKeyNavParam")
@@ -1864,8 +1864,8 @@ public class TestFullResourcePath {
         .isKeyPredicate(1, "PropertyString", "'3'");
 
     testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=1)"
-        + "/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=2,PropertyString='3')"
-        + "/com.sap.odata.test1.ETTwoBaseTwoKeyNav")
+        + "/olingo.odata.test1.ETBaseTwoKeyNav(PropertyInt16=2,PropertyString='3')"
+        + "/olingo.odata.test1.ETTwoBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isFunctionImport("FICRTESTwoKeyNavParam")
@@ -1890,7 +1890,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runSingletonPpNpCast() throws Exception {
-    testUri.run("SINav/com.sap.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
+    testUri.run("SINav/olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
@@ -1899,7 +1899,7 @@ public class TestFullResourcePath {
         .n()
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
-    testUri.run("SINav/com.sap.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany(1)")
+    testUri.run("SINav/olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany(1)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
@@ -1913,7 +1913,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runSingletonPpCpCast() throws Exception {
-    testUri.run("SINav/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyComp")
+    testUri.run("SINav/olingo.odata.test1.ETBaseTwoKeyNav/PropertyComp")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
@@ -1922,7 +1922,7 @@ public class TestFullResourcePath {
         .n()
         .isComplex("PropertyComp");
 
-    testUri.run("SINav/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyComp/PropertyComp")
+    testUri.run("SINav/olingo.odata.test1.ETBaseTwoKeyNav/PropertyComp/PropertyComp")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
@@ -1933,7 +1933,7 @@ public class TestFullResourcePath {
         .n()
         .isComplex("PropertyComp");
 
-    testUri.run("SINav/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyCompTwoPrim/com.sap.odata.test1.CTBase")
+    testUri.run("SINav/olingo.odata.test1.ETBaseTwoKeyNav/PropertyCompTwoPrim/olingo.odata.test1.CTBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
@@ -1948,7 +1948,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runSingletonPpSpCast() throws Exception {
-    testUri.run("SINav/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyInt16")
+    testUri.run("SINav/olingo.odata.test1.ETBaseTwoKeyNav/PropertyInt16")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
@@ -1957,7 +1957,7 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
-    testUri.run("SINav/com.sap.odata.test1.ETBaseTwoKeyNav/CollPropertyString")
+    testUri.run("SINav/olingo.odata.test1.ETBaseTwoKeyNav/CollPropertyString")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
@@ -2345,7 +2345,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETKeyNav, true);
 
     testUri.run("ESTwoKeyNav?"
-        + "$expand=com.sap.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
+        + "$expand=olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
         .isKind(UriInfoKind.resource).goPath().first()
         .goExpand().first()
         .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
@@ -2356,7 +2356,7 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='Hugo')?"
-        + "$expand=com.sap.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
+        + "$expand=olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
         .isKind(UriInfoKind.resource).goPath().first()
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'Hugo'")
@@ -2369,7 +2369,7 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?"
-        + "$expand=com.sap.odata.test1.ETBaseTwoKeyNav/NavPropertyETTwoKeyNavMany")
+        + "$expand=olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETTwoKeyNavMany")
         .isKind(UriInfoKind.resource).goPath().first()
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
@@ -2381,8 +2381,8 @@ public class TestFullResourcePath {
         // .n()
         .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true);
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$expand=com.sap.odata.test1.ETBaseTwoKeyNav"
-        + "/NavPropertyETTwoKeyNavMany/com.sap.odata.test1.ETTwoBaseTwoKeyNav")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$expand=olingo.odata.test1.ETBaseTwoKeyNav"
+        + "/NavPropertyETTwoKeyNavMany/olingo.odata.test1.ETTwoBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath().first()
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
@@ -2395,7 +2395,7 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
         .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
 
-    testUri.run("ESTwoKeyNav?$expand=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyCompNav/NavPropertyETTwoKeyNavOne")
+    testUri.run("ESTwoKeyNav?$expand=olingo.odata.test1.ETBaseTwoKeyNav/PropertyCompNav/NavPropertyETTwoKeyNavOne")
         .isKind(UriInfoKind.resource).goPath().first()
         .goExpand().first()
         .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
@@ -2408,8 +2408,8 @@ public class TestFullResourcePath {
         .n()
         .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
-    testUri.run("ESTwoKeyNav?$expand=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyCompNav"
-        + "/com.sap.odata.test1.CTTwoBasePrimCompNav/NavPropertyETTwoKeyNavOne")
+    testUri.run("ESTwoKeyNav?$expand=olingo.odata.test1.ETBaseTwoKeyNav/PropertyCompNav"
+        + "/olingo.odata.test1.CTTwoBasePrimCompNav/NavPropertyETTwoKeyNavOne")
         .isKind(UriInfoKind.resource).goPath().first()
         .goExpand().first()
         .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
@@ -2437,8 +2437,8 @@ public class TestFullResourcePath {
         .isSkipText("2")
         .isTopText("1");
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$expand=com.sap.odata.test1.ETBaseTwoKeyNav"
-        + "/NavPropertyETTwoKeyNavMany/com.sap.odata.test1.ETTwoBaseTwoKeyNav($select=PropertyString)")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$expand=olingo.odata.test1.ETBaseTwoKeyNav"
+        + "/NavPropertyETTwoKeyNavMany/olingo.odata.test1.ETTwoBaseTwoKeyNav($select=PropertyString)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isKeyPredicate(0, "PropertyInt16", "1")
@@ -2474,7 +2474,7 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
         .isType(EntityTypeProvider.nameETKeyNav);
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$select=com.sap.odata.test1.ETBaseTwoKeyNav"
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$select=olingo.odata.test1.ETBaseTwoKeyNav"
         + "/PropertyInt16")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -2726,25 +2726,25 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .n().isCount();
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isEntitySet("ESTwoKeyNav")
         .n().isFunction("BFCESTwoKeyNavRTESTwoKeyNav");
 
-    testUri.run("ESAllPrim/com.sap.odata.test1.BAESAllPrimRTETAllPrim")
+    testUri.run("ESAllPrim/olingo.odata.test1.BAESAllPrimRTETAllPrim")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isEntitySet("ESAllPrim")
         .n().isAction("BAESAllPrimRTETAllPrim");
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isEntitySet("ESTwoKeyNav")
         .n().isFunction("BFCESTwoKeyNavRTESTwoKeyNav");
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isEntitySet("ESTwoKeyNav")
@@ -2785,19 +2785,19 @@ public class TestFullResourcePath {
         .n()
         .isValue();
 
-    testUri.run("ESAllPrim/com.sap.odata.test1.BAESAllPrimRTETAllPrim")
+    testUri.run("ESAllPrim/olingo.odata.test1.BAESAllPrimRTETAllPrim")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isEntitySet("ESAllPrim")
         .n().isAction("BAESAllPrimRTETAllPrim");
 
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isEntitySet("ESTwoKeyNav")
         .n().isFunction("BFCESTwoKeyNavRTESTwoKeyNav");
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isEntitySet("ESTwoKeyNav")
@@ -2806,7 +2806,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav);
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav/$ref")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav/$ref")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isEntitySet("ESTwoKeyNav")
@@ -2816,7 +2816,7 @@ public class TestFullResourcePath {
         .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n().isRef();
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav/$value")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav/$value")
         .goPath().first()
         .isEntitySet("ESTwoKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
@@ -2887,7 +2887,7 @@ public class TestFullResourcePath {
         .goUpFilterValidator()
         .root().right();
 
-    testFilter.runOnETTwoKeyNav("com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12")
+    testFilter.runOnETTwoKeyNav("olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12")
         .is("<<PropertyDate> eq <2013-11-12>>")
         .root().left()
         .isType(PropertyProvider.nameDate)
@@ -2900,7 +2900,7 @@ public class TestFullResourcePath {
         .root().right()
         .isLiteral("2013-11-12");
 
-    testFilter.runOnCTTwoPrim("com.sap.odata.test1.CTBase/AdditionalPropString eq 'SomeString'")
+    testFilter.runOnCTTwoPrim("olingo.odata.test1.CTBase/AdditionalPropString eq 'SomeString'")
         .is("<<AdditionalPropString> eq <'SomeString'>>")
         .root().left()
         .isType(PropertyProvider.nameString)
@@ -2914,16 +2914,16 @@ public class TestFullResourcePath {
         .isLiteral("'SomeString'");
 
     testFilter
-        .runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12")
-        .is("<<NavPropertyETTwoKeyNavOne/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate> eq <2013-11-12>>")
+        .runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12")
+        .is("<<NavPropertyETTwoKeyNavOne/olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate> eq <2013-11-12>>")
         .root().left()
         .isType(PropertyProvider.nameDate)
         .root().right()
         .isLiteral("2013-11-12");
 
     testFilter
-        .runOnETTwoKeyNav("PropertyCompTwoPrim/com.sap.odata.test1.CTTwoBase/AdditionalPropString eq 'SomeString'")
-        .is("<<PropertyCompTwoPrim/com.sap.odata.test1.CTTwoBase/AdditionalPropString> eq <'SomeString'>>")
+        .runOnETTwoKeyNav("PropertyCompTwoPrim/olingo.odata.test1.CTTwoBase/AdditionalPropString eq 'SomeString'")
+        .is("<<PropertyCompTwoPrim/olingo.odata.test1.CTTwoBase/AdditionalPropString> eq <'SomeString'>>")
         .root().left()
         .isType(PropertyProvider.nameString)
         .root().right()
@@ -3367,7 +3367,7 @@ public class TestFullResourcePath {
     testFilter.runOnETAllPrim("PropertyByte mod 0")
         .is("<<PropertyByte> mod <0>>");
 
-    testFilter.runOnETAllPrim("com.sap.odata.test1.UFCRTETTwoKeyNavParamCTTwoPrim(ParameterCTTwoPrim=@ParamAlias)")
+    testFilter.runOnETAllPrim("olingo.odata.test1.UFCRTETTwoKeyNavParamCTTwoPrim(ParameterCTTwoPrim=@ParamAlias)")
         .is("<UFCRTETTwoKeyNavParamCTTwoPrim>")
         .goPath()
         .first()
@@ -3375,7 +3375,7 @@ public class TestFullResourcePath {
         .isParameterAlias(0, "ParameterCTTwoPrim", "@ParamAlias");
 
     testFilter.runOnETTwoKeyNav("PropertyComp"
-        + "/com.sap.odata.test1.BFCCTPrimCompRTESTwoKeyNavParam"
+        + "/olingo.odata.test1.BFCCTPrimCompRTESTwoKeyNavParam"
         + "(ParameterString=PropertyComp/PropertyComp/PropertyString)(PropertyInt16=1,PropertyString='2')"
         + "/PropertyString eq 'SomeString'")
         .is("<<PropertyComp/BFCCTPrimCompRTESTwoKeyNavParam/PropertyString> eq <'SomeString'>>")
@@ -3397,7 +3397,7 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testFilter.runOnETTwoKeyNav("PropertyComp/com.sap.odata.test1.BFCCTPrimCompRTETTwoKeyNavParam"
+    testFilter.runOnETTwoKeyNav("PropertyComp/olingo.odata.test1.BFCCTPrimCompRTETTwoKeyNavParam"
         + "(ParameterString=null)/PropertyString eq 'SomeString'")
         .is("<<PropertyComp/BFCCTPrimCompRTETTwoKeyNavParam/PropertyString> eq <'SomeString'>>")
         .root().left().goPath()
@@ -3411,7 +3411,7 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavMany/com.sap.odata.test1.BFCESTwoKeyNavRTString()"
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavMany/olingo.odata.test1.BFCESTwoKeyNavRTString()"
         + " eq 'SomeString'")
         .is("<<NavPropertyETTwoKeyNavMany/BFCESTwoKeyNavRTString> eq <'SomeString'>>")
         .root().left().goPath()
@@ -3420,7 +3420,7 @@ public class TestFullResourcePath {
         .n()
         .isFunction("BFCESTwoKeyNavRTString");
 
-    testFilter.runOnETTwoKeyNav("$it/com.sap.odata.test1.BFESTwoKeyNavRTESTwoKeyNav()/PropertyString eq 'SomeString'")
+    testFilter.runOnETTwoKeyNav("$it/olingo.odata.test1.BFESTwoKeyNavRTESTwoKeyNav()/PropertyString eq 'SomeString'")
         .is("<<$it/BFESTwoKeyNavRTESTwoKeyNav/PropertyString> eq <'SomeString'>>")
         .root().left().goPath()
         .first()
@@ -3430,7 +3430,7 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testFilter.runOnETTwoKeyNav("com.sap.odata.test1.BFESTwoKeyNavRTESTwoKeyNav()/PropertyString eq 'SomeString'")
+    testFilter.runOnETTwoKeyNav("olingo.odata.test1.BFESTwoKeyNavRTESTwoKeyNav()/PropertyString eq 'SomeString'")
         .is("<<BFESTwoKeyNavRTESTwoKeyNav/PropertyString> eq <'SomeString'>>")
         .root().left().goPath()
         .first()
@@ -3438,7 +3438,7 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/com.sap.odata.test1.BFCETTwoKeyNavRTETTwoKeyNav()"
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/olingo.odata.test1.BFCETTwoKeyNavRTETTwoKeyNav()"
         + "/PropertyComp/PropertyComp/PropertyString eq 'Walldorf'")
         .is("<<NavPropertyETTwoKeyNavOne/BFCETTwoKeyNavRTETTwoKeyNav/PropertyComp/PropertyComp/PropertyString> "
             + "eq <'Walldorf'>>")
@@ -3454,11 +3454,11 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testFilter.runOnETTwoKeyNav("PropertyComp/com.sap.odata.test1.BFCCTPrimCompRTESTwoKeyNavParam"
+    testFilter.runOnETTwoKeyNav("PropertyComp/olingo.odata.test1.BFCCTPrimCompRTESTwoKeyNavParam"
         + "(ParameterString='1')"
-        + "/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=2,PropertyString='3')"
+        + "/olingo.odata.test1.ETBaseTwoKeyNav(PropertyInt16=2,PropertyString='3')"
         + "/PropertyString eq 'SomeString'")
-        .is("<<PropertyComp/BFCCTPrimCompRTESTwoKeyNavParam/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyString> "
+        .is("<<PropertyComp/BFCCTPrimCompRTESTwoKeyNavParam/olingo.odata.test1.ETBaseTwoKeyNav/PropertyString> "
             + "eq <'SomeString'>>")
         .root().left().goPath()
         .first()
@@ -3471,9 +3471,9 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testFilter.runOnETTwoKeyNavSingle("$it/com.sap.odata.test1.BFCETTwoKeyNavRTCTTwoPrim()/com.sap.odata.test1.CTBase"
+    testFilter.runOnETTwoKeyNavSingle("$it/olingo.odata.test1.BFCETTwoKeyNavRTCTTwoPrim()/olingo.odata.test1.CTBase"
         + "/PropertyString eq 'SomeString'")
-        .is("<<$it/BFCETTwoKeyNavRTCTTwoPrim/com.sap.odata.test1.CTBase/PropertyString> eq <'SomeString'>>")
+        .is("<<$it/BFCETTwoKeyNavRTCTTwoPrim/olingo.odata.test1.CTBase/PropertyString> eq <'SomeString'>>")
         .root().left().goPath()
         .first()
         .isIt()
@@ -3483,7 +3483,7 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testFilter.runOnETTwoKeyNav("com.sap.odata.test1.UFCRTETTwoKeyNavParam(ParameterInt16=1)/PropertyInt16 eq 2")
+    testFilter.runOnETTwoKeyNav("olingo.odata.test1.UFCRTETTwoKeyNavParam(ParameterInt16=1)/PropertyInt16 eq 2")
         .is("<<UFCRTETTwoKeyNavParam/PropertyInt16> eq <2>>")
         .root().left().goPath()
         .first()
@@ -3492,7 +3492,7 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
-    testFilter.runOnETTwoKeyNav("com.sap.odata.test1.UFCRTETTwoKeyNavParam(ParameterInt16=@Param1Alias)"
+    testFilter.runOnETTwoKeyNav("olingo.odata.test1.UFCRTETTwoKeyNavParam(ParameterInt16=@Param1Alias)"
         + "/PropertyInt16 eq 2")
         .root().left().goPath()
         .first()
@@ -3501,7 +3501,7 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
-    testFilter.runOnETTwoKeyNav("com.sap.odata.test1.UFCRTETTwoKeyNavParam(ParameterInt16=1)"
+    testFilter.runOnETTwoKeyNav("olingo.odata.test1.UFCRTETTwoKeyNavParam(ParameterInt16=1)"
         + "/PropertyComp/PropertyComp/PropertyString eq 'SomeString'")
         .root().left().goPath()
         .first()
@@ -3514,7 +3514,7 @@ public class TestFullResourcePath {
         .n()
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testFilter.runOnETTwoKeyNav("com.sap.odata.test1.UFCRTETTwoKeyNavParam(ParameterInt16=PropertyInt16)"
+    testFilter.runOnETTwoKeyNav("olingo.odata.test1.UFCRTETTwoKeyNavParam(ParameterInt16=PropertyInt16)"
         + "/PropertyComp/PropertyComp/PropertyString eq 'SomeString'")
         .root().left().goPath()
         .first()
@@ -4009,20 +4009,20 @@ public class TestFullResourcePath {
         .isKeyPredicate(1, "PropertyString", "'2'")
         .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
-    testFilter.runOnETKeyNav("cast(com.sap.odata.test1.ETBaseTwoKeyNav)")
-        .is("<cast(<com.sap.odata.test1.ETBaseTwoKeyNav>)>")
+    testFilter.runOnETKeyNav("cast(olingo.odata.test1.ETBaseTwoKeyNav)")
+        .is("<cast(<olingo.odata.test1.ETBaseTwoKeyNav>)>")
         .root()
         .isMethod(MethodKind.CAST, 1)
-        .isParameterText(0, "<com.sap.odata.test1.ETBaseTwoKeyNav>")
+        .isParameterText(0, "<olingo.odata.test1.ETBaseTwoKeyNav>")
         .goParameter(0)
         .isTypedLiteral(EntityTypeProvider.nameETBaseTwoKeyNav);
 
-    testFilter.runOnETKeyNav("cast(PropertyCompTwoPrim,com.sap.odata.test1.CTBase)")
-        .is("<cast(<PropertyCompTwoPrim>,<com.sap.odata.test1.CTBase>)>")
+    testFilter.runOnETKeyNav("cast(PropertyCompTwoPrim,olingo.odata.test1.CTBase)")
+        .is("<cast(<PropertyCompTwoPrim>,<olingo.odata.test1.CTBase>)>")
         .root()
         .isMethod(MethodKind.CAST, 2)
         .isParameterText(0, "<PropertyCompTwoPrim>")
-        .isParameterText(1, "<com.sap.odata.test1.CTBase>")
+        .isParameterText(1, "<olingo.odata.test1.CTBase>")
         .goParameter(0).goPath().first()
         .isComplex("PropertyCompTwoPrim").isType(ComplexTypeProvider.nameCTTwoPrim, false)
         .goUpFilterValidator()
@@ -4030,25 +4030,25 @@ public class TestFullResourcePath {
         .goParameter(1)
         .isTypedLiteral(ComplexTypeProvider.nameCTBase);
 
-    testFilter.runOnETKeyNav("cast($it,com.sap.odata.test1.CTBase)")
-        .is("<cast(<$it>,<com.sap.odata.test1.CTBase>)>")
+    testFilter.runOnETKeyNav("cast($it,olingo.odata.test1.CTBase)")
+        .is("<cast(<$it>,<olingo.odata.test1.CTBase>)>")
         .root()
         .isMethod(MethodKind.CAST, 2)
         .isParameterText(0, "<$it>")
-        .isParameterText(1, "<com.sap.odata.test1.CTBase>")
+        .isParameterText(1, "<olingo.odata.test1.CTBase>")
         .goParameter(0).goPath().first()
         .isIt().isType(EntityTypeProvider.nameETKeyNav, false)
         .goUpFilterValidator()
         .root()
         .goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTBase);
 
-    testFilter.runOnETKeyNav("cast($it,com.sap.odata.test1.CTBase) eq cast($it,com.sap.odata.test1.CTBase)"
+    testFilter.runOnETKeyNav("cast($it,olingo.odata.test1.CTBase) eq cast($it,olingo.odata.test1.CTBase)"
         )
-        .is("<<cast(<$it>,<com.sap.odata.test1.CTBase>)> eq <cast(<$it>,<com.sap.odata.test1.CTBase>)>>")
+        .is("<<cast(<$it>,<olingo.odata.test1.CTBase>)> eq <cast(<$it>,<olingo.odata.test1.CTBase>)>>")
         .root().left()
         .isMethod(MethodKind.CAST, 2)
         .isParameterText(0, "<$it>")
-        .isParameterText(1, "<com.sap.odata.test1.CTBase>")
+        .isParameterText(1, "<olingo.odata.test1.CTBase>")
         .goParameter(0).goPath().first()
         .isIt().isType(EntityTypeProvider.nameETKeyNav, false)
         .goUpFilterValidator()
@@ -4057,7 +4057,7 @@ public class TestFullResourcePath {
         .root().right()
         .isMethod(MethodKind.CAST, 2)
         .isParameterText(0, "<$it>")
-        .isParameterText(1, "<com.sap.odata.test1.CTBase>")
+        .isParameterText(1, "<olingo.odata.test1.CTBase>")
         .goParameter(0).goPath().first()
         .isIt().isType(EntityTypeProvider.nameETKeyNav, false)
         .goUpFilterValidator()
@@ -4123,25 +4123,25 @@ public class TestFullResourcePath {
         .goUpFilterValidator().root()
         .goParameter(1).isTypedLiteral(PropertyProvider.nameTimeOfDay);
 
-    testFilter.runOnETKeyNav("cast(PropertyCompAllPrim,com.sap.odata.test1.CTTwoPrim)")
-        .is("<cast(<PropertyCompAllPrim>,<com.sap.odata.test1.CTTwoPrim>)>")
+    testFilter.runOnETKeyNav("cast(PropertyCompAllPrim,olingo.odata.test1.CTTwoPrim)")
+        .is("<cast(<PropertyCompAllPrim>,<olingo.odata.test1.CTTwoPrim>)>")
         .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
         .first().isComplexProperty("PropertyCompAllPrim", ComplexTypeProvider.nameCTAllPrim, false)
         .goUpFilterValidator().root()
         .goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTTwoPrim);
 
-    // testFilter.runOnETKeyNav(" Xcast(PropertyCompTwoPrim,com.sap.odata.test1.CTAllPrim)");
+    // testFilter.runOnETKeyNav(" Xcast(PropertyCompTwoPrim,olingo.odata.test1.CTAllPrim)");
 
-    testFilter.runOnETKeyNav("cast(NavPropertyETKeyNavOne,com.sap.odata.test1.ETKeyPrimNav)")
-        .is("<cast(<NavPropertyETKeyNavOne>,<com.sap.odata.test1.ETKeyPrimNav>)>")
+    testFilter.runOnETKeyNav("cast(NavPropertyETKeyNavOne,olingo.odata.test1.ETKeyPrimNav)")
+        .is("<cast(<NavPropertyETKeyNavOne>,<olingo.odata.test1.ETKeyPrimNav>)>")
         .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
         .first().isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
         .goUpFilterValidator().root()
         .goParameter(1).isTypedLiteral(EntityTypeProvider.nameETKeyPrimNav);
 
-    testFilter.runOnETKeyNavEx("cast(NavPropertyETKeyPrimNavOne,com.sap.odata.test1.ETKeyNav)")
+    testFilter.runOnETKeyNavEx("cast(NavPropertyETKeyPrimNavOne,olingo.odata.test1.ETKeyNav)")
         .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETKeyNav("any()")
         .isMember().goPath().first().isUriPathInfoKind(UriResourceKind.lambdaAny);
@@ -4192,7 +4192,7 @@ public class TestFullResourcePath {
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
         .isType(PropertyProvider.nameString, false);
 
-    testFilter.runOnETKeyNav(" NavPropertyETTwoKeyNavOne/com.sap.odata.test1.BFCETTwoKeyNavRTESTwoKeyNav()"
+    testFilter.runOnETKeyNav(" NavPropertyETTwoKeyNavOne/olingo.odata.test1.BFCETTwoKeyNavRTESTwoKeyNav()"
         + "/any(d:d/PropertyComp/PropertyInt16 eq 6)")
         .is("<NavPropertyETTwoKeyNavOne/BFCETTwoKeyNavRTESTwoKeyNav/<ANY;<<d/PropertyComp/PropertyInt16> eq <6>>>>")
         .root().goPath()
@@ -4301,62 +4301,62 @@ public class TestFullResourcePath {
   @Test
   public void runIsOf() throws ExpressionVisitException, ODataApplicationException, UriParserException {
 
-    testFilter.runOnETKeyNav("isof(com.sap.odata.test1.ETTwoKeyNav)")
-        .is("<isof(<com.sap.odata.test1.ETTwoKeyNav>)>")
+    testFilter.runOnETKeyNav("isof(olingo.odata.test1.ETTwoKeyNav)")
+        .is("<isof(<olingo.odata.test1.ETTwoKeyNav>)>")
         .root()
         .isMethod(MethodKind.ISOF, 1)
         .goParameter(0).isTypedLiteral(EntityTypeProvider.nameETTwoKeyNav);
 
-    testFilter.runOnETKeyNav("isof(com.sap.odata.test1.ETBaseTwoKeyNav) eq true")
-        .is("<<isof(<com.sap.odata.test1.ETBaseTwoKeyNav>)> eq <true>>")
+    testFilter.runOnETKeyNav("isof(olingo.odata.test1.ETBaseTwoKeyNav) eq true")
+        .is("<<isof(<olingo.odata.test1.ETBaseTwoKeyNav>)> eq <true>>")
         .root().isBinary(BinaryOperatorKind.EQ)
         .left()
         .isMethod(MethodKind.ISOF, 1)
         .goParameter(0).isTypedLiteral(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testFilter
-        .runOnETKeyNav("isof(com.sap.odata.test1.ETBaseTwoKeyNav) eq true and PropertyComp/PropertyInt16 eq 1")
-        .is("<<<isof(<com.sap.odata.test1.ETBaseTwoKeyNav>)> eq <true>> and <<PropertyComp/PropertyInt16> eq <1>>>")
+        .runOnETKeyNav("isof(olingo.odata.test1.ETBaseTwoKeyNav) eq true and PropertyComp/PropertyInt16 eq 1")
+        .is("<<<isof(<olingo.odata.test1.ETBaseTwoKeyNav>)> eq <true>> and <<PropertyComp/PropertyInt16> eq <1>>>")
         .root().isBinary(BinaryOperatorKind.AND)
         .left().isBinary(BinaryOperatorKind.EQ)
         .left().isMethod(MethodKind.ISOF, 1)
         .goParameter(0).isTypedLiteral(EntityTypeProvider.nameETBaseTwoKeyNav);
 
-    testFilter.runOnETKeyNav("isof(NavPropertyETKeyNavOne, com.sap.odata.test1.ETKeyNav) eq true")
-        .is("<<isof(<NavPropertyETKeyNavOne>,<com.sap.odata.test1.ETKeyNav>)> eq <true>>")
+    testFilter.runOnETKeyNav("isof(NavPropertyETKeyNavOne, olingo.odata.test1.ETKeyNav) eq true")
+        .is("<<isof(<NavPropertyETKeyNavOne>,<olingo.odata.test1.ETKeyNav>)> eq <true>>")
         .root().isBinary(BinaryOperatorKind.EQ)
         .left().isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
         .goUpFilterValidator()
         .root().left().goParameter(1).isTypedLiteral(EntityTypeProvider.nameETKeyNav);
 
-    testFilter.runOnETKeyNav("isof(PropertyCompTwoPrim,com.sap.odata.test1.CTTwoPrim)")
-        .is("<isof(<PropertyCompTwoPrim>,<com.sap.odata.test1.CTTwoPrim>)>")
+    testFilter.runOnETKeyNav("isof(PropertyCompTwoPrim,olingo.odata.test1.CTTwoPrim)")
+        .is("<isof(<PropertyCompTwoPrim>,<olingo.odata.test1.CTTwoPrim>)>")
         .root().isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isComplex("PropertyCompTwoPrim").goUpFilterValidator()
         .root().goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTTwoPrim);
 
-    testFilter.runOnETKeyNav("isof(PropertyCompTwoPrim,com.sap.odata.test1.CTTwoBase)")
-        .is("<isof(<PropertyCompTwoPrim>,<com.sap.odata.test1.CTTwoBase>)>")
+    testFilter.runOnETKeyNav("isof(PropertyCompTwoPrim,olingo.odata.test1.CTTwoBase)")
+        .is("<isof(<PropertyCompTwoPrim>,<olingo.odata.test1.CTTwoBase>)>")
         .root().isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isComplex("PropertyCompTwoPrim").goUpFilterValidator()
         .root().goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTTwoBase);
 
-    testFilter.runOnETKeyNav("isof(PropertyCompTwoPrim,com.sap.odata.test1.CTTwoPrim) eq true")
-        .is("<<isof(<PropertyCompTwoPrim>,<com.sap.odata.test1.CTTwoPrim>)> eq <true>>")
+    testFilter.runOnETKeyNav("isof(PropertyCompTwoPrim,olingo.odata.test1.CTTwoPrim) eq true")
+        .is("<<isof(<PropertyCompTwoPrim>,<olingo.odata.test1.CTTwoPrim>)> eq <true>>")
         .root().left().isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isComplex("PropertyCompTwoPrim").goUpFilterValidator()
         .root().left().goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTTwoPrim);
 
-    testFilter.runOnETKeyNav("isof($it,com.sap.odata.test1.CTTwoPrim)")
-        .is("<isof(<$it>,<com.sap.odata.test1.CTTwoPrim>)>")
+    testFilter.runOnETKeyNav("isof($it,olingo.odata.test1.CTTwoPrim)")
+        .is("<isof(<$it>,<olingo.odata.test1.CTTwoPrim>)>")
         .root()
         .isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isIt().goUpFilterValidator()
         .root().goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTTwoPrim);
 
-    testFilter.runOnETKeyNav("isof($it,com.sap.odata.test1.CTTwoBase) eq false")
-        .is("<<isof(<$it>,<com.sap.odata.test1.CTTwoBase>)> eq <false>>")
+    testFilter.runOnETKeyNav("isof($it,olingo.odata.test1.CTTwoBase) eq false")
+        .is("<<isof(<$it>,<olingo.odata.test1.CTTwoBase>)> eq <false>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left()
         .isMethod(MethodKind.ISOF, 2)
@@ -4432,15 +4432,15 @@ public class TestFullResourcePath {
   @Test
   public void testHas() throws ExpressionVisitException, ODataApplicationException, UriParserException {
 
-    testFilter.runOnETTwoKeyNav("PropertyEnumString has com.sap.odata.test1.ENString'String1'")
-        .is("<<PropertyEnumString> has <com.sap.odata.test1.ENString<String1>>>")
+    testFilter.runOnETTwoKeyNav("PropertyEnumString has olingo.odata.test1.ENString'String1'")
+        .is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String1>>>")
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
-    testFilter.runOnETTwoKeyNav("PropertyCompEnum/PropertyEnumString has com.sap.odata.test1.ENString'String2'")
-        .is("<<PropertyCompEnum/PropertyEnumString> has <com.sap.odata.test1.ENString<String2>>>")
+    testFilter.runOnETTwoKeyNav("PropertyCompEnum/PropertyEnumString has olingo.odata.test1.ENString'String2'")
+        .is("<<PropertyCompEnum/PropertyEnumString> has <olingo.odata.test1.ENString<String2>>>")
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
         .first().isComplex("PropertyCompEnum")
@@ -4450,8 +4450,8 @@ public class TestFullResourcePath {
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String2"));
 
     testFilter.runOnETTwoKeyNav(
-        "PropertyCompEnum/PropertyEnumString has com.sap.odata.test1.ENString'String2' eq true")
-        .is("<<<PropertyCompEnum/PropertyEnumString> has <com.sap.odata.test1.ENString<String2>>> eq <true>>")
+        "PropertyCompEnum/PropertyEnumString has olingo.odata.test1.ENString'String2' eq true")
+        .is("<<<PropertyCompEnum/PropertyEnumString> has <olingo.odata.test1.ENString<String2>>> eq <true>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left()
         .isBinary(BinaryOperatorKind.HAS)
@@ -4461,8 +4461,8 @@ public class TestFullResourcePath {
         .goUpFilterValidator()
         .root().left().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String2"));
 
-    testFilter.runOnETTwoKeyNav("PropertyEnumString has com.sap.odata.test1.ENString'String3'")
-        .is("<<PropertyEnumString> has <com.sap.odata.test1.ENString<String3>>>")
+    testFilter.runOnETTwoKeyNav("PropertyEnumString has olingo.odata.test1.ENString'String3'")
+        .is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String3>>>")
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
         .first().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
@@ -4470,8 +4470,8 @@ public class TestFullResourcePath {
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String3"));
 
-    testFilter.runOnETTwoKeyNav("PropertyEnumString has com.sap.odata.test1.ENString'String,String3'")
-        .is("<<PropertyEnumString> has <com.sap.odata.test1.ENString<String,String3>>>")
+    testFilter.runOnETTwoKeyNav("PropertyEnumString has olingo.odata.test1.ENString'String,String3'")
+        .is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String,String3>>>")
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
         .first().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
@@ -4581,7 +4581,7 @@ public class TestFullResourcePath {
         .goParameter(0).isLiteral("'Walldorf'")
         .root().left().goParameter(1).isLiteral("'Wall'");
 
-    testFilter.runOnETAllPrim("com.sap.odata.test1.UFCRTCTTwoPrimParam(ParameterInt16=null,ParameterString=null)")
+    testFilter.runOnETAllPrim("olingo.odata.test1.UFCRTCTTwoPrimParam(ParameterInt16=null,ParameterString=null)")
         .goPath()
         .isFunction("UFCRTCTTwoPrimParam")
         .isParameter(0, "ParameterInt16", "null")
@@ -4696,22 +4696,22 @@ public class TestFullResourcePath {
         .goUpFilterValidator()
         .root().right().isLiteral("12:34:55.12345678901");
 
-    testFilter.runOnETTwoKeyNav("PropertyEnumString eq com.sap.odata.test1.ENString'String1'")
-        .is("<<PropertyEnumString> eq <com.sap.odata.test1.ENString<String1>>>")
+    testFilter.runOnETTwoKeyNav("PropertyEnumString eq olingo.odata.test1.ENString'String1'")
+        .is("<<PropertyEnumString> eq <olingo.odata.test1.ENString<String1>>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left().goPath().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
-    testFilter.runOnETTwoKeyNav("PropertyEnumString eq com.sap.odata.test1.ENString'String2'")
-        .is("<<PropertyEnumString> eq <com.sap.odata.test1.ENString<String2>>>")
+    testFilter.runOnETTwoKeyNav("PropertyEnumString eq olingo.odata.test1.ENString'String2'")
+        .is("<<PropertyEnumString> eq <olingo.odata.test1.ENString<String2>>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left().goPath().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String2"));
 
-    testFilter.runOnETTwoKeyNav("PropertyCompEnum/PropertyEnumString eq com.sap.odata.test1.ENString'String3'")
-        .is("<<PropertyCompEnum/PropertyEnumString> eq <com.sap.odata.test1.ENString<String3>>>")
+    testFilter.runOnETTwoKeyNav("PropertyCompEnum/PropertyEnumString eq olingo.odata.test1.ENString'String3'")
+        .is("<<PropertyCompEnum/PropertyEnumString> eq <olingo.odata.test1.ENString<String3>>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left().goPath()
         .first().isComplex("PropertyCompEnum")
@@ -4733,28 +4733,28 @@ public class TestFullResourcePath {
   @Test
   public void testOrderby() throws UriParserException, UnsupportedEncodingException {
 
-    testFilter.runOrderByOnETTwoKeyNav("com.sap.odata.test1.UFCRTETAllPrimTwoParam("
+    testFilter.runOrderByOnETTwoKeyNav("olingo.odata.test1.UFCRTETAllPrimTwoParam("
         + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString'")
         .isSortOrder(0, false)
         .goOrder(0).isBinary(BinaryOperatorKind.EQ).left().goPath()
         .first().isFunction("UFCRTETAllPrimTwoParam").goUpFilterValidator()
         .goOrder(0).right().isLiteral("'SomeString'");
 
-    testFilter.runOrderByOnETTwoKeyNav("com.sap.odata.test1.UFCRTETAllPrimTwoParam("
+    testFilter.runOrderByOnETTwoKeyNav("olingo.odata.test1.UFCRTETAllPrimTwoParam("
         + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString' asc")
         .isSortOrder(0, false)
         .goOrder(0).isBinary(BinaryOperatorKind.EQ).left().goPath()
         .first().isFunction("UFCRTETAllPrimTwoParam").goUpFilterValidator()
         .goOrder(0).right().isLiteral("'SomeString'");
 
-    testFilter.runOrderByOnETTwoKeyNav("com.sap.odata.test1.UFCRTETAllPrimTwoParam("
+    testFilter.runOrderByOnETTwoKeyNav("olingo.odata.test1.UFCRTETAllPrimTwoParam("
         + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString' desc")
         .isSortOrder(0, true)
         .goOrder(0).isBinary(BinaryOperatorKind.EQ).left().goPath()
         .first().isFunction("UFCRTETAllPrimTwoParam").goUpFilterValidator()
         .goOrder(0).right().isLiteral("'SomeString'");
 
-    testFilter.runOrderByOnETTwoKeyNav("com.sap.odata.test1.UFCRTETAllPrimTwoParam("
+    testFilter.runOrderByOnETTwoKeyNav("olingo.odata.test1.UFCRTETAllPrimTwoParam("
         + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString' desc"
         + ", PropertyString eq '1'")
         .isSortOrder(0, true)
@@ -5045,12 +5045,12 @@ public class TestFullResourcePath {
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("12:34:55.123456789012");
 
-    testFilter.runOrderByOnETTwoKeyNav("PropertyEnumString eq com.sap.odata.test1.ENString'String1'")
+    testFilter.runOrderByOnETTwoKeyNav("PropertyEnumString eq olingo.odata.test1.ENString'String1'")
         .isSortOrder(0, false)
         .goOrder(0).left().goPath().isComplex("PropertyEnumString").goUpFilterValidator()
         .goOrder(0).right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
-    testFilter.runOrderByOnETTwoKeyNav("PropertyEnumString eq com.sap.odata.test1.ENString'String1' desc")
+    testFilter.runOrderByOnETTwoKeyNav("PropertyEnumString eq olingo.odata.test1.ENString'String1' desc")
         .isSortOrder(0, true)
         .goOrder(0).left().goPath().isComplex("PropertyEnumString").goUpFilterValidator()
         .goOrder(0).right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
@@ -5104,47 +5104,47 @@ public class TestFullResourcePath {
 
   @Test
   public void testErrors() {
-    testUri.runEx("FICRTString(wrong1='ABC')/com.sap.odata.test1.BFCStringRTESTwoKeyNav()")
+    testUri.runEx("FICRTString(wrong1='ABC')/olingo.odata.test1.BFCStringRTESTwoKeyNav()")
         .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND);
-    testUri.runEx("FICRTString(wrong1='ABC', wrong2=1)/com.sap.odata.test1.BFCStringRTESTwoKeyNav()")
+    testUri.runEx("FICRTString(wrong1='ABC', wrong2=1)/olingo.odata.test1.BFCStringRTESTwoKeyNav()")
         .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND);
 
     // type filter for entity incompatible
-    testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBase")
+    testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBase")
         .isExSemantic(UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER);
 
     // type filter for entity double on entry
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')"
-        + "/com.sap.odata.test1.ETBaseTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav")
+        + "/olingo.odata.test1.ETBaseTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav")
         .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
     // type filter for entity double on collection
-    testUri.runEx("ESTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav")
+    testUri.runEx("ESTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav")
         .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
     // type filter for entity double on non key pred
-    testUri.runEx("SINav/com.sap.odata.test1.ETBaseTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav")
+    testUri.runEx("SINav/olingo.odata.test1.ETBaseTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav")
         .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
 
     // type filter for complex incompatible
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim"
-        + "/com.sap.odata.test1.CTCollAllPrim")
+        + "/olingo.odata.test1.CTCollAllPrim")
         .isExSemantic(UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER);
 
     // type filter for complex double on entry
     testUri.runEx("FICRTCTTwoPrimParam(ParameterInt16=1,ParameterString='2')"
-        + "/com.sap.odata.test1.CTBase/com.sap.odata.test1.CTBase")
+        + "/olingo.odata.test1.CTBase/olingo.odata.test1.CTBase")
         .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
 
     // type filter for complex double on collection
     testUri.runEx("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')"
-        + "/com.sap.odata.test1.CTBase/com.sap.odata.test1.CTBase")
+        + "/olingo.odata.test1.CTBase/olingo.odata.test1.CTBase")
         .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
 
     // type filter for complex double on non key pred
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim"
-        + "/com.sap.odata.test1.CTBase/com.sap.odata.test1.CTBase")
+        + "/olingo.odata.test1.CTBase/olingo.odata.test1.CTBase")
         .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
 
-    testUri.runEx("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav")
+    testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav")
         .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_PARAMETERS_EXPECTED);
 
     // $ref

@@ -32,137 +32,137 @@ public class FunctionProvider {
 
   // Bound Functions
   public static final FullQualifiedName nameBFCCollCTPrimCompRTESAllPrim =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCCollCTPrimCompRTESAllPrim");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCCollCTPrimCompRTESAllPrim");
 
   public static final FullQualifiedName nameBFCCollStringRTESTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCCollStringRTESTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCCollStringRTESTwoKeyNav");
 
   public static final FullQualifiedName nameBFCCTPrimCompRTESBaseTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCCTPrimCompRTESBaseTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCCTPrimCompRTESBaseTwoKeyNav");
 
   public static final FullQualifiedName nameBFCCTPrimCompRTESTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCCTPrimCompRTESTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCCTPrimCompRTESTwoKeyNav");
 
   public static final FullQualifiedName nameBFCCTPrimCompRTESTwoKeyNavParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCCTPrimCompRTESTwoKeyNavParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCCTPrimCompRTESTwoKeyNavParam");
 
   public static final FullQualifiedName nameBFCCTPrimCompRTETTwoKeyNavParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCCTPrimCompRTETTwoKeyNavParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCCTPrimCompRTETTwoKeyNavParam");
 
   public static final FullQualifiedName nameBFCESAllPrimRTCTAllPrim =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCESAllPrimRTCTAllPrim");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESAllPrimRTCTAllPrim");
 
   public static final FullQualifiedName nameBFCESBaseTwoKeyNavRTESBaseTwoKey =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCESBaseTwoKeyNavRTESBaseTwoKey");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESBaseTwoKeyNavRTESBaseTwoKey");
 
   public static final FullQualifiedName nameBFCESKeyNavRTETKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCESKeyNavRTETKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESKeyNavRTETKeyNav");
 
   public static final FullQualifiedName nameBFCESKeyNavRTETKeyNavParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCESKeyNavRTETKeyNavParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESKeyNavRTETKeyNavParam");
 
   public static final FullQualifiedName nameBFCESTwoKeyNavRTCollCTTwoPrim =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCESTwoKeyNavRTCollCTTwoPrim");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCollCTTwoPrim");
 
   public static final FullQualifiedName nameBFCESTwoKeyNavRTCollString =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCESTwoKeyNavRTCollString");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCollString");
 
   public static final FullQualifiedName nameBFCESTwoKeyNavRTCTTwoPrim =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCESTwoKeyNavRTCTTwoPrim");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCTTwoPrim");
 
   public static final FullQualifiedName nameBFCESTwoKeyNavRTESTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCESTwoKeyNavRTESTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTESTwoKeyNav");
 
   public static final FullQualifiedName nameBFCESTwoKeyNavRTString =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCESTwoKeyNavRTString");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTString");
 
   public static final FullQualifiedName nameBFCESTwoKeyNavRTStringParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCESTwoKeyNavRTStringParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTStringParam");
 
   public static final FullQualifiedName nameBFCESTwoKeyNavRTTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCESTwoKeyNavRTTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTTwoKeyNav");
 
   public static final FullQualifiedName nameBFCETBaseTwoKeyNavRTESBaseTwoKey =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCETBaseTwoKeyNavRTESBaseTwoKey");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCETBaseTwoKeyNavRTESBaseTwoKey");
 
   public static final FullQualifiedName nameBFCETBaseTwoKeyNavRTESTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCETBaseTwoKeyNavRTESTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCETBaseTwoKeyNavRTESTwoKeyNav");
 
   public static final FullQualifiedName nameBFCETBaseTwoKeyNavRTETTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCETBaseTwoKeyNavRTETTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCETBaseTwoKeyNavRTETTwoKeyNav");
 
   public static final FullQualifiedName nameBFCETKeyNavRTETKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCETKeyNavRTETKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCETKeyNavRTETKeyNav");
 
   public static final FullQualifiedName nameBFCETTwoKeyNavRTCTTwoPrim =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCETTwoKeyNavRTCTTwoPrim");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCETTwoKeyNavRTCTTwoPrim");
 
   public static final FullQualifiedName nameBFCETTwoKeyNavRTESTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCETTwoKeyNavRTESTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCETTwoKeyNavRTESTwoKeyNav");
 
   public static final FullQualifiedName nameBFCETTwoKeyNavRTETTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCETTwoKeyNavRTETTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCETTwoKeyNavRTETTwoKeyNav");
 
   public static final FullQualifiedName nameBFCSINavRTESTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCSINavRTESTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCSINavRTESTwoKeyNav");
 
   public static final FullQualifiedName nameBFCStringRTESTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFCStringRTESTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCStringRTESTwoKeyNav");
 
   public static final FullQualifiedName nameBFESTwoKeyNavRTESTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BFESTwoKeyNavRTESTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFESTwoKeyNavRTESTwoKeyNav");
 
   // Unbound Functions
   public static final FullQualifiedName nameUFCRTCollCTTwoPrim =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTCollCTTwoPrim");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCollCTTwoPrim");
   public static final FullQualifiedName nameUFCRTCollCTTwoPrimParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTCollCTTwoPrimParam");
-  public static final FullQualifiedName nameUFCRTCollString = new FullQualifiedName(SchemaProvider.nameSpace,
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCollCTTwoPrimParam");
+  public static final FullQualifiedName nameUFCRTCollString = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UFCRTCollString");
   public static final FullQualifiedName nameUFCRTCollStringTwoParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTCollStringTwoParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCollStringTwoParam");
   public static final FullQualifiedName nameUFCRTCTAllPrimTwoParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTCTAllPrimTwoParam");
-  public static final FullQualifiedName nameUFCRTCTTwoPrim = new FullQualifiedName(SchemaProvider.nameSpace,
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCTAllPrimTwoParam");
+  public static final FullQualifiedName nameUFCRTCTTwoPrim = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UFCRTCTTwoPrim");
   public static final FullQualifiedName nameUFCRTCTTwoPrimParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTCTTwoPrimParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCTTwoPrimParam");
   public static final FullQualifiedName nameUFCRTESMixPrimCollCompTwoParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTESMixPrimCollCompTwoParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTESMixPrimCollCompTwoParam");
   public static final FullQualifiedName nameUFCRTESTwoKeyNavParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTESTwoKeyNavParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTESTwoKeyNavParam");
   public static final FullQualifiedName nameUFCRTETAllPrimTwoParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTETAllPrimTwoParam");
-  public static final FullQualifiedName nameUFCRTETKeyNav = new FullQualifiedName(SchemaProvider.nameSpace,
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTETAllPrimTwoParam");
+  public static final FullQualifiedName nameUFCRTETKeyNav = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UFCRTETKeyNav");
-  public static final FullQualifiedName nameUFCRTETMedia = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameUFCRTETMedia = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UFCRTETMedia");
 
   public static final FullQualifiedName nameUFCRTETTwoKeyNavParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTETTwoKeyNavParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTETTwoKeyNavParam");
 
   public static final FullQualifiedName nameUFCRTETTwoKeyNavParamCTTwoPrim =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTETTwoKeyNavParamCTTwoPrim");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTETTwoKeyNavParamCTTwoPrim");
 
   public static final FullQualifiedName nameUFCRTString =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTString");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTString");
 
   public static final FullQualifiedName nameUFCRTStringTwoParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTStringTwoParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTStringTwoParam");
 
   public static final FullQualifiedName nameUFNRTESMixPrimCollCompTwoParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UFNRTESMixPrimCollCompTwoParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFNRTESMixPrimCollCompTwoParam");
   public static final FullQualifiedName nameUFNRTInt16 =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UFNRTInt16");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFNRTInt16");
 
-  public static final FullQualifiedName nameUFNRTCollCTNavFiveProp = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameUFNRTCollCTNavFiveProp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UFNRTCollCTNavFiveProp");
 
   public static final FullQualifiedName nameBFCESTwoKeyNavRTCTNavFiveProp = new FullQualifiedName(
-      SchemaProvider.nameSpace, "BFCESTwoKeyNavRTCTNavFiveProp");
+      SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCTNavFiveProp");
 
   public static final FullQualifiedName nameBFCESTwoKeyNavRTCollCTNavFiveProp = new FullQualifiedName(
-      SchemaProvider.nameSpace, "BFCESTwoKeyNavRTCollCTNavFiveProp");
+      SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCollCTNavFiveProp");
 
   public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
 

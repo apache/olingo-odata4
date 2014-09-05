@@ -33,7 +33,7 @@ public class SchemaProvider {
 
   private EdmTechProvider prov;
 
-  public static final String nameSpace = "com.sap.odata.test1";
+  public static final String NAMESPACE = "olingo.odata.test1";
 
   public SchemaProvider(final EdmTechProvider prov) {
     this.prov = prov;
@@ -42,7 +42,7 @@ public class SchemaProvider {
   public List<Schema> getSchemas() throws ODataException {
     List<Schema> schemas = new ArrayList<Schema>();
     Schema schema = new Schema();
-    schema.setNamespace("com.sap.odata.test1");
+    schema.setNamespace(NAMESPACE);
     schema.setAlias("Namespace1_Alias");
     schemas.add(schema);
     // EnumTypes

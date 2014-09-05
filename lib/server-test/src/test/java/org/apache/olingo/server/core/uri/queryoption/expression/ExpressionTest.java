@@ -107,7 +107,7 @@ public class ExpressionTest {
     expression.addValue("B");
     assertEquals("A", expression.getValues().get(0));
     assertEquals("B", expression.getValues().get(1));
-    assertEquals("<com.sap.odata.test1.ENString<A,B>>", expression.accept(new FilterTreeToText()));
+    assertEquals("<olingo.odata.test1.ENString<A,B>>", expression.accept(new FilterTreeToText()));
   }
 
   @Test
@@ -219,7 +219,7 @@ public class ExpressionTest {
     expression.setType(entityBaseType);
 
     assertEquals(entityBaseType, expression.getType());
-    assertEquals("<com.sap.odata.test1.ETBaseTwoKeyNav>", expression.accept(new FilterTreeToText()));
+    assertEquals("<olingo.odata.test1.ETBaseTwoKeyNav>", expression.accept(new FilterTreeToText()));
   }
 
   @Test

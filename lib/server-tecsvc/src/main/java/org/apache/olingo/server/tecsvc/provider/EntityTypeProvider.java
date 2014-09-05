@@ -30,48 +30,48 @@ import java.util.Arrays;
 
 public class EntityTypeProvider {
 
-  public static final FullQualifiedName nameETAllKey = new FullQualifiedName(SchemaProvider.nameSpace, "ETAllKey");
-  public static final FullQualifiedName nameETAllNullable = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameETAllKey = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETAllKey");
+  public static final FullQualifiedName nameETAllNullable = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETAllNullable");
-  public static final FullQualifiedName nameETAllPrim = new FullQualifiedName(SchemaProvider.nameSpace, "ETAllPrim");
-  public static final FullQualifiedName nameETBase = new FullQualifiedName(SchemaProvider.nameSpace, "ETBase");
-  public static final FullQualifiedName nameETBaseTwoKeyNav = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameETAllPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETAllPrim");
+  public static final FullQualifiedName nameETBase = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETBase");
+  public static final FullQualifiedName nameETBaseTwoKeyNav = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETBaseTwoKeyNav");
   public static final FullQualifiedName nameETBaseTwoKeyTwoPrim =
-      new FullQualifiedName(SchemaProvider.nameSpace, "ETBaseTwoKeyTwoPrim");
-  public static final FullQualifiedName nameETCollAllPrim = new FullQualifiedName(SchemaProvider.nameSpace,
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "ETBaseTwoKeyTwoPrim");
+  public static final FullQualifiedName nameETCollAllPrim = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETCollAllPrim");
-  public static final FullQualifiedName nameETCompAllPrim = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameETCompAllPrim = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETCompAllPrim");
-  public static final FullQualifiedName nameETCompCollAllPrim = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameETCompCollAllPrim = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETCompCollAllPrim");
-  public static final FullQualifiedName nameETCompCollComp = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameETCompCollComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETCompCollComp");
-  public static final FullQualifiedName nameETCompComp = new FullQualifiedName(SchemaProvider.nameSpace, "ETCompComp");
+  public static final FullQualifiedName nameETCompComp = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETCompComp");
   public static final FullQualifiedName nameETCompMixPrimCollComp =
-      new FullQualifiedName(SchemaProvider.nameSpace, "ETCompMixPrimCollComp");
-  public static final FullQualifiedName nameETFourKeyAlias = new FullQualifiedName(SchemaProvider.nameSpace,
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "ETCompMixPrimCollComp");
+  public static final FullQualifiedName nameETFourKeyAlias = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETFourKeyAlias");
-  public static final FullQualifiedName nameETKeyNav = new FullQualifiedName(SchemaProvider.nameSpace, "ETKeyNav");
-  public static final FullQualifiedName nameETKeyPrimNav = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameETKeyNav = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETKeyNav");
+  public static final FullQualifiedName nameETKeyPrimNav = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETKeyPrimNav");
-  public static final FullQualifiedName nameETKeyTwoKeyComp = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameETKeyTwoKeyComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETKeyTwoKeyComp");
-  public static final FullQualifiedName nameETMedia = new FullQualifiedName(SchemaProvider.nameSpace, "ETMedia");
-  public static final FullQualifiedName nameETMixPrimCollComp = new FullQualifiedName(SchemaProvider.nameSpace,
+  public static final FullQualifiedName nameETMedia = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETMedia");
+  public static final FullQualifiedName nameETMixPrimCollComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETMixPrimCollComp");
   public static final FullQualifiedName nameETServerSidePaging =
-      new FullQualifiedName(SchemaProvider.nameSpace, "ETServerSidePaging");
-  public static final FullQualifiedName nameETTwoBase = new FullQualifiedName(SchemaProvider.nameSpace, "ETTwoBase");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "ETServerSidePaging");
+  public static final FullQualifiedName nameETTwoBase = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETTwoBase");
   public static final FullQualifiedName nameETTwoBaseTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "ETTwoBaseTwoKeyNav");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "ETTwoBaseTwoKeyNav");
   public static final FullQualifiedName nameETTwoBaseTwoKeyTwoPrim =
-      new FullQualifiedName(SchemaProvider.nameSpace, "ETTwoBaseTwoKeyTwoPrim");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "ETTwoBaseTwoKeyTwoPrim");
   public static final FullQualifiedName nameETTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "ETTwoKeyNav");
-  public static final FullQualifiedName nameETTwoKeyTwoPrim = new FullQualifiedName(SchemaProvider.nameSpace,
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "ETTwoKeyNav");
+  public static final FullQualifiedName nameETTwoKeyTwoPrim = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETTwoKeyTwoPrim");
-  public static final FullQualifiedName nameETTwoPrim = new FullQualifiedName(SchemaProvider.nameSpace, "ETTwoPrim");
+  public static final FullQualifiedName nameETTwoPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETTwoPrim");
 
   public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
     if (entityTypeName.equals(nameETAllPrim)) {

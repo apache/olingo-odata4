@@ -28,7 +28,7 @@ import java.util.Arrays;
 
 public class EnumTypeProvider {
 
-  public static final FullQualifiedName nameENString = new FullQualifiedName(SchemaProvider.nameSpace, "ENString");
+  public static final FullQualifiedName nameENString = new FullQualifiedName(SchemaProvider.NAMESPACE, "ENString");
 
   public EnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
     if (enumTypeName.equals(nameENString)) {
