@@ -32,6 +32,7 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.xml.MetadataDocumentXmlSerializer;
 import org.slf4j.Logger;
@@ -79,15 +80,15 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
-  public InputStream entity(final EdmEntitySet edmEntitySet, final Entity entity, final ContextURL contextURL)
-      throws ODataSerializerException {
+  public InputStream entity(final EdmEntitySet edmEntitySet, final Entity entity, final ContextURL contextURL,
+      final ExpandItem options) throws ODataSerializerException {
     throw new ODataSerializerException("Entity serialization not implemented for XML format",
         ODataSerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
 
   @Override
   public InputStream entitySet(final EdmEntitySet edmEntitySet, final EntitySet entitySet,
-      final ContextURL contextURL) throws ODataSerializerException {
+      final ContextURL contextURL, final ExpandItem options) throws ODataSerializerException {
     throw new ODataSerializerException("Entityset serialization not implemented for XML format",
         ODataSerializerException.MessageKeys.NOT_IMPLEMENTED);
   }

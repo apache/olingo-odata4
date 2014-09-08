@@ -20,7 +20,10 @@ package org.apache.olingo.server.core.serializer.json;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ContextURL;
@@ -41,6 +44,10 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceProperty;
+import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
+import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.utils.ContextURLBuilder;
 import org.slf4j.Logger;
@@ -119,7 +126,7 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   @Override
   public InputStream entitySet(final EdmEntitySet edmEntitySet, final EntitySet entitySet,
-      final ContextURL contextURL) throws ODataSerializerException {
+      final ContextURL contextURL, final ExpandItem options) throws ODataSerializerException {
     CircleStreamBuffer buffer = new CircleStreamBuffer();
     try {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
@@ -138,7 +145,7 @@ public class ODataJsonSerializer implements ODataSerializer {
       json.writeFieldName(Constants.VALUE);
       json.writeStartArray();
       for (Entity entity : entitySet.getEntities()) {
-        writeEntity(edmEntitySet, entity, null, json);
+        writeEntity(edmEntitySet, entity, null, options, json);
       }
       json.writeEndArray();
       if (entitySet.getNext() != null) {
@@ -153,8 +160,8 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   @Override
-  public InputStream entity(final EdmEntitySet edmEntitySet, final Entity entity, final ContextURL contextURL)
-      throws ODataSerializerException {
+  public InputStream entity(final EdmEntitySet edmEntitySet, final Entity entity, final ContextURL contextURL,
+      final ExpandItem options) throws ODataSerializerException {
     if (format != ODataFormat.JSON_NO_METADATA && contextURL == null) {
       throw new ODataSerializerException("ContextURL null!",
           ODataSerializerException.MessageKeys.NO_CONTEXT_URL);
@@ -162,7 +169,7 @@ public class ODataJsonSerializer implements ODataSerializer {
     CircleStreamBuffer buffer = new CircleStreamBuffer();
     try {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
-      writeEntity(edmEntitySet, entity, contextURL, json);
+      writeEntity(edmEntitySet, entity, contextURL, options, json);
       json.close();
     } catch (final IOException e) {
       throw new ODataSerializerException("An I/O exception occurred.", e,
@@ -172,7 +179,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   protected void writeEntity(final EdmEntitySet entitySet, final Entity entity, final ContextURL contextURL,
-      final JsonGenerator json) throws IOException, ODataSerializerException {
+      final ExpandItem options, final JsonGenerator json) throws IOException, ODataSerializerException {
     final EdmEntityType entityType = entitySet.getEntityType();
     json.writeStartObject();
     if (format != ODataFormat.JSON_NO_METADATA) {
@@ -191,16 +198,71 @@ public class ODataJsonSerializer implements ODataSerializer {
         }
       }
     }
+    final boolean all = isAll(options);
+    final Set<String> selected = all ? null : getSelectedPropertyNames(options.getSelectOption().getSelectItems());
     for (final String propertyName : entityType.getPropertyNames()) {
-      final EdmProperty edmProperty = (EdmProperty) entityType.getProperty(propertyName);
-      final Property property = entity.getProperty(propertyName);
-      writeProperty(edmProperty, property, json);
+      if (all || selected.contains(propertyName)) {
+        final EdmProperty edmProperty = (EdmProperty) entityType.getProperty(propertyName);
+        final Property property = entity.getProperty(propertyName);
+        final Set<List<String>> selectedPaths = all || edmProperty.isPrimitive() ? null :
+            getSelectedPaths(options.getSelectOption().getSelectItems(), propertyName);
+        writeProperty(edmProperty, property, selectedPaths, json);
+      }
     }
     json.writeEndObject();
   }
 
-  protected void writeProperty(final EdmProperty edmProperty, final Property property, final JsonGenerator json)
-      throws IOException, ODataSerializerException {
+  private boolean isAll(final ExpandItem options) {
+    if (options == null || options.getSelectOption() == null
+        || options.getSelectOption().getSelectItems() == null
+        || options.getSelectOption().getSelectItems().isEmpty()) {
+      return true;
+    } else {
+      for (final SelectItem item : options.getSelectOption().getSelectItems()) {
+        if (item.isStar()) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
+  private Set<String> getSelectedPropertyNames(final List<SelectItem> selectItems) {
+    Set<String> selected = new HashSet<String>();
+    for (final SelectItem item : selectItems) {
+      final UriResource resource = item.getResourcePath().getUriResourceParts().get(0);
+      if (resource instanceof UriResourceProperty) {
+        selected.add(((UriResourceProperty) resource).getProperty().getName());
+      }
+    }
+    return selected;
+  }
+
+  private Set<List<String>> getSelectedPaths(final List<SelectItem> selectItems, final String propertyName) {
+    Set<List<String>> selectedPaths = new HashSet<List<String>>();
+    for (final SelectItem item : selectItems) {
+      final List<UriResource> parts = item.getResourcePath().getUriResourceParts();
+      final UriResource resource = parts.get(0);
+      if (resource instanceof UriResourceProperty
+          && propertyName.equals(((UriResourceProperty) resource).getProperty().getName())) {
+        if (parts.size() > 1) {
+          List<String> path = new ArrayList<String>();
+          for (final UriResource part : parts.subList(1, parts.size())) {
+            if (part instanceof UriResourceProperty) {
+              path.add(((UriResourceProperty) part).getProperty().getName());
+            }
+          }
+          selectedPaths.add(path);
+        } else {
+          return null;
+        }
+      }
+    }
+    return selectedPaths.isEmpty() ? null : selectedPaths;
+  }
+
+  protected void writeProperty(final EdmProperty edmProperty, final Property property,
+      final Set<List<String>> selectedPaths, final JsonGenerator json) throws IOException, ODataSerializerException {
     json.writeFieldName(edmProperty.getName());
     if (property == null || property.isNull()) {
       if (edmProperty.isNullable() == Boolean.FALSE) {
@@ -212,13 +274,13 @@ public class ODataJsonSerializer implements ODataSerializer {
     } else {
       try {
         if (edmProperty.isCollection()) {
-          writeCollection(edmProperty, property, json);
+          writeCollection(edmProperty, property, selectedPaths, json);
         } else if (edmProperty.isPrimitive()) {
           writePrimitive(edmProperty, property, json);
         } else if (property.isLinkedComplex()) {
-          writeComplexValue(edmProperty, property.asLinkedComplex().getValue(), json);
+          writeComplexValue(edmProperty, property.asLinkedComplex().getValue(), selectedPaths, json);
         } else if (property.isComplex()) {
-          writeComplexValue(edmProperty, property.asComplex(), json);
+          writeComplexValue(edmProperty, property.asComplex(), selectedPaths, json);
         } else {
           throw new ODataSerializerException("Property type not yet supported!",
               ODataSerializerException.MessageKeys.UNSUPPORTED_PROPERTY_TYPE, edmProperty.getName());
@@ -231,7 +293,8 @@ public class ODataJsonSerializer implements ODataSerializer {
     }
   }
 
-  private void writeCollection(EdmProperty edmProperty, Property property, JsonGenerator json)
+  private void writeCollection(final EdmProperty edmProperty, final Property property,
+      final Set<List<String>> selectedPaths, JsonGenerator json)
       throws IOException, EdmPrimitiveTypeException, ODataSerializerException {
     json.writeStartArray();
     for (Object value : property.asCollection()) {
@@ -246,10 +309,10 @@ public class ODataJsonSerializer implements ODataSerializer {
         json.writeString(value.toString());
         break;
       case COLLECTION_LINKED_COMPLEX:
-        writeComplexValue(edmProperty, ((LinkedComplexValue) value).getValue(), json);
+        writeComplexValue(edmProperty, ((LinkedComplexValue) value).getValue(), selectedPaths, json);
         break;
       case COLLECTION_COMPLEX:
-        writeComplexValue(edmProperty, property.asComplex(), json);
+        writeComplexValue(edmProperty, property.asComplex(), selectedPaths, json);
         break;
       default:
         throw new ODataSerializerException("Property type not yet supported!",
@@ -298,12 +361,17 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   private void writeComplexValue(final EdmProperty edmProperty, final List<Property> properties,
-      JsonGenerator json) throws IOException, EdmPrimitiveTypeException, ODataSerializerException {
+      final Set<List<String>> selectedPaths, JsonGenerator json)
+      throws IOException, EdmPrimitiveTypeException, ODataSerializerException {
     final EdmComplexType type = (EdmComplexType) edmProperty.getType();
     json.writeStartObject();
     for (final String propertyName : type.getPropertyNames()) {
       final Property property = findProperty(propertyName, properties);
-      writeProperty((EdmProperty) type.getProperty(propertyName), property, json);
+      if (selectedPaths == null || isSelected(selectedPaths, propertyName)) {
+        writeProperty((EdmProperty) type.getProperty(propertyName), property,
+            selectedPaths == null ? null : getReducedSelectedPaths(selectedPaths, propertyName),
+            json);
+      }
     }
     json.writeEndObject();
   }
@@ -315,5 +383,29 @@ public class ODataJsonSerializer implements ODataSerializer {
       }
     }
     return null;
+  }
+
+  private boolean isSelected(final Set<List<String>> selectedPaths, final String propertyName) {
+    for (final List<String> path : selectedPaths) {
+      if (propertyName.equals(path.get(0))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private Set<List<String>> getReducedSelectedPaths(final Set<List<String>> selectedPaths,
+      final String propertyName) {
+    Set<List<String>> reducedPaths = new HashSet<List<String>>();
+    for (final List<String> path : selectedPaths) {
+      if (path.size() > 1) {
+        if (propertyName.equals(path.get(0))) {
+          reducedPaths.add(path.subList(1, path.size()));
+        }
+      } else {
+        return null;
+      }
+    }
+    return reducedPaths.isEmpty() ? null : reducedPaths;
   }
 }

@@ -73,7 +73,7 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
         ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-        response.setContent(serializer.entitySet(edmEntitySet, entitySet, getContextUrl(edmEntitySet, false)));
+        response.setContent(serializer.entitySet(edmEntitySet, entitySet, getContextUrl(edmEntitySet, false), null));
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
         response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
       }
@@ -100,7 +100,7 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
         ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-        response.setContent(serializer.entity(edmEntitySet, entity, getContextUrl(edmEntitySet, true)));
+        response.setContent(serializer.entity(edmEntitySet, entity, getContextUrl(edmEntitySet, true), null));
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
         response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
       }

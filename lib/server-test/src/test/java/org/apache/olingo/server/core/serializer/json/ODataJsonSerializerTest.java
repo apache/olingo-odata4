@@ -20,7 +20,9 @@ package org.apache.olingo.server.core.serializer.json;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.data.ContextURL;
@@ -31,16 +33,25 @@ import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.uri.UriInfoResource;
+import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceProperty;
+import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
+import org.apache.olingo.server.api.uri.queryoption.SelectItem;
+import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class ODataJsonSerializerTest {
 
@@ -55,7 +66,8 @@ public class ODataJsonSerializerTest {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     InputStream result = serializer.entity(edmEntitySet, entity,
-        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build());
+        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(),
+        null);
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
         + "\"@odata.context\":\"$metadata#ESAllPrim/$entity\","
@@ -85,7 +97,7 @@ public class ODataJsonSerializerTest {
     Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     entity.getProperties().retainAll(Arrays.asList(entity.getProperties().get(0)));
     final String resultString = IOUtils.toString(serializer.entity(edmEntitySet, entity,
-        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build()));
+        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(), null));
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESAllPrim/$entity\","
         + "\"PropertyInt16\":32767,"
         + "\"PropertyString\":null,\"PropertyBoolean\":null,"
@@ -104,7 +116,7 @@ public class ODataJsonSerializerTest {
     Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     entity.getProperties().clear();
     serializer.entity(edmEntitySet, entity,
-        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build());
+        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(), null);
   }
 
   @Test
@@ -114,7 +126,7 @@ public class ODataJsonSerializerTest {
     entity.getProperties().get(0).setValue(ValueType.PRIMITIVE, false);
     try {
       serializer.entity(edmEntitySet, entity,
-          ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build());
+          ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(), null);
       Assert.fail("Expected exception not thrown!");
     } catch (final ODataSerializerException e) {
       Assert.assertEquals(ODataSerializerException.MessageKeys.WRONG_PROPERTY_VALUE, e.getMessageKey());
@@ -131,7 +143,7 @@ public class ODataJsonSerializerTest {
     entitySet.setCount(entitySet.getEntities().size());
     entitySet.setNext(URI.create("/next"));
     InputStream result = serializer.entitySet(edmEntitySet, entitySet,
-        ContextURL.Builder.create().entitySet(edmEntitySet).build());
+        ContextURL.Builder.create().entitySet(edmEntitySet).build(), null);
     final String resultString = IOUtils.toString(result);
 
     Assert.assertThat(resultString, CoreMatchers.startsWith("{"
@@ -154,7 +166,7 @@ public class ODataJsonSerializerTest {
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     InputStream result = serializer.entity(edmEntitySet, entity,
         ContextURL.Builder.create().serviceRoot(URI.create("http://host/service/"))
-            .entitySet(edmEntitySet).suffix(Suffix.ENTITY).build());
+            .entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(), null);
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
         + "\"@odata.context\":\"http://host/service/$metadata#ESCollAllPrim/$entity\","
@@ -187,7 +199,7 @@ public class ODataJsonSerializerTest {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompAllPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     InputStream result = serializer.entity(edmEntitySet, entity,
-        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build());
+        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(), null);
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
         + "\"@odata.context\":\"$metadata#ESCompAllPrim/$entity\","
@@ -218,7 +230,7 @@ public class ODataJsonSerializerTest {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     InputStream result = serializer.entity(edmEntitySet, entity,
-        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build());
+        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(), null);
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
         + "\"@odata.context\":\"$metadata#ESMixPrimCollComp/$entity\","
@@ -239,7 +251,7 @@ public class ODataJsonSerializerTest {
     Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     entity.getProperties().retainAll(Arrays.asList(entity.getProperties().get(0)));
     final String resultString = IOUtils.toString(serializer.entity(edmEntitySet, entity,
-        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build()));
+        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(), null));
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESMixPrimCollComp/$entity\","
         + "\"PropertyInt16\":32767,"
         + "\"CollPropertyString\":null,\"PropertyComp\":null,\"CollPropertyComp\":null}";
@@ -251,7 +263,7 @@ public class ODataJsonSerializerTest {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     InputStream result = new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA)
-        .entity(edmEntitySet, entity, null);
+        .entity(edmEntitySet, entity, null, null);
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"}";
     Assert.assertEquals(expectedResult, resultString);
@@ -262,7 +274,7 @@ public class ODataJsonSerializerTest {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
     final EntitySet entitySet = data.readAll(edmEntitySet);
     InputStream result = new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA)
-        .entitySet(edmEntitySet, entitySet, ContextURL.Builder.create().entitySet(edmEntitySet).build());
+        .entitySet(edmEntitySet, entitySet, ContextURL.Builder.create().entitySet(edmEntitySet).build(), null);
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{\"value\":["
         + "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"},"
@@ -278,7 +290,7 @@ public class ODataJsonSerializerTest {
     Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     entity.setMediaETag("theMediaETag");
     final String resultString = IOUtils.toString(serializer.entity(edmEntitySet, entity,
-        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build()));
+        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(), null));
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia/$entity\","
         + "\"@odata.mediaEtag\":\"theMediaETag\",\"@odata.mediaContentType\":\"image/png\","
         + "\"PropertyInt16\":1}";
@@ -290,12 +302,123 @@ public class ODataJsonSerializerTest {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMedia");
     final EntitySet entitySet = data.readAll(edmEntitySet);
     final String resultString = IOUtils.toString(serializer.entitySet(edmEntitySet, entitySet,
-        ContextURL.Builder.create().entitySet(edmEntitySet).build()));
+        ContextURL.Builder.create().entitySet(edmEntitySet).build(), null));
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia\",\"value\":["
         + "{\"@odata.mediaContentType\":\"image/png\",\"PropertyInt16\":1},"
         + "{\"@odata.mediaContentType\":\"image/bmp\",\"PropertyInt16\":2},"
         + "{\"@odata.mediaContentType\":\"image/jpeg\",\"PropertyInt16\":3},"
         + "{\"@odata.mediaContentType\":\"foo\",\"PropertyInt16\":4}]}";
     Assert.assertEquals(expectedResult, resultString);
+  }
+
+  @Test
+  public void select() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    final SelectItem selectItem1 = mockSelectItem(edmEntitySet, "PropertyDate");
+    final SelectItem selectItem2 = mockSelectItem(edmEntitySet, "PropertyBoolean");
+    final SelectOption select = mockSelectOption(Arrays.asList(selectItem1, selectItem2, selectItem2));
+    ExpandItem options = Mockito.mock(ExpandItem.class);
+    Mockito.when(options.getSelectOption()).thenReturn(select);
+    InputStream result =
+        new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA) // serializer
+            .entity(edmEntitySet, entity,
+                null, // ContextURL.Builder.create().entitySet(edmEntitySet).selectList("PropertyBoolean,PropertyDate")
+                      //     .suffix(Suffix.ENTITY).build(),
+                options);
+    final String resultString = IOUtils.toString(result);
+    final String expectedResult = "{"
+        // + "\"@odata.context\":\"$metadata#ESAllPrim(PropertyBoolean,PropertyDate)/$entity\","
+        + "\"PropertyBoolean\":true,\"PropertyDate\":\"2012-12-03\"}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+
+  @Test
+  public void selectAll() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    final SelectItem selectItem1 = mockSelectItem(edmEntitySet, "PropertyString");
+    SelectItem selectItem2 = Mockito.mock(SelectItem.class);
+    Mockito.when(selectItem2.isStar()).thenReturn(true);
+    final SelectOption select = mockSelectOption(Arrays.asList(selectItem1, selectItem2));
+    ExpandItem options = Mockito.mock(ExpandItem.class);
+    Mockito.when(options.getSelectOption()).thenReturn(select);
+    InputStream result = serializer.entity(edmEntitySet, entity,
+        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(),
+        options);
+    final String resultString = IOUtils.toString(result);
+    final String expectedResult = "{\"@odata.context\":\"$metadata#ESTwoPrim/$entity\","
+        + "\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+
+  @Test
+  public void selectComplex() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
+    final EntitySet entitySet = data.readAll(edmEntitySet);
+    final SelectOption select = mockSelectOption(Arrays.asList(
+        mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp", "PropertyString")));
+    ExpandItem options = Mockito.mock(ExpandItem.class);
+    Mockito.when(options.getSelectOption()).thenReturn(select);
+    InputStream result =
+        new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA) // serializer
+            .entitySet(edmEntitySet, entitySet,
+                null, // ContextURL.Builder.create().entitySet(edmEntitySet)
+                      //     .selectList("PropertyComp/PropertyComp/PropertyString").build(),
+                options);
+    final String resultString = IOUtils.toString(result);
+    Assert.assertEquals("{"
+        // + "\"@odata.context\":\"$metadata#ESCompComp(PropertyComp/PropertyComp/PropertyString)\","
+        + "\"value\":["
+        + "{\"PropertyComp\":{\"PropertyComp\":{\"PropertyString\":\"String 1\"}}},"
+        + "{\"PropertyComp\":{\"PropertyComp\":{\"PropertyString\":\"String 2\"}}}]}",
+        resultString);
+  }
+
+  @Test
+  public void selectComplexTwice() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
+    final EntitySet entitySet = data.readAll(edmEntitySet);
+    final SelectOption select = mockSelectOption(Arrays.asList(
+        mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp", "PropertyString"),
+        mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp")));
+    ExpandItem options = Mockito.mock(ExpandItem.class);
+    Mockito.when(options.getSelectOption()).thenReturn(select);
+    InputStream result =
+        new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA) // serializer
+            .entitySet(edmEntitySet, entitySet,
+                null, // ContextURL.Builder.create().entitySet(edmEntitySet)
+                      //     .selectList("PropertyComp/PropertyComp").build(),
+                options);
+    final String resultString = IOUtils.toString(result);
+    Assert.assertEquals("{"
+    //    + "\"@odata.context\":\"$metadata#ESCompComp(PropertyComp/PropertyComp)\","
+        + "\"value\":["
+        + "{\"PropertyComp\":{\"PropertyComp\":{\"PropertyInt16\":123,\"PropertyString\":\"String 1\"}}},"
+        + "{\"PropertyComp\":{\"PropertyComp\":{\"PropertyInt16\":987,\"PropertyString\":\"String 2\"}}}]}",
+        resultString);
+  }
+
+  private SelectItem mockSelectItem(final EdmEntitySet edmEntitySet, final String... names) {
+    EdmStructuredType type = edmEntitySet.getEntityType();
+    List<UriResource> elements = new ArrayList<UriResource>();
+    for (final String name : Arrays.asList(names)) {
+      UriResourceProperty element = Mockito.mock(UriResourceProperty.class);
+      final EdmProperty property = (EdmProperty) type.getProperty(name);
+      Mockito.when(element.getProperty()).thenReturn(property);
+      elements.add(element);
+      type = property.isPrimitive() ? null : (EdmStructuredType) property.getType();
+    }
+    UriInfoResource resource = Mockito.mock(UriInfoResource.class);
+    Mockito.when(resource.getUriResourceParts()).thenReturn(elements);
+    SelectItem selectItem = Mockito.mock(SelectItem.class);
+    Mockito.when(selectItem.getResourcePath()).thenReturn(resource);
+    return selectItem;
+  }
+
+  private SelectOption mockSelectOption(final List<SelectItem> selectItems) {
+    SelectOption select = Mockito.mock(SelectOption.class);
+    Mockito.when(select.getSelectItems()).thenReturn(selectItems);
+    return select;
   }
 }

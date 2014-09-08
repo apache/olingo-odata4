@@ -68,11 +68,20 @@ public class DataProviderTest {
 
   @Test
   public void esAllPrim() throws Exception {
-    EntitySet outSet = new DataProvider().readAll(esAllPrim);
+    final DataProvider data = new DataProvider();
+    EntitySet outSet = data.readAll(esAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
+
     Entity first = outSet.getEntities().get(0);
     Assert.assertEquals(16, first.getProperties().size());
+    Assert.assertEquals(2, first.getNavigationLinks().size());
+    final EntitySet target = first.getNavigationLink("NavPropertyETTwoPrimMany").getInlineEntitySet();
+    Assert.assertNotNull(target);
+    Assert.assertEquals(1, target.getEntities().size());
+    Assert.assertEquals(data.readAll(entityContainer.getEntitySet("ESTwoPrim")).getEntities().get(1),
+        target.getEntities().get(0));
+
     Assert.assertEquals(16, outSet.getEntities().get(1).getProperties().size());
     Assert.assertEquals(16, outSet.getEntities().get(2).getProperties().size());
   }
@@ -120,7 +129,7 @@ public class DataProviderTest {
     Assert.assertEquals(2, linkedComplexValue.getValue().size());
     Property lcProp = linkedComplexValue.getValue().get(0);
     Assert.assertFalse(lcProp.isCollection());
-    Assert.assertEquals(Integer.valueOf("123"), lcProp.getValue());
+    Assert.assertEquals(123, lcProp.getValue());
     //
     Assert.assertEquals(4, outSet.getEntities().get(1).getProperties().size());
     Assert.assertEquals(4, outSet.getEntities().get(2).getProperties().size());

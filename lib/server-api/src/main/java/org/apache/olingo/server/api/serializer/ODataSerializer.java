@@ -26,6 +26,7 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 
 public interface ODataSerializer {
 
@@ -35,10 +36,10 @@ public interface ODataSerializer {
 
   InputStream metadataDocument(Edm edm) throws ODataSerializerException;
 
-  InputStream entity(EdmEntitySet edmEntitySet, Entity entity, ContextURL contextURL)
+  InputStream entity(EdmEntitySet edmEntitySet, Entity entity, ContextURL contextURL, ExpandItem options)
       throws ODataSerializerException;
 
-  InputStream entitySet(EdmEntitySet edmEntitySet, EntitySet entitySet, ContextURL contextURL)
+  InputStream entitySet(EdmEntitySet edmEntitySet, EntitySet entitySet, ContextURL contextURL, ExpandItem options)
       throws ODataSerializerException;
 
   /**
