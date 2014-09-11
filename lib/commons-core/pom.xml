@@ -23,13 +23,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>olingo-commons-core</artifactId>
+  <artifactId>odata-commons-core</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
 
   <parent>
     <groupId>org.apache.olingo</groupId>
-    <artifactId>olingo-lib</artifactId>
+    <artifactId>odata-lib</artifactId>
     <version>4.0.0-beta-01-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
@@ -37,7 +37,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-commons-api</artifactId>
+      <artifactId>odata-commons-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -23,14 +23,14 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>olingo-client-samples</artifactId>
+  <artifactId>odata-client-samples</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
   <description>Olingo client customization samples.</description>
   
   <parent>
     <groupId>org.apache.olingo</groupId>
-    <artifactId>olingo-parent</artifactId>
+    <artifactId>odata-parent</artifactId>
     <version>4.0.0-beta-01-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
@@ -38,7 +38,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-client-proxy</artifactId>
+      <artifactId>odata-client-proxy</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

@@ -24,11 +24,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.olingo</groupId>
-  <artifactId>olingo-parent</artifactId>
+  <artifactId>odata-parent</artifactId>
   <version>4.0.0-beta-01-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>${project.artifactId}</name>
+  <name>Olingo-OData</name>
 
   <inceptionYear>2013</inceptionYear>
 
@@ -51,7 +51,7 @@
   <mailingLists>
     <mailingList>
       <name>Apache Olingo Developers Mailinglist</name>
-      <archive>http://mail-archives.apache.org/mod_mbox/olingo-dev/</archive>
+      <archive>http://mail-archives.apache.org/mod_mbox/odata-dev/</archive>
       <post>mailto:dev@olingo.apache.org</post>
       <subscribe>mailto:dev-subscribe@olingo.apache.org</subscribe>
     </mailingList>
@@ -291,7 +291,7 @@
 
   <build>
   
-    <finalName>${project.artifactId}-${project.version}</finalName>
+    <finalName>${name}-${project.version}</finalName>
 
     <pluginManagement>
       <plugins>

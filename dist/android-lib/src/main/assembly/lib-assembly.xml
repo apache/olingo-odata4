@@ -36,7 +36,7 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <scope>compile</scope>
             <includes>
-                <include>org.apache.olingo:olingo-client-android</include>
+                <include>org.apache.olingo:odata-client-android</include>
             </includes>
         </dependencySet>
     </dependencySets>

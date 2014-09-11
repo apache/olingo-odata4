@@ -42,7 +42,7 @@
     </dependency>
     
     <dependency>
-      <artifactId>olingo-client-proxy</artifactId>
+      <artifactId>odata-client-proxy</artifactId>
       <groupId>org.apache.olingo</groupId>
       <version>@project.version@</version>
     </dependency>

@@ -23,11 +23,11 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <scope>compile</scope>
             <includes>
-                <include>org.apache.olingo:olingo-commons-api</include>
-                <include>org.apache.olingo:olingo-commons-core</include>
-                <include>org.apache.olingo:olingo-client-api</include>
-                <include>org.apache.olingo:olingo-client-core</include>
-                <include>org.apache.olingo:olingo-client-proxy</include>
+                <include>org.apache.olingo:odata-commons-api</include>
+                <include>org.apache.olingo:odata-commons-core</include>
+                <include>org.apache.olingo:odata-client-api</include>
+                <include>org.apache.olingo:odata-client-core</include>
+                <include>org.apache.olingo:odata-client-proxy</include>
             </includes>
         </dependencySet>
     </dependencySets>

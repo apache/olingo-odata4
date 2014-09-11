@@ -30,7 +30,7 @@
   
   <parent>
     <groupId>org.apache.olingo</groupId>
-    <artifactId>olingo-ext</artifactId>
+    <artifactId>odata-ext</artifactId>
     <version>4.0.0-beta-01-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
@@ -43,7 +43,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-client-proxy</artifactId>
+      <artifactId>odata-client-proxy</artifactId>
       <version>${project.version}</version>
     </dependency>
     

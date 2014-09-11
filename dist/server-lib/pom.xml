@@ -23,21 +23,20 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.olingo</groupId>
-  <artifactId>olingo-dist-server-lib</artifactId>
+  <artifactId>odata-dist-server-lib</artifactId>
   <packaging>pom</packaging>
 
-  <name>${project.artifactId}</name>
+  <name>Olingo-OData-Server-for-Java</name>
 
   <parent>
     <groupId>org.apache.olingo</groupId>
-    <artifactId>olingo-dist</artifactId>
+    <artifactId>odata-dist</artifactId>
     <version>4.0.0-beta-01-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
   <build>
-
+    <finalName>${name}-${version}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -88,26 +87,26 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-commons-api</artifactId>
+      <artifactId>odata-commons-api</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-commons-core</artifactId>
+      <artifactId>odata-commons-core</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-server-api</artifactId>
+      <artifactId>odata-server-api</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-server-core</artifactId>
+      <artifactId>odata-server-core</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>

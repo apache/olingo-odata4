@@ -23,13 +23,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>olingo-client-android</artifactId>
+  <artifactId>odata-client-android</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
 
   <parent>
     <groupId>org.apache.olingo</groupId>
-    <artifactId>olingo-ext</artifactId>
+    <artifactId>odata-ext</artifactId>
     <version>4.0.0-beta-01-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
@@ -37,7 +37,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-client-proxy</artifactId>
+      <artifactId>odata-client-proxy</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -66,11 +66,11 @@
         <configuration>
           <artifactSet>
             <includes>
-              <include>org.apache.olingo:olingo-client-proxy</include>
-              <include>org.apache.olingo:olingo-client-core</include>
-              <include>org.apache.olingo:olingo-client-api</include>
-              <include>org.apache.olingo:olingo-commons-core</include>
-              <include>org.apache.olingo:olingo-commons-api</include>
+              <include>org.apache.olingo:odata-client-proxy</include>
+              <include>org.apache.olingo:odata-client-core</include>
+              <include>org.apache.olingo:odata-client-api</include>
+              <include>org.apache.olingo:odata-commons-core</include>
+              <include>org.apache.olingo:odata-commons-api</include>
               <include>org.apache.commons:commons-lang3</include>
               <include>org.slf4j:slf4j-api</include>
               <include>commons-io:commons-io</include>

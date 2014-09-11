@@ -24,13 +24,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.olingo</groupId>
-  <artifactId>olingo-lib</artifactId>
+  <artifactId>odata-lib</artifactId>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
 
   <parent>
     <groupId>org.apache.olingo</groupId>
-    <artifactId>olingo-parent</artifactId>
+    <artifactId>odata-parent</artifactId>
     <version>4.0.0-beta-01-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
