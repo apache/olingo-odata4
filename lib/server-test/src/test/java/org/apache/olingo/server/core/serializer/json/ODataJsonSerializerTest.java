@@ -31,19 +31,24 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerException;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
+import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
@@ -55,11 +60,11 @@ import org.mockito.Mockito;
 
 public class ODataJsonSerializerTest {
 
-  private final Edm edm = OData.newInstance().createEdm(new EdmTechProvider());
-  private final EdmEntityContainer entityContainer = edm.getEntityContainer(
+  private static final Edm edm = OData.newInstance().createEdm(new EdmTechProvider());
+  private static final EdmEntityContainer entityContainer = edm.getEntityContainer(
       new FullQualifiedName("olingo.odata.test1", "Container"));
   private final DataProvider data = new DataProvider();
-  private ODataSerializer serializer = new ODataJsonSerializer(ODataFormat.JSON);
+  private final ODataSerializer serializer = new ODataJsonSerializer(ODataFormat.JSON);
 
   @Test
   public void entitySimple() throws Exception {
@@ -399,18 +404,173 @@ public class ODataJsonSerializerTest {
         resultString);
   }
 
-  private SelectItem mockSelectItem(final EdmEntitySet edmEntitySet, final String... names) {
+  @Test
+  public void expand() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(3);
+    final ExpandOption expand = mockExpandOption(Arrays.asList(
+        mockExpandItem(edmEntitySet, "NavPropertyETAllPrimOne")));
+    ExpandItem options = Mockito.mock(ExpandItem.class);
+    Mockito.when(options.getExpandOption()).thenReturn(expand);
+    InputStream result = serializer.entity(edmEntitySet, entity,
+        ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(),
+        options);
+    final String resultString = IOUtils.toString(result);
+    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESTwoPrim/$entity\","
+        + "\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\","
+        + "\"NavPropertyETAllPrimOne\":{"
+        + "\"PropertyInt16\":32767,"
+        + "\"PropertyString\":\"First Resource - positive values\","
+        + "\"PropertyBoolean\":true,"
+        + "\"PropertyByte\":255,"
+        + "\"PropertySByte\":127,"
+        + "\"PropertyInt32\":2147483647,"
+        + "\"PropertyInt64\":9223372036854775807,"
+        + "\"PropertySingle\":1.79E20,"
+        + "\"PropertyDouble\":-1.79E19,"
+        + "\"PropertyDecimal\":34,"
+        + "\"PropertyBinary\":\"ASNFZ4mrze8=\","
+        + "\"PropertyDate\":\"2012-12-03\","
+        + "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\","
+        + "\"PropertyDuration\":\"PT6S\","
+        + "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\","
+        + "\"PropertyTimeOfDay\":\"03:26:05\"}}",
+        resultString);
+  }
+
+  @Test
+  public void expandSelect() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(3);
+    final SelectOption select = mockSelectOption(Arrays.asList(
+        mockSelectItem(entityContainer.getEntitySet("ESAllPrim"), "PropertyDate")));
+    ExpandItem expandItem = mockExpandItem(edmEntitySet, "NavPropertyETAllPrimOne");
+    Mockito.when(expandItem.getSelectOption()).thenReturn(select);
+    final ExpandOption expand = mockExpandOption(Arrays.asList(expandItem));
+    ExpandItem options = Mockito.mock(ExpandItem.class);
+    Mockito.when(options.getExpandOption()).thenReturn(expand);
+    InputStream result =
+        new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA) // serializer
+            .entity(edmEntitySet, entity,
+                null, // ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(),
+                options);
+    final String resultString = IOUtils.toString(result);
+    Assert.assertEquals("{"
+        // + "\"@odata.context\":\"$metadata#ESTwoPrim(NavPropertyETAllPrimOne(PropertyDate))/$entity\","
+        + "\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\","
+        + "\"NavPropertyETAllPrimOne\":{\"PropertyDate\":\"2012-12-03\"}}",
+        resultString);
+  }
+
+  @Test
+  public void expandAll() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    final ExpandItem expandItem = mockExpandItem(edmEntitySet, "NavPropertyETTwoPrimOne");
+    ExpandItem expandItemAll = Mockito.mock(ExpandItem.class);
+    Mockito.when(expandItemAll.isStar()).thenReturn(true);
+    final ExpandOption expand = mockExpandOption(Arrays.asList(expandItem, expandItem, expandItemAll));
+    final SelectOption select = mockSelectOption(Arrays.asList(mockSelectItem(edmEntitySet, "PropertySByte")));
+    ExpandItem options = Mockito.mock(ExpandItem.class);
+    Mockito.when(options.getExpandOption()).thenReturn(expand);
+    Mockito.when(options.getSelectOption()).thenReturn(select);
+    InputStream result =
+        new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA) // serializer
+            .entity(edmEntitySet, entity,
+                null, // ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(),
+                options);
+    final String resultString = IOUtils.toString(result);
+    Assert.assertEquals("{"
+        // + "\"@odata.context\":\"$metadata#ESAllPrim(PropertySByte)/$entity\","
+        + "\"PropertySByte\":127,"
+        + "\"NavPropertyETTwoPrimOne\":{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"},"
+        + "\"NavPropertyETTwoPrimMany\":[{\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\"}]}",
+        resultString);
+  }
+
+  @Test
+  public void expandNoData() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    ExpandItem expandItemAll = Mockito.mock(ExpandItem.class);
+    Mockito.when(expandItemAll.isStar()).thenReturn(true);
+    final ExpandOption expand = mockExpandOption(Arrays.asList(expandItemAll));
+    final SelectOption select = mockSelectOption(Arrays.asList(mockSelectItem(edmEntitySet, "PropertyTimeOfDay")));
+    ExpandItem options = Mockito.mock(ExpandItem.class);
+    Mockito.when(options.getExpandOption()).thenReturn(expand);
+    Mockito.when(options.getSelectOption()).thenReturn(select);
+    InputStream result =
+        new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA) // serializer
+            .entity(edmEntitySet, entity,
+                null, // ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(),
+                options);
+    final String resultString = IOUtils.toString(result);
+    Assert.assertEquals("{"
+        // + "\"@odata.context\":\"$metadata#ESAllPrim(PropertyTimeOfDay)/$entity\","
+        + "\"PropertyTimeOfDay\":\"23:49:14\","
+        + "\"NavPropertyETTwoPrimOne\":null,\"NavPropertyETTwoPrimMany\":[]}",
+        resultString);
+  }
+
+  @Test
+  public void expandTwoLevels() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
+    final EdmEntitySet innerEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    ExpandItem expandItemSecond = Mockito.mock(ExpandItem.class);
+    Mockito.when(expandItemSecond.isStar()).thenReturn(true);
+    final ExpandOption expandInner = mockExpandOption(Arrays.asList(expandItemSecond));
+    ExpandItem expandItemFirst = mockExpandItem(edmEntitySet, "NavPropertyETAllPrimMany");
+    Mockito.when(expandItemFirst.getExpandOption()).thenReturn(expandInner);
+    final SelectOption select = mockSelectOption(Arrays.asList(
+        mockSelectItem(innerEntitySet, "PropertyInt32")));
+    Mockito.when(expandItemFirst.getSelectOption()).thenReturn(select);
+    final ExpandOption expand = mockExpandOption(Arrays.asList(expandItemFirst));
+    ExpandItem options = Mockito.mock(ExpandItem.class);
+    Mockito.when(options.getExpandOption()).thenReturn(expand);
+    InputStream result =
+        new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA) // serializer
+            .entity(edmEntitySet, entity,
+                null, // ContextURL.Builder.create().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build(),
+                options);
+    final String resultString = IOUtils.toString(result);
+    Assert.assertEquals("{"
+        // + "\"@odata.context\":\"$metadata#ESTwoPrim(NavPropertyETAllPrimMany(PropertyInt32))/$entity\","
+        + "\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\","
+        + "\"NavPropertyETAllPrimMany\":["
+        + "{\"PropertyInt32\":-2147483648,\"NavPropertyETTwoPrimOne\":null,\"NavPropertyETTwoPrimMany\":[]},"
+        + "{\"PropertyInt32\":0,\"NavPropertyETTwoPrimOne\":null,"
+        + "\"NavPropertyETTwoPrimMany\":["
+        + "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"},"
+        + "{\"PropertyInt16\":-32766,\"PropertyString\":\"Test String3\"},"
+        + "{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"}]}]}",
+        resultString);
+  }
+
+  private UriInfoResource mockResource(final EdmEntitySet edmEntitySet, final String... names) {
     EdmStructuredType type = edmEntitySet.getEntityType();
     List<UriResource> elements = new ArrayList<UriResource>();
     for (final String name : Arrays.asList(names)) {
-      UriResourceProperty element = Mockito.mock(UriResourceProperty.class);
-      final EdmProperty property = (EdmProperty) type.getProperty(name);
-      Mockito.when(element.getProperty()).thenReturn(property);
-      elements.add(element);
-      type = property.isPrimitive() ? null : (EdmStructuredType) property.getType();
+      final EdmElement edmElement = type.getProperty(name);
+      if (edmElement.getType().getKind() == EdmTypeKind.ENTITY) {
+        UriResourceNavigation element = Mockito.mock(UriResourceNavigation.class);
+        Mockito.when(element.getProperty()).thenReturn((EdmNavigationProperty) edmElement);
+        elements.add(element);
+      } else {
+        final EdmProperty property = (EdmProperty) edmElement;
+        UriResourceProperty element = Mockito.mock(UriResourceProperty.class);
+        Mockito.when(element.getProperty()).thenReturn(property);
+        elements.add(element);
+        type = property.isPrimitive() ? null : (EdmStructuredType) property.getType();
+      }
     }
     UriInfoResource resource = Mockito.mock(UriInfoResource.class);
     Mockito.when(resource.getUriResourceParts()).thenReturn(elements);
+    return resource;
+  }
+
+  private SelectItem mockSelectItem(final EdmEntitySet edmEntitySet, final String... names) {
+    final UriInfoResource resource = mockResource(edmEntitySet, names);
     SelectItem selectItem = Mockito.mock(SelectItem.class);
     Mockito.when(selectItem.getResourcePath()).thenReturn(resource);
     return selectItem;
@@ -420,5 +580,18 @@ public class ODataJsonSerializerTest {
     SelectOption select = Mockito.mock(SelectOption.class);
     Mockito.when(select.getSelectItems()).thenReturn(selectItems);
     return select;
+  }
+
+  private ExpandItem mockExpandItem(final EdmEntitySet edmEntitySet, final String... names) {
+    final UriInfoResource resource = mockResource(edmEntitySet, names);
+    ExpandItem expandItem = Mockito.mock(ExpandItem.class);
+    Mockito.when(expandItem.getResourcePath()).thenReturn(resource);
+    return expandItem;
+  }
+
+  private ExpandOption mockExpandOption(final List<ExpandItem> expandItems) {
+    ExpandOption expand = Mockito.mock(ExpandOption.class);
+    Mockito.when(expand.getExpandItems()).thenReturn(expandItems);
+    return expand;
   }
 }
