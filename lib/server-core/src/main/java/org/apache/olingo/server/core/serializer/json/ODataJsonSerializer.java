@@ -45,7 +45,10 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
+import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
+import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.utils.ContextURLBuilder;
 import org.apache.olingo.server.core.serializer.utils.ExpandSelectHelper;
@@ -125,24 +128,27 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   @Override
   public InputStream entitySet(final EdmEntitySet edmEntitySet, final EntitySet entitySet,
-      final ContextURL contextURL, final ExpandItem options) throws ODataSerializerException {
+      final ODataSerializerOptions options) throws ODataSerializerException {
     CircleStreamBuffer buffer = new CircleStreamBuffer();
     try {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
       if (format != ODataFormat.JSON_NO_METADATA) {
-        if (contextURL == null) {
+        if (options == null || options.getContextURL() == null) {
           throw new ODataSerializerException("ContextURL null!",
               ODataSerializerException.MessageKeys.NO_CONTEXT_URL);
         } else {
-          json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
+          json.writeStringField(Constants.JSON_CONTEXT,
+              ContextURLBuilder.create(options.getContextURL()).toASCIIString());
         }
       }
-      if (entitySet.getCount() != null) {
+      if (options != null && options.getCount() != null && options.getCount().getValue()
+          && entitySet.getCount() != null) {
         json.writeNumberField(Constants.JSON_COUNT, entitySet.getCount());
       }
       json.writeFieldName(Constants.VALUE);
-      writeEntitySet(edmEntitySet.getEntityType(), entitySet, options, json);
+      writeEntitySet(edmEntitySet.getEntityType(), entitySet,
+          options == null ? null : options.getExpand(), options == null ? null : options.getSelect(), json);
       if (entitySet.getNext() != null) {
         json.writeStringField(Constants.JSON_NEXT_LINK, entitySet.getNext().toASCIIString());
       }
@@ -155,8 +161,9 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   @Override
-  public InputStream entity(final EdmEntitySet edmEntitySet, final Entity entity, final ContextURL contextURL,
-      final ExpandItem options) throws ODataSerializerException {
+  public InputStream entity(final EdmEntitySet edmEntitySet, final Entity entity,
+      final ODataSerializerOptions options) throws ODataSerializerException {
+    final ContextURL contextURL = options == null ? null : options.getContextURL();
     if (format != ODataFormat.JSON_NO_METADATA && contextURL == null) {
       throw new ODataSerializerException("ContextURL null!",
           ODataSerializerException.MessageKeys.NO_CONTEXT_URL);
@@ -164,7 +171,8 @@ public class ODataJsonSerializer implements ODataSerializer {
     CircleStreamBuffer buffer = new CircleStreamBuffer();
     try {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
-      writeEntity(edmEntitySet.getEntityType(), entity, contextURL, options, json);
+      writeEntity(edmEntitySet.getEntityType(), entity, contextURL,
+          options == null ? null : options.getExpand(), options == null ? null : options.getSelect(), json);
       json.close();
     } catch (final IOException e) {
       throw new ODataSerializerException("An I/O exception occurred.", e,
@@ -174,16 +182,18 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   protected void writeEntitySet(final EdmEntityType entityType, final EntitySet entitySet,
-      final ExpandItem options, final JsonGenerator json) throws IOException, ODataSerializerException {
+      final ExpandOption expand, final SelectOption select, final JsonGenerator json)
+      throws IOException, ODataSerializerException {
     json.writeStartArray();
     for (final Entity entity : entitySet.getEntities()) {
-      writeEntity(entityType, entity, null, options, json);
+      writeEntity(entityType, entity, null, expand, select, json);
     }
     json.writeEndArray();
   }
 
   protected void writeEntity(final EdmEntityType entityType, final Entity entity, final ContextURL contextURL,
-      final ExpandItem options, final JsonGenerator json) throws IOException, ODataSerializerException {
+      final ExpandOption expand, final SelectOption select, final JsonGenerator json)
+      throws IOException, ODataSerializerException {
     json.writeStartObject();
     if (format != ODataFormat.JSON_NO_METADATA) {
       if (contextURL != null) {
@@ -201,64 +211,68 @@ public class ODataJsonSerializer implements ODataSerializer {
         }
       }
     }
-    writeProperties(entityType, entity, options, json);
-    writeNavigationProperties(entityType, entity, options, json);
+    writeProperties(entityType, entity, select, json);
+    writeNavigationProperties(entityType, entity, expand, json);
     json.writeEndObject();
   }
 
-  protected void writeProperties(final EdmEntityType entityType, final Entity entity, final ExpandItem options,
-      final JsonGenerator json) throws IOException, ODataSerializerException {
-    final boolean all = ExpandSelectHelper.isAll(options);
+  protected void writeProperties(final EdmEntityType entityType, final Entity entity, final SelectOption select,
+      JsonGenerator json) throws IOException, ODataSerializerException {
+    final boolean all = ExpandSelectHelper.isAll(select);
     final Set<String> selected = all ? null :
-        ExpandSelectHelper.getSelectedPropertyNames(options.getSelectOption().getSelectItems());
+        ExpandSelectHelper.getSelectedPropertyNames(select.getSelectItems());
     for (final String propertyName : entityType.getPropertyNames()) {
       if (all || selected.contains(propertyName)) {
         final EdmProperty edmProperty = (EdmProperty) entityType.getProperty(propertyName);
         final Property property = entity.getProperty(propertyName);
         final Set<List<String>> selectedPaths = all || edmProperty.isPrimitive() ? null :
-            ExpandSelectHelper.getSelectedPaths(options.getSelectOption().getSelectItems(), propertyName);
+            ExpandSelectHelper.getSelectedPaths(select.getSelectItems(), propertyName);
         writeProperty(edmProperty, property, selectedPaths, json);
       }
     }
   }
 
   protected void writeNavigationProperties(final EdmEntityType entityType, final Entity entity,
-      final ExpandItem options, final JsonGenerator json) throws ODataSerializerException, IOException {
-    if (options != null && (options.isRef() || options.getLevelsOption() != null)) {
-      throw new ODataSerializerException("Expand options $ref and $levels are not supported.",
-          ODataSerializerException.MessageKeys.NOT_IMPLEMENTED);
-    }
-    if (ExpandSelectHelper.hasExpand(options)) {
-      final boolean expandAll = ExpandSelectHelper.isExpandAll(options);
+      final ExpandOption expand, final JsonGenerator json) throws ODataSerializerException, IOException {
+    if (ExpandSelectHelper.hasExpand(expand)) {
+      final boolean expandAll = ExpandSelectHelper.isExpandAll(expand);
       final Set<String> expanded = expandAll ? null :
-          ExpandSelectHelper.getExpandedPropertyNames(options.getExpandOption().getExpandItems());
+          ExpandSelectHelper.getExpandedPropertyNames(expand.getExpandItems());
       for (final String propertyName : entityType.getNavigationPropertyNames()) {
         if (expandAll || expanded.contains(propertyName)) {
           final EdmNavigationProperty property = entityType.getNavigationProperty(propertyName);
           final Link navigationLink = entity.getNavigationLink(property.getName());
           final ExpandItem innerOptions = expandAll ? null :
-              ExpandSelectHelper.getExpandItem(options.getExpandOption().getExpandItems(), propertyName);
-          writeExpandedNavigationProperty(property, navigationLink, innerOptions, json);
+              ExpandSelectHelper.getExpandItem(expand.getExpandItems(), propertyName);
+          if (innerOptions != null && (innerOptions.isRef() || innerOptions.getLevelsOption() != null)) {
+            throw new ODataSerializerException("Expand options $ref and $levels are not supported.",
+                ODataSerializerException.MessageKeys.NOT_IMPLEMENTED);
+          }
+          writeExpandedNavigationProperty(property, navigationLink,
+              innerOptions == null ? null : innerOptions.getExpandOption(),
+              innerOptions == null ? null : innerOptions.getSelectOption(),
+              json);
         }
       }
     }
   }
 
   protected void writeExpandedNavigationProperty(final EdmNavigationProperty property, final Link navigationLink,
-      final ExpandItem innerOptions, JsonGenerator json) throws IOException, ODataSerializerException {
+      final ExpandOption innerExpand, final SelectOption innerSelect, JsonGenerator json)
+      throws IOException, ODataSerializerException {
     json.writeFieldName(property.getName());
     if (property.isCollection()) {
       if (navigationLink == null || navigationLink.getInlineEntitySet() == null) {
         json.writeStartArray();
         json.writeEndArray();
       } else {
-        writeEntitySet(property.getType(), navigationLink.getInlineEntitySet(), innerOptions, json);
+        writeEntitySet(property.getType(), navigationLink.getInlineEntitySet(), innerExpand, innerSelect, json);
       }
     } else {
       if (navigationLink == null || navigationLink.getInlineEntity() == null) {
         json.writeNull();
       } else {
-        writeEntity(property.getType(), navigationLink.getInlineEntity(), null, innerOptions, json);
+        writeEntity(property.getType(), navigationLink.getInlineEntity(), null, innerExpand, innerSelect, json);
       }
     }
   }

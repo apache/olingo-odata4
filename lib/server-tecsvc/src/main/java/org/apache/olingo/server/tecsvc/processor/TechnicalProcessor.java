@@ -36,6 +36,7 @@ import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
+import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -73,7 +74,12 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
         ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-        response.setContent(serializer.entitySet(edmEntitySet, entitySet, getContextUrl(edmEntitySet, false), null));
+        response.setContent(serializer.entitySet(edmEntitySet, entitySet,
+            ODataSerializerOptions.with()
+                .contextURL(getContextUrl(edmEntitySet, false))
+                .count(uriInfo.getCountOption())
+                .expand(uriInfo.getExpandOption()).select(uriInfo.getSelectOption())
+                .build()));
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
         response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
       }
@@ -100,7 +106,13 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
         ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-        response.setContent(serializer.entity(edmEntitySet, entity, getContextUrl(edmEntitySet, true), null));
+        response.setContent(serializer.entity(edmEntitySet, entity,
+            ODataSerializerOptions.with()
+                .contextURL(getContextUrl(edmEntitySet, true))
+                .count(uriInfo.getCountOption())
+                .expand(uriInfo.getExpandOption())
+                .select(uriInfo.getSelectOption())
+                .build()));
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
         response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
       }
@@ -128,12 +140,10 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
   private boolean validateOptions(final UriInfoResource uriInfo) {
     return uriInfo.getCountOption() == null
         && uriInfo.getCustomQueryOptions().isEmpty()
-        && uriInfo.getExpandOption() == null
         && uriInfo.getFilterOption() == null
         && uriInfo.getIdOption() == null
         && uriInfo.getOrderByOption() == null
         && uriInfo.getSearchOption() == null
-        && uriInfo.getSelectOption() == null
         && uriInfo.getSkipOption() == null
         && uriInfo.getSkipTokenOption() == null
         && uriInfo.getTopOption() == null;
@@ -158,6 +168,6 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
   }
 
   private ContextURL getContextUrl(final EdmEntitySet entitySet, final boolean isSingleEntity) {
-    return ContextURL.Builder.create().entitySet(entitySet).suffix(isSingleEntity ? Suffix.ENTITY : null).build();
+    return ContextURL.with().entitySet(entitySet).suffix(isSingleEntity ? Suffix.ENTITY : null).build();
   }
 }

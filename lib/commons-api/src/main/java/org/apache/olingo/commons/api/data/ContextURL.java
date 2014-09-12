@@ -110,16 +110,13 @@ public class ContextURL {
     return suffix == Suffix.DELTA_DELETED_LINK;
   }
 
+  public static Builder with() {
+    return new Builder();
+  }
+
   public static final class Builder {
 
     private ContextURL contextURL = new ContextURL();
-
-    private Builder() {
-    }
-
-    public static final Builder create() {
-      return new Builder();
-    }
 
     public Builder serviceRoot(final URI serviceRoot) {
       contextURL.serviceRoot = serviceRoot;

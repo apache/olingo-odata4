@@ -28,17 +28,17 @@ import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
+import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
+import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 
 public abstract class ExpandSelectHelper {
 
-  public static boolean isAll(final ExpandItem options) {
-    if (options == null || options.getSelectOption() == null
-        || options.getSelectOption().getSelectItems() == null
-        || options.getSelectOption().getSelectItems().isEmpty()) {
+  public static boolean isAll(final SelectOption select) {
+    if (select == null || select.getSelectItems() == null || select.getSelectItems().isEmpty()) {
       return true;
     } else {
-      for (final SelectItem item : options.getSelectOption().getSelectItems()) {
+      for (final SelectItem item : select.getSelectItems()) {
         if (item.isStar()) {
           return true;
         }
@@ -81,13 +81,12 @@ public abstract class ExpandSelectHelper {
     return selectedPaths.isEmpty() ? null : selectedPaths;
   }
 
-  public static boolean hasExpand(final ExpandItem options) {
-    return options != null && options.getExpandOption() != null && options.getExpandOption().getExpandItems() != null
-        && !options.getExpandOption().getExpandItems().isEmpty();
+  public static boolean hasExpand(final ExpandOption expand) {
+    return expand != null && expand.getExpandItems() != null && !expand.getExpandItems().isEmpty();
   }
 
-  public static boolean isExpandAll(final ExpandItem options) {
-    for (final ExpandItem item : options.getExpandOption().getExpandItems()) {
+  public static boolean isExpandAll(final ExpandOption expand) {
+    for (final ExpandItem item : expand.getExpandItems()) {
       if (item.isStar()) {
         return true;
       }

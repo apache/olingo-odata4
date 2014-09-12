@@ -34,39 +34,39 @@ public class ContextURLParser {
       return null;
     }
 
-    final ContextURL.Builder builder = ContextURL.Builder.create();
+    final ContextURL.Builder contextUrl = ContextURL.with();
 
     String contextURLasString = contextURL.toASCIIString();
 
     boolean isEntity = false;
     if (contextURLasString.endsWith("/$entity") || contextURLasString.endsWith("/@Element")) {
       isEntity = true;
-      builder.suffix(Suffix.ENTITY);
+      contextUrl.suffix(Suffix.ENTITY);
       contextURLasString = contextURLasString.replace("/$entity", StringUtils.EMPTY).
               replace("/@Element", StringUtils.EMPTY);
     } else if (contextURLasString.endsWith("/$ref")) {
-      builder.suffix(Suffix.REFERENCE);
+      contextUrl.suffix(Suffix.REFERENCE);
       contextURLasString = contextURLasString.replace("/$ref", StringUtils.EMPTY);
     } else if (contextURLasString.endsWith("/$delta")) {
-      builder.suffix(Suffix.DELTA);
+      contextUrl.suffix(Suffix.DELTA);
       contextURLasString = contextURLasString.replace("/$delta", StringUtils.EMPTY);
     } else if (contextURLasString.endsWith("/$deletedEntity")) {
-      builder.suffix(Suffix.DELTA_DELETED_ENTITY);
+      contextUrl.suffix(Suffix.DELTA_DELETED_ENTITY);
       contextURLasString = contextURLasString.replace("/$deletedEntity", StringUtils.EMPTY);
     } else if (contextURLasString.endsWith("/$link")) {
-      builder.suffix(Suffix.DELTA_LINK);
+      contextUrl.suffix(Suffix.DELTA_LINK);
       contextURLasString = contextURLasString.replace("/$link", StringUtils.EMPTY);
     } else if (contextURLasString.endsWith("/$deletedLink")) {
-      builder.suffix(Suffix.DELTA_DELETED_LINK);
+      contextUrl.suffix(Suffix.DELTA_DELETED_LINK);
       contextURLasString = contextURLasString.replace("/$deletedLink", StringUtils.EMPTY);
     }
 
-    builder.serviceRoot(URI.create(StringUtils.substringBefore(contextURLasString, Constants.METADATA)));
+    contextUrl.serviceRoot(URI.create(StringUtils.substringBefore(contextURLasString, Constants.METADATA)));
 
     final String rest = StringUtils.substringAfter(contextURLasString, Constants.METADATA + "#");
 
     String firstToken;
-    String entitySetOrSingletonOrType = null;
+    String entitySetOrSingletonOrType;
     if (rest.startsWith("Collection(")) {
       firstToken = rest.substring(0, rest.indexOf(')') + 1);
       entitySetOrSingletonOrType = firstToken;
@@ -86,34 +86,33 @@ public class ContextURLParser {
         entitySetOrSingletonOrType = StringUtils.join(parts, '/');
         final int commaIdx = firstToken.indexOf(',');
         if (commaIdx != -1) {
-          builder.selectList(firstToken.substring(openParIdx + 1, firstToken.length() - 1));
+          contextUrl.selectList(firstToken.substring(openParIdx + 1, firstToken.length() - 1));
         }
       }
     }
-    builder.entitySetOrSingletonOrType(entitySetOrSingletonOrType);
+    contextUrl.entitySetOrSingletonOrType(entitySetOrSingletonOrType);
 
     final int slashIdx = entitySetOrSingletonOrType.lastIndexOf('/');
     if (slashIdx != -1 && entitySetOrSingletonOrType.substring(slashIdx + 1).indexOf('.') != -1) {
-      final String clone = entitySetOrSingletonOrType;
-      builder.entitySetOrSingletonOrType(clone.substring(0, slashIdx));
-      builder.derivedEntity(clone.substring(slashIdx + 1));
+      contextUrl.entitySetOrSingletonOrType(entitySetOrSingletonOrType.substring(0, slashIdx));
+      contextUrl.derivedEntity(entitySetOrSingletonOrType.substring(slashIdx + 1));
     }
 
     if (!firstToken.equals(rest)) {
       final String[] pathElems = StringUtils.substringAfter(rest, "/").split("/");
       if (pathElems.length > 0 && pathElems[0].length() > 0) {
         if (pathElems[0].indexOf('.') == -1) {
-          builder.navOrPropertyPath(pathElems[0]);
+          contextUrl.navOrPropertyPath(pathElems[0]);
         } else {
-          builder.derivedEntity(pathElems[0]);
+          contextUrl.derivedEntity(pathElems[0]);
         }
 
         if (pathElems.length > 1) {
-          builder.navOrPropertyPath(pathElems[1]);
+          contextUrl.navOrPropertyPath(pathElems[1]);
         }
       }
     }
 
-    return builder.build();
+    return contextUrl.build();
   }
 }
