@@ -20,9 +20,7 @@ package org.apache.olingo.server.core.serializer.json;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.data.ContextURL;
@@ -31,28 +29,20 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
-import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerException;
 import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
-import org.apache.olingo.server.api.uri.UriInfoResource;
-import org.apache.olingo.server.api.uri.UriResource;
-import org.apache.olingo.server.api.uri.UriResourceNavigation;
-import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
+import org.apache.olingo.server.core.serializer.ExpandSelectMock;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.hamcrest.CoreMatchers;
@@ -347,9 +337,10 @@ public class ODataJsonSerializerTest {
   public void select() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
-    final SelectItem selectItem1 = mockSelectItem(edmEntitySet, "PropertyDate");
-    final SelectItem selectItem2 = mockSelectItem(edmEntitySet, "PropertyBoolean");
-    final SelectOption select = mockSelectOption(Arrays.asList(selectItem1, selectItem2, selectItem2));
+    final SelectItem selectItem1 = ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyDate");
+    final SelectItem selectItem2 = ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyBoolean");
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        selectItem1, selectItem2, selectItem2));
     InputStream result = serializer
         .entity(edmEntitySet, entity,
             ODataSerializerOptions.with()
@@ -369,10 +360,10 @@ public class ODataJsonSerializerTest {
   public void selectAll() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
-    final SelectItem selectItem1 = mockSelectItem(edmEntitySet, "PropertyString");
+    final SelectItem selectItem1 = ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyString");
     SelectItem selectItem2 = Mockito.mock(SelectItem.class);
     Mockito.when(selectItem2.isStar()).thenReturn(true);
-    final SelectOption select = mockSelectOption(Arrays.asList(selectItem1, selectItem2));
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem1, selectItem2));
     InputStream result = serializer.entity(edmEntitySet, entity,
         ODataSerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
@@ -388,8 +379,8 @@ public class ODataJsonSerializerTest {
   public void selectComplex() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
     final EntitySet entitySet = data.readAll(edmEntitySet);
-    final SelectOption select = mockSelectOption(Arrays.asList(
-        mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp", "PropertyString")));
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp", "PropertyString")));
     InputStream result = serializer
         .entitySet(edmEntitySet, entitySet,
             ODataSerializerOptions.with()
@@ -411,9 +402,9 @@ public class ODataJsonSerializerTest {
   public void selectComplexTwice() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
     final EntitySet entitySet = data.readAll(edmEntitySet);
-    final SelectOption select = mockSelectOption(Arrays.asList(
-        mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp", "PropertyString"),
-        mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp")));
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp", "PropertyString"),
+        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp")));
     final String resultString = IOUtils.toString(serializer
         .entitySet(edmEntitySet, entitySet,
             ODataSerializerOptions.with()
@@ -434,8 +425,8 @@ public class ODataJsonSerializerTest {
   public void expand() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(3);
-    final ExpandOption expand = mockExpandOption(Arrays.asList(
-        mockExpandItem(edmEntitySet, "NavPropertyETAllPrimOne")));
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(
+        ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETAllPrimOne")));
     InputStream result = serializer.entity(edmEntitySet, entity,
         ODataSerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
@@ -468,11 +459,11 @@ public class ODataJsonSerializerTest {
   public void expandSelect() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(3);
-    final SelectOption select = mockSelectOption(Arrays.asList(
-        mockSelectItem(entityContainer.getEntitySet("ESAllPrim"), "PropertyDate")));
-    ExpandItem expandItem = mockExpandItem(edmEntitySet, "NavPropertyETAllPrimOne");
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        ExpandSelectMock.mockSelectItem(entityContainer.getEntitySet("ESAllPrim"), "PropertyDate")));
+    ExpandItem expandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETAllPrimOne");
     Mockito.when(expandItem.getSelectOption()).thenReturn(select);
-    final ExpandOption expand = mockExpandOption(Arrays.asList(expandItem));
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItem));
     final String resultString = IOUtils.toString(serializer
         .entity(edmEntitySet, entity,
             ODataSerializerOptions.with()
@@ -492,11 +483,13 @@ public class ODataJsonSerializerTest {
   public void expandAll() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
-    final ExpandItem expandItem = mockExpandItem(edmEntitySet, "NavPropertyETTwoPrimOne");
+    final ExpandItem expandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETTwoPrimOne");
     ExpandItem expandItemAll = Mockito.mock(ExpandItem.class);
     Mockito.when(expandItemAll.isStar()).thenReturn(true);
-    final ExpandOption expand = mockExpandOption(Arrays.asList(expandItem, expandItem, expandItemAll));
-    final SelectOption select = mockSelectOption(Arrays.asList(mockSelectItem(edmEntitySet, "PropertySByte")));
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(
+        expandItem, expandItem, expandItemAll));
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertySByte")));
     final String resultString = IOUtils.toString(serializer
         .entity(edmEntitySet, entity,
             ODataSerializerOptions.with()
@@ -520,8 +513,9 @@ public class ODataJsonSerializerTest {
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
     ExpandItem expandItemAll = Mockito.mock(ExpandItem.class);
     Mockito.when(expandItemAll.isStar()).thenReturn(true);
-    final ExpandOption expand = mockExpandOption(Arrays.asList(expandItemAll));
-    final SelectOption select = mockSelectOption(Arrays.asList(mockSelectItem(edmEntitySet, "PropertyTimeOfDay")));
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItemAll));
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyTimeOfDay")));
     final String resultString = IOUtils.toString(serializer
         .entity(edmEntitySet, entity,
             ODataSerializerOptions.with()
@@ -545,13 +539,13 @@ public class ODataJsonSerializerTest {
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
     ExpandItem expandItemSecond = Mockito.mock(ExpandItem.class);
     Mockito.when(expandItemSecond.isStar()).thenReturn(true);
-    final ExpandOption expandInner = mockExpandOption(Arrays.asList(expandItemSecond));
-    ExpandItem expandItemFirst = mockExpandItem(edmEntitySet, "NavPropertyETAllPrimMany");
+    final ExpandOption expandInner = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItemSecond));
+    ExpandItem expandItemFirst = ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETAllPrimMany");
     Mockito.when(expandItemFirst.getExpandOption()).thenReturn(expandInner);
-    final SelectOption select = mockSelectOption(Arrays.asList(
-        mockSelectItem(innerEntitySet, "PropertyInt32")));
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        ExpandSelectMock.mockSelectItem(innerEntitySet, "PropertyInt32")));
     Mockito.when(expandItemFirst.getSelectOption()).thenReturn(select);
-    final ExpandOption expand = mockExpandOption(Arrays.asList(expandItemFirst));
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItemFirst));
     final String resultString = IOUtils.toString(serializer
         .entity(edmEntitySet, entity,
             ODataSerializerOptions.with()
@@ -571,53 +565,5 @@ public class ODataJsonSerializerTest {
         + "{\"PropertyInt16\":-32766,\"PropertyString\":\"Test String3\"},"
         + "{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"}]}]}",
         resultString);
-  }
-
-  private static UriInfoResource mockResource(final EdmEntitySet edmEntitySet, final String... names) {
-    EdmStructuredType type = edmEntitySet.getEntityType();
-    List<UriResource> elements = new ArrayList<UriResource>();
-    for (final String name : Arrays.asList(names)) {
-      final EdmElement edmElement = type.getProperty(name);
-      if (edmElement.getType().getKind() == EdmTypeKind.ENTITY) {
-        UriResourceNavigation element = Mockito.mock(UriResourceNavigation.class);
-        Mockito.when(element.getProperty()).thenReturn((EdmNavigationProperty) edmElement);
-        elements.add(element);
-      } else {
-        final EdmProperty property = (EdmProperty) edmElement;
-        UriResourceProperty element = Mockito.mock(UriResourceProperty.class);
-        Mockito.when(element.getProperty()).thenReturn(property);
-        elements.add(element);
-        type = property.isPrimitive() ? null : (EdmStructuredType) property.getType();
-      }
-    }
-    UriInfoResource resource = Mockito.mock(UriInfoResource.class);
-    Mockito.when(resource.getUriResourceParts()).thenReturn(elements);
-    return resource;
-  }
-
-  public static SelectItem mockSelectItem(final EdmEntitySet edmEntitySet, final String... names) {
-    final UriInfoResource resource = mockResource(edmEntitySet, names);
-    SelectItem selectItem = Mockito.mock(SelectItem.class);
-    Mockito.when(selectItem.getResourcePath()).thenReturn(resource);
-    return selectItem;
-  }
-
-  public static SelectOption mockSelectOption(final List<SelectItem> selectItems) {
-    SelectOption select = Mockito.mock(SelectOption.class);
-    Mockito.when(select.getSelectItems()).thenReturn(selectItems);
-    return select;
-  }
-
-  public static ExpandItem mockExpandItem(final EdmEntitySet edmEntitySet, final String... names) {
-    final UriInfoResource resource = mockResource(edmEntitySet, names);
-    ExpandItem expandItem = Mockito.mock(ExpandItem.class);
-    Mockito.when(expandItem.getResourcePath()).thenReturn(resource);
-    return expandItem;
-  }
-
-  public static ExpandOption mockExpandOption(final List<ExpandItem> expandItems) {
-    ExpandOption expand = Mockito.mock(ExpandOption.class);
-    Mockito.when(expand.getExpandItems()).thenReturn(expandItems);
-    return expand;
   }
 }

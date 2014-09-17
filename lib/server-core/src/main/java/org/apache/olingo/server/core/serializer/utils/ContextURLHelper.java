@@ -47,8 +47,7 @@ public final class ContextURLHelper {
   public static String buildSelectList(final EdmEntityType entityType,
       final ExpandOption expand, final SelectOption select) throws ODataSerializerException {
     StringBuilder result = new StringBuilder();
-    boolean isSelected = select != null && select.getSelectItems() != null && !select.getSelectItems().isEmpty();
-    if(isSelected) {
+    if (ExpandSelectHelper.hasSelect(select)) {
       handleSelect(entityType, select, result);
     }
 
@@ -58,7 +57,7 @@ public final class ContextURLHelper {
     return result.length() == 0 ? null : result.toString();
   }
 
-  private static void handleSelect(EdmEntityType entityType, SelectOption select, StringBuilder result) {
+  private static void handleSelect(final EdmEntityType entityType, final SelectOption select, StringBuilder result) {
     if (ExpandSelectHelper.isAll(select)) {
       result.append('*');
     } else {
@@ -98,7 +97,7 @@ public final class ContextURLHelper {
     }
   }
 
-  private static void handleExpand(EdmEntityType entityType, ExpandOption expand, StringBuilder result)
+  private static void handleExpand(final EdmEntityType entityType, final ExpandOption expand, StringBuilder result)
       throws ODataSerializerException {
     final Set<String> expandedPropertyNames = ExpandSelectHelper.getExpandedPropertyNames(expand.getExpandItems());
     for (final String propertyName : entityType.getNavigationPropertyNames()) {
@@ -109,10 +108,12 @@ public final class ContextURLHelper {
             || ExpandSelectHelper.hasSelect(expandItem.getSelectOption())) {
           final String innerSelectList = buildSelectList(entityType.getNavigationProperty(propertyName).getType(),
               expandItem.getExpandOption(), expandItem.getSelectOption());
-          if (result.length() > 0) {
-            result.append(',');
+          if (innerSelectList != null) {
+            if (result.length() > 0) {
+              result.append(',');
+            }
+            result.append(Encoder.encode(propertyName)).append('(').append(innerSelectList).append(')');
           }
-          result.append(Encoder.encode(propertyName)).append('(').append(innerSelectList).append(')');
         }
       }
     }

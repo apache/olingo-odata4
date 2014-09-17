@@ -32,7 +32,7 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
-import org.apache.olingo.server.core.serializer.json.ODataJsonSerializerTest;
+import org.apache.olingo.server.core.serializer.ExpandSelectMock;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -46,9 +46,9 @@ public class ContextURLHelperTest {
   @Test
   public void buildSelect() throws Exception {
     final EdmEntitySet entitySet = entityContainer.getEntitySet("ESAllPrim");
-    final SelectItem selectItem1 = ODataJsonSerializerTest.mockSelectItem(entitySet, "PropertyString");
-    final SelectItem selectItem2 = ODataJsonSerializerTest.mockSelectItem(entitySet, "PropertyInt16");
-    final SelectOption select = ODataJsonSerializerTest.mockSelectOption(Arrays.asList(
+    final SelectItem selectItem1 = ExpandSelectMock.mockSelectItem(entitySet, "PropertyString");
+    final SelectItem selectItem2 = ExpandSelectMock.mockSelectItem(entitySet, "PropertyInt16");
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
         selectItem1, selectItem2, selectItem2));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
@@ -59,10 +59,10 @@ public class ContextURLHelperTest {
   @Test
   public void buildSelectAll() throws Exception {
     final EdmEntitySet entitySet = entityContainer.getEntitySet("ESAllPrim");
-    final SelectItem selectItem1 = ODataJsonSerializerTest.mockSelectItem(entitySet, "PropertyGuid");
+    final SelectItem selectItem1 = ExpandSelectMock.mockSelectItem(entitySet, "PropertyGuid");
     SelectItem selectItem2 = Mockito.mock(SelectItem.class);
     Mockito.when(selectItem2.isStar()).thenReturn(true);
-    final SelectOption select = ODataJsonSerializerTest.mockSelectOption(Arrays.asList(selectItem1, selectItem2));
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem1, selectItem2));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
     assertEquals("$metadata#ESAllPrim(*)", ContextURLBuilder.create(contextURL).toASCIIString());
@@ -71,14 +71,14 @@ public class ContextURLHelperTest {
   @Test
   public void buildSelectComplex() throws Exception {
     final EdmEntitySet entitySet = entityContainer.getEntitySet("ESCompMixPrimCollComp");
-    final SelectOption select = ODataJsonSerializerTest.mockSelectOption(Arrays.asList(
-        ODataJsonSerializerTest.mockSelectItem(entitySet,
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        ExpandSelectMock.mockSelectItem(entitySet,
             "PropertyMixedPrimCollComp", "PropertyComp", "PropertyString"),
-        ODataJsonSerializerTest.mockSelectItem(entitySet,
+        ExpandSelectMock.mockSelectItem(entitySet,
             "PropertyMixedPrimCollComp", "PropertyComp", "PropertyInt16"),
-        ODataJsonSerializerTest.mockSelectItem(entitySet, "PropertyMixedPrimCollComp", "CollPropertyString"),
-        ODataJsonSerializerTest.mockSelectItem(entitySet, "PropertyMixedPrimCollComp", "CollPropertyComp"),
-        ODataJsonSerializerTest.mockSelectItem(entitySet, "PropertyInt16")));
+        ExpandSelectMock.mockSelectItem(entitySet, "PropertyMixedPrimCollComp", "CollPropertyString"),
+        ExpandSelectMock.mockSelectItem(entitySet, "PropertyMixedPrimCollComp", "CollPropertyComp"),
+        ExpandSelectMock.mockSelectItem(entitySet, "PropertyInt16")));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
     assertEquals("$metadata#ESCompMixPrimCollComp("
@@ -95,7 +95,7 @@ public class ContextURLHelperTest {
     final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");
     ExpandItem expandItem = Mockito.mock(ExpandItem.class);
     Mockito.when(expandItem.isStar()).thenReturn(true);
-    final ExpandOption expand = ODataJsonSerializerTest.mockExpandOption(Arrays.asList(expandItem));
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, null)).build();
     assertEquals("$metadata#ESTwoPrim", ContextURLBuilder.create(contextURL).toASCIIString());
@@ -104,8 +104,8 @@ public class ContextURLHelperTest {
   @Test
   public void buildExpandNoSelect() throws Exception {
     final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");
-    final ExpandOption expand = ODataJsonSerializerTest.mockExpandOption(Arrays.asList(
-        ODataJsonSerializerTest.mockExpandItem(entitySet, "NavPropertyETAllPrimOne")));
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(
+        ExpandSelectMock.mockExpandItem(entitySet, "NavPropertyETAllPrimOne")));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, null)).build();
     assertEquals("$metadata#ESTwoPrim", ContextURLBuilder.create(contextURL).toASCIIString());
@@ -114,16 +114,16 @@ public class ContextURLHelperTest {
   @Test
   public void buildExpandSelect() throws Exception {
     final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");
-    final ExpandItem expandItem1 = ODataJsonSerializerTest.mockExpandItem(entitySet, "NavPropertyETAllPrimOne");
+    final ExpandItem expandItem1 = ExpandSelectMock.mockExpandItem(entitySet, "NavPropertyETAllPrimOne");
     final EdmEntitySet innerEntitySet = entityContainer.getEntitySet("ESAllPrim");
-    ExpandItem expandItem2 = ODataJsonSerializerTest.mockExpandItem(entitySet, "NavPropertyETAllPrimMany");
-    final SelectOption innerSelect = ODataJsonSerializerTest.mockSelectOption(Arrays.asList(
-        ODataJsonSerializerTest.mockSelectItem(innerEntitySet, "PropertyInt32")));
+    ExpandItem expandItem2 = ExpandSelectMock.mockExpandItem(entitySet, "NavPropertyETAllPrimMany");
+    final SelectOption innerSelect = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        ExpandSelectMock.mockSelectItem(innerEntitySet, "PropertyInt32")));
     Mockito.when(expandItem2.getSelectOption()).thenReturn(innerSelect);
-    final ExpandOption expand = ODataJsonSerializerTest.mockExpandOption(Arrays.asList(
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(
         expandItem1, expandItem2));
-    final SelectItem selectItem = ODataJsonSerializerTest.mockSelectItem(entitySet, "PropertyString");
-    final SelectOption select = ODataJsonSerializerTest.mockSelectOption(Arrays.asList(selectItem));
+    final SelectItem selectItem = ExpandSelectMock.mockSelectItem(entitySet, "PropertyString");
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, select)).build();
     assertEquals("$metadata#ESTwoPrim(PropertyString,NavPropertyETAllPrimMany(PropertyInt32))",
@@ -131,18 +131,46 @@ public class ContextURLHelperTest {
   }
 
   @Test
+  public void buildExpandTwoLevels() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");
+    final EdmEntitySet innerEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final ExpandOption innerExpand = ExpandSelectMock.mockExpandOption(Arrays.asList(
+        ExpandSelectMock.mockExpandItem(innerEntitySet, "NavPropertyETTwoPrimOne")));
+    ExpandItem expandItem = ExpandSelectMock.mockExpandItem(entitySet, "NavPropertyETAllPrimOne");
+    Mockito.when(expandItem.getExpandOption()).thenReturn(innerExpand);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItem));
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, null)).build();
+    assertEquals("$metadata#ESTwoPrim", ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+
+  @Test
+  public void buildExpandTwoLevelsInnerAll() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");
+    ExpandItem expandItemInner = Mockito.mock(ExpandItem.class);
+    Mockito.when(expandItemInner.isStar()).thenReturn(true);
+    final ExpandOption innerExpand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItemInner));
+    ExpandItem expandItem = ExpandSelectMock.mockExpandItem(entitySet, "NavPropertyETAllPrimOne");
+    Mockito.when(expandItem.getExpandOption()).thenReturn(innerExpand);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItem));
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, null)).build();
+    assertEquals("$metadata#ESTwoPrim", ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+
+  @Test
   public void buildExpandSelectTwoLevels() throws Exception {
     final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");
     final EdmEntitySet innerEntitySet = entityContainer.getEntitySet("ESAllPrim");
-    ExpandItem expandItemInner = ODataJsonSerializerTest.mockExpandItem(innerEntitySet, "NavPropertyETTwoPrimOne");
+    ExpandItem expandItemInner = ExpandSelectMock.mockExpandItem(innerEntitySet, "NavPropertyETTwoPrimOne");
     SelectItem innerSelectItem = Mockito.mock(SelectItem.class);
     Mockito.when(innerSelectItem.isStar()).thenReturn(true);
-    final SelectOption innerSelect = ODataJsonSerializerTest.mockSelectOption(Arrays.asList(innerSelectItem));
+    final SelectOption innerSelect = ExpandSelectMock.mockSelectOption(Arrays.asList(innerSelectItem));
     Mockito.when(expandItemInner.getSelectOption()).thenReturn(innerSelect);
-    final ExpandOption innerExpand = ODataJsonSerializerTest.mockExpandOption(Arrays.asList(expandItemInner));
-    ExpandItem expandItem = ODataJsonSerializerTest.mockExpandItem(entitySet, "NavPropertyETAllPrimOne");
+    final ExpandOption innerExpand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItemInner));
+    ExpandItem expandItem = ExpandSelectMock.mockExpandItem(entitySet, "NavPropertyETAllPrimOne");
     Mockito.when(expandItem.getExpandOption()).thenReturn(innerExpand);
-    final ExpandOption expand = ODataJsonSerializerTest.mockExpandOption(Arrays.asList(expandItem));
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, null)).build();
     assertEquals("$metadata#ESTwoPrim(NavPropertyETAllPrimOne(NavPropertyETTwoPrimOne(*)))",
