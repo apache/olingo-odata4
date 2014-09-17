@@ -34,16 +34,20 @@ import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 
 public abstract class ExpandSelectHelper {
 
+  public static boolean hasSelect(final SelectOption select) {
+    return select != null && select.getSelectItems() != null && !select.getSelectItems().isEmpty();
+  }
+
   public static boolean isAll(final SelectOption select) {
-    if (select == null || select.getSelectItems() == null || select.getSelectItems().isEmpty()) {
-      return true;
-    } else {
+    if (hasSelect(select)) {
       for (final SelectItem item : select.getSelectItems()) {
         if (item.isStar()) {
           return true;
         }
       }
       return false;
+    } else {
+      return true;
     }
   }
 
@@ -79,6 +83,31 @@ public abstract class ExpandSelectHelper {
       }
     }
     return selectedPaths.isEmpty() ? null : selectedPaths;
+  }
+
+
+  public static boolean isSelected(final Set<List<String>> selectedPaths, final String propertyName) {
+    for (final List<String> path : selectedPaths) {
+      if (propertyName.equals(path.get(0))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public static Set<List<String>> getReducedSelectedPaths(final Set<List<String>> selectedPaths,
+      final String propertyName) {
+    Set<List<String>> reducedPaths = new HashSet<List<String>>();
+    for (final List<String> path : selectedPaths) {
+      if (propertyName.equals(path.get(0))) {
+        if (path.size() > 1) {
+          reducedPaths.add(path.subList(1, path.size()));
+        } else {
+          return null;
+        }
+      }
+    }
+    return reducedPaths.isEmpty() ? null : reducedPaths;
   }
 
   public static boolean hasExpand(final ExpandOption expand) {

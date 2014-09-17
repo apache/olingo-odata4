@@ -20,7 +20,6 @@ package org.apache.olingo.server.core.serializer.json;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -51,6 +50,7 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.utils.ContextURLBuilder;
+import org.apache.olingo.server.core.serializer.utils.ContextURLHelper;
 import org.apache.olingo.server.core.serializer.utils.ExpandSelectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -382,9 +382,9 @@ public class ODataJsonSerializer implements ODataSerializer {
     json.writeStartObject();
     for (final String propertyName : type.getPropertyNames()) {
       final Property property = findProperty(propertyName, properties);
-      if (selectedPaths == null || isSelected(selectedPaths, propertyName)) {
+      if (selectedPaths == null || ExpandSelectHelper.isSelected(selectedPaths, propertyName)) {
         writeProperty((EdmProperty) type.getProperty(propertyName), property,
-            selectedPaths == null ? null : getReducedSelectedPaths(selectedPaths, propertyName),
+            selectedPaths == null ? null : ExpandSelectHelper.getReducedSelectedPaths(selectedPaths, propertyName),
             json);
       }
     }
@@ -400,27 +400,9 @@ public class ODataJsonSerializer implements ODataSerializer {
     return null;
   }
 
-  private static boolean isSelected(final Set<List<String>> selectedPaths, final String propertyName) {
-    for (final List<String> path : selectedPaths) {
-      if (propertyName.equals(path.get(0))) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private static Set<List<String>> getReducedSelectedPaths(final Set<List<String>> selectedPaths,
-      final String propertyName) {
-    Set<List<String>> reducedPaths = new HashSet<List<String>>();
-    for (final List<String> path : selectedPaths) {
-      if (path.size() > 1) {
-        if (propertyName.equals(path.get(0))) {
-          reducedPaths.add(path.subList(1, path.size()));
-        }
-      } else {
-        return null;
-      }
-    }
-    return reducedPaths.isEmpty() ? null : reducedPaths;
+  @Override
+  public String buildContextURLSelectList(final EdmEntitySet edmEntitySet,
+      final ExpandOption expand, final SelectOption select) throws ODataSerializerException {
+    return ContextURLHelper.buildSelectList(edmEntitySet.getEntityType(), expand, select);
   }
 }
