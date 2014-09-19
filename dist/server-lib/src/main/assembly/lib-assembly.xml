@@ -36,6 +36,7 @@
             <outputDirectory>/</outputDirectory>
             <excludes>
                 <exclude>LICENSE</exclude>
+                <exclude>NOTICE</exclude>
            </excludes>
         </fileSet>
         <fileSet>
