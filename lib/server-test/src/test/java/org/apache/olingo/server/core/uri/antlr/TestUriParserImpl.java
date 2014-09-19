@@ -576,6 +576,7 @@ public class TestUriParserImpl {
     testFilter.runESabc("a eq b or c      and e eq f").isCompr("<<<a> eq <b>> or < <c>         and <<e> eq <f>>>>");
     testFilter.runESabc("a eq b or c eq d and e     ").isCompr("<<<a> eq <b>> or <<<c> eq <d>> and  <e>      >>");
     testFilter.runESabc("a eq b or c eq d and e eq f").isCompr("<<<a> eq <b>> or <<<c> eq <d>> and <<e> eq <f>>>>");
+    testFilter.runESabc("not a").isCompr("<not <a>>");
   }
 
   @Test
@@ -1052,6 +1053,12 @@ public class TestUriParserImpl {
     testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')/olingo.odata.test1.CTBase");
   }
 
+  @Test
+  public void testAlias() throws Exception {
+    testUri.run("ESAllPrim?$filter=PropertyInt16 eq @p1&@p1=1)")
+        .goFilter().is("<<PropertyInt16> eq <@p1>>");
+  }  
+  
   @Test
   public void testLambda() throws Exception {
     testUri.run("ESTwoKeyNav", "$filter=CollPropertyComp/all( l : true )")
