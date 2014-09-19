@@ -25,7 +25,7 @@
 
   <groupId>org.apache.olingo</groupId>
   <artifactId>odata-parent</artifactId>
-  <version>4.0.0-beta-01-RC01</version>
+  <version>4.0.0-beta-01-RC02</version>
   <packaging>pom</packaging>
 
   <name>Olingo-OData</name>
@@ -175,7 +175,7 @@
         <artifactId>stax-api</artifactId>
         <version>${stax.api.version}</version>
       </dependency>
-    
+
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
@@ -290,8 +290,8 @@
   </dependencyManagement>
 
   <build>
-  
-    <finalName>${name}-${project.version}</finalName>
+
+    <finalName>${project.name}-${project.version}</finalName>
 
     <pluginManagement>
       <plugins>

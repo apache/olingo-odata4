@@ -31,12 +31,12 @@
   <parent>
     <groupId>org.apache.olingo</groupId>
     <artifactId>odata-dist</artifactId>
-    <version>4.0.0-beta-01-RC01</version>
+    <version>4.0.0-beta-01-RC02</version>
     <relativePath>..</relativePath>
   </parent>
 
   <build>
-    <finalName>${name}-${version}</finalName>
+    <finalName>${project.name}-${project.version}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
