@@ -20,12 +20,13 @@ package org.apache.olingo.server.api.serializer;
 
 import java.io.InputStream;
 
-import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
+import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 
 public interface ODataSerializer {
 
@@ -35,10 +36,10 @@ public interface ODataSerializer {
 
   InputStream metadataDocument(Edm edm) throws ODataSerializerException;
 
-  InputStream entity(EdmEntitySet edmEntitySet, Entity entity, ContextURL contextURL)
+  InputStream entity(EdmEntitySet edmEntitySet, Entity entity, ODataSerializerOptions options)
       throws ODataSerializerException;
 
-  InputStream entitySet(EdmEntitySet edmEntitySet, EntitySet entitySet, ContextURL contextURL)
+  InputStream entitySet(EdmEntitySet edmEntitySet, EntitySet entitySet, ODataSerializerOptions options)
       throws ODataSerializerException;
 
   /**
@@ -48,4 +49,15 @@ public interface ODataSerializer {
    * @throws ODataSerializerException 
    */
   InputStream error(ODataServerError error) throws ODataSerializerException;
+
+  /**
+   * Builds the select-list part of a {@link org.apache.olingo.commons.api.data.ContextURL ContextURL}.
+   * @param edmEntitySet the Entity Set
+   * @param expand       the $expand option
+   * @param select       the $select option
+   * @return a String with the select list
+   * @throws ODataSerializerException
+   */
+  String buildContextURLSelectList(EdmEntitySet edmEntitySet, ExpandOption expand, SelectOption select)
+      throws ODataSerializerException;
 }

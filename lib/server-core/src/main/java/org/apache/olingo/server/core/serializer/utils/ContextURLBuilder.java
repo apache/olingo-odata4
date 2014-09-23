@@ -19,7 +19,6 @@
 package org.apache.olingo.server.core.serializer.utils;
 
 import java.net.URI;
-
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.core.Encoder;
@@ -40,6 +39,9 @@ public final class ContextURLBuilder {
         throw new IllegalArgumentException("ContextURL: Derived Type without anything to derive from!");
       }
       result.append('/').append(Encoder.encode(contextURL.getDerivedEntity()));
+    }
+    if (contextURL.getSelectList() != null) {
+      result.append('(').append(contextURL.getSelectList()).append(')');
     }
     if (contextURL.isReference()) {
       if (contextURL.getEntitySetOrSingletonOrType() != null) {
