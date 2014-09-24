@@ -24,27 +24,30 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Handels http requests as OData requests.
+ * Handles HTTP requests as OData requests.
  */
 public interface ODataHttpHandler {
 
   /**
-   * Process an OData request. This includes uri parsing, content negotiation, dispatching the request to a specific
-   * custom processor implementation for handling data and creating the serialized content for the response object.
-   * @param request - must be a http OData request
-   * @param response - http OData response
+   * <p>Processes an OData request.</p>
+   * <p>This includes URI parsing, content negotiation, dispatching the request
+   * to a specific custom processor implementation for handling data and
+   * creating the serialized content for the response object.</p>
+   * @param request - must be a HTTP OData request
+   * @param response - HTTP OData response
    */
   void process(HttpServletRequest request, HttpServletResponse response);
 
   /**
-   * Register additional custom processor implementations for handling OData requests. If a request processing requires
-   * a processor which is not registered then an not implemented exception will happen.
+   * <p>Registers additional custom processor implementations for handling OData requests.</p>
+   * <p>If request processing requires a processor that is not registered then a
+   * "not implemented" exception will happen.</p>
    */
   void register(Processor processor);
 
   /**
-   * Sets the split parameter which is used for service resolution. Default is 0. 
-   * @param split
+   * Sets the split parameter which is used for service resolution.
+   * @param split the number of path segments reserved for service resolution; default is 0
    */
   void setSplit(int split);
 

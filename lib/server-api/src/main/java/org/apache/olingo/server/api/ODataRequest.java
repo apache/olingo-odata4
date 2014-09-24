@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Request object carry http information optimized and required to handle OData requests only. 
+ * Request object to carry HTTP information optimized for and required to handle OData requests only.
  */
 public class ODataRequest {
   private HttpMethod method;
@@ -40,21 +40,28 @@ public class ODataRequest {
   private String rawServiceResolutionUri;
 
   /**
-   * @return the http method (GET, PUT, POST ...)
+   * Gets the HTTP method.
+   * @return the HTTP method (GET, PUT, POST ...)
    */
   public HttpMethod getMethod() {
     return method;
   }
 
+  /**
+   * Sets the HTTP method.
+   * @param method the HTTP method (GET, PUT, POST ...)
+   */
   public void setMethod(final HttpMethod method) {
     this.method = method;
   }
 
   /**
-   * Add header to request where name handled as case insensitive key. If a header already exists then the list of
-   * values will just be extended.
-   * @param name case insensitive header name
-   * @param values
+   * <p>Adds a header to the request.</p>
+   * <p>The header name will be handled as case-insensitive key.</p>
+   * <p>If a header already exists then the list of values will just be extended.</p>
+   * @param name case-insensitive header name
+   * @param values list of values for the given header name
+   * @see <a href="http://ietf.org/rfc/rfc7230.txt">RFC 7230, section 3.2.2</a>
    */
   public void addHeader(final String name, final List<String> values) {
     String key = name.toUpperCase();
@@ -72,85 +79,117 @@ public class ODataRequest {
   }
 
   /**
-   * Returns header value for name where name is a case insensitive key.
-   * @return the header value or null if not found
+   * Gets header value for a given name.
+   * @param name the header name as a case-insensitive key
+   * @return the header value(s) or null if not found
    */
   public List<String> getHeaders(final String name) {
     return headers.get(name.toUpperCase());
   }
 
   /**
-   * Returns first header value for name where name is a case insensitive key.
-   * @return the header value or null if not found
+   * Gets first header value for a given name.
+   * @param name the header name as a case-insensitive key
+   * @return the first header value or null if not found
    */
   public String getHeader(final String name) {
-    List<String> values = getHeaders(name);
-    return values != null ? values.get(0) : null;
+    final List<String> values = getHeaders(name);
+    return values == null ? null : values.get(0);
   }
 
   /**
-   * @return the request payload or null
+   * Gets the body of the request.
+   * @return the request payload as {@link InputStream} or null
    */
   public InputStream getBody() {
     return body;
   }
 
+  /**
+   * Sets the body of the request.
+   * @param body the request payload as {@link InputStream}
+   */
   public void setBody(final InputStream body) {
     this.body = body;
   }
 
   /**
-   * @return decoded query options e.g. "$format=json"
+   * Gets the query part of the request URI.
+   * @return the undecoded query options, e.g., "<code>$format=json,$top=10</code>"
+   * @see <a href="http://ietf.org/rfc/rfc3986.txt">RFC 3986, section 3.4</a>
    */
   public String getRawQueryPath() {
     return rawQueryPath;
   }
 
+  /**
+   * Sets the query part of the request URI.
+   * @see #getRawQueryPath()
+   */
   public void setRawQueryPath(final String rawQueryPath) {
     this.rawQueryPath = rawQueryPath;
   }
 
   /**
-   * @return encoded base uri e.g. "http://localhost/my%20service"
+   * Gets the base URI.
+   * @return undecoded base URI, e.g., "<code>http://localhost/my%20service</code>"
    */
   public String getRawBaseUri() {
     return rawBaseUri;
   }
 
   /**
-   * @return encoded request uri e.g. "http://localhost/my%20service/sys1/Employees?$format=json"
+   * Sets the base URI.
+   * @see #getRawBaseUri()
+   */
+  public void setRawBaseUri(final String rawBaseUri) {
+    this.rawBaseUri = rawBaseUri;
+  }
+
+  /**
+   * Gets the total request URI.
+   * @return undecoded request URI, e.g., "<code>http://localhost/my%20service/sys1/Employees?$format=json</code>"
    */
   public String getRawRequestUri() {
     return rawRequestUri;
   }
 
   /**
-   * @return encoded OData path segments e.g. "/Employees"
+   * Sets the total request URI.
+   * @see #getRawRequestUri()
+   */
+  public void setRawRequestUri(final String rawRequestUri) {
+    this.rawRequestUri = rawRequestUri;
+  }
+
+  /**
+   * Gets the path segments of the request URI that belong to OData.
+   * @return undecoded OData path segments, e.g., "/Employees"
    */
   public String getRawODataPath() {
     return rawODataPath;
   }
 
-  public void setRawRequestUri(final String rawRequestUri) {
-    this.rawRequestUri = rawRequestUri;
-  }
-
+  /**
+   * Sets the path segments of the request URI that belong to OData.
+   * @see #getRawODataPath()
+   */
   public void setRawODataPath(final String rawODataPath) {
     this.rawODataPath = rawODataPath;
-
-  }
-
-  public void setRawBaseUri(final String rawBaseUri) {
-    this.rawBaseUri = rawBaseUri;
   }
 
   /**
-   * @return a decoded path segment that does not belong to the OData url schema or null  e.g. "sys1" 
+   * Gets the URI part responsible for service resolution.
+   * @return undecoded path segments that do not belong to the OData URL schema or null, e.g., "<code>sys1</code>"
    */
   public String getRawServiceResolutionUri() {
     return rawServiceResolutionUri;
   }
 
+  /**
+   * Sets the URI part responsible for service resolution.
+   * @see #getRawServiceResolutionUri()
+   */
   public void setRawServiceResolutionUri(final String rawServiceResolutionUri) {
     this.rawServiceResolutionUri = rawServiceResolutionUri;
   }

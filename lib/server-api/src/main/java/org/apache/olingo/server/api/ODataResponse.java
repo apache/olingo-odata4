@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 
 /**
- * Response object to carry OData relevant http information (statusCode, content & response headers)
+ * Response object to carry OData-relevant HTTP information (status code, response headers, and content).
  */
 public class ODataResponse {
 
@@ -34,26 +34,51 @@ public class ODataResponse {
   private Map<String, String> headers = new HashMap<String, String>();
   private InputStream content;
 
+  /**
+   * Sets the status code.
+   * @see HttpStatusCode
+   */
   public void setStatusCode(final int statusCode) {
     this.statusCode = statusCode;
   }
 
-  public void setHeader(final String name, final String value) {
-    headers.put(name, value);
-  }
-
-  public void setContent(final InputStream content) {
-    this.content = content;
-  }
-
+  /**
+   * Gets the status code.
+   * @see HttpStatusCode
+   */
   public int getStatusCode() {
     return statusCode;
   }
 
+  /**
+   * Sets a header.
+   * @param name  the name
+   * @param value the value
+   */
+  public void setHeader(final String name, final String value) {
+    headers.put(name, value);
+  }
+
+  /**
+   * Gets all headers.
+   * @return an unmodifiable Map of header names/values
+   */
   public Map<String, String> getHeaders() {
     return Collections.unmodifiableMap(headers);
   }
 
+  /**
+   * Sets the content (body).
+   * @param content the content as {@link InputStream}
+   */
+  public void setContent(final InputStream content) {
+    this.content = content;
+  }
+
+  /**
+   * Gets the content (body).
+   * @return the content as {@link InputStream}
+   */
   public InputStream getContent() {
     return content;
   }

@@ -26,7 +26,7 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerException;
 
 /**
- * Root object for serving factory tasks and support loosely coupling of implementation (core) from the api.
+ * Root object for serving factory tasks and support loose coupling of implementation (core) from the API.
  * This is not a singleton (static variables) to avoid issues with synchronization, OSGi, hot deployment and so on.
  * Each thread (request) should keep its own instance.
  */
@@ -54,7 +54,7 @@ public abstract class OData {
   /**
    * Creates a new serializer object for rendering content in the specified format.
    * Serializers are used in Processor implementations.
-   * @param format - Any format supported by Olingo (XML, JSON ...)
+   * @param format - any format supported by Olingo (XML, JSON ...)
    */
   public abstract ODataSerializer createSerializer(ODataFormat format) throws ODataSerializerException;
 
@@ -65,8 +65,8 @@ public abstract class OData {
   public abstract ODataHttpHandler createHandler(Edm edm);
 
   /**
-   * Creates an metadata object.
-   * @param edmProvider - A custom or default implementation for creating metadata
+   * Creates a metadata object.
+   * @param edmProvider - a custom or default implementation for creating metadata
    */
   public abstract Edm createEdm(EdmProvider edmProvider);
 

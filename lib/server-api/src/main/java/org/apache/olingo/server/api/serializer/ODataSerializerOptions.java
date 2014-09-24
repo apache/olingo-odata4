@@ -23,6 +23,7 @@ import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 
+/** Options for the OData serializer. */
 public class ODataSerializerOptions {
 
   private ContextURL contextURL;
@@ -30,28 +31,34 @@ public class ODataSerializerOptions {
   private ExpandOption expand;
   private SelectOption select;
 
+  /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
     return contextURL;
   }
 
+  /** Gets the $count system query option. */
   public CountOption getCount() {
     return count;
   }
 
+  /** Gets the $expand system query option. */
   public ExpandOption getExpand() {
     return expand;
   }
 
+  /** Gets the $select system query option. */
   public SelectOption getSelect() {
     return select;
   }
 
   private ODataSerializerOptions() {}
 
+  /** Initializes the options builder. */
   public static Builder with() {
     return new Builder();
   }
 
+  /** Builder of OData serializer options. */
   public static final class Builder {
 
     private ODataSerializerOptions options;
@@ -60,26 +67,31 @@ public class ODataSerializerOptions {
       options = new ODataSerializerOptions();
     }
 
+    /** Sets the {@link ContextURL}. */
     public Builder contextURL(final ContextURL contextURL) {
       options.contextURL = contextURL;
       return this;
     }
 
+    /** Sets the $count system query option. */
     public Builder count(final CountOption count) {
       options.count = count;
       return this;
     }
 
+    /** Sets the $expand system query option. */
     public Builder expand(final ExpandOption expand) {
       options.expand = expand;
       return this;
     }
 
+    /** Sets the $select system query option. */
     public Builder select(final SelectOption select) {
       options.select = select;
       return this;
     }
 
+    /** Builds the OData serializer options. */
     public ODataSerializerOptions build() {
       return options;
     }

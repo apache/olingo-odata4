@@ -20,10 +20,12 @@ package org.apache.olingo.server.api.serializer;
 
 import org.apache.olingo.server.api.ODataTranslatedException;
 
+/** Exception thrown by the {@link ODataSerializer}. */
 public class ODataSerializerException extends ODataTranslatedException {
 
   private static final long serialVersionUID = 5358683245923127425L;
 
+  /** Keys for exception texts in the resource bundle. */
   public static enum MessageKeys implements MessageKey {
     NOT_IMPLEMENTED,
     /** parameter: format */ UNSUPPORTED_FORMAT,
@@ -42,11 +44,24 @@ public class ODataSerializerException extends ODataTranslatedException {
     }
   }
 
+  /**
+   * Creates serializer exception.
+   * @param developmentMessage message text as fallback and for debugging purposes
+   * @param messageKey         one of the {@link MessageKeys} for the exception text in the resource bundle
+   * @param parameters         parameters for the exception text
+   */
   public ODataSerializerException(final String developmentMessage,
       final MessageKey messageKey, final String... parameters) {
     super(developmentMessage, messageKey, parameters);
   }
 
+  /**
+   * Creates serializer exception.
+   * @param developmentMessage message text as fallback and for debugging purposes
+   * @param cause              the cause of this exception
+   * @param messageKey         one of the {@link MessageKeys} for the exception text in the resource bundle
+   * @param parameters         parameters for the exception text
+   */
   public ODataSerializerException(final String developmentMessage, final Throwable cause,
       final MessageKey messageKey, final String... parameters) {
     super(developmentMessage, cause, messageKey, parameters);

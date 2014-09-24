@@ -21,38 +21,79 @@ package org.apache.olingo.server.api;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 
+/**
+ * Exception thrown by OData service implementations.
+ * @see ODataException
+ */
 public class ODataApplicationException extends ODataException {
 
   private static final long serialVersionUID = 5358683245923127425L;
-  private int statusCode = 500;
+  private int statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode();
   private Locale locale;
   private String oDataErrorCode;
 
-  public ODataApplicationException(final String msg, int statusCode, Locale locale) {
+  /**
+   * Exception in an OData service implementation.
+   * @param msg        the text of the exception
+   * @param statusCode the HTTP status code of the error response; the default is 500 - Internal Server Error
+   * @param locale     a {@link Locale} to enable translation of error messages
+   * @see ODataException
+   * @see HttpStatusCode
+   */
+  public ODataApplicationException(final String msg, final int statusCode, final Locale locale) {
     super(msg);
     this.statusCode = statusCode;
     this.locale = locale;
   }
 
-  public ODataApplicationException(final String msg, int statusCode, Locale locale, String oDataErrorCode) {
-    super(msg);
-    this.statusCode = statusCode;
-    this.locale = locale;
+  /**
+   * Exception in an OData service implementation.
+   * @param msg            the text of the exception
+   * @param statusCode     the HTTP status code of the error response; the default is 500 - Internal Server Error
+   * @param locale         a {@link Locale} to enable translation of error messages
+   * @param oDataErrorCode the error code of the exception as defined by the OData standard
+   * @see ODataException
+   * @see HttpStatusCode
+   */
+  public ODataApplicationException(final String msg, final int statusCode, final Locale locale,
+      final String oDataErrorCode) {
+    this(msg, statusCode, locale);
     this.oDataErrorCode = oDataErrorCode;
   }
 
-  public ODataApplicationException(final String msg, int statusCode, Locale locale, final Throwable cause) {
+  /**
+   * Exception in an OData service implementation.
+   * @param msg        the text of the exception
+   * @param statusCode the HTTP status code of the error response; the default is 500 - Internal Server Error
+   * @param locale     a {@link Locale} to enable translation of error messages
+   * @param cause      the cause of this exception 
+   * @see ODataException
+   * @see HttpStatusCode
+   * @see Throwable#getCause()
+   */
+  public ODataApplicationException(final String msg, final int statusCode, final Locale locale,
+      final Throwable cause) {
     super(msg, cause);
     this.statusCode = statusCode;
     this.locale = locale;
   }
 
-  public ODataApplicationException(final String msg, int statusCode, Locale locale, final Throwable cause,
-      String oDataErrorCode) {
-    super(msg, cause);
-    this.statusCode = statusCode;
-    this.locale = locale;
+  /**
+   * Exception in an OData service implementation.
+   * @param msg            the text of the exception
+   * @param statusCode     the HTTP status code of the error response; the default is 500 - Internal Server Error
+   * @param locale         a {@link Locale} to enable translation of error messages
+   * @param cause          the cause of this exception 
+   * @param oDataErrorCode the error code of the exception as defined by the OData standard
+   * @see ODataException
+   * @see HttpStatusCode
+   * @see Throwable#getCause()
+   */
+  public ODataApplicationException(final String msg, final int statusCode, final Locale locale, final Throwable cause,
+      final String oDataErrorCode) {
+    this(msg, statusCode, locale, cause);
     this.oDataErrorCode = oDataErrorCode;
   }
 

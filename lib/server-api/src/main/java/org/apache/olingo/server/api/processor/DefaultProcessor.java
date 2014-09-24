@@ -35,8 +35,12 @@ import org.apache.olingo.server.api.serializer.ODataSerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor implementation for handling of metadata and service document. This implementation is registerd in the
- * ODataHandler by default. The default can be replaced by re-registering an custom implementation.
+ * <p>Processor implementation for handling default cases:
+ * <ul><li>request for the metadata document</li>
+ * <li>request for the service document</li>
+ * <li>error handling</li></ul></p>
+ * <p>This implementation is registered in the ODataHandler by default.
+ * The default can be replaced by re-registering a custom implementation.</p>
  */
 public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProcessor, ExceptionProcessor {
 

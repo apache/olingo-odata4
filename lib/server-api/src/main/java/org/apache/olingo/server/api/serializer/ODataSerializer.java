@@ -28,25 +28,47 @@ import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 
+/** OData serializer */
 public interface ODataSerializer {
 
+  /** The default character set is UTF-8. */
   public static final String DEFAULT_CHARSET = "UTF-8";
 
+  /**
+   * Writes the service document into an InputStream.
+   * @param edm         the Entity Data Model
+   * @param serviceRoot the service-root URI of this OData service 
+   */
   InputStream serviceDocument(Edm edm, String serviceRoot) throws ODataSerializerException;
 
+  /**
+   * Writes the metadata document into an InputStream.
+   * @param edm the Entity Data Model
+   */
   InputStream metadataDocument(Edm edm) throws ODataSerializerException;
 
+  /**
+   * Writes entity data into an InputStream.
+   * @param edmEntitySet the {@link EdmEntitySet}
+   * @param entity       the data of the entity
+   * @param options      options for the serializer
+   */
   InputStream entity(EdmEntitySet edmEntitySet, Entity entity, ODataSerializerOptions options)
       throws ODataSerializerException;
 
+  /**
+   * Writes entity-set data into an InputStream.
+   * @param edmEntitySet the {@link EdmEntitySet}
+   * @param entitySet    the data of the entity set
+   * @param options      options for the serializer
+   */
   InputStream entitySet(EdmEntitySet edmEntitySet, EntitySet entitySet, ODataSerializerOptions options)
       throws ODataSerializerException;
 
   /**
    * Writes an ODataError into an InputStream.
    * @param error the main error
-   * @return inputStream containing the OData formatted error
-   * @throws ODataSerializerException 
+   * @return inputStream containing the OData-formatted error
    */
   InputStream error(ODataServerError error) throws ODataSerializerException;
 
@@ -56,7 +78,6 @@ public interface ODataSerializer {
    * @param expand       the $expand option
    * @param select       the $select option
    * @return a String with the select list
-   * @throws ODataSerializerException
    */
   String buildContextURLSelectList(EdmEntitySet edmEntitySet, ExpandOption expand, SelectOption select)
       throws ODataSerializerException;

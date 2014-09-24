@@ -24,17 +24,16 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor interface for handling a single entry (e.g. atom entry).
+ * Processor interface for handling a single Entity.
  */
 public interface EntityProcessor extends Processor {
 
   /**
-   * Read entity data from persistency and puts serialized content and status into the response.
-   *  @param request - OData request object containing raw http information.
+   * Reads entity data from persistency and puts serialized content and status into the response.
+   *  @param request - OData request object containing raw HTTP information
    *  @param response - OData response object for collecting response data
-   *  @param uriInfo - information of a parsed OData uri
+   *  @param uriInfo - information of a parsed OData URI
    *  @param requestedContentType - requested content type after content negotiation
    */
   void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format);
-  
 }

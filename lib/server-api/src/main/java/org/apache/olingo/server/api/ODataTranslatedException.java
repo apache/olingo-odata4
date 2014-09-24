@@ -40,7 +40,9 @@ public abstract class ODataTranslatedException extends ODataException {
 
   protected static final String DEFAULT_SERVER_BUNDLE_NAME = "server-core-exceptions-i18n";
 
+  /** Key for the exception text in the resource bundle. */
   public static interface MessageKey {
+    /** Gets this key. */
     public String getKey();
   }
 
@@ -70,10 +72,17 @@ public abstract class ODataTranslatedException extends ODataException {
     return getMessage();
   }
 
+  /** Gets the message key. */
   public MessageKey getMessageKey() {
     return messageKey;
   }
 
+  /**
+   * Gets the translated message text for a given locale (or the default locale if not available),
+   * returning the developer message text if none is found.
+   * @param locale the preferred {@link Locale}
+   * @return the error message
+   */
   public ODataErrorMessage getTranslatedMessage(final Locale locale) {
     if (messageKey == null) {
       return new ODataErrorMessage(getMessage(), DEFAULT_LOCALE);
@@ -125,19 +134,22 @@ public abstract class ODataTranslatedException extends ODataException {
     }
   }
 
+  /** Error message text and {@link Locale} used for it. */
   public class ODataErrorMessage {
     String message;
     Locale locale;
 
-    public ODataErrorMessage(String message, Locale usedLocale) {
+    public ODataErrorMessage(final String message, final Locale usedLocale) {
       this.message = message;
       this.locale = usedLocale;
     }
 
+    /** Gets the message text. */
     public String getMessage() {
       return message;
     }
 
+    /** Gets the {@link Locale} used for this message. */
     public Locale getLocale() {
       return locale;
     }

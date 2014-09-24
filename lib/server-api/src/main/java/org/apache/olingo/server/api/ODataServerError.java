@@ -25,6 +25,9 @@ import java.util.Map;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataErrorDetail;
 
+/**
+ * Server error.
+ */
 public class ODataServerError extends ODataError {
 
   private Exception exception;
@@ -32,45 +35,61 @@ public class ODataServerError extends ODataError {
   private Locale locale;
 
   /**
+   * Gets the locale.
    * @return the locale for the exception message
    */
   public Locale getLocale() {
     return locale;
   }
 
+  /**
+   * Sets the locale.
+   * @return this for method chaining
+   */
   public ODataServerError setLocale(Locale locale) {
     this.locale = locale;
     return this;
   }
 
   /**
+   * Gets the exception.
    * @return the exception with its hierarchy
    */
   public Exception getException() {
     return exception;
   }
 
+  /**
+   * Sets the exception.
+   * @return this for method chaining
+   */
   public ODataServerError setException(Exception exception) {
     this.exception = exception;
     return this;
   }
 
   /**
+   * Gets the status code.
    * @return the status code which this error results in.
    */
   public int getStatusCode() {
     return statusCode;
   }
 
+  /**
+   * Sets the status code.
+   * @param statusCode the status code which this error results in
+   * @return this for method chaining
+   */
   public ODataServerError setStatusCode(int statusCode) {
     this.statusCode = statusCode;
     return this;
   }
 
   /**
-   * The value for the code name/value pair is a language-independent string. Its value is a service-defined error code.
-   * This code serves as a sub-status for the HTTP error code specified in the response. MAY be null.
-   * @param code
+   * The value for the code name/value pair is a language-independent string.
+   * Its value is a service-defined error code. This code serves as a sub-status
+   * for the HTTP error code specified in the response. MAY be null.
    * @return this for method chaining
    */
   public ODataServerError setCode(String code) {
@@ -79,9 +98,8 @@ public class ODataServerError extends ODataError {
   }
 
   /**
-   * The value for the message name/value pair MUST be a human-readable, language-dependent representation of the error.
-   * MUST not be null
-   * @param message
+   * The value for the message name/value pair MUST be a human-readable,
+   * language-dependent representation of the error. MUST not be null.
    * @return this for method chaining
    */
   public ODataServerError setMessage(String message) {
@@ -92,7 +110,6 @@ public class ODataServerError extends ODataError {
   /**
    * The value for the target name/value pair is the target of the particular error (for example, the name of the
    * property in error). MAY be null.
-   * @param target
    * @return this for method chaining
    */
   public ODataServerError setTarget(String target) {
@@ -102,7 +119,6 @@ public class ODataServerError extends ODataError {
 
   /**
    * Sets error details.
-   * 
    * @return this for method chaining.
    */
   public ODataServerError setDetails(List<ODataErrorDetail> details) {
@@ -112,7 +128,6 @@ public class ODataServerError extends ODataError {
 
   /**
    * Sets server defined key-value pairs for debug environment only.
-   * 
    * @return this for method chaining.
    */
   public ODataServerError setInnerError(Map<String, String> innerError) {

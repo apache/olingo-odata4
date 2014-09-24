@@ -23,21 +23,23 @@ import java.util.List;
 import org.apache.olingo.commons.api.format.ContentType;
 
 /**
- * A processor which supports custom content types can implement this interface. The processor can also remove default
- * content types if the default serializer of Olingo are not used. By default this interface is not implemented and
- * a processor supports content types implemented by Olingos default serializer (e.g. application/xml for metadata and
- * application/json for service document).
- * Requesting a content type which is not supported results in a http error 406 (Not Acceptable).
+ * A processor which supports custom content types can implement this interface.
+ * The processor can also remove default content types if the default serializers
+ * of Olingo are not used. By default this interface is not implemented and
+ * a processor supports content types implemented by Olingo's default serializer
+ * (e.g., <code>application/xml</code> for the metadata and
+ * </code>application/json</code> for the service document).
+ * Requesting a content type that is not supported results in an HTTP error
+ * 406 (Not Acceptable).
  */
 public interface CustomContentTypeSupportProcessor {
 
   /**
    * Returns a list of supported content types.
-   * @param defaultContentTypes content types supported by Olingos serializer
+   * @param defaultContentTypes content types supported by Olingo's serializer
+   * @param processorClass the {@link Processor} of the current request
    * @return modified list of supported content types
-   * 
    */
   public List<ContentType> modifySupportedContentTypes(
       List<ContentType> defaultContentTypes, Class<? extends Processor> processorClass);
-
 }
