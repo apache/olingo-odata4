@@ -52,11 +52,10 @@ public class ODataExceptionHelper {
   
   public static ODataServerError createServerErrorObject(UriParserSyntaxException e, Locale requestedLocale) {
     ODataServerError serverError = basicTranslatedError(e, requestedLocale);
-    if(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_VALUE.equals(e.getMessageKey())){
-      serverError.setStatusCode(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode());
-    }else{
-      serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
-    }
+    serverError.setStatusCode(
+        UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT.equals(e.getMessageKey()) ?
+            HttpStatusCode.NOT_ACCEPTABLE.getStatusCode() :
+            HttpStatusCode.BAD_REQUEST.getStatusCode());
     return serverError;
   }
   

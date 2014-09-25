@@ -188,8 +188,7 @@ public class Parser {
               formatOption.setFormat(option.value);
             } else {
               throw new UriParserSyntaxException("Illegal value of $format option!",
-                  UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_VALUE,
-                  option.name, option.value);
+                  UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT, option.value);
             }
             context.contextUriInfo.setSystemQueryOption(formatOption);
 

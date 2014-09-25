@@ -2553,15 +2553,15 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .isFormatText(HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8);
     testUri.runEx("ESKeyNav(1)?$format=noSlash")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_VALUE);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT);
     testUri.runEx("ESKeyNav(1)?$format=slashAtEnd/")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_VALUE);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT);
     testUri.runEx("ESKeyNav(1)?$format=/startsWithSlash")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_VALUE);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT);
     testUri.runEx("ESKeyNav(1)?$format=two/Slashes/tooMuch")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_VALUE);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT);
     testUri.runEx("ESKeyNav(1)?$format=")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_VALUE);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT);
   }
 
   @Test
