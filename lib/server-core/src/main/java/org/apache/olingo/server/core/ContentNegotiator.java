@@ -36,8 +36,7 @@ public class ContentNegotiator {
 
   private ContentNegotiator() {}
 
-  private static List<ContentType>
-      getDefaultSupportedContentTypes(final Class<? extends Processor> processorClass) {
+  private static List<ContentType> getDefaultSupportedContentTypes(final Class<? extends Processor> processorClass) {
     List<ContentType> defaults = new ArrayList<ContentType>();
 
     if (processorClass == MetadataProcessor.class) {
@@ -75,35 +74,23 @@ public class ContentNegotiator {
           ODataFormat.JSON.name().equalsIgnoreCase(formatString) ? ODataFormat.JSON :
           ODataFormat.XML.name().equalsIgnoreCase(formatString) ? ODataFormat.XML :
           ODataFormat.ATOM.name().equalsIgnoreCase(formatString) ? ODataFormat.ATOM : null;
-      result = getSupportedContentType(format == null ?
-          ContentType.create(formatOption.getFormat()) : format.getContentType(ODataServiceVersion.V40),
-          supportedContentTypes);
+      try {
+        result = getAcceptedType(
+            AcceptType.fromContentType(format == null ?
+                ContentType.create(formatOption.getFormat()) : format.getContentType(ODataServiceVersion.V40)),
+            supportedContentTypes);
+      } catch (final IllegalArgumentException e) {}
       if (result == null) {
         throw new ContentNegotiatorException("Unsupported $format = " + formatString,
             ContentNegotiatorException.MessageKeys.UNSUPPORTED_FORMAT_OPTION, formatString);
       }
     } else if (acceptHeaderValue != null) {
       final List<AcceptType> acceptedContentTypes = AcceptType.create(acceptHeaderValue);
-      for (AcceptType acceptedType : acceptedContentTypes) {
-        for (final ContentType supportedContentType : supportedContentTypes) {
-          ContentType contentType = supportedContentType;
-          if (acceptedType.getParameters().containsKey("charset")) {
-            final String value = acceptedType.getParameters().get("charset");
-            if ("utf8".equalsIgnoreCase(value) || "utf-8".equalsIgnoreCase(value)) {
-              contentType = ContentType.create(contentType, ContentType.PARAMETER_CHARSET_UTF8);
-            } else {
-              throw new ContentNegotiatorException("charset in accept header not supported: " + acceptHeaderValue,
-                  ContentNegotiatorException.MessageKeys.WRONG_CHARSET_IN_HEADER, HttpHeader.ACCEPT, acceptHeaderValue);
-            }
-          }
-          if (acceptedType.matches(contentType)) {
-            result = contentType;
-            break;
-          }
-        }
-        if (result != null) {
-          break;
-        }
+      try {
+        result = getAcceptedType(acceptedContentTypes, supportedContentTypes);
+      } catch (final IllegalArgumentException e) {
+        throw new ContentNegotiatorException("charset in accept header not supported: " + acceptHeaderValue, e,
+            ContentNegotiatorException.MessageKeys.WRONG_CHARSET_IN_HEADER, HttpHeader.ACCEPT, acceptHeaderValue);
       }
       if (result == null) {
         throw new ContentNegotiatorException(
@@ -114,7 +101,7 @@ public class ContentNegotiator {
       final ContentType requestedContentType = processorClass == MetadataProcessor.class ?
           ODataFormat.XML.getContentType(ODataServiceVersion.V40) :
           ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
-      result = getSupportedContentType(requestedContentType, supportedContentTypes);
+      result = getAcceptedType(AcceptType.fromContentType(requestedContentType), supportedContentTypes);
       if (result == null) {
         throw new ContentNegotiatorException(
             "unsupported accept content type: " + requestedContentType + " != " + supportedContentTypes,
@@ -125,11 +112,22 @@ public class ContentNegotiator {
     return result;
   }
 
-  private static ContentType getSupportedContentType(final ContentType requestedContentType,
+  private static ContentType getAcceptedType(final List<AcceptType> acceptedContentTypes,
       final List<ContentType> supportedContentTypes) {
-    for (final ContentType supportedContentType : supportedContentTypes) {
-      if (requestedContentType.isCompatible(supportedContentType)) {
-        return supportedContentType;
+    for (final AcceptType acceptedType : acceptedContentTypes) {
+      for (final ContentType supportedContentType : supportedContentTypes) {
+        ContentType contentType = supportedContentType;
+        if (acceptedType.getParameters().containsKey("charset")) {
+          final String value = acceptedType.getParameters().get("charset");
+          if ("utf8".equalsIgnoreCase(value) || "utf-8".equalsIgnoreCase(value)) {
+            contentType = ContentType.create(contentType, ContentType.PARAMETER_CHARSET_UTF8);
+          } else {
+            throw new IllegalArgumentException("charset not supported: " + acceptedType);
+          }
+        }
+        if (acceptedType.matches(contentType)) {
+          return contentType;
+        }
       }
     }
     return null;

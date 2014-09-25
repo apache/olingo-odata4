@@ -49,6 +49,7 @@ public class ContentNegotiatorTest {
   static final private String ACCEPT_CASE_MIN = "application/json;odata.metadata=minimal";
   static final private String ACCEPT_CASE_MIN_UTF8 = "application/json;charset=UTF-8;odata.metadata=minimal";
   static final private String ACCEPT_CASE_FULL = "application/json;odata.metadata=full";
+  static final private String ACCEPT_CASE_NONE = "application/json;odata.metadata=none";
   static final private String ACCEPT_CASE_JSONQ = "application/json;q=0.2";
   static final private String ACCEPT_CASE_XML = "application/xml";
   static final private String ACCEPT_CASE_WILDCARD1 = "*/*";
@@ -62,6 +63,7 @@ public class ContentNegotiatorTest {
       { ACCEPT_CASE_MIN,        null,             null,                  null             },
       { ACCEPT_CASE_MIN,        "json",           null,                  null             },
       { ACCEPT_CASE_MIN,        "json",           ACCEPT_CASE_JSONQ,     null             },
+      { ACCEPT_CASE_NONE,       ACCEPT_CASE_NONE, null,                  null             },
       { "a/a",                  "a/a",            null,                  "a/a"            },
       { ACCEPT_CASE_MIN,        null,             ACCEPT_CASE_JSONQ,     null             },
       { ACCEPT_CASE_MIN,        null,             ACCEPT_CASE_WILDCARD1, null             },
@@ -69,9 +71,11 @@ public class ContentNegotiatorTest {
       { "a/a",                  "a/a",            null,                  "a/a,b/b"        },
       { "a/a",                  " a/a ",          null,                  " a/a , b/b "    },
       { "a/a;x=y",              "a/a",            ACCEPT_CASE_WILDCARD1, "a/a;x=y"        },
+      { "a/a;v=w;x=y",          null,             "a/a;x=y",             "a/a;b=c,a/a;v=w;x=y" },
+      { "a/a;v=w;x=y",          "a/a;x=y",        null,                  "a/a;b=c,a/a;v=w;x=y" },
       { ACCEPT_CASE_MIN,        "json",           ACCEPT_CASE_MIN,       null             },
       { ACCEPT_CASE_FULL,       null,             ACCEPT_CASE_FULL,      ACCEPT_CASE_FULL }, 
-      { ACCEPT_CASE_MIN_UTF8,   null,             ACCEPT_CASE_MIN_UTF8,  null             },
+      { ACCEPT_CASE_MIN_UTF8,   null,             ACCEPT_CASE_MIN_UTF8,  null             }
   };                                                                                          
 
   String[][] casesMetadata = {                                                                 
@@ -85,24 +89,28 @@ public class ContentNegotiatorTest {
       { ACCEPT_CASE_XML,        null,             ACCEPT_CASE_WILDCARD2, null             },
       { "a/a",                  "a/a",            null,                  "a/a,b/b"        },
       { "a/a",                  " a/a ",          null,                  " a/a , b/b "    },
-      { "a/a;x=y",              "a/a",            ACCEPT_CASE_WILDCARD1, "a/a;x=y"        },
+      { "a/a;x=y",              "a/a",            ACCEPT_CASE_WILDCARD1, "a/a;x=y"        }
   };
 
   String[][] casesFail = {                                                                 
       /* expected               $format           accept                 additional content types */
-      { ACCEPT_CASE_XML,        "xxx/yyy",        null,                  null             },
-      { "a/a",                  "a/a",            null,                  "b/b"            },
-      { ACCEPT_CASE_XML,        null,             ACCEPT_CASE_JSONQ,     null             },
-      { "application/json",     null,             ACCEPT_CASE_FULL,      null             }, // not yet supported
+      { null,                   "xxx/yyy",        null,                  null             },
+      { null,                   "a/a",            null,                  "b/b"            },
+      { null,                   "a/a;x=y",        null,                  "a/a;v=w"        },
+      { null,                   null,             "a/a;x=y",             "a/a;v=w"        },
+      { null,                   "atom",           null,                  null             }, // not yet supported
+      { null,                   null,             ACCEPT_CASE_FULL,      null             }, // not yet supported
+      { null,                   "a/b;charset=ISO-8859-1", null,          "a/b"            },
+      { null,                   null,             "a/b;charset=ISO-8859-1", "a/b"         }
   };
   //CHECKSTYLE:ON
   //@formatter:on
 
   @Test
   public void testServiceDocumentSingleCase() throws Exception {
-    String[] useCase = { ACCEPT_CASE_MIN_UTF8, null, ACCEPT_CASE_MIN_UTF8, null };
-
-    testContentNegotiation(useCase, ServiceDocumentProcessor.class);
+    testContentNegotiation(
+        new String[] { ACCEPT_CASE_MIN_UTF8, null, ACCEPT_CASE_MIN_UTF8, null },
+        ServiceDocumentProcessor.class);
   }
 
   @Test
@@ -114,9 +122,12 @@ public class ContentNegotiatorTest {
 
   @Test
   public void testMetadataSingleCase() throws Exception {
-    String[] useCase = { ACCEPT_CASE_XML, null, null, null };
+    testContentNegotiation(new String[] { ACCEPT_CASE_XML, null, null, null }, MetadataProcessor.class);
+  }
 
-    testContentNegotiation(useCase, MetadataProcessor.class);
+  @Test(expected = ContentNegotiatorException.class)
+  public void testMetadataJsonFail() throws Exception {
+    testContentNegotiation(new String[] { null, "json", null, null }, MetadataProcessor.class);
   }
 
   @Test
@@ -127,11 +138,11 @@ public class ContentNegotiatorTest {
   }
 
   @Test
-  public void testMetadataFail() throws Exception {
+  public void testEntityCollectionFail() throws Exception {
     for (String[] useCase : casesFail) {
       try {
-        testContentNegotiation(useCase, MetadataProcessor.class);
-        fail("Exception expected!");
+        testContentNegotiation(useCase, EntityCollectionProcessor.class);
+        fail("Exception expected for '" + useCase[1] + '|' + useCase[2] + '|' + useCase[3] + "'!");
       } catch (final ContentNegotiatorException e) {}
     }
   }
@@ -157,7 +168,9 @@ public class ContentNegotiatorTest {
     final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(fo, request, p, processorClass);
 
     assertNotNull(requestedContentType);
-    assertEquals(ContentType.create(useCase[0]), requestedContentType);
+    if (useCase[0] != null) {
+      assertEquals(ContentType.create(useCase[0]), requestedContentType);
+    }
   }
 
   private List<ContentType> createCustomContentTypes(final String contentTypeString) {

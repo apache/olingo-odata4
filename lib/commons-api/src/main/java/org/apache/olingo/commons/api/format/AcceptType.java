@@ -27,7 +27,7 @@ import java.util.TreeMap;
 
 /**
  * Internally used {@link AcceptType} for OData library.
- * 
+ *
  * See RFC 7231, chapter 5.3.2:
  * <pre>
  * Accept = #( media-range [ accept-params ] )
@@ -41,7 +41,7 @@ import java.util.TreeMap;
  * qvalue = ( "0" [ "." 0*3DIGIT ] ) / ( "1" [ "." 0*3("0") ] )
  * </pre>
  * 
- * Once created a {@link AcceptType} is <b>IMMUTABLE</b>.
+ * Once created an {@link AcceptType} is <b>IMMUTABLE</b>.
  */
 public class AcceptType {
 
@@ -82,7 +82,7 @@ public class AcceptType {
     if (TypeUtil.MEDIA_TYPE_WILDCARD.equals(this.type) && !TypeUtil.MEDIA_TYPE_WILDCARD.equals(subtype)) {
       throw new IllegalArgumentException("Illegal combination of WILDCARD type with NONE WILDCARD subtype.");
     }
-    
+
     final String q = parameters.get(TypeUtil.PARAMETER_Q);
     if (q == null) {
       quality = 1F;
@@ -124,7 +124,7 @@ public class AcceptType {
   }
 
   /**
-   * Create a list of {@link AcceptType} objects based on given input string (<code>format</code>).
+   * Creates a list of {@link AcceptType} objects based on given input string (<code>format</code>).
    * @param format accept types, comma-separated, as specified for the HTTP header <code>Accept</code>
    * @return a list of <code>AcceptType</code> objects
    * @throws IllegalArgumentException if input string is not parseable
@@ -140,6 +140,16 @@ public class AcceptType {
     sort(result);
     
     return result;
+  }
+
+  /**
+   * Creates a list of {@link AcceptType} objects based on given content type.
+   * @param contentType the content type
+   * @return an immutable one-element list of <code>AcceptType</code> objects that matches only the given content type
+   */
+  public static List<AcceptType> fromContentType(final ContentType contentType) {
+    return Collections.singletonList(new AcceptType(
+        contentType.getType(), contentType.getSubtype(), contentType.getParameters(), 1F));
   }
 
   public String getType() {
