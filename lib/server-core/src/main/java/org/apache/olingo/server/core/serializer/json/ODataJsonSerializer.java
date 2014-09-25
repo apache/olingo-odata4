@@ -223,7 +223,7 @@ public class ODataJsonSerializer implements ODataSerializer {
         ExpandSelectHelper.getSelectedPropertyNames(select.getSelectItems());
     for (final String propertyName : entityType.getPropertyNames()) {
       if (all || selected.contains(propertyName)) {
-        final EdmProperty edmProperty = (EdmProperty) entityType.getProperty(propertyName);
+        final EdmProperty edmProperty = entityType.getStructuralProperty(propertyName);
         final Property property = entity.getProperty(propertyName);
         final Set<List<String>> selectedPaths = all || edmProperty.isPrimitive() ? null :
             ExpandSelectHelper.getSelectedPaths(select.getSelectItems(), propertyName);

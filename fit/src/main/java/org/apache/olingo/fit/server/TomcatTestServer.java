@@ -85,16 +85,16 @@ public class TomcatTestServer {
 
       boolean keepRunning = false;
       for (String param : params) {
-        if(param.equalsIgnoreCase("keeprunning")) {
+        if (param.equalsIgnoreCase("keeprunning")) {
           keepRunning = true;
-        } else if(param.equalsIgnoreCase("addwebapp")) {
+        } else if (param.equalsIgnoreCase("addwebapp")) {
           server.addWebApp();
-        } else if(param.startsWith("port")) {
+        } else if (param.startsWith("port")) {
           server.atPort(extractPortParam(param));
         }
       }
 
-      if(keepRunning) {
+      if (keepRunning) {
         LOG.info("...and keep server running.");
         server.startAndWait();
       } else {
@@ -110,16 +110,14 @@ public class TomcatTestServer {
 
   public static int extractPortParam(String portParameter) {
     String[] portParam = portParameter.split("=");
-    if(portParam.length == 2) {
+    if (portParam.length == 2) {
       try {
         return Integer.parseInt(portParam[1]);
       } catch (NumberFormatException e) {
-        throw new IllegalArgumentException("Port parameter (" + portParameter +
-            ") could not be parsed.");
+        throw new IllegalArgumentException("Port parameter (" + portParameter + ") could not be parsed.");
       }
     }
-    throw new IllegalArgumentException("Port parameter (" + portParameter +
-        ") could not be parsed.");
+    throw new IllegalArgumentException("Port parameter (" + portParameter + ") could not be parsed.");
   }
 
   public static class StaticContent extends HttpServlet {
@@ -138,7 +136,7 @@ public class TomcatTestServer {
 
       String result;
       File resourcePath = new File(resource);
-      if(resourcePath.exists() && resourcePath.isFile()) {
+      if (resourcePath.exists() && resourcePath.isFile()) {
         FileInputStream fin = new FileInputStream(resourcePath);
         result = IOUtils.toString(fin, "UTF-8");
         LOG.info("Mapped uri '{}' to resource '{}'.", uri, resource);
@@ -152,8 +150,9 @@ public class TomcatTestServer {
   }
 
   private static TestServerBuilder builder;
+
   public static TestServerBuilder init(int port) {
-    if(builder == null) {
+    if (builder == null) {
       builder = new TestServerBuilder(port);
     }
     return builder;
@@ -173,7 +172,7 @@ public class TomcatTestServer {
       initializeProperties();
       //baseDir = new File(System.getProperty("java.io.tmpdir"), "tomcat-test");
       baseDir = getFileForDirProperty(TOMCAT_BASE_DIR);
-      if(!baseDir.exists() && !baseDir.mkdirs()) {
+      if (!baseDir.exists() && !baseDir.mkdirs()) {
         throw new RuntimeException("Unable to create temporary test directory at {" + baseDir.getAbsolutePath() + "}");
       }
       //
@@ -204,14 +203,14 @@ public class TomcatTestServer {
     }
 
     public TestServerBuilder addWebApp() throws IOException {
-      if(server != null) {
+      if (server != null) {
         return this;
       }
 
       File webAppProjectDir = getFileForDirProperty(PROJECT_WEB_APP_DIR);
       File webAppDir = new File(baseDir, webAppProjectDir.getName());
       FileUtils.deleteDirectory(webAppDir);
-      if(!webAppDir.mkdirs()) {
+      if (!webAppDir.mkdirs()) {
         throw new RuntimeException("Unable to create temporary directory at {" + webAppDir.getAbsolutePath() + "}");
       }
       FileUtils.copyDirectory(webAppProjectDir, webAppDir);
@@ -226,22 +225,23 @@ public class TomcatTestServer {
 
     private File getFileForDirProperty(String propertyName) {
       File targetFile = new File(properties.getProperty(propertyName));
-      if(targetFile.exists() && targetFile.isDirectory()) {
+      if (targetFile.exists() && targetFile.isDirectory()) {
         return targetFile;
-      } else if(targetFile.mkdirs()) {
+      } else if (targetFile.mkdirs()) {
         return targetFile;
       }
 
       URL targetURL = Thread.currentThread().getContextClassLoader().getResource(targetFile.getPath());
-      if(targetURL == null) {
+      if (targetURL == null) {
         throw new RuntimeException("Project target was not found at '" +
             properties.getProperty(propertyName) + "'.");
       }
       return new File(targetURL.getFile());
     }
 
-    public TestServerBuilder addServlet(final Class<? extends HttpServlet> factoryClass, String path) throws Exception {
-      if(server != null) {
+    public TestServerBuilder addServlet(final Class<? extends HttpServlet> factoryClass, String path)
+        throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+      if (server != null) {
         return this;
       }
       String odataServlet = factoryClass.getName();
@@ -264,7 +264,7 @@ public class TomcatTestServer {
     }
 
     public TestServerBuilder addServlet(HttpServlet httpServlet, String name, String path) throws IOException {
-      if(server != null) {
+      if (server != null) {
         return this;
       }
       Context cxt = getContext();
@@ -278,14 +278,14 @@ public class TomcatTestServer {
     private Context baseContext = null;
 
     private Context getContext() {
-      if(baseContext == null) {
+      if (baseContext == null) {
         baseContext = tomcat.addContext("/", baseDir.getAbsolutePath());
       }
       return baseContext;
     }
 
     public TomcatTestServer start() throws LifecycleException {
-      if(server != null) {
+      if (server != null) {
         return server;
       }
       tomcat.start();

@@ -32,7 +32,6 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
@@ -76,12 +75,14 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
       if (entitySet == null) {
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
-        ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
+        final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
+        ODataSerializer serializer = odata.createSerializer(format);
         final ExpandOption expand = uriInfo.getExpandOption();
         final SelectOption select = uriInfo.getSelectOption();
         response.setContent(serializer.entitySet(edmEntitySet, entitySet,
             ODataSerializerOptions.with()
-                .contextURL(getContextUrl(serializer, edmEntitySet, false, expand, select))
+                .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
+                    getContextUrl(serializer, edmEntitySet, false, expand, select))
                 .count(uriInfo.getCountOption())
                 .expand(expand).select(select)
                 .build()));
@@ -90,7 +91,7 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
       }
     } catch (final DataProvider.DataProviderException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final ODataTranslatedException e) {
+    } catch (final ODataSerializerException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     } catch (final ODataApplicationException e) {
       response.setStatusCode(e.getStatusCode());
@@ -110,21 +111,23 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
       if (entity == null) {
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
-        ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
+        final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
+        ODataSerializer serializer = odata.createSerializer(format);
         final ExpandOption expand = uriInfo.getExpandOption();
         final SelectOption select = uriInfo.getSelectOption();
         response.setContent(serializer.entity(edmEntitySet, entity,
             ODataSerializerOptions.with()
-                .contextURL(getContextUrl(serializer, edmEntitySet, true, expand, select))
+                .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
+                    getContextUrl(serializer, edmEntitySet, true, expand, select))
                 .count(uriInfo.getCountOption())
-                .expand(uriInfo.getExpandOption()).select(uriInfo.getSelectOption())
+                .expand(expand).select(select)
                 .build()));
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
         response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
       }
     } catch (final DataProvider.DataProviderException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final ODataTranslatedException e) {
+    } catch (final ODataSerializerException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     } catch (final ODataApplicationException e) {
       response.setStatusCode(e.getStatusCode());

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.fit;
 
+import org.apache.catalina.LifecycleException;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.commons.api.data.Entity;
@@ -37,6 +38,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -48,12 +50,11 @@ public abstract class AbstractBaseTestITCase {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractBaseTestITCase.class);
 
-  @SuppressWarnings("rawtypes")
-  protected abstract CommonODataClient getClient();
-
+  protected abstract CommonODataClient<?> getClient();
 
   @BeforeClass
-  public static void init() throws Exception {
+  public static void init()
+      throws LifecycleException, IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
     TomcatTestServer.init(9080)
         .addServlet(TechnicalServlet.class, "/olingo-server-tecsvc/odata.svc/*")
         .addServlet(StaticContent.class, "/olingo-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml")
@@ -128,8 +129,8 @@ public abstract class AbstractBaseTestITCase {
 
   public static class StaticContent extends HttpServlet {
     private static final long serialVersionUID = -6663569573355398997L;
-    @Override protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-        throws ServletException, IOException {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
       resp.getOutputStream().write(IOUtils.toByteArray(
           Thread.currentThread().getContextClassLoader().getResourceAsStream("org-odata-core-v1.xml")));
     }

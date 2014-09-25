@@ -527,15 +527,18 @@ public class MetadataDocumentXmlSerializer {
     }
   }
 
+  /** Appends a reference to the OData Core Vocabulary as defined in the OData specification
+   * and mentioned in its Common Schema Definition Language (CSDL) document.
+   */
   private void appendReference(final XMLStreamWriter writer) throws XMLStreamException {
     writer.writeStartElement(NS_EDMX, "Reference");
-    // TODO: Where is this value comming from?
+    // TODO: Which value can we use here?
+    // <http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml>
+    // is an external site we don't want to query each time an EDM-enabled client is used.
     writer.writeAttribute("Uri",
         "http://localhost:9080/olingo-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml");
     writer.writeEmptyElement(NS_EDMX, "Include");
-    // TODO: Where is this value comming from?
     writer.writeAttribute(XML_NAMESPACE, "Org.OData.Core.V1");
-    // TODO: Where is this value comming from?
     writer.writeAttribute(XML_ALIAS, "Core");
     writer.writeEndElement();
   }

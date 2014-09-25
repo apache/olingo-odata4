@@ -53,25 +53,16 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.junit.Before;
 import org.junit.Test;
 
 public class BasicITCase extends AbstractBaseTestITCase {
 
   private static final String SERVICE_URI = TecSvcConst.BASE_URI;
 
-  private ODataClient odata;
-
-  @Before
-  public void before() {
-    odata = ODataClientFactory.getV4();
-    odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
-  }
-
-
   @Test
   public void readServiceDocument() {
-    ODataServiceDocumentRequest request = odata.getRetrieveRequestFactory().getServiceDocumentRequest(SERVICE_URI);
+    ODataServiceDocumentRequest request = getClient().getRetrieveRequestFactory()
+        .getServiceDocumentRequest(SERVICE_URI);
     assertNotNull(request);
 
     ODataRetrieveResponse<ODataServiceDocument> response = request.execute();
@@ -87,7 +78,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readMetadata() {
-    EdmMetadataRequest request = odata.getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
+    EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
     assertNotNull(request);
 
     ODataRetrieveResponse<Edm> response = request.execute();
@@ -104,7 +95,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readEntitySet() {
-    final ODataEntitySetRequest<ODataEntitySet> request = odata.getRetrieveRequestFactory()
+    final ODataEntitySetRequest<ODataEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESMixPrimCollComp").build());
     assertNotNull(request);
@@ -134,7 +125,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readException() throws Exception {
-    final ODataEntityRequest<ODataEntity> request = odata.getRetrieveRequestFactory()
+    final ODataEntityRequest<ODataEntity> request = getClient().getRetrieveRequestFactory()
         .getEntityRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESMixPrimCollComp").appendKeySegment("42").build());
     assertNotNull(request);
@@ -151,7 +142,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readEntityRawResult() throws IOException {
-    final ODataEntityRequest<ODataEntity> request = odata.getRetrieveRequestFactory()
+    final ODataEntityRequest<ODataEntity> request = getClient().getRetrieveRequestFactory()
         .getEntityRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESCollAllPrim").appendKeySegment(1).build());
     assertNotNull(request);
@@ -187,7 +178,10 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertEquals(expectedResult, IOUtils.toString(response.getRawResponse(), "UTF-8"));
   }
 
-  @Override protected CommonODataClient<?> getClient() {
-    return ODataClientFactory.getV4();
+  @Override
+  protected CommonODataClient<?> getClient() {
+    ODataClient odata = ODataClientFactory.getV4();
+    odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    return odata;
   }
 }
