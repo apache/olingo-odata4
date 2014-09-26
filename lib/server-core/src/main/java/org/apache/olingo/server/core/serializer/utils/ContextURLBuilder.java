@@ -19,13 +19,19 @@
 package org.apache.olingo.server.core.serializer.utils;
 
 import java.net.URI;
+
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.core.Encoder;
 
+/**
+ * Builder to build a context URL (as defined in the <a
+ * href="http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html#_Toc372793655">
+ * protocol specification</a>).
+ */
 public final class ContextURLBuilder {
 
-  public static final URI create(final ContextURL contextURL) {
+  public static URI create(final ContextURL contextURL) {
     StringBuilder result = new StringBuilder();
     if (contextURL.getServiceRoot() != null) {
       result.append(contextURL.getServiceRoot());
@@ -42,6 +48,9 @@ public final class ContextURLBuilder {
     }
     if (contextURL.getSelectList() != null) {
       result.append('(').append(contextURL.getSelectList()).append(')');
+    }
+    if (contextURL.getNavOrPropertyPath() != null) {
+      result.append('/').append(contextURL.getNavOrPropertyPath());
     }
     if (contextURL.isReference()) {
       if (contextURL.getEntitySetOrSingletonOrType() != null) {

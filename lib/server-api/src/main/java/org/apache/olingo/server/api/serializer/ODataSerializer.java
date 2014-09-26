@@ -22,8 +22,10 @@ import java.io.InputStream;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
@@ -55,6 +57,16 @@ public interface ODataSerializer {
    */
   InputStream entity(EdmEntitySet edmEntitySet, Entity entity, ODataSerializerOptions options)
       throws ODataSerializerException;
+  
+  /**
+   * Writes entity data into an InputStream.
+   * @param edmProperty property definition
+   * @param property property value
+   * @param value when true send bare value of property, false metadata is also included
+   * @param options options for the serializer
+   */
+  InputStream entityProperty(EdmProperty edmProperty, Property property,
+      boolean value, ODataSerializerOptions options) throws ODataSerializerException;
 
   /**
    * Writes entity-set data into an InputStream.

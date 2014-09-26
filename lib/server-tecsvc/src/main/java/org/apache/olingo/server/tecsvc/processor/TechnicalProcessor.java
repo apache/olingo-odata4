@@ -22,8 +22,10 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -41,6 +43,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
@@ -50,6 +53,9 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Technical Processor which provides current implemented processor functionality.
+ */
 public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor {
 
   private OData odata;
@@ -84,7 +90,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor {
         response.setContent(serializer.entitySet(edmEntitySet, entitySet,
             ODataSerializerOptions.with()
                 .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                    getContextUrl(serializer, edmEntitySet, false, expand, select))
+                    getContextUrl(serializer, edmEntitySet, false, expand, select, null))
                 .count(uriInfo.getCountOption())
                 .expand(expand).select(select)
                 .build()));
@@ -120,7 +126,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor {
         response.setContent(serializer.entity(edmEntitySet, entity,
             ODataSerializerOptions.with()
                 .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                    getContextUrl(serializer, edmEntitySet, true, expand, select))
+                    getContextUrl(serializer, edmEntitySet, true, expand, select, null))
                 .count(uriInfo.getCountOption())
                 .expand(expand).select(select)
                 .build()));
@@ -142,9 +148,9 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor {
       EntitySet entitySet = null;
       final UriInfoResource uriResource = uriInfo.asUriInfoResource();
       final List<UriResource> resourceParts = uriResource.getUriResourceParts();
-      if(isCount(resourceParts)) {
+      if (isCount(resourceParts)) {
         int pos = resourceParts.size() - 2;
-        if(pos >= 0) {
+        if (pos >= 0) {
           final UriResourceEntitySet ur =
               (UriResourceEntitySet) uriResource.getUriResourceParts().get(pos);
           entitySet = readEntitySetInternal(ur.getEntitySet(), true);
@@ -165,7 +171,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor {
   }
 
   private boolean isCount(List<UriResource> resourceParts) {
-    if(resourceParts.isEmpty()) {
+    if (resourceParts.isEmpty()) {
       return false;
     }
     UriResource part = resourceParts.get(resourceParts.size() - 1);
@@ -180,7 +186,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor {
       boolean withCount) throws DataProvider.DataProviderException {
     EntitySet entitySet = dataProvider.readAll(edmEntitySet);
     // TODO: set count (correctly) and next link
-    if(withCount && entitySet.getCount() == null) {
+    if (withCount && entitySet.getCount() == null) {
       entitySet.setCount(entitySet.getEntities().size());
     }
     //
@@ -225,9 +231,58 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor {
 
   private ContextURL getContextUrl(final ODataSerializer serializer,
       final EdmEntitySet entitySet, final boolean isSingleEntity,
-      final ExpandOption expand, final SelectOption select) throws ODataSerializerException {
+      final ExpandOption expand, final SelectOption select, final String navOrPropertyPath)
+      throws ODataSerializerException {
+
     return ContextURL.with().entitySet(entitySet)
         .selectList(serializer.buildContextURLSelectList(entitySet, expand, select))
-        .suffix(isSingleEntity ? Suffix.ENTITY : null).build();
+        .suffix(isSingleEntity ? Suffix.ENTITY : null)
+        .navOrPropertyPath(navOrPropertyPath)
+        .build();
+  }
+
+  @Override
+  public void readEntityProperty(ODataRequest request,
+      ODataResponse response, UriInfo uriInfo, ContentType contentType, boolean value) {
+
+    if (!validateOptions(uriInfo.asUriInfoResource())) {
+      response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
+      return;
+    }
+    try {
+      final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
+      final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
+      if (entity == null) {
+        response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
+      } else {
+        UriResourceProperty uriProperty = (UriResourceProperty) uriInfo
+            .getUriResourceParts().get(uriInfo.getUriResourceParts().size() - 1);
+        EdmProperty edmProperty = uriProperty.getProperty();
+        Property property = entity.getProperty(edmProperty.getName());
+        if (property == null) {
+          response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
+        } else {
+          if (property.getValue() == null) {
+            response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+          } else {
+            final ODataFormat format = ODataFormat.fromContentType(contentType);
+            ODataSerializer serializer = odata.createSerializer(format);
+            response.setContent(serializer.entityProperty(edmProperty, property, value,
+                ODataSerializerOptions.with()
+                    .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
+                        getContextUrl(serializer, edmEntitySet, true, null, null, edmProperty.getName()))
+                    .build()));
+            response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+            response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
+          }
+        }
+      }
+    } catch (final DataProvider.DataProviderException e) {
+      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
+    } catch (final ODataSerializerException e) {
+      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
+    } catch (final ODataApplicationException e) {
+      response.setStatusCode(e.getStatusCode());
+    }
   }
 }

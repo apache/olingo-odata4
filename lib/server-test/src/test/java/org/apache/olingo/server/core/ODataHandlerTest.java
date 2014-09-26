@@ -28,6 +28,7 @@ import java.util.Arrays;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -39,6 +40,7 @@ import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Before;
 import org.junit.Test;
@@ -215,7 +217,7 @@ public class ODataHandlerTest {
     assertNotNull(response);
     assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), response.getStatusCode());
   }
-  
+
   @Test
   public void testContentNegotiationNotSupported2() {
     ODataRequest request = new ODataRequest();
@@ -252,14 +254,13 @@ public class ODataHandlerTest {
     handler.register(processor);
 
     ODataResponse response = handler.process(request);
-
     assertNotNull(response);
     Mockito.verify(processor).countEntitySet(
         Mockito.eq(request),
         Mockito.any(ODataResponse.class),
         Mockito.any(UriInfo.class));
-  }  
-  
+  }
+
   @Test
   public void testCountWithNavigation() throws Exception {
     ODataRequest request = new ODataRequest();
@@ -271,11 +272,73 @@ public class ODataHandlerTest {
     handler.register(processor);
 
     ODataResponse response = handler.process(request);
-
     assertNotNull(response);
     Mockito.verify(processor).countEntitySet(
         Mockito.eq(request),
         Mockito.any(ODataResponse.class),
         Mockito.any(UriInfo.class));
-  }  
+  }
+
+  @Test
+  public void testAddressPrimitiveProperty() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("ESAllPrim/PropertyInt16");
+
+    EntityProcessor processor = mock(EntityProcessor.class);
+    handler.register(processor);
+
+    ODataResponse response = handler.process(request);
+    assertNotNull(response);
+
+    Mockito.verify(processor).readEntityProperty(
+        Mockito.any(ODataRequest.class),
+        Mockito.any(ODataResponse.class),
+        Mockito.any(UriInfo.class),
+        Mockito.any(ContentType.class),
+        Mockito.eq(false));
+  }
+
+  @Test
+  public void testAddressPrimitivePropertyValue() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("ESAllPrim/PropertyInt16/$value");
+
+    EntityProcessor processor = mock(EntityProcessor.class);
+    handler.register(processor);
+
+    ODataResponse response = handler.process(request);
+    assertNotNull(response);
+
+    Mockito.verify(processor).readEntityProperty(
+        Mockito.any(ODataRequest.class),
+        Mockito.any(ODataResponse.class),
+        Mockito.any(UriInfo.class),
+        Mockito.any(ContentType.class),
+        Mockito.eq(true));
+  }
+
+  @Test
+  public void testAddressComplexProperty() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("ESMixPrimCollComp/PropertyComp");
+
+    EntityProcessor processor = mock(EntityProcessor.class);
+    handler.register(processor);
+
+    ODataResponse response = handler.process(request);
+    assertNotNull(response);
+
+    Mockito.verify(processor).readEntityProperty(
+        Mockito.any(ODataRequest.class),
+        Mockito.any(ODataResponse.class),
+        Mockito.any(UriInfo.class),
+        Mockito.any(ContentType.class),
+        Mockito.eq(false));
+  }
 }

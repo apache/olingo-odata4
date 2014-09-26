@@ -26,8 +26,10 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerException;
@@ -106,4 +108,12 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
       final ExpandOption expand, final SelectOption select) throws ODataSerializerException {
     return ContextURLHelper.buildSelectList(edmEntitySet.getEntityType(), expand, select);
   }
+
+  @Override
+  public 	InputStream entityProperty(EdmProperty edmProperty, Property property,
+    boolean value, ODataSerializerOptions options)
+      throws ODataSerializerException{
+    throw new ODataSerializerException("error serialization not implemented for XML format",
+      ODataSerializerException.MessageKeys.NOT_IMPLEMENTED);
+	}
 }

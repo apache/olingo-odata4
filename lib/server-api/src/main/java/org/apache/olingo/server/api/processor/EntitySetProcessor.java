@@ -30,7 +30,7 @@ public interface EntitySetProcessor extends Processor {
 
   /**
    *  Reads entities data from persistence and puts serialized content and status into the response.
-   *  
+   *
    *  @param request - OData request object containing raw HTTP information
    *  @param response - OData response object for collecting response data
    *  @param uriInfo - information of a parsed OData URI
