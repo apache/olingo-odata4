@@ -30,9 +30,10 @@ import java.util.regex.Pattern;
 
 public class UriDecoder {
 
-  static Pattern uriPattern = Pattern.compile("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
+  private static final Pattern uriPattern =
+      Pattern.compile("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
 
-  public static RawUri decodeUri(final String uri, final int scipSegments) {
+  public static RawUri decodeUri(final String uri, final int skipSegments) throws UriParserSyntaxException {
     RawUri rawUri = new RawUri();
 
     Matcher m = uriPattern.matcher(uri);
@@ -44,14 +45,14 @@ public class UriDecoder {
       rawUri.fragment = m.group(9);
     }
 
-    splittPath(rawUri, scipSegments);
-    splittOptions(rawUri);
+    splitPath(rawUri, skipSegments);
+    splitOptions(rawUri);
     decode(rawUri);
 
     return rawUri;
   }
 
-  private static void decode(final RawUri rawUri) {
+  private static void decode(final RawUri rawUri) throws UriParserSyntaxException {
     rawUri.pathSegmentListDecoded = new ArrayList<String>();
     for (String segment : rawUri.pathSegmentList) {
       rawUri.pathSegmentListDecoded.add(decode(segment));
@@ -65,25 +66,25 @@ public class UriDecoder {
     }
   }
 
-  private static void splittOptions(final RawUri rawUri) {
+  private static void splitOptions(final RawUri rawUri) {
     rawUri.queryOptionList = new ArrayList<RawUri.QueryOption>();
 
     if (rawUri.queryOptionString == null) {
       return;
     }
 
-    List<String> options = splitt(rawUri.queryOptionString, '&');
+    List<String> options = split(rawUri.queryOptionString, '&');
 
     for (String option : options) {
       if (option.length() != 0) {
-        List<String> pair = splittFirst(option, '=');
+        List<String> pair = splitFirst(option, '=');
         rawUri.queryOptionList.add(
             new RawUri.QueryOption(pair.get(0), pair.get(1)));
       }
     }
   }
 
-  private static List<String> splittFirst(final String input, final char c) {
+  private static List<String> splitFirst(final String input, final char c) {
     int pos = input.indexOf(c, 0);
     if (pos >= 0) {
       return Arrays.asList(input.substring(0, pos), input.substring(pos + 1));
@@ -92,21 +93,19 @@ public class UriDecoder {
     }
   }
 
-  public static void splittPath(final RawUri rawUri, int scipSegments) {
-    List<String> list = splitt(rawUri.path, '/');
+  public static void splitPath(final RawUri rawUri, int skipSegments) {
+    List<String> list = split(rawUri.path, '/');
 
     if (list.get(0).length() == 0) {
-      scipSegments++;
+      skipSegments++;
     }
 
-    if (scipSegments > 0) {
-      rawUri.pathSegmentList = list.subList(scipSegments, list.size());
-    } else {
-      rawUri.pathSegmentList = list;
-    }
+    rawUri.pathSegmentList = skipSegments > 0 ?
+        list.subList(skipSegments, list.size()) :
+        list;
   }
 
-  public static List<String> splitt(final String input, final char c) {
+  public static List<String> split(final String input, final char c) {
 
     List<String> list = new LinkedList<String>();
 
@@ -123,8 +122,11 @@ public class UriDecoder {
     return list;
   }
 
-  public static String decode(final String encoded) {
-    return Decoder.decode(encoded);
+  public static String decode(final String encoded) throws UriParserSyntaxException {
+    try {
+      return Decoder.decode(encoded);
+    } catch (final IllegalArgumentException e) {
+      throw new UriParserSyntaxException("Wrong percent encoding!", e, UriParserSyntaxException.MessageKeys.SYNTAX);
+    }
   }
-
 }

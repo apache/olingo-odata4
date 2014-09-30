@@ -31,8 +31,8 @@ import static org.junit.Assert.assertEquals;
 
 public class RawUriTest {
 
-  private RawUri runRawParser(final String uri, final int scipSegments) throws UriParserSyntaxException {
-    return UriDecoder.decodeUri(uri, scipSegments);
+  private RawUri runRawParser(final String uri, final int skipSegments) throws UriParserSyntaxException {
+    return UriDecoder.decodeUri(uri, skipSegments);
   }
 
   @Test
@@ -79,7 +79,6 @@ public class RawUriTest {
 
     assertEquals(name, option.name);
     assertEquals(value, option.value);
-
   }
 
   private void checkOptionCount(final RawUri rawUri, final int count) {
@@ -127,13 +126,13 @@ public class RawUriTest {
   }
 
   @Test
-  public void testSplitt() {
-    UriDecoder.splitt("", '/');
-    UriDecoder.splitt("/", '/');
-    UriDecoder.splitt("a", '/');
-    UriDecoder.splitt("a/", '/');
-    UriDecoder.splitt("/a", '/');
-    UriDecoder.splitt("a/a", '/');
+  public void testSplit() {
+    UriDecoder.split("", '/');
+    UriDecoder.split("/", '/');
+    UriDecoder.split("a", '/');
+    UriDecoder.split("a/", '/');
+    UriDecoder.split("/a", '/');
+    UriDecoder.split("a/a", '/');
   }
 
   private void checkPath(final RawUri rawUri, final String path, final List<String> list) {
@@ -148,4 +147,8 @@ public class RawUriTest {
     }
   }
 
+  @Test(expected = UriParserSyntaxException.class)
+  public void wrongPercentEncoding() throws Exception {
+    runRawParser("%wrong", 0);
+  }
 }
