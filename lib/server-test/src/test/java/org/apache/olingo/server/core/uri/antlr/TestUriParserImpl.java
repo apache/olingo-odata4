@@ -30,6 +30,7 @@ import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
+import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
@@ -240,7 +241,7 @@ public class TestUriParserImpl {
         .goFilter().is("<<PropertyInt16> eq <123>>");
   }
 
-  @Test(expected = UriValidationException.class)
+  @Test(expected = UriParserSyntaxException.class)
   public void testEntityFailOnValidation2() throws Exception {
     // simple entity set; with qualifiedentityTypeName; with 2xformat(before and after), expand, filter
     testUri.run("$entity/olingo.odata.test1.ETTwoPrim?"

@@ -314,6 +314,11 @@ public class UriValidatorTest {
     parseAndValidate("ESAllPrim?$skip=foo", HttpMethod.GET);
   }
 
+  @Test(expected = UriParserSyntaxException.class)
+  public void validateDoubleSystemOptions() throws Exception {
+    parseAndValidate("ESAllPrim?$skip=1&$skip=2", HttpMethod.GET);
+  }
+
   @Test(expected = UriValidationException.class)
   public void validateKeyPredicatesWrongKey() throws Exception {
     String uri = "ESTwoKeyNav(xxx=1, yyy='abc')";

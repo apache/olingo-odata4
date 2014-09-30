@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.uri;
 
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.server.api.uri.UriInfoAll;
@@ -120,6 +121,13 @@ public class UriInfoImplTest {
 
     uriInfo.addResourcePart(entitySet1);
     assertEquals(entitySet1, uriInfo.getLastResourcePart());
+  }
+
+  @Test(expected = ODataRuntimeException.class)
+  public void doubleSystemQueryOptions() {
+    new UriInfoImpl()
+        .setSystemQueryOption(new FormatOptionImpl())
+        .setSystemQueryOption(new FormatOptionImpl());
   }
 
   @Test

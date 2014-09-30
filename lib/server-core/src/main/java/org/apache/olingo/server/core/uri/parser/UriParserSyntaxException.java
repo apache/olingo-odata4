@@ -25,6 +25,7 @@ public class UriParserSyntaxException extends UriParserException {
 
   public static enum MessageKeys implements MessageKey {
     /** parameter: query-option name */ UNKNOWN_SYSTEM_QUERY_OPTION,
+    /** parameter: query-option name */ DOUBLE_SYSTEM_QUERY_OPTION,
     /** parameters: query-option name, query-option value */ WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
     SYNTAX,
     SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE, 

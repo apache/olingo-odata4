@@ -53,6 +53,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UriInfoImpl implements UriInfo {
 
@@ -62,9 +63,9 @@ public class UriInfoImpl implements UriInfo {
   private EdmEntityType entityTypeCast; // for $entity
 
   private List<CustomQueryOptionImpl> customQueryOptions = new ArrayList<CustomQueryOptionImpl>();
-  private HashMap<String, String> aliasToValue = new HashMap<String, String>();
+  private Map<String, String> aliasToValue = new HashMap<String, String>();
 
-  HashMap<SystemQueryOptionKind, SystemQueryOption> systemQueryOptions =
+  Map<SystemQueryOptionKind, SystemQueryOption> systemQueryOptions =
       new HashMap<SystemQueryOptionKind, SystemQueryOption>();
 
   private String fragment;
@@ -239,36 +240,36 @@ public class UriInfoImpl implements UriInfo {
     }
   }
 
-  public UriInfoImpl setSystemQueryOption(final SystemQueryOptionImpl systemOption) {
-
-    if (systemOption.getKind() == SystemQueryOptionKind.EXPAND) {
-      systemQueryOptions.put(SystemQueryOptionKind.EXPAND, systemOption);
-    } else if (systemOption.getKind() == SystemQueryOptionKind.FILTER) {
-      systemQueryOptions.put(SystemQueryOptionKind.FILTER, systemOption);
-    } else if (systemOption.getKind() == SystemQueryOptionKind.FORMAT) {
-      systemQueryOptions.put(SystemQueryOptionKind.FORMAT, systemOption);
-    } else if (systemOption.getKind() == SystemQueryOptionKind.ID) {
-      systemQueryOptions.put(SystemQueryOptionKind.ID, systemOption);
-    } else if (systemOption.getKind() == SystemQueryOptionKind.COUNT) {
-      systemQueryOptions.put(SystemQueryOptionKind.COUNT, systemOption);
-    } else if (systemOption.getKind() == SystemQueryOptionKind.ORDERBY) {
-      systemQueryOptions.put(SystemQueryOptionKind.ORDERBY, systemOption);
-    } else if (systemOption.getKind() == SystemQueryOptionKind.SEARCH) {
-      systemQueryOptions.put(SystemQueryOptionKind.SEARCH, systemOption);
-    } else if (systemOption.getKind() == SystemQueryOptionKind.SELECT) {
-      systemQueryOptions.put(SystemQueryOptionKind.SELECT, systemOption);
-    } else if (systemOption.getKind() == SystemQueryOptionKind.SKIP) {
-      systemQueryOptions.put(SystemQueryOptionKind.SKIP, systemOption);
-    } else if (systemOption.getKind() == SystemQueryOptionKind.SKIPTOKEN) {
-      systemQueryOptions.put(SystemQueryOptionKind.SKIPTOKEN, systemOption);
-    } else if (systemOption.getKind() == SystemQueryOptionKind.TOP) {
-      systemQueryOptions.put(SystemQueryOptionKind.TOP, systemOption);
-    } else if (systemOption.getKind() == SystemQueryOptionKind.LEVELS) {
-      systemQueryOptions.put(SystemQueryOptionKind.LEVELS, systemOption);
-    } else {
+  /** Adds system query option.
+   * @param systemOption the option to be added
+   * @return this object for method chaining
+   * @throws ODataRuntimeException if an unsupported option is provided
+   *                               or an option of this kind has been added before
+   */
+  public UriInfoImpl setSystemQueryOption(final SystemQueryOption systemOption) {
+    final SystemQueryOptionKind kind = systemOption.getKind();
+    switch (kind) {
+    case EXPAND:
+    case FILTER:
+    case FORMAT:
+    case ID:
+    case COUNT:
+    case ORDERBY:
+    case SEARCH:
+    case SELECT:
+    case SKIP:
+    case SKIPTOKEN:
+    case TOP:
+    case LEVELS:
+      if (systemQueryOptions.containsKey(kind)) {
+        throw new ODataRuntimeException("Double System Query Option: " + systemOption.getName());
+      } else {
+        systemQueryOptions.put(kind, systemOption);
+      }
+      break;
+    default:
       throw new ODataRuntimeException("Unsupported System Query Option: " + systemOption.getName());
     }
-
     return this;
   }
 
