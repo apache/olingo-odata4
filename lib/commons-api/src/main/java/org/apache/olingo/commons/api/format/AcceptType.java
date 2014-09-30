@@ -103,10 +103,7 @@ public class AcceptType {
     final String params = (typesAndParameters.length > 1 ? typesAndParameters[1] : null);
 
     String[] tokens = types.split(TypeUtil.TYPE_SUBTYPE_SEPARATOR);
-    if (tokens.length == 1) {
-      typeSubtype.add(tokens[0]);
-      typeSubtype.add(TypeUtil.MEDIA_TYPE_WILDCARD);
-    } else if (tokens.length == 2) {
+    if (tokens.length == 2) {
       if (tokens[0] == null || tokens[0].isEmpty()) {
         throw new IllegalArgumentException("No type found in format '" + format + "'.");
       } else if (tokens[1] == null || tokens[1].isEmpty()) {
@@ -116,8 +113,8 @@ public class AcceptType {
         typeSubtype.add(tokens[1]);
       }
     } else {
-      throw new IllegalArgumentException("Too many '" + TypeUtil.TYPE_SUBTYPE_SEPARATOR + "' in format '" + format
-          + "'.");
+      throw new IllegalArgumentException("Not exactly one '" + TypeUtil.TYPE_SUBTYPE_SEPARATOR +
+          "' in format '" + format + "', or it is at the beginning or at the end.");
     }
 
     TypeUtil.parseParameters(params, parameters);

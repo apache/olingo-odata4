@@ -38,8 +38,6 @@ public class AcceptTypeTest {
 
     assertTrue(atl.get(0).matches(ContentType.create("a/a")));
     assertTrue(atl.get(0).matches(ContentType.create("b/b")));
-
-    assertEquals("*/*", AcceptType.create("*").get(0).toString());
   }
 
   @Test
@@ -110,6 +108,11 @@ public class AcceptTypeTest {
     assertEquals("json", atl.get(0).getSubtype());
     assertEquals("0.2", atl.get(0).getParameters().get("q"));
     assertEquals("application/json;q=0.2", atl.get(0).toString());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void abbreviationsNotAllowed() {
+    AcceptType.create("application");
   }
 
   @Test(expected = IllegalArgumentException.class)
