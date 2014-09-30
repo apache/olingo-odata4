@@ -27,7 +27,7 @@ import java.util.TreeMap;
 
 /**
  * Internally used {@link AcceptType} for OData library.
- *
+ * 
  * See RFC 7231, chapter 5.3.2:
  * <pre>
  * Accept = #( media-range [ accept-params ] )
@@ -74,11 +74,11 @@ public class AcceptType {
     }
     List<String> typeSubtype = new ArrayList<String>();
     parameters = createParameterMap();
-    
+
     parse(type, typeSubtype, parameters);
     this.type = typeSubtype.get(0);
     subtype = typeSubtype.get(1);
-    
+
     if (TypeUtil.MEDIA_TYPE_WILDCARD.equals(this.type) && !TypeUtil.MEDIA_TYPE_WILDCARD.equals(subtype)) {
       throw new IllegalArgumentException("Illegal combination of WILDCARD type with NONE WILDCARD subtype.");
     }
@@ -97,7 +97,7 @@ public class AcceptType {
 
   private static void parse(final String format, final List<String> typeSubtype,
       final Map<String, String> parameters) {
-    
+
     final String[] typesAndParameters = format.split(TypeUtil.PARAMETER_SEPARATOR, 2);
     final String types = typesAndParameters[0];
     final String params = (typesAndParameters.length > 1 ? typesAndParameters[1] : null);
@@ -112,6 +112,9 @@ public class AcceptType {
         typeSubtype.add(tokens[0]);
         typeSubtype.add(tokens[1]);
       }
+    } else if (tokens.length == 1 && "*".equals(tokens[0])) {
+      typeSubtype.add(tokens[0]);
+      typeSubtype.add(tokens[0]);
     } else {
       throw new IllegalArgumentException("Not exactly one '" + TypeUtil.TYPE_SUBTYPE_SEPARATOR +
           "' in format '" + format + "', or it is at the beginning or at the end.");
@@ -135,7 +138,7 @@ public class AcceptType {
     }
 
     sort(result);
-    
+
     return result;
   }
 

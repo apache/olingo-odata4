@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.fit.tecsvc.http;
 
+import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -28,7 +30,7 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-public class PingITCase {
+public class PingITCase extends AbstractBaseTestITCase{
 
   private static final Logger LOG = LoggerFactory.getLogger(PingITCase.class);
 
@@ -62,6 +64,11 @@ public class PingITCase {
 
     int code = connection.getResponseCode();
     assertEquals(200, code);
+  }
+
+  @Override
+  protected CommonODataClient<?> getClient() {
+    return null;
   }
 
 }

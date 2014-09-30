@@ -18,17 +18,19 @@
  */
 package org.apache.olingo.fit.tecsvc.http;
 
-import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static org.junit.Assert.assertEquals;
+import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.fit.AbstractBaseTestITCase;
+import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.junit.Test;
 
-public class BasicHttpITCase {
+public class BasicHttpITCase extends AbstractBaseTestITCase{
 
   private static final String SERVICE_URI = TecSvcConst.BASE_URI + "/";
 
@@ -112,6 +114,12 @@ public class BasicHttpITCase {
     assertEquals(200, code);
     String v = connection.getHeaderField(HttpHeader.ODATA_VERSION);
     assertEquals("4.0", v);
+  }
+
+  @Override
+  protected CommonODataClient<?> getClient() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   
