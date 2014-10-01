@@ -227,6 +227,15 @@ public class ODataHandler {
         }
       }
       break;
+    case count:
+      if (request.getMethod().equals(HttpMethod.GET)) {
+        EntityCollectionProcessor cp = selectProcessor(EntityCollectionProcessor.class);
+      	cp.countCollection(request, response, uriInfo);
+      } else {
+        throw new ODataHandlerException("not implemented",
+            ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+      }
+      break;
     default:
       throw new ODataHandlerException("not implemented",
           ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);

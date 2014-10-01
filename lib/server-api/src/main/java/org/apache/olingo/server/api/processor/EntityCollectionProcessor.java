@@ -29,11 +29,19 @@ import org.apache.olingo.server.api.uri.UriInfo;
 public interface EntityCollectionProcessor extends Processor {
 
   /**
-   * Reads entities data from persistency and puts serialized content and status into the response.
+   * Reads entities data from persistence and puts serialized content and status into the response.
    *  @param request - OData request object containing raw HTTP information
    *  @param response - OData response object for collecting response data
    *  @param uriInfo - information of a parsed OData URI
    *  @param requestedContentType - requested content type after content negotiation
    */
   void readCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestedContentType);
+
+  /**
+   *  Count entities from persistence and puts serialized content and status into the response.
+   *  @param request - OData request object containing raw http information.
+   *  @param response - OData response object for collecting response data
+   *  @param uriInfo - information of a parsed OData uri
+   */
+  void countCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo);
 }

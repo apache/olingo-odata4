@@ -521,6 +521,7 @@ public class UriValidator {
     UriResource secondLastPathSegment = uriInfo.getUriResourceParts().get(secondLastPathSegmentIndex);
     switch (secondLastPathSegment.getKind()) {
     case entitySet:
+    case navigationProperty:
       idx = RowIndexForUriType.entitySetCount;
       break;
     case complexProperty:

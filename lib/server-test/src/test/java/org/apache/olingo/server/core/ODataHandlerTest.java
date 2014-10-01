@@ -35,11 +35,14 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
+import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class ODataHandlerTest {
 
@@ -238,4 +241,41 @@ public class ODataHandlerTest {
     assertEquals(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), response.getStatusCode());
   }
 
+  @Test
+  public void testCount() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("ESAllPrim/$count");
+
+    EntityCollectionProcessor processor = mock(EntityCollectionProcessor.class);
+    handler.register(processor);
+
+    ODataResponse response = handler.process(request);
+
+    assertNotNull(response);
+    Mockito.verify(processor).countCollection(
+    		Mockito.eq(request),
+    		Mockito.any(ODataResponse.class),
+    		Mockito.any(UriInfo.class));
+  }  
+  
+  @Test
+  public void testCountWithNavigation() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("ESAllPrim/NavPropertyETTwoPrimMany/$count");
+
+    EntityCollectionProcessor processor = mock(EntityCollectionProcessor.class);
+    handler.register(processor);
+
+    ODataResponse response = handler.process(request);
+
+    assertNotNull(response);
+    Mockito.verify(processor).countCollection(
+        Mockito.eq(request),
+    		Mockito.any(ODataResponse.class), 
+    		Mockito.any(UriInfo.class));
+  }  
 }

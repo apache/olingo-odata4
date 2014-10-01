@@ -230,5 +230,10 @@ public class ContentNegotiatorTest {
         final ContentType requestedContentType) {
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     }
+
+    @Override
+    public void countCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo) {
+      response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.TEXT_PLAIN.toContentTypeString());
+    }
   }
 }

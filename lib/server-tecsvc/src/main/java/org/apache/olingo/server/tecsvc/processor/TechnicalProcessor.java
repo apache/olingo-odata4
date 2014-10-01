@@ -43,8 +43,10 @@ import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Locale;
 
@@ -134,9 +136,54 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
     }
   }
 
+  @Override
+  public void countCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo) {
+    try {
+      EntitySet entitySet = null;
+      final UriInfoResource uriResource = uriInfo.asUriInfoResource();
+      final List<UriResource> resourceParts = uriResource.getUriResourceParts();
+      if(isCount(resourceParts)) {
+        int pos = resourceParts.size() - 2;
+        if(pos >= 0) {
+          final UriResourceEntitySet ur =
+              (UriResourceEntitySet) uriResource.getUriResourceParts().get(pos);
+          entitySet = readEntitySetInternal(ur.getEntitySet(), true);
+        }
+      }
+
+      if (entitySet == null) {
+        response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
+      } else {
+        Integer count = entitySet.getCount();
+        response.setContent(new ByteArrayInputStream(count.toString().getBytes()));
+        response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+        response.setHeader(HttpHeader.CONTENT_TYPE, "text/plain");
+      }
+    } catch (final DataProvider.DataProviderException e) {
+      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
+    }
+  }
+
+  private boolean isCount(List<UriResource> resourceParts) {
+    if(resourceParts.isEmpty()) {
+      return false;
+    }
+    UriResource part = resourceParts.get(resourceParts.size() - 1);
+    return SystemQueryOptionKind.COUNT.toString().equals(part.toString());
+  }
+
   private EntitySet readEntitySetInternal(final EdmEntitySet edmEntitySet) throws DataProvider.DataProviderException {
+    return readEntitySetInternal(edmEntitySet, false);
+  }
+
+  private EntitySet readEntitySetInternal(final EdmEntitySet edmEntitySet,
+      boolean withCount) throws DataProvider.DataProviderException {
     EntitySet entitySet = dataProvider.readAll(edmEntitySet);
-    // TODO: set count and next link
+    // TODO: set count (correctly) and next link
+    if(withCount && entitySet.getCount() == null) {
+      entitySet.setCount(entitySet.getEntities().size());
+    }
+    //
     return entitySet;
   }
 
