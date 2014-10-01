@@ -19,6 +19,7 @@
 package org.apache.olingo.fit.tecsvc.http;
 
 import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
@@ -45,6 +46,7 @@ public class PingITCase extends AbstractBaseTestITCase{
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");
+    connection.setRequestProperty(HttpHeader.ACCEPT, "*/*");
     connection.connect();
 
     int code = connection.getResponseCode();
@@ -60,6 +62,7 @@ public class PingITCase extends AbstractBaseTestITCase{
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");
+    connection.setRequestProperty(HttpHeader.ACCEPT, "*/*");
     connection.connect();
 
     int code = connection.getResponseCode();

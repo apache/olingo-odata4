@@ -107,6 +107,7 @@ public class BasicHttpITCase extends AbstractBaseTestITCase{
 
     connection.setRequestMethod("GET");
     connection.setRequestProperty(HttpHeader.ODATA_MAX_VERSION, "4.0");
+    connection.setRequestProperty(HttpHeader.ACCEPT, "*/*");
     
     connection.connect();
 
@@ -118,7 +119,6 @@ public class BasicHttpITCase extends AbstractBaseTestITCase{
 
   @Override
   protected CommonODataClient<?> getClient() {
-    // TODO Auto-generated method stub
     return null;
   }
 

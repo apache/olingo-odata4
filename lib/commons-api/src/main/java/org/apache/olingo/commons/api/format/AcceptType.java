@@ -112,9 +112,6 @@ public class AcceptType {
         typeSubtype.add(tokens[0]);
         typeSubtype.add(tokens[1]);
       }
-    } else if (tokens.length == 1 && "*".equals(tokens[0])) {
-      typeSubtype.add(tokens[0]);
-      typeSubtype.add(tokens[0]);
     } else {
       throw new IllegalArgumentException("Not exactly one '" + TypeUtil.TYPE_SUBTYPE_SEPARATOR +
           "' in format '" + format + "', or it is at the beginning or at the end.");
