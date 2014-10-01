@@ -34,7 +34,7 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.processor.DefaultProcessor;
-import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
+import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.ExceptionProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
@@ -174,13 +174,13 @@ public class ODataHandler {
     case entitySet:
       if (((UriResourcePartTyped) lastPathSegment).isCollection()) {
         if (request.getMethod().equals(HttpMethod.GET)) {
-          EntityCollectionProcessor cp = selectProcessor(EntityCollectionProcessor.class);
+          EntitySetProcessor cp = selectProcessor(EntitySetProcessor.class);
 
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp,
-                  EntityCollectionProcessor.class);
+                  EntitySetProcessor.class);
 
-          cp.readCollection(request, response, uriInfo, requestedContentType);
+          cp.readEntitySet(request, response, uriInfo, requestedContentType);
         } else {
           throw new ODataHandlerException("not implemented",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
@@ -202,13 +202,13 @@ public class ODataHandler {
     case navigationProperty:
       if (((UriResourceNavigation) lastPathSegment).isCollection()) {
         if (request.getMethod().equals(HttpMethod.GET)) {
-          EntityCollectionProcessor cp = selectProcessor(EntityCollectionProcessor.class);
+          EntitySetProcessor cp = selectProcessor(EntitySetProcessor.class);
 
           requestedContentType =
               ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, cp,
-                  EntityCollectionProcessor.class);
+                  EntitySetProcessor.class);
 
-          cp.readCollection(request, response, uriInfo, requestedContentType);
+          cp.readEntitySet(request, response, uriInfo, requestedContentType);
         } else {
           throw new ODataHandlerException("not implemented",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
@@ -229,8 +229,8 @@ public class ODataHandler {
       break;
     case count:
       if (request.getMethod().equals(HttpMethod.GET)) {
-        EntityCollectionProcessor cp = selectProcessor(EntityCollectionProcessor.class);
-      	cp.countCollection(request, response, uriInfo);
+        EntitySetProcessor cp = selectProcessor(EntitySetProcessor.class);
+      	cp.countEntitySet(request, response, uriInfo);
       } else {
         throw new ODataHandlerException("not implemented",
             ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);

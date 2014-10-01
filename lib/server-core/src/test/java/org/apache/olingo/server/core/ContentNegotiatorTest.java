@@ -36,7 +36,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.processor.CustomContentTypeSupportProcessor;
-import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
+import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
@@ -141,7 +141,7 @@ public class ContentNegotiatorTest {
   public void testEntityCollectionFail() throws Exception {
     for (String[] useCase : casesFail) {
       try {
-        testContentNegotiation(useCase, EntityCollectionProcessor.class);
+        testContentNegotiation(useCase, EntitySetProcessor.class);
         fail("Exception expected for '" + useCase[1] + '|' + useCase[2] + '|' + useCase[3] + "'!");
       } catch (final ContentNegotiatorException e) {}
     }
@@ -190,7 +190,7 @@ public class ContentNegotiatorTest {
   }
 
   private class ProcessorStub implements ServiceDocumentProcessor, MetadataProcessor,
-      EntityCollectionProcessor, CustomContentTypeSupportProcessor {
+      EntitySetProcessor, CustomContentTypeSupportProcessor {
 
     List<ContentType> customTypes;
 
@@ -220,7 +220,7 @@ public class ContentNegotiatorTest {
     }
 
     @Override
-    public void readCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
+    public void readEntitySet(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
         final ContentType requestedContentType) {
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     }
@@ -232,7 +232,7 @@ public class ContentNegotiatorTest {
     }
 
     @Override
-    public void countCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo) {
+    public void countEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo) {
       response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.TEXT_PLAIN.toContentTypeString());
     }
   }

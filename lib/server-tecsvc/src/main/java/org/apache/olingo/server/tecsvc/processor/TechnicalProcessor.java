@@ -32,7 +32,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
+import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerException;
@@ -50,7 +50,7 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Locale;
 
-public class TechnicalProcessor implements EntityCollectionProcessor, EntityProcessor {
+public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor {
 
   private OData odata;
   private DataProvider dataProvider;
@@ -65,7 +65,7 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
   }
 
   @Override
-  public void readCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readEntitySet(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) {
     if (!validateOptions(uriInfo.asUriInfoResource())) {
       response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
@@ -137,7 +137,7 @@ public class TechnicalProcessor implements EntityCollectionProcessor, EntityProc
   }
 
   @Override
-  public void countCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo) {
+  public void countEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo) {
     try {
       EntitySet entitySet = null;
       final UriInfoResource uriResource = uriInfo.asUriInfoResource();

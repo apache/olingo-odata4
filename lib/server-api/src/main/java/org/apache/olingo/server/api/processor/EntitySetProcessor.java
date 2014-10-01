@@ -24,24 +24,27 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor interface for handling collections of entities (e.g., EntitySets).
+ * Processor interface for handling EntitySets (i.e. collection of entities).
  */
-public interface EntityCollectionProcessor extends Processor {
+public interface EntitySetProcessor extends Processor {
 
   /**
-   * Reads entities data from persistence and puts serialized content and status into the response.
+   *  Reads entities data from persistence and puts serialized content and status into the response.
+   *  
    *  @param request - OData request object containing raw HTTP information
    *  @param response - OData response object for collecting response data
    *  @param uriInfo - information of a parsed OData URI
    *  @param requestedContentType - requested content type after content negotiation
    */
-  void readCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestedContentType);
+  void readEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestedContentType);
 
   /**
    *  Count entities from persistence and puts serialized content and status into the response.
+   *  Response content type is <code>text/plain</code> by default.
+   *
    *  @param request - OData request object containing raw http information.
    *  @param response - OData response object for collecting response data
    *  @param uriInfo - information of a parsed OData uri
    */
-  void countCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo);
+  void countEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo);
 }
