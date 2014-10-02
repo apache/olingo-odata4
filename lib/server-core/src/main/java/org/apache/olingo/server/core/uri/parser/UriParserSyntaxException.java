@@ -24,12 +24,13 @@ public class UriParserSyntaxException extends UriParserException {
   private static final long serialVersionUID = 5887744747812478226L;
 
   public static enum MessageKeys implements MessageKey {
+    /** parameter: segment */ MUST_BE_LAST_SEGMENT,
     /** parameter: query-option name */ UNKNOWN_SYSTEM_QUERY_OPTION,
     /** parameter: query-option name */ DOUBLE_SYSTEM_QUERY_OPTION,
     /** parameters: query-option name, query-option value */ WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
-    SYNTAX,
-    SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE, 
-    /** parameter: $format option value */ WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT;
+    /** parameter: $format option value */ WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT,
+    SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE,
+    SYNTAX;
 
     @Override
     public String getKey() {

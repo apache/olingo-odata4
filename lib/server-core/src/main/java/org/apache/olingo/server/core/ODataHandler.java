@@ -90,9 +90,6 @@ public class ODataHandler {
       handleException(request, response, serverError, null);
     } catch (ODataHandlerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError, null);
-    } catch (ODataTranslatedException e) {
-      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError, requestedContentType);
     } catch (ODataApplicationException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
@@ -106,14 +103,12 @@ public class ODataHandler {
 
   private void processInternal(final ODataRequest request, ContentType requestedContentType,
       final ODataResponse response)
-      throws ODataTranslatedException, UriParserException, UriValidationException, ContentNegotiatorException,
+      throws ODataHandlerException, UriParserException, UriValidationException, ContentNegotiatorException,
       ODataApplicationException {
     validateODataVersion(request, response);
 
     Parser parser = new Parser();
-    String odUri =
-        request.getRawODataPath() + (request.getRawQueryPath() == null ? "" : "?" + request.getRawQueryPath());
-    UriInfo uriInfo = parser.parseUri(odUri, edm);
+    final UriInfo uriInfo = parser.parseUri(request.getRawODataPath(), request.getRawQueryPath(), null, edm);
 
     UriValidator validator = new UriValidator();
     validator.validate(uriInfo, request.getMethod());
@@ -165,7 +160,7 @@ public class ODataHandler {
   }
 
   private void handleResourceDispatching(final ODataRequest request, final ODataResponse response,
-      final UriInfo uriInfo) throws ODataTranslatedException {
+      final UriInfo uriInfo) throws ODataHandlerException, ContentNegotiatorException {
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
     ContentType requestedContentType = null;
@@ -243,7 +238,7 @@ public class ODataHandler {
   }
 
   private void validateODataVersion(final ODataRequest request, final ODataResponse response)
-      throws ODataTranslatedException {
+      throws ODataHandlerException {
     String maxVersion = request.getHeader(HttpHeader.ODATA_MAX_VERSION);
     response.setHeader(HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
 
@@ -255,8 +250,7 @@ public class ODataHandler {
     }
   }
 
-  private <T extends Processor> T selectProcessor(final Class<T> cls)
-      throws ODataTranslatedException {
+  private <T extends Processor> T selectProcessor(final Class<T> cls) throws ODataHandlerException {
     @SuppressWarnings("unchecked")
     T p = (T) processors.get(cls);
 

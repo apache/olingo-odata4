@@ -901,18 +901,18 @@ public class TestFullResourcePath {
   @Test
   public void runCrossjoinError() throws Exception {
     testUri.runEx("$crossjoin").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-    testUri.runEx("$crossjoin/error").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testUri.runEx("$crossjoin/error").isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
     testUri.runEx("$crossjoin()").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-    // testUri.runEx("$crossjoin(ESKeyNav, ESTwoKeyNav)/invalid")
-    //     .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testUri.runEx("$crossjoin(ESKeyNav, ESTwoKeyNav)/invalid")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
   }
 
   @Test
   public void runEntityId() throws Exception {
-    testUri.run("$entity?$id=ESKeyNav(1)")
+    testUri.run("$entity", "$id=ESKeyNav(1)")
         .isKind(UriInfoKind.entityId)
         .isIdText("ESKeyNav(1)");
-    testUri.run("$entity/olingo.odata.test1.ETKeyNav?$id=ESKeyNav(1)")
+    testUri.run("$entity/olingo.odata.test1.ETKeyNav", "$id=ESKeyNav(1)")
         .isKind(UriInfoKind.entityId)
         .isEntityType(EntityTypeProvider.nameETKeyNav)
         .isIdText("ESKeyNav(1)");
@@ -1823,9 +1823,9 @@ public class TestFullResourcePath {
   @Test
   public void runFunctionImpEsAlias() throws Exception {
 
-    testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=@parameterAlias)?@parameterAlias=1");
-    testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=@parameterAlias)/$count?@parameterAlias=1");
-    testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=@invalidAlias)?@validAlias=1");
+    testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=@parameterAlias)", "@parameterAlias=1");
+    testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=@parameterAlias)/$count", "@parameterAlias=1");
+    testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=@invalidAlias)", "@validAlias=1");
   }
 
   @Test
@@ -2062,18 +2062,18 @@ public class TestFullResourcePath {
   @Test
   public void runExpand() throws Exception {
 
-    testUri.run("ESKeyNav(1)?$expand=*")
+    testUri.run("ESKeyNav(1)", "$expand=*")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .isSegmentStar();
 
-    testUri.run("ESKeyNav(1)?$expand=*/$ref")
+    testUri.run("ESKeyNav(1)", "$expand=*/$ref")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .isSegmentStar()
         .isSegmentRef();
 
-    testUri.run("ESKeyNav(1)?$expand=*/$ref,NavPropertyETKeyNavMany")
+    testUri.run("ESKeyNav(1)", "$expand=*/$ref,NavPropertyETKeyNavMany")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .isSegmentStar().isSegmentRef()
@@ -2081,19 +2081,19 @@ public class TestFullResourcePath {
         .goPath().first()
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
-    testUri.run("ESKeyNav(1)?$expand=*($levels=3)")
+    testUri.run("ESKeyNav(1)", "$expand=*($levels=3)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .isSegmentStar()
         .isLevelText("3");
 
-    testUri.run("ESKeyNav(1)?$expand=*($levels=max)")
+    testUri.run("ESKeyNav(1)", "$expand=*($levels=max)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .isSegmentStar()
         .isLevelText("max");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany/$ref")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2101,7 +2101,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETKeyNav, true)
         .n().isRef();
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$ref")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavOne/$ref")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2109,7 +2109,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETKeyNav, false)
         .n().isRef();
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($filter=PropertyInt16 eq 1)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany/$ref($filter=PropertyInt16 eq 1)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2118,7 +2118,7 @@ public class TestFullResourcePath {
         .n().isRef()
         .goUpExpandValidator().isFilterSerialized("<<PropertyInt16> eq <1>>");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($orderby=PropertyInt16)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany/$ref($orderby=PropertyInt16)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2129,7 +2129,7 @@ public class TestFullResourcePath {
         .isSortOrder(0, false)
         .goOrder(0).goPath().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($skip=1)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany/$ref($skip=1)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2139,7 +2139,7 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isSkipText("1");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($top=2)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany/$ref($top=2)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2149,7 +2149,7 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isTopText("2");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($count=true)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany/$ref($count=true)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2159,7 +2159,7 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isInlineCountText("true");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($skip=1;$top=3)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany/$ref($skip=1;$top=3)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2170,7 +2170,7 @@ public class TestFullResourcePath {
         .isSkipText("1")
         .isTopText("3");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($skip=1%3b$top=3)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany/$ref($skip=1%3b$top=3)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2181,7 +2181,7 @@ public class TestFullResourcePath {
         .isSkipText("1")
         .isTopText("3");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$count")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany/$count")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2189,7 +2189,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETKeyNav, true)
         .n().isCount();
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$count")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavOne/$count")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2197,7 +2197,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETKeyNav, false)
         .n().isCount();
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$count($filter=PropertyInt16 gt 1)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany/$count($filter=PropertyInt16 gt 1)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2207,7 +2207,7 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isFilterSerialized("<<PropertyInt16> gt <1>>");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($filter=PropertyInt16 eq 1)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany($filter=PropertyInt16 eq 1)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2216,7 +2216,7 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isFilterSerialized("<<PropertyInt16> eq <1>>");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($orderby=PropertyInt16)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany($orderby=PropertyInt16)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2226,7 +2226,7 @@ public class TestFullResourcePath {
         .isSortOrder(0, false)
         .goOrder(0).goPath().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($skip=1)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany($skip=1)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2235,7 +2235,7 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isSkipText("1");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($top=2)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany($top=2)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2244,7 +2244,7 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isTopText("2");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($count=true)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany($count=true)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2253,7 +2253,7 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isInlineCountText("true");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($select=PropertyString)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany($select=PropertyString)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2263,7 +2263,7 @@ public class TestFullResourcePath {
         .isSelectText("PropertyString")
         .goSelectItem(0).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($expand=NavPropertyETTwoKeyNavOne)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany($expand=NavPropertyETTwoKeyNavOne)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2274,7 +2274,7 @@ public class TestFullResourcePath {
         .goPath().first()
         .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($expand=NavPropertyETKeyNavMany)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany($expand=NavPropertyETKeyNavMany)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2285,7 +2285,7 @@ public class TestFullResourcePath {
         .goPath().first()
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne($levels=5)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavOne($levels=5)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2294,7 +2294,7 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isLevelText("5");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($select=PropertyString)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany($select=PropertyString)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2304,7 +2304,7 @@ public class TestFullResourcePath {
         .isSelectText("PropertyString")
         .goSelectItem(0).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne($levels=max)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavOne($levels=max)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2313,7 +2313,7 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isLevelText("max");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($skip=1;$top=2)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany($skip=1;$top=2)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2323,7 +2323,7 @@ public class TestFullResourcePath {
         .isSkipText("1")
         .isTopText("2");
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($skip=1%3b$top=2)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany($skip=1%3b$top=2)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
@@ -2333,7 +2333,7 @@ public class TestFullResourcePath {
         .isSkipText("1")
         .isTopText("2");
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='Hugo')?$expand=NavPropertyETKeyNavMany")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='Hugo')", "$expand=NavPropertyETKeyNavMany")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isKeyPredicate(0, "PropertyInt16", "1")
@@ -2344,8 +2344,7 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
         .isType(EntityTypeProvider.nameETKeyNav, true);
 
-    testUri.run("ESTwoKeyNav?"
-        + "$expand=olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
+    testUri.run("ESTwoKeyNav", "$expand=olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
         .isKind(UriInfoKind.resource).goPath().first()
         .goExpand().first()
         .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
@@ -2355,8 +2354,8 @@ public class TestFullResourcePath {
         // .n()
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='Hugo')?"
-        + "$expand=olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='Hugo')",
+        "$expand=olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
         .isKind(UriInfoKind.resource).goPath().first()
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'Hugo'")
@@ -2368,8 +2367,8 @@ public class TestFullResourcePath {
         // .n()
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?"
-        + "$expand=olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETTwoKeyNavMany")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')",
+        "$expand=olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETTwoKeyNavMany")
         .isKind(UriInfoKind.resource).goPath().first()
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
@@ -2381,8 +2380,9 @@ public class TestFullResourcePath {
         // .n()
         .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true);
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$expand=olingo.odata.test1.ETBaseTwoKeyNav"
-        + "/NavPropertyETTwoKeyNavMany/olingo.odata.test1.ETTwoBaseTwoKeyNav")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')",
+        "$expand=olingo.odata.test1.ETBaseTwoKeyNav"
+             + "/NavPropertyETTwoKeyNavMany/olingo.odata.test1.ETTwoBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath().first()
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
@@ -2395,7 +2395,7 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
         .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
 
-    testUri.run("ESTwoKeyNav?$expand=olingo.odata.test1.ETBaseTwoKeyNav/PropertyCompNav/NavPropertyETTwoKeyNavOne")
+    testUri.run("ESTwoKeyNav", "$expand=olingo.odata.test1.ETBaseTwoKeyNav/PropertyCompNav/NavPropertyETTwoKeyNavOne")
         .isKind(UriInfoKind.resource).goPath().first()
         .goExpand().first()
         .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
@@ -2408,7 +2408,7 @@ public class TestFullResourcePath {
         .n()
         .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
-    testUri.run("ESTwoKeyNav?$expand=olingo.odata.test1.ETBaseTwoKeyNav/PropertyCompNav"
+    testUri.run("ESTwoKeyNav", "$expand=olingo.odata.test1.ETBaseTwoKeyNav/PropertyCompNav"
         + "/olingo.odata.test1.CTTwoBasePrimCompNav/NavPropertyETTwoKeyNavOne")
         .isKind(UriInfoKind.resource).goPath().first()
         .goExpand().first()
@@ -2422,7 +2422,7 @@ public class TestFullResourcePath {
         .n()
         .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref,NavPropertyETTwoKeyNavMany($skip=2;$top=1)")
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany/$ref,NavPropertyETTwoKeyNavMany($skip=2;$top=1)")
         .isKind(UriInfoKind.resource).goPath().first()
         .goExpand().first()
         .goPath()
@@ -2437,7 +2437,7 @@ public class TestFullResourcePath {
         .isSkipText("2")
         .isTopText("1");
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$expand=olingo.odata.test1.ETBaseTwoKeyNav"
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')", "$expand=olingo.odata.test1.ETBaseTwoKeyNav"
         + "/NavPropertyETTwoKeyNavMany/olingo.odata.test1.ETTwoBaseTwoKeyNav($select=PropertyString)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -2455,7 +2455,7 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .goSelectItem(0).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testUri.run("ESKeyNav?$expand=NavPropertyETKeyNavOne($expand=NavPropertyETKeyNavMany("
+    testUri.run("ESKeyNav", "$expand=NavPropertyETKeyNavOne($expand=NavPropertyETKeyNavMany("
         + "$expand=NavPropertyETKeyNavOne))")
         .isKind(UriInfoKind.resource)
         .goPath().first()
@@ -2474,7 +2474,7 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
         .isType(EntityTypeProvider.nameETKeyNav);
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$select=olingo.odata.test1.ETBaseTwoKeyNav"
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')", "$select=olingo.odata.test1.ETBaseTwoKeyNav"
         + "/PropertyInt16")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -2485,7 +2485,7 @@ public class TestFullResourcePath {
         .first()
         .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
-    testUri.run("ESKeyNav?$expand=NavPropertyETKeyNavOne($select=PropertyInt16)")
+    testUri.run("ESKeyNav", "$expand=NavPropertyETKeyNavOne($select=PropertyInt16)")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .goExpand().first()
@@ -2496,7 +2496,7 @@ public class TestFullResourcePath {
         .isSelectText("PropertyInt16")
         .goSelectItem(0).isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
-    testUri.run("ESKeyNav?$expand=NavPropertyETKeyNavOne($select=PropertyComp/PropertyInt16)")
+    testUri.run("ESKeyNav", "$expand=NavPropertyETKeyNavOne($select=PropertyComp/PropertyInt16)")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .goExpand().first()
@@ -2510,103 +2510,103 @@ public class TestFullResourcePath {
   @Test
   public void runTop() throws Exception {
     // top
-    testUri.run("ESKeyNav?$top=1")
+    testUri.run("ESKeyNav", "$top=1")
         .isKind(UriInfoKind.resource).goPath()
         .isEntitySet("ESKeyNav")
         .isTopText("1");
 
-    testUri.run("ESKeyNav?$top=0")
+    testUri.run("ESKeyNav", "$top=0")
         .isKind(UriInfoKind.resource).goPath()
         .isEntitySet("ESKeyNav")
         .isTopText("0");
 
-    testUri.run("ESKeyNav?$top=-3")
+    testUri.run("ESKeyNav", "$top=-3")
         .isKind(UriInfoKind.resource).goPath()
         .isEntitySet("ESKeyNav")
         .isTopText("-3");
 
-    testUri.runEx("ESKeyNav?$top=undefined")
+    testUri.runEx("ESKeyNav", "$top=undefined")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
-    testUri.runEx("ESKeyNav?$top=")
+    testUri.runEx("ESKeyNav", "$top=")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
 
   @Test
   public void runFormat() throws Exception {
     // format
-    testUri.run("ESKeyNav(1)?$format=atom")
+    testUri.run("ESKeyNav(1)", "$format=atom")
         .isKind(UriInfoKind.resource).goPath()
         .isFormatText("atom");
-    testUri.run("ESKeyNav(1)?$format=json")
+    testUri.run("ESKeyNav(1)", "$format=json")
         .isKind(UriInfoKind.resource).goPath()
         .isFormatText("json");
-    testUri.run("ESKeyNav(1)?$format=xml")
+    testUri.run("ESKeyNav(1)", "$format=xml")
         .isKind(UriInfoKind.resource).goPath()
         .isFormatText("xml");
-    testUri.run("ESKeyNav(1)?$format=IANA_content_type/must_contain_a_slash")
+    testUri.run("ESKeyNav(1)", "$format=IANA_content_type/must_contain_a_slash")
         .isKind(UriInfoKind.resource).goPath()
         .isFormatText("IANA_content_type/must_contain_a_slash");
-    testUri.run("ESKeyNav(1)?$format=Test_all_valid_signsSpecified_for_format_signs%26-._~$@%27/Aa123%26-._~$@%27")
+    testUri.run("ESKeyNav(1)", "$format=Test_all_valid_signsSpecified_for_format_signs%26-._~$@%27/Aa123%26-._~$@%27")
         .isKind(UriInfoKind.resource).goPath()
         .isFormatText("Test_all_valid_signsSpecified_for_format_signs&-._~$@'/Aa123&-._~$@'");
-    testUri.run("ESKeyNav(1)?$format=" + HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8)
+    testUri.run("ESKeyNav(1)", "$format=" + HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8)
         .isKind(UriInfoKind.resource).goPath()
         .isFormatText(HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8);
-    testUri.runEx("ESKeyNav(1)?$format=noSlash")
+    testUri.runEx("ESKeyNav(1)", "$format=noSlash")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT);
-    testUri.runEx("ESKeyNav(1)?$format=slashAtEnd/")
+    testUri.runEx("ESKeyNav(1)", "$format=slashAtEnd/")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT);
-    testUri.runEx("ESKeyNav(1)?$format=/startsWithSlash")
+    testUri.runEx("ESKeyNav(1)", "$format=/startsWithSlash")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT);
-    testUri.runEx("ESKeyNav(1)?$format=two/Slashes/tooMuch")
+    testUri.runEx("ESKeyNav(1)", "$format=two/Slashes/tooMuch")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT);
-    testUri.runEx("ESKeyNav(1)?$format=")
+    testUri.runEx("ESKeyNav(1)", "$format=")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT);
   }
 
   @Test
   public void runCount() throws Exception {
     // count
-    testUri.run("ESAllPrim?$count=true")
+    testUri.run("ESAllPrim", "$count=true")
         .isKind(UriInfoKind.resource).goPath()
         .isInlineCountText("true");
-    testUri.run("ESAllPrim?$count=false")
+    testUri.run("ESAllPrim", "$count=false")
         .isKind(UriInfoKind.resource).goPath()
         .isInlineCountText("false");
-    testUri.runEx("ESAllPrim?$count=undefined")
+    testUri.runEx("ESAllPrim", "$count=undefined")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
-    testUri.runEx("ESAllPrim?$count=")
+    testUri.runEx("ESAllPrim", "$count=")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
 
   @Test
   public void skip() throws Exception {
     // skip
-    testUri.run("ESAllPrim?$skip=3")
+    testUri.run("ESAllPrim", "$skip=3")
         .isKind(UriInfoKind.resource).goPath()
         .isSkipText("3");
-    testUri.run("ESAllPrim?$skip=0")
+    testUri.run("ESAllPrim", "$skip=0")
         .isKind(UriInfoKind.resource).goPath()
         .isSkipText("0");
-    testUri.run("ESAllPrim?$skip=-3")
+    testUri.run("ESAllPrim", "$skip=-3")
         .isKind(UriInfoKind.resource).goPath()
         .isSkipText("-3");
-    testUri.runEx("ESAllPrim?$skip=F")
+    testUri.runEx("ESAllPrim", "$skip=F")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
-    testUri.runEx("ESAllPrim?$skip=")
+    testUri.runEx("ESAllPrim", "$skip=")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
 
   @Test
   public void skiptoken() throws Exception {
-    testUri.run("ESAllPrim?$skiptoken=foo")
+    testUri.run("ESAllPrim", "$skiptoken=foo")
         .isKind(UriInfoKind.resource).goPath()
         .isSkipTokenText("foo");
   }
 
   @Test
   public void notExistingSystemQueryOption() throws Exception {
-    testUri.runEx("ESAllPrim?$wrong=error")
+    testUri.runEx("ESAllPrim", "$wrong=error")
         .isExSyntax(UriParserSyntaxException.MessageKeys.UNKNOWN_SYSTEM_QUERY_OPTION);
   }
 
@@ -2630,6 +2630,13 @@ public class TestFullResourcePath {
     testUri.run("$crossjoin(ESKeyNav)")
         .isKind(UriInfoKind.crossjoin)
         .isCrossJoinEntityList(Arrays.asList("ESKeyNav"));
+
+    testUri.runEx("$metadata/$ref").isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
+    testUri.runEx("$batch/$ref").isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
+    testUri.runEx("$crossjoin(ESKeyNav)/$ref").isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
+    testUri.runEx("$all/$ref").isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
+    testUri.runEx("$entity/olingo.odata.test1.ETKeyNav/$ref")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
 
     testUri.run("ESKeyNav")
         .isKind(UriInfoKind.resource)
@@ -5069,37 +5076,37 @@ public class TestFullResourcePath {
   @Ignore("$search currently not implemented")
   public void testSearch() throws Exception {
 
-    testUri.run("ESTwoKeyNav?$search=abc");
-    testUri.run("ESTwoKeyNav?$search=NOT abc");
+    testUri.run("ESTwoKeyNav", "$search=abc");
+    testUri.run("ESTwoKeyNav", "$search=NOT abc");
 
-    testUri.run("ESTwoKeyNav?$search=abc AND def");
-    testUri.run("ESTwoKeyNav?$search=abc  OR def");
-    testUri.run("ESTwoKeyNav?$search=abc     def");
+    testUri.run("ESTwoKeyNav", "$search=abc AND def");
+    testUri.run("ESTwoKeyNav", "$search=abc  OR def");
+    testUri.run("ESTwoKeyNav", "$search=abc     def");
 
-    testUri.run("ESTwoKeyNav?$search=abc AND def AND ghi");
-    testUri.run("ESTwoKeyNav?$search=abc AND def  OR ghi");
-    testUri.run("ESTwoKeyNav?$search=abc AND def     ghi");
+    testUri.run("ESTwoKeyNav", "$search=abc AND def AND ghi");
+    testUri.run("ESTwoKeyNav", "$search=abc AND def  OR ghi");
+    testUri.run("ESTwoKeyNav", "$search=abc AND def     ghi");
 
-    testUri.run("ESTwoKeyNav?$search=abc  OR def AND ghi");
-    testUri.run("ESTwoKeyNav?$search=abc  OR def  OR ghi");
-    testUri.run("ESTwoKeyNav?$search=abc  OR def     ghi");
+    testUri.run("ESTwoKeyNav", "$search=abc  OR def AND ghi");
+    testUri.run("ESTwoKeyNav", "$search=abc  OR def  OR ghi");
+    testUri.run("ESTwoKeyNav", "$search=abc  OR def     ghi");
 
-    testUri.run("ESTwoKeyNav?$search=abc     def AND ghi");
-    testUri.run("ESTwoKeyNav?$search=abc     def  OR ghi");
-    testUri.run("ESTwoKeyNav?$search=abc     def     ghi");
+    testUri.run("ESTwoKeyNav", "$search=abc     def AND ghi");
+    testUri.run("ESTwoKeyNav", "$search=abc     def  OR ghi");
+    testUri.run("ESTwoKeyNav", "$search=abc     def     ghi");
 
     // mixed not
-    testUri.run("ESTwoKeyNav?$search=    abc         def AND     ghi");
-    testUri.run("ESTwoKeyNav?$search=NOT abc  NOT    def  OR NOT ghi");
-    testUri.run("ESTwoKeyNav?$search=    abc         def     NOT ghi");
+    testUri.run("ESTwoKeyNav", "$search=    abc         def AND     ghi");
+    testUri.run("ESTwoKeyNav", "$search=NOT abc  NOT    def  OR NOT ghi");
+    testUri.run("ESTwoKeyNav", "$search=    abc         def     NOT ghi");
 
     // parenthesis
-    testUri.run("ESTwoKeyNav?$search= (abc)");
-    testUri.run("ESTwoKeyNav?$search= (abc AND  def)");
-    testUri.run("ESTwoKeyNav?$search= (abc AND  def)   OR  ghi ");
-    testUri.run("ESTwoKeyNav?$search= (abc AND  def)       ghi ");
-    testUri.run("ESTwoKeyNav?$search=  abc AND (def    OR  ghi)");
-    testUri.run("ESTwoKeyNav?$search=  abc AND (def        ghi)");
+    testUri.run("ESTwoKeyNav", "$search= (abc)");
+    testUri.run("ESTwoKeyNav", "$search= (abc AND  def)");
+    testUri.run("ESTwoKeyNav", "$search= (abc AND  def)   OR  ghi ");
+    testUri.run("ESTwoKeyNav", "$search= (abc AND  def)       ghi ");
+    testUri.run("ESTwoKeyNav", "$search=  abc AND (def    OR  ghi)");
+    testUri.run("ESTwoKeyNav", "$search=  abc AND (def        ghi)");
   }
 
   @Test
@@ -5156,7 +5163,7 @@ public class TestFullResourcePath {
 
   @Test
   public void testAlias() throws Exception {
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString=@A)?@A='2'").goPath()
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString=@A)", "@A='2'").goPath()
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicateAlias(1, "PropertyString", "@A")
         .isInAliasToValueMap("@A", "'2'")

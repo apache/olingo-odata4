@@ -58,40 +58,42 @@ public class TestUriValidator implements TestValidator {
   }
 
   // Execution
-  public TestUriValidator run(final String uri) throws UriParserException, UriValidationException {
+  public TestUriValidator run(final String path) throws UriParserException, UriValidationException {
+    return run(path, null);
+  }
+
+  public TestUriValidator run(final String path, final String query)
+      throws UriParserException, UriValidationException {
     Parser parser = new Parser();
     UriValidator validator = new UriValidator();
 
-    uriInfo = parser.parseUri(uri, edm);
+    uriInfo = parser.parseUri(path, query, null, edm);
     validator.validate(uriInfo, HttpMethod.GET);
     return this;
   }
 
-  public TestUriValidator runEx(final String uri) {
+  public TestUriValidator run(final String path, final String query, final String fragment)
+      throws UriParserException, UriValidationException {
+    uriInfo = new Parser().parseUri(path, query, fragment, edm);
+    new UriValidator().validate(uriInfo, HttpMethod.GET);
+    return this;
+  }
+
+  public TestUriValidator runEx(final String path) {
+    return runEx(path, null);
+  }
+
+  public TestUriValidator runEx(final String path, final String query) {
     Parser parser = new Parser();
     uriInfo = null;
     try {
-      uriInfo = parser.parseUri(uri, edm);
+      uriInfo = parser.parseUri(path, query, null, edm);
       new UriValidator().validate(uriInfo, HttpMethod.GET);
       fail("Exception expected");
     } catch (UriParserException e) {
       exception = e;
     } catch (UriValidationException e) {
       exception = e;
-    }
-
-    return this;
-  }
-
-  public TestUriValidator log(final String uri) {
-    ParserWithLogging parserTest = new ParserWithLogging();
-    parserTest.setLogLevel(1);
-    uriInfo = null;
-    try {
-      uriInfo = parserTest.parseUri(uri, edm);
-    } catch (UriParserException e) {
-      fail("Exception occured while parsing the URI: " + uri + "\n"
-          + " Exception: " + e.getMessage());
     }
 
     return this;

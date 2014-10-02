@@ -86,22 +86,22 @@ public class ResourceValidator implements TestValidator {
 
   // --- Execution ---
 
-  public ResourceValidator run(final String uri) {
+  public ResourceValidator run(final String path) {
     ParserWithLogging testParser = new ParserWithLogging();
 
     UriInfo uriInfoTmp = null;
     uriPathInfo = null;
     try {
-      uriInfoTmp = testParser.parseUri(uri, edm);
+      uriInfoTmp = testParser.parseUri(path, null, null, edm);
     } catch (final UriParserException e) {
-      fail("Exception occurred while parsing the URI: " + uri + "\n"
+      fail("Exception occurred while parsing the URI: " + path + "\n"
           + " Message: " + e.getMessage());
     }
 
     try {
       new UriValidator().validate(uriInfoTmp, HttpMethod.GET);
     } catch (final UriValidationException e) {
-      fail("Exception occurred while validating the URI: " + uri + "\n"
+      fail("Exception occurred while validating the URI: " + path + "\n"
           + " Message: " + e.getMessage());
     }
 

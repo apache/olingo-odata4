@@ -76,62 +76,58 @@ public class Parser {
     return this;
   }
 
-  public UriInfo parseUri(final String input, final Edm edm) throws UriParserException {
-
-    boolean readQueryParameter = false;
-    boolean readFragment = false;
+  public UriInfo parseUri(final String path, final String query, final String fragment, final Edm edm)
+      throws UriParserException {
 
     UriContext context = new UriContext();
     UriParseTreeVisitor uriParseTreeVisitor = new UriParseTreeVisitor(edm, context);
 
     try {
-      RawUri uri = UriDecoder.decodeUri(input, 0); // -> 0 segments are before the service url
+      final RawUri uri = UriDecoder.decodeUri(path, query, fragment, 0); // -> 0 segments are before the service url
 
       // first, read the decoded path segments
-      String firstSegment = "";
-      if (uri.pathSegmentListDecoded.size() > 0) {
-        firstSegment = uri.pathSegmentListDecoded.get(0);
-      }
+      final String firstSegment = uri.pathSegmentListDecoded.isEmpty() ? "" : uri.pathSegmentListDecoded.get(0);
 
-      if (firstSegment.length() == 0) {
-        readQueryParameter = true;
+      if (firstSegment.isEmpty()) {
+        ensureLastSegment(firstSegment, 0, uri.pathSegmentListDecoded.size());
         context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.service);
       } else if (firstSegment.startsWith("$batch")) {
+        ensureLastSegment(firstSegment, 1, uri.pathSegmentListDecoded.size());
         BatchEOFContext ctxBatchEOF =
             (BatchEOFContext) parseRule(uri.pathSegmentListDecoded.get(0), ParserEntryRules.Batch);
 
         uriParseTreeVisitor.visitBatchEOF(ctxBatchEOF);
-        readQueryParameter = true;
       } else if (firstSegment.startsWith("$metadata")) {
+        ensureLastSegment(firstSegment, 1, uri.pathSegmentListDecoded.size());
         MetadataEOFContext ctxMetadataEOF =
             (MetadataEOFContext) parseRule(uri.pathSegmentListDecoded.get(0), ParserEntryRules.Metadata);
 
         uriParseTreeVisitor.visitMetadataEOF(ctxMetadataEOF);
-        readQueryParameter = true;
-        readFragment = true;
+
+        context.contextUriInfo.setFragment(uri.fragment);
       } else if (firstSegment.startsWith("$entity")) {
 
         context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.entityId);
         if (uri.pathSegmentListDecoded.size() > 1) {
+          final String typeCastSegment = uri.pathSegmentListDecoded.get(1);
+          ensureLastSegment(typeCastSegment, 2, uri.pathSegmentListDecoded.size());
           EntityEOFContext ctxEntityEOF =
-              (EntityEOFContext) parseRule(uri.pathSegmentListDecoded.get(1), ParserEntryRules.Entity);
+              (EntityEOFContext) parseRule(typeCastSegment, ParserEntryRules.Entity);
           uriParseTreeVisitor.visitEntityEOF(ctxEntityEOF);
-
         }
-        readQueryParameter = true;
 
       } else if (firstSegment.startsWith("$all")) {
+        ensureLastSegment(firstSegment, 1, uri.pathSegmentListDecoded.size());
         AllEOFContext ctxResourcePathEOF =
             (AllEOFContext) parseRule(uri.pathSegmentListDecoded.get(0), ParserEntryRules.All);
 
         uriParseTreeVisitor.visitAllEOF(ctxResourcePathEOF);
-        readQueryParameter = true;
       } else if (firstSegment.startsWith("$crossjoin")) {
+        ensureLastSegment(firstSegment, 1, uri.pathSegmentListDecoded.size());
         CrossjoinEOFContext ctxResourcePathEOF =
             (CrossjoinEOFContext) parseRule(uri.pathSegmentListDecoded.get(0), ParserEntryRules.CrossJoin);
 
         uriParseTreeVisitor.visitCrossjoinEOF(ctxResourcePathEOF);
-        readQueryParameter = true;
       } else {
         List<PathSegmentEOFContext> ctxPathSegments = new ArrayList<PathSegmentEOFContext>();
         for (String pathSegment : uri.pathSegmentListDecoded) {
@@ -155,141 +151,131 @@ public class Parser {
           UriParseTreeVisitor.TypeInformation typeInfo =
               uriParseTreeVisitor.new TypeInformation(myType.type, typed.isCollection());
           context.contextTypes.push(typeInfo);
-
         }
-
-        readQueryParameter = true;
-
       }
 
-      if (readQueryParameter) {
-        // second, read the system query options and the custom query options
-        for (RawUri.QueryOption option : uri.queryOptionListDecoded) {
-          if (option.name.startsWith("$")) {
-            SystemQueryOption systemOption = null;
-            if (option.name.equals(SystemQueryOptionKind.FILTER.toString())) {
-              FilterExpressionEOFContext ctxFilterExpression =
-                  (FilterExpressionEOFContext) parseRule(option.value, ParserEntryRules.FilterExpression);
+      // second, read the system query options and the custom query options
+      for (RawUri.QueryOption option : uri.queryOptionListDecoded) {
+        if (option.name.startsWith("$")) {
+          SystemQueryOption systemOption = null;
+          if (option.name.equals(SystemQueryOptionKind.FILTER.toString())) {
+            FilterExpressionEOFContext ctxFilterExpression =
+                (FilterExpressionEOFContext) parseRule(option.value, ParserEntryRules.FilterExpression);
 
-              FilterOptionImpl filterOption =
-                  (FilterOptionImpl) uriParseTreeVisitor.visitFilterExpressionEOF(ctxFilterExpression);
+            FilterOptionImpl filterOption =
+                (FilterOptionImpl) uriParseTreeVisitor.visitFilterExpressionEOF(ctxFilterExpression);
 
-              systemOption = filterOption;
+            systemOption = filterOption;
 
-            } else if (option.name.equals(SystemQueryOptionKind.FORMAT.toString())) {
-              FormatOptionImpl formatOption = new FormatOptionImpl();
-              formatOption.setName(option.name);
-              formatOption.setText(option.value);
-              if (option.value.equalsIgnoreCase(ODataFormat.JSON.name())
-                  || option.value.equalsIgnoreCase(ODataFormat.XML.name())
-                  || option.value.equalsIgnoreCase(ODataFormat.ATOM.name())
-                  || isFormatSyntaxValid(option)) {
-                formatOption.setFormat(option.value);
-              } else {
-                throw new UriParserSyntaxException("Illegal value of $format option!",
-                    UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT, option.value);
-              }
-              systemOption = formatOption;
-
-            } else if (option.name.equals(SystemQueryOptionKind.EXPAND.toString())) {
-              ExpandItemsEOFContext ctxExpandItems =
-                  (ExpandItemsEOFContext) parseRule(option.value, ParserEntryRules.ExpandItems);
-
-              ExpandOptionImpl expandOption =
-                  (ExpandOptionImpl) uriParseTreeVisitor.visitExpandItemsEOF(ctxExpandItems);
-
-              systemOption = expandOption;
-
-            } else if (option.name.equals(SystemQueryOptionKind.ID.toString())) {
-              IdOptionImpl idOption = new IdOptionImpl();
-              idOption.setName(option.name);
-              idOption.setText(option.value);
-              idOption.setValue(option.value);
-              systemOption = idOption;
-            } else if (option.name.equals(SystemQueryOptionKind.LEVELS.toString())) {
-              throw new UriParserSyntaxException("System query option '$levels' is allowed only inside '$expand'!",
-                  UriParserSyntaxException.MessageKeys.SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE);
-            } else if (option.name.equals(SystemQueryOptionKind.ORDERBY.toString())) {
-              OrderByEOFContext ctxOrderByExpression =
-                  (OrderByEOFContext) parseRule(option.value, ParserEntryRules.Orderby);
-
-              OrderByOptionImpl orderByOption =
-                  (OrderByOptionImpl) uriParseTreeVisitor.visitOrderByEOF(ctxOrderByExpression);
-
-              systemOption = orderByOption;
-            } else if (option.name.equals(SystemQueryOptionKind.SEARCH.toString())) {
-              throw new RuntimeException("System query option '$search' not implemented!");
-            } else if (option.name.equals(SystemQueryOptionKind.SELECT.toString())) {
-              SelectEOFContext ctxSelectEOF =
-                  (SelectEOFContext) parseRule(option.value, ParserEntryRules.Select);
-
-              SelectOptionImpl selectOption =
-                  (SelectOptionImpl) uriParseTreeVisitor.visitSelectEOF(ctxSelectEOF);
-
-              systemOption = selectOption;
-            } else if (option.name.equals(SystemQueryOptionKind.SKIP.toString())) {
-              SkipOptionImpl skipOption = new SkipOptionImpl();
-              skipOption.setName(option.name);
-              skipOption.setText(option.value);
-              try {
-                skipOption.setValue(Integer.parseInt(option.value));
-              } catch (final NumberFormatException e) {
-                throw new UriParserSyntaxException("Illegal value of $skip option!", e,
-                    UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
-                    option.name, option.value);
-              }
-              systemOption = skipOption;
-            } else if (option.name.equals(SystemQueryOptionKind.SKIPTOKEN.toString())) {
-              SkipTokenOptionImpl skipTokenOption = new SkipTokenOptionImpl();
-              skipTokenOption.setName(option.name);
-              skipTokenOption.setText(option.value);
-              skipTokenOption.setValue(option.value);
-              systemOption = skipTokenOption;
-            } else if (option.name.equals(SystemQueryOptionKind.TOP.toString())) {
-              TopOptionImpl topOption = new TopOptionImpl();
-              topOption.setName(option.name);
-              topOption.setText(option.value);
-              try {
-                topOption.setValue(Integer.parseInt(option.value));
-              } catch (final NumberFormatException e) {
-                throw new UriParserSyntaxException("Illegal value of $top option!", e,
-                    UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
-                    option.name, option.value);
-              }
-              systemOption = topOption;
-            } else if (option.name.equals(SystemQueryOptionKind.COUNT.toString())) {
-              CountOptionImpl inlineCountOption = new CountOptionImpl();
-              inlineCountOption.setName(option.name);
-              inlineCountOption.setText(option.value);
-              if (option.value.equals("true") || option.value.equals("false")) {
-                inlineCountOption.setValue(Boolean.parseBoolean(option.value));
-              } else {
-                throw new UriParserSyntaxException("Illegal value of $count option!",
-                    UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
-                    option.name, option.value);
-              }
-              systemOption = inlineCountOption;
+          } else if (option.name.equals(SystemQueryOptionKind.FORMAT.toString())) {
+            FormatOptionImpl formatOption = new FormatOptionImpl();
+            formatOption.setName(option.name);
+            formatOption.setText(option.value);
+            if (option.value.equalsIgnoreCase(ODataFormat.JSON.name())
+                || option.value.equalsIgnoreCase(ODataFormat.XML.name())
+                || option.value.equalsIgnoreCase(ODataFormat.ATOM.name())
+                || isFormatSyntaxValid(option.value)) {
+              formatOption.setFormat(option.value);
             } else {
-              throw new UriParserSyntaxException("Unknown system query option!",
-                  UriParserSyntaxException.MessageKeys.UNKNOWN_SYSTEM_QUERY_OPTION, option.name);
+              throw new UriParserSyntaxException("Illegal value of $format option!",
+                  UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT, option.value);
             }
-            try {
-              context.contextUriInfo.setSystemQueryOption(systemOption);
-            } catch (final ODataRuntimeException e) {
-              throw new UriParserSyntaxException("Double system query option!", e,
-                  UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, option.name);
-            }
-          } else {
-            CustomQueryOptionImpl customOption = new CustomQueryOptionImpl();
-            customOption.setName(option.name);
-            customOption.setText(option.value);
-            context.contextUriInfo.addCustomQueryOption(customOption);
-          }
-        }
-      }
+            systemOption = formatOption;
 
-      if (readFragment) {
-        context.contextUriInfo.setFragment(uri.fragment);
+          } else if (option.name.equals(SystemQueryOptionKind.EXPAND.toString())) {
+            ExpandItemsEOFContext ctxExpandItems =
+                (ExpandItemsEOFContext) parseRule(option.value, ParserEntryRules.ExpandItems);
+
+            ExpandOptionImpl expandOption =
+                (ExpandOptionImpl) uriParseTreeVisitor.visitExpandItemsEOF(ctxExpandItems);
+
+            systemOption = expandOption;
+
+          } else if (option.name.equals(SystemQueryOptionKind.ID.toString())) {
+            IdOptionImpl idOption = new IdOptionImpl();
+            idOption.setName(option.name);
+            idOption.setText(option.value);
+            idOption.setValue(option.value);
+            systemOption = idOption;
+          } else if (option.name.equals(SystemQueryOptionKind.LEVELS.toString())) {
+            throw new UriParserSyntaxException("System query option '$levels' is allowed only inside '$expand'!",
+                UriParserSyntaxException.MessageKeys.SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE);
+          } else if (option.name.equals(SystemQueryOptionKind.ORDERBY.toString())) {
+            OrderByEOFContext ctxOrderByExpression =
+                (OrderByEOFContext) parseRule(option.value, ParserEntryRules.Orderby);
+
+            OrderByOptionImpl orderByOption =
+                (OrderByOptionImpl) uriParseTreeVisitor.visitOrderByEOF(ctxOrderByExpression);
+
+            systemOption = orderByOption;
+          } else if (option.name.equals(SystemQueryOptionKind.SEARCH.toString())) {
+            throw new RuntimeException("System query option '$search' not implemented!");
+          } else if (option.name.equals(SystemQueryOptionKind.SELECT.toString())) {
+            SelectEOFContext ctxSelectEOF =
+                (SelectEOFContext) parseRule(option.value, ParserEntryRules.Select);
+
+            SelectOptionImpl selectOption =
+                (SelectOptionImpl) uriParseTreeVisitor.visitSelectEOF(ctxSelectEOF);
+
+            systemOption = selectOption;
+          } else if (option.name.equals(SystemQueryOptionKind.SKIP.toString())) {
+            SkipOptionImpl skipOption = new SkipOptionImpl();
+            skipOption.setName(option.name);
+            skipOption.setText(option.value);
+            try {
+              skipOption.setValue(Integer.parseInt(option.value));
+            } catch (final NumberFormatException e) {
+              throw new UriParserSyntaxException("Illegal value of $skip option!", e,
+                  UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+                  option.name, option.value);
+            }
+            systemOption = skipOption;
+          } else if (option.name.equals(SystemQueryOptionKind.SKIPTOKEN.toString())) {
+            SkipTokenOptionImpl skipTokenOption = new SkipTokenOptionImpl();
+            skipTokenOption.setName(option.name);
+            skipTokenOption.setText(option.value);
+            skipTokenOption.setValue(option.value);
+            systemOption = skipTokenOption;
+          } else if (option.name.equals(SystemQueryOptionKind.TOP.toString())) {
+            TopOptionImpl topOption = new TopOptionImpl();
+            topOption.setName(option.name);
+            topOption.setText(option.value);
+            try {
+              topOption.setValue(Integer.parseInt(option.value));
+            } catch (final NumberFormatException e) {
+              throw new UriParserSyntaxException("Illegal value of $top option!", e,
+                  UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+                  option.name, option.value);
+            }
+            systemOption = topOption;
+          } else if (option.name.equals(SystemQueryOptionKind.COUNT.toString())) {
+            CountOptionImpl inlineCountOption = new CountOptionImpl();
+            inlineCountOption.setName(option.name);
+            inlineCountOption.setText(option.value);
+            if (option.value.equals("true") || option.value.equals("false")) {
+              inlineCountOption.setValue(Boolean.parseBoolean(option.value));
+            } else {
+              throw new UriParserSyntaxException("Illegal value of $count option!",
+                  UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+                  option.name, option.value);
+            }
+            systemOption = inlineCountOption;
+          } else {
+            throw new UriParserSyntaxException("Unknown system query option!",
+                UriParserSyntaxException.MessageKeys.UNKNOWN_SYSTEM_QUERY_OPTION, option.name);
+          }
+          try {
+            context.contextUriInfo.setSystemQueryOption(systemOption);
+          } catch (final ODataRuntimeException e) {
+            throw new UriParserSyntaxException("Double system query option!", e,
+                UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, option.name);
+          }
+        } else {
+          CustomQueryOptionImpl customOption = new CustomQueryOptionImpl();
+          customOption.setName(option.name);
+          customOption.setText(option.value);
+          context.contextUriInfo.addCustomQueryOption(customOption);
+        }
       }
 
       return context.contextUriInfo;
@@ -300,9 +286,17 @@ public class Parser {
     }
   }
 
-  private boolean isFormatSyntaxValid(RawUri.QueryOption option) {
-    final int index = option.value.indexOf('/');
-    return index > 0 && index < option.value.length() - 1 && index == option.value.lastIndexOf('/');
+  private void ensureLastSegment(final String segment, final int pos, final int size)
+      throws UriParserSyntaxException {
+    if (pos < size) {
+      throw new UriParserSyntaxException(segment + " must be the last segment.",
+          UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT, segment);
+    }
+  }
+
+  private boolean isFormatSyntaxValid(final String value) {
+    final int index = value.indexOf('/');
+    return index > 0 && index < value.length() - 1 && index == value.lastIndexOf('/');
   }
 
   private ParserRuleContext parseRule(final String input, final ParserEntryRules entryPoint)

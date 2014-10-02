@@ -106,90 +106,74 @@ public class FilterValidator implements TestValidator {
   // --- Execution ---
 
   public FilterValidator runOrderByOnETAllPrim(final String orderBy) throws UriParserException {
-    String uri = "ESAllPrim?$orderby=" + orderBy.trim();
-    return runUriOrderBy(uri);
+    return runUriOrderBy("ESAllPrim", "$orderby=" + orderBy.trim());
   }
 
   public FilterValidator runOrderByOnETTwoKeyNav(final String orderBy) throws UriParserException {
-    String uri = "ESTwoKeyNav?$orderby=" + orderBy.trim();
-    return runUriOrderBy(uri);
+    return runUriOrderBy("ESTwoKeyNav", "$orderby=" + orderBy.trim());
   }
 
   public FilterValidator runOrderByOnETTwoKeyNavEx(final String orderBy) throws UriParserException {
-    String uri = "ESTwoKeyNav?$orderby=" + orderBy.trim();
-    return runUriOrderByEx(uri);
+    return runUriOrderByEx("ESTwoKeyNav", "$orderby=" + orderBy.trim());
   }
 
   public FilterValidator runOnETTwoKeyNav(final String filter) throws UriParserException {
-    String uri = "ESTwoKeyNav?$filter=" + filter.trim();
-    return runUri(uri);
+    return runUri("ESTwoKeyNav", "$filter=" + filter.trim());
   }
 
   public FilterValidator runOnETTwoKeyNavSingle(final String filter) throws UriParserException {
-    String uri = "SINav?$filter=" + filter.trim();
-    return runUri(uri);
+    return runUri("SINav", "$filter=" + filter.trim());
   }
 
   public FilterValidator runOnETTwoKeyNavEx(final String filter) throws UriParserException {
-    String uri = "ESTwoKeyNav?$filter=" + filter.trim();
-    return runUriEx(uri);
+    return runUriEx("ESTwoKeyNav", "$filter=" + filter.trim());
   }
 
   public FilterValidator runOnETAllPrim(final String filter) throws UriParserException {
-    String uri = "ESAllPrim(1)?$filter=" + filter.trim();
-    return runUri(uri);
+    return runUri("ESAllPrim(1)", "$filter=" + filter.trim());
   }
 
   public FilterValidator runOnETKeyNav(final String filter) throws UriParserException {
-    String uri = "ESKeyNav(1)?$filter=" + filter.trim();
-    return runUri(uri);
+    return runUri("ESKeyNav(1)", "$filter=" + filter.trim());
   }
 
   public FilterValidator runOnETKeyNavEx(final String filter) throws UriParserException {
-    String uri = "ESKeyNav(1)?$filter=" + filter.trim();
-    return runUriEx(uri);
+    return runUriEx("ESKeyNav(1)", "$filter=" + filter.trim());
   }
 
   public FilterValidator runOnCTTwoPrim(final String filter) throws UriParserException {
-    String uri = "SINav/PropertyCompTwoPrim?$filter=" + filter.trim();
-    return runUri(uri);
+    return runUri("SINav/PropertyCompTwoPrim", "$filter=" + filter.trim());
   }
 
   public FilterValidator runOnString(final String filter) throws UriParserException {
-    String uri = "SINav/PropertyString?$filter=" + filter.trim();
-    return runUri(uri);
+    return runUri("SINav/PropertyString", "$filter=" + filter.trim());
   }
 
   public FilterValidator runOnInt32(final String filter) throws UriParserException {
-    String uri = "ESCollAllPrim(1)/CollPropertyInt32?$filter=" + filter.trim();
-    return runUri(uri);
+    return runUri("ESCollAllPrim(1)/CollPropertyInt32", "$filter=" + filter.trim());
   }
 
   public FilterValidator runOnDateTimeOffset(final String filter) throws UriParserException {
-    String uri = "ESCollAllPrim(1)/CollPropertyDateTimeOffset?$filter=" + filter.trim();
-    return runUri(uri);
+    return runUri("ESCollAllPrim(1)/CollPropertyDateTimeOffset", "$filter=" + filter.trim());
   }
 
   public FilterValidator runOnDuration(final String filter) throws UriParserException {
-    String uri = "ESCollAllPrim(1)/CollPropertyDuration?$filter=" + filter.trim();
-    return runUri(uri);
+    return runUri("ESCollAllPrim(1)/CollPropertyDuration", "$filter=" + filter.trim());
   }
 
   public FilterValidator runOnTimeOfDay(final String filter) throws UriParserException {
-    String uri = "ESCollAllPrim(1)/CollPropertyTimeOfDay?$filter=" + filter.trim();
-    return runUri(uri);
+    return runUri("ESCollAllPrim(1)/CollPropertyTimeOfDay", "$filter=" + filter.trim());
   }
 
   public FilterValidator runESabc(final String filter) throws UriParserException {
-    String uri = "ESabc?$filter=" + filter.trim();
-    return runUri(uri);
+    return runUri("ESabc", "$filter=" + filter.trim());
   }
 
-  public FilterValidator runUri(final String uri) throws UriParserException {
+  public FilterValidator runUri(final String path, final String query) throws UriParserException {
     Parser parser = new Parser();
     UriInfo uriInfo = null;
 
-    uriInfo = parser.parseUri(uri, edm);
+    uriInfo = parser.parseUri(path, query, null, edm);
 
     if (uriInfo.getKind() != UriInfoKind.resource) {
       fail("Filtervalidator can only be used on resourcePaths");
@@ -200,12 +184,12 @@ public class FilterValidator implements TestValidator {
     return this;
   }
 
-  public FilterValidator runUriEx(final String uri) {
+  public FilterValidator runUriEx(final String path, final String query) {
     Parser parser = new Parser();
     UriInfo uriInfo = null;
 
     try {
-      uriInfo = parser.parseUri(uri, edm);
+      uriInfo = parser.parseUri(path, query, null, edm);
     } catch (UriParserException e) {
       exception = e;
       return this;
@@ -220,11 +204,11 @@ public class FilterValidator implements TestValidator {
     return this;
   }
 
-  public FilterValidator runUriOrderBy(final String uri) throws UriParserException {
+  public FilterValidator runUriOrderBy(final String path, final String query) throws UriParserException {
     Parser parser = new Parser();
     UriInfo uriInfo = null;
 
-    uriInfo = parser.parseUri(uri, edm);
+    uriInfo = parser.parseUri(path, query, null, edm);
 
     if (uriInfo.getKind() != UriInfoKind.resource) {
       fail("Filtervalidator can only be used on resourcePaths");
@@ -234,12 +218,12 @@ public class FilterValidator implements TestValidator {
     return this;
   }
 
-  public FilterValidator runUriOrderByEx(final String uri) {
+  public FilterValidator runUriOrderByEx(final String path, final String query) {
     Parser parser = new Parser();
     UriInfo uriInfo = null;
 
     try {
-      uriInfo = parser.parseUri(uri, edm);
+      uriInfo = parser.parseUri(path, query, null, edm);
     } catch (UriParserException e) {
       exception = e;
       return this;

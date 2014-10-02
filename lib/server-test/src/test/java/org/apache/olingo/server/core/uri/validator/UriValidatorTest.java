@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.fail;
 
@@ -268,88 +269,77 @@ public class UriValidatorTest {
 
   @Test
   public void validateSelect() throws Exception {
-    String[] uris = { "/ESAllPrim(1)?$select=PropertyString" };
-    for (String uri : uris) {
-      parseAndValidate(uri, HttpMethod.GET);
-    }
+    parseAndValidate("/ESAllPrim(1)", "$select=PropertyString", HttpMethod.GET);
   }
 
   @Test
   public void validateForHttpMethods() throws Exception {
     String uri = URI_ENTITY;
-    parseAndValidate(uri, HttpMethod.GET);
-    parseAndValidate(uri, HttpMethod.POST);
-    parseAndValidate(uri, HttpMethod.PUT);
-    parseAndValidate(uri, HttpMethod.DELETE);
-    parseAndValidate(uri, HttpMethod.PATCH);
-    parseAndValidate(uri, HttpMethod.MERGE);
+    parseAndValidate(uri, null, HttpMethod.GET);
+    parseAndValidate(uri, null, HttpMethod.POST);
+    parseAndValidate(uri, null, HttpMethod.PUT);
+    parseAndValidate(uri, null, HttpMethod.DELETE);
+    parseAndValidate(uri, null, HttpMethod.PATCH);
+    parseAndValidate(uri, null, HttpMethod.MERGE);
   }
 
   @Test
   public void validateOrderBy() throws Exception {
-    String[] uris = { "/ESAllPrim?$orderby=PropertyString" };
-    for (String uri : uris) {
-      parseAndValidate(uri, HttpMethod.GET);
-    }
+    parseAndValidate("/ESAllPrim", "$orderby=PropertyString", HttpMethod.GET);
   }
 
   @Test(expected = UriParserSemanticException.class)
   public void validateOrderByInvalid() throws Exception {
-    String uri = "/ESAllPrim(1)?$orderby=XXXX";
-    parseAndValidate(uri, HttpMethod.GET);
+    parseAndValidate("/ESAllPrim(1)", "$orderby=XXXX", HttpMethod.GET);
   }
 
   @Test(expected = UriParserSyntaxException.class)
   public void validateCountInvalid() throws Exception {
-    parseAndValidate("ESAllPrim?$count=foo", HttpMethod.GET);
+    parseAndValidate("ESAllPrim", "$count=foo", HttpMethod.GET);
   }
 
   @Test(expected = UriParserSyntaxException.class)
   public void validateTopInvalid() throws Exception {
-    parseAndValidate("ESAllPrim?$top=foo", HttpMethod.GET);
+    parseAndValidate("ESAllPrim", "$top=foo", HttpMethod.GET);
   }
 
   @Test(expected = UriParserSyntaxException.class)
   public void validateSkipInvalid() throws Exception {
-    parseAndValidate("ESAllPrim?$skip=foo", HttpMethod.GET);
+    parseAndValidate("ESAllPrim", "$skip=foo", HttpMethod.GET);
   }
 
   @Test(expected = UriParserSyntaxException.class)
   public void validateDoubleSystemOptions() throws Exception {
-    parseAndValidate("ESAllPrim?$skip=1&$skip=2", HttpMethod.GET);
+    parseAndValidate("ESAllPrim", "$skip=1&$skip=2", HttpMethod.GET);
   }
 
   @Test(expected = UriValidationException.class)
   public void validateKeyPredicatesWrongKey() throws Exception {
-    String uri = "ESTwoKeyNav(xxx=1, yyy='abc')";
-    parseAndValidate(uri, HttpMethod.GET);
+    parseAndValidate("ESTwoKeyNav(xxx=1, yyy='abc')", null, HttpMethod.GET);
   }
 
   @Test
   public void validateKeyPredicates() throws Exception {
-    String uri = "ESTwoKeyNav(PropertyInt16=1, PropertyString='abc')";
-    parseAndValidate(uri, HttpMethod.GET);
+    parseAndValidate("ESTwoKeyNav(PropertyInt16=1, PropertyString='abc')", null, HttpMethod.GET);
   }
 
   @Test(expected = UriValidationException.class)
   public void validateKeyPredicatesWrongValueType() throws Exception {
-    String uri = "ESTwoKeyNav(PropertyInt16='abc', PropertyString=1)";
-    parseAndValidate(uri, HttpMethod.GET);
+    parseAndValidate("ESTwoKeyNav(PropertyInt16='abc', PropertyString=1)", null, HttpMethod.GET);
   }
 
   @Test(expected = UriValidationException.class)
   public void validateKeyPredicatesWrongValueTypeForValidateMethod() throws Exception {
-    String uri = "ESTwoKeyNav(PropertyInt16='abc', PropertyString='abc')";
-    parseAndValidate(uri, HttpMethod.GET);
+    parseAndValidate("ESTwoKeyNav(PropertyInt16='abc', PropertyString='abc')", null, HttpMethod.GET);
   }
   
   @Test
   public void checkValidSystemQueryOption() throws Exception {
-    String[] uris = constructUri(urisWithValidSystemQueryOptions);
+    List<String[]> uris = constructUri(urisWithValidSystemQueryOptions);
 
-    for (String uri : uris) {
+    for (String[] uri : uris) {
       try {
-        parseAndValidate(uri, HttpMethod.GET);
+        parseAndValidate(uri[0], uri[1], HttpMethod.GET);
       } catch (final UriParserException e) {
         fail("Failed for uri: " + uri);
       } catch (final UriValidationException e) {
@@ -360,11 +350,11 @@ public class UriValidatorTest {
 
   @Test
   public void checkNonValidSystemQueryOption() throws Exception {
-    String[] uris = constructUri(urisWithNonValidSystemQueryOptions);
+    List<String[]> uris = constructUri(urisWithNonValidSystemQueryOptions);
 
-    for (String uri : uris) {
+    for (String[] uri : uris) {
       try {
-        parseAndValidate(uri, HttpMethod.GET);
+        parseAndValidate(uri[0], uri[1], HttpMethod.GET);
         fail("Validation Exception not thrown: " + uri);
       } catch (UriParserSemanticException e) {
       } catch (UriValidationException e) {
@@ -372,27 +362,25 @@ public class UriValidatorTest {
     }
   }
 
-  private String[] constructUri(final String[][] uriParameterMatrix) {
-    ArrayList<String> uris = new ArrayList<String>();
+  private List<String[]> constructUri(final String[][] uriParameterMatrix) {
+    List<String[]> uris = new ArrayList<String[]>();
     for (String[] uriParameter : uriParameterMatrix) {
-      String uri = uriParameter[0];
-      if (uriParameter.length > 1) {
-        uri += "?";
-      }
+      String path = uriParameter[0];
+      String query = "";
       for (int i = 1; i < uriParameter.length; i++) {
-        uri += uriParameter[i];
+        query += uriParameter[i];
         if (i < (uriParameter.length - 1)) {
-          uri += "&";
+          query += "&";
         }
       }
-      uris.add(uri);
+      uris.add(new String[] { path, query });
     }
-    return uris.toArray(new String[uris.size()]);
+    return uris;
   }
 
-  private void parseAndValidate(final String uri, final HttpMethod method)
+  private void parseAndValidate(final String path, final String query, final HttpMethod method)
       throws UriParserException, UriValidationException {
-    UriInfo uriInfo = parser.parseUri(uri.trim(), edm);
+    UriInfo uriInfo = parser.parseUri(path.trim(), query, null, edm);
     new UriValidator().validate(uriInfo, method);
   }
 

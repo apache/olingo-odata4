@@ -23,53 +23,54 @@ import org.apache.olingo.server.core.uri.parser.UriDecoder;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 public class RawUriTest {
 
-  private RawUri runRawParser(final String uri, final int skipSegments) throws UriParserSyntaxException {
-    return UriDecoder.decodeUri(uri, skipSegments);
+  private RawUri runRawParser(final String path, final String query, final int skipSegments)
+      throws UriParserSyntaxException {
+    return UriDecoder.decodeUri(path, query, null, skipSegments);
   }
 
   @Test
   public void testOption() throws Exception {
     RawUri rawUri;
-    rawUri = runRawParser("?", 0);
+    rawUri = runRawParser("", "", 0);
     checkOptionCount(rawUri, 0);
 
-    rawUri = runRawParser("?a", 0);
+    rawUri = runRawParser("", "a", 0);
     checkOption(rawUri, 0, "a", "");
 
-    rawUri = runRawParser("?a=b", 0);
+    rawUri = runRawParser("", "a=b", 0);
     checkOption(rawUri, 0, "a", "b");
 
-    rawUri = runRawParser("?=", 0);
+    rawUri = runRawParser("", "=", 0);
     checkOption(rawUri, 0, "", "");
 
-    rawUri = runRawParser("?=b", 0);
+    rawUri = runRawParser("", "=b", 0);
     checkOption(rawUri, 0, "", "b");
 
-    rawUri = runRawParser("?a&c", 0);
+    rawUri = runRawParser("", "a&c", 0);
     checkOption(rawUri, 0, "a", "");
     checkOption(rawUri, 1, "c", "");
 
-    rawUri = runRawParser("?a=b&c", 0);
+    rawUri = runRawParser("", "a=b&c", 0);
     checkOption(rawUri, 0, "a", "b");
     checkOption(rawUri, 1, "c", "");
 
-    rawUri = runRawParser("?a=b&c=d", 0);
+    rawUri = runRawParser("", "a=b&c=d", 0);
     checkOption(rawUri, 0, "a", "b");
     checkOption(rawUri, 1, "c", "d");
 
-    rawUri = runRawParser("?=&=", 0);
+    rawUri = runRawParser("", "=&=", 0);
     checkOption(rawUri, 0, "", "");
     checkOption(rawUri, 1, "", "");
 
-    rawUri = runRawParser("?=&c=d", 0);
+    rawUri = runRawParser("", "=&c=d", 0);
     checkOption(rawUri, 0, "", "");
     checkOption(rawUri, 1, "c", "d");
   }
@@ -89,40 +90,38 @@ public class RawUriTest {
   public void testPath() throws Exception {
     RawUri rawUri;
 
-    rawUri = runRawParser("http://test.org", 0);
-    checkPath(rawUri, "", new ArrayList<String>());
+    rawUri = runRawParser("", null, 0);
+    checkPath(rawUri, "", Collections.<String> emptyList());
 
-    rawUri = runRawParser("http://test.org/", 0);
-    checkPath(rawUri, "/", Arrays.asList(""));
+    rawUri = runRawParser("/", null, 0);
+    checkPath(rawUri, "/", Collections.<String> emptyList());
 
-    rawUri = runRawParser("http://test.org/entitySet", 0);
+    rawUri = runRawParser("/entitySet", null, 0);
     checkPath(rawUri, "/entitySet", Arrays.asList("entitySet"));
 
-    rawUri = runRawParser("http://test.org/nonServiceSegment/entitySet", 0);
-    checkPath(rawUri, "/nonServiceSegment/entitySet", Arrays.asList("nonServiceSegment", "entitySet"));
+    rawUri = runRawParser("//entitySet", null, 0);
+    checkPath(rawUri, "//entitySet", Arrays.asList("entitySet"));
 
-    rawUri = runRawParser("http://test.org/nonServiceSegment/entitySet", 1);
-    checkPath(rawUri, "/nonServiceSegment/entitySet", Arrays.asList("entitySet"));
-
-    rawUri = runRawParser("", 0);
-    checkPath(rawUri, "", new ArrayList<String>());
-
-    rawUri = runRawParser("/", 0);
-    checkPath(rawUri, "/", Arrays.asList(""));
-
-    rawUri = runRawParser("/entitySet", 0);
-    checkPath(rawUri, "/entitySet", Arrays.asList("entitySet"));
-
-    rawUri = runRawParser("entitySet", 0);
+    rawUri = runRawParser("entitySet", null, 0);
     checkPath(rawUri, "entitySet", Arrays.asList("entitySet"));
 
-    rawUri = runRawParser("nonServiceSegment/entitySet", 0);
+    rawUri = runRawParser("/nonServiceSegment/entitySet", null, 0);
+    checkPath(rawUri, "/nonServiceSegment/entitySet", Arrays.asList("nonServiceSegment", "entitySet"));
+
+    rawUri = runRawParser("/nonServiceSegment/entitySet", null, 1);
+    checkPath(rawUri, "/nonServiceSegment/entitySet", Arrays.asList("entitySet"));
+
+    rawUri = runRawParser("nonServiceSegment/entitySet", null, 0);
     checkPath(rawUri, "nonServiceSegment/entitySet", Arrays.asList("nonServiceSegment", "entitySet"));
 
-    rawUri = runRawParser("nonServiceSegment/entitySet", 1);
+    rawUri = runRawParser("nonServiceSegment/entitySet", null, 1);
     checkPath(rawUri, "nonServiceSegment/entitySet", Arrays.asList("entitySet"));
 
-    rawUri = runRawParser("http://test.org/a?abc=xx+yz", 0);
+    rawUri = runRawParser("non//Service/Segment///entitySet/", null, 3);
+    checkPath(rawUri, "non//Service/Segment///entitySet/", Arrays.asList("entitySet"));
+
+    rawUri = runRawParser("/a", "abc=xx+yz", 0);
+    checkPath(rawUri, "/a", Arrays.asList("a"));
   }
 
   @Test
@@ -140,15 +139,13 @@ public class RawUriTest {
 
     assertEquals(list.size(), rawUri.pathSegmentListDecoded.size());
 
-    int i = 0;
-    while (i < list.size()) {
+    for (int i = 0; i < list.size(); i++) {
       assertEquals(list.get(i), rawUri.pathSegmentListDecoded.get(i));
-      i++;
     }
   }
 
   @Test(expected = UriParserSyntaxException.class)
   public void wrongPercentEncoding() throws Exception {
-    runRawParser("%wrong", 0);
+    runRawParser("%wrong", null, 0);
   }
 }

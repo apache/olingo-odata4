@@ -236,7 +236,7 @@ public class TestUriParserImpl {
   @Test(expected = UriValidationException.class)
   public void testEntityFailOnValidation1() throws Exception {
     // simple entity set; with qualifiedentityTypeName; with filter
-    testUri.run("$entity/olingo.odata.test1.ETTwoPrim?$filter=PropertyInt16 eq 123&$id=ESAllKey")
+    testUri.run("$entity/olingo.odata.test1.ETTwoPrim", "$filter=PropertyInt16 eq 123&$id=ESAllKey")
         .isIdText("ESAllKey")
         .goFilter().is("<<PropertyInt16> eq <123>>");
   }
@@ -244,8 +244,8 @@ public class TestUriParserImpl {
   @Test(expected = UriParserSyntaxException.class)
   public void testEntityFailOnValidation2() throws Exception {
     // simple entity set; with qualifiedentityTypeName; with 2xformat(before and after), expand, filter
-    testUri.run("$entity/olingo.odata.test1.ETTwoPrim?"
-        + "$format=xml&$expand=*&abc=123&$id=ESBase&xyz=987&$filter=PropertyInt16 eq 123&$format=atom&$select=*")
+    testUri.run("$entity/olingo.odata.test1.ETTwoPrim",
+        "$format=xml&$expand=*&abc=123&$id=ESBase&xyz=987&$filter=PropertyInt16 eq 123&$format=atom&$select=*")
         .isFormatText("atom")
         .isCustomParameter(0, "abc", "123")
         .isIdText("ESBase")
@@ -257,64 +257,64 @@ public class TestUriParserImpl {
   public void testEntity() throws Exception {
 
     // simple entity set
-    testUri.run("$entity?$id=ESAllPrim").isKind(UriInfoKind.entityId)
+    testUri.run("$entity", "$id=ESAllPrim").isKind(UriInfoKind.entityId)
         .isKind(UriInfoKind.entityId)
         .isIdText("ESAllPrim");
 
     // simple entity set; $format before $id
-    testUri.run("$entity?$format=xml&$id=ETAllPrim").isKind(UriInfoKind.entityId)
+    testUri.run("$entity", "$format=xml&$id=ETAllPrim").isKind(UriInfoKind.entityId)
         .isFormatText("xml")
         .isIdText("ETAllPrim");
 
-    testUri.run("$entity?$format=xml&abc=123&$id=ESAllKey").isKind(UriInfoKind.entityId)
+    testUri.run("$entity", "$format=xml&abc=123&$id=ESAllKey").isKind(UriInfoKind.entityId)
         .isFormatText("xml")
         .isCustomParameter(0, "abc", "123")
         .isIdText("ESAllKey");
 
     // simple entity set; $format after $id
-    testUri.run("$entity?$id=ETAllPrim&$format=xml").isKind(UriInfoKind.entityId)
+    testUri.run("$entity", "$id=ETAllPrim&$format=xml").isKind(UriInfoKind.entityId)
         .isIdText("ETAllPrim")
         .isFormatText("xml");
 
     // simple entity set; $format and custom parameter after $id
-    testUri.run("$entity?$id=ETAllPrim&$format=xml&abc=123").isKind(UriInfoKind.entityId)
+    testUri.run("$entity", "$id=ETAllPrim&$format=xml&abc=123").isKind(UriInfoKind.entityId)
         .isIdText("ETAllPrim")
         .isFormatText("xml")
         .isCustomParameter(0, "abc", "123");
 
     // simple entity set; $format before $id and custom parameter after $id
-    testUri.run("$entity?$format=xml&$id=ETAllPrim&abc=123").isKind(UriInfoKind.entityId)
+    testUri.run("$entity", "$format=xml&$id=ETAllPrim&abc=123").isKind(UriInfoKind.entityId)
         .isFormatText("xml")
         .isIdText("ETAllPrim")
         .isCustomParameter(0, "abc", "123");
 
     // simple entity set; with qualifiedentityTypeName
-    testUri.run("$entity/olingo.odata.test1.ETTwoPrim?$id=ESBase")
+    testUri.run("$entity/olingo.odata.test1.ETTwoPrim", "$id=ESBase")
         .isEntityType(EntityTypeProvider.nameETTwoPrim)
         .isIdText("ESBase");
 
     // simple entity set; with qualifiedentityTypeName;
-    testUri.run("$entity/olingo.odata.test1.ETBase?$id=ESTwoPrim")
+    testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim")
         .isEntityType(EntityTypeProvider.nameETBase)
         .isKind(UriInfoKind.entityId)
         .isIdText("ESTwoPrim");
 
     // simple entity set; with qualifiedentityTypeName; with format
-    testUri.run("$entity/olingo.odata.test1.ETBase?$id=ESTwoPrim&$format=atom")
+    testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim&$format=atom")
         .isKind(UriInfoKind.entityId)
         .isEntityType(EntityTypeProvider.nameETBase)
         .isIdText("ESTwoPrim")
         .isFormatText("atom");
 
     // simple entity set; with qualifiedentityTypeName; with select
-    testUri.run("$entity/olingo.odata.test1.ETBase?$id=ESTwoPrim&$select=*")
+    testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim&$select=*")
         .isKind(UriInfoKind.entityId)
         .isEntityType(EntityTypeProvider.nameETBase)
         .isIdText("ESTwoPrim")
         .isSelectItemStar(0);
 
     // simple entity set; with qualifiedentityTypeName; with expand
-    testUri.run("$entity/olingo.odata.test1.ETBase?$id=ESTwoPrim&$expand=*")
+    testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim&$expand=*")
         .isKind(UriInfoKind.entityId)
         .isEntityType(EntityTypeProvider.nameETBase)
         .isIdText("ESTwoPrim")
@@ -367,7 +367,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testEntitySet_NavigationPropperty() {
+  public void testEntitySet_NavigationProperty() {
 
     // plain entity set ...
 
@@ -711,153 +711,155 @@ public class TestUriParserImpl {
     testUri.run("$metadata")
         .isKind(UriInfoKind.metadata);
 
-    testUri.run("$metadata?$format=atom")
+    testUri.run("$metadata", "$format=atom")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom");
 
     // with context (client usage)
 
-    testUri.run("$metadata#$ref")
+    testUri.run("$metadata", null, "$ref")
         .isKind(UriInfoKind.metadata)
         .isFragmentText("$ref");
 
-    testUri.run("$metadata?$format=atom#$ref")
+    testUri.run("$metadata", "$format=atom", "$ref")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("$ref");
 
-    testUri.run("$metadata?$format=atom#Collection($ref)")
+    testUri.run("$metadata", "$format=atom", "Collection($ref)")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("Collection($ref)");
 
-    testUri.run("$metadata?$format=atom#Collection(Edm.EntityType)")
+    testUri.run("$metadata", "$format=atom", "Collection(Edm.EntityType)")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("Collection(Edm.EntityType)");
 
-    testUri.run("$metadata?$format=atom#Collection(Edm.ComplexType)")
+    testUri.run("$metadata", "$format=atom", "Collection(Edm.ComplexType)")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("Collection(Edm.ComplexType)");
 
-    testUri.run("$metadata?$format=atom#SINav")
+    testUri.run("$metadata", "$format=atom", "SINav")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("SINav");
 
-    testUri.run("$metadata?$format=atom#SINav/PropertyInt16")
+    testUri.run("$metadata", "$format=atom", "SINav/PropertyInt16")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("SINav/PropertyInt16");
 
-    testUri.run("$metadata?$format=atom#SINav/NavPropertyETKeyNavOne")
+    testUri.run("$metadata", "$format=atom", "SINav/NavPropertyETKeyNavOne")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("SINav/NavPropertyETKeyNavOne");
 
-    testUri.run("$metadata?$format=atom#SINav/NavPropertyETKeyNavMany(1)")
+    testUri.run("$metadata", "$format=atom", "SINav/NavPropertyETKeyNavMany(1)")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("SINav/NavPropertyETKeyNavMany(1)");
 
-    testUri.run("$metadata?$format=atom#SINav/NavPropertyETKeyNavOne/PropertyInt16")
+    testUri.run("$metadata", "$format=atom", "SINav/NavPropertyETKeyNavOne/PropertyInt16")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("SINav/NavPropertyETKeyNavOne/PropertyInt16");
 
-    testUri.run("$metadata?$format=atom#SINav/NavPropertyETKeyNavMany(1)/PropertyInt16")
+    testUri.run("$metadata", "$format=atom", "SINav/NavPropertyETKeyNavMany(1)/PropertyInt16")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("SINav/NavPropertyETKeyNavMany(1)/PropertyInt16");
 
-    testUri.run("$metadata?$format=atom#SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16")
+    testUri.run("$metadata", "$format=atom", "SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16");
 
-    testUri.run("$metadata?$format=atom#SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16")
+    testUri.run("$metadata", "$format=atom",
+        "SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16");
 
-    testUri.run("$metadata?$format=atom#olingo.odata.test1.ETAllKey")
+    testUri.run("$metadata", "$format=atom", "olingo.odata.test1.ETAllKey")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("olingo.odata.test1.ETAllKey");
 
-    testUri.run("$metadata?$format=atom#ESTwoPrim/$deletedEntity")
+    testUri.run("$metadata", "$format=atom", "ESTwoPrim/$deletedEntity")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESTwoPrim/$deletedEntity");
 
-    testUri.run("$metadata?$format=atom#ESTwoPrim/$link")
+    testUri.run("$metadata", "$format=atom", "ESTwoPrim/$link")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESTwoPrim/$link");
 
-    testUri.run("$metadata?$format=atom#ESTwoPrim/$deletedLink")
+    testUri.run("$metadata", "$format=atom", "ESTwoPrim/$deletedLink")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESTwoPrim/$deletedLink");
 
-    testUri.run("$metadata?$format=atom#ESKeyNav")
+    testUri.run("$metadata", "$format=atom", "ESKeyNav")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESKeyNav");
 
-    testUri.run("$metadata?$format=atom#ESKeyNav/PropertyInt16")
+    testUri.run("$metadata", "$format=atom", "ESKeyNav/PropertyInt16")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESKeyNav/PropertyInt16");
 
-    testUri.run("$metadata?$format=atom#ESKeyNav/NavPropertyETKeyNavOne")
+    testUri.run("$metadata", "$format=atom", "ESKeyNav/NavPropertyETKeyNavOne")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESKeyNav/NavPropertyETKeyNavOne");
 
-    testUri.run("$metadata?$format=atom#ESKeyNav/NavPropertyETKeyNavMany(1)")
+    testUri.run("$metadata", "$format=atom", "ESKeyNav/NavPropertyETKeyNavMany(1)")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESKeyNav/NavPropertyETKeyNavMany(1)");
 
-    testUri.run("$metadata?$format=atom#ESKeyNav/NavPropertyETKeyNavOne/PropertyInt16")
+    testUri.run("$metadata", "$format=atom", "ESKeyNav/NavPropertyETKeyNavOne/PropertyInt16")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESKeyNav/NavPropertyETKeyNavOne/PropertyInt16");
 
-    testUri.run("$metadata?$format=atom#ESKeyNav/NavPropertyETKeyNavMany(1)/PropertyInt16")
+    testUri.run("$metadata", "$format=atom", "ESKeyNav/NavPropertyETKeyNavMany(1)/PropertyInt16")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESKeyNav/NavPropertyETKeyNavMany(1)/PropertyInt16");
 
-    testUri.run("$metadata?$format=atom#ESKeyNav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16")
+    testUri.run("$metadata", "$format=atom",
+        "ESKeyNav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESKeyNav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16");
 
     testUri.run(
-        "$metadata?$format=atom#ESKeyNav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16")
+        "$metadata", "$format=atom", "ESKeyNav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESKeyNav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16");
 
-    testUri.run("$metadata?$format=atom#ESKeyNav(PropertyInt16,PropertyString)")
+    testUri.run("$metadata", "$format=atom", "ESKeyNav(PropertyInt16,PropertyString)")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESKeyNav(PropertyInt16,PropertyString)");
 
-    testUri.run("$metadata?$format=atom#ESKeyNav/$entity")
+    testUri.run("$metadata", "$format=atom", "ESKeyNav/$entity")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESKeyNav/$entity");
 
-    testUri.run("$metadata?$format=atom#ESKeyNav/$delta")
+    testUri.run("$metadata", "$format=atom", "ESKeyNav/$delta")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESKeyNav/$delta");
 
-    testUri.run("$metadata?$format=atom#ESKeyNav/(PropertyInt16,PropertyString)/$delta")
+    testUri.run("$metadata", "$format=atom", "ESKeyNav/(PropertyInt16,PropertyString)/$delta")
         .isKind(UriInfoKind.metadata)
         .isFormatText("atom")
         .isFragmentText("ESKeyNav/(PropertyInt16,PropertyString)/$delta");
@@ -995,8 +997,8 @@ public class TestUriParserImpl {
   @Test(expected = UriValidationException.class)
   public void testMemberStartingWithCastFailOnValidation1() throws Exception {
     // on EntityType entry
-    testUri.run("ESTwoKeyNav(ParameterInt16=1,PropertyString='ABC')?"
-        + "$filter=olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate")
+    testUri.run("ESTwoKeyNav(ParameterInt16=1,PropertyString='ABC')",
+        "$filter=olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate")
         .goFilter().root().isMember()
         .isMemberStartType(EntityTypeProvider.nameETBaseTwoKeyNav).goPath()
         // .at(0)
@@ -1008,8 +1010,8 @@ public class TestUriParserImpl {
 
   @Test(expected = UriValidationException.class)
   public void testMemberStartingWithCastFailOnValidation2() throws Exception {
-    testUri.run("FICRTCTTwoPrimParam(ParameterInt16=1,ParameterString='2')?"
-        + "$filter=olingo.odata.test1.CTBase/AdditionalPropString")
+    testUri.run("FICRTCTTwoPrimParam(ParameterInt16=1,ParameterString='2')",
+        "$filter=olingo.odata.test1.CTBase/AdditionalPropString")
         .goFilter().root().isMember()
         .isMemberStartType(ComplexTypeProvider.nameCTBase).goPath()
         // .at(0)
@@ -1023,7 +1025,7 @@ public class TestUriParserImpl {
   public void testMemberStartingWithCast() throws Exception {
 
     // on EntityType collection
-    testUri.run("ESTwoKeyNav?$filter=olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate")
+    testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate")
         .goFilter().root().isMember()
         .isMemberStartType(EntityTypeProvider.nameETBaseTwoKeyNav).goPath()
         // .at(0)
@@ -1033,8 +1035,8 @@ public class TestUriParserImpl {
         .at(0).isType(PropertyProvider.nameDate);
 
     // on Complex collection
-    testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')?"
-        + "$filter=olingo.odata.test1.CTBase/AdditionalPropString")
+    testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')",
+        "$filter=olingo.odata.test1.CTBase/AdditionalPropString")
         .goFilter().root().isMember()
         .isMemberStartType(ComplexTypeProvider.nameCTBase).goPath()
         // .at(0)
@@ -1052,27 +1054,27 @@ public class TestUriParserImpl {
 
   @Test
   public void testLambda() throws Exception {
-    testUri.run("ESTwoKeyNav?$filter=CollPropertyComp/all( l : true )")
+    testUri.run("ESTwoKeyNav", "$filter=CollPropertyComp/all( l : true )")
         .goFilter().is("<CollPropertyComp/<ALL;<true>>>");
 
-    testUri.run("ESTwoKeyNav?$filter=CollPropertyComp/any( l : true )")
+    testUri.run("ESTwoKeyNav", "$filter=CollPropertyComp/any( l : true )")
         .goFilter().is("<CollPropertyComp/<ANY;<true>>>");
-    testUri.run("ESTwoKeyNav?$filter=CollPropertyComp/any( )")
+    testUri.run("ESTwoKeyNav", "$filter=CollPropertyComp/any( )")
         .goFilter().is("<CollPropertyComp/<ANY;>>");
 
-    testUri.run("ESTwoKeyNav?$filter=all( l : true )")
+    testUri.run("ESTwoKeyNav", "$filter=all( l : true )")
         .goFilter().is("<<ALL;<true>>>");
-    testUri.run("ESTwoKeyNav?$filter=any( l : true )")
+    testUri.run("ESTwoKeyNav", "$filter=any( l : true )")
         .goFilter().is("<<ANY;<true>>>");
-    testUri.run("ESTwoKeyNav?$filter=any( )")
+    testUri.run("ESTwoKeyNav", "$filter=any( )")
         .goFilter().is("<<ANY;>>");
   }
 
   @Test
   public void testCustomQueryOption() throws Exception {
-    testUri.run("ESTwoKeyNav?custom")
+    testUri.run("ESTwoKeyNav", "custom")
         .isCustomParameter(0, "custom", "");
-    testUri.run("ESTwoKeyNav?custom=ABC")
+    testUri.run("ESTwoKeyNav", "custom=ABC")
         .isCustomParameter(0, "custom", "ABC");
   }
 
@@ -1092,52 +1094,47 @@ public class TestUriParserImpl {
 
   @Test
   public void testSelect() throws Exception {
-    testUri.run("ESTwoKeyNav?$select=*")
+    testUri.run("ESTwoKeyNav", "$select=*")
         .isSelectItemStar(0);
 
-    testUri.run("ESTwoKeyNav?$select=olingo.odata.test1.*")
+    testUri.run("ESTwoKeyNav", "$select=olingo.odata.test1.*")
         .isSelectItemAllOp(0, new FullQualifiedName("olingo.odata.test1", "*"));
 
-    testUri.run("ESTwoKeyNav?$select=PropertyString")
+    testUri.run("ESTwoKeyNav", "$select=PropertyString")
         .goSelectItemPath(0).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testUri.run("ESTwoKeyNav?$select=PropertyComp")
+    testUri.run("ESTwoKeyNav", "$select=PropertyComp")
         .goSelectItemPath(0).isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false);
 
-    testUri.run("ESTwoKeyNav?$select=PropertyComp/PropertyInt16")
+    testUri.run("ESTwoKeyNav", "$select=PropertyComp/PropertyInt16")
         .goSelectItemPath(0)
         .first()
         .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
         .n()
         .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
-    testUri.run("ESTwoKeyNav?$select=PropertyComp/PropertyComp")
+    testUri.run("ESTwoKeyNav", "$select=PropertyComp/PropertyComp")
         .goSelectItemPath(0)
         .first()
         .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
         .n()
         .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false);
 
-    testUri.run("ESTwoKeyNav?$select=olingo.odata.test1.ETBaseTwoKeyNav")
+    testUri.run("ESTwoKeyNav", "$select=olingo.odata.test1.ETBaseTwoKeyNav")
         .isSelectStartType(0, EntityTypeProvider.nameETBaseTwoKeyNav);
 
-    testUri.run("ESTwoKeyNav/PropertyCompNav?$select=olingo.odata.test1.CTTwoBasePrimCompNav")
+    testUri.run("ESTwoKeyNav/PropertyCompNav", "$select=olingo.odata.test1.CTTwoBasePrimCompNav")
         .isSelectStartType(0, ComplexTypeProvider.nameCTTwoBasePrimCompNav);
 
-    testUri.run("ESTwoKeyNav?$select=PropertyCompNav/olingo.odata.test1.CTTwoBasePrimCompNav")
+    testUri.run("ESTwoKeyNav", "$select=PropertyCompNav/olingo.odata.test1.CTTwoBasePrimCompNav")
         .goSelectItemPath(0)
         .first()
         .isComplexProperty("PropertyCompNav", ComplexTypeProvider.nameCTBasePrimCompNav, false)
         .n()
         .isTypeFilterOnCollection(ComplexTypeProvider.nameCTTwoBasePrimCompNav);
-    ;
-
   }
 
   public static String encode(final String decoded) throws UnsupportedEncodingException {
-
     return URLEncoder.encode(decoded, "UTF-8");
-
   }
-
 }

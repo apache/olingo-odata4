@@ -19,69 +19,57 @@
 package org.apache.olingo.server.core.uri.parser;
 
 import org.apache.olingo.commons.core.Decoder;
-import org.apache.olingo.server.core.uri.parser.RawUri.QueryOption;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class UriDecoder {
 
-  private static final Pattern uriPattern =
-      Pattern.compile("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
-
-  public static RawUri decodeUri(final String uri, final int skipSegments) throws UriParserSyntaxException {
+  public static RawUri decodeUri(final String path, final String query, final String fragment,
+      final int skipSegments) throws UriParserSyntaxException {
     RawUri rawUri = new RawUri();
 
-    Matcher m = uriPattern.matcher(uri);
-    if (m.matches()) {
-      rawUri.scheme = m.group(2);
-      rawUri.authority = m.group(4);
-      rawUri.path = m.group(5);
-      rawUri.queryOptionString = m.group(7);
-      rawUri.fragment = m.group(9);
-    }
+    rawUri.path = path;
+    rawUri.queryOptionString = query;
+    rawUri.fragment = fragment;
 
-    splitPath(rawUri, skipSegments);
-    splitOptions(rawUri);
+    rawUri.pathSegmentList = splitPath(path, skipSegments);
+    rawUri.queryOptionList = splitOptions(query);
     decode(rawUri);
 
     return rawUri;
   }
 
-  private static void decode(final RawUri rawUri) throws UriParserSyntaxException {
+  private static void decode(RawUri rawUri) throws UriParserSyntaxException {
     rawUri.pathSegmentListDecoded = new ArrayList<String>();
     for (String segment : rawUri.pathSegmentList) {
       rawUri.pathSegmentListDecoded.add(decode(segment));
     }
 
-    rawUri.queryOptionListDecoded = new ArrayList<QueryOption>();
-    for (QueryOption optionPair : rawUri.queryOptionList) {
-      rawUri.queryOptionListDecoded.add(new QueryOption(
+    rawUri.queryOptionListDecoded = new ArrayList<RawUri.QueryOption>();
+    for (RawUri.QueryOption optionPair : rawUri.queryOptionList) {
+      rawUri.queryOptionListDecoded.add(new RawUri.QueryOption(
           decode(optionPair.name),
           decode(optionPair.value)));
     }
   }
 
-  private static void splitOptions(final RawUri rawUri) {
-    rawUri.queryOptionList = new ArrayList<RawUri.QueryOption>();
-
-    if (rawUri.queryOptionString == null) {
-      return;
+  private static List<RawUri.QueryOption> splitOptions(final String queryOptionString) {
+    if (queryOptionString == null) {
+      return Collections.<RawUri.QueryOption> emptyList();
     }
 
-    List<String> options = split(rawUri.queryOptionString, '&');
-
-    for (String option : options) {
+    List<RawUri.QueryOption> queryOptionList = new ArrayList<RawUri.QueryOption>();
+    for (String option : split(queryOptionString, '&')) {
       if (option.length() != 0) {
-        List<String> pair = splitFirst(option, '=');
-        rawUri.queryOptionList.add(
-            new RawUri.QueryOption(pair.get(0), pair.get(1)));
+        final List<String> pair = splitFirst(option, '=');
+        queryOptionList.add(new RawUri.QueryOption(pair.get(0), pair.get(1)));
       }
     }
+    return queryOptionList;
   }
 
   private static List<String> splitFirst(final String input, final char c) {
@@ -93,16 +81,16 @@ public class UriDecoder {
     }
   }
 
-  public static void splitPath(final RawUri rawUri, int skipSegments) {
-    List<String> list = split(rawUri.path, '/');
+  private static List<String> splitPath(final String path, int skipSegments) {
+    List<String> list = split(path, '/');
 
-    if (list.get(0).length() == 0) {
-      skipSegments++;
+    // Empty path segments of the resource path are removed.
+    while (list.remove("")) {
+      // this place intentionally left blank
+      ;
     }
 
-    rawUri.pathSegmentList = skipSegments > 0 ?
-        list.subList(skipSegments, list.size()) :
-        list;
+    return skipSegments > 0 ? list.subList(skipSegments, list.size()) : list;
   }
 
   public static List<String> split(final String input, final char c) {
