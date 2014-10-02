@@ -111,8 +111,7 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
 
   @Override
   public 	InputStream entityProperty(EdmProperty edmProperty, Property property,
-    boolean value, ODataSerializerOptions options)
-      throws ODataSerializerException{
+    ODataSerializerOptions options) throws ODataSerializerException{
     throw new ODataSerializerException("error serialization not implemented for XML format",
       ODataSerializerException.MessageKeys.NOT_IMPLEMENTED);
 	}

@@ -36,11 +36,8 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.processor.EntitySetProcessor;
-import org.apache.olingo.server.api.processor.MetadataProcessor;
-import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
+import org.apache.olingo.server.api.processor.*;
 import org.apache.olingo.server.api.uri.UriInfo;
-import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Before;
 import org.junit.Test;
@@ -262,7 +259,7 @@ public class ODataHandlerTest {
   }
 
   @Test
-  public void testCountWithNavigation() throws Exception {
+  public void dispatchCountWithNavigation() throws Exception {
     ODataRequest request = new ODataRequest();
 
     request.setMethod(HttpMethod.GET);
@@ -280,65 +277,62 @@ public class ODataHandlerTest {
   }
 
   @Test
-  public void testAddressPrimitiveProperty() throws Exception {
+  public void dispatchAddressPrimitiveProperty() throws Exception {
     ODataRequest request = new ODataRequest();
 
     request.setMethod(HttpMethod.GET);
     request.setRawODataPath("ESAllPrim/PropertyInt16");
 
-    EntityProcessor processor = mock(EntityProcessor.class);
+    PropertyProcessor processor = mock(PropertyProcessor.class);
     handler.register(processor);
 
     ODataResponse response = handler.process(request);
     assertNotNull(response);
 
-    Mockito.verify(processor).readEntityProperty(
-        Mockito.any(ODataRequest.class),
-        Mockito.any(ODataResponse.class),
-        Mockito.any(UriInfo.class),
-        Mockito.any(ContentType.class),
-        Mockito.eq(false));
+    Mockito.verify(processor).readProperty(
+            Mockito.any(ODataRequest.class),
+            Mockito.any(ODataResponse.class),
+            Mockito.any(UriInfo.class),
+            Mockito.any(ContentType.class));
   }
 
   @Test
-  public void testAddressPrimitivePropertyValue() throws Exception {
+  public void dispatchAddressPrimitivePropertyValue() throws Exception {
     ODataRequest request = new ODataRequest();
 
     request.setMethod(HttpMethod.GET);
     request.setRawODataPath("ESAllPrim/PropertyInt16/$value");
 
-    EntityProcessor processor = mock(EntityProcessor.class);
+    PropertyProcessor processor = mock(PropertyProcessor.class);
     handler.register(processor);
 
     ODataResponse response = handler.process(request);
     assertNotNull(response);
 
-    Mockito.verify(processor).readEntityProperty(
-        Mockito.any(ODataRequest.class),
-        Mockito.any(ODataResponse.class),
-        Mockito.any(UriInfo.class),
-        Mockito.any(ContentType.class),
-        Mockito.eq(true));
+    Mockito.verify(processor).readPropertyValue(
+            Mockito.any(ODataRequest.class),
+            Mockito.any(ODataResponse.class),
+            Mockito.any(UriInfo.class),
+            Mockito.any(ContentType.class));
   }
 
   @Test
-  public void testAddressComplexProperty() throws Exception {
+  public void dispatchAddressComplexProperty() throws Exception {
     ODataRequest request = new ODataRequest();
 
     request.setMethod(HttpMethod.GET);
     request.setRawODataPath("ESMixPrimCollComp/PropertyComp");
 
-    EntityProcessor processor = mock(EntityProcessor.class);
+    PropertyProcessor processor = mock(PropertyProcessor.class);
     handler.register(processor);
 
     ODataResponse response = handler.process(request);
     assertNotNull(response);
 
-    Mockito.verify(processor).readEntityProperty(
-        Mockito.any(ODataRequest.class),
-        Mockito.any(ODataResponse.class),
-        Mockito.any(UriInfo.class),
-        Mockito.any(ContentType.class),
-        Mockito.eq(false));
+    Mockito.verify(processor).readProperty(
+            Mockito.any(ODataRequest.class),
+            Mockito.any(ODataResponse.class),
+            Mockito.any(UriInfo.class),
+            Mockito.any(ContentType.class));
   }
 }

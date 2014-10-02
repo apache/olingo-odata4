@@ -45,12 +45,12 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
-import org.apache.olingo.server.core.edm.provider.EdmPropertyImpl;
 import org.apache.olingo.server.core.serializer.ExpandSelectMock;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -580,7 +580,7 @@ public class ODataJsonSerializerTest {
     Entity entity = entitySet.getEntities().get(0);
 
     InputStream result = serializer
-        .entityProperty((EdmProperty) edmElement, entity.getProperty("PropertyString"), false,
+        .entityProperty((EdmProperty) edmElement, entity.getProperty("PropertyString"),
             ODataSerializerOptions.with()
                 .contextURL(ContextURL.with().entitySetOrSingletonOrType("Edm.String")
                     .build())
@@ -598,7 +598,7 @@ public class ODataJsonSerializerTest {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     EdmElement edmElement = edmEntitySet.getEntityType().getProperty("PropertyString");
     InputStream result = serializer
-        .entityProperty((EdmProperty) edmElement, property, false,
+        .entityProperty((EdmProperty) edmElement, property,
             ODataSerializerOptions.with()
                 .contextURL(ContextURL.with().entitySetOrSingletonOrType("Edm.String")
                     .build())
@@ -614,7 +614,7 @@ public class ODataJsonSerializerTest {
     Entity entity = entitySet.getEntities().get(0);
 
     InputStream result = serializer
-        .entityProperty((EdmProperty) edmElement, entity.getProperty("CollPropertyString"), false,
+        .entityProperty((EdmProperty) edmElement, entity.getProperty("CollPropertyString"),
             ODataSerializerOptions.with()
                 .contextURL(ContextURL.with().entitySetOrSingletonOrType("Collection(Edm.String)")
                     .build())
@@ -627,6 +627,7 @@ public class ODataJsonSerializerTest {
   }
 
   @Test
+  @Ignore("Serialization of value of primitive property is not done by json serializer")
   public void individualPrimitivePropertyValue() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     final EntitySet entitySet = data.readAll(edmEntitySet);
@@ -635,9 +636,9 @@ public class ODataJsonSerializerTest {
     Entity entity = entitySet.getEntities().get(0);
 
     InputStream result = serializer
-        .entityProperty((EdmProperty) edmElement, entity.getProperty("PropertyString"), true,
+        .entityProperty((EdmProperty) edmElement, entity.getProperty("PropertyString"),
             ODataSerializerOptions.with()
-                .contextURL(ContextURL.with().entitySetOrSingletonOrType("ESAllPrim(1)")
+                .contextURL(ContextURL.with().entitySetOrSingletonOrType("ESAllPrim(0)")
                     .navOrPropertyPath("PropertyString")
                     .build())
                 .build());
@@ -654,7 +655,7 @@ public class ODataJsonSerializerTest {
     Entity entity = entitySet.getEntities().get(0);
 
     InputStream result = serializer
-        .entityProperty((EdmProperty) edmElement, entity.getProperty("PropertyComp"), false,
+        .entityProperty((EdmProperty) edmElement, entity.getProperty("PropertyComp"),
             ODataSerializerOptions.with()
                 .contextURL(ContextURL.with().entitySetOrSingletonOrType("ESMixPrimCollComp.PropertyComp")
                     .build())

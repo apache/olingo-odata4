@@ -29,25 +29,10 @@ import org.apache.olingo.server.api.uri.UriInfo;
 public interface EntityProcessor extends Processor {
 
   /**
-   * Reads entity data from persistency and puts serialized content and status into the response.
+   *  Reads entity data from persistence and puts serialized content and status into the response.
    *  @param request - OData request object containing raw HTTP information
    *  @param response - OData response object for collecting response data
    *  @param uriInfo - information of a parsed OData URI
-   *  @param requestedContentType - requested content type after content negotiation
    */
   void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format);
-
-  /**
-   * Reads primitive property from entity.
-   * If the property is single-valued and has the null value, the service responds with 204 No Content.
-   * If the property is not available, for example due to permissions, the service responds with 404 Not Found
-   * @param request - OData request object containing raw HTTP information
-   * @param response - OData response object for collecting response data
-   * @param uriInfo - information of a parsed OData URI
-   * @param format - requested content type after content negotiation
-   * @param value - true if only value of property requested through $value,
-   *                 false when individual property read with metadata
-   */  
-  void readEntityProperty(ODataRequest request, ODataResponse response,
-      UriInfo uriInfo, ContentType format, boolean value);
 }

@@ -33,18 +33,11 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
-import org.apache.olingo.server.api.processor.DefaultProcessor;
-import org.apache.olingo.server.api.processor.EntitySetProcessor;
-import org.apache.olingo.server.api.processor.EntityProcessor;
-import org.apache.olingo.server.api.processor.ExceptionProcessor;
-import org.apache.olingo.server.api.processor.MetadataProcessor;
-import org.apache.olingo.server.api.processor.Processor;
-import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
+import org.apache.olingo.server.api.processor.*;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
-import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
@@ -166,7 +159,7 @@ public class ODataHandler {
   }
 
   private void handleResourceDispatching(final ODataRequest request, final ODataResponse response,
-      final UriInfo uriInfo) throws ODataTranslatedException {
+      final UriInfo uriInfo) throws ODataTranslatedException, ODataApplicationException {
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
     ContentType requestedContentType = null;
@@ -240,12 +233,12 @@ public class ODataHandler {
     case primitiveProperty:
     case complexProperty:
       if (request.getMethod().equals(HttpMethod.GET)) {
-        EntityProcessor ep = selectProcessor(EntityProcessor.class);
+        PropertyProcessor ep = selectProcessor(PropertyProcessor.class);
 
         requestedContentType =
-            ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, EntityProcessor.class);
+            ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, PropertyProcessor.class);
 
-        ep.readEntityProperty(request, response, uriInfo, requestedContentType, false);
+        ep.readProperty(request, response, uriInfo, requestedContentType);
       } else {
         throw new ODataHandlerException("not implemented",
             ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
@@ -253,8 +246,10 @@ public class ODataHandler {
       break;
     case value:
       if (request.getMethod().equals(HttpMethod.GET)) {
-        EntityProcessor ep = selectProcessor(EntityProcessor.class);
-        ep.readEntityProperty(request, response, uriInfo, requestedContentType, true);
+        PropertyProcessor ep = selectProcessor(PropertyProcessor.class);
+        requestedContentType =
+                ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, PropertyProcessor.class);
+        ep.readPropertyValue(request, response, uriInfo, requestedContentType);
       } else {
         throw new ODataHandlerException("not implemented",
             ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);

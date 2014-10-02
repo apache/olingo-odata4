@@ -62,11 +62,10 @@ public interface ODataSerializer {
    * Writes entity data into an InputStream.
    * @param edmProperty property definition
    * @param property property value
-   * @param value when true send bare value of property, false metadata is also included
    * @param options options for the serializer
    */
-  InputStream entityProperty(EdmProperty edmProperty, Property property,
-      boolean value, ODataSerializerOptions options) throws ODataSerializerException;
+  InputStream entityProperty(EdmProperty edmProperty, Property property, ODataSerializerOptions options)
+          throws ODataSerializerException;
 
   /**
    * Writes entity-set data into an InputStream.
