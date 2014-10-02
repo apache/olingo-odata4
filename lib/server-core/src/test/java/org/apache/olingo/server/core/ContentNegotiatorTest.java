@@ -35,7 +35,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.processor.CustomContentTypeSupportProcessor;
+import org.apache.olingo.server.api.processor.CustomContentTypeSupport;
 import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.Processor;
@@ -190,7 +190,7 @@ public class ContentNegotiatorTest {
   }
 
   private class ProcessorStub implements ServiceDocumentProcessor, MetadataProcessor,
-      EntitySetProcessor, CustomContentTypeSupportProcessor {
+      EntitySetProcessor, CustomContentTypeSupport {
 
     List<ContentType> customTypes;
 

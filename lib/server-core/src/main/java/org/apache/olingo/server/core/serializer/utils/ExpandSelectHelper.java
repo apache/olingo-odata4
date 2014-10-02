@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
@@ -124,7 +124,7 @@ public abstract class ExpandSelectHelper {
   }
 
   public static Set<String> getExpandedPropertyNames(final List<ExpandItem> expandItems)
-      throws ODataSerializerException {
+      throws SerializerException {
     Set<String> expanded = new HashSet<String>();
     for (final ExpandItem item : expandItems) {
       final List<UriResource> resourceParts = item.getResourcePath().getUriResourceParts();
@@ -134,8 +134,8 @@ public abstract class ExpandSelectHelper {
           expanded.add(((UriResourceNavigation) resource).getProperty().getName());
         }
       } else {
-        throw new ODataSerializerException("Expand is not supported within complex properties.",
-            ODataSerializerException.MessageKeys.NOT_IMPLEMENTED);
+        throw new SerializerException("Expand is not supported within complex properties.",
+            SerializerException.MessageKeys.NOT_IMPLEMENTED);
       }
     }
     return expanded;

@@ -23,17 +23,17 @@ import java.io.IOException;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataErrorDetail;
-import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.serializer.SerializerException;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
 public class ODataErrorSerializer {
 
   public void writeErrorDocument(JsonGenerator json, final ODataError error)
-      throws IOException, ODataSerializerException {
+      throws IOException, SerializerException {
     if (error == null) {
-      throw new ODataSerializerException("ODataError object MUST NOT be null!",
-          ODataSerializerException.MessageKeys.NULL_INPUT);
+      throw new SerializerException("ODataError object MUST NOT be null!",
+          SerializerException.MessageKeys.NULL_INPUT);
     }
     json.writeStartObject();
     json.writeFieldName(Constants.JSON_ERROR);

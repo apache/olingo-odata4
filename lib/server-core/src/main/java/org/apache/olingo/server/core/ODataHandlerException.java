@@ -26,7 +26,8 @@ public class ODataHandlerException extends ODataTranslatedException {
 
   public static enum MessageKeys implements MessageKey {
     /** parameters: HTTP method, HTTP method */ AMBIGUOUS_XHTTP_METHOD,
-    /** parameter: HTTP method */ HTTP_METHOD_NOT_IMPLEMENTED,
+    /** parameter: HTTP method */ INVALID_HTTP_METHOD,
+    /** parameter: HTTP method */ HTTP_METHOD_NOT_ALLOWED,
     /** parameter: processor interface */ PROCESSOR_NOT_IMPLEMENTED,
     FUNCTIONALITY_NOT_IMPLEMENTED,
     /** parameter: version */ ODATA_VERSION_NOT_SUPPORTED;

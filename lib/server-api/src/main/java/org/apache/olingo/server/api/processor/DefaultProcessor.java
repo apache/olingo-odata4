@@ -22,16 +22,18 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
@@ -55,26 +57,26 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
 
   @Override
   public void readServiceDocument(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestedContentType) {
+      final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     try {
       ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
       response.setContent(serializer.serviceDocument(edm, request.getRawBaseUri()));
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
-    } catch (final ODataSerializerException e) {
+    } catch (final SerializerException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     }
   }
 
   @Override
   public void readMetadata(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestedContentType) {
+      final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     try {
       ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
       response.setContent(serializer.metadataDocument(edm));
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
-    } catch (final ODataSerializerException e) {
+    } catch (final SerializerException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     }
   }
@@ -83,6 +85,9 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
   public void processException(ODataRequest request, ODataResponse response, ODataServerError serverError,
       ContentType requestedContentType) {
     try {
+      if(ContentType.APPLICATION_XML.equals(requestedContentType)){
+        requestedContentType = ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
+      }
       ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
       InputStream responseEntity = serializer.error(serverError);
       response.setStatusCode(serverError.getStatusCode());

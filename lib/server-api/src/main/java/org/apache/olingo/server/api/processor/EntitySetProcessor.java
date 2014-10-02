@@ -19,8 +19,10 @@
 package org.apache.olingo.server.api.processor;
 
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
@@ -29,22 +31,28 @@ import org.apache.olingo.server.api.uri.UriInfo;
 public interface EntitySetProcessor extends Processor {
 
   /**
-   *  Reads entities data from persistence and puts serialized content and status into the response.
-   *  
-   *  @param request - OData request object containing raw HTTP information
-   *  @param response - OData response object for collecting response data
-   *  @param uriInfo - information of a parsed OData URI
-   *  @param requestedContentType - requested content type after content negotiation
+   * Reads entities data from persistence and puts serialized content and status into the response.
+   * 
+   * @param request - OData request object containing raw HTTP information
+   * @param response - OData response object for collecting response data
+   * @param uriInfo - information of a parsed OData URI
+   * @param requestedContentType - requested content type after content negotiation
+   * @throws ODataApplicationException
+   * @throws SerializerException
    */
-  void readEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestedContentType);
+  void readEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestedContentType)
+      throws ODataApplicationException, SerializerException;
 
   /**
-   *  Count entities from persistence and puts serialized content and status into the response.
-   *  Response content type is <code>text/plain</code> by default.
-   *
-   *  @param request - OData request object containing raw http information.
-   *  @param response - OData response object for collecting response data
-   *  @param uriInfo - information of a parsed OData uri
+   * Count entities from persistence and puts serialized content and status into the response.
+   * Response content type is <code>text/plain</code> by default.
+   * 
+   * @param request - OData request object containing raw http information.
+   * @param response - OData response object for collecting response data
+   * @param uriInfo - information of a parsed OData uri
+   * @throws ODataApplicationException
+   * @throws SerializerException
    */
-  void countEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo);
+  void countEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo) throws ODataApplicationException,
+      SerializerException;
 }

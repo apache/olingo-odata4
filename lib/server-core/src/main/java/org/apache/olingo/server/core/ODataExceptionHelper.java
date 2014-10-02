@@ -25,31 +25,32 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.ODataTranslatedException.ODataErrorMessage;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 public class ODataExceptionHelper {
-  
+
   public static ODataServerError createServerErrorObject(UriValidationException e, Locale requestedLocale) {
     ODataServerError serverError = basicTranslatedError(e, requestedLocale);
     serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
     return serverError;
   }
-  
+
   public static ODataServerError createServerErrorObject(UriParserSemanticException e, Locale requestedLocale) {
     ODataServerError serverError = basicTranslatedError(e, requestedLocale);
-    if(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND.equals(e.getMessageKey())
+    if (UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND.equals(e.getMessageKey())
         || UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND.equals(e.getMessageKey())
-        || UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE.equals(e.getMessageKey())){
+        || UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE.equals(e.getMessageKey())) {
       serverError.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
-    }else{
+    } else {
       serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
     }
     return serverError;
   }
-  
+
   public static ODataServerError createServerErrorObject(UriParserSyntaxException e, Locale requestedLocale) {
     ODataServerError serverError = basicTranslatedError(e, requestedLocale);
     serverError.setStatusCode(
@@ -58,13 +59,13 @@ public class ODataExceptionHelper {
             HttpStatusCode.BAD_REQUEST.getStatusCode());
     return serverError;
   }
-  
+
   public static ODataServerError createServerErrorObject(UriParserException e, Locale requestedLocale) {
     ODataServerError serverError = basicTranslatedError(e, requestedLocale);
     serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
     return serverError;
   }
-  
+
   public static ODataServerError createServerErrorObject(ContentNegotiatorException e, Locale requestedLocale) {
     ODataServerError serverError = basicTranslatedError(e, requestedLocale);
     serverError.setStatusCode(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode());
@@ -74,13 +75,22 @@ public class ODataExceptionHelper {
   public static ODataServerError createServerErrorObject(ODataHandlerException e, Locale requestedLocale) {
     ODataServerError serverError = basicTranslatedError(e, requestedLocale);
     if (ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED.equals(e.getMessageKey())
-        || ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_IMPLEMENTED.equals(e.getMessageKey())
         || ODataHandlerException.MessageKeys.PROCESSOR_NOT_IMPLEMENTED.equals(e.getMessageKey())) {
       serverError.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
-    } else if (ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED.equals(e.getMessageKey())) {
+    } else if (ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED.equals(e.getMessageKey())
+        || ODataHandlerException.MessageKeys.INVALID_HTTP_METHOD.equals(e.getMessageKey())
+        || ODataHandlerException.MessageKeys.AMBIGUOUS_XHTTP_METHOD.equals(e.getMessageKey())) {
       serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
+    } else if (ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED.equals(e.getMessageKey())) {
+      serverError.setStatusCode(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode());
     }
 
+    return serverError;
+  }
+
+  public static ODataServerError createServerErrorObject(SerializerException e, Locale requestedLocale) {
+    ODataServerError serverError = basicTranslatedError(e, requestedLocale);
+    serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
     return serverError;
   }
 

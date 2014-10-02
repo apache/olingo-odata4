@@ -23,7 +23,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.serializer.SerializerException;
 
 /**
  * Root object for serving factory tasks and support loose coupling of implementation (core) from the API.
@@ -56,7 +56,7 @@ public abstract class OData {
    * Serializers are used in Processor implementations.
    * @param format - any format supported by Olingo (XML, JSON ...)
    */
-  public abstract ODataSerializer createSerializer(ODataFormat format) throws ODataSerializerException;
+  public abstract ODataSerializer createSerializer(ODataFormat format) throws SerializerException;
 
   /**
    * Creates a new ODataHttpHandler for handling OData requests in an HTTP context. 

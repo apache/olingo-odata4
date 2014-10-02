@@ -29,7 +29,7 @@ import org.apache.olingo.server.api.ODataServerError;
 public interface ExceptionProcessor extends Processor{
 
   /**
-   * Processes an exception.
+   * Processes an exception. MUST NOT throw an exception!
    * @param request              the request
    * @param response             the response
    * @param serverError          the server error

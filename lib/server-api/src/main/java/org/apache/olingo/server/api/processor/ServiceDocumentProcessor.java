@@ -19,8 +19,10 @@
 package org.apache.olingo.server.api.processor;
 
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
@@ -36,5 +38,5 @@ public interface ServiceDocumentProcessor extends Processor {
    * @param requestedContentType - requested content type after content negotiation
    */
   void readServiceDocument(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-      ContentType requestedContentType);
+      ContentType requestedContentType) throws ODataApplicationException, SerializerException;
 }

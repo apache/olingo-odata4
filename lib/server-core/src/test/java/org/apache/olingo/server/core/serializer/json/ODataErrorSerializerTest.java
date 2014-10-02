@@ -31,7 +31,7 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -75,7 +75,7 @@ public class ODataErrorSerializerTest {
     assertEquals("{\"error\":{\"code\":\"Code\",\"message\":\"ErrorMessage\",\"target\":\"Target\"}}", jsonString);
   }
 
-  @Test(expected = ODataSerializerException.class)
+  @Test(expected = SerializerException.class)
   public void nullErrorResultsInException() throws Exception {
     ser.error(null);
   }

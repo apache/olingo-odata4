@@ -34,6 +34,7 @@ public class ODataResponse {
   private Map<String, String> headers = new HashMap<String, String>();
   private InputStream content;
 
+
   /**
    * Sets the status code.
    * @see HttpStatusCode
@@ -52,7 +53,7 @@ public class ODataResponse {
 
   /**
    * Sets a header.
-   * @param name  the name
+   * @param name the name
    * @param value the value
    */
   public void setHeader(final String name, final String value) {

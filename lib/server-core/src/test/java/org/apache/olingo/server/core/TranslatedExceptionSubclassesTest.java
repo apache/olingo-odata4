@@ -19,7 +19,7 @@
 package org.apache.olingo.server.core;
 
 import org.apache.olingo.server.api.ODataTranslatedException;
-import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
@@ -54,7 +54,7 @@ public class TranslatedExceptionSubclassesTest {
     testException(UriParserSemanticException.class, UriParserSemanticException.MessageKeys.values());
     testException(UriParserSyntaxException.class, UriParserSyntaxException.MessageKeys.values());
     testException(ContentNegotiatorException.class, ContentNegotiatorException.MessageKeys.values());
-    testException(ODataSerializerException.class, ODataSerializerException.MessageKeys.values());
+    testException(SerializerException.class, SerializerException.MessageKeys.values());
     testException(UriValidationException.class, UriValidationException.MessageKeys.values());
     testException(UriParserSyntaxException.class, UriParserSyntaxException.MessageKeys.values());
   }

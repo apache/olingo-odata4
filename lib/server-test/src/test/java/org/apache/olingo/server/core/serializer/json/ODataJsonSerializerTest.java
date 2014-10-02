@@ -35,7 +35,7 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
@@ -110,7 +110,7 @@ public class ODataJsonSerializerTest {
     Assert.assertEquals(expectedResult, resultString);
   }
 
-  @Test(expected = ODataSerializerException.class)
+  @Test(expected = SerializerException.class)
   public void entityAllPrimKeyNull() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
@@ -132,8 +132,8 @@ public class ODataJsonSerializerTest {
               .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
               .build());
       Assert.fail("Expected exception not thrown!");
-    } catch (final ODataSerializerException e) {
-      Assert.assertEquals(ODataSerializerException.MessageKeys.WRONG_PROPERTY_VALUE, e.getMessageKey());
+    } catch (final SerializerException e) {
+      Assert.assertEquals(SerializerException.MessageKeys.WRONG_PROPERTY_VALUE, e.getMessageKey());
        final String message = e.getLocalizedMessage();
        Assert.assertThat(message, CoreMatchers.containsString("PropertyInt16"));
        Assert.assertThat(message, CoreMatchers.containsString("false"));

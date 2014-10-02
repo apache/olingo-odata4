@@ -55,14 +55,14 @@ import org.apache.olingo.server.api.edm.provider.Schema;
 import org.apache.olingo.server.api.edm.provider.Singleton;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
 
 public class MetadataDocumentTest {
 
-  @Test(expected = ODataSerializerException.class)
+  @Test(expected = SerializerException.class)
   public void metadataOnJsonResultsInException() throws Exception {
     ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.JSON);
     serializer.metadataDocument(mock(Edm.class));

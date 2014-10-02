@@ -30,7 +30,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
@@ -45,13 +45,13 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   private static final Logger log = LoggerFactory.getLogger(ODataXmlSerializerImpl.class);
 
   @Override
-  public InputStream serviceDocument(final Edm edm, final String serviceRoot) throws ODataSerializerException {
-    throw new ODataSerializerException("Service Document not implemented for XML format",
-        ODataSerializerException.MessageKeys.NOT_IMPLEMENTED);
+  public InputStream serviceDocument(final Edm edm, final String serviceRoot) throws SerializerException {
+    throw new SerializerException("Service Document not implemented for XML format",
+        SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
 
   @Override
-  public InputStream metadataDocument(final Edm edm) throws ODataSerializerException {
+  public InputStream metadataDocument(final Edm edm) throws SerializerException {
     CircleStreamBuffer buffer;
     XMLStreamWriter xmlStreamWriter = null;
 
@@ -67,15 +67,15 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
       return buffer.getInputStream();
     } catch (final XMLStreamException e) {
       log.error(e.getMessage(), e);
-      throw new ODataSerializerException("An I/O exception occurred.", e,
-          ODataSerializerException.MessageKeys.IO_EXCEPTION);
+      throw new SerializerException("An I/O exception occurred.", e,
+          SerializerException.MessageKeys.IO_EXCEPTION);
     } finally {
       if (xmlStreamWriter != null) {
         try {
           xmlStreamWriter.close();
         } catch (XMLStreamException e) {
-          throw new ODataSerializerException("An I/O exception occurred.", e,
-              ODataSerializerException.MessageKeys.IO_EXCEPTION);
+          throw new SerializerException("An I/O exception occurred.", e,
+              SerializerException.MessageKeys.IO_EXCEPTION);
         }
       }
     }
@@ -83,27 +83,27 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
 
   @Override
   public InputStream entity(final EdmEntitySet edmEntitySet, final Entity entity,
-      final ODataSerializerOptions options) throws ODataSerializerException {
-    throw new ODataSerializerException("Entity serialization not implemented for XML format",
-        ODataSerializerException.MessageKeys.NOT_IMPLEMENTED);
+      final ODataSerializerOptions options) throws SerializerException {
+    throw new SerializerException("Entity serialization not implemented for XML format",
+        SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
 
   @Override
   public InputStream entitySet(final EdmEntitySet edmEntitySet, final EntitySet entitySet,
-      final ODataSerializerOptions options) throws ODataSerializerException {
-    throw new ODataSerializerException("Entityset serialization not implemented for XML format",
-        ODataSerializerException.MessageKeys.NOT_IMPLEMENTED);
+      final ODataSerializerOptions options) throws SerializerException {
+    throw new SerializerException("Entityset serialization not implemented for XML format",
+        SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
 
   @Override
-  public InputStream error(ODataServerError error) throws ODataSerializerException {
-    throw new ODataSerializerException("error serialization not implemented for XML format",
-        ODataSerializerException.MessageKeys.NOT_IMPLEMENTED);
+  public InputStream error(ODataServerError error) throws SerializerException {
+    throw new SerializerException("error serialization not implemented for XML format",
+        SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
 
   @Override
   public String buildContextURLSelectList(final EdmEntitySet edmEntitySet,
-      final ExpandOption expand, final SelectOption select) throws ODataSerializerException {
+      final ExpandOption expand, final SelectOption select) throws SerializerException {
     return ContextURLHelper.buildSelectList(edmEntitySet.getEntityType(), expand, select);
   }
 }

@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.core.Encoder;
-import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
@@ -42,10 +42,10 @@ public final class ContextURLHelper {
    * @param expand     the Expand option (from the URL's $expand query option)
    * @param select     the Select option (from the URL's $select query option)
    * @return a select-list String
-   * @throws ODataSerializerException if an unsupported feature is used
+   * @throws SerializerException if an unsupported feature is used
    */
   public static String buildSelectList(final EdmEntityType entityType,
-      final ExpandOption expand, final SelectOption select) throws ODataSerializerException {
+      final ExpandOption expand, final SelectOption select) throws SerializerException {
     StringBuilder result = new StringBuilder();
     if (ExpandSelectHelper.hasSelect(select)) {
       handleSelect(entityType, select, result);
@@ -98,7 +98,7 @@ public final class ContextURLHelper {
   }
 
   private static void handleExpand(final EdmEntityType entityType, final ExpandOption expand, StringBuilder result)
-      throws ODataSerializerException {
+      throws SerializerException {
     final Set<String> expandedPropertyNames = ExpandSelectHelper.getExpandedPropertyNames(expand.getExpandItems());
     for (final String propertyName : entityType.getNavigationPropertyNames()) {
       if (expandedPropertyNames.contains(propertyName)) {

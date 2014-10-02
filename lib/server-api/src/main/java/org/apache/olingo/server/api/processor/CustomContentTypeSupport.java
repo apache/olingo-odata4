@@ -32,7 +32,7 @@ import org.apache.olingo.commons.api.format.ContentType;
  * Requesting a content type that is not supported results in an HTTP error
  * 406 (Not Acceptable).
  */
-public interface CustomContentTypeSupportProcessor {
+public interface CustomContentTypeSupport {
 
   /**
    * Returns a list of supported content types.

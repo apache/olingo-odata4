@@ -39,13 +39,13 @@ public interface ODataSerializer {
    * @param edm         the Entity Data Model
    * @param serviceRoot the service-root URI of this OData service 
    */
-  InputStream serviceDocument(Edm edm, String serviceRoot) throws ODataSerializerException;
+  InputStream serviceDocument(Edm edm, String serviceRoot) throws SerializerException;
 
   /**
    * Writes the metadata document into an InputStream.
    * @param edm the Entity Data Model
    */
-  InputStream metadataDocument(Edm edm) throws ODataSerializerException;
+  InputStream metadataDocument(Edm edm) throws SerializerException;
 
   /**
    * Writes entity data into an InputStream.
@@ -54,7 +54,7 @@ public interface ODataSerializer {
    * @param options      options for the serializer
    */
   InputStream entity(EdmEntitySet edmEntitySet, Entity entity, ODataSerializerOptions options)
-      throws ODataSerializerException;
+      throws SerializerException;
 
   /**
    * Writes entity-set data into an InputStream.
@@ -63,14 +63,14 @@ public interface ODataSerializer {
    * @param options      options for the serializer
    */
   InputStream entitySet(EdmEntitySet edmEntitySet, EntitySet entitySet, ODataSerializerOptions options)
-      throws ODataSerializerException;
+      throws SerializerException;
 
   /**
    * Writes an ODataError into an InputStream.
    * @param error the main error
    * @return inputStream containing the OData-formatted error
    */
-  InputStream error(ODataServerError error) throws ODataSerializerException;
+  InputStream error(ODataServerError error) throws SerializerException;
 
   /**
    * Builds the select-list part of a {@link org.apache.olingo.commons.api.data.ContextURL ContextURL}.
@@ -80,5 +80,5 @@ public interface ODataSerializer {
    * @return a String with the select list
    */
   String buildContextURLSelectList(EdmEntitySet edmEntitySet, ExpandOption expand, SelectOption select)
-      throws ODataSerializerException;
+      throws SerializerException;
 }

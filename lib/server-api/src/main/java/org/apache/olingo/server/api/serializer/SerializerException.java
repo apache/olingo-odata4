@@ -21,7 +21,7 @@ package org.apache.olingo.server.api.serializer;
 import org.apache.olingo.server.api.ODataTranslatedException;
 
 /** Exception thrown by the {@link ODataSerializer}. */
-public class ODataSerializerException extends ODataTranslatedException {
+public class SerializerException extends ODataTranslatedException {
 
   private static final long serialVersionUID = 5358683245923127425L;
 
@@ -50,7 +50,7 @@ public class ODataSerializerException extends ODataTranslatedException {
    * @param messageKey         one of the {@link MessageKeys} for the exception text in the resource bundle
    * @param parameters         parameters for the exception text
    */
-  public ODataSerializerException(final String developmentMessage,
+  public SerializerException(final String developmentMessage,
       final MessageKey messageKey, final String... parameters) {
     super(developmentMessage, messageKey, parameters);
   }
@@ -62,7 +62,7 @@ public class ODataSerializerException extends ODataTranslatedException {
    * @param messageKey         one of the {@link MessageKeys} for the exception text in the resource bundle
    * @param parameters         parameters for the exception text
    */
-  public ODataSerializerException(final String developmentMessage, final Throwable cause,
+  public SerializerException(final String developmentMessage, final Throwable cause,
       final MessageKey messageKey, final String... parameters) {
     super(developmentMessage, cause, messageKey, parameters);
   }

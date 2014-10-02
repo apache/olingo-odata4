@@ -40,6 +40,7 @@ import org.apache.olingo.server.api.processor.ExceptionProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
@@ -57,6 +58,7 @@ public class ODataHandler {
   private final Edm edm;
   private final Map<Class<? extends Processor>, Processor> processors =
       new HashMap<Class<? extends Processor>, Processor>();
+  private ContentType requestedContentType;
 
   public ODataHandler(final OData server, final Edm edm) {
     odata = server;
@@ -67,11 +69,10 @@ public class ODataHandler {
   }
 
   public ODataResponse process(final ODataRequest request) {
-    ContentType requestedContentType = null;
     ODataResponse response = new ODataResponse();
     try {
 
-      processInternal(request, requestedContentType, response);
+      processInternal(request, response);
 
     } catch (final UriValidationException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
@@ -88,6 +89,9 @@ public class ODataHandler {
     } catch (ContentNegotiatorException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError, null);
+    } catch (SerializerException e) {
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      handleException(request, response, serverError, requestedContentType);
     } catch (ODataHandlerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError, requestedContentType);
@@ -101,10 +105,9 @@ public class ODataHandler {
     return response;
   }
 
-  private void processInternal(final ODataRequest request, ContentType requestedContentType,
-      final ODataResponse response)
+  private void processInternal(final ODataRequest request, final ODataResponse response)
       throws ODataHandlerException, UriParserException, UriValidationException, ContentNegotiatorException,
-      ODataApplicationException {
+      ODataApplicationException, SerializerException {
     validateODataVersion(request, response);
 
     Parser parser = new Parser();
@@ -115,25 +118,34 @@ public class ODataHandler {
 
     switch (uriInfo.getKind()) {
     case metadata:
-      MetadataProcessor mp = selectProcessor(MetadataProcessor.class);
-
-      requestedContentType =
-          ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, mp, MetadataProcessor.class);
-
-      mp.readMetadata(request, response, uriInfo, requestedContentType);
-      break;
-    case service:
-      if ("".equals(request.getRawODataPath())) {
-        RedirectProcessor rdp = selectProcessor(RedirectProcessor.class);
-        rdp.redirect(request, response);
-      } else {
-        ServiceDocumentProcessor sdp = selectProcessor(ServiceDocumentProcessor.class);
+      if (request.getMethod().equals(HttpMethod.GET)) {
+        MetadataProcessor mp = selectProcessor(MetadataProcessor.class);
 
         requestedContentType =
-            ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, sdp,
-                ServiceDocumentProcessor.class);
+            ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, mp, MetadataProcessor.class);
+        mp.readMetadata(request, response, uriInfo, requestedContentType);
+      } else {
+        throw new ODataHandlerException("HttpMethod " + request.getMethod() + " not allowed for metadata document",
+            ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, request.getMethod().toString());
+      }
+      break;
+    case service:
+      if (request.getMethod().equals(HttpMethod.GET)) {
+        if ("".equals(request.getRawODataPath())) {
+          RedirectProcessor rdp = selectProcessor(RedirectProcessor.class);
+          rdp.redirect(request, response);
+        } else {
+          ServiceDocumentProcessor sdp = selectProcessor(ServiceDocumentProcessor.class);
 
-        sdp.readServiceDocument(request, response, uriInfo, requestedContentType);
+          requestedContentType =
+              ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, sdp,
+                  ServiceDocumentProcessor.class);
+
+          sdp.readServiceDocument(request, response, uriInfo, requestedContentType);
+        }
+      } else {
+        throw new ODataHandlerException("HttpMethod " + request.getMethod() + " not allowed for service document",
+            ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, request.getMethod().toString());
       }
       break;
     case resource:
@@ -145,12 +157,13 @@ public class ODataHandler {
     }
   }
 
-  private void handleException(ODataRequest request, ODataResponse response, ODataServerError serverError,
+  public void handleException(ODataRequest request, ODataResponse response, ODataServerError serverError,
       ContentType requestedContentType) {
     ExceptionProcessor exceptionProcessor;
     try {
       exceptionProcessor = selectProcessor(ExceptionProcessor.class);
     } catch (ODataTranslatedException e) {
+      // This cannot happen since there is always an ExceptionProcessor registered
       exceptionProcessor = new DefaultProcessor();
     }
     if (requestedContentType == null) {
@@ -160,7 +173,8 @@ public class ODataHandler {
   }
 
   private void handleResourceDispatching(final ODataRequest request, final ODataResponse response,
-      final UriInfo uriInfo) throws ODataHandlerException, ContentNegotiatorException {
+      final UriInfo uriInfo) throws ODataHandlerException, ContentNegotiatorException, ODataApplicationException,
+      SerializerException {
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
     ContentType requestedContentType = null;
@@ -225,7 +239,7 @@ public class ODataHandler {
     case count:
       if (request.getMethod().equals(HttpMethod.GET)) {
         EntitySetProcessor cp = selectProcessor(EntitySetProcessor.class);
-      	cp.countEntitySet(request, response, uriInfo);
+        cp.countEntitySet(request, response, uriInfo);
       } else {
         throw new ODataHandlerException("not implemented",
             ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);

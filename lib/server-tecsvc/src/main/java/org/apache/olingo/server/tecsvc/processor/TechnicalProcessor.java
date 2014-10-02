@@ -35,7 +35,7 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.ODataSerializerException;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
@@ -93,7 +93,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor {
       }
     } catch (final DataProvider.DataProviderException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final ODataSerializerException e) {
+    } catch (final SerializerException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     } catch (final ODataApplicationException e) {
       response.setStatusCode(e.getStatusCode());
@@ -129,7 +129,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor {
       }
     } catch (final DataProvider.DataProviderException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final ODataSerializerException e) {
+    } catch (final SerializerException e) {
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     } catch (final ODataApplicationException e) {
       response.setStatusCode(e.getStatusCode());
@@ -225,7 +225,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor {
 
   private ContextURL getContextUrl(final ODataSerializer serializer,
       final EdmEntitySet entitySet, final boolean isSingleEntity,
-      final ExpandOption expand, final SelectOption select) throws ODataSerializerException {
+      final ExpandOption expand, final SelectOption select) throws SerializerException {
     return ContextURL.with().entitySet(entitySet)
         .selectList(serializer.buildContextURLSelectList(entitySet, expand, select))
         .suffix(isSingleEntity ? Suffix.ENTITY : null).build();

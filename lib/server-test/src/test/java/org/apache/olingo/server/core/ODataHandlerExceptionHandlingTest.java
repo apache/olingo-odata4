@@ -26,7 +26,6 @@ import static org.mockito.Mockito.mock;
 
 import java.util.Locale;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -54,6 +53,92 @@ public class ODataHandlerExceptionHandlingTest {
     Edm edm = odata.createEdm(new EdmTechProvider());
 
     handler = new ODataHandler(odata, edm);
+  }
+
+  @Test
+  public void wrongHttpMethodForMetadataDocument() throws Exception {
+    ODataRequest request = new ODataRequest();
+    request.setMethod(HttpMethod.POST);
+    request.setRawODataPath("$metadata");
+    ODataResponse response = handler.process(request);
+    assertNotNull(response);
+    assertEquals(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatusCode());
+    assertNotNull(response.getContent());
+
+    request = new ODataRequest();
+    request.setMethod(HttpMethod.PUT);
+    request.setRawODataPath("$metadata");
+    response = handler.process(request);
+    assertNotNull(response);
+    assertEquals(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatusCode());
+    assertNotNull(response.getContent());
+
+    request = new ODataRequest();
+    request.setMethod(HttpMethod.PATCH);
+    request.setRawODataPath("$metadata");
+    response = handler.process(request);
+    assertNotNull(response);
+    assertEquals(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatusCode());
+    assertNotNull(response.getContent());
+
+    request = new ODataRequest();
+    request.setMethod(HttpMethod.MERGE);
+    request.setRawODataPath("$metadata");
+    response = handler.process(request);
+    assertNotNull(response);
+    assertEquals(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatusCode());
+    assertNotNull(response.getContent());
+
+    request = new ODataRequest();
+    request.setMethod(HttpMethod.DELETE);
+    request.setRawODataPath("$metadata");
+    response = handler.process(request);
+    assertNotNull(response);
+    assertEquals(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatusCode());
+    assertNotNull(response.getContent());
+  }
+
+  @Test
+  public void wrongHttpMethodForServiceDocument() throws Exception {
+    ODataRequest request = new ODataRequest();
+    request.setMethod(HttpMethod.POST);
+    request.setRawODataPath("");
+    ODataResponse response = handler.process(request);
+    assertNotNull(response);
+    assertEquals(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatusCode());
+    assertNotNull(response.getContent());
+
+    request = new ODataRequest();
+    request.setMethod(HttpMethod.PUT);
+    request.setRawODataPath("");
+    response = handler.process(request);
+    assertNotNull(response);
+    assertEquals(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatusCode());
+    assertNotNull(response.getContent());
+
+    request = new ODataRequest();
+    request.setMethod(HttpMethod.PATCH);
+    request.setRawODataPath("");
+    response = handler.process(request);
+    assertNotNull(response);
+    assertEquals(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatusCode());
+    assertNotNull(response.getContent());
+
+    request = new ODataRequest();
+    request.setMethod(HttpMethod.MERGE);
+    request.setRawODataPath("");
+    response = handler.process(request);
+    assertNotNull(response);
+    assertEquals(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatusCode());
+    assertNotNull(response.getContent());
+
+    request = new ODataRequest();
+    request.setMethod(HttpMethod.DELETE);
+    request.setRawODataPath("");
+    response = handler.process(request);
+    assertNotNull(response);
+    assertEquals(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatusCode());
+    assertNotNull(response.getContent());
   }
 
   @Test
@@ -100,8 +185,6 @@ public class ODataHandlerExceptionHandlingTest {
     ODataResponse response = localHandler.process(request);
     assertNotNull(response);
     assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
-    // TODO: Check for message in case of EdmException
-    System.out.println(IOUtils.toString(response.getContent()));
   }
 
   @Test
