@@ -39,6 +39,7 @@ import java.util.TreeMap;
  * type = token
  * subtype = token
  * OWS = *( SP / HTAB ) ; optional whitespace
+ * parameter = token "=" ( token / quoted-string )
  * </pre>
  *
  * Once created a {@link ContentType} is <b>IMMUTABLE</b>.
@@ -111,11 +112,8 @@ public final class ContentType {
     if (type == null || type.isEmpty() || "*".equals(type)) {
       throw new IllegalArgumentException("Illegal type '" + type + "'.");
     }
-    int len = type.length();
-    for (int i = 0; i < len; i++) {
-      if (type.charAt(i) == TypeUtil.WHITESPACE_CHAR) {
-        throw new IllegalArgumentException("Illegal whitespace found for type '" + type + "'.");
-      }
+    if (type.indexOf(TypeUtil.WHITESPACE_CHAR) >= 0) {
+      throw new IllegalArgumentException("Illegal whitespace found for type '" + type + "'.");
     }
     return type;
   }
@@ -145,7 +143,7 @@ public final class ContentType {
     ContentType ct = parse(format);
 
     for (String p : parameters) {
-      final String[] keyvalue = p.split("=");
+      final String[] keyvalue = TypeUtil.parseParameter(p);
       ct.parameters.put(keyvalue[0], keyvalue[1]);
     }
 
@@ -163,7 +161,7 @@ public final class ContentType {
     ContentType ct = new ContentType(contentType.type, contentType.subtype, contentType.parameters);
 
     for (String p : parameters) {
-      String[] keyvalue = p.split("=");
+      final String[] keyvalue = TypeUtil.parseParameter(p);
       ct.parameters.put(keyvalue[0], keyvalue[1]);
     }
 
@@ -380,7 +378,8 @@ public final class ContentType {
     sb.append(type).append(TypeUtil.TYPE_SUBTYPE_SEPARATOR).append(subtype);
 
     for (String key : parameters.keySet()) {
-      sb.append(";").append(key).append("=").append(parameters.get(key));
+      sb.append(TypeUtil.PARAMETER_SEPARATOR).append(key)
+          .append(TypeUtil.PARAMETER_KEY_VALUE_SEPARATOR).append(parameters.get(key));
     }
     return sb.toString();
   }

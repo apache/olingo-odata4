@@ -120,4 +120,33 @@ public class AcceptTypeTest {
     AcceptType.create(" a/a;q=z ");
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void incompleteParameter() {
+    AcceptType.create("a/b;parameter");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void missingParameterValue() {
+    AcceptType.create("a/b;parameter=");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void parameterValueStartingWithWhitespace() {
+    AcceptType.create("a/b;name= value");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void missingParameterName() {
+    AcceptType.create("a/b;=value");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void parameterNameWithWhitespace() {
+    AcceptType.create("a/b;the name=value");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void trailingSemicolon() {
+    AcceptType.create("a/b;");
+  }
 }

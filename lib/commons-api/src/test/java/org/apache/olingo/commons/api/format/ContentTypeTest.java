@@ -46,6 +46,36 @@ public class ContentTypeTest {
     ContentType.create(" a / b ");
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateFail3() {
+    ContentType.create("a/b;");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateFail4() {
+    ContentType.create("a/b;parameter");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateFail5() {
+    ContentType.create("a/b;parameter=");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateFail6() {
+    ContentType.create("a/b;=value");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateFail7() {
+    ContentType.create("a/b;the name=value");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateFail8() {
+    ContentType.create("a/b;name= value");
+  }
+
   @Test
   public void testCreateWithParameter() {
     assertEquals(ContentType.create("a/b;c=d"), ContentType.create("a/b", "c=d"));
