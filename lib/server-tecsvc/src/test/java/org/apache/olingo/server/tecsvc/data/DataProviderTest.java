@@ -57,12 +57,12 @@ public class DataProviderTest {
   @Test
   public void esAllPrimEntity() throws Exception {
     final DataProvider dataProvider = new DataProvider();
-    Entity first = dataProvider.readAll(esAllPrim).getEntities().get(0);
+    Entity first = dataProvider.readAll(esAllPrim).getEntities().get(2);
     Assert.assertEquals(16, first.getProperties().size());
 
     UriParameter parameter = Mockito.mock(UriParameter.class);
     Mockito.when(parameter.getName()).thenReturn("PropertyInt16");
-    Mockito.when(parameter.getText()).thenReturn(Short.toString(Short.MAX_VALUE));
+    Mockito.when(parameter.getText()).thenReturn("-0");
     Assert.assertEquals(first, dataProvider.read(esAllPrim, Arrays.asList(parameter)));
   }
 

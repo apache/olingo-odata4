@@ -84,10 +84,11 @@ public class DataProvider {
           for (final UriParameter key : keys) {
             final EdmProperty property = (EdmProperty) entityType.getProperty(key.getName());
             final EdmPrimitiveType type = (EdmPrimitiveType) property.getType();
-            if (!type.valueToString(entity.getProperty(key.getName()).getValue(),
+            final Object value = entity.getProperty(key.getName()).getValue();
+            final Object keyValue = type.valueOfString(key.getText(),
                 property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
-                property.isUnicode())
-                .equals(key.getText())) {
+                property.isUnicode(), value.getClass());
+            if (!value.equals(keyValue)) {
               found = false;
               break;
             }
