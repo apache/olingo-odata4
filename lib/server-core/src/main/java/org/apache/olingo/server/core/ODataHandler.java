@@ -39,6 +39,7 @@ import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.ExceptionProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.Processor;
+import org.apache.olingo.server.api.processor.PropertyProcessor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
@@ -177,7 +178,6 @@ public class ODataHandler {
       SerializerException {
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
-    ContentType requestedContentType = null;
 
     switch (lastPathSegment.getKind()) {
     case entitySet:
@@ -240,6 +240,31 @@ public class ODataHandler {
       if (request.getMethod().equals(HttpMethod.GET)) {
         EntitySetProcessor cp = selectProcessor(EntitySetProcessor.class);
         cp.countEntitySet(request, response, uriInfo);
+      } else {
+        throw new ODataHandlerException("not implemented",
+            ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+      }
+      break;
+    case primitiveProperty:
+    case complexProperty:
+      if (request.getMethod().equals(HttpMethod.GET)) {
+        PropertyProcessor ep = selectProcessor(PropertyProcessor.class);
+
+        requestedContentType =
+            ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, PropertyProcessor.class);
+
+        ep.readProperty(request, response, uriInfo, requestedContentType);
+      } else {
+        throw new ODataHandlerException("not implemented",
+            ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+      }
+      break;
+    case value:
+      if (request.getMethod().equals(HttpMethod.GET)) {
+        PropertyProcessor ep = selectProcessor(PropertyProcessor.class);
+        requestedContentType =
+                ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request, ep, PropertyProcessor.class);
+        ep.readPropertyValue(request, response, uriInfo, requestedContentType);
       } else {
         throw new ODataHandlerException("not implemented",
             ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);

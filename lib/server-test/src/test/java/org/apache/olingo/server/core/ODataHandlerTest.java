@@ -28,6 +28,7 @@ import java.util.Arrays;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -35,9 +36,7 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.processor.EntitySetProcessor;
-import org.apache.olingo.server.api.processor.MetadataProcessor;
-import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
+import org.apache.olingo.server.api.processor.*;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Before;
@@ -215,7 +214,7 @@ public class ODataHandlerTest {
     assertNotNull(response);
     assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), response.getStatusCode());
   }
-  
+
   @Test
   public void testContentNegotiationNotSupported2() {
     ODataRequest request = new ODataRequest();
@@ -252,16 +251,15 @@ public class ODataHandlerTest {
     handler.register(processor);
 
     ODataResponse response = handler.process(request);
-
     assertNotNull(response);
     Mockito.verify(processor).countEntitySet(
         Mockito.eq(request),
         Mockito.any(ODataResponse.class),
         Mockito.any(UriInfo.class));
-  }  
-  
+  }
+
   @Test
-  public void testCountWithNavigation() throws Exception {
+  public void dispatchCountWithNavigation() throws Exception {
     ODataRequest request = new ODataRequest();
 
     request.setMethod(HttpMethod.GET);
@@ -271,11 +269,70 @@ public class ODataHandlerTest {
     handler.register(processor);
 
     ODataResponse response = handler.process(request);
-
     assertNotNull(response);
     Mockito.verify(processor).countEntitySet(
         Mockito.eq(request),
         Mockito.any(ODataResponse.class),
         Mockito.any(UriInfo.class));
-  }  
+  }
+
+  @Test
+  public void dispatchAddressPrimitiveProperty() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("ESAllPrim/PropertyInt16");
+
+    PropertyProcessor processor = mock(PropertyProcessor.class);
+    handler.register(processor);
+
+    ODataResponse response = handler.process(request);
+    assertNotNull(response);
+
+    Mockito.verify(processor).readProperty(
+            Mockito.any(ODataRequest.class),
+            Mockito.any(ODataResponse.class),
+            Mockito.any(UriInfo.class),
+            Mockito.any(ContentType.class));
+  }
+
+  @Test
+  public void dispatchAddressPrimitivePropertyValue() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("ESAllPrim/PropertyInt16/$value");
+
+    PropertyProcessor processor = mock(PropertyProcessor.class);
+    handler.register(processor);
+
+    ODataResponse response = handler.process(request);
+    assertNotNull(response);
+
+    Mockito.verify(processor).readPropertyValue(
+            Mockito.any(ODataRequest.class),
+            Mockito.any(ODataResponse.class),
+            Mockito.any(UriInfo.class),
+            Mockito.any(ContentType.class));
+  }
+
+  @Test
+  public void dispatchAddressComplexProperty() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("ESMixPrimCollComp/PropertyComp");
+
+    PropertyProcessor processor = mock(PropertyProcessor.class);
+    handler.register(processor);
+
+    ODataResponse response = handler.process(request);
+    assertNotNull(response);
+
+    Mockito.verify(processor).readProperty(
+            Mockito.any(ODataRequest.class),
+            Mockito.any(ODataResponse.class),
+            Mockito.any(UriInfo.class),
+            Mockito.any(ContentType.class));
+  }
 }
