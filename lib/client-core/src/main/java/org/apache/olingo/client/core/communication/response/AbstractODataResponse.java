@@ -18,6 +18,17 @@
  */
 package org.apache.olingo.client.core.communication.response;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -33,20 +44,9 @@ import org.apache.olingo.client.core.communication.request.batch.ODataBatchContr
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchLineIteratorImpl;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchUtilities;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.TreeMap;
-import org.apache.olingo.commons.api.ODataRuntimeException;
 
 /**
  * Abstract representation of an OData response.

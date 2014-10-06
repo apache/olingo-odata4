@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntityType;
@@ -47,11 +52,6 @@ import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.AbstractEdmSchema;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class EdmSchemaImpl extends AbstractEdmSchema {
 

@@ -18,13 +18,14 @@
  */
 package org.apache.olingo.client.core.edm.xml.v3;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.PropertyRef;
 import org.apache.olingo.client.api.edm.xml.v3.ReferentialConstraintRole;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ReferentialConstraintRoleDeserializer.class)
 public class ReferentialConstraintRoleImpl extends AbstractEdmItem implements ReferentialConstraintRole {

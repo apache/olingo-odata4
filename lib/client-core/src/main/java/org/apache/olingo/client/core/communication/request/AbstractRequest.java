@@ -15,6 +15,8 @@
  */
 package org.apache.olingo.client.core.communication.request;
 
+import java.io.IOException;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
@@ -23,7 +25,6 @@ import org.apache.olingo.client.core.communication.header.ODataErrorResponseChec
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.io.IOException;
 
 public abstract class AbstractRequest {
 

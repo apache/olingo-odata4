@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.client.core.http;
 
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.InputStream;
-import java.util.Properties;
 
 public abstract class AbstractHttpClientFactory implements HttpClientFactory {
 

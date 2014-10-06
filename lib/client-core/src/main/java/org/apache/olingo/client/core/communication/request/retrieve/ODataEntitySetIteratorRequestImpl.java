@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
+import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -27,8 +29,6 @@ import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataFormat;
-
-import java.net.URI;
 
 /**
  * This class implements an OData EntitySet query request.

@@ -18,12 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
-import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.api.http.HttpClientException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
@@ -32,6 +26,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
+import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.api.http.HttpClientException;
 
 /**
  * OData request payload management abstract class.

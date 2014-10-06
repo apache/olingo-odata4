@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.request.cud;
 
-import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 public interface CommonUpdateType {
 

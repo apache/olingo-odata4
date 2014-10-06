@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.client.core.edm.v4;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
@@ -31,9 +34,6 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmActionImportInfoImpl;
 import org.apache.olingo.commons.core.edm.EdmFunctionImportInfoImpl;
 import org.apache.olingo.commons.core.edm.EdmSingletonInfoImpl;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
 

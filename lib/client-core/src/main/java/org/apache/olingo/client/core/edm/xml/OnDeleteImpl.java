@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.olingo.client.api.edm.xml.OnDelete;
 import org.apache.olingo.client.api.edm.xml.OnDeleteAction;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class OnDeleteImpl extends AbstractEdmItem implements OnDelete {
 

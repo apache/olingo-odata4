@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.client.core.uri.v4;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.olingo.client.api.Configuration;
@@ -28,9 +31,6 @@ import org.apache.olingo.client.api.uri.v4.URISearch;
 import org.apache.olingo.client.core.uri.AbstractURIBuilder;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements URIBuilder {
 

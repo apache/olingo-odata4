@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.client.api.edm.xml.EntityKey;
 import org.apache.olingo.client.api.edm.xml.EntityType;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = EntityTypeDeserializer.class)
 public abstract class AbstractEntityType extends AbstractComplexType implements EntityType {

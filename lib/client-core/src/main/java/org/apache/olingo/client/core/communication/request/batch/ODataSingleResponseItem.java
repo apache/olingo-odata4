@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.client.core.communication.request.batch;
 
-import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.core.communication.response.batch.ODataBatchErrorResponse;
-import org.apache.olingo.client.core.communication.response.v4.AsyncResponseImpl;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
+
+import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.core.communication.response.batch.ODataBatchErrorResponse;
+import org.apache.olingo.client.core.communication.response.v4.AsyncResponseImpl;
 
 /**
  * Retrieve response wrapper for the corresponding batch item.

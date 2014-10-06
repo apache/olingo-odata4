@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.client.core.edm.xml.v3;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.EntitySet;
 import org.apache.olingo.client.api.edm.xml.v3.AssociationSet;
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.client.core.edm.xml.AbstractEntityContainer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EntityContainerImpl extends AbstractEntityContainer {
 

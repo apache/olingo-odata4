@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.client.api.communication.response.v4;
 
+import java.net.URI;
+
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-
-import java.net.URI;
 
 public interface AsyncResponseWrapper<R extends ODataResponse> {
 

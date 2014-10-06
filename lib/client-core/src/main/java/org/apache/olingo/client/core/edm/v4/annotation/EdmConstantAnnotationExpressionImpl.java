@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.client.core.edm.v4.annotation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.ConstantAnnotationExpression;
 import org.apache.olingo.commons.api.Constants;
@@ -33,9 +36,6 @@ import org.apache.olingo.commons.core.domain.v4.ODataCollectionValueImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataEnumValueImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataPrimitiveValueImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotationExpression {
 

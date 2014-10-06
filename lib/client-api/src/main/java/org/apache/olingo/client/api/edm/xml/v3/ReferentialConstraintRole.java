@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.client.api.edm.xml.v3;
 
-import org.apache.olingo.client.api.edm.xml.PropertyRef;
-
 import java.util.List;
+
+import org.apache.olingo.client.api.edm.xml.PropertyRef;
 
 public interface ReferentialConstraintRole {
 

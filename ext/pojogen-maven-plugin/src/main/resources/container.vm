@@ -20,7 +20,7 @@
 package ${package};
 
 //CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.annotations.Property;

@@ -18,14 +18,15 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.v4.Include;
 import org.apache.olingo.client.api.edm.xml.v4.IncludeAnnotations;
 import org.apache.olingo.client.api.edm.xml.v4.Reference;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ReferenceDeserializer.class)
 public class ReferenceImpl extends AbstractAnnotatable implements Reference {

@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.client.api.edm.xml.v4;
 
-import org.apache.olingo.client.api.edm.xml.Named;
-
 import java.util.List;
+
+import org.apache.olingo.client.api.edm.xml.Named;
 
 public interface Action extends Named, Annotatable {
 

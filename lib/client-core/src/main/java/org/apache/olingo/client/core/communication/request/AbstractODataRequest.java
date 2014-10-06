@@ -18,6 +18,13 @@
  */
 package org.apache.olingo.client.core.communication.request;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.net.URI;
+import java.util.Collection;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -33,16 +40,9 @@ import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.commons.api.format.ODataFormat;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.net.URI;
-import java.util.Collection;
 import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Abstract representation of an OData request. Get instance by using factories.

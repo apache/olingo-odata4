@@ -19,7 +19,7 @@
 package org.apache.olingo.client.core.edm.v3;
 
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
-import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 public final class FunctionImportUtils {
 

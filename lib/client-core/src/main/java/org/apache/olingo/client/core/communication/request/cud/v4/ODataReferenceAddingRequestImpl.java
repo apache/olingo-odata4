@@ -19,20 +19,20 @@
 package org.apache.olingo.client.core.communication.request.cud.v4;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
-import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
-import org.apache.olingo.commons.api.format.ODataFormat;
-
-import java.io.InputStream;
-import java.net.URI;
-import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.request.cud.v4.ODataReferenceAddingRequest;
 import org.apache.olingo.client.api.communication.response.v4.ODataReferenceAddingResponse;
+import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * This class implements an OData delete request.

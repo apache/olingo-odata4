@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.client.core.http;
 
+import java.net.URI;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
-import org.apache.olingo.client.api.http.HttpMethod;
-
-import java.net.URI;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Default implementation returning HttpClients with default parameters.

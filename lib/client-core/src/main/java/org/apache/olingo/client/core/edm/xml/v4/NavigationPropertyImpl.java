@@ -18,15 +18,16 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.OnDelete;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.NavigationProperty;
 import org.apache.olingo.client.api.edm.xml.v4.ReferentialConstraint;
 import org.apache.olingo.client.core.edm.xml.AbstractNavigationProperty;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = NavigationPropertyDeserializer.class)
 public class NavigationPropertyImpl extends AbstractNavigationProperty implements NavigationProperty {

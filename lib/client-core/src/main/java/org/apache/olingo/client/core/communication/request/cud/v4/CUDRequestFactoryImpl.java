@@ -24,10 +24,10 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateR
 import org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.v4.ODataReferenceAddingRequest;
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.communication.request.cud.AbstractCUDRequestFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 public class CUDRequestFactoryImpl extends AbstractCUDRequestFactory<UpdateType> implements CUDRequestFactory {
 

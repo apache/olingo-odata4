@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.client.api.edm.xml.v4;
 
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.Named;
 import org.apache.olingo.commons.api.edm.geo.SRID;
-
-import java.util.List;
 
 public interface TypeDefinition extends Named, Annotatable {
 

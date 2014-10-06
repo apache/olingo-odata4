@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.core.http;
 
+import java.net.URI;
+
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -25,10 +27,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.olingo.client.api.http.HttpClientFactory;
-import org.apache.olingo.client.api.http.HttpMethod;
-
-import java.net.URI;
 import org.apache.olingo.client.api.http.WrappingHttpClientFactory;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Implementation for working behind an HTTP proxy (possibly requiring authentication); requires another concrete

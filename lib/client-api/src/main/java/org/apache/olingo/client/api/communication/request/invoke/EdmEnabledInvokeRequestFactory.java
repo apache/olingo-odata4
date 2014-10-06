@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.client.api.communication.request.invoke;
 
+import java.net.URI;
+import java.util.Map;
+
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-
-import java.net.URI;
-import java.util.Map;
 
 public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
 

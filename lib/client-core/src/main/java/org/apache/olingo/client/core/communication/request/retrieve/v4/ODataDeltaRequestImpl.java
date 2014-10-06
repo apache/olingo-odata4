@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve.v4;
 
+import java.io.IOException;
+import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -31,9 +34,6 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.v4.ODataDelta;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-
-import java.io.IOException;
-import java.net.URI;
 
 public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ODataDelta>
         implements ODataDeltaRequest {

@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4.annotation;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.AnnotationPath;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.Apply;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.Cast;
@@ -37,6 +36,8 @@ import org.apache.olingo.client.api.edm.xml.v4.annotation.PropertyValue;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.Record;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.TwoParamsOpDynamicAnnotationExpression;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.UrlRef;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = DynamicAnnotationExpressionDeserializer.class)
 public abstract class AbstractDynamicAnnotationExpression

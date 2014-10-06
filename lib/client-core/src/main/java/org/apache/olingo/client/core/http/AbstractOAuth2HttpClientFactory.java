@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.http;
 
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
@@ -31,8 +32,8 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HttpContext;
 import org.apache.olingo.client.api.http.HttpClientFactory;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.http.WrappingHttpClientFactory;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 public abstract class AbstractOAuth2HttpClientFactory
         extends AbstractHttpClientFactory implements WrappingHttpClientFactory {

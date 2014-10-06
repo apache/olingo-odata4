@@ -21,8 +21,8 @@ package org.apache.olingo.client.core.communication.request.batch;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataSingleRequest;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Retrieve request wrapper for the corresponding batch item.

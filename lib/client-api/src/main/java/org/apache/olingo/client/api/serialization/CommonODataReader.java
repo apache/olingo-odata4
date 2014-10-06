@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.client.api.serialization;
 
+import java.io.InputStream;
+import java.util.Map;
+
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
@@ -28,9 +31,6 @@ import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-
-import java.io.InputStream;
-import java.util.Map;
 
 /**
  * OData reader.

@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.client.api.serialization.v3;
 
+import java.io.InputStream;
+
 import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-
-import java.io.InputStream;
 
 public interface ODataDeserializer extends ClientODataDeserializer {
 

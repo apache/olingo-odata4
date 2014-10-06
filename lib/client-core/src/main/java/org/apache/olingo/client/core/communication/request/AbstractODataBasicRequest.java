@@ -18,6 +18,12 @@
  */
 package org.apache.olingo.client.core.communication.request;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -26,14 +32,8 @@ import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.commons.api.format.ODataFormat;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Basic request abstract implementation.

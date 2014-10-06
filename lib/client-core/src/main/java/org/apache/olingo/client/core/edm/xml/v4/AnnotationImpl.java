@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.AnnotationExpression;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = AnnotationDeserializer.class)
 public class AnnotationImpl extends AbstractAnnotatable implements Annotation {

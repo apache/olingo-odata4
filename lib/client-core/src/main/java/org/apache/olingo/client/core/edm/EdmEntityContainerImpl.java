@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntitySet;
@@ -41,9 +44,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmEntityContainer;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-
-import java.util.Collections;
-import java.util.List;
 
 public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 

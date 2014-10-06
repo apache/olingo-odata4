@@ -18,16 +18,16 @@
  */
 package org.apache.olingo.client.core.communication.request.cud.v3;
 
+import java.net.URI;
+
 import org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.communication.request.cud.AbstractCUDRequestFactory;
 import org.apache.olingo.commons.api.domain.ODataLink;
-
-import java.net.URI;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 public class CUDRequestFactoryImpl extends AbstractCUDRequestFactory<UpdateType> implements CUDRequestFactory {
 

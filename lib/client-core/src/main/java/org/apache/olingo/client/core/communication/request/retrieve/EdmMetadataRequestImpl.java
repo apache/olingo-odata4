@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.communication.request.retrieve;
 
 import java.net.URI;
+
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;

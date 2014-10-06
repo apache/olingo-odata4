@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.EntitySet;
 import org.apache.olingo.client.api.edm.xml.v4.NavigationPropertyBinding;
 import org.apache.olingo.client.core.edm.xml.AbstractEntitySet;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EntitySetImpl extends AbstractEntitySet implements EntitySet {
 

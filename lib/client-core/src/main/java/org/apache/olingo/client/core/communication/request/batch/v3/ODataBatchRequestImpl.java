@@ -31,13 +31,13 @@ import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.request.batch.v3.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.request.batch.AbstractBatchManager;
 import org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.communication.response.batch.ODataBatchResponseManager;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 public class ODataBatchRequestImpl extends AbstractODataBatchRequest<ODataBatchResponse, BatchManager>
     implements ODataBatchRequest {

@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.client.api.edm.xml.v4;
 
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.CommonNavigationProperty;
 import org.apache.olingo.client.api.edm.xml.OnDelete;
-
-import java.util.List;
 
 public interface NavigationProperty extends CommonNavigationProperty, Annotatable {
 

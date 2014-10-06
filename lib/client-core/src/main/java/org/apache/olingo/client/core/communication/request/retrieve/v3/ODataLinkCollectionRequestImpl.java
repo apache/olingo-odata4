@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve.v3;
 
+import java.io.IOException;
+import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -29,9 +32,6 @@ import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.communication.request.retrieve.AbstractODataRetrieveRequest;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-
-import java.io.IOException;
-import java.net.URI;
 
 /**
  * This class implements an OData link query request.

@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.client.api.uri.v4;
 
+import java.util.Map;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
-
-import java.util.Map;
 
 public interface URIBuilder extends CommonURIBuilder<URIBuilder> {
 

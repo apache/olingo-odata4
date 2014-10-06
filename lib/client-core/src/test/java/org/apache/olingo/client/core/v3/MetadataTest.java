@@ -23,7 +23,7 @@ import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
-import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.edm.Edm;

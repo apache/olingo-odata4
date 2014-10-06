@@ -18,15 +18,16 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
+import java.io.IOException;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 import org.apache.olingo.client.core.edm.xml.OnDeleteImpl;
 
-import java.io.IOException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
 
 public class NavigationPropertyDeserializer extends AbstractEdmDeserializer<NavigationPropertyImpl> {
 

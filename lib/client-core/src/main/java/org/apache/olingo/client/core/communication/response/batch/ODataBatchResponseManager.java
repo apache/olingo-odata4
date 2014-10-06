@@ -18,6 +18,13 @@
  */
 package org.apache.olingo.client.core.communication.response.batch;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
@@ -29,13 +36,6 @@ import org.apache.olingo.client.core.communication.request.batch.ODataChangesetR
 import org.apache.olingo.commons.api.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  * Batch response manager class.

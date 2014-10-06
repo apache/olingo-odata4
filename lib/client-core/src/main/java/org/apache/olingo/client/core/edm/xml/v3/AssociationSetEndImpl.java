@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.client.core.edm.xml.v3;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.olingo.client.api.edm.xml.v3.AssociationSetEnd;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AssociationSetEndImpl extends AbstractEdmItem implements AssociationSetEnd {
 

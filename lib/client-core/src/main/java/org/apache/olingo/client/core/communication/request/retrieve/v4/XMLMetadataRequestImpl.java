@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve.v4;
 
+import java.net.URI;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -33,11 +35,10 @@ import org.apache.olingo.client.api.edm.xml.v4.Reference;
 import org.apache.olingo.client.api.edm.xml.v4.XMLMetadata;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.communication.request.retrieve.AbstractMetadataRequestImpl;
+import org.apache.olingo.client.core.edm.xml.AbstractSchema;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationsImpl;
 import org.apache.olingo.client.core.edm.xml.v4.SchemaImpl;
-import org.apache.olingo.client.core.edm.xml.AbstractSchema;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import java.net.URI;
 
 public class XMLMetadataRequestImpl
         extends AbstractMetadataRequestImpl<org.apache.olingo.client.api.edm.xml.XMLMetadata>

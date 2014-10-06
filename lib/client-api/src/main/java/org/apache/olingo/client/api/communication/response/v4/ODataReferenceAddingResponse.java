@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.response.v4;
 
-import org.apache.olingo.client.api.communication.response.*;
+import org.apache.olingo.client.api.communication.response.ODataResponse;
 
 /**
  * This class implements the response to an OData delete request.

@@ -19,7 +19,7 @@
 package org.apache.olingo.client.api.communication.request.cud.v3;
 
 import org.apache.olingo.client.api.communication.request.cud.CommonUpdateType;
-import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Update type.

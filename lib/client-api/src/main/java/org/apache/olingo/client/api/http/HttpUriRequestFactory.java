@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.client.api.http;
 
-import org.apache.http.client.methods.HttpUriRequest;
-
 import java.net.URI;
+
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Interface used by ODataRequest implementations to create the HttpUriRequest.

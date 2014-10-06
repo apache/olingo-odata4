@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.client.api.communication.request.cud.v3;
 
+import java.net.URI;
+
 import org.apache.olingo.client.api.communication.request.cud.CommonCUDRequestFactory;
 import org.apache.olingo.commons.api.domain.ODataLink;
-
-import java.net.URI;
 
 public interface CUDRequestFactory extends CommonCUDRequestFactory<UpdateType> {
 

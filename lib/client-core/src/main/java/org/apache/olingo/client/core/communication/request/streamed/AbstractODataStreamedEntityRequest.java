@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.client.core.communication.request.streamed;
 
+import java.net.URI;
+
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamedEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.commons.api.format.ODataFormat;
-
-import java.net.URI;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Abstract class representing a request concerning a streamed entity.

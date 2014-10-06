@@ -18,6 +18,15 @@
  */
 package org.apache.olingo.fit.v3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
@@ -25,7 +34,6 @@ import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequ
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
@@ -34,16 +42,8 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * This is the unit test class to check basic entity operations.

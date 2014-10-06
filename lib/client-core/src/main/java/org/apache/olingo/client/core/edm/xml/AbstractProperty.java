@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.client.api.edm.xml.CommonProperty;
 import org.apache.olingo.commons.api.edm.geo.SRID;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = PropertyDeserializer.class)
 public abstract class AbstractProperty extends AbstractEdmItem implements CommonProperty {

@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.client.core.edm.xml.v3;
 
-import org.apache.olingo.client.api.edm.xml.Member;
-import org.apache.olingo.client.core.edm.xml.AbstractEnumType;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.olingo.client.api.edm.xml.Member;
+import org.apache.olingo.client.core.edm.xml.AbstractEnumType;
 
 public class EnumTypeImpl extends AbstractEnumType {
 

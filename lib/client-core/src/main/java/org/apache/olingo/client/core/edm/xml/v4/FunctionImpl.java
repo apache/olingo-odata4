@@ -18,8 +18,9 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.client.api.edm.xml.v4.Function;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = FunctionDeserializer.class)
 public class FunctionImpl extends ActionImpl implements Function {

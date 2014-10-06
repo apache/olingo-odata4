@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.client.core.communication.request.cud;
 
+import java.io.InputStream;
+import java.net.URI;
+
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.cud.CommonCUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.CommonUpdateType;
@@ -29,7 +32,6 @@ import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRe
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.streamed.ODataMediaEntityCreateRequestImpl;
 import org.apache.olingo.client.core.communication.request.streamed.ODataMediaEntityUpdateRequestImpl;
 import org.apache.olingo.client.core.communication.request.streamed.ODataStreamUpdateRequestImpl;
@@ -37,9 +39,7 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-
-import java.io.InputStream;
-import java.net.URI;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 public abstract class AbstractCUDRequestFactory<UT extends CommonUpdateType> implements CommonCUDRequestFactory<UT> {
 

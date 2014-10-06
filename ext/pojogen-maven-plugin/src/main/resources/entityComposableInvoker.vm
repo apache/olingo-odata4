@@ -19,7 +19,7 @@
 #set( $clsSuffix = ".class" )
 package ${package};
 //CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;

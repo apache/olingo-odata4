@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.client.api.communication.request;
 
-import org.apache.olingo.client.api.communication.header.HeaderName;
-import org.apache.olingo.client.api.http.HttpMethod;
-
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
+
+import org.apache.olingo.client.api.communication.header.HeaderName;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Abstract representation of an OData request. Get instance by using factories.

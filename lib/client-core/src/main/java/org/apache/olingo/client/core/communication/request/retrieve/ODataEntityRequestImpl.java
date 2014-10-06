@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
+import java.net.URI;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -28,8 +30,6 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-
-import java.net.URI;
 
 /**
  * This class implements an OData retrieve query request returning a single entity.

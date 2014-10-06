@@ -18,6 +18,12 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.olingo.client.api.edm.xml.EnumType;
 import org.apache.olingo.client.api.edm.xml.v4.Action;
 import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
@@ -35,12 +41,6 @@ import org.apache.olingo.client.api.edm.xml.v4.Singleton;
 import org.apache.olingo.client.api.edm.xml.v4.Term;
 import org.apache.olingo.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.client.core.edm.xml.AbstractSchema;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class SchemaImpl extends AbstractSchema implements Schema {
 

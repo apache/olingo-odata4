@@ -18,10 +18,12 @@
  */
 package org.apache.olingo.client.core.communication.request.invoke;
 
+import java.net.URI;
+import java.util.Map;
+
 import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
@@ -29,9 +31,7 @@ import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-
-import java.net.URI;
-import java.util.Map;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 public abstract class AbstractInvokeRequestFactory implements InvokeRequestFactory {
 

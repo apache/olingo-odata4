@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4.annotation;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.DynamicAnnotationExpression;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.LabeledElement;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = LabeledElementDeserializer.class)
 public class LabeledElementImpl

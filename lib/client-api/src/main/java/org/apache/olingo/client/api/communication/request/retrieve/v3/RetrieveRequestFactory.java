@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve.v3;
 
+import java.net.URI;
+
 import org.apache.olingo.client.api.communication.request.retrieve.CommonRetrieveRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
@@ -26,8 +28,6 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataProperty
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
-
-import java.net.URI;
 
 @SuppressWarnings("unchecked")
 public interface RetrieveRequestFactory extends CommonRetrieveRequestFactory {

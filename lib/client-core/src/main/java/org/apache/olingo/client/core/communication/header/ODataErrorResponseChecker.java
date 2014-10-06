@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.communication.header;
 
 import java.io.InputStream;
+
 import org.apache.http.StatusLine;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;

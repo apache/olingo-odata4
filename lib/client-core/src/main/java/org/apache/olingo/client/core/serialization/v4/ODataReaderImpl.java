@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.core.serialization.v4;
 
+import java.io.InputStream;
+
 import org.apache.olingo.client.api.serialization.v4.ODataReader;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.serialization.AbstractODataReader;
@@ -26,8 +28,6 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-
-import java.io.InputStream;
 
 public class ODataReaderImpl extends AbstractODataReader implements ODataReader {
 

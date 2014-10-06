@@ -18,12 +18,8 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4.annotation;
 
-import com.fasterxml.jackson.core.JsonLocation;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
+import java.io.IOException;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.AnnotationPath;
@@ -42,7 +38,12 @@ import org.apache.olingo.client.api.edm.xml.v4.annotation.TwoParamsOpDynamicAnno
 import org.apache.olingo.client.api.edm.xml.v4.annotation.UrlRef;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
-import java.io.IOException;
+import com.fasterxml.jackson.core.JsonLocation;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
 
 public class DynamicAnnotationExpressionDeserializer
         extends AbstractEdmDeserializer<AbstractDynamicAnnotationExpression> {

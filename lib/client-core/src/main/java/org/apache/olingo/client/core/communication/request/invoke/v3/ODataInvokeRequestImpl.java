@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.client.core.communication.request.invoke.v3;
 
+import java.net.URI;
+
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.invoke.AbstractODataInvokeRequest;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.format.ODataFormat;
-
-import java.net.URI;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends AbstractODataInvokeRequest<T> {
 

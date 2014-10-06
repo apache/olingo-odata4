@@ -18,10 +18,8 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
+import java.io.IOException;
+
 import org.apache.olingo.client.core.edm.xml.v3.AssociationImpl;
 import org.apache.olingo.client.core.edm.xml.v3.UsingImpl;
 import org.apache.olingo.client.core.edm.xml.v3.ValueTermImpl;
@@ -32,7 +30,10 @@ import org.apache.olingo.client.core.edm.xml.v4.TermImpl;
 import org.apache.olingo.client.core.edm.xml.v4.TypeDefinitionImpl;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-import java.io.IOException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
 
 public class SchemaDeserializer extends AbstractEdmDeserializer<AbstractSchema> {
 

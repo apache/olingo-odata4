@@ -18,16 +18,17 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import java.io.IOException;
+
+import org.apache.olingo.client.core.edm.xml.v4.ReturnTypeImpl;
+import org.apache.olingo.client.core.edm.xml.v4.annotation.ConstantAnnotationExpressionImpl;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
-import org.apache.olingo.client.core.edm.xml.v4.ReturnTypeImpl;
-import org.apache.olingo.client.core.edm.xml.v4.annotation.ConstantAnnotationExpressionImpl;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-
-import java.io.IOException;
 
 public abstract class AbstractEdmDeserializer<T> extends JsonDeserializer<T> {
 

@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
-import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
-
 import java.util.Iterator;
+
+import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 
 /**
  * This class implements a response to a batch request.

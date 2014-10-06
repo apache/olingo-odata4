@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.client.core.communication.response.batch;
 
+import java.util.Collection;
+import java.util.Map;
+
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchController;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
-
-import java.util.Collection;
-import java.util.Map;
 
 public class ODataBatchErrorResponse extends AbstractODataResponse {
 

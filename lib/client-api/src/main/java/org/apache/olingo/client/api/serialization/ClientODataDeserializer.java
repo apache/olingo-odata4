@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.client.api.serialization;
 
+import java.io.InputStream;
+
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-
-import java.io.InputStream;
 
 public interface ClientODataDeserializer extends ODataDeserializer {
 

@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.client.core.communication.request.invoke.v4;
 
+import java.net.URI;
+import java.util.Map;
+
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.core.communication.request.invoke.AbstractEdmEnabledInvokeRequestFactory;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
-
-import java.net.URI;
-import java.util.Map;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 public class EdmEnabledInvokeRequestFactoryImpl extends AbstractEdmEnabledInvokeRequestFactory {
 

@@ -18,10 +18,11 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4.annotation;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.Cast;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.DynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.geo.SRID;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = CastDeserializer.class)
 public class CastImpl extends AbstractAnnotatableDynamicAnnotationExpression implements Cast {

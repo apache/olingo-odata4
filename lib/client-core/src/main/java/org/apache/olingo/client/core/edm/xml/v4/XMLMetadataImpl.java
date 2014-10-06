@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4;
 
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.v4.Edmx;
 import org.apache.olingo.client.api.edm.xml.v4.Reference;
 import org.apache.olingo.client.api.edm.xml.v4.Schema;
 import org.apache.olingo.client.api.edm.xml.v4.XMLMetadata;
 import org.apache.olingo.client.core.edm.xml.AbstractXMLMetadata;
-
-import java.util.List;
 
 public class XMLMetadataImpl extends AbstractXMLMetadata implements XMLMetadata {
 

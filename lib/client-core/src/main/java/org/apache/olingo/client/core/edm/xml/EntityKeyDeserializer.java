@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
-
-import java.io.IOException;
 
 public class EntityKeyDeserializer extends AbstractEdmDeserializer<EntityKeyImpl> {
 

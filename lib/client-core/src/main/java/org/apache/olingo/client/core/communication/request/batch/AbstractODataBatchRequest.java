@@ -18,21 +18,21 @@
  */
 package org.apache.olingo.client.core.communication.request.batch;
 
+import java.io.PipedOutputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.streamed.AbstractODataStreamedRequest;
 import org.apache.olingo.commons.api.format.ContentType;
-
-import java.io.PipedOutputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * This class implements a batch request.

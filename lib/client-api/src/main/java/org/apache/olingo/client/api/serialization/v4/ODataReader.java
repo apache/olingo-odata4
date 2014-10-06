@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.client.api.serialization.v4;
 
+import java.io.InputStream;
+
 import org.apache.olingo.client.api.serialization.CommonODataReader;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-
-import java.io.InputStream;
 
 public interface ODataReader extends CommonODataReader {
 

@@ -18,12 +18,13 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntitySet;
 
-import java.util.List;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = EntityContainerDeserializer.class)
 public abstract class AbstractEntityContainer extends AbstractEdmItem implements EntityContainer {

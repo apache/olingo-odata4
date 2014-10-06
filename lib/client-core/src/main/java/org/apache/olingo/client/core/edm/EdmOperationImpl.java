@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.edm.xml.CommonParameter;
 import org.apache.olingo.client.api.edm.xml.v4.Action;
@@ -29,9 +32,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.core.edm.AbstractEdmOperation;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class EdmOperationImpl extends AbstractEdmOperation {
 

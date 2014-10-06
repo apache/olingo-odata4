@@ -18,8 +18,9 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.client.api.edm.xml.DataServices;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = DataServicesDeserializer.class)
 public abstract class AbstractDataServices extends AbstractEdmItem implements DataServices {

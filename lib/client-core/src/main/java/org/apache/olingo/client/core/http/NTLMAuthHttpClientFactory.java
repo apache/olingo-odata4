@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.client.core.http;
 
+import java.net.URI;
+
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.olingo.client.api.http.HttpMethod;
-
-import java.net.URI;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Implementation for working with NTLM Authentication via embedded HttpClient features.

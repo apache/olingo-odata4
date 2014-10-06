@@ -18,19 +18,19 @@
  */
 package org.apache.olingo.client.core.communication.request.streamed;
 
+import java.io.InputStream;
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.StreamUpdateStreamManager;
 import org.apache.olingo.client.api.communication.response.ODataStreamUpdateResponse;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
-
-import java.io.InputStream;
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * This class implements an OData stream create/update request. Get instance by using ODataStreamedRequestFactory.

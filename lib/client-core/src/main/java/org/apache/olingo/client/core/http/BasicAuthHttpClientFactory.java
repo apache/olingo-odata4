@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.client.core.http;
 
+import java.net.URI;
+
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.olingo.client.api.http.HttpMethod;
-
-import java.net.URI;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Implementation for working with Basic Authentication.

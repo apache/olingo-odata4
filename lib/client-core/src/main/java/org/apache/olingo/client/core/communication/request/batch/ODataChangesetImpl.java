@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.client.core.communication.request.batch;
 
+import java.util.UUID;
+
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.commons.api.format.ContentType;
-
-import java.util.UUID;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Changeset wrapper for the corresponding batch item.

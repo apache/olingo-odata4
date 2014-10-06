@@ -18,12 +18,13 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4.annotation;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.v4.annotation.AnnotationExpression;
 import org.apache.olingo.client.api.edm.xml.v4.annotation.Collection;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = CollectionDeserializer.class)
 public class CollectionImpl extends AbstractDynamicAnnotationExpression implements Collection {

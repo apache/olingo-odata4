@@ -18,12 +18,13 @@
  */
 package org.apache.olingo.client.core.android.http;
 
-import android.net.http.AndroidHttpClient;
-import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.core.http.AbstractHttpClientFactory;
-
 import java.net.URI;
+
+import org.apache.http.client.HttpClient;
+import org.apache.olingo.client.core.http.AbstractHttpClientFactory;
+import org.apache.olingo.commons.api.http.HttpMethod;
+
+import android.net.http.AndroidHttpClient;
 
 public class AndroidHttpClientFactory extends AbstractHttpClientFactory {
 

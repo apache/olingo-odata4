@@ -18,12 +18,13 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.EnumType;
 import org.apache.olingo.client.api.edm.xml.Member;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = EnumTypeDeserializer.class)
 public abstract class AbstractEnumType extends AbstractEdmItem implements EnumType {

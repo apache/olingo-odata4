@@ -18,6 +18,10 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.PropertyRef;
 import org.apache.olingo.client.api.edm.xml.Schema;
@@ -33,10 +37,6 @@ import org.apache.olingo.commons.core.edm.AbstractEdmEntityType;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class EdmEntityTypeImpl extends AbstractEdmEntityType {
 

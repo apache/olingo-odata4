@@ -18,8 +18,9 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.olingo.client.api.edm.xml.PropertyRef;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PropertyRefImpl extends AbstractEdmItem implements PropertyRef {
 

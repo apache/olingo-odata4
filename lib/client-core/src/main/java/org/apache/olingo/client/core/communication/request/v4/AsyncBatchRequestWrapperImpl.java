@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.client.core.communication.request.v4;
 
+import java.net.URI;
+import java.util.Collection;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
@@ -30,9 +33,6 @@ import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.communication.response.v4.AsyncResponseWrapper;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-
-import java.net.URI;
-import java.util.Collection;
 
 public class AsyncBatchRequestWrapperImpl extends AsyncRequestWrapperImpl<ODataBatchResponse>
         implements AsyncBatchRequestWrapper {
