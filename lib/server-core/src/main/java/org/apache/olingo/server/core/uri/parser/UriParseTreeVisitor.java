@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
+import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -45,6 +46,7 @@ import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
+import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
 import org.apache.olingo.server.core.uri.UriParameterImpl;
 import org.apache.olingo.server.core.uri.UriResourceActionImpl;
@@ -68,6 +70,7 @@ import org.apache.olingo.server.core.uri.UriResourceValueImpl;
 import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
 import org.apache.olingo.server.core.uri.antlr.UriLexer;
 import org.apache.olingo.server.core.uri.antlr.UriParserBaseVisitor;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.AllEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.AllExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.AltAddContext;
@@ -84,6 +87,7 @@ import org.apache.olingo.server.core.uri.antlr.UriParserParser.BatchEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.BooleanNonCaseContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.CastExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.CeilingMethodCallExprContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.CommonExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ConcatMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ConstSegmentContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ContainsMethodCallExprContext;
@@ -153,6 +157,7 @@ import org.apache.olingo.server.core.uri.antlr.UriParserParser.TopContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.TotalOffsetMinutesMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.TotalsecondsMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.TrimMethodCallExprContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.UnaryContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.YearMethodCallExprContext;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandItemImpl;
@@ -168,6 +173,7 @@ import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SystemQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.expression.AliasImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.BinaryImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.EnumerationImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
@@ -175,6 +181,7 @@ import org.apache.olingo.server.core.uri.queryoption.expression.LiteralImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.TypeLiteralImpl;
+import org.apache.olingo.server.core.uri.queryoption.expression.UnaryImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -2156,4 +2163,18 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return new ParseCancellationException(uriParserException);
   }
 
+  @Override
+  public ExpressionImpl visitAltUnary(@NotNull UriParserParser.AltUnaryContext ctx) {
+  	UnaryImpl unary = new UnaryImpl();
+  	unary.setOperator(ctx.unary().NOT() == null? UnaryOperatorKind.MINUS: UnaryOperatorKind.NOT);
+  	unary.setOperand((ExpressionImpl) ctx.commonExpr().accept(this));
+  	return unary;
+  }
+  
+	@Override 
+	public ExpressionImpl visitAltAlias(@NotNull UriParserParser.AltAliasContext ctx) { 
+		AliasImpl alias = new AliasImpl();
+		alias.setParameter("@"+ctx.odataIdentifier().getChild(0).getText());
+		return alias;
+	}
 }

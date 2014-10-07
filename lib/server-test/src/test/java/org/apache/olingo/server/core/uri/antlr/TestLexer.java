@@ -49,6 +49,11 @@ public class TestLexer {
   // ;------------------------------------------------------------------------------
 
   @Test
+  public void testUnary() {
+    test.run("- a eq a").isAllInput();
+  }
+
+  @Test
   public void testUriTokens() {
     test.globalMode(UriLexer.MODE_QUERY);
     test.run("#").isText("#").isType(UriLexer.FRAGMENT);
