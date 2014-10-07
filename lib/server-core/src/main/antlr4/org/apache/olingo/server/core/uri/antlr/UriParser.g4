@@ -191,7 +191,7 @@ contextFragment     : REST; // the context fragment is only required on the clie
 commonExpr          : OPEN commonExpr CLOSE                                                             #altPharenthesis
                     | vE1=commonExpr (WSP HAS WSP) vE2=commonExpr                                       #altHas
                     | methodCallExpr                                                                    #altMethod
-                    | ( unary WSP ) commonExpr                                                          #altUnary
+                    | ( unary WSP? ) commonExpr                                                         #altUnary
                     | anyExpr                                                                           #altAny
                     | allExpr                                                                           #altAll
                     | memberExpr                                                                        #altMember

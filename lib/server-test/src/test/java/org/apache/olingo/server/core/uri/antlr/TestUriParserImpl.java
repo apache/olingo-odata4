@@ -570,6 +570,7 @@ public class TestUriParserImpl {
   public void testUnary() throws UriParserException {
     testFilter.runESabc("not a").isCompr("<not <a>>");
     testFilter.runESabc("- a eq a").isCompr("<<- <a>> eq <a>>");
+    testFilter.runESabc("-a eq a").isCompr("<<- <a>> eq <a>>");
   }
 
   @Test
