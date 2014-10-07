@@ -19,9 +19,9 @@
 lexer grammar UriLexer;
 
 //;==============================================================================
-// Mode "DEFAULT_MODE": Processes everything bevor the first '?' char
-// On '?' the next mode "MODE_QUERY" is used
-// The percent encoding rules a defined in RFC3986 ABNF rule "path-rootless" apply
+// Mode "DEFAULT_MODE": Processes everything before the first '?' char.
+// On '?' the next mode "MODE_QUERY" is used.
+// The percent encoding rules are defined in RFC3986; ABNF rule "path-rootless" applies.
 //;==============================================================================
 QM              : '?'                 ->        pushMode(MODE_QUERY);               //first query parameter
 AMP             : '&'                 ->        pushMode(MODE_QUERY);               //more query parameters
@@ -99,7 +99,7 @@ fragment DAY                : '0' '1'..'9' | ('1'|'2') DIGIT | '3' ('0'|'1');
 fragment MONTH              : '0' ONE_TO_NINE | '1' ( '0' | '1' | '2' );
 fragment YEAR               : ('-')? ( '0' DIGIT DIGIT DIGIT | ONE_TO_NINE DIGIT DIGIT DIGIT );
 
-//tags start with $ 
+//tags starting with $ 
 BATCH         : '$batch';
 ENTITY        : '$entity';
 METADATA      : '$metadata';
@@ -116,14 +116,12 @@ TOP_I    : '$top' -> type(TOP);
 SKIP_I   : '$skip' -> type(SKIP);
 FILTER_I : '$filter' -> type(FILTER);
 ORDERBY_I: '$orderby' -> type(ORDERBY);
-SELECT_I: '$select' -> type(SELECT);
-EXPAND_I: '$expand' -> type(EXPAND);
-LEVELS_I: '$levels' -> type(LEVELS);
+SELECT_I : '$select' -> type(SELECT);
+EXPAND_I : '$expand' -> type(EXPAND);
+LEVELS_I : '$levels' -> type(LEVELS);
 MAX: 'max';
 
 ROOT            : '$root/';
-
-
 
 //rest
 NULLVALUE     : 'null';
@@ -188,7 +186,7 @@ MINUS           :'-';
 
 IT  : '$it';
 ITSLASH  : '$it/';
-LEVELS               : '$levels';
+LEVELS : '$levels';
 
 CONTAINS_WORD             : 'contains(';
 STARTSWITH_WORD           : 'startswith(';
@@ -237,13 +235,15 @@ LINK                      : '$link';
 DELETED_LINK              : '$deletedLink';
 DELTA                     : '$delta';
 
-//ODI
-ODATAIDENTIFIER             : ODI_LEADINGCHARACTER (ODI_CHARACTER)*;
+ODATAIDENTIFIER : ODI_LEADINGCHARACTER (ODI_CHARACTER)*;
+
+//handle characters that failed to match any other token
+ERROR_CHARACTER : .;
 
 //;==============================================================================
-// Mode "QUERY": Processes everything between the first '?' and the '#' char
-// On '?' the next mode "FRAGMENT" is used
-// The percent encoding rules a defined in RFC3986 ABNF rule "query" apply
+// Mode "QUERY": Processes everything between the first '?' and the '#' char.
+// On '?' the next mode "FRAGMENT" is used.
+// The percent encoding rules are defined in RFC3986; ABNF rule "query" applies.
 mode MODE_QUERY;
 //;==============================================================================
 
@@ -270,6 +270,9 @@ AT_Q          : '@' -> pushMode(DEFAULT_MODE);
 
 CUSTOMNAME    : ~[&=@$] ~[&=]* -> pushMode(MODE_SYSTEM_QUERY_REST);
 
+//handle characters that failed to match any other token
+ERROR_CHARACTER_q : .;
+
 //;==============================================================================
 mode MODE_SYSTEM_QUERY_PCHAR;
 //;==============================================================================
@@ -287,17 +290,18 @@ fragment UNRESERVED_sqp     : ALPHA_sqp | DIGIT_sqp | '-' |'.' | '_' | '~';
 fragment PCHAR              : UNRESERVED_sqp | PCT_ENCODED_sqp | SUB_DELIMS_sqp | ':' | '@'; 
 fragment PCHARSTART         : UNRESERVED_sqp | PCT_ENCODED_sqp | '$' | /*'&' |*/ '\'' | OTHER_DELIMS_sqp | ':' | '@'; 
 
-
 ATOM : [Aa][Tt][Oo][Mm];
 JSON : [Jj][Ss][Oo][Nn];
 XML  : [Xx][Mm][Ll];
 
 PCHARS : PCHARSTART PCHAR*;
 
-
 SLASH_sqp : '/' -> type(SLASH);
 EQ_sqp    : '=' -> type(EQ);
 FRAGMENT_sqp  : '#'     -> type(FRAGMENT),  pushMode(MODE_FRAGMENT);
+
+//handle characters that failed to match any other token
+ERROR_CHARACTER_sqp : .;
 
 //;==============================================================================
 mode MODE_FRAGMENT;
@@ -336,19 +340,18 @@ QUOTATION_MARK_sqc  : '\u0022' | '%22';
 SEARCHWORD          : ('a'..'z'|'A'..'Z')+;
 SEARCHPHRASE        : QUOTATION_MARK_sqc ~["]* QUOTATION_MARK_sqc -> popMode;
 
-
 //;==============================================================================
 mode MODE_STRING;
-// Read the remaining characters up to an ' character.
-// An "'" character inside a string are expressed as double ''
+// Reads the remaining characters up to an ' character.
+// Any "'" characters inside a string are expressed as double "''".
 //;==============================================================================
 
 STRING_s            : ('\'\'' | ~[\u0027] )* '\'' -> type(STRING), popMode;
 
 //;==============================================================================
 mode MODE_JSON_STRING;
-// Read the remaining characters up to an " character.
-// An "'" character inside a string are expressed excaped \"
+// Reads the remaining characters up to an " character.
+// Any """ characters inside a string are escaped with "\".
 //;==============================================================================
 
 STRING_IN_JSON      : ('\\"' | ~[\u0022] )* ('"' | '%22') -> popMode;

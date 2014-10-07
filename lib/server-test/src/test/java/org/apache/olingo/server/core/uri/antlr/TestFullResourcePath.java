@@ -2638,6 +2638,9 @@ public class TestFullResourcePath {
     testUri.runEx("$entity/olingo.odata.test1.ETKeyNav/$ref")
         .isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
 
+    testUri.runEx("$wrong").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testUri.runEx("", "$wrong").isExSyntax(UriParserSyntaxException.MessageKeys.UNKNOWN_SYSTEM_QUERY_OPTION);
+
     testUri.run("ESKeyNav")
         .isKind(UriInfoKind.resource)
         .goPath().first()

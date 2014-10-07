@@ -20,16 +20,16 @@
 grammar UriParser;
 
 //------------------------------------------------------------------------------
-// This grammer refers to the "odata-abnf-construction-rules.txt" Revision 517.
+// This grammar refers to the "odata-abnf-construction-rules.txt" Revision 517.
 // URL: https://tools.oasis-open.org/version-control/browse/wsvn/odata/trunk/spec/ABNF/odata-abnf-construction-rules.txt?rev=517
 
-// While contructing this grammer we tried to keep it  close to the ABNF. However this is not really possible 
-// in order to support
+// While contructing this grammar we tried to keep it close to the ABNF.
+// However this is not really possible in order to support
 // - percent decoding
 // - operator precedence
-// - have context free grammar ( without out java snipples to add context)
-// - generate the parser in diffend target languages
-// Currently not supported 
+// - having a context free grammar ( without java snipplets to add context)
+// - generating the parser in different target languages
+// Currently not supported are 
 // - $search
 // - geometry data
 // - json data in url
@@ -54,7 +54,7 @@ metadataEOF         : METADATA EOF;
 //;------------------------------------------------------------------------------
 //; 1. Resource Path
 //;------------------------------------------------------------------------------
-                   
+
 //resourcePathEOF     : vlPS=pathSegments EOF;
 
 crossjoinEOF        : CROSSJOIN OPEN WSP? vlODI+=odataIdentifier WSP? ( COMMA WSP? vlODI+=odataIdentifier  WSP?)* CLOSE EOF;
