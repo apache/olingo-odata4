@@ -18,13 +18,21 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -37,14 +45,15 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
+import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.PropertyProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
+import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceKind;
@@ -52,11 +61,6 @@ import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
-
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Technical Processor which provides currently implemented processor functionality.
@@ -212,14 +216,38 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
         .navOrPropertyPath(propertyPath)
         .build();
   }
-
+  
+  private Map<String, Object> getKeys(EdmEntityType entityType,
+      List<UriParameter> parameters) throws ODataApplicationException {
+    TreeMap<String, Object> keys = new TreeMap<String, Object>();
+    for (UriParameter param: parameters) {
+      final EdmProperty property = (EdmProperty) entityType.getProperty(param.getName());
+      final EdmPrimitiveType type = (EdmPrimitiveType) property.getType();
+      try {
+        Object keyValue = type.valueOfString(param.getText(),
+            property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
+            property.isUnicode(), type.getDefaultType());
+        if (keyValue instanceof String) {
+          keyValue = "'"+keyValue+"'";
+        }
+        keys.put(param.getName(), keyValue);
+      } catch (EdmPrimitiveTypeException e) {
+        throw new ODataApplicationException("Invalid key found", HttpStatusCode.BAD_REQUEST.getStatusCode(),
+                Locale.ROOT, e);
+      }
+    }
+    return keys;
+  }
+  
   @Override
   public void readProperty(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
 
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
+    final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
     final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
+
     if (entity == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
     } else {
@@ -236,10 +264,11 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
           final ODataFormat format = ODataFormat.fromContentType(contentType);
           ODataSerializer serializer = odata.createSerializer(format);
           response.setContent(serializer.entityProperty(edmProperty, property,
-              ODataSerializerOptions.with()
-                  .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                      getContextUrl(serializer, edmEntitySet, true, null, null, edmProperty.getName()))
-                  .build()));
+              ODataSerializerOptions.with().contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
+                    ContextURL.with().entitySet(edmEntitySet)
+                            .keySegment(getKeys(edmEntitySet.getEntityType(), resourceEntitySet.getKeyPredicates()))
+                            .navOrPropertyPath(edmProperty.getName())
+                            .build()).build()));
           response.setStatusCode(HttpStatusCode.OK.getStatusCode());
           response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
         }

@@ -19,9 +19,11 @@
 package org.apache.olingo.commons.api.data;
 
 import java.net.URI;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmType;
 
 /**
  * High-level representation of a context URL, built from the string value returned by a service; provides access to the
@@ -35,11 +37,17 @@ public class ContextURL {
 
   private String entitySetOrSingletonOrType;
 
+  private boolean isCollection = false;
+
   private String derivedEntity;
 
   private String selectList;
 
   private String navOrPropertyPath;
+  
+  private String keyPath;
+
+  private Suffix suffix;
 
   public enum Suffix {
 
@@ -57,7 +65,6 @@ public class ContextURL {
     }
   }
 
-  private Suffix suffix;
 
   private ContextURL() {
   }
@@ -68,6 +75,10 @@ public class ContextURL {
 
   public String getEntitySetOrSingletonOrType() {
     return entitySetOrSingletonOrType;
+  }
+
+  public boolean isCollection() {
+    return isCollection;
   }
 
   public String getDerivedEntity() {
@@ -81,6 +92,10 @@ public class ContextURL {
   public String getNavOrPropertyPath() {
     return navOrPropertyPath;
   }
+  
+  public String getKeyPath() {
+    return keyPath;
+  }  
 
   public Suffix getSuffix() {
     return suffix;
@@ -127,9 +142,45 @@ public class ContextURL {
       contextURL.entitySetOrSingletonOrType = entitySet.getName();
       return this;
     }
+    
+    public Builder keySegment(Object value) {
+      if (value != null) {
+        contextURL.keyPath = String.valueOf(value);
+      }
+      return this;
+    }  
+    
+    public Builder keySegment(Map<String, Object> values) {
+      if (values != null && !values.isEmpty()) {
+        
+        if (values.size() == 1) {
+          return keySegment(values.values().iterator().next());
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        for (String key:values.keySet()) {
+          if (sb.length() > 0) {
+            sb.append(",");
+          }
+          sb.append(key).append("=").append(values.get(key));
+        }
+        contextURL.keyPath = sb.toString();
+      }
+      return this;
+    }      
 
     public Builder entitySetOrSingletonOrType(final String entitySetOrSingletonOrType) {
       contextURL.entitySetOrSingletonOrType = entitySetOrSingletonOrType;
+      return this;
+    }
+    
+    public Builder propertyType(final EdmType type) {
+      contextURL.entitySetOrSingletonOrType = type.getFullQualifiedName().toString();
+      return this;
+    }
+
+    public Builder asCollection() {
+      contextURL.isCollection = true;
       return this;
     }
 

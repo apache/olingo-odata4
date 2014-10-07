@@ -131,7 +131,7 @@ public class DataProvider {
 
     entitySet.getEntities().add(new EntityImpl()
         .addProperty(createPrimitive("PropertyInt16", -32766))
-        .addProperty(createPrimitive("PropertyString", "Test String3")));
+        .addProperty(createPrimitive("PropertyString", null)));
 
     entitySet.getEntities().add(new EntityImpl()
         .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))

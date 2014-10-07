@@ -302,7 +302,7 @@ public class ODataJsonSerializerTest {
     final String expectedResult = "{\"value\":["
         + "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"},"
         + "{\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\"},"
-        + "{\"PropertyInt16\":-32766,\"PropertyString\":\"Test String3\"},"
+        + "{\"PropertyInt16\":-32766,\"PropertyString\":null},"
         + "{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
@@ -566,7 +566,7 @@ public class ODataJsonSerializerTest {
             + "{\"PropertyInt32\":0,\"NavPropertyETTwoPrimOne\":null,"
             + "\"NavPropertyETTwoPrimMany\":["
             + "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"},"
-            + "{\"PropertyInt16\":-32766,\"PropertyString\":\"Test String3\"},"
+            + "{\"PropertyInt16\":-32766,\"PropertyString\":null},"
             + "{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"}]}]}",
         resultString);
   }

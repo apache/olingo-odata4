@@ -38,13 +38,23 @@ public final class ContextURLBuilder {
     }
     result.append(Constants.METADATA);
     if (contextURL.getEntitySetOrSingletonOrType() != null) {
-      result.append('#').append(Encoder.encode(contextURL.getEntitySetOrSingletonOrType()));
+      result.append('#');
+      if(contextURL.isCollection()) {
+        result.append("Collection(")
+                .append(Encoder.encode(contextURL.getEntitySetOrSingletonOrType()))
+                .append(")");
+      } else {
+        result.append(Encoder.encode(contextURL.getEntitySetOrSingletonOrType()));
+      }
     }
     if (contextURL.getDerivedEntity() != null) {
       if (contextURL.getEntitySetOrSingletonOrType() == null) {
         throw new IllegalArgumentException("ContextURL: Derived Type without anything to derive from!");
       }
       result.append('/').append(Encoder.encode(contextURL.getDerivedEntity()));
+    }
+    if (contextURL.getKeyPath() != null) {
+      result.append('(').append(contextURL.getKeyPath()).append(')');
     }
     if (contextURL.getSelectList() != null) {
       result.append('(').append(contextURL.getSelectList()).append(')');
