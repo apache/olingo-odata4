@@ -132,7 +132,9 @@ TRUE          : 'true';
 FALSE         : 'false';
 BOOLEAN       :  T R U E |  F A L S E; 
 PLUS          : '+';
-SIGN          : PLUS  | '%2B'   |'-';
+
+MINUS         : '-';
+SIGN          : PLUS  | '%2B' | '-';
 INT           : SIGN? DIGITS;
 DECIMAL       : INT '.' DIGITS (('e'|'E') SIGN?  DIGITS)?;
 NANINFINITY   : 'NaN' | '-INF' | 'INF';
@@ -184,7 +186,7 @@ OR              : 'or';
 
 
 NOT             : 'not';
-MINUS           :'-';
+
 
 IT  : '$it';
 ITSLASH  : '$it/';

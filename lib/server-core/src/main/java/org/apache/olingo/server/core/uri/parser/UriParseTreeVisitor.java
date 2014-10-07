@@ -2166,8 +2166,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   @Override
   public ExpressionImpl visitAltUnary(@NotNull UriParserParser.AltUnaryContext ctx) {
   	UnaryImpl unary = new UnaryImpl();
-  	unary.setOperator(ctx.unary().NOT() == null?UnaryOperatorKind.MINUS:UnaryOperatorKind.NOT);
-  	unary.setOperand((ExpressionImpl)ctx.commonExpr().accept(this));
+  	unary.setOperator(ctx.unary().NOT() == null? UnaryOperatorKind.MINUS: UnaryOperatorKind.NOT);
+  	unary.setOperand((ExpressionImpl) ctx.commonExpr().accept(this));
   	return unary;
   }
   
@@ -2177,5 +2177,4 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 		alias.setParameter("@"+ctx.odataIdentifier().getChild(0).getText());
 		return alias;
 	}
-  
 }

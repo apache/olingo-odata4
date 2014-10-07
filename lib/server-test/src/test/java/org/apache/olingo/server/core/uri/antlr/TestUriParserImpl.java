@@ -567,6 +567,12 @@ public class TestUriParserImpl {
   }
 
   @Test
+  public void testUnary() throws UriParserException {
+    testFilter.runESabc("not a").isCompr("<not <a>>");
+    testFilter.runESabc("- a eq a").isCompr("<<- <a>> eq <a>>");
+  }
+
+  @Test
   public void testFilterComplexMixedPriority() throws UriParserException {
     testFilter.runESabc("a      or c      and e     ").isCompr("< <a>         or < <c>         and  <e>      >>");
     testFilter.runESabc("a      or c      and e eq f").isCompr("< <a>         or < <c>         and <<e> eq <f>>>>");
@@ -576,7 +582,6 @@ public class TestUriParserImpl {
     testFilter.runESabc("a eq b or c      and e eq f").isCompr("<<<a> eq <b>> or < <c>         and <<e> eq <f>>>>");
     testFilter.runESabc("a eq b or c eq d and e     ").isCompr("<<<a> eq <b>> or <<<c> eq <d>> and  <e>      >>");
     testFilter.runESabc("a eq b or c eq d and e eq f").isCompr("<<<a> eq <b>> or <<<c> eq <d>> and <<e> eq <f>>>>");
-    testFilter.runESabc("not a").isCompr("<not <a>>");
   }
 
   @Test
@@ -1055,7 +1060,7 @@ public class TestUriParserImpl {
 
   @Test
   public void testAlias() throws Exception {
-    testUri.run("ESAllPrim?$filter=PropertyInt16 eq @p1&@p1=1)")
+    testUri.run("ESAllPrim", "$filter=PropertyInt16 eq @p1&@p1=1)")
         .goFilter().is("<<PropertyInt16> eq <@p1>>");
   }  
   
