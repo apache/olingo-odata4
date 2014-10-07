@@ -30,6 +30,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
@@ -40,8 +41,8 @@ import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.PropertyProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -50,7 +51,6 @@ import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
-import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
 import java.io.ByteArrayInputStream;
@@ -59,7 +59,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Technical Processor which provides current implemented processor functionality.
+ * Technical Processor which provides currently implemented processor functionality.
  */
 public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, PropertyProcessor {
 
@@ -77,124 +77,80 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
 
   @Override
   public void readEntitySet(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestedContentType) {
-    if (!validateOptions(uriInfo.asUriInfoResource())) {
-      response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
-      return;
-    }
-    try {
-      final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
-      final EntitySet entitySet = readEntitySetInternal(edmEntitySet);
-      if (entitySet == null) {
-        response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
-      } else {
-        final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
-        ODataSerializer serializer = odata.createSerializer(format);
-        final ExpandOption expand = uriInfo.getExpandOption();
-        final SelectOption select = uriInfo.getSelectOption();
-        response.setContent(serializer.entitySet(edmEntitySet, entitySet,
-            ODataSerializerOptions.with()
-                .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                    getContextUrl(serializer, edmEntitySet, false, expand, select, null))
-                .count(uriInfo.getCountOption())
-                .expand(expand).select(select)
-                .build()));
-        response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-        response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
-      }
-    } catch (final DataProvider.DataProviderException e) {
-      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final SerializerException e) {
-      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final ODataApplicationException e) {
-      response.setStatusCode(e.getStatusCode());
+      final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
+    validateOptions(uriInfo.asUriInfoResource());
+
+    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
+    final EntitySet entitySet = readEntitySetInternal(edmEntitySet,
+        uriInfo.getCountOption() != null && uriInfo.getCountOption().getValue());
+    if (entitySet == null) {
+      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+    } else {
+      final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
+      ODataSerializer serializer = odata.createSerializer(format);
+      final ExpandOption expand = uriInfo.getExpandOption();
+      final SelectOption select = uriInfo.getSelectOption();
+      response.setContent(serializer.entitySet(edmEntitySet, entitySet,
+          ODataSerializerOptions.with()
+              .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
+                  getContextUrl(serializer, edmEntitySet, false, expand, select, null))
+              .count(uriInfo.getCountOption())
+              .expand(expand).select(select)
+              .build()));
+      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+      response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     }
   }
 
   @Override
   public void readEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestedContentType) {
-    if (!validateOptions(uriInfo.asUriInfoResource())) {
-      response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
-      return;
-    }
-    try {
-      final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
-      final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
-      if (entity == null) {
-        response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
-      } else {
-        final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
-        ODataSerializer serializer = odata.createSerializer(format);
-        final ExpandOption expand = uriInfo.getExpandOption();
-        final SelectOption select = uriInfo.getSelectOption();
-        response.setContent(serializer.entity(edmEntitySet, entity,
-            ODataSerializerOptions.with()
-                .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                    getContextUrl(serializer, edmEntitySet, true, expand, select, null))
-                .count(uriInfo.getCountOption())
-                .expand(expand).select(select)
-                .build()));
-        response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-        response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
-      }
-    } catch (final DataProvider.DataProviderException e) {
-      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final SerializerException e) {
-      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final ODataApplicationException e) {
-      response.setStatusCode(e.getStatusCode());
+      final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
+    validateOptions(uriInfo.asUriInfoResource());
+
+    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
+    final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
+    if (entity == null) {
+      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+    } else {
+      final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
+      ODataSerializer serializer = odata.createSerializer(format);
+      final ExpandOption expand = uriInfo.getExpandOption();
+      final SelectOption select = uriInfo.getSelectOption();
+      response.setContent(serializer.entity(edmEntitySet, entity,
+          ODataSerializerOptions.with()
+              .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
+                  getContextUrl(serializer, edmEntitySet, true, expand, select, null))
+              .count(uriInfo.getCountOption())
+              .expand(expand).select(select)
+              .build()));
+      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+      response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     }
   }
 
   @Override
-  public void countEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo) {
-    try {
-      EntitySet entitySet = null;
-      final UriInfoResource uriResource = uriInfo.asUriInfoResource();
-      final List<UriResource> resourceParts = uriResource.getUriResourceParts();
-      if (isCount(resourceParts)) {
-        int pos = resourceParts.size() - 2;
-        if (pos >= 0) {
-          final UriResourceEntitySet ur =
-              (UriResourceEntitySet) uriResource.getUriResourceParts().get(pos);
-          entitySet = readEntitySetInternal(ur.getEntitySet(), true);
-        }
-      }
-
-      if (entitySet == null) {
-        response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
-      } else {
-        Integer count = entitySet.getCount();
-        response.setContent(new ByteArrayInputStream(count.toString().getBytes()));
-        response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-        response.setHeader(HttpHeader.CONTENT_TYPE, "text/plain");
-      }
-    } catch (final DataProvider.DataProviderException e) {
-      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
+  public void countEntitySet(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
+      throws ODataApplicationException, SerializerException {
+    final List<UriResource> resourceParts = uriInfo.asUriInfoResource().getUriResourceParts();
+    final int pos = resourceParts.size() - 2;
+    final EntitySet entitySet =
+        readEntitySetInternal(((UriResourceEntitySet) resourceParts.get(pos)).getEntitySet(), true);
+    if (entitySet == null) {
+      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+    } else {
+      response.setContent(new ByteArrayInputStream(entitySet.getCount().toString().getBytes()));
+      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+      response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.TEXT_PLAIN);
     }
-  }
-
-  private boolean isCount(List<UriResource> resourceParts) {
-    if (resourceParts.isEmpty()) {
-      return false;
-    }
-    UriResource part = resourceParts.get(resourceParts.size() - 1);
-    return SystemQueryOptionKind.COUNT.toString().equals(part.toString());
-  }
-
-  private EntitySet readEntitySetInternal(final EdmEntitySet edmEntitySet) throws DataProvider.DataProviderException {
-    return readEntitySetInternal(edmEntitySet, false);
   }
 
   private EntitySet readEntitySetInternal(final EdmEntitySet edmEntitySet,
-      boolean withCount) throws DataProvider.DataProviderException {
+      final boolean withCount) throws DataProvider.DataProviderException {
     EntitySet entitySet = dataProvider.readAll(edmEntitySet);
     // TODO: set count (correctly) and next link
     if (withCount && entitySet.getCount() == null) {
       entitySet.setCount(entitySet.getEntities().size());
     }
-    //
     return entitySet;
   }
 
@@ -204,16 +160,19 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
     return dataProvider.read(entitySet, resourceEntitySet.getKeyPredicates());
   }
 
-  private boolean validateOptions(final UriInfoResource uriInfo) {
-    return uriInfo.getCountOption() == null
-        && uriInfo.getCustomQueryOptions().isEmpty()
-        && uriInfo.getFilterOption() == null
-        && uriInfo.getIdOption() == null
-        && uriInfo.getOrderByOption() == null
-        && uriInfo.getSearchOption() == null
-        && uriInfo.getSkipOption() == null
-        && uriInfo.getSkipTokenOption() == null
-        && uriInfo.getTopOption() == null;
+  private void validateOptions(final UriInfoResource uriInfo) throws ODataApplicationException {
+    if (uriInfo.getCountOption() != null
+        || !uriInfo.getCustomQueryOptions().isEmpty()
+        || uriInfo.getFilterOption() != null
+        || uriInfo.getIdOption() != null
+        || uriInfo.getOrderByOption() != null
+        || uriInfo.getSearchOption() != null
+        || uriInfo.getSkipOption() != null
+        || uriInfo.getSkipTokenOption() != null
+        || uriInfo.getTopOption() != null) {
+      throw new ODataApplicationException("Not all of the specified options are supported.",
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+    }
   }
 
   private EdmEntitySet getEdmEntitySet(final UriInfoResource uriInfo) throws ODataApplicationException {
@@ -223,7 +182,6 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
       throw new ODataApplicationException("Invalid resource type.",
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
-
     List<UriResource> subResPaths = resourcePaths.subList(1, resourcePaths.size());
     for (UriResource subResPath : subResPaths) {
       UriResourceKind kind = subResPath.getKind();
@@ -236,7 +194,6 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
       }
     }
 
-    //
     final UriResourceEntitySet uriResource = (UriResourceEntitySet) resourcePaths.get(0);
     if (uriResource.getTypeFilterOnCollection() != null || uriResource.getTypeFilterOnEntry() != null) {
       throw new ODataApplicationException("Type filters are not supported.",
@@ -246,100 +203,83 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
   }
 
   private ContextURL getContextUrl(final ODataSerializer serializer,
-        final EdmEntitySet entitySet, final boolean isSingleEntity,
-        final ExpandOption expand, final SelectOption select, final String navOrPropertyPath)
-      throws SerializerException {
-
+      final EdmEntitySet entitySet, final boolean isSingleEntity,
+      final ExpandOption expand, final SelectOption select, final String propertyPath)
+    throws SerializerException {
     return ContextURL.with().entitySet(entitySet)
         .selectList(serializer.buildContextURLSelectList(entitySet, expand, select))
-        .suffix(isSingleEntity ? Suffix.ENTITY : null)
-        .navOrPropertyPath(navOrPropertyPath)
+        .suffix(isSingleEntity && propertyPath == null ? Suffix.ENTITY : null)
+        .navOrPropertyPath(propertyPath)
         .build();
   }
 
   @Override
-  public void readProperty(ODataRequest request,
-                           ODataResponse response, UriInfo uriInfo, ContentType contentType) {
+  public void readProperty(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+      final ContentType contentType) throws ODataApplicationException, SerializerException {
+    validateOptions(uriInfo.asUriInfoResource());
 
-    if (!validateOptions(uriInfo.asUriInfoResource())) {
-      response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
-      return;
-    }
-    try {
-      final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
-      final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
-      if (entity == null) {
+    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
+    final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
+    if (entity == null) {
+      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+    } else {
+      final UriResourceProperty uriProperty = (UriResourceProperty) uriInfo
+          .getUriResourceParts().get(uriInfo.getUriResourceParts().size() - 1);
+      final EdmProperty edmProperty = uriProperty.getProperty();
+      final Property property = entity.getProperty(edmProperty.getName());
+      if (property == null) {
         response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
       } else {
-        UriResourceProperty uriProperty = (UriResourceProperty) uriInfo
-            .getUriResourceParts().get(uriInfo.getUriResourceParts().size() - 1);
-        EdmProperty edmProperty = uriProperty.getProperty();
-        Property property = entity.getProperty(edmProperty.getName());
-        if (property == null) {
-          response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
+        if (property.getValue() == null) {
+          response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
         } else {
-          if (property.getValue() == null) {
-            response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
-          } else {
-            final ODataFormat format = ODataFormat.fromContentType(contentType);
-            ODataSerializer serializer = odata.createSerializer(format);
-            response.setContent(serializer.entityProperty(edmProperty, property,
-                ODataSerializerOptions.with()
-                    .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                        getContextUrl(serializer, edmEntitySet, true, null, null, edmProperty.getName()))
-                    .build()));
-            response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-            response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
-          }
+          final ODataFormat format = ODataFormat.fromContentType(contentType);
+          ODataSerializer serializer = odata.createSerializer(format);
+          response.setContent(serializer.entityProperty(edmProperty, property,
+              ODataSerializerOptions.with()
+                  .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
+                      getContextUrl(serializer, edmEntitySet, true, null, null, edmProperty.getName()))
+                  .build()));
+          response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+          response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
         }
       }
-    } catch (final DataProvider.DataProviderException e) {
-      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final SerializerException e) {
-      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final ODataApplicationException e) {
-      response.setStatusCode(e.getStatusCode());
     }
   }
 
   @Override
-  public void readPropertyValue(ODataRequest request, ODataResponse response,
-                                UriInfo uriInfo, ContentType contentType) {
+  public void readPropertyValue(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+      final ContentType contentType) throws ODataApplicationException, SerializerException {
+    validateOptions(uriInfo.asUriInfoResource());
 
-    if (!validateOptions(uriInfo.asUriInfoResource())) {
-      response.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
-      return;
-    }
-    try {
-      final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
-      final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
-      if (entity == null) {
-        response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
+    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
+    final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
+    if (entity == null) {
+      response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
+    } else {
+      final UriResourceProperty uriProperty =
+          (UriResourceProperty) uriInfo.getUriResourceParts().get(uriInfo.getUriResourceParts().size() - 2);
+      final EdmProperty edmProperty = uriProperty.getProperty();
+      final Property property = entity.getProperty(edmProperty.getName());
+      if (property == null || property.getValue() == null) {
+        response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
       } else {
-        UriResourceProperty uriProperty = (UriResourceProperty) uriInfo
-                .getUriResourceParts().get(uriInfo.getUriResourceParts().size() - 2);
-        EdmProperty edmProperty = uriProperty.getProperty();
-        Property property = entity.getProperty(edmProperty.getName());
-        if (property == null || property.getValue() == null) {
-          response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
-        } else {
-          final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
+        final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
+        try {
           final String value = type.valueToString(property.getValue(),
-                  edmProperty.isNullable(), edmProperty.getMaxLength(),
-                  edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode());
+              edmProperty.isNullable(), edmProperty.getMaxLength(),
+              edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode());
           response.setContent(new ByteArrayInputStream(value.getBytes("UTF-8")));
-          response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-          response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.TEXT_PLAIN.toContentTypeString());
+        } catch (final EdmPrimitiveTypeException e) {
+          throw new ODataApplicationException("Error in value formatting.",
+              HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT, e);
+        } catch (final UnsupportedEncodingException e) {
+          throw new ODataApplicationException("Encoding exception.",
+              HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT, e);
         }
+        response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+        response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.TEXT_PLAIN.toContentTypeString());
       }
-    } catch (final DataProvider.DataProviderException e) {
-      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final EdmPrimitiveTypeException e) {
-      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final UnsupportedEncodingException e) {
-      response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
-    } catch (final ODataApplicationException e) {
-      response.setStatusCode(e.getStatusCode());
     }
   }
 }

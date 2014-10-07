@@ -24,11 +24,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
@@ -40,11 +40,13 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriParameter;
 
 public class DataProvider {
@@ -104,15 +106,15 @@ public class DataProvider {
     }
   }
 
-  public static class DataProviderException extends ODataException {
+  public static class DataProviderException extends ODataApplicationException {
     private static final long serialVersionUID = 5098059649321796156L;
 
-    public DataProviderException(String message, Throwable throwable) {
-      super(message, throwable);
+    public DataProviderException(final String message, final Throwable throwable) {
+      super(message, HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT, throwable);
     }
 
-    public DataProviderException(String message) {
-      super(message);
+    public DataProviderException(final String message) {
+      super(message, HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
     }
   }
 
