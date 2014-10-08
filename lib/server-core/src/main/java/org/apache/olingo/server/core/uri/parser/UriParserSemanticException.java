@@ -28,6 +28,7 @@ public class UriParserSemanticException extends UriParserException {
     /** parameter: resource part */ RESOURCE_PART_ONLY_FOR_TYPED_PARTS,
     /** parameter: resource part */ RESOURCE_PART_MUST_BE_PRECEDED_BY_STRUCTURAL_TYPE,
     /** parameters: type name, property name */ PROPERTY_NOT_IN_TYPE,
+    /** parameters: type name, property name */ EXPRESSION_PROPERTY_NOT_IN_TYPE,
     /** parameter: property name */ UNKNOWN_PROPERTY_TYPE,
     /** parameter: type filter */ INCOMPATIBLE_TYPE_FILTER,
     /** parameters: previous type filter, last type filter */ TYPE_FILTER_NOT_CHAINABLE,
@@ -50,7 +51,7 @@ public class UriParserSemanticException extends UriParserException {
     COMPLEX_PROPERTY_OF_ENTITY_TYPE_EXPECTED,
     NOT_FOR_ENTITY_TYPE,
     PREVIOUS_PART_TYPED, 
-    /** parameter: resource_name */RESOURCE_NOT_FOUND;
+    /** parameter: resource_name */ RESOURCE_NOT_FOUND;
 
     @Override
     public String getKey() {

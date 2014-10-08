@@ -596,7 +596,6 @@ public class TestUriParserImpl {
     testFilter.runESabc("1 div 2 add 3 div 4").isCompr("<<  <1> div   <2>> add <<3>   div <4>>>");
     testFilter.runESabc("1 div 2 div 3 add 4").isCompr("<<< <1> div   <2>> div  <3>>  add <4>>");
     testFilter.runESabc("1 div 2 div 3 div 4").isCompr("<<< <1> div   <2>> div  <3>>  div <4>>");
-
   }
 
   @Test
@@ -622,7 +621,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testFunctionImport_VarRetruning() {
+  public void testFunctionImport_VarReturning() {
     // returning primitive
     testRes.run("FINRTInt16()")
         .isFunctionImport("FINRTInt16")
@@ -1145,6 +1144,21 @@ public class TestUriParserImpl {
         .isComplexProperty("PropertyCompNav", ComplexTypeProvider.nameCTBasePrimCompNav, false)
         .n()
         .isTypeFilterOnCollection(ComplexTypeProvider.nameCTTwoBasePrimCompNav);
+
+    testUri.run("ESAllPrim", "$select=PropertyTimeOfDay,PropertyDate,PropertyTimeOfDay")
+        .isKind(UriInfoKind.resource)
+        .goSelectItemPath(0).first().isPrimitiveProperty("PropertyTimeOfDay", PropertyProvider.nameTimeOfDay, false)
+        .goUpUriValidator()
+        .goSelectItemPath(1).first().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false);
+
+    testUri.runEx("ESMixPrimCollComp", "$select=wrong")
+        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("ESMixPrimCollComp", "$select=PropertyComp/wrong")
+        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("ESMixPrimCollComp", "$select=PropertyComp///PropertyInt16")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testUri.runEx("ESMixPrimCollComp", "$select=/PropertyInt16")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
   public static String encode(final String decoded) throws UnsupportedEncodingException {

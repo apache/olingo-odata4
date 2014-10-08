@@ -87,7 +87,6 @@ import org.apache.olingo.server.core.uri.antlr.UriParserParser.BatchEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.BooleanNonCaseContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.CastExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.CeilingMethodCallExprContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.CommonExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ConcatMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ConstSegmentContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ContainsMethodCallExprContext;
@@ -157,7 +156,6 @@ import org.apache.olingo.server.core.uri.antlr.UriParserParser.TopContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.TotalOffsetMinutesMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.TotalsecondsMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.TrimMethodCallExprContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.UnaryContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.YearMethodCallExprContext;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandItemImpl;
@@ -409,7 +407,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (property == null) {
         throw wrap(new UriParserSemanticException("Property '" + odi + "' not found in type '"
             + structType.getNamespace() + "." + structType.getName() + "'",
-            UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE,
+            ctx.depth() > 2 ?  // resource path or path evaluation inside an expression?
+                UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE :
+                UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE,
             structType.getFullQualifiedName().toString(), odi));
       }
 
@@ -1872,7 +1872,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       EdmElement element = structType.getProperty(odi);
       if (element == null) {
         throw wrap(new UriParserSemanticException("Previous select item has not property: " + odi,
-            UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE, structType.getName(), odi));
+            UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE, structType.getName(), odi));
       }
 
       // create new segment

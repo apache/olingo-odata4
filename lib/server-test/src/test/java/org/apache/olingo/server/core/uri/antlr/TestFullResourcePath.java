@@ -2505,6 +2505,11 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETKeyNav)
         .goUpExpandValidator()
         .isSelectText("PropertyComp/PropertyInt16");
+
+    testUri.runEx("ESKeyNav", "$expand=undefined")
+        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("ESTwoKeyNav", "$expand=PropertyCompNav/undefined")
+        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
   }
 
   @Test
@@ -2940,20 +2945,22 @@ public class TestFullResourcePath {
         .isLiteral("'SomeString'");
 
     testFilter.runOnETTwoKeyNavEx("invalid")
-        .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE);
+        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    testFilter.runOnETTwoKeyNavEx("PropertyComp")
+        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/invalid")
-        .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE);
+        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETTwoKeyNavEx("concat('a','b')/invalid").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/concat('a','b')")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-    testFilter.runOnETTwoKeyNavEx("PropertyCompAllPrim/PropertyInt16 eq '1'")
-        .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE);
-    testFilter.runOnETTwoKeyNavEx("PropertyCompAllPrim/PropertyDate eq 1")
-        .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE);
-    testFilter.runOnETTwoKeyNavEx("PropertyCompAllPrim/PropertyString eq 1")
-        .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE);
-    testFilter.runOnETTwoKeyNavEx("PropertyCompAllPrim/PropertyDate eq 1")
-        .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyInt16 eq '1'")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyComp/PropertyDate eq 1")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyComp/PropertyString eq 1")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyInt64 eq 1")
+        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
 
     testFilter.runOnETAllPrim("PropertySByte eq PropertySByte")
         .is("<<PropertySByte> eq <PropertySByte>>")
@@ -4152,10 +4159,9 @@ public class TestFullResourcePath {
         .goParameter(1).isTypedLiteral(EntityTypeProvider.nameETKeyPrimNav);
 
     testFilter.runOnETKeyNavEx("cast(NavPropertyETKeyPrimNavOne,olingo.odata.test1.ETKeyNav)")
-        .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE);
+        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETKeyNav("any()")
         .isMember().goPath().first().isUriPathInfoKind(UriResourceKind.lambdaAny);
-
   }
 
   @Test
@@ -5073,6 +5079,12 @@ public class TestFullResourcePath {
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 asc, PropertyInt32 PropertyDuration desc")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 asc desc")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testFilter.runOrderByOnETTwoKeyNavEx("undefined")
+        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    testFilter.runOrderByOnETTwoKeyNavEx("PropertyComp/undefined")
+        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
   }
 
   @Test

@@ -224,6 +224,7 @@ public class FilterValidator implements TestValidator {
 
     try {
       uriInfo = parser.parseUri(path, query, null, edm);
+      fail("Expected exception not thrown.");
     } catch (UriParserException e) {
       exception = e;
       return this;
