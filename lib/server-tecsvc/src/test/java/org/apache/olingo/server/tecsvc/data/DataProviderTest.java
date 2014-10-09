@@ -42,28 +42,42 @@ public class DataProviderTest {
   private final EdmEntityContainer entityContainer = edm.getEntityContainer(
           new FullQualifiedName("olingo.odata.test1", "Container"));
 
-  private final EdmEntitySet esAllPrim;
-  private final EdmEntitySet esCompAllPrim;
-  private final EdmEntitySet esCollAllPrim;
-  private final EdmEntitySet esMixPrimCollAllPrim;
-
-  public DataProviderTest() {
-    esAllPrim = entityContainer.getEntitySet("ESAllPrim");
-    esCompAllPrim = entityContainer.getEntitySet("ESCompAllPrim");
-    esCollAllPrim = entityContainer.getEntitySet("ESCollAllPrim");
-    esMixPrimCollAllPrim = entityContainer.getEntitySet("ESMixPrimCollComp");
-  }
+  private final EdmEntitySet esAllPrim = entityContainer.getEntitySet("ESAllPrim");
+  private final EdmEntitySet esAllKey = entityContainer.getEntitySet("ESAllKey");
+  private final EdmEntitySet esCompAllPrim = entityContainer.getEntitySet("ESCompAllPrim");
+  private final EdmEntitySet esCollAllPrim = entityContainer.getEntitySet("ESCollAllPrim");
+  private final EdmEntitySet esMixPrimCollComp = entityContainer.getEntitySet("ESMixPrimCollComp");
 
   @Test
   public void esAllPrimEntity() throws Exception {
     final DataProvider dataProvider = new DataProvider();
-    Entity first = dataProvider.readAll(esAllPrim).getEntities().get(2);
-    Assert.assertEquals(16, first.getProperties().size());
+    final Entity entity = dataProvider.readAll(esAllPrim).getEntities().get(2);
+    Assert.assertEquals(16, entity.getProperties().size());
 
-    UriParameter parameter = Mockito.mock(UriParameter.class);
-    Mockito.when(parameter.getName()).thenReturn("PropertyInt16");
-    Mockito.when(parameter.getText()).thenReturn("-0");
-    Assert.assertEquals(first, dataProvider.read(esAllPrim, Arrays.asList(parameter)));
+    Assert.assertEquals(entity,
+        dataProvider.read(esAllPrim, Arrays.asList(mockParameter("PropertyInt16", "-0"))));
+  }
+
+  @Test
+  public void esAllKeyEntity() throws Exception {
+    final DataProvider dataProvider = new DataProvider();
+    final Entity entity = dataProvider.readAll(esAllKey).getEntities().get(0);
+    Assert.assertEquals(13, entity.getProperties().size());
+
+    Assert.assertEquals(entity, dataProvider.read(esAllKey, Arrays.asList(
+        mockParameter("PropertyBoolean", "true"),
+        mockParameter("PropertyByte", "255"),
+        mockParameter("PropertyDate", "2012-12-03"),
+        mockParameter("PropertyDateTimeOffset", "2012-12-03T07:16:23Z"),
+        mockParameter("PropertyDecimal", "34"),
+        mockParameter("PropertyDuration", "duration'PT6S'"),
+        mockParameter("PropertyGuid", "01234567-89AB-CDEF-0123-456789ABCDEF"),
+        mockParameter("PropertyInt16", "32767"),
+        mockParameter("PropertyInt32", "2147483647"),
+        mockParameter("PropertyInt64", "9223372036854775807"),
+        mockParameter("PropertySByte", "127"),
+        mockParameter("PropertyString", "'First'"),
+        mockParameter("PropertyTimeOfDay", "02:48:21"))));
   }
 
   @Test
@@ -114,7 +128,7 @@ public class DataProviderTest {
 
   @Test
   public void esMixPrimCollComp() throws Exception {
-    EntitySet outSet = new DataProvider().readAll(esMixPrimCollAllPrim);
+    EntitySet outSet = new DataProvider().readAll(esMixPrimCollComp);
 
     Assert.assertEquals(3, outSet.getEntities().size());
     Assert.assertEquals(4, outSet.getEntities().get(0).getProperties().size());
@@ -133,5 +147,12 @@ public class DataProviderTest {
     //
     Assert.assertEquals(4, outSet.getEntities().get(1).getProperties().size());
     Assert.assertEquals(4, outSet.getEntities().get(2).getProperties().size());
+  }
+
+  private static UriParameter mockParameter(final String name, final String text) {
+    UriParameter parameter = Mockito.mock(UriParameter.class);
+    Mockito.when(parameter.getName()).thenReturn(name);
+    Mockito.when(parameter.getText()).thenReturn(text);
+    return parameter;
   }
 }

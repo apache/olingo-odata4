@@ -87,9 +87,10 @@ public class DataProvider {
             final EdmProperty property = (EdmProperty) entityType.getProperty(key.getName());
             final EdmPrimitiveType type = (EdmPrimitiveType) property.getType();
             final Object value = entity.getProperty(key.getName()).getValue();
-            final Object keyValue = type.valueOfString(key.getText(),
+            final Object keyValue = type.valueOfString(type.fromUriLiteral(key.getText()),
                 property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
-                property.isUnicode(), value.getClass());
+                property.isUnicode(),
+                Calendar.class.isAssignableFrom(value.getClass()) ? Calendar.class : value.getClass());
             if (!value.equals(keyValue)) {
               found = false;
               break;
