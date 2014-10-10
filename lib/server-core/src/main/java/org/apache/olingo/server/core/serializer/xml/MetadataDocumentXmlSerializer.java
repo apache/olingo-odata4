@@ -536,7 +536,7 @@ public class MetadataDocumentXmlSerializer {
     // <http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml>
     // is an external site we don't want to query each time an EDM-enabled client is used.
     writer.writeAttribute("Uri",
-        "http://localhost:9080/olingo-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml");
+        "http://localhost:9080/odata-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml");
     writer.writeEmptyElement(NS_EDMX, "Include");
     writer.writeAttribute(XML_NAMESPACE, "Org.OData.Core.V1");
     writer.writeAttribute(XML_ALIAS, "Core");

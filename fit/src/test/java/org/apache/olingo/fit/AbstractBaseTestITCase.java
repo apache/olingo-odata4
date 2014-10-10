@@ -56,8 +56,8 @@ public abstract class AbstractBaseTestITCase {
   public static void init()
       throws LifecycleException, IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
     TomcatTestServer.init(9080)
-        .addServlet(TechnicalServlet.class, "/olingo-server-tecsvc/odata.svc/*")
-        .addServlet(StaticContent.class, "/olingo-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml")
+        .addServlet(TechnicalServlet.class, "/odata-server-tecsvc/odata.svc/*")
+        .addServlet(StaticContent.class, "/odata-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml")
         .addWebApp()
         .start();
   }
