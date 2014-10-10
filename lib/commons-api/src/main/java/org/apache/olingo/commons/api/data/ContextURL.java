@@ -143,14 +143,14 @@ public class ContextURL {
       return this;
     }
     
-    public Builder keySegment(Object value) {
+    public Builder keySegment(String value) {
       if (value != null) {
-        contextURL.keyPath = String.valueOf(value);
+        contextURL.keyPath = value;
       }
       return this;
     }  
     
-    public Builder keySegment(Map<String, Object> values) {
+    public Builder keySegment(Map<String, String> values) {
       if (values != null && !values.isEmpty()) {
         
         if (values.size() == 1) {
@@ -158,7 +158,7 @@ public class ContextURL {
         }
         
         StringBuilder sb = new StringBuilder();
-        for (String key:values.keySet()) {
+        for (String key: values.keySet()) {
           if (sb.length() > 0) {
             sb.append(",");
           }

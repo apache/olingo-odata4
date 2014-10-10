@@ -20,10 +20,7 @@ package org.apache.olingo.server.tecsvc.processor;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
@@ -32,7 +29,6 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -217,24 +213,11 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
         .build();
   }
   
-  private Map<String, Object> getKeys(EdmEntityType entityType,
-      List<UriParameter> parameters) throws ODataApplicationException {
-    TreeMap<String, Object> keys = new TreeMap<String, Object>();
+  private Map<String, String> mapKeys(List<UriParameter> parameters)
+          throws ODataApplicationException {
+    Map<String, String> keys = new LinkedHashMap<String, String>();
     for (UriParameter param: parameters) {
-      final EdmProperty property = (EdmProperty) entityType.getProperty(param.getName());
-      final EdmPrimitiveType type = (EdmPrimitiveType) property.getType();
-      try {
-        Object keyValue = type.valueOfString(param.getText(),
-            property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
-            property.isUnicode(), type.getDefaultType());
-        if (keyValue instanceof String) {
-          keyValue = "'"+keyValue+"'";
-        }
-        keys.put(param.getName(), keyValue);
-      } catch (EdmPrimitiveTypeException e) {
-        throw new ODataApplicationException("Invalid key found", HttpStatusCode.BAD_REQUEST.getStatusCode(),
-                Locale.ROOT, e);
-      }
+      keys.put(param.getName(), param.getText());
     }
     return keys;
   }
@@ -264,11 +247,11 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
           final ODataFormat format = ODataFormat.fromContentType(contentType);
           ODataSerializer serializer = odata.createSerializer(format);
           response.setContent(serializer.entityProperty(edmProperty, property,
-              ODataSerializerOptions.with().contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                    ContextURL.with().entitySet(edmEntitySet)
-                            .keySegment(getKeys(edmEntitySet.getEntityType(), resourceEntitySet.getKeyPredicates()))
-                            .navOrPropertyPath(edmProperty.getName())
-                            .build()).build()));
+                  ODataSerializerOptions.with().contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
+                          ContextURL.with().entitySet(edmEntitySet)
+                                  .keySegment(mapKeys(resourceEntitySet.getKeyPredicates()))
+                                  .navOrPropertyPath(edmProperty.getName())
+                                  .build()).build()));
           response.setStatusCode(HttpStatusCode.OK.getStatusCode());
           response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
         }

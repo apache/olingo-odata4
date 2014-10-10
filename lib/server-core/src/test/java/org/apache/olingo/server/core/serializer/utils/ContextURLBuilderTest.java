@@ -111,13 +111,13 @@ public class ContextURLBuilderTest {
     Mockito.when(entitySet.getName()).thenReturn("Customers");
     ContextURL contextURL = ContextURL.with().serviceRoot(URI.create("http://host/service/"))
         .entitySet(entitySet)
-        .keySegment(1)
+        .keySegment(String.valueOf(1))
         .navOrPropertyPath("Name")
         .build();
     assertEquals("http://host/service/$metadata#Customers(1)/Name",
         ContextURLBuilder.create(contextURL).toASCIIString());
-    TreeMap<String, Object> keys = new TreeMap<String, Object>();
-    keys.put("one", 1);
+    TreeMap<String, String> keys = new TreeMap<String, String>();
+    keys.put("one", String.valueOf(1));
     keys.put("two", "'two'");
     contextURL = ContextURL.with().serviceRoot(URI.create("http://host/service/"))
         .entitySet(entitySet)
