@@ -19,11 +19,13 @@
 package org.apache.olingo.server.api;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
+
+import java.util.List;
 
 /**
  * Root object for serving factory tasks and support loose coupling of implementation (core) from the API.
@@ -54,20 +56,23 @@ public abstract class OData {
   /**
    * Creates a new serializer object for rendering content in the specified format.
    * Serializers are used in Processor implementations.
+   *
    * @param format - any format supported by Olingo (XML, JSON ...)
    */
   public abstract ODataSerializer createSerializer(ODataFormat format) throws SerializerException;
 
   /**
-   * Creates a new ODataHttpHandler for handling OData requests in an HTTP context. 
-   * @param edm - metadata object required to handle an OData request
+   * Creates a new ODataHttpHandler for handling OData requests in an HTTP context.
+   *
+   * @param serviceMetadata - metadata object required to handle an OData request
    */
-  public abstract ODataHttpHandler createHandler(Edm edm);
+  public abstract ODataHttpHandler createHandler(ServiceMetadata serviceMetadata);
 
   /**
-   * Creates a metadata object.
-   * @param edmProvider - a custom or default implementation for creating metadata
+   * Creates a metadata object for this service.
+   *
+   * @param edmProvider a custom or default implementation for creating metadata
+   * @param references list of edmx references
    */
-  public abstract Edm createEdm(EdmProvider edmProvider);
-
+  public abstract ServiceMetadata createServiceMetadata(EdmProvider edmProvider, List<EdmxReference> references);
 }

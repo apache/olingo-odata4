@@ -19,6 +19,7 @@
 package org.apache.olingo.server.tecsvc.data;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
@@ -30,6 +31,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Assert;
@@ -38,7 +40,10 @@ import org.mockito.Mockito;
 
 public class DataProviderTest {
 
-  private final Edm edm = OData.newInstance().createEdm(new EdmTechProvider());
+  private final Edm edm =
+          OData.newInstance().createServiceMetadata(new EdmTechProvider(
+                          Collections.<EdmxReference>emptyList()),
+                          Collections.<EdmxReference>emptyList()).getEdm();
   private final EdmEntityContainer entityContainer = edm.getEntityContainer(
           new FullQualifiedName("olingo.odata.test1", "Container"));
 

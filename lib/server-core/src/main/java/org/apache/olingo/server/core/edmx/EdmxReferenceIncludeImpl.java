@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,22 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.processor;
+package org.apache.olingo.server.core.edmx;
 
-import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
 
 /**
- * <p>Base interface for all processor types.</p>
- * <p>Processors are responsible to read and write data and marshalling content
- * within a request - response cycle.</p>
  */
-public interface Processor {
+public class EdmxReferenceIncludeImpl implements EdmxReferenceInclude {
+  private final String namespace;
+  private final String alias;
 
-  /**
-   * Initializes the processor for each HTTP request - response cycle.
-   * @param odata - Olingo's root object, acting as a factory for various object types
-   * @param edm - the EDM which needs to be created before the OData request handling takes place
-   */
-  void init(OData odata, ServiceMetadata edm);
+  public EdmxReferenceIncludeImpl(String namespace, String alias) {
+    this.namespace = namespace;
+    this.alias = alias;
+  }
+
+  @Override
+  public String getNamespace() {
+    return namespace;
+  }
+
+  @Override
+  public String getAlias() {
+    return alias;
+  }
 }

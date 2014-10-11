@@ -33,12 +33,7 @@ import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.ODataHttpHandler;
-import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataServerError;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.*;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.slf4j.Logger;
@@ -51,8 +46,8 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   private ODataHandler handler;
   private int split = 0;
 
-  public ODataHttpHandlerImpl(final OData odata, final Edm edm) {
-    handler = new ODataHandler(odata, edm);
+  public ODataHttpHandlerImpl(final OData odata, final ServiceMetadata serviceMetadata) {
+    handler = new ODataHandler(odata, serviceMetadata);
   }
 
   @Override

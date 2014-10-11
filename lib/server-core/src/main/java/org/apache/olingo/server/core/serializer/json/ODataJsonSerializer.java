@@ -42,6 +42,7 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
@@ -107,7 +108,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   @Override
-  public InputStream metadataDocument(final Edm edm) throws SerializerException {
+  public InputStream metadataDocument(final ServiceMetadata serviceMetadata) throws SerializerException {
     throw new SerializerException("Metadata in JSON format not supported!",
         SerializerException.MessageKeys.JSON_METADATA);
   }

@@ -18,17 +18,17 @@
  */
 package org.apache.olingo.server.core;
 
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ServiceMetadata;
 
 public class DefaultRedirectProcessor implements RedirectProcessor {
 
   @Override
-  public void init(final OData odata, final Edm edm) {}
+  public void init(final OData odata, final ServiceMetadata edm) {}
 
   @Override
   public void redirect(final ODataRequest request, final ODataResponse response) {

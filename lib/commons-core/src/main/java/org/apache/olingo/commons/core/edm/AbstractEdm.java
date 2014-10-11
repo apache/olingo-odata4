@@ -28,7 +28,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmSchema;
-import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
+import org.apache.olingo.commons.api.edm.EdmMetadata;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -76,7 +76,7 @@ public abstract class AbstractEdm implements Edm {
   private final Map<FullQualifiedName, List<EdmAnnotation>> annotations =
       new HashMap<FullQualifiedName, List<EdmAnnotation>>();
 
-  private EdmServiceMetadata serviceMetadata;
+  private EdmMetadata serviceMetadata;
 
   private Map<String, String> aliasToNamespaceInfo;
 
@@ -403,7 +403,7 @@ public abstract class AbstractEdm implements Edm {
   }
 
   @Override
-  public EdmServiceMetadata getServiceMetadata() {
+  public EdmMetadata getServiceMetadata() {
     if (serviceMetadata == null) {
       serviceMetadata = createServiceMetadata();
     }
@@ -455,7 +455,7 @@ public abstract class AbstractEdm implements Edm {
       FullQualifiedName bindingParameterTypeName, Boolean isBindingParameterCollection,
       List<String> parameterNames);
 
-  protected abstract EdmServiceMetadata createServiceMetadata();
+  protected abstract EdmMetadata createServiceMetadata();
 
   protected abstract EdmTerm createTerm(FullQualifiedName termName);
 

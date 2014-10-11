@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 
@@ -45,9 +46,9 @@ public interface ODataSerializer {
 
   /**
    * Writes the metadata document into an InputStream.
-   * @param edm the Entity Data Model
+   * @param serviceMetadata the metadata information for the service
    */
-  InputStream metadataDocument(Edm edm) throws SerializerException;
+  InputStream metadataDocument(ServiceMetadata serviceMetadata) throws SerializerException;
 
   /**
    * Writes entity data into an InputStream.

@@ -37,10 +37,7 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.*;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.PropertyProcessor;
@@ -71,7 +68,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
   }
 
   @Override
-  public void init(final OData odata, final Edm edm) {
+  public void init(final OData odata, final ServiceMetadata edm) {
     this.odata = odata;
   }
 

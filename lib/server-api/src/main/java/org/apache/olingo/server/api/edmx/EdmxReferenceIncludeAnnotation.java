@@ -16,22 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.processor;
-
-import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.ServiceMetadata;
+package org.apache.olingo.server.api.edmx;
 
 /**
- * <p>Base interface for all processor types.</p>
- * <p>Processors are responsible to read and write data and marshalling content
- * within a request - response cycle.</p>
+ *
  */
-public interface Processor {
-
-  /**
-   * Initializes the processor for each HTTP request - response cycle.
-   * @param odata - Olingo's root object, acting as a factory for various object types
-   * @param edm - the EDM which needs to be created before the OData request handling takes place
-   */
-  void init(OData odata, ServiceMetadata edm);
+public interface EdmxReferenceIncludeAnnotation {
+	/**
+	 * @return TermNamespace of the include annotation
+	 */
+	String getTermNamespace();
+	
+	/**
+	 * @return Qualifier if one defined; null otherwise
+	 */
+	String getQualifier();
+	
+	/**
+	 * @return targetNamespace if defined; null otherwise
+	 */
+	String getTargetNamespace();
 }

@@ -28,7 +28,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmSchema;
-import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
+import org.apache.olingo.commons.api.edm.EdmMetadata;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -244,8 +244,8 @@ public class EdmImplCallCreateTest {
     }
 
     @Override
-    public EdmServiceMetadata createServiceMetadata() {
-      return mock(EdmServiceMetadata.class);
+    public EdmMetadata createServiceMetadata() {
+      return mock(EdmMetadata.class);
     }
 
     @Override

@@ -29,14 +29,15 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntitySet;
 import org.apache.olingo.client.api.edm.xml.Schema;
+import org.apache.olingo.client.core.edm.v3.EdmMetadataImpl;
 import org.apache.olingo.commons.api.edm.EdmActionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
-import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
+import org.apache.olingo.commons.api.edm.EdmMetadata;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmEntitySetInfoImpl;
 
-public abstract class AbstractEdmServiceMetadataImpl implements EdmServiceMetadata {
+public abstract class AbstractEdmMetadataImpl implements EdmMetadata {
 
   protected final List<? extends Schema> xmlSchemas;
 
@@ -46,20 +47,15 @@ public abstract class AbstractEdmServiceMetadataImpl implements EdmServiceMetada
 
   protected List<EdmActionImportInfo> actionImportInfos;
 
-  public static EdmServiceMetadata getInstance(final ODataServiceVersion version, final List<Schema> xmlSchemas) {
+  public static EdmMetadata getInstance(final ODataServiceVersion version, final List<Schema> xmlSchemas) {
 
     return version.compareTo(ODataServiceVersion.V40) < 0
-            ? new org.apache.olingo.client.core.edm.v3.EdmServiceMetadataImpl(xmlSchemas)
-            : new org.apache.olingo.client.core.edm.v4.EdmServiceMetadataImpl(xmlSchemas);
+            ? new EdmMetadataImpl(xmlSchemas)
+            : new org.apache.olingo.client.core.edm.v4.EdmMetadataImpl(xmlSchemas);
   }
 
-  public AbstractEdmServiceMetadataImpl(final List<? extends Schema> xmlSchemas) {
+  public AbstractEdmMetadataImpl(final List<? extends Schema> xmlSchemas) {
     this.xmlSchemas = xmlSchemas;
-  }
-
-  @Override
-  public InputStream getMetadata() {
-    throw new UnsupportedOperationException("Not supported in client code.");
   }
 
   @Override

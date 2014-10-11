@@ -24,9 +24,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpContentType;
@@ -36,6 +36,8 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.processor.*;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
@@ -50,9 +52,10 @@ public class ODataHandlerTest {
   @Before
   public void before() {
     OData odata = OData.newInstance();
-    Edm edm = odata.createEdm(new EdmTechProvider());
+    ServiceMetadata metadata = odata.createServiceMetadata(
+            new EdmTechProvider(), Collections.<EdmxReference>emptyList());
 
-    handler = new ODataHandler(odata, edm);
+    handler = new ODataHandler(odata, metadata);
   }
 
   @Test

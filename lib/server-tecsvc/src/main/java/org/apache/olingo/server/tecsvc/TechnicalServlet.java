@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.server.tecsvc;
 
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
+import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.processor.TechnicalProcessor;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
@@ -33,6 +34,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class TechnicalServlet extends HttpServlet {
 
@@ -44,7 +48,8 @@ public class TechnicalServlet extends HttpServlet {
           throws ServletException, IOException {
     try {
       OData odata = OData.newInstance();
-      Edm edm = odata.createEdm(new EdmTechProvider());
+      List<EdmxReference> references = Collections.emptyList();
+      ServiceMetadata serviceMetadata = odata.createServiceMetadata(new EdmTechProvider(references), references);
 
       HttpSession session = req.getSession(true);
       DataProvider dataProvider = (DataProvider) session.getAttribute(DataProvider.class.getName());
@@ -54,7 +59,7 @@ public class TechnicalServlet extends HttpServlet {
         LOG.info("Created new data provider.");
       }
 
-      ODataHttpHandler handler = odata.createHandler(edm);
+      ODataHttpHandler handler = odata.createHandler(serviceMetadata);
       handler.register(new TechnicalProcessor(dataProvider));
       handler.process(req, resp);
     } catch (RuntimeException e) {

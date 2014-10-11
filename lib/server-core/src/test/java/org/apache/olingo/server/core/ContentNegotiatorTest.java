@@ -35,6 +35,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.processor.CustomContentTypeSupport;
 import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
@@ -199,7 +200,7 @@ public class ContentNegotiatorTest {
     }
 
     @Override
-    public void init(final OData odata, final Edm edm) {}
+    public void init(final OData odata, final ServiceMetadata edm) {}
 
     @Override
     public List<ContentType> modifySupportedContentTypes(final List<ContentType> supportedContentTypes,

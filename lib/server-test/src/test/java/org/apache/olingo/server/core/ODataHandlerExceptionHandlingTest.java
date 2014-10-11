@@ -24,20 +24,18 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
+import java.util.Collections;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.ODataException;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.*;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.edm.provider.EntitySet;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
@@ -50,9 +48,10 @@ public class ODataHandlerExceptionHandlingTest {
   @Before
   public void before() {
     OData odata = OData.newInstance();
-    Edm edm = odata.createEdm(new EdmTechProvider());
+    ServiceMetadata metadata = odata.createServiceMetadata(
+            new EdmTechProvider(), Collections.<EdmxReference>emptyList());
 
-    handler = new ODataHandler(odata, edm);
+    handler = new ODataHandler(odata, metadata);
   }
 
   @Test
@@ -173,14 +172,14 @@ public class ODataHandlerExceptionHandlingTest {
     request.setRawODataPath("EdmException");
 
     OData odata = OData.newInstance();
-    Edm edm = odata.createEdm(new EdmProvider() {
+    ServiceMetadata serviceMetadata = odata.createServiceMetadata(new EdmProvider() {
       public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
           throws ODataException {
         throw new ODataException("msg");
       }
-    });
+    }, Collections.<EdmxReference>emptyList());
 
-    ODataHandler localHandler = new ODataHandler(odata, edm);
+    ODataHandler localHandler = new ODataHandler(odata, serviceMetadata);
 
     ODataResponse response = localHandler.process(request);
     assertNotNull(response);

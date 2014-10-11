@@ -31,6 +31,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
@@ -53,7 +54,7 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
-  public InputStream metadataDocument(final Edm edm) throws SerializerException {
+  public InputStream metadataDocument(final ServiceMetadata serviceMetadata) throws SerializerException {
     CircleStreamBuffer buffer;
     XMLStreamWriter xmlStreamWriter = null;
 
@@ -61,7 +62,7 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
     try {
       buffer = new CircleStreamBuffer();
       xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET);
-      MetadataDocumentXmlSerializer serializer = new MetadataDocumentXmlSerializer(edm);
+      MetadataDocumentXmlSerializer serializer = new MetadataDocumentXmlSerializer(serviceMetadata);
       serializer.writeMetadataDocument(xmlStreamWriter);
       xmlStreamWriter.flush();
       xmlStreamWriter.close();

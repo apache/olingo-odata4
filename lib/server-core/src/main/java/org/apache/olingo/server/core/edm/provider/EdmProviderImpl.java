@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmSchema;
-import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
+import org.apache.olingo.commons.api.edm.EdmMetadata;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -210,8 +210,8 @@ public class EdmProviderImpl extends AbstractEdm {
   }
 
   @Override
-  public EdmServiceMetadata createServiceMetadata() {
-    return new EdmServiceMetadataImpl(provider);
+  public EdmMetadata createServiceMetadata() {
+    return new EdmMetadataImpl(provider);
   }
 
   @Override

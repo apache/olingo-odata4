@@ -19,30 +19,18 @@
 package org.apache.olingo.server.core.edm.provider;
 
 import org.apache.olingo.commons.api.ODataException;
-import org.apache.olingo.commons.api.edm.EdmActionImportInfo;
-import org.apache.olingo.commons.api.edm.EdmEntitySetInfo;
-import org.apache.olingo.commons.api.edm.EdmException;
-import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
-import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
-import org.apache.olingo.commons.api.edm.EdmSingletonInfo;
+import org.apache.olingo.commons.api.edm.*;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmActionImportInfoImpl;
 import org.apache.olingo.commons.core.edm.EdmEntitySetInfoImpl;
 import org.apache.olingo.commons.core.edm.EdmFunctionImportInfoImpl;
 import org.apache.olingo.commons.core.edm.EdmSingletonInfoImpl;
-import org.apache.olingo.server.api.edm.provider.ActionImport;
-import org.apache.olingo.server.api.edm.provider.EdmProvider;
-import org.apache.olingo.server.api.edm.provider.EntityContainer;
-import org.apache.olingo.server.api.edm.provider.EntitySet;
-import org.apache.olingo.server.api.edm.provider.FunctionImport;
-import org.apache.olingo.server.api.edm.provider.Schema;
-import org.apache.olingo.server.api.edm.provider.Singleton;
+import org.apache.olingo.server.api.edm.provider.*;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EdmServiceMetadataImpl implements EdmServiceMetadata {
+public class EdmMetadataImpl implements EdmMetadata {
 
   private EdmProvider provider;
 
@@ -56,18 +44,8 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
 
   private List<EdmFunctionImportInfo> functionImportInfos;
 
-  public EdmServiceMetadataImpl(final EdmProvider provider) {
+  public EdmMetadataImpl(final EdmProvider provider) {
     this.provider = provider;
-  }
-
-  @Override
-  public InputStream getMetadata() {
-    throw new RuntimeException("Not yet implemented");
-  }
-
-  @Override
-  public ODataServiceVersion getDataServiceVersion() {
-    return ODataServiceVersion.V40;
   }
 
   @Override
@@ -185,6 +163,11 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
       }
     }
     return functionImportInfos;
+  }
+
+  @Override
+  public ODataServiceVersion getDataServiceVersion() {
+    return ODataServiceVersion.V40;
   }
 
 }

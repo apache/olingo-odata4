@@ -21,10 +21,12 @@ package org.apache.olingo.server.core.serializer.xml;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -33,8 +35,10 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.Target;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edm.provider.Action;
 import org.apache.olingo.server.api.edm.provider.ActionImport;
 import org.apache.olingo.server.api.edm.provider.ComplexType;
@@ -54,32 +58,31 @@ import org.apache.olingo.server.api.edm.provider.ReturnType;
 import org.apache.olingo.server.api.edm.provider.Schema;
 import org.apache.olingo.server.api.edm.provider.Singleton;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.core.ServiceMetadataImpl;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
 
 public class MetadataDocumentTest {
 
-  @Test(expected = SerializerException.class)
-  public void metadataOnJsonResultsInException() throws Exception {
-    ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.JSON);
-    serializer.metadataDocument(mock(Edm.class));
-  }
-
   @Test
   public void writeMetadataWithEmptyMockedEdm() throws Exception {
     ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.XML);
+    ServiceMetadata metadata = mock(ServiceMetadata.class);
     Edm edm = mock(Edm.class);
-    serializer.metadataDocument(edm);
+    when(metadata.getEdm()).thenReturn(edm);
+    serializer.metadataDocument(metadata);
   }
 
   @Test
   public void writeMetadataWithLocalTestEdm() throws Exception {
     ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.XML);
-    Edm edm = new EdmProviderImpl(new TestMetadataProvider());
-    InputStream metadata = serializer.metadataDocument(edm);
+    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(ODataServiceVersion.V40,
+            new TestMetadataProvider(), Collections.<EdmxReference>emptyList());
+    InputStream metadata = serializer.metadataDocument(serviceMetadata);
     assertNotNull(metadata);
 
     String metadataString = IOUtils.toString(metadata);
@@ -147,8 +150,9 @@ public class MetadataDocumentTest {
   @Test
   public void writeMetadataWithTechnicalScenario() throws Exception {
     ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.XML);
-    EdmProviderImpl edm = new EdmProviderImpl(new EdmTechProvider());
-    InputStream metadata = serializer.metadataDocument(edm);
+    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(ODataServiceVersion.V40,
+            new TestMetadataProvider(), Collections.<EdmxReference>emptyList());
+    InputStream metadata = serializer.metadataDocument(serviceMetadata);
     assertNotNull(metadata);
     // The technical scenario is too big to verify. We are content for now to make sure we can serialize it.
     // System.out.println(StringUtils.inputStreamToString(metadata, false));

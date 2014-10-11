@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.serializer.json;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.data.ContextURL;
@@ -37,6 +38,7 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
@@ -56,7 +58,8 @@ import org.mockito.Mockito;
 
 public class ODataJsonSerializerTest {
 
-  private static final Edm edm = OData.newInstance().createEdm(new EdmTechProvider());
+  private static final Edm edm = OData.newInstance().createServiceMetadata(
+          new EdmTechProvider(), Collections.<EdmxReference>emptyList()).getEdm();
   private static final EdmEntityContainer entityContainer = edm.getEntityContainer(
       new FullQualifiedName("olingo.odata.test1", "Container"));
   private final DataProvider data = new DataProvider();

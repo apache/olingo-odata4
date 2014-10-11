@@ -18,31 +18,9 @@
  */
 package org.apache.olingo.server.core.serializer.xml;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAction;
-import org.apache.olingo.commons.api.edm.EdmActionImport;
-import org.apache.olingo.commons.api.edm.EdmBindingTarget;
-import org.apache.olingo.commons.api.edm.EdmComplexType;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.EdmEnumType;
-import org.apache.olingo.commons.api.edm.EdmFunction;
-import org.apache.olingo.commons.api.edm.EdmFunctionImport;
-import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
-import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
-import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
-import org.apache.olingo.commons.api.edm.EdmOperation;
-import org.apache.olingo.commons.api.edm.EdmParameter;
-import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
-import org.apache.olingo.commons.api.edm.EdmReturnType;
-import org.apache.olingo.commons.api.edm.EdmSchema;
-import org.apache.olingo.commons.api.edm.EdmSingleton;
-import org.apache.olingo.commons.api.edm.EdmStructuredType;
-import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.*;
+import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 
 import javax.xml.stream.XMLStreamException;
@@ -93,7 +71,7 @@ public class MetadataDocumentXmlSerializer {
   private static final String XML_NAMESPACE = "Namespace";
   private static final String XML_TYPE_DEFINITION = "TypeDefinition";
 
-  private final Edm edm;
+  private final ServiceMetadata serviceMetadata;
 
   private final static String EDMX = "Edmx";
   private final static String PREFIX_EDMX = "edmx";
@@ -101,8 +79,8 @@ public class MetadataDocumentXmlSerializer {
 
   private final static String NS_EDM = "http://docs.oasis-open.org/odata/ns/edm";
 
-  public MetadataDocumentXmlSerializer(final Edm edm) {
-    this.edm = edm;
+  public MetadataDocumentXmlSerializer(final ServiceMetadata edm) {
+    this.serviceMetadata = edm;
   }
 
   public void writeMetadataDocument(final XMLStreamWriter writer) throws XMLStreamException {
@@ -122,7 +100,7 @@ public class MetadataDocumentXmlSerializer {
   private void appendDataServices(final XMLStreamWriter writer) throws XMLStreamException {
     writer.setDefaultNamespace(NS_EDM);
     writer.writeStartElement(NS_EDMX, "DataServices");
-    for (EdmSchema schema : edm.getSchemas()) {
+    for (EdmSchema schema : serviceMetadata.getEdm().getSchemas()) {
       appendSchema(writer, schema);
     }
     writer.writeEndElement();
@@ -531,15 +509,17 @@ public class MetadataDocumentXmlSerializer {
    * and mentioned in its Common Schema Definition Language (CSDL) document.
    */
   private void appendReference(final XMLStreamWriter writer) throws XMLStreamException {
-    writer.writeStartElement(NS_EDMX, "Reference");
-    // TODO: Which value can we use here?
-    // <http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml>
-    // is an external site we don't want to query each time an EDM-enabled client is used.
-    writer.writeAttribute("Uri",
-        "http://localhost:9080/odata-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml");
-    writer.writeEmptyElement(NS_EDMX, "Include");
-    writer.writeAttribute(XML_NAMESPACE, "Org.OData.Core.V1");
-    writer.writeAttribute(XML_ALIAS, "Core");
-    writer.writeEndElement();
+    List<EdmxReference> references = serviceMetadata.getReferences();
+    for (EdmxReference reference: references) {
+      writer.writeStartElement(NS_EDMX, "Reference");
+      // TODO: Which value can we use here?
+      // <http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml>
+      // is an external site we don't want to query each time an EDM-enabled client is used.
+      writer.writeAttribute("Uri", reference.getUri().toASCIIString());
+  //    writer.writeEmptyElement(NS_EDMX, "Include");
+  //    writer.writeAttribute(XML_NAMESPACE, reference.getIncludeNamespace());
+  //    writer.writeAttribute(XML_ALIAS, reference.getIncludeAlias());
+  //    writer.writeEndElement();
+    }
   }
 }

@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.serializer.utils;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -28,6 +29,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
@@ -39,7 +41,8 @@ import org.mockito.Mockito;
 
 public class ContextURLHelperTest {
 
-  private static final Edm edm = OData.newInstance().createEdm(new EdmTechProvider());
+  private static final Edm edm = OData.newInstance().createServiceMetadata(
+          new EdmTechProvider(), Collections.<EdmxReference>emptyList()).getEdm();
   private static final EdmEntityContainer entityContainer = edm.getEntityContainer(
       new FullQualifiedName("olingo.odata.test1", "Container"));
 

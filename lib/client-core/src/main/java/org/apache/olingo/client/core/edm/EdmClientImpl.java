@@ -58,7 +58,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmSchema;
-import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
+import org.apache.olingo.commons.api.edm.EdmMetadata;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -74,7 +74,7 @@ public class EdmClientImpl extends AbstractEdm {
 
   private final Map<String, Schema> xmlSchemaByNamespace;
 
-  private final EdmServiceMetadata serviceMetadata;
+  private final EdmMetadata serviceMetadata;
 
   public EdmClientImpl(final ODataServiceVersion version, final Map<String, Schema> xmlSchemas) {
     this.version = version;
@@ -88,11 +88,11 @@ public class EdmClientImpl extends AbstractEdm {
       }
     }
 
-    this.serviceMetadata = AbstractEdmServiceMetadataImpl.getInstance(version, this.xmlSchemas);
+    this.serviceMetadata = AbstractEdmMetadataImpl.getInstance(version, this.xmlSchemas);
   }
 
   @Override
-  protected EdmServiceMetadata createServiceMetadata() {
+  protected EdmMetadata createServiceMetadata() {
     return serviceMetadata;
   }
 

@@ -26,7 +26,7 @@ import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
 import org.apache.olingo.client.api.edm.xml.v4.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.v4.Singleton;
-import org.apache.olingo.client.core.edm.AbstractEdmServiceMetadataImpl;
+import org.apache.olingo.client.core.edm.AbstractEdmMetadataImpl;
 import org.apache.olingo.commons.api.edm.EdmActionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmSingletonInfo;
@@ -35,13 +35,13 @@ import org.apache.olingo.commons.core.edm.EdmActionImportInfoImpl;
 import org.apache.olingo.commons.core.edm.EdmFunctionImportInfoImpl;
 import org.apache.olingo.commons.core.edm.EdmSingletonInfoImpl;
 
-public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
+public class EdmMetadataImpl extends AbstractEdmMetadataImpl {
 
   private static final ODataServiceVersion SERVICE_VERSION = ODataServiceVersion.V40;
 
   private List<EdmSingletonInfo> singletonInfos;
 
-  public EdmServiceMetadataImpl(final List<Schema> xmlSchemas) {
+  public EdmMetadataImpl(final List<Schema> xmlSchemas) {
     super(xmlSchemas);
   }
 

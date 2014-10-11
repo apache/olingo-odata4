@@ -176,9 +176,9 @@ public interface Edm {
   /**
    * Get service metadata.
    * <br/>
-   * See {@link EdmServiceMetadata} for more information.
+   * See {@link EdmMetadata} for more information.
    * 
-   * @return {@link EdmServiceMetadata}
+   * @return {@link EdmMetadata}
    */
-  EdmServiceMetadata getServiceMetadata();
+  EdmMetadata getServiceMetadata();
 }

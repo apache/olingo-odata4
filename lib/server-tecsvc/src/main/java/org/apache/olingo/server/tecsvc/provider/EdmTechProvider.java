@@ -19,6 +19,7 @@
 package org.apache.olingo.server.tecsvc.provider;
 
 import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.edm.provider.Action;
 import org.apache.olingo.server.api.edm.provider.ActionImport;
@@ -38,6 +39,7 @@ import org.apache.olingo.server.api.edm.provider.Term;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class EdmTechProvider extends EdmProvider {
@@ -52,8 +54,13 @@ public class EdmTechProvider extends EdmProvider {
   private final ActionProvider actionProvider;
   private final FunctionProvider functionProvider;
   private final TypeDefinitionProvider typeDefinitionProvider;
+  private final List<EdmxReference> references;
 
   public EdmTechProvider() {
+    this(Collections.<EdmxReference>emptyList());
+  }
+
+  public EdmTechProvider(List<EdmxReference> references) {
     containerProvider = new ContainerProvider(this);
     entityTypeProvider = new EntityTypeProvider();
     complexTypeProvider = new ComplexTypeProvider();
@@ -62,6 +69,7 @@ public class EdmTechProvider extends EdmProvider {
     functionProvider = new FunctionProvider();
     typeDefinitionProvider = new TypeDefinitionProvider();
     schemaProvider = new SchemaProvider(this);
+    this.references = references;
   }
 
   @Override

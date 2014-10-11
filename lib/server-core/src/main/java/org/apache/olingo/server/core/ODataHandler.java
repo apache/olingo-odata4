@@ -27,12 +27,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataServerError;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.*;
 import org.apache.olingo.server.api.processor.DefaultProcessor;
 import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
@@ -56,14 +51,14 @@ import org.apache.olingo.server.core.uri.validator.UriValidator;
 public class ODataHandler {
 
   private final OData odata;
-  private final Edm edm;
+  private final ServiceMetadata serviceMetadata;
   private final Map<Class<? extends Processor>, Processor> processors =
       new HashMap<Class<? extends Processor>, Processor>();
   private ContentType requestedContentType;
 
-  public ODataHandler(final OData server, final Edm edm) {
+  public ODataHandler(final OData server, final ServiceMetadata serviceMetadata) {
     odata = server;
-    this.edm = edm;
+    this.serviceMetadata = serviceMetadata;
 
     register(new DefaultProcessor());
     register(new DefaultRedirectProcessor());
@@ -112,7 +107,9 @@ public class ODataHandler {
     validateODataVersion(request, response);
 
     Parser parser = new Parser();
-    final UriInfo uriInfo = parser.parseUri(request.getRawODataPath(), request.getRawQueryPath(), null, edm);
+    final UriInfo uriInfo = parser.parseUri(
+            request.getRawODataPath(), request.getRawQueryPath(),
+            null, serviceMetadata.getEdm());
 
     UriValidator validator = new UriValidator();
     validator.validate(uriInfo, request.getMethod());
@@ -302,7 +299,7 @@ public class ODataHandler {
   }
 
   public void register(final Processor processor) {
-    processor.init(odata, edm);
+    processor.init(odata, serviceMetadata);
 
     for (Class<?> cls : processor.getClass().getInterfaces()) {
       if (Processor.class.isAssignableFrom(cls) && cls != Processor.class) {

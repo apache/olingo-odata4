@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
-import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
+import org.apache.olingo.commons.api.edm.EdmMetadata;
 import org.apache.olingo.commons.api.edm.EdmSingletonInfo;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
@@ -41,11 +41,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class EdmServiceMetadataImplTest {
+public class EdmMetadataImplTest {
 
   @Test
   public void allGettersMustDeliver() {
-    EdmServiceMetadata serviceMetadata = new EdmServiceMetadataImpl(new CustomProvider(true));
+    EdmMetadata serviceMetadata = new EdmMetadataImpl(new CustomProvider(true));
     List<EdmEntitySetInfo> entitySetInfos = serviceMetadata.getEntitySetInfos();
     assertNotNull(entitySetInfos);
     assertEquals(2, entitySetInfos.size());
@@ -64,43 +64,37 @@ public class EdmServiceMetadataImplTest {
     assertTrue(functionImportInfos == serviceMetadata.getFunctionImportInfos());
   }
 
-  @Test(expected = RuntimeException.class)
-  public void getMetadataAsInputStreamIsNotImplemented() {
-    EdmServiceMetadata serviceMetadata = new EdmServiceMetadataImpl(new CustomProvider(true));
-    serviceMetadata.getMetadata();
-  }
-
   @Test
   public void initialProvider() {
     EdmProvider provider = new EdmProvider() {};
-    EdmServiceMetadata serviceMetadata = new EdmServiceMetadataImpl(provider);
+    EdmMetadata serviceMetadata = new EdmMetadataImpl(provider);
     assertEquals(ODataServiceVersion.V40, serviceMetadata.getDataServiceVersion());
   }
 
   @Test(expected = EdmException.class)
   public void initialProviderEntitySetInfo() {
     EdmProvider provider = new EdmProvider() {};
-    EdmServiceMetadata serviceMetadata = new EdmServiceMetadataImpl(provider);
+    EdmMetadata serviceMetadata = new EdmMetadataImpl(provider);
     serviceMetadata.getEntitySetInfos();
   }
 
   @Test(expected = EdmException.class)
   public void initialProviderSingletonInfo() {
     EdmProvider provider = new EdmProvider() {};
-    EdmServiceMetadata serviceMetadata = new EdmServiceMetadataImpl(provider);
+    EdmMetadata serviceMetadata = new EdmMetadataImpl(provider);
     serviceMetadata.getSingletonInfos();
   }
 
   @Test(expected = EdmException.class)
   public void initialProviderFunctionImportInfo() {
     EdmProvider provider = new EdmProvider() {};
-    EdmServiceMetadata serviceMetadata = new EdmServiceMetadataImpl(provider);
+    EdmMetadata serviceMetadata = new EdmMetadataImpl(provider);
     serviceMetadata.getFunctionImportInfos();
   }
 
   @Test
   public void emptySchemaMustNotResultInException() {
-    EdmServiceMetadata serviceMetadata = new EdmServiceMetadataImpl(new CustomProvider(false));
+    EdmMetadata serviceMetadata = new EdmMetadataImpl(new CustomProvider(false));
     assertNotNull(serviceMetadata.getEntitySetInfos());
     assertEquals(0, serviceMetadata.getEntitySetInfos().size());
 
@@ -120,13 +114,13 @@ public class EdmServiceMetadataImplTest {
       }
     };
 
-    EdmServiceMetadata serviceMetadata = new EdmServiceMetadataImpl(provider);
+    EdmMetadata serviceMetadata = new EdmMetadataImpl(provider);
     callGetEntitySetInfosAndExpectException(serviceMetadata);
     callGetSingletonInfosAndExpectException(serviceMetadata);
     callGetFunctionImportInfosAndExpectException(serviceMetadata);
   }
 
-  private void callGetFunctionImportInfosAndExpectException(final EdmServiceMetadata svc) {
+  private void callGetFunctionImportInfosAndExpectException(final EdmMetadata svc) {
     try {
       svc.getFunctionImportInfos();
     } catch (EdmException e) {
@@ -137,7 +131,7 @@ public class EdmServiceMetadataImplTest {
 
   }
 
-  private void callGetSingletonInfosAndExpectException(final EdmServiceMetadata svc) {
+  private void callGetSingletonInfosAndExpectException(final EdmMetadata svc) {
     try {
       svc.getSingletonInfos();
     } catch (EdmException e) {
@@ -147,7 +141,7 @@ public class EdmServiceMetadataImplTest {
     fail("Expected EdmException was not thrown");
   }
 
-  private void callGetEntitySetInfosAndExpectException(final EdmServiceMetadata svc) {
+  private void callGetEntitySetInfosAndExpectException(final EdmMetadata svc) {
     try {
       svc.getEntitySetInfos();
     } catch (EdmException e) {
