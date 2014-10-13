@@ -117,10 +117,25 @@ public class MetadataDocumentTest {
             new EdmxReferenceIncludeAnnotationImpl("ReferenceWithAllTermNs.5", "Q.5", "TargetNS.5"));
     edmxReferences.add(referenceWithAll);
 
+    EdmxReferenceImpl referenceWithAllAndNull = new EdmxReferenceImpl(
+            URI.create("http://localhost/odata/odata/v4.0/referenceWithAllAndNull"));
+    referenceWithAllAndNull.addInclude(new EdmxReferenceIncludeImpl("referenceWithAllAndNull.1"));
+    referenceWithAllAndNull.addInclude(new EdmxReferenceIncludeImpl("referenceWithAllAndNull.2", null));
+    referenceWithAllAndNull.addIncludeAnnotation(
+            new EdmxReferenceIncludeAnnotationImpl("ReferenceWithAllTermNs.4"));
+    referenceWithAllAndNull.addIncludeAnnotation(
+            new EdmxReferenceIncludeAnnotationImpl("ReferenceWithAllTermAndNullNs.5", "Q.5", null));
+    referenceWithAllAndNull.addIncludeAnnotation(
+            new EdmxReferenceIncludeAnnotationImpl("ReferenceWithAllTermAndNullNs.6", null, "TargetNS"));
+    referenceWithAllAndNull.addIncludeAnnotation(
+            new EdmxReferenceIncludeAnnotationImpl("ReferenceWithAllTermAndNullNs.7", null, null));
+    edmxReferences.add(referenceWithAllAndNull);
+
     ServiceMetadata serviceMetadata = new ServiceMetadataImpl(ODataServiceVersion.V40,
             new TestMetadataProvider(), edmxReferences);
     InputStream metadata = serializer.metadataDocument(serviceMetadata);
     assertNotNull(metadata);
+
 
     String metadataString = IOUtils.toString(metadata);
     // edmx reference
@@ -144,13 +159,23 @@ public class MetadataDocumentTest {
             "</edmx:Reference>"));
     assertTrue(metadataString.contains(
             "<edmx:Reference Uri=\"http://localhost/odata/odata/v4.0/referenceWithAll\">" +
-            "<edmx:Include Namespace=\"ReferenceWithAll.1\" Alias=\"Core1\"/>" +
-            "<edmx:Include Namespace=\"ReferenceWithAll.2\" Alias=\"Core2\"/>" +
-            "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.4\" " +
+                    "<edmx:Include Namespace=\"ReferenceWithAll.1\" Alias=\"Core1\"/>" +
+                    "<edmx:Include Namespace=\"ReferenceWithAll.2\" Alias=\"Core2\"/>" +
+                    "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.4\" " +
                     "Qualifier=\"Q.4\" TargetNamespace=\"TargetNS.4\"/>" +
-            "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.5\" " +
+                    "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.5\" " +
                     "Qualifier=\"Q.5\" TargetNamespace=\"TargetNS.5\"/>" +
-            "</edmx:Reference>"));
+                    "</edmx:Reference>"));
+    assertTrue(metadataString.contains(
+            "<edmx:Reference Uri=\"http://localhost/odata/odata/v4.0/referenceWithAllAndNull\">" +
+                    "<edmx:Include Namespace=\"referenceWithAllAndNull.1\"/>" +
+                    "<edmx:Include Namespace=\"referenceWithAllAndNull.2\"/>" +
+                    "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.4\"/>" +
+                    "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermAndNullNs.5\" Qualifier=\"Q.5\"/>" +
+                    "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermAndNullNs.6\" " +
+                                              "TargetNamespace=\"TargetNS\"/>" +
+                    "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermAndNullNs.7\"/>" +
+                    "</edmx:Reference>"));
   }
 
   @Test

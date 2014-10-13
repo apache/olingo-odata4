@@ -31,6 +31,10 @@ public class EdmxReferenceIncludeImpl implements EdmxReferenceInclude {
     this.alias = alias;
   }
 
+  public EdmxReferenceIncludeImpl(String namespace) {
+    this(namespace, null);
+  }
+
   @Override
   public String getNamespace() {
     return namespace;

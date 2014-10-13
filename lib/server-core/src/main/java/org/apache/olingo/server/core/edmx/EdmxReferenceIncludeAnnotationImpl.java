@@ -34,6 +34,10 @@ public class EdmxReferenceIncludeAnnotationImpl implements EdmxReferenceIncludeA
     this.targetNamespace = targetNamespace;
   }
 
+  public EdmxReferenceIncludeAnnotationImpl(String termNamespace) {
+    this(termNamespace, null, null);
+  }
+
   @Override
   public String getTermNamespace() {
     return termNamespace;
