@@ -21,6 +21,8 @@ package org.apache.olingo.server.core.serializer.xml;
 import org.apache.olingo.commons.api.edm.*;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
+import org.apache.olingo.server.api.edmx.EdmxReferenceIncludeAnnotation;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 
 import javax.xml.stream.XMLStreamException;
@@ -70,6 +72,13 @@ public class MetadataDocumentXmlSerializer {
   private static final String XML_ALIAS = "Alias";
   private static final String XML_NAMESPACE = "Namespace";
   private static final String XML_TYPE_DEFINITION = "TypeDefinition";
+  private static final String REFERENCE = "Reference";
+  private static final String INCLUDE = "Include";
+  private static final String INCLUDE_ANNOTATIONS = "IncludeAnnotations";
+  private static final String XML_TERM_NAMESPACE = "TermNamespace";
+  private static final String XML_TARGET_NAMESPACE = "TargetNamespace";
+  private static final String XML_QUALIFIER = "Qualifier";
+  private static final String URI = "Uri";
 
   private final ServiceMetadata serviceMetadata;
 
@@ -463,7 +472,7 @@ public class MetadataDocumentXmlSerializer {
       writer.writeStartElement(XML_KEY);
       for (EdmKeyPropertyRef keyRef : keyPropertyRefs) {
         writer.writeEmptyElement(XML_PROPERTY_REF);
-        String keyName = null;
+        final String keyName;
         if (keyRef.getPath() != null) {
           keyName = keyRef.getPath() + "/" + keyRef.getKeyPropertyName();
         } else {
@@ -511,15 +520,33 @@ public class MetadataDocumentXmlSerializer {
   private void appendReference(final XMLStreamWriter writer) throws XMLStreamException {
     List<EdmxReference> references = serviceMetadata.getReferences();
     for (EdmxReference reference: references) {
-      writer.writeStartElement(NS_EDMX, "Reference");
-      // TODO: Which value can we use here?
-      // <http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml>
-      // is an external site we don't want to query each time an EDM-enabled client is used.
-      writer.writeAttribute("Uri", reference.getUri().toASCIIString());
-  //    writer.writeEmptyElement(NS_EDMX, "Include");
-  //    writer.writeAttribute(XML_NAMESPACE, reference.getIncludeNamespace());
-  //    writer.writeAttribute(XML_ALIAS, reference.getIncludeAlias());
-  //    writer.writeEndElement();
+      writer.writeStartElement(PREFIX_EDMX, REFERENCE, NS_EDMX);
+      writer.writeAttribute(URI, reference.getUri().toASCIIString());
+
+      List<EdmxReferenceInclude> includes = reference.getIncludes();
+      for (EdmxReferenceInclude include : includes) {
+        writer.writeStartElement(PREFIX_EDMX, INCLUDE, NS_EDMX);
+        writer.writeAttribute(XML_NAMESPACE, include.getNamespace());
+        if(include.getAlias() != null) {
+          writer.writeAttribute(XML_ALIAS, include.getAlias());
+        }
+        writer.writeEndElement();
+      }
+
+      List<EdmxReferenceIncludeAnnotation> includeAnnotations = reference.getIncludeAnnotations();
+      for (EdmxReferenceIncludeAnnotation includeAnnotation : includeAnnotations) {
+        writer.writeStartElement(PREFIX_EDMX, INCLUDE_ANNOTATIONS, NS_EDMX);
+        writer.writeAttribute(XML_TERM_NAMESPACE, includeAnnotation.getTermNamespace());
+        if(includeAnnotation.getQualifier() != null) {
+          writer.writeAttribute(XML_QUALIFIER, includeAnnotation.getQualifier());
+        }
+        if(includeAnnotation.getTargetNamespace() != null) {
+          writer.writeAttribute(XML_TARGET_NAMESPACE, includeAnnotation.getTargetNamespace());
+        }
+        writer.writeEndElement();
+      }
+
+      writer.writeEndElement();
     }
   }
 }

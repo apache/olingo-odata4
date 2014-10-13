@@ -24,6 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,11 +60,12 @@ import org.apache.olingo.server.api.edm.provider.Schema;
 import org.apache.olingo.server.api.edm.provider.Singleton;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.ServiceMetadataImpl;
-import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
+import org.apache.olingo.server.core.edmx.EdmxReferenceImpl;
+import org.apache.olingo.server.core.edmx.EdmxReferenceIncludeAnnotationImpl;
+import org.apache.olingo.server.core.edmx.EdmxReferenceIncludeImpl;
 import org.junit.Test;
 
 public class MetadataDocumentTest {
@@ -78,14 +80,96 @@ public class MetadataDocumentTest {
   }
 
   @Test
-  public void writeMetadataWithLocalTestEdm() throws Exception {
+  public void writeEdmxWithLocalTestEdm() throws Exception {
     ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.XML);
+
+    List<EdmxReference> edmxReferences = new ArrayList<EdmxReference>();
+    EdmxReferenceImpl reference = new EdmxReferenceImpl(URI.create("http://example.com"));
+    edmxReferences.add(reference);
+
+    EdmxReferenceImpl referenceWithInclude = new EdmxReferenceImpl(
+            URI.create("http://localhost/odata/odata/v4.0/referenceWithInclude"));
+    EdmxReferenceInclude include = new EdmxReferenceIncludeImpl("Org.OData.Core.V1", "Core");
+    referenceWithInclude.addInclude(include);
+    edmxReferences.add(referenceWithInclude);
+
+    EdmxReferenceImpl referenceWithTwoIncludes = new EdmxReferenceImpl(
+            URI.create("http://localhost/odata/odata/v4.0/referenceWithTwoIncludes"));
+    referenceWithTwoIncludes.addInclude(new EdmxReferenceIncludeImpl("Org.OData.Core.2", "Core2"));
+    referenceWithTwoIncludes.addInclude(new EdmxReferenceIncludeImpl("Org.OData.Core.3", "Core3"));
+    edmxReferences.add(referenceWithTwoIncludes);
+
+    EdmxReferenceImpl referenceWithIncludeAnnos = new EdmxReferenceImpl(
+            URI.create("http://localhost/odata/odata/v4.0/referenceWithIncludeAnnos"));
+    referenceWithIncludeAnnos.addIncludeAnnotation(
+            new EdmxReferenceIncludeAnnotationImpl("TermNs.2", "Q.2", "TargetNS.2"));
+    referenceWithIncludeAnnos.addIncludeAnnotation(
+            new EdmxReferenceIncludeAnnotationImpl("TermNs.3", "Q.3","TargetNS.3"));
+    edmxReferences.add(referenceWithIncludeAnnos);
+
+    EdmxReferenceImpl referenceWithAll = new EdmxReferenceImpl(
+            URI.create("http://localhost/odata/odata/v4.0/referenceWithAll"));
+    referenceWithAll.addInclude(new EdmxReferenceIncludeImpl("ReferenceWithAll.1", "Core1"));
+    referenceWithAll.addInclude(new EdmxReferenceIncludeImpl("ReferenceWithAll.2", "Core2"));
+    referenceWithAll.addIncludeAnnotation(
+            new EdmxReferenceIncludeAnnotationImpl("ReferenceWithAllTermNs.4", "Q.4", "TargetNS.4"));
+    referenceWithAll.addIncludeAnnotation(
+            new EdmxReferenceIncludeAnnotationImpl("ReferenceWithAllTermNs.5", "Q.5", "TargetNS.5"));
+    edmxReferences.add(referenceWithAll);
+
     ServiceMetadata serviceMetadata = new ServiceMetadataImpl(ODataServiceVersion.V40,
-            new TestMetadataProvider(), Collections.<EdmxReference>emptyList());
+            new TestMetadataProvider(), edmxReferences);
     InputStream metadata = serializer.metadataDocument(serviceMetadata);
     assertNotNull(metadata);
 
     String metadataString = IOUtils.toString(metadata);
+    // edmx reference
+    assertTrue(metadataString.contains(
+            "<edmx:Reference Uri=\"http://example.com\"/>"));
+    assertTrue(metadataString.contains(
+            "<edmx:Reference " +
+                    "Uri=\"http://localhost/odata/odata/v4.0/referenceWithInclude\">" +
+            "<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\"/>" +
+            "</edmx:Reference>"));
+    assertTrue(metadataString.contains(
+            "<edmx:Reference " +
+                    "Uri=\"http://localhost/odata/odata/v4.0/referenceWithTwoIncludes\">" +
+            "<edmx:Include Namespace=\"Org.OData.Core.2\" Alias=\"Core2\"/>" +
+            "<edmx:Include Namespace=\"Org.OData.Core.3\" Alias=\"Core3\"/>" +
+            "</edmx:Reference>"));
+    assertTrue(metadataString.contains(
+            "<edmx:Reference Uri=\"http://localhost/odata/odata/v4.0/referenceWithIncludeAnnos\">" +
+            "<edmx:IncludeAnnotations TermNamespace=\"TermNs.2\" Qualifier=\"Q.2\" TargetNamespace=\"TargetNS.2\"/>" +
+            "<edmx:IncludeAnnotations TermNamespace=\"TermNs.3\" Qualifier=\"Q.3\" TargetNamespace=\"TargetNS.3\"/>" +
+            "</edmx:Reference>"));
+    assertTrue(metadataString.contains(
+            "<edmx:Reference Uri=\"http://localhost/odata/odata/v4.0/referenceWithAll\">" +
+            "<edmx:Include Namespace=\"ReferenceWithAll.1\" Alias=\"Core1\"/>" +
+            "<edmx:Include Namespace=\"ReferenceWithAll.2\" Alias=\"Core2\"/>" +
+            "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.4\" " +
+                    "Qualifier=\"Q.4\" TargetNamespace=\"TargetNS.4\"/>" +
+            "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.5\" " +
+                    "Qualifier=\"Q.5\" TargetNamespace=\"TargetNS.5\"/>" +
+            "</edmx:Reference>"));
+  }
+
+  @Test
+  public void writeMetadataWithLocalTestEdm() throws Exception {
+    ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.XML);
+    List<EdmxReference> edmxReferences = getEdmxReferences();
+    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(ODataServiceVersion.V40,
+            new TestMetadataProvider(), edmxReferences);
+    InputStream metadata = serializer.metadataDocument(serviceMetadata);
+    assertNotNull(metadata);
+
+    String metadataString = IOUtils.toString(metadata);
+    // edmx reference
+    assertTrue(metadataString
+            .contains("<edmx:Reference " +
+                    "Uri=\"http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml\">" +
+                    "<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\"/>" +
+                    "</edmx:Reference>"));
+
     assertTrue(metadataString
         .contains("<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">"));
 
@@ -145,6 +229,25 @@ public class MetadataDocumentTest {
             "EntitySet=\"namespace.EntitySetName\" IncludeInServiceDocument=\"false\"/>"));
 
     assertTrue(metadataString.contains("</EntityContainer></Schema></edmx:DataServices></edmx:Edmx>"));
+  }
+
+  /**
+   * <code>
+   *  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml">
+   *    <edmx:Include Namespace="Org.OData.Core.V1" Alias="Core"/>
+   *  </edmx:Reference>
+   * </code>
+   *
+   * @return default emdx reference
+   */
+  private List<EdmxReference> getEdmxReferences() {
+    List<EdmxReference> edmxReferences = new ArrayList<EdmxReference>();
+    EdmxReferenceImpl reference = new EdmxReferenceImpl(
+            URI.create("http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml"));
+    EdmxReferenceInclude include = new EdmxReferenceIncludeImpl("Org.OData.Core.V1", "Core");
+    reference.addInclude(include);
+    edmxReferences.add(reference);
+    return edmxReferences;
   }
 
   @Test
