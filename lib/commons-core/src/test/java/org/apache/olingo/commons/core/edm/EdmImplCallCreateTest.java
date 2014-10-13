@@ -28,7 +28,6 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmSchema;
-import org.apache.olingo.commons.api.edm.EdmMetadata;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -151,11 +150,6 @@ public class EdmImplCallCreateTest {
     assertNull(edm.getUnboundFunction(WRONG_FQN, null));
   }
 
-  @Test
-  public void callCreateServiceMetadata() {
-    assertNotNull(edm.getServiceMetadata());
-  }
-
   @Before
   public void setup() {
     edm = new LocalEdm();
@@ -241,11 +235,6 @@ public class EdmImplCallCreateTest {
         return function;
       }
       return null;
-    }
-
-    @Override
-    public EdmMetadata createServiceMetadata() {
-      return mock(EdmMetadata.class);
     }
 
     @Override

@@ -172,13 +172,4 @@ public interface Edm {
    * @return {@link EdmAnnotation}
    */
   EdmAnnotation getAnnotation(FullQualifiedName annotatableName, EdmTerm term);
-
-  /**
-   * Get service metadata.
-   * <br/>
-   * See {@link EdmMetadata} for more information.
-   * 
-   * @return {@link EdmMetadata}
-   */
-  EdmMetadata getServiceMetadata();
 }

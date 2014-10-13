@@ -55,7 +55,6 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
-import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
@@ -67,6 +66,8 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.junit.Test;
+
+import java.util.List;
 
 public class MetadataTest extends AbstractTest {
 
@@ -240,24 +241,29 @@ public class MetadataTest extends AbstractTest {
     final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("fromdoc1-metadata.xml"));
     assertNotNull(edm);
 
-    final EdmFunctionImportInfo fiInfo = edm.getServiceMetadata().getFunctionImportInfos().get(0);
-    final EdmEntityContainer demoService = edm.getEntityContainer(
-            new FullQualifiedName(metadata.getSchema(0).getNamespace(), fiInfo.getEntityContainerName()));
-    assertNotNull(demoService);
-    final EdmFunctionImport fi = demoService.getFunctionImport(fiInfo.getFunctionImportName());
-    assertNotNull(fi);
-    assertEquals(demoService.getEntitySet("Products"), fi.getReturnedEntitySet());
+    List<EdmSchema> schemaList = edm.getSchemas();
+    assertNotNull(schemaList);
+    assertEquals(1, schemaList.size());
+    EdmSchema schema = schemaList.get(0);
 
-    final EdmFunction function = edm.getUnboundFunction(
-            new FullQualifiedName(metadata.getSchema(0).getNamespace(), "ProductsByRating"), null);
-    assertNotNull(function);
-    assertEquals(function.getName(), fi.getUnboundFunction(null).getName());
-    assertEquals(function.getNamespace(), fi.getUnboundFunction(null).getNamespace());
-    assertEquals(function.getParameterNames(), fi.getUnboundFunction(null).getParameterNames());
-    assertEquals(function.getReturnType().getType().getName(),
-            fi.getUnboundFunction(null).getReturnType().getType().getName());
-    assertEquals(function.getReturnType().getType().getNamespace(),
-            fi.getUnboundFunction(null).getReturnType().getType().getNamespace());
+    EdmEntityContainer demoService = schema.getEntityContainer();
+    assertNotNull(demoService);
+    for (EdmFunction function : schema.getFunctions()) {
+      final EdmFunctionImport fi = demoService.getFunctionImport(function.getName());
+      assertNotNull(fi);
+      assertEquals(demoService.getEntitySet("Products"), fi.getReturnedEntitySet());
+
+      final EdmFunction edmFunction = edm.getUnboundFunction(
+              new FullQualifiedName(metadata.getSchema(0).getNamespace(), "ProductsByRating"), null);
+      assertNotNull(edmFunction);
+      assertEquals(edmFunction.getName(), fi.getUnboundFunction(null).getName());
+      assertEquals(edmFunction.getNamespace(), fi.getUnboundFunction(null).getNamespace());
+      assertEquals(edmFunction.getParameterNames(), fi.getUnboundFunction(null).getParameterNames());
+      assertEquals(edmFunction.getReturnType().getType().getName(),
+              fi.getUnboundFunction(null).getReturnType().getType().getName());
+      assertEquals(edmFunction.getReturnType().getType().getNamespace(),
+              fi.getUnboundFunction(null).getReturnType().getType().getNamespace());
+    }
 
     final EdmTypeDefinition weight = edm.getTypeDefinition(new FullQualifiedName("ODataDemo", "Weight"));
     assertNotNull(weight);

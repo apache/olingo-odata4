@@ -26,12 +26,12 @@ import org.apache.olingo.client.api.edm.xml.v4.annotation.ConstantAnnotationExpr
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.annotation.EdmConstantAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.domain.v4.ODataCollectionValueImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataEnumValueImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataPrimitiveValueImpl;
@@ -41,7 +41,7 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
 
   private final ODataValue value;
 
-  public EdmConstantAnnotationExpressionImpl(final Edm edm, final ConstantAnnotationExpression constExprConstruct) {
+  public EdmConstantAnnotationExpressionImpl(final ConstantAnnotationExpression constExprConstruct) {
     if (constExprConstruct.getType() == ConstantAnnotationExpression.Type.EnumMember) {
       final List<ODataEnumValue> enumValues = new ArrayList<ODataEnumValue>();
       String enumTypeName = null;
@@ -97,7 +97,7 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
           kind = EdmPrimitiveTypeKind.String;
       }
       final ODataPrimitiveValueImpl.BuilderImpl primitiveValueBuilder =
-          new ODataPrimitiveValueImpl.BuilderImpl(edm.getServiceMetadata().getDataServiceVersion());
+          new ODataPrimitiveValueImpl.BuilderImpl(ODataServiceVersion.V40);
       primitiveValueBuilder.setType(kind);
       try {
         final EdmPrimitiveType primitiveType = EdmPrimitiveTypeFactory.getInstance(kind);

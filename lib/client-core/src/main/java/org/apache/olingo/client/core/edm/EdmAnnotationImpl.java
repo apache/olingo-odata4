@@ -96,7 +96,7 @@ public class EdmAnnotationImpl implements EdmAnnotation {
     EdmAnnotationExpression _expression = null;
 
     if (exp.isConstant()) {
-      _expression = new EdmConstantAnnotationExpressionImpl(edm, exp.asConstant());
+      _expression = new EdmConstantAnnotationExpressionImpl(exp.asConstant());
     } else if (annotation.getExpression().isDynamic()) {
       _expression = getDynamicExpression(exp.asDynamic());
     }

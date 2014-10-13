@@ -29,7 +29,6 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmSchema;
-import org.apache.olingo.commons.api.edm.EdmMetadata;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -249,15 +248,6 @@ public class EdmImplCachingTest {
     assertNotSame(function, function2);
   }
 
-  @Test
-  public void cacheServiceMetadata() {
-    EdmMetadata serviceMetadata = edm.getServiceMetadata();
-    EdmMetadata cachedMetadata = edm.getServiceMetadata();
-
-    assertTrue(serviceMetadata == cachedMetadata);
-    assertEquals(serviceMetadata, cachedMetadata);
-  }
-
   @Before
   public void setup() {
     edm = new LocalEdm();
@@ -358,11 +348,6 @@ public class EdmImplCachingTest {
         return function;
       }
       return null;
-    }
-
-    @Override
-    public EdmMetadata createServiceMetadata() {
-      return mock(EdmMetadata.class);
     }
 
     @Override

@@ -98,7 +98,6 @@ public class EdmProviderImplTest {
     localEdm.getEntityType(FQN);
     localEdm.getEnumType(FQN);
     localEdm.getTypeDefinition(FQN);
-    localEdm.getServiceMetadata();
   }
 
   @Test
@@ -222,10 +221,4 @@ public class EdmProviderImplTest {
 
     assertNull(edm.getComplexType(WRONG_FQN));
   }
-
-  @Test
-  public void getServiceMetadata() {
-    assertNotNull(edm.getServiceMetadata());
-  }
-
 }

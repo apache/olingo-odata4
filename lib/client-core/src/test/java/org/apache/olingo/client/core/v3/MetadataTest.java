@@ -23,13 +23,9 @@ import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
-import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.client.api.v3.ODataClient;
-import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
-import org.apache.olingo.commons.api.edm.EdmActionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -37,11 +33,14 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
-import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
+import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.client.api.v3.ODataClient;
+import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.junit.Test;
@@ -260,10 +259,11 @@ public class MetadataTest extends AbstractTest {
     final Edm metadata = getClient().getReader().
             readMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(metadata);
+    final EdmSchema schema = metadata.getSchemas().get(0);
 
     final Set<String> actionImports = new HashSet<String>();
-    for (EdmActionImportInfo info : metadata.getServiceMetadata().getActionImportInfos()) {
-      actionImports.add(info.getActionImportName());
+    for (EdmAction info : schema.getActions()) {
+      actionImports.add(info.getName());
     }
     final Set<String> expectedAI = new HashSet<String>(Arrays.asList(new String[] {
       "ResetDataSource",
@@ -274,8 +274,8 @@ public class MetadataTest extends AbstractTest {
       "ResetComputerDetailsSpecifications"}));
     assertEquals(expectedAI, actionImports);
     final Set<String> functionImports = new HashSet<String>();
-    for (EdmFunctionImportInfo info : metadata.getServiceMetadata().getFunctionImportInfos()) {
-      functionImports.add(info.getFunctionImportName());
+    for (EdmFunction info : schema.getFunctions()) {
+      functionImports.add(info.getName());
     }
     final Set<String> expectedFI = new HashSet<String>(Arrays.asList(new String[] {
       "GetPrimitiveString",
