@@ -38,6 +38,7 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
+import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
@@ -288,46 +289,53 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
           final Linked linked, final ODataLinked odataLinked, final String metadataETag, final URI base) {
 
     for (Link link : linked.getNavigationLinks()) {
+      final String href = link.getHref();
+      final String title = link.getTitle();
       final Entity inlineEntity = link.getInlineEntity();
       final EntitySet inlineEntitySet = link.getInlineEntitySet();
-
       if (inlineEntity == null && inlineEntitySet == null) {
         ODataLinkType linkType = null;
         if (edmType instanceof EdmStructuredType) {
-          final EdmNavigationProperty navProp = ((EdmStructuredType) edmType).getNavigationProperty(link.getTitle());
+          final EdmNavigationProperty navProp = ((EdmStructuredType) edmType).getNavigationProperty(title);
           if (navProp != null) {
-            linkType = navProp.isCollection()
-                    ? ODataLinkType.ENTITY_SET_NAVIGATION
-                    : ODataLinkType.ENTITY_NAVIGATION;
+            linkType = navProp.isCollection() ?
+                ODataLinkType.ENTITY_SET_NAVIGATION :
+                ODataLinkType.ENTITY_NAVIGATION;
           }
         }
         if (linkType == null) {
-          linkType = link.getType() == null
-                  ? ODataLinkType.ENTITY_NAVIGATION
-                  : ODataLinkType.fromString(client.getServiceVersion(), link.getRel(), link.getType());
+          linkType = link.getType() == null ?
+                  ODataLinkType.ENTITY_NAVIGATION :
+                  ODataLinkType.fromString(client.getServiceVersion(), link.getRel(), link.getType());
         }
 
-        odataLinked.addLink(linkType == ODataLinkType.ENTITY_NAVIGATION
-                ? client.getObjectFactory().
-                newEntityNavigationLink(link.getTitle(), URIUtils.getURI(base, link.getHref()))
-                : client.getObjectFactory().
-                newEntitySetNavigationLink(link.getTitle(), URIUtils.getURI(base, link.getHref())));
+        odataLinked.addLink(linkType == ODataLinkType.ENTITY_NAVIGATION ?
+            client.getObjectFactory().newEntityNavigationLink(title, URIUtils.getURI(base, href)) :
+            client.getObjectFactory().newEntitySetNavigationLink(title, URIUtils.getURI(base, href)));
       } else if (inlineEntity != null) {
-        odataLinked.addLink(new ODataInlineEntity(client.getServiceVersion(),
-                URIUtils.getURI(base, link.getHref()), ODataLinkType.ENTITY_NAVIGATION, link.getTitle(),
-                getODataEntity(new ResWrap<Entity>(
-                                inlineEntity.getBaseURI() == null ? null : inlineEntity.getBaseURI(),
-                                metadataETag,
-                                inlineEntity))));
+        odataLinked.addLink(createODataInlineEntity(inlineEntity,
+            URIUtils.getURI(base, href), title, metadataETag));
       } else {
-        odataLinked.addLink(new ODataInlineEntitySet(client.getServiceVersion(),
-                URIUtils.getURI(base, link.getHref()), ODataLinkType.ENTITY_SET_NAVIGATION, link.getTitle(),
-                getODataEntitySet(new ResWrap<EntitySet>(
-                                inlineEntitySet.getBaseURI() == null ? null : inlineEntitySet.getBaseURI(),
-                                metadataETag,
-                                inlineEntitySet))));
+        odataLinked.addLink(createODataInlineEntitySet(inlineEntitySet,
+            URIUtils.getURI(base, href), title, metadataETag));
       }
     }
+  }
+
+  private ODataInlineEntity createODataInlineEntity(final Entity inlineEntity,
+      final URI uri, final String title, final String metadataETag) {
+    return new ODataInlineEntity(client.getServiceVersion(), uri, ODataLinkType.ENTITY_NAVIGATION, title,
+        getODataEntity(new ResWrap<Entity>(
+            inlineEntity.getBaseURI() == null ? null : inlineEntity.getBaseURI(), metadataETag,
+            inlineEntity)));
+  }
+
+  private ODataInlineEntitySet createODataInlineEntitySet(final EntitySet inlineEntitySet,
+      final URI uri, final String title, final String metadataETag) {
+    return new ODataInlineEntitySet(client.getServiceVersion(), uri, ODataLinkType.ENTITY_SET_NAVIGATION, title,
+        getODataEntitySet(new ResWrap<EntitySet>(
+            inlineEntitySet.getBaseURI() == null ? null : inlineEntitySet.getBaseURI(), metadataETag,
+            inlineEntitySet)));
   }
 
   private EdmEntityType findEntityType(
@@ -474,18 +482,44 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       entity.setMediaETag(resource.getPayload().getMediaETag());
     }
 
-    for (Property property : resource.getPayload().getProperties()) {
+    for (final Property property : resource.getPayload().getProperties()) {
       EdmType propertyType = null;
       if (edmType instanceof EdmEntityType) {
         final EdmElement edmProperty = ((EdmEntityType) edmType).getProperty(property.getName());
         if (edmProperty != null) {
           propertyType = edmProperty.getType();
+          if (edmProperty instanceof EdmNavigationProperty) {
+            final String propertyTypeName = propertyType.getFullQualifiedName().getFullQualifiedNameAsString();
+            entity.addLink(createLinkFromNavigationProperty(property, propertyTypeName));
+            break;
+          }
         }
       }
       add(entity, getODataProperty(propertyType, property));
     }
 
     return entity;
+  }
+
+  private ODataLink createLinkFromNavigationProperty(final Property property, final String propertyTypeName) {
+    if (property.isCollection()) {
+      EntitySet inlineEntitySet = new EntitySetImpl();
+      for (final Object inlined : property.asCollection()) {
+        Entity inlineEntity = new EntityImpl();
+        inlineEntity.setType(propertyTypeName);
+        inlineEntity.getProperties().addAll(
+            inlined instanceof LinkedComplexValue ? ((LinkedComplexValue) inlined).getValue() :
+                inlined instanceof Property ? ((Property) inlined).asComplex() : null);
+        inlineEntitySet.getEntities().add(inlineEntity);
+      }
+      return createODataInlineEntitySet(inlineEntitySet, null, property.getName(), null);
+    } else {
+      Entity inlineEntity = new EntityImpl();
+      inlineEntity.setType(propertyTypeName);
+      inlineEntity.getProperties().addAll(
+          property.isLinkedComplex() ? property.asLinkedComplex().getValue() : property.asComplex());
+      return createODataInlineEntity(inlineEntity, null, property.getName(), null);
+    }
   }
 
   protected EdmTypeInfo buildTypeInfo(final ContextURL contextURL, final String metadataETag,
