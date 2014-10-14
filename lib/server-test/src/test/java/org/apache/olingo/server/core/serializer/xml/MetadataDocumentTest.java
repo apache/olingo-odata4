@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.serializer.xml;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -257,14 +258,45 @@ public class MetadataDocumentTest {
   }
 
   /**
-   * <code>
-   *  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml">
-   *    <edmx:Include Namespace="Org.OData.Core.V1" Alias="Core"/>
-   *  </edmx:Reference>
-   * </code>
+   * Write simplest (empty) Schema.
    *
-   * @return default emdx reference
+   * @throws Exception
    */
+  @Test
+  public void writeMetadataWithEmptySchema() throws Exception {
+    ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.XML);
+    List<EdmxReference> edmxReferences = Collections.emptyList();
+    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(ODataServiceVersion.V40,
+        new EdmProvider() {
+          @Override
+          public List<Schema> getSchemas() throws ODataException {
+            return Arrays.asList(new Schema().setNamespace("MyNamespace"));
+          }
+        },
+        edmxReferences);
+
+    InputStream metadata = serializer.metadataDocument(serviceMetadata);
+    assertNotNull(metadata);
+
+    String metadataString = IOUtils.toString(metadata);
+    assertEquals("<?xml version='1.0' encoding='UTF-8'?>" +
+        "<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">" +
+          "<edmx:DataServices>" +
+            "<Schema xmlns=\"http://docs.oasis-open.org/odata/ns/edm\" Namespace=\"MyNamespace\"/>" +
+          "</edmx:DataServices>" +
+        "</edmx:Edmx>",
+        metadataString);
+  }
+
+    /**
+     * <code>
+     *  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml">
+     *    <edmx:Include Namespace="Org.OData.Core.V1" Alias="Core"/>
+     *  </edmx:Reference>
+     * </code>
+     *
+     * @return default emdx reference
+     */
   private List<EdmxReference> getEdmxReferences() {
     List<EdmxReference> edmxReferences = new ArrayList<EdmxReference>();
     EdmxReferenceImpl reference = new EdmxReferenceImpl(

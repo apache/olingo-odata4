@@ -79,6 +79,8 @@ public class MetadataDocumentXmlSerializer {
   private static final String XML_TARGET_NAMESPACE = "TargetNamespace";
   private static final String XML_QUALIFIER = "Qualifier";
   private static final String URI = "Uri";
+  private static final String SCHEMA = "Schema";
+  private static final String DATA_SERVICES = "DataServices";
 
   private final ServiceMetadata serviceMetadata;
 
@@ -88,8 +90,8 @@ public class MetadataDocumentXmlSerializer {
 
   private final static String NS_EDM = "http://docs.oasis-open.org/odata/ns/edm";
 
-  public MetadataDocumentXmlSerializer(final ServiceMetadata edm) {
-    this.serviceMetadata = edm;
+  public MetadataDocumentXmlSerializer(final ServiceMetadata serviceMetadata) {
+    this.serviceMetadata = serviceMetadata;
   }
 
   public void writeMetadataDocument(final XMLStreamWriter writer) throws XMLStreamException {
@@ -108,7 +110,7 @@ public class MetadataDocumentXmlSerializer {
 
   private void appendDataServices(final XMLStreamWriter writer) throws XMLStreamException {
     writer.setDefaultNamespace(NS_EDM);
-    writer.writeStartElement(NS_EDMX, "DataServices");
+    writer.writeStartElement(NS_EDMX, DATA_SERVICES);
     for (EdmSchema schema : serviceMetadata.getEdm().getSchemas()) {
       appendSchema(writer, schema);
     }
@@ -116,10 +118,12 @@ public class MetadataDocumentXmlSerializer {
   }
 
   private void appendSchema(final XMLStreamWriter writer, final EdmSchema schema) throws XMLStreamException {
-    writer.writeStartElement(NS_EDM, "Schema");
+    writer.writeStartElement(NS_EDM, SCHEMA);
     writer.writeDefaultNamespace(NS_EDM);
     writer.writeAttribute(XML_NAMESPACE, schema.getNamespace());
-    writer.writeAttribute(XML_ALIAS, schema.getAlias());
+    if(schema.getAlias() != null) {
+      writer.writeAttribute(XML_ALIAS, schema.getAlias());
+    }
 
     // EnumTypes
     appendEnumTypes(writer, schema.getEnumTypes());
