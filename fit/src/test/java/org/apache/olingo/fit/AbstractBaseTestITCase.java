@@ -57,9 +57,10 @@ public abstract class AbstractBaseTestITCase {
       throws LifecycleException, IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
     TomcatTestServer.init(9080)
         .addServlet(TechnicalServlet.class, "/odata-server-tecsvc/odata.svc/*")
-        .addServlet(StaticContent.class, "/odata-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml")
-        .addServlet(MetadataContent.class, "/odata-metadata/$metadata")
-        .addWebApp()
+        .addServlet(StaticContent.create("org-odata-core-v1.xml"),
+            "/odata-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml")
+        .addServlet(StaticContent.create("metadata-ref.xml"), "/odata-metadata/$metadata")
+        .addWebApp(false)
         .start();
   }
 
@@ -130,19 +131,20 @@ public abstract class AbstractBaseTestITCase {
 
   public static class StaticContent extends HttpServlet {
     private static final long serialVersionUID = -6663569573355398997L;
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-      resp.getOutputStream().write(IOUtils.toByteArray(
-          Thread.currentThread().getContextClassLoader().getResourceAsStream("org-odata-core-v1.xml")));
-    }
-  }
+    private final String resourceName;
 
-  public static class MetadataContent extends HttpServlet {
-    private static final long serialVersionUID = -6663569573355398997L;
+    public StaticContent(String resourceName) {
+      this.resourceName = resourceName;
+    }
+
+    public static HttpServlet create(String resourceName) {
+      return new StaticContent(resourceName);
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
       resp.getOutputStream().write(IOUtils.toByteArray(
-          Thread.currentThread().getContextClassLoader().getResourceAsStream("metadata-ref.xml")));
+          Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName)));
     }
   }
 }

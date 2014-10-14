@@ -46,7 +46,7 @@ under the License.
   </logger>
 
   <root>
-    <level value="DEBUG"/>
+    <level value="INFO"/>
     <appender-ref ref="fitlog"/>
   </root>
 

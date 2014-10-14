@@ -55,19 +55,6 @@ public class TomcatTestServer {
 
   private TomcatTestServer(Tomcat tomcat) {
     this.tomcat = tomcat;
-    enableLogging();
-  }
-
-  private void enableLogging() {
-    java.util.logging.Logger logger = java.util.logging.Logger.getLogger("");
-    try {
-      Handler fileHandler = new FileHandler(tomcat.getHost().getAppBase() + "/catalina.out", true);
-      fileHandler.setFormatter(new SimpleFormatter());
-      fileHandler.setLevel(Level.ALL);
-      logger.addHandler(fileHandler);
-    } catch (IOException e) {
-      throw new RuntimeException("Unable to configure embedded tomcat logging.");
-    }
   }
 
   public static void main(String[] params) {
@@ -179,9 +166,10 @@ public class TomcatTestServer {
       tomcat = new Tomcat();
       tomcat.setBaseDir(baseDir.getParentFile().getAbsolutePath());
       tomcat.setPort(fixedPort);
-      tomcat.getHost().setAutoDeploy(true);
       tomcat.getHost().setAppBase(baseDir.getAbsolutePath());
       tomcat.getHost().setDeployOnStartup(true);
+      tomcat.getConnector().setSecure(false);
+      tomcat.setSilent(true);
       tomcat.addUser("odatajclient", "odatajclient");
       tomcat.addRole("odatajclient", "odatajclient");
     }
@@ -198,22 +186,43 @@ public class TomcatTestServer {
       }
     }
 
+    public void enableLogging(Level level) {
+      tomcat.setSilent(false);
+      try {
+        Handler fileHandler = new FileHandler(tomcat.getHost().getAppBase() + "/catalina.out", true);
+        fileHandler.setFormatter(new SimpleFormatter());
+        fileHandler.setLevel(level);
+        java.util.logging.Logger.getLogger("").addHandler(fileHandler);
+      } catch (IOException e) {
+        throw new RuntimeException("Unable to configure embedded tomcat logging.");
+      }
+    }
+
     public void atPort(int port) {
       tomcat.setPort(port);
     }
 
     public TestServerBuilder addWebApp() throws IOException {
+      return addWebApp(true);
+    }
+
+    public TestServerBuilder addWebApp(boolean copy) throws IOException {
       if (server != null) {
         return this;
       }
 
       File webAppProjectDir = getFileForDirProperty(PROJECT_WEB_APP_DIR);
-      File webAppDir = new File(baseDir, webAppProjectDir.getName());
-      FileUtils.deleteDirectory(webAppDir);
-      if (!webAppDir.mkdirs()) {
-        throw new RuntimeException("Unable to create temporary directory at {" + webAppDir.getAbsolutePath() + "}");
+      final File webAppDir;
+      if(copy) {
+        webAppDir = new File(baseDir, webAppProjectDir.getName());
+        FileUtils.deleteDirectory(webAppDir);
+        if (!webAppDir.mkdirs()) {
+          throw new RuntimeException("Unable to create temporary directory at {" + webAppDir.getAbsolutePath() + "}");
+        }
+        FileUtils.copyDirectory(webAppProjectDir, webAppDir);
+      } else {
+        webAppDir = webAppProjectDir;
       }
-      FileUtils.copyDirectory(webAppProjectDir, webAppDir);
 
       String contextPath = "/stub";
       Context context = tomcat.addWebapp(tomcat.getHost(), contextPath, webAppDir.getAbsolutePath());
@@ -244,14 +253,14 @@ public class TomcatTestServer {
       if (server != null) {
         return this;
       }
-      String odataServlet = factoryClass.getName();
-      HttpServlet httpServlet = (HttpServlet) Class.forName(odataServlet).newInstance();
+      String servletClassname = factoryClass.getName();
+      HttpServlet httpServlet = (HttpServlet) Class.forName(servletClassname).newInstance();
       Context cxt = getContext();
       String randomServletId = UUID.randomUUID().toString();
       Tomcat.addServlet(cxt, randomServletId, httpServlet);
       cxt.addServletMapping(path, randomServletId);
       //
-      LOG.info("Added servlet {} at context {} (mapping id={}).", odataServlet, path, randomServletId);
+      LOG.info("Added servlet {} at context {} (mapping id={}).", servletClassname, path, randomServletId);
       return this;
     }
 
@@ -261,6 +270,11 @@ public class TomcatTestServer {
       LOG.info("Added static content from '{}' at uri '{}'.", resource, uri);
       StaticContent staticContent = new StaticContent(uri, resource);
       return addServlet(staticContent, String.valueOf(uri.hashCode()), uri);
+    }
+
+    public TestServerBuilder addServlet(HttpServlet httpServlet, String path) throws IOException {
+      String name = UUID.randomUUID().toString();
+      return addServlet(httpServlet, name, path);
     }
 
     public TestServerBuilder addServlet(HttpServlet httpServlet, String name, String path) throws IOException {
