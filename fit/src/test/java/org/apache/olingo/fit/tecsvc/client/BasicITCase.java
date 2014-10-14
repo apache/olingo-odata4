@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -38,7 +39,9 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.ODataError;
@@ -79,7 +82,6 @@ public class BasicITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  @Ignore("Ignored till refactoring is finished")
   public void readMetadata() {
     EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
     assertNotNull(request);
@@ -92,8 +94,25 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertNotNull(edm);
     assertEquals("olingo.odata.test1", edm.getSchema("olingo.odata.test1").getNamespace());
     assertEquals("Namespace1_Alias", edm.getSchema("olingo.odata.test1").getAlias());
-    assertNotNull(edm.getTerm(new FullQualifiedName("Core.Description")));
-    assertEquals(2, edm.getSchemas().size());
+    assertEquals(1, edm.getSchemas().size());
+  }
+
+  @Test
+  public void readViaXmlMetadata() {
+    XMLMetadataRequest request = getClient().getRetrieveRequestFactory()
+        .getXMLMetadataRequest(SERVICE_URI.replace("odata-server-tecsvc/odata.svc", "odata-metadata"));
+    assertNotNull(request);
+
+    ODataRetrieveResponse<XMLMetadata> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    XMLMetadata xmlMetadata = response.getBody();
+
+    assertNotNull(xmlMetadata);
+    assertTrue(xmlMetadata instanceof org.apache.olingo.client.api.edm.xml.v4.XMLMetadata);
+    assertEquals("ODataDemo", xmlMetadata.getSchema("ODataDemo").getNamespace());
+    assertEquals(1, ((org.apache.olingo.client.api.edm.xml.v4.XMLMetadata) xmlMetadata).getReferences().size());
+    assertEquals(2, xmlMetadata.getSchemas().size());
   }
 
   @Test
