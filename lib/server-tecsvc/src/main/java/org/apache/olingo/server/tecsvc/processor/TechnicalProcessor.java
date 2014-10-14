@@ -20,14 +20,16 @@ package org.apache.olingo.server.tecsvc.processor;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
@@ -37,7 +39,11 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.*;
+import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataRequest;
+import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.PropertyProcessor;
@@ -209,7 +215,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
         .navOrPropertyPath(propertyPath)
         .build();
   }
-  
+
   private Map<String, String> mapKeys(List<UriParameter> parameters)
           throws ODataApplicationException {
     Map<String, String> keys = new LinkedHashMap<String, String>();
@@ -218,7 +224,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
     }
     return keys;
   }
-  
+
   @Override
   public void readProperty(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {

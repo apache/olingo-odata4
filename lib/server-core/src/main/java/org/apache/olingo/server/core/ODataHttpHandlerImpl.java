@@ -30,10 +30,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.server.api.*;
+import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataHttpHandler;
+import org.apache.olingo.server.api.ODataRequest;
+import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.slf4j.Logger;

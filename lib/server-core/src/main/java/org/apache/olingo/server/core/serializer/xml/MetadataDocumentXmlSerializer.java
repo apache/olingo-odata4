@@ -18,7 +18,30 @@
  */
 package org.apache.olingo.server.core.serializer.xml;
 
-import org.apache.olingo.commons.api.edm.*;
+import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmActionImport;
+import org.apache.olingo.commons.api.edm.EdmBindingTarget;
+import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmFunctionImport;
+import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.EdmOperation;
+import org.apache.olingo.commons.api.edm.EdmParameter;
+import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
+import org.apache.olingo.commons.api.edm.EdmReturnType;
+import org.apache.olingo.commons.api.edm.EdmSchema;
+import org.apache.olingo.commons.api.edm.EdmSingleton;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
@@ -27,6 +50,7 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
 import java.util.List;
 
 public class MetadataDocumentXmlSerializer {
@@ -511,19 +535,15 @@ public class MetadataDocumentXmlSerializer {
   }
 
   private String getFullQualifiedName(final EdmType type, final boolean isCollection) {
-    if (isCollection) {
-      return "Collection(" + type.getNamespace() + "." + type.getName() + ")";
-    } else {
-      return type.getNamespace() + "." + type.getName();
-    }
+    final String name = type.getFullQualifiedName().getFullQualifiedNameAsString();
+    return isCollection ? "Collection(" + name + ")" : name;
   }
 
-  /** Appends a reference to the OData Core Vocabulary as defined in the OData specification
+  /** Appends references, e.g., to the OData Core Vocabulary, as defined in the OData specification
    * and mentioned in its Common Schema Definition Language (CSDL) document.
    */
   private void appendReference(final XMLStreamWriter writer) throws XMLStreamException {
-    List<EdmxReference> references = serviceMetadata.getReferences();
-    for (EdmxReference reference: references) {
+    for (final EdmxReference reference : serviceMetadata.getReferences()) {
       writer.writeStartElement(PREFIX_EDMX, REFERENCE, NS_EDMX);
       writer.writeAttribute(URI, reference.getUri().toASCIIString());
 
