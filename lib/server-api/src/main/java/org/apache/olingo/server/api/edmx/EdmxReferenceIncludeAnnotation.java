@@ -19,21 +19,75 @@
 package org.apache.olingo.server.api.edmx;
 
 /**
- *
+ * POJO for Edmx Reference Include Annotation.
  */
-public interface EdmxReferenceIncludeAnnotation {
-	/**
+public class EdmxReferenceIncludeAnnotation {
+  private final String termNamespace;
+  private String qualifier;
+  private String targetNamespace;
+
+  /**
+   * Create include annotation with given termNamespace and empty qualifier and targetNamespace.
+   *
+   * @param termNamespace of include annotation
+   */
+  public EdmxReferenceIncludeAnnotation(String termNamespace) {
+    this(termNamespace, null, null);
+  }
+
+  /**
+   * Create include annotation with given termNamespace, qualifier and targetNamespace.
+   *
+   * @param termNamespace of include annotation
+   * @param qualifier of include annotation
+   * @param targetNamespace of include annotation
+   */
+  public EdmxReferenceIncludeAnnotation(String termNamespace, String qualifier, String targetNamespace) {
+    this.termNamespace = termNamespace;
+    this.qualifier = qualifier;
+    this.targetNamespace = targetNamespace;
+  }
+
+  /**
 	 * @return TermNamespace of the include annotation
 	 */
-	String getTermNamespace();
-	
+  public String getTermNamespace() {
+    return termNamespace;
+  }
+
 	/**
 	 * @return Qualifier if one defined; null otherwise
 	 */
-	String getQualifier();
-	
+  public String getQualifier() {
+    return qualifier;
+  }
+
+  /**
+   * Set qualifier for this include annotation.
+   *
+   * @param qualifier for include annotation
+   * @return this include annotation
+   */
+  public EdmxReferenceIncludeAnnotation setQualifier(String qualifier) {
+    this.qualifier = qualifier;
+    return this;
+  }
+
 	/**
 	 * @return targetNamespace if defined; null otherwise
 	 */
-	String getTargetNamespace();
+  public String getTargetNamespace() {
+    return targetNamespace;
+  }
+
+  /**
+   * Set target namespace for this include annotation.
+   *
+   * @param targetNamespace for include annotation
+   * @return this include annotation
+   */
+  public EdmxReferenceIncludeAnnotation setTargetNamespace(String targetNamespace) {
+    this.targetNamespace = targetNamespace;
+    return this;
+  }
 }

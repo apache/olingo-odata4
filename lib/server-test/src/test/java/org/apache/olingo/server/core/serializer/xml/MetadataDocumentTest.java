@@ -64,9 +64,7 @@ import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.core.ServiceMetadataImpl;
-import org.apache.olingo.server.core.edmx.EdmxReferenceImpl;
-import org.apache.olingo.server.core.edmx.EdmxReferenceIncludeAnnotationImpl;
-import org.apache.olingo.server.core.edmx.EdmxReferenceIncludeImpl;
+import org.apache.olingo.server.api.edmx.EdmxReferenceIncludeAnnotation;
 import org.junit.Test;
 
 public class MetadataDocumentTest {
@@ -85,51 +83,51 @@ public class MetadataDocumentTest {
     ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.XML);
 
     List<EdmxReference> edmxReferences = new ArrayList<EdmxReference>();
-    EdmxReferenceImpl reference = new EdmxReferenceImpl(URI.create("http://example.com"));
+    EdmxReference reference = new EdmxReference(URI.create("http://example.com"));
     edmxReferences.add(reference);
 
-    EdmxReferenceImpl referenceWithInclude = new EdmxReferenceImpl(
+    EdmxReference referenceWithInclude = new EdmxReference(
             URI.create("http://localhost/odata/odata/v4.0/referenceWithInclude"));
-    EdmxReferenceInclude include = new EdmxReferenceIncludeImpl("Org.OData.Core.V1", "Core");
+    EdmxReferenceInclude include = new EdmxReferenceInclude("Org.OData.Core.V1", "Core");
     referenceWithInclude.addInclude(include);
     edmxReferences.add(referenceWithInclude);
 
-    EdmxReferenceImpl referenceWithTwoIncludes = new EdmxReferenceImpl(
+    EdmxReference referenceWithTwoIncludes = new EdmxReference(
             URI.create("http://localhost/odata/odata/v4.0/referenceWithTwoIncludes"));
-    referenceWithTwoIncludes.addInclude(new EdmxReferenceIncludeImpl("Org.OData.Core.2", "Core2"));
-    referenceWithTwoIncludes.addInclude(new EdmxReferenceIncludeImpl("Org.OData.Core.3", "Core3"));
+    referenceWithTwoIncludes.addInclude(new EdmxReferenceInclude("Org.OData.Core.2", "Core2"));
+    referenceWithTwoIncludes.addInclude(new EdmxReferenceInclude("Org.OData.Core.3", "Core3"));
     edmxReferences.add(referenceWithTwoIncludes);
 
-    EdmxReferenceImpl referenceWithIncludeAnnos = new EdmxReferenceImpl(
+    EdmxReference referenceWithIncludeAnnos = new EdmxReference(
             URI.create("http://localhost/odata/odata/v4.0/referenceWithIncludeAnnos"));
     referenceWithIncludeAnnos.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotationImpl("TermNs.2", "Q.2", "TargetNS.2"));
+            new EdmxReferenceIncludeAnnotation("TermNs.2", "Q.2", "TargetNS.2"));
     referenceWithIncludeAnnos.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotationImpl("TermNs.3", "Q.3","TargetNS.3"));
+            new EdmxReferenceIncludeAnnotation("TermNs.3", "Q.3","TargetNS.3"));
     edmxReferences.add(referenceWithIncludeAnnos);
 
-    EdmxReferenceImpl referenceWithAll = new EdmxReferenceImpl(
+    EdmxReference referenceWithAll = new EdmxReference(
             URI.create("http://localhost/odata/odata/v4.0/referenceWithAll"));
-    referenceWithAll.addInclude(new EdmxReferenceIncludeImpl("ReferenceWithAll.1", "Core1"));
-    referenceWithAll.addInclude(new EdmxReferenceIncludeImpl("ReferenceWithAll.2", "Core2"));
+    referenceWithAll.addInclude(new EdmxReferenceInclude("ReferenceWithAll.1", "Core1"));
+    referenceWithAll.addInclude(new EdmxReferenceInclude("ReferenceWithAll.2", "Core2"));
     referenceWithAll.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotationImpl("ReferenceWithAllTermNs.4", "Q.4", "TargetNS.4"));
+            new EdmxReferenceIncludeAnnotation("ReferenceWithAllTermNs.4", "Q.4", "TargetNS.4"));
     referenceWithAll.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotationImpl("ReferenceWithAllTermNs.5", "Q.5", "TargetNS.5"));
+            new EdmxReferenceIncludeAnnotation("ReferenceWithAllTermNs.5", "Q.5", "TargetNS.5"));
     edmxReferences.add(referenceWithAll);
 
-    EdmxReferenceImpl referenceWithAllAndNull = new EdmxReferenceImpl(
+    EdmxReference referenceWithAllAndNull = new EdmxReference(
             URI.create("http://localhost/odata/odata/v4.0/referenceWithAllAndNull"));
-    referenceWithAllAndNull.addInclude(new EdmxReferenceIncludeImpl("referenceWithAllAndNull.1"));
-    referenceWithAllAndNull.addInclude(new EdmxReferenceIncludeImpl("referenceWithAllAndNull.2", null));
+    referenceWithAllAndNull.addInclude(new EdmxReferenceInclude("referenceWithAllAndNull.1"));
+    referenceWithAllAndNull.addInclude(new EdmxReferenceInclude("referenceWithAllAndNull.2", null));
     referenceWithAllAndNull.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotationImpl("ReferenceWithAllTermNs.4"));
+            new EdmxReferenceIncludeAnnotation("ReferenceWithAllTermNs.4"));
     referenceWithAllAndNull.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotationImpl("ReferenceWithAllTermAndNullNs.5", "Q.5", null));
+            new EdmxReferenceIncludeAnnotation("ReferenceWithAllTermAndNullNs.5", "Q.5", null));
     referenceWithAllAndNull.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotationImpl("ReferenceWithAllTermAndNullNs.6", null, "TargetNS"));
+            new EdmxReferenceIncludeAnnotation("ReferenceWithAllTermAndNullNs.6", null, "TargetNS"));
     referenceWithAllAndNull.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotationImpl("ReferenceWithAllTermAndNullNs.7", null, null));
+            new EdmxReferenceIncludeAnnotation("ReferenceWithAllTermAndNullNs.7", null, null));
     edmxReferences.add(referenceWithAllAndNull);
 
     ServiceMetadata serviceMetadata = new ServiceMetadataImpl(ODataServiceVersion.V40,
@@ -299,9 +297,9 @@ public class MetadataDocumentTest {
      */
   private List<EdmxReference> getEdmxReferences() {
     List<EdmxReference> edmxReferences = new ArrayList<EdmxReference>();
-    EdmxReferenceImpl reference = new EdmxReferenceImpl(
+    EdmxReference reference = new EdmxReference(
             URI.create("http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml"));
-    EdmxReferenceInclude include = new EdmxReferenceIncludeImpl("Org.OData.Core.V1", "Core");
+    EdmxReferenceInclude include = new EdmxReferenceInclude("Org.OData.Core.V1", "Core");
     reference.addInclude(include);
     edmxReferences.add(reference);
     return edmxReferences;

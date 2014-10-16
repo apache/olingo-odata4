@@ -19,28 +19,75 @@
 package org.apache.olingo.server.api.edmx;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
+ * POJO for Edmx Reference.
  */
-public interface EdmxReference {
+public class EdmxReference {
+
+  private final URI uri;
+  private final List<EdmxReferenceInclude> edmxIncludes;
+  private final List<EdmxReferenceIncludeAnnotation> edmxIncludeAnnotations;
+
   /**
-   * Get URI for the Reference
-   * @return
+   * Create reference with given uri
+   *
+   * @param uri of reference
    */
-  URI getUri();
+  public EdmxReference(URI uri) {
+    this.uri = uri;
+    edmxIncludes = new ArrayList<EdmxReferenceInclude>();
+    edmxIncludeAnnotations = new ArrayList<EdmxReferenceIncludeAnnotation>();
+  }
+
+  /**
+   * Get URI for the reference
+   * @return uri for the reference
+   */
+  public URI getUri() {
+    return uri;
+  }
 
   /**
    * edmx:Include elements that specify the schemas to include from the target document
    *
    * @return list of {@link EdmxReferenceInclude} in reference or null if none specified
    */
-  List<EdmxReferenceInclude> getIncludes();
+  public List<EdmxReferenceInclude> getIncludes() {
+    return Collections.unmodifiableList(edmxIncludes);
+  }
+
+  /**
+   * Add include element to current list.
+   *
+   * @param include to be added
+   * @return this EdmxReference object
+   */
+  public EdmxReference addInclude(EdmxReferenceInclude include) {
+    edmxIncludes.add(include);
+    return this;
+  }
 
   /**
    * edmx:IncludeAnnotations elements that specify the annotations to include from the target document.
    *
    * @return List of {@link EdmxReferenceIncludeAnnotation} or null if none specified
    */
-  List<EdmxReferenceIncludeAnnotation> getIncludeAnnotations();
+  public List<EdmxReferenceIncludeAnnotation> getIncludeAnnotations() {
+    return Collections.unmodifiableList(edmxIncludeAnnotations);
+  }
+
+  /**
+   * Add include annotation element to current list.
+   *
+   * @param includeAnnotation to be added
+   * @return this EdmxReference object
+   */
+  public EdmxReference addIncludeAnnotation(EdmxReferenceIncludeAnnotation includeAnnotation) {
+    edmxIncludeAnnotations.add(includeAnnotation);
+    return this;
+  }
 }
