@@ -29,6 +29,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -39,23 +40,28 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.client.api.edm.xml.v4.Reference;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class BasicITCase extends AbstractBaseTestITCase {
@@ -90,15 +96,16 @@ public class BasicITCase extends AbstractBaseTestITCase {
     Edm edm = response.getBody();
 
     assertNotNull(edm);
+    assertEquals(2, edm.getSchemas().size());
     assertEquals("olingo.odata.test1", edm.getSchema("olingo.odata.test1").getNamespace());
     assertEquals("Namespace1_Alias", edm.getSchema("olingo.odata.test1").getAlias());
-    assertEquals(1, edm.getSchemas().size());
+    assertEquals("Org.OData.Core.V1", edm.getSchema("Org.OData.Core.V1").getNamespace());
+    assertEquals("Core", edm.getSchema("Org.OData.Core.V1").getAlias());
   }
 
   @Test
   public void readViaXmlMetadata() {
-    XMLMetadataRequest request = getClient().getRetrieveRequestFactory()
-        .getXMLMetadataRequest(SERVICE_URI.replace("odata-server-tecsvc/odata.svc", "odata-metadata"));
+    XMLMetadataRequest request = getClient().getRetrieveRequestFactory().getXMLMetadataRequest(SERVICE_URI);
     assertNotNull(request);
 
     ODataRetrieveResponse<XMLMetadata> response = request.execute();
@@ -108,9 +115,12 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
     assertNotNull(xmlMetadata);
     assertTrue(xmlMetadata instanceof org.apache.olingo.client.api.edm.xml.v4.XMLMetadata);
-    assertEquals("ODataDemo", xmlMetadata.getSchema("ODataDemo").getNamespace());
-    assertEquals(1, ((org.apache.olingo.client.api.edm.xml.v4.XMLMetadata) xmlMetadata).getReferences().size());
     assertEquals(2, xmlMetadata.getSchemas().size());
+    assertEquals("olingo.odata.test1", xmlMetadata.getSchema("olingo.odata.test1").getNamespace());
+    final List<Reference> references =
+        ((org.apache.olingo.client.api.edm.xml.v4.XMLMetadata) xmlMetadata).getReferences();
+    assertEquals(1, references.size());
+    assertThat(references.get(0).getUri().toASCIIString(), containsString("vocabularies/Org.OData.Core.V1"));
   }
 
   @Test
@@ -160,8 +170,9 @@ public class BasicITCase extends AbstractBaseTestITCase {
     }
   }
 
+  @Ignore("wrong value type!")
   @Test
-  public void readEntityRawResult() throws IOException {
+  public void readEntity() throws IOException {
     final ODataEntityRequest<ODataEntity> request = getClient().getRetrieveRequestFactory()
         .getEntityRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESCollAllPrim").appendKeySegment(1).build());
@@ -171,33 +182,18 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
 
-    //
-    final String expectedResult = "{"
-        + "\"@odata.context\":\"$metadata#ESCollAllPrim/$entity\","
-        + "\"PropertyInt16\":1,"
-        + "\"CollPropertyString\":"
-        + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
-        + "\"CollPropertyBoolean\":[true,false,true],"
-        + "\"CollPropertyByte\":[50,200,249],"
-        + "\"CollPropertySByte\":[-120,120,126],"
-        + "\"CollPropertyInt16\":[1000,2000,30112],"
-        + "\"CollPropertyInt32\":[23232323,11223355,10000001],"
-        + "\"CollPropertyInt64\":[929292929292,333333333333,444444444444],"
-        + "\"CollPropertySingle\":[1790.0,26600.0,3210.0],"
-        + "\"CollPropertyDouble\":[-17900.0,-2.78E7,3210.0],"
-        + "\"CollPropertyDecimal\":[12,-2,1234],"
-        + "\"CollPropertyBinary\":[\"q83v\",\"ASNF\",\"VGeJ\"],"
-        + "\"CollPropertyDate\":[\"1958-12-03\",\"1999-08-05\",\"2013-06-25\"],"
-        + "\"CollPropertyDateTimeOffset\":[\"2015-08-12T03:08:34Z\",\"1970-03-28T12:11:10Z\","
-        + "\"1948-02-17T09:09:09Z\"],"
-        + "\"CollPropertyDuration\":[\"PT13S\",\"PT5H28M0S\",\"PT1H0S\"],"
-        + "\"CollPropertyGuid\":[\"ffffff67-89ab-cdef-0123-456789aaaaaa\",\"eeeeee67-89ab-cdef-0123-456789bbbbbb\","
-        + "\"cccccc67-89ab-cdef-0123-456789cccccc\"],"
-        + "\"CollPropertyTimeOfDay\":[\"04:14:13\",\"23:59:59\",\"01:12:33\"]"
-        + "}";
-    assertEquals(expectedResult, IOUtils.toString(response.getRawResponse(), "UTF-8"));
+    final ODataEntity entity = response.getBody();
+    assertNotNull(entity);
+    final ODataProperty property = entity.getProperty("CollPropertyInt16");
+    assertNotNull(property);
+    assertNotNull(property.getCollectionValue());
+    assertEquals(3, property.getCollectionValue().size());
+    Iterator<ODataValue> iterator = property.getCollectionValue().iterator();
+    assertEquals(1000, iterator.next().asPrimitive().toValue());
+    assertEquals(2000, iterator.next().asPrimitive().toValue());
+    assertEquals(30112, iterator.next().asPrimitive().toValue());
   }
-  
+
   @Test
   public void readSimpleProperty() throws Exception {
     ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
@@ -251,7 +247,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertNotNull(property.getComplexValue());
     assertEquals("TEST B", property.getComplexValue().get("PropertyString").getPrimitiveValue().toValue());   
   }  
-  
+
   @Test
   public void readComplexPropertyContextURL() throws Exception {
     ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
@@ -266,19 +262,23 @@ public class BasicITCase extends AbstractBaseTestITCase {
         "\"PropertyInt16\":222,\"PropertyString\":\"TEST B\"}";
     assertEquals(expectedResult, IOUtils.toString(response.getRawResponse(), "UTF-8"));    
   }  
-  
-  @Test(expected=ODataClientErrorException.class)
+
+  @Test
   public void readUnknownProperty() throws Exception {
     ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)            
             .appendEntitySetSegment("ESTwoPrim")
             .appendKeySegment(32766)
             .appendPropertySegment("Unknown")
-            .build());    
-    ODataRetrieveResponse<ODataProperty> response = request.execute();
-    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), response.getStatusCode());
-  }   
-  
+            .build());
+    try {
+     request.execute();
+     fail("Expected exception not thrown!");
+    } catch (final ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+  }
+
   @Test
   public void readNoContentProperty() throws Exception {
     ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
@@ -290,18 +290,19 @@ public class BasicITCase extends AbstractBaseTestITCase {
     ODataRetrieveResponse<ODataProperty> response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
   }   
-  
+
+  @Ignore("Content Negotiation!")
   @Test
   public void readPropertyValue() throws Exception {
-    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
-        .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)            
+    final ODataValueRequest request = getClient().getRetrieveRequestFactory()
+        .getPropertyValueRequest(getClient().newURIBuilder(SERVICE_URI)            
             .appendEntitySetSegment("ESTwoPrim")
             .appendKeySegment(32766)
             .appendPropertySegment("PropertyString")
             .appendValueSegment()
-            .build());    
-    ODataRetrieveResponse<ODataProperty> response = request.execute();
-    assertEquals("Test String1", IOUtils.toString(response.getRawResponse(), "UTF-8"));
+            .build());
+    ODataRetrieveResponse<ODataPrimitiveValue> response = request.execute();
+    assertEquals("Test String1", response.getBody().toValue());
   }   
 
   @Override

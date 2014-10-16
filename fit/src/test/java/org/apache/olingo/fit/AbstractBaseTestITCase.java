@@ -59,7 +59,6 @@ public abstract class AbstractBaseTestITCase {
         .addServlet(TechnicalServlet.class, "/odata-server-tecsvc/odata.svc/*")
         .addServlet(StaticContent.create("org-odata-core-v1.xml"),
             "/odata-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml")
-        .addServlet(StaticContent.create("metadata-ref.xml"), "/odata-metadata/$metadata")
         .addWebApp(false)
         .start();
   }

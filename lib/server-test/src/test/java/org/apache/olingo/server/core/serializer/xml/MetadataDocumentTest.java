@@ -18,398 +18,129 @@
  */
 package org.apache.olingo.server.core.serializer.xml;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertThat;
 
-import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.commons.api.ODataException;
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.Target;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.edm.provider.Action;
-import org.apache.olingo.server.api.edm.provider.ActionImport;
-import org.apache.olingo.server.api.edm.provider.ComplexType;
-import org.apache.olingo.server.api.edm.provider.EdmProvider;
-import org.apache.olingo.server.api.edm.provider.EntityContainer;
-import org.apache.olingo.server.api.edm.provider.EntitySet;
-import org.apache.olingo.server.api.edm.provider.EntityType;
-import org.apache.olingo.server.api.edm.provider.EnumMember;
-import org.apache.olingo.server.api.edm.provider.EnumType;
-import org.apache.olingo.server.api.edm.provider.Function;
-import org.apache.olingo.server.api.edm.provider.FunctionImport;
-import org.apache.olingo.server.api.edm.provider.NavigationProperty;
-import org.apache.olingo.server.api.edm.provider.NavigationPropertyBinding;
-import org.apache.olingo.server.api.edm.provider.Parameter;
-import org.apache.olingo.server.api.edm.provider.Property;
-import org.apache.olingo.server.api.edm.provider.ReturnType;
-import org.apache.olingo.server.api.edm.provider.Schema;
-import org.apache.olingo.server.api.edm.provider.Singleton;
-import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
-import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.core.ServiceMetadataImpl;
-import org.apache.olingo.server.api.edmx.EdmxReferenceIncludeAnnotation;
+import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
 
 public class MetadataDocumentTest {
 
-  @Test
-  public void writeMetadataWithEmptyMockedEdm() throws Exception {
-    ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.XML);
-    ServiceMetadata metadata = mock(ServiceMetadata.class);
-    Edm edm = mock(Edm.class);
-    when(metadata.getEdm()).thenReturn(edm);
-    serializer.metadataDocument(metadata);
-  }
-
-  @Test
-  public void writeEdmxWithLocalTestEdm() throws Exception {
-    ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.XML);
-
-    List<EdmxReference> edmxReferences = new ArrayList<EdmxReference>();
-    EdmxReference reference = new EdmxReference(URI.create("http://example.com"));
-    edmxReferences.add(reference);
-
-    EdmxReference referenceWithInclude = new EdmxReference(
-            URI.create("http://localhost/odata/odata/v4.0/referenceWithInclude"));
-    EdmxReferenceInclude include = new EdmxReferenceInclude("Org.OData.Core.V1", "Core");
-    referenceWithInclude.addInclude(include);
-    edmxReferences.add(referenceWithInclude);
-
-    EdmxReference referenceWithTwoIncludes = new EdmxReference(
-            URI.create("http://localhost/odata/odata/v4.0/referenceWithTwoIncludes"));
-    referenceWithTwoIncludes.addInclude(new EdmxReferenceInclude("Org.OData.Core.2", "Core2"));
-    referenceWithTwoIncludes.addInclude(new EdmxReferenceInclude("Org.OData.Core.3", "Core3"));
-    edmxReferences.add(referenceWithTwoIncludes);
-
-    EdmxReference referenceWithIncludeAnnos = new EdmxReference(
-            URI.create("http://localhost/odata/odata/v4.0/referenceWithIncludeAnnos"));
-    referenceWithIncludeAnnos.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotation("TermNs.2", "Q.2", "TargetNS.2"));
-    referenceWithIncludeAnnos.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotation("TermNs.3", "Q.3","TargetNS.3"));
-    edmxReferences.add(referenceWithIncludeAnnos);
-
-    EdmxReference referenceWithAll = new EdmxReference(
-            URI.create("http://localhost/odata/odata/v4.0/referenceWithAll"));
-    referenceWithAll.addInclude(new EdmxReferenceInclude("ReferenceWithAll.1", "Core1"));
-    referenceWithAll.addInclude(new EdmxReferenceInclude("ReferenceWithAll.2", "Core2"));
-    referenceWithAll.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotation("ReferenceWithAllTermNs.4", "Q.4", "TargetNS.4"));
-    referenceWithAll.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotation("ReferenceWithAllTermNs.5", "Q.5", "TargetNS.5"));
-    edmxReferences.add(referenceWithAll);
-
-    EdmxReference referenceWithAllAndNull = new EdmxReference(
-            URI.create("http://localhost/odata/odata/v4.0/referenceWithAllAndNull"));
-    referenceWithAllAndNull.addInclude(new EdmxReferenceInclude("referenceWithAllAndNull.1"));
-    referenceWithAllAndNull.addInclude(new EdmxReferenceInclude("referenceWithAllAndNull.2", null));
-    referenceWithAllAndNull.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotation("ReferenceWithAllTermNs.4"));
-    referenceWithAllAndNull.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotation("ReferenceWithAllTermAndNullNs.5", "Q.5", null));
-    referenceWithAllAndNull.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotation("ReferenceWithAllTermAndNullNs.6", null, "TargetNS"));
-    referenceWithAllAndNull.addIncludeAnnotation(
-            new EdmxReferenceIncludeAnnotation("ReferenceWithAllTermAndNullNs.7", null, null));
-    edmxReferences.add(referenceWithAllAndNull);
-
-    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(ODataServiceVersion.V40,
-            new TestMetadataProvider(), edmxReferences);
-    InputStream metadata = serializer.metadataDocument(serviceMetadata);
-    assertNotNull(metadata);
-
-
-    String metadataString = IOUtils.toString(metadata);
-    // edmx reference
-    assertTrue(metadataString.contains(
-            "<edmx:Reference Uri=\"http://example.com\"/>"));
-    assertTrue(metadataString.contains(
-            "<edmx:Reference " +
-                    "Uri=\"http://localhost/odata/odata/v4.0/referenceWithInclude\">" +
-            "<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\"/>" +
-            "</edmx:Reference>"));
-    assertTrue(metadataString.contains(
-            "<edmx:Reference " +
-                    "Uri=\"http://localhost/odata/odata/v4.0/referenceWithTwoIncludes\">" +
-            "<edmx:Include Namespace=\"Org.OData.Core.2\" Alias=\"Core2\"/>" +
-            "<edmx:Include Namespace=\"Org.OData.Core.3\" Alias=\"Core3\"/>" +
-            "</edmx:Reference>"));
-    assertTrue(metadataString.contains(
-            "<edmx:Reference Uri=\"http://localhost/odata/odata/v4.0/referenceWithIncludeAnnos\">" +
-            "<edmx:IncludeAnnotations TermNamespace=\"TermNs.2\" Qualifier=\"Q.2\" TargetNamespace=\"TargetNS.2\"/>" +
-            "<edmx:IncludeAnnotations TermNamespace=\"TermNs.3\" Qualifier=\"Q.3\" TargetNamespace=\"TargetNS.3\"/>" +
-            "</edmx:Reference>"));
-    assertTrue(metadataString.contains(
-            "<edmx:Reference Uri=\"http://localhost/odata/odata/v4.0/referenceWithAll\">" +
-                    "<edmx:Include Namespace=\"ReferenceWithAll.1\" Alias=\"Core1\"/>" +
-                    "<edmx:Include Namespace=\"ReferenceWithAll.2\" Alias=\"Core2\"/>" +
-                    "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.4\" " +
-                    "Qualifier=\"Q.4\" TargetNamespace=\"TargetNS.4\"/>" +
-                    "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.5\" " +
-                    "Qualifier=\"Q.5\" TargetNamespace=\"TargetNS.5\"/>" +
-                    "</edmx:Reference>"));
-    assertTrue(metadataString.contains(
-            "<edmx:Reference Uri=\"http://localhost/odata/odata/v4.0/referenceWithAllAndNull\">" +
-                    "<edmx:Include Namespace=\"referenceWithAllAndNull.1\"/>" +
-                    "<edmx:Include Namespace=\"referenceWithAllAndNull.2\"/>" +
-                    "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.4\"/>" +
-                    "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermAndNullNs.5\" Qualifier=\"Q.5\"/>" +
-                    "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermAndNullNs.6\" " +
-                                              "TargetNamespace=\"TargetNS\"/>" +
-                    "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermAndNullNs.7\"/>" +
-                    "</edmx:Reference>"));
-  }
-
-  @Test
-  public void writeMetadataWithLocalTestEdm() throws Exception {
-    ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.XML);
-    List<EdmxReference> edmxReferences = getEdmxReferences();
-    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(ODataServiceVersion.V40,
-            new TestMetadataProvider(), edmxReferences);
-    InputStream metadata = serializer.metadataDocument(serviceMetadata);
-    assertNotNull(metadata);
-
-    String metadataString = IOUtils.toString(metadata);
-    // edmx reference
-    assertTrue(metadataString
-            .contains("<edmx:Reference " +
-                    "Uri=\"http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml\">" +
-                    "<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\"/>" +
-                    "</edmx:Reference>"));
-
-    assertTrue(metadataString
-        .contains("<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">"));
-
-    assertTrue(metadataString
-        .contains("<Schema xmlns=\"http://docs.oasis-open.org/odata/ns/edm\" " +
-            "Namespace=\"namespace\" Alias=\"alias\">"));
-
-    assertTrue(metadataString
-        .contains("<EntityType Name=\"ETBaseName\"><Property Name=\"P1\" Type=\"Edm.Int16\"/><NavigationProperty " +
-            "Name=\"N1\" Type=\"namespace.ETBaseName\" Nullable=\"true\" Partner=\"N1\"/></EntityType>"));
-
-    assertTrue(metadataString
-        .contains("<EntityType Name=\"ETDerivedName\" BaseType=\"namespace.ETBaseName\"><Property Name=\"P2\" " +
-            "Type=\"Edm.Int16\"/><NavigationProperty Name=\"N2\" Type=\"namespace.ETDerivedName\" Nullable=\"true\" " +
-            "Partner=\"N2\"/></EntityType>"));
-
-    assertTrue(metadataString
-        .contains("<ComplexType Name=\"CTBaseName\"><Property Name=\"P1\" Type=\"Edm.Int16\"/><NavigationProperty " +
-            "Name=\"N1\" Type=\"namespace.ETBaseName\" Nullable=\"true\" Partner=\"N1\"/></ComplexType>"));
-
-    assertTrue(metadataString
-        .contains("<ComplexType Name=\"CTDerivedName\" BaseType=\"namespace.CTBaseName\"><Property Name=\"P2\" " +
-            "Type=\"Edm.Int16\"/><NavigationProperty Name=\"N2\" Type=\"namespace.ETDerivedName\" Nullable=\"true\" " +
-            "Partner=\"N2\"/></ComplexType>"));
-
-    assertTrue(metadataString.contains("<TypeDefinition Name=\"typeDef\" Type=\"Edm.Int16\"/>"));
-
-    assertTrue(metadataString.contains("<Action Name=\"ActionWOParameter\" IsBound=\"false\"/>"));
-
-    assertTrue(metadataString
-        .contains("<Action Name=\"ActionName\" IsBound=\"true\"><Parameter Name=\"param\" Type=\"Edm.Int16\"/>" +
-            "<Parameter Name=\"param2\" Type=\"Collection(Edm.Int16)\"/><ReturnType Type=\"namespace.CTBaseName\"/>" +
-            "</Action>"));
-
-    assertTrue(metadataString
-        .contains("<Function Name=\"FunctionWOParameter\" IsBound=\"false\" IsComposable=\"false\"><ReturnType " +
-            "Type=\"namespace.CTBaseName\"/></Function>"));
-
-    assertTrue(metadataString
-        .contains("<Function Name=\"FunctionName\" IsBound=\"true\" IsComposable=\"false\"><Parameter Name=\"param\" " +
-            "Type=\"Edm.Int16\"/><Parameter Name=\"param2\" Type=\"Collection(Edm.Int16)\"/><ReturnType " +
-            "Type=\"namespace.CTBaseName\"/></Function>"));
-
-    assertTrue(metadataString.contains("<EntityContainer Name=\"container\">"));
-
-    assertTrue(metadataString
-        .contains("<EntitySet Name=\"EntitySetName\" EntityType=\"namespace.ETBaseName\"><NavigationPropertyBinding " +
-            "Path=\"N1\" Target=\"namespace.container/EntitySetName\"/></EntitySet>"));
-    assertTrue(metadataString
-        .contains("<Singleton Name=\"SingletonName\" EntityType=\"namespace.ETBaseName\"><NavigationPropertyBinding " +
-            "Path=\"N1\" Target=\"namespace.container/EntitySetName\"/></Singleton>"));
-
-    assertTrue(metadataString.contains("<ActionImport Name=\"actionImport\" Action=\"namespace.ActionWOParameter\"/>"));
-
-    assertTrue(metadataString
-        .contains("<FunctionImport Name=\"actionImport\" Function=\"namespace.FunctionName\" " +
-            "EntitySet=\"namespace.EntitySetName\" IncludeInServiceDocument=\"false\"/>"));
-
-    assertTrue(metadataString.contains("</EntityContainer></Schema></edmx:DataServices></edmx:Edmx>"));
-  }
-
-  /**
-   * Write simplest (empty) Schema.
-   *
-   * @throws Exception
-   */
-  @Test
-  public void writeMetadataWithEmptySchema() throws Exception {
-    ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.XML);
-    List<EdmxReference> edmxReferences = Collections.emptyList();
-    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(ODataServiceVersion.V40,
-        new EdmProvider() {
-          @Override
-          public List<Schema> getSchemas() throws ODataException {
-            return Arrays.asList(new Schema().setNamespace("MyNamespace"));
-          }
-        },
-        edmxReferences);
-
-    InputStream metadata = serializer.metadataDocument(serviceMetadata);
-    assertNotNull(metadata);
-
-    String metadataString = IOUtils.toString(metadata);
-    assertEquals("<?xml version='1.0' encoding='UTF-8'?>" +
-        "<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">" +
-          "<edmx:DataServices>" +
-            "<Schema xmlns=\"http://docs.oasis-open.org/odata/ns/edm\" Namespace=\"MyNamespace\"/>" +
-          "</edmx:DataServices>" +
-        "</edmx:Edmx>",
-        metadataString);
-  }
-
-    /**
-     * <code>
-     *  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml">
-     *    <edmx:Include Namespace="Org.OData.Core.V1" Alias="Core"/>
-     *  </edmx:Reference>
-     * </code>
-     *
-     * @return default emdx reference
-     */
-  private List<EdmxReference> getEdmxReferences() {
-    List<EdmxReference> edmxReferences = new ArrayList<EdmxReference>();
-    EdmxReference reference = new EdmxReference(
-            URI.create("http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml"));
-    EdmxReferenceInclude include = new EdmxReferenceInclude("Org.OData.Core.V1", "Core");
-    reference.addInclude(include);
-    edmxReferences.add(reference);
-    return edmxReferences;
-  }
+  private static final String CORE_VOCABULARY =
+      "http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml";
 
   @Test
   public void writeMetadataWithTechnicalScenario() throws Exception {
-    ODataSerializer serializer = OData.newInstance().createSerializer(ODataFormat.XML);
-    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(ODataServiceVersion.V40,
-            new TestMetadataProvider(), Collections.<EdmxReference>emptyList());
-    InputStream metadata = serializer.metadataDocument(serviceMetadata);
+    final OData odata = OData.newInstance();
+    final List<EdmxReference> references = getEdmxReferences();
+    final ServiceMetadata serviceMetadata = odata.createServiceMetadata(
+        new EdmTechProvider(references), references);
+
+    final String metadata = IOUtils.toString(
+        odata.createSerializer(ODataFormat.XML).metadataDocument(serviceMetadata));
     assertNotNull(metadata);
-    // The technical scenario is too big to verify. We are content for now to make sure we can serialize it.
-    // System.out.println(StringUtils.inputStreamToString(metadata, false));
+
+    assertThat(metadata,
+        containsString("<edmx:Reference Uri=\"" + CORE_VOCABULARY + "\">"
+            + "<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\"/>"
+            + "</edmx:Reference>"));
+
+    assertThat(metadata,
+        containsString("<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">"));
+
+    assertThat(metadata,
+        containsString("<Schema xmlns=\"http://docs.oasis-open.org/odata/ns/edm\" "
+            + "Namespace=\"olingo.odata.test1\" Alias=\"Namespace1_Alias\">"));
+
+    assertThat(metadata,
+        containsString("<EntityType Name=\"ETTwoPrim\">"
+            + "<Key><PropertyRef Name=\"PropertyInt16\"/></Key>"
+            + "<Property Name=\"PropertyInt16\" Type=\"Edm.Int16\" Nullable=\"false\"/>"
+            + "<Property Name=\"PropertyString\" Type=\"Edm.String\"/>"
+            + "<NavigationProperty Name=\"NavPropertyETAllPrimOne\" Type=\"olingo.odata.test1.ETAllPrim\"/>"
+            + "<NavigationProperty Name=\"NavPropertyETAllPrimMany\" "
+            + "Type=\"Collection(olingo.odata.test1.ETAllPrim)\"/>"
+            + "</EntityType>"));
+
+    assertThat(metadata,
+        containsString("<EntityType Name=\"ETBase\" BaseType=\"olingo.odata.test1.ETTwoPrim\">"
+            + "<Property Name=\"AdditionalPropertyString_5\" Type=\"Edm.String\"/>"
+            + "</EntityType>"));
+
+    assertThat(metadata,
+        containsString("<ComplexType Name=\"CTPrim\">"
+            + "<Property Name=\"PropertyInt16\" Type=\"Edm.Int16\"/></ComplexType>"));
+
+    assertThat(metadata,
+        containsString("<ComplexType Name=\"CTBase\" BaseType=\"olingo.odata.test1.CTTwoPrim\">"
+            + "<Property Name=\"AdditionalPropString\" Type=\"Edm.String\"/></ComplexType>"));
+
+    // TODO: TypeDefinition
+    // assertThat(metadata, containsString("<TypeDefinition Name=\"typeDef\" Type=\"Edm.Int16\"/>"));
+
+    assertThat(metadata, containsString("<Action Name=\"UARTPrimParam\" IsBound=\"false\">"
+        + "<Parameter Name=\"ParameterInt16\" Type=\"Edm.Int16\"/>"
+        + "<ReturnType Type=\"Edm.String\"/></Action>"));
+
+    assertThat(metadata,
+        containsString("<Action Name=\"BAESAllPrimRTETAllPrim\" IsBound=\"true\">"
+            + "<Parameter Name=\"ParameterESAllPrim\" "
+            + "Type=\"Collection(olingo.odata.test1.ETAllPrim)\" Nullable=\"false\"/>"
+            + "<ReturnType Type=\"olingo.odata.test1.ETAllPrim\"/></Action>"));
+
+    assertThat(metadata,
+        containsString("<Function Name=\"UFNRTInt16\" IsBound=\"false\" IsComposable=\"false\">"
+            + "<ReturnType Type=\"Edm.Int16\"/></Function>"));
+
+    assertThat(metadata,
+        containsString("<Function Name=\"BFCESTwoKeyNavRTESTwoKeyNav\" IsBound=\"true\" IsComposable=\"true\">"
+            + "<Parameter Name=\"BindingParam\" Type=\"Collection(olingo.odata.test1.ETTwoKeyNav)\" "
+            + "Nullable=\"false\"/>"
+            + "<ReturnType Type=\"Collection(olingo.odata.test1.ETTwoKeyNav)\" Nullable=\"false\"/></Function>"));
+
+    assertThat(metadata, containsString("<EntityContainer Name=\"Container\">"));
+
+    assertThat(metadata,
+        containsString("<EntitySet Name=\"ESTwoPrim\" EntityType=\"olingo.odata.test1.ETTwoPrim\"/>"));
+
+    assertThat(metadata,
+        containsString("<Singleton Name=\"SINav\" EntityType=\"olingo.odata.test1.ETTwoKeyNav\">"
+            + "<NavigationPropertyBinding Path=\"NavPropertyETTwoKeyNavMany\" Target=\"ESTwoKeyNav\"/>"
+            + "</Singleton>"));
+
+    assertThat(metadata,
+        containsString("<ActionImport Name=\"AIRTPrimParam\" Action=\"olingo.odata.test1.UARTPrimParam\"/>"));
+
+    assertThat(metadata,
+        containsString("<FunctionImport Name=\"FINInvisible2RTInt16\" Function=\"olingo.odata.test1.UFNRTInt16\" "
+            + "IncludeInServiceDocument=\"false\"/>"));
+
+    assertThat(metadata, containsString("</EntityContainer></Schema></edmx:DataServices></edmx:Edmx>"));
   }
 
-  private class TestMetadataProvider extends EdmProvider {
-
-    @Override
-    public List<Schema> getSchemas() throws ODataException {
-      Property p1 = new Property().setName("P1").setType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName());
-      String ns = "namespace";
-      NavigationProperty n1 = new NavigationProperty().setName("N1")
-          .setType(new FullQualifiedName(ns, "ETBaseName")).setNullable(true).setPartner("N1");
-      Property p2 = new Property().setName("P2").setType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName());
-      NavigationProperty n2 = new NavigationProperty().setName("N2")
-          .setType(new FullQualifiedName(ns, "ETDerivedName")).setNullable(true).setPartner("N2");
-      Schema schema = new Schema().setNamespace(ns).setAlias("alias");
-      List<ComplexType> complexTypes = new ArrayList<ComplexType>();
-      schema.setComplexTypes(complexTypes);
-      ComplexType ctBase =
-          new ComplexType().setName("CTBaseName").setProperties(Arrays.asList(p1)).setNavigationProperties(
-              Arrays.asList(n1));
-      complexTypes.add(ctBase);
-      ComplexType ctDerived =
-          new ComplexType().setName("CTDerivedName").setBaseType(new FullQualifiedName(ns, "CTBaseName"))
-              .setProperties(Arrays.asList(p2)).setNavigationProperties(Arrays.asList(n2));
-      complexTypes.add(ctDerived);
-
-      List<EntityType> entityTypes = new ArrayList<EntityType>();
-      schema.setEntityTypes(entityTypes);
-      EntityType etBase =
-          new EntityType().setName("ETBaseName").setProperties(Arrays.asList(p1)).setNavigationProperties(
-              Arrays.asList(n1));
-      entityTypes.add(etBase);
-      EntityType etDerived =
-          new EntityType().setName("ETDerivedName").setBaseType(new FullQualifiedName(ns, "ETBaseName"))
-              .setProperties(Arrays.asList(p2)).setNavigationProperties(Arrays.asList(n2));
-      entityTypes.add(etDerived);
-
-      List<Action> actions = new ArrayList<Action>();
-      schema.setActions(actions);
-      // TODO:EntitySetPath
-      actions.add((new Action().setName("ActionWOParameter")));
-      List<Parameter> parameters = new ArrayList<Parameter>();
-      parameters.add(new Parameter().setName("param").setType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName()));
-      parameters.add(new Parameter().setName("param2").setType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName())
-          .setCollection(true));
-      actions.add(new Action().setName("ActionName").setBound(true).setParameters(parameters).setReturnType(
-          new ReturnType().setType(new FullQualifiedName(ns, "CTBaseName"))));
-
-      List<Function> functions = new ArrayList<Function>();
-      schema.setFunctions(functions);
-      functions.add((new Function().setName("FunctionWOParameter")
-          .setReturnType(new ReturnType().setType(new FullQualifiedName(ns, "CTBaseName")))));
-      functions.add(new Function().setName("FunctionName").setBound(true).setParameters(parameters).setReturnType(
-          new ReturnType().setType(new FullQualifiedName(ns, "CTBaseName"))));
-
-      List<EnumType> enumTypes = new ArrayList<EnumType>();
-      schema.setEnumTypes(enumTypes);
-      List<EnumMember> members = new ArrayList<EnumMember>();
-      members.add(new EnumMember().setName("member").setValue("1"));
-      enumTypes.add(new EnumType().setName("EnumName").setFlags(true).setMembers(members));
-
-      List<TypeDefinition> typeDefinitions = new ArrayList<TypeDefinition>();
-      schema.setTypeDefinitions(typeDefinitions);
-      typeDefinitions.add(new TypeDefinition().setName("typeDef")
-          .setUnderlyingType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName()));
-
-      EntityContainer container = new EntityContainer().setName("container");
-      schema.setEntityContainer(container);
-
-      List<ActionImport> actionImports = new ArrayList<ActionImport>();
-      container.setActionImports(actionImports);
-      actionImports.add(new ActionImport().setName("actionImport").setAction(
-          new FullQualifiedName(ns, "ActionWOParameter")).setEntitySet(
-          new Target().setEntityContainer(new FullQualifiedName(ns, "container")).setTargetName("EntitySetName")));
-
-      List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
-      container.setFunctionImports(functionImports);
-      functionImports.add(new FunctionImport().setName("actionImport").setFunction(
-          new FullQualifiedName(ns, "FunctionName")).setEntitySet(
-          new Target().setEntityContainer(new FullQualifiedName(ns, "container")).setTargetName("EntitySetName")));
-
-      List<EntitySet> entitySets = new ArrayList<EntitySet>();
-      container.setEntitySets(entitySets);
-      List<NavigationPropertyBinding> nPB = new ArrayList<NavigationPropertyBinding>();
-      nPB.add(new NavigationPropertyBinding().setPath("N1").setTarget(
-          new Target().setEntityContainer(new FullQualifiedName(ns, "container")).setTargetName("EntitySetName")));
-      entitySets.add(new EntitySet().setName("EntitySetName").setType(new FullQualifiedName(ns, "ETBaseName"))
-          .setNavigationPropertyBindings(nPB));
-
-      List<Singleton> singletons = new ArrayList<Singleton>();
-      container.setSingletons(singletons);
-      singletons.add(new Singleton().setName("SingletonName").setType(new FullQualifiedName(ns, "ETBaseName"))
-          .setNavigationPropertyBindings(nPB));
-
-      List<Schema> schemas = new ArrayList<Schema>();
-      schemas.add(schema);
-      return schemas;
-    }
+  /**
+   * <code>
+   *  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml">
+   *    <edmx:Include Namespace="Org.OData.Core.V1" Alias="Core"/>
+   *  </edmx:Reference>
+   * </code>
+   *
+   * @return default emdx reference
+   */
+  private List<EdmxReference> getEdmxReferences() {
+    EdmxReference reference = new EdmxReference(URI.create(CORE_VOCABULARY));
+    reference.addInclude(new EdmxReferenceInclude("Org.OData.Core.V1", "Core"));
+    return Arrays.asList(reference);
   }
 }

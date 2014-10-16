@@ -23,6 +23,7 @@ import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -50,7 +51,7 @@ public class XMLMetadataRequestImpl
 
   @Override
   public ODataRetrieveResponse<org.apache.olingo.client.api.edm.xml.XMLMetadata> execute() {
-    final SingleXMLMetadatRequestImpl rootReq = new SingleXMLMetadatRequestImpl((ODataClient) odataClient, uri);
+    final SingleXMLMetadatRequestImpl rootReq = new SingleXMLMetadatRequestImpl((ODataClient) odataClient, uri, null);
     final ODataRetrieveResponse<XMLMetadata> rootRes = rootReq.execute();
 
     final XMLMetadataResponseImpl response =
@@ -59,9 +60,11 @@ public class XMLMetadataRequestImpl
     // process external references
     for (Reference reference : rootRes.getBody().getReferences()) {
       final SingleXMLMetadatRequestImpl includeReq = new SingleXMLMetadatRequestImpl(
-              (ODataClient) odataClient, odataClient.newURIBuilder(reference.getUri().toASCIIString()).build());
+              (ODataClient) odataClient,
+              odataClient.newURIBuilder(uri.resolve(reference.getUri()).toASCIIString()).build(),
+              uri);
       final XMLMetadata includeMetadata = includeReq.execute().getBody();
-      
+
       // edmx:Include
       for (Include include : reference.getIncludes()) {
         final Schema includedSchema = includeMetadata.getSchema(include.getNamespace());
@@ -116,14 +119,34 @@ public class XMLMetadataRequestImpl
 
   private class SingleXMLMetadatRequestImpl extends AbstractMetadataRequestImpl<XMLMetadata> {
 
+    private final URI parentURI;
     private HttpResponse httpResponse;
 
-    public SingleXMLMetadatRequestImpl(final ODataClient odataClient, final URI uri) {
+    public SingleXMLMetadatRequestImpl(final ODataClient odataClient, final URI uri, final URI parent) {
       super(odataClient, uri);
+      parentURI = parent;
     }
 
     public HttpResponse getHttpResponse() {
       return httpResponse;
+    }
+
+    /** Referenced document's URIs must only have the same scheme, host, and port as the
+     *  main metadata document's URI but don't have to start with the service root
+     *  as all other OData request URIs. */
+    @Override
+    protected void checkRequest(final CommonODataClient<?> odataClient, final HttpUriRequest request) {
+      if (parentURI == null) {
+        super.checkRequest(odataClient, request);
+      } else {
+        if (!parentURI.getScheme().equals(uri.getScheme())
+            || !parentURI.getAuthority().equals(uri.getAuthority())) {
+          throw new IllegalArgumentException(
+              String.format("The referenced EDMX document has the URI '%s'"
+                  + " where scheme, host, or port is different from the main metadata document URI '%s'.",
+                  uri.toASCIIString(), parentURI.toASCIIString()));
+        }
+      }
     }
 
     @Override

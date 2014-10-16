@@ -22,6 +22,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.processor.TechnicalProcessor;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
@@ -33,8 +34,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
-import java.util.Collections;
+import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 
 public class TechnicalServlet extends HttpServlet {
@@ -47,8 +50,10 @@ public class TechnicalServlet extends HttpServlet {
           throws ServletException, IOException {
     try {
       OData odata = OData.newInstance();
-      List<EdmxReference> references = Collections.emptyList();
-      ServiceMetadata serviceMetadata = odata.createServiceMetadata(new EdmTechProvider(references), references);
+      EdmxReference reference = new EdmxReference(URI.create("../v4.0/cs02/vocabularies/Org.OData.Core.V1.xml"));
+      reference.addInclude(new EdmxReferenceInclude("Org.OData.Core.V1", "Core"));
+      final List<EdmxReference> references = Arrays.asList(reference);
+      final ServiceMetadata serviceMetadata = odata.createServiceMetadata(new EdmTechProvider(references), references);
 
       HttpSession session = req.getSession(true);
       DataProvider dataProvider = (DataProvider) session.getAttribute(DataProvider.class.getName());
