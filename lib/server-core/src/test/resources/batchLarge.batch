@@ -1,0 +1,2422 @@
+--batch_8194-cf13-1f56
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+GET Employees HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Accept: application/atom+xml
+MaxDataServiceVersion: 2.0
+DataServiceVersion: 2.0
+Content-Type: application/atom+xml
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+
+--batch_8194-cf13-1f56
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+GET Employees HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Accept: application/atom+xml
+MaxDataServiceVersion: 2.0
+DataServiceVersion: 2.0
+Content-Type: application/atom+xml
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+
+--batch_8194-cf13-1f56
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+GET Employees HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Accept: application/atom+xml
+MaxDataServiceVersion: 2.0
+DataServiceVersion: 2.0
+Content-Type: application/atom+xml
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+
+--batch_8194-cf13-1f56
+Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+POST Employees HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/"
+  m:etag="W/2">
+  <id>
+    http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Rooms('2')
+  </id>
+  <title type="text">Room 2</title>
+  <updated>2013-04-03T10:53:26.021+02:00</updated>
+  <category term="RefScenario.Room"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link href="Rooms('2')" rel="edit" title="Room" />
+  <link href="Rooms('2')/nr_Employees"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees"
+    title="nr_Employees" type="application/atom+xml; type=feed">
+    <m:inline>
+      <feed xmlns="http://www.w3.org/2005/Atom"
+        xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+        xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+        xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/">
+        <id>
+          http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees
+        </id>
+        <title type="text">Employees</title>
+        <updated>2013-04-03T10:53:26.024+02:00</updated>
+        <author>
+          <name />
+        </author>
+        <link href="Employees" rel="self" title="Employees" />
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('2')
+          </id>
+          <title type="text">Frederic Fall</title>
+          <updated>2003-07-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('2')" rel="edit" title="Employee" />
+          <link href="Employees('2')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('2')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('2')/$value" />
+          <m:properties>
+            <d:EmployeeId>2</d:EmployeeId>
+            <d:EmployeeName>Frederic Fall</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>32</d:Age>
+            <d:EntryDate>2003-07-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('2')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('3')
+          </id>
+          <title type="text">Jonathan Smith</title>
+          <updated>2013-04-03T10:53:26.025+02:00</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('3')" rel="edit" title="Employee" />
+          <link href="Employees('3')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('3')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('3')/$value" />
+          <m:properties>
+            <d:EmployeeId>3</d:EmployeeId>
+            <d:EmployeeName>Jonathan Smith</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>56</d:Age>
+            <d:EntryDate m:null="true" />
+            <d:ImageUrl>Employees('3')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('4')
+          </id>
+          <title type="text">Peter Burke</title>
+          <updated>2004-09-12T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('4')" rel="edit" title="Employee" />
+          <link href="Employees('4')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('4')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('4')/$value" />
+          <m:properties>
+            <d:EmployeeId>4</d:EmployeeId>
+            <d:EmployeeName>Peter Burke</d:EmployeeName>
+            <d:ManagerId>3</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>2</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>39</d:Age>
+            <d:EntryDate>2004-09-12T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('4')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('6')
+          </id>
+          <title type="text">Susan Bay</title>
+          <updated>2010-12-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('6')" rel="edit" title="Employee" />
+          <link href="Employees('6')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('6')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('6')/$value" />
+          <m:properties>
+            <d:EmployeeId>6</d:EmployeeId>
+            <d:EmployeeName>Susan Bay</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>3</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>29</d:Age>
+            <d:EntryDate>2010-12-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('6')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+      </feed>
+    </m:inline>
+  </link>
+  <link href="Rooms('2')/nr_Building"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building"
+    title="nr_Building" type="application/atom+xml; type=entry" />
+  <content type="application/xml">
+    <m:properties>
+      <d:Id>2</d:Id>
+      <d:Name>Room 2</d:Name>
+      <d:Seats>5</d:Seats>
+      <d:Version>2</d:Version>
+    </m:properties>
+  </content>
+</entry>
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+POST Employees HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/"
+  m:etag="W/2">
+  <id>
+    http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Rooms('2')
+  </id>
+  <title type="text">Room 2</title>
+  <updated>2013-04-03T10:53:26.021+02:00</updated>
+  <category term="RefScenario.Room"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link href="Rooms('2')" rel="edit" title="Room" />
+  <link href="Rooms('2')/nr_Employees"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees"
+    title="nr_Employees" type="application/atom+xml; type=feed">
+    <m:inline>
+      <feed xmlns="http://www.w3.org/2005/Atom"
+        xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+        xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+        xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/">
+        <id>
+          http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees
+        </id>
+        <title type="text">Employees</title>
+        <updated>2013-04-03T10:53:26.024+02:00</updated>
+        <author>
+          <name />
+        </author>
+        <link href="Employees" rel="self" title="Employees" />
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('2')
+          </id>
+          <title type="text">Frederic Fall</title>
+          <updated>2003-07-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('2')" rel="edit" title="Employee" />
+          <link href="Employees('2')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('2')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('2')/$value" />
+          <m:properties>
+            <d:EmployeeId>2</d:EmployeeId>
+            <d:EmployeeName>Frederic Fall</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>32</d:Age>
+            <d:EntryDate>2003-07-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('2')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('3')
+          </id>
+          <title type="text">Jonathan Smith</title>
+          <updated>2013-04-03T10:53:26.025+02:00</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('3')" rel="edit" title="Employee" />
+          <link href="Employees('3')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('3')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('3')/$value" />
+          <m:properties>
+            <d:EmployeeId>3</d:EmployeeId>
+            <d:EmployeeName>Jonathan Smith</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>56</d:Age>
+            <d:EntryDate m:null="true" />
+            <d:ImageUrl>Employees('3')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('4')
+          </id>
+          <title type="text">Peter Burke</title>
+          <updated>2004-09-12T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('4')" rel="edit" title="Employee" />
+          <link href="Employees('4')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('4')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('4')/$value" />
+          <m:properties>
+            <d:EmployeeId>4</d:EmployeeId>
+            <d:EmployeeName>Peter Burke</d:EmployeeName>
+            <d:ManagerId>3</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>2</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>39</d:Age>
+            <d:EntryDate>2004-09-12T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('4')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('6')
+          </id>
+          <title type="text">Susan Bay</title>
+          <updated>2010-12-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('6')" rel="edit" title="Employee" />
+          <link href="Employees('6')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('6')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('6')/$value" />
+          <m:properties>
+            <d:EmployeeId>6</d:EmployeeId>
+            <d:EmployeeName>Susan Bay</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>3</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>29</d:Age>
+            <d:EntryDate>2010-12-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('6')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+      </feed>
+    </m:inline>
+  </link>
+  <link href="Rooms('2')/nr_Building"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building"
+    title="nr_Building" type="application/atom+xml; type=entry" />
+  <content type="application/xml">
+    <m:properties>
+      <d:Id>2</d:Id>
+      <d:Name>Room 2</d:Name>
+      <d:Seats>5</d:Seats>
+      <d:Version>2</d:Version>
+    </m:properties>
+  </content>
+</entry>
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+PUT Employees('1') HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<?xml version='1.0' encoding='utf-8'?>
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:19000/abc/EntryXmlChangeTest/">
+  <id>http://localhost:19000/abc/EntryXmlChangeTest/Employees('9')</id>
+  <title type="text">Mister X</title>
+  <updated m:null='true'>Z</updated>
+  <category term="RefScenario.Employee"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <content type="image/jpeg" src="Employees('1')/$value" />
+  <m:properties>
+    <d:EmployeeId>1</d:EmployeeId>
+    <d:EmployeeName>Mister X</d:EmployeeName>
+    <d:ManagerId>1</d:ManagerId>
+    <d:RoomId>2</d:RoomId>
+    <d:TeamId>1</d:TeamId>
+    <d:Location m:type="RefScenario.c_Location">
+      <d:City m:type="RefScenario.c_City">
+        <d:PostalCode>69190</d:PostalCode>
+        <d:CityName>Walldorf</d:CityName>
+      </d:City>
+      <d:Country>Germany</d:Country>
+    </d:Location>
+    <d:EntryDate m:null='true'></d:EntryDate>
+    <d:ImageUrl>Employees('1')/$value</d:ImageUrl>
+  </m:properties>
+</entry>
+--changeset_f980-1cb6-94dd--
+--batch_8194-cf13-1f56
+Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+POST Employees HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/"
+  m:etag="W/2">
+  <id>
+    http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Rooms('2')
+  </id>
+  <title type="text">Room 2</title>
+  <updated>2013-04-03T10:53:26.021+02:00</updated>
+  <category term="RefScenario.Room"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link href="Rooms('2')" rel="edit" title="Room" />
+  <link href="Rooms('2')/nr_Employees"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees"
+    title="nr_Employees" type="application/atom+xml; type=feed">
+    <m:inline>
+      <feed xmlns="http://www.w3.org/2005/Atom"
+        xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+        xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+        xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/">
+        <id>
+          http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees
+        </id>
+        <title type="text">Employees</title>
+        <updated>2013-04-03T10:53:26.024+02:00</updated>
+        <author>
+          <name />
+        </author>
+        <link href="Employees" rel="self" title="Employees" />
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('2')
+          </id>
+          <title type="text">Frederic Fall</title>
+          <updated>2003-07-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('2')" rel="edit" title="Employee" />
+          <link href="Employees('2')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('2')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('2')/$value" />
+          <m:properties>
+            <d:EmployeeId>2</d:EmployeeId>
+            <d:EmployeeName>Frederic Fall</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>32</d:Age>
+            <d:EntryDate>2003-07-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('2')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('3')
+          </id>
+          <title type="text">Jonathan Smith</title>
+          <updated>2013-04-03T10:53:26.025+02:00</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('3')" rel="edit" title="Employee" />
+          <link href="Employees('3')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('3')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('3')/$value" />
+          <m:properties>
+            <d:EmployeeId>3</d:EmployeeId>
+            <d:EmployeeName>Jonathan Smith</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>56</d:Age>
+            <d:EntryDate m:null="true" />
+            <d:ImageUrl>Employees('3')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('4')
+          </id>
+          <title type="text">Peter Burke</title>
+          <updated>2004-09-12T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('4')" rel="edit" title="Employee" />
+          <link href="Employees('4')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('4')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('4')/$value" />
+          <m:properties>
+            <d:EmployeeId>4</d:EmployeeId>
+            <d:EmployeeName>Peter Burke</d:EmployeeName>
+            <d:ManagerId>3</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>2</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>39</d:Age>
+            <d:EntryDate>2004-09-12T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('4')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('6')
+          </id>
+          <title type="text">Susan Bay</title>
+          <updated>2010-12-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('6')" rel="edit" title="Employee" />
+          <link href="Employees('6')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('6')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('6')/$value" />
+          <m:properties>
+            <d:EmployeeId>6</d:EmployeeId>
+            <d:EmployeeName>Susan Bay</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>3</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>29</d:Age>
+            <d:EntryDate>2010-12-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('6')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+      </feed>
+    </m:inline>
+  </link>
+  <link href="Rooms('2')/nr_Building"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building"
+    title="nr_Building" type="application/atom+xml; type=entry" />
+  <content type="application/xml">
+    <m:properties>
+      <d:Id>2</d:Id>
+      <d:Name>Room 2</d:Name>
+      <d:Seats>5</d:Seats>
+      <d:Version>2</d:Version>
+    </m:properties>
+  </content>
+</entry>
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+POST Employees HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/"
+  m:etag="W/2">
+  <id>
+    http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Rooms('2')
+  </id>
+  <title type="text">Room 2</title>
+  <updated>2013-04-03T10:53:26.021+02:00</updated>
+  <category term="RefScenario.Room"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link href="Rooms('2')" rel="edit" title="Room" />
+  <link href="Rooms('2')/nr_Employees"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees"
+    title="nr_Employees" type="application/atom+xml; type=feed">
+    <m:inline>
+      <feed xmlns="http://www.w3.org/2005/Atom"
+        xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+        xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+        xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/">
+        <id>
+          http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees
+        </id>
+        <title type="text">Employees</title>
+        <updated>2013-04-03T10:53:26.024+02:00</updated>
+        <author>
+          <name />
+        </author>
+        <link href="Employees" rel="self" title="Employees" />
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('2')
+          </id>
+          <title type="text">Frederic Fall</title>
+          <updated>2003-07-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('2')" rel="edit" title="Employee" />
+          <link href="Employees('2')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('2')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('2')/$value" />
+          <m:properties>
+            <d:EmployeeId>2</d:EmployeeId>
+            <d:EmployeeName>Frederic Fall</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>32</d:Age>
+            <d:EntryDate>2003-07-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('2')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('3')
+          </id>
+          <title type="text">Jonathan Smith</title>
+          <updated>2013-04-03T10:53:26.025+02:00</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('3')" rel="edit" title="Employee" />
+          <link href="Employees('3')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('3')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('3')/$value" />
+          <m:properties>
+            <d:EmployeeId>3</d:EmployeeId>
+            <d:EmployeeName>Jonathan Smith</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>56</d:Age>
+            <d:EntryDate m:null="true" />
+            <d:ImageUrl>Employees('3')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('4')
+          </id>
+          <title type="text">Peter Burke</title>
+          <updated>2004-09-12T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('4')" rel="edit" title="Employee" />
+          <link href="Employees('4')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('4')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('4')/$value" />
+          <m:properties>
+            <d:EmployeeId>4</d:EmployeeId>
+            <d:EmployeeName>Peter Burke</d:EmployeeName>
+            <d:ManagerId>3</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>2</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>39</d:Age>
+            <d:EntryDate>2004-09-12T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('4')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('6')
+          </id>
+          <title type="text">Susan Bay</title>
+          <updated>2010-12-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('6')" rel="edit" title="Employee" />
+          <link href="Employees('6')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('6')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('6')/$value" />
+          <m:properties>
+            <d:EmployeeId>6</d:EmployeeId>
+            <d:EmployeeName>Susan Bay</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>3</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>29</d:Age>
+            <d:EntryDate>2010-12-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('6')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+      </feed>
+    </m:inline>
+  </link>
+  <link href="Rooms('2')/nr_Building"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building"
+    title="nr_Building" type="application/atom+xml; type=entry" />
+  <content type="application/xml">
+    <m:properties>
+      <d:Id>2</d:Id>
+      <d:Name>Room 2</d:Name>
+      <d:Seats>5</d:Seats>
+      <d:Version>2</d:Version>
+    </m:properties>
+  </content>
+</entry>
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+PUT Employees('1') HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<?xml version='1.0' encoding='utf-8'?>
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:19000/abc/EntryXmlChangeTest/">
+  <id>http://localhost:19000/abc/EntryXmlChangeTest/Employees('9')</id>
+  <title type="text">Mister X</title>
+  <updated m:null='true'>Z</updated>
+  <category term="RefScenario.Employee"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <content type="image/jpeg" src="Employees('1')/$value" />
+  <m:properties>
+    <d:EmployeeId>1</d:EmployeeId>
+    <d:EmployeeName>Mister X</d:EmployeeName>
+    <d:ManagerId>1</d:ManagerId>
+    <d:RoomId>2</d:RoomId>
+    <d:TeamId>1</d:TeamId>
+    <d:Location m:type="RefScenario.c_Location">
+      <d:City m:type="RefScenario.c_City">
+        <d:PostalCode>69190</d:PostalCode>
+        <d:CityName>Walldorf</d:CityName>
+      </d:City>
+      <d:Country>Germany</d:Country>
+    </d:Location>
+    <d:EntryDate m:null='true'></d:EntryDate>
+    <d:ImageUrl>Employees('1')/$value</d:ImageUrl>
+  </m:properties>
+</entry>
+--changeset_f980-1cb6-94dd--
+--batch_8194-cf13-1f56
+Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+POST Employees HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/"
+  m:etag="W/2">
+  <id>
+    http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Rooms('2')
+  </id>
+  <title type="text">Room 2</title>
+  <updated>2013-04-03T10:53:26.021+02:00</updated>
+  <category term="RefScenario.Room"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link href="Rooms('2')" rel="edit" title="Room" />
+  <link href="Rooms('2')/nr_Employees"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees"
+    title="nr_Employees" type="application/atom+xml; type=feed">
+    <m:inline>
+      <feed xmlns="http://www.w3.org/2005/Atom"
+        xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+        xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+        xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/">
+        <id>
+          http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees
+        </id>
+        <title type="text">Employees</title>
+        <updated>2013-04-03T10:53:26.024+02:00</updated>
+        <author>
+          <name />
+        </author>
+        <link href="Employees" rel="self" title="Employees" />
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('2')
+          </id>
+          <title type="text">Frederic Fall</title>
+          <updated>2003-07-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('2')" rel="edit" title="Employee" />
+          <link href="Employees('2')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('2')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('2')/$value" />
+          <m:properties>
+            <d:EmployeeId>2</d:EmployeeId>
+            <d:EmployeeName>Frederic Fall</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>32</d:Age>
+            <d:EntryDate>2003-07-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('2')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('3')
+          </id>
+          <title type="text">Jonathan Smith</title>
+          <updated>2013-04-03T10:53:26.025+02:00</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('3')" rel="edit" title="Employee" />
+          <link href="Employees('3')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('3')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('3')/$value" />
+          <m:properties>
+            <d:EmployeeId>3</d:EmployeeId>
+            <d:EmployeeName>Jonathan Smith</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>56</d:Age>
+            <d:EntryDate m:null="true" />
+            <d:ImageUrl>Employees('3')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('4')
+          </id>
+          <title type="text">Peter Burke</title>
+          <updated>2004-09-12T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('4')" rel="edit" title="Employee" />
+          <link href="Employees('4')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('4')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('4')/$value" />
+          <m:properties>
+            <d:EmployeeId>4</d:EmployeeId>
+            <d:EmployeeName>Peter Burke</d:EmployeeName>
+            <d:ManagerId>3</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>2</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>39</d:Age>
+            <d:EntryDate>2004-09-12T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('4')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('6')
+          </id>
+          <title type="text">Susan Bay</title>
+          <updated>2010-12-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('6')" rel="edit" title="Employee" />
+          <link href="Employees('6')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('6')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('6')/$value" />
+          <m:properties>
+            <d:EmployeeId>6</d:EmployeeId>
+            <d:EmployeeName>Susan Bay</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>3</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>29</d:Age>
+            <d:EntryDate>2010-12-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('6')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+      </feed>
+    </m:inline>
+  </link>
+  <link href="Rooms('2')/nr_Building"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building"
+    title="nr_Building" type="application/atom+xml; type=entry" />
+  <content type="application/xml">
+    <m:properties>
+      <d:Id>2</d:Id>
+      <d:Name>Room 2</d:Name>
+      <d:Seats>5</d:Seats>
+      <d:Version>2</d:Version>
+    </m:properties>
+  </content>
+</entry>
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+POST Employees HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/"
+  m:etag="W/2">
+  <id>
+    http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Rooms('2')
+  </id>
+  <title type="text">Room 2</title>
+  <updated>2013-04-03T10:53:26.021+02:00</updated>
+  <category term="RefScenario.Room"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link href="Rooms('2')" rel="edit" title="Room" />
+  <link href="Rooms('2')/nr_Employees"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees"
+    title="nr_Employees" type="application/atom+xml; type=feed">
+    <m:inline>
+      <feed xmlns="http://www.w3.org/2005/Atom"
+        xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+        xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+        xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/">
+        <id>
+          http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees
+        </id>
+        <title type="text">Employees</title>
+        <updated>2013-04-03T10:53:26.024+02:00</updated>
+        <author>
+          <name />
+        </author>
+        <link href="Employees" rel="self" title="Employees" />
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('2')
+          </id>
+          <title type="text">Frederic Fall</title>
+          <updated>2003-07-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('2')" rel="edit" title="Employee" />
+          <link href="Employees('2')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('2')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('2')/$value" />
+          <m:properties>
+            <d:EmployeeId>2</d:EmployeeId>
+            <d:EmployeeName>Frederic Fall</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>32</d:Age>
+            <d:EntryDate>2003-07-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('2')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('3')
+          </id>
+          <title type="text">Jonathan Smith</title>
+          <updated>2013-04-03T10:53:26.025+02:00</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('3')" rel="edit" title="Employee" />
+          <link href="Employees('3')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('3')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('3')/$value" />
+          <m:properties>
+            <d:EmployeeId>3</d:EmployeeId>
+            <d:EmployeeName>Jonathan Smith</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>56</d:Age>
+            <d:EntryDate m:null="true" />
+            <d:ImageUrl>Employees('3')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('4')
+          </id>
+          <title type="text">Peter Burke</title>
+          <updated>2004-09-12T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('4')" rel="edit" title="Employee" />
+          <link href="Employees('4')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('4')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('4')/$value" />
+          <m:properties>
+            <d:EmployeeId>4</d:EmployeeId>
+            <d:EmployeeName>Peter Burke</d:EmployeeName>
+            <d:ManagerId>3</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>2</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>39</d:Age>
+            <d:EntryDate>2004-09-12T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('4')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('6')
+          </id>
+          <title type="text">Susan Bay</title>
+          <updated>2010-12-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('6')" rel="edit" title="Employee" />
+          <link href="Employees('6')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('6')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('6')/$value" />
+          <m:properties>
+            <d:EmployeeId>6</d:EmployeeId>
+            <d:EmployeeName>Susan Bay</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>3</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>29</d:Age>
+            <d:EntryDate>2010-12-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('6')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+      </feed>
+    </m:inline>
+  </link>
+  <link href="Rooms('2')/nr_Building"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building"
+    title="nr_Building" type="application/atom+xml; type=entry" />
+  <content type="application/xml">
+    <m:properties>
+      <d:Id>2</d:Id>
+      <d:Name>Room 2</d:Name>
+      <d:Seats>5</d:Seats>
+      <d:Version>2</d:Version>
+    </m:properties>
+  </content>
+</entry>
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+PUT Employees('1') HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<?xml version='1.0' encoding='utf-8'?>
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:19000/abc/EntryXmlChangeTest/">
+  <id>http://localhost:19000/abc/EntryXmlChangeTest/Employees('9')</id>
+  <title type="text">Mister X</title>
+  <updated m:null='true'>Z</updated>
+  <category term="RefScenario.Employee"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <content type="image/jpeg" src="Employees('1')/$value" />
+  <m:properties>
+    <d:EmployeeId>1</d:EmployeeId>
+    <d:EmployeeName>Mister X</d:EmployeeName>
+    <d:ManagerId>1</d:ManagerId>
+    <d:RoomId>2</d:RoomId>
+    <d:TeamId>1</d:TeamId>
+    <d:Location m:type="RefScenario.c_Location">
+      <d:City m:type="RefScenario.c_City">
+        <d:PostalCode>69190</d:PostalCode>
+        <d:CityName>Walldorf</d:CityName>
+      </d:City>
+      <d:Country>Germany</d:Country>
+    </d:Location>
+    <d:EntryDate m:null='true'></d:EntryDate>
+    <d:ImageUrl>Employees('1')/$value</d:ImageUrl>
+  </m:properties>
+</entry>
+--changeset_f980-1cb6-94dd--
+--batch_8194-cf13-1f56
+Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+POST Employees HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/"
+  m:etag="W/2">
+  <id>
+    http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Rooms('2')
+  </id>
+  <title type="text">Room 2</title>
+  <updated>2013-04-03T10:53:26.021+02:00</updated>
+  <category term="RefScenario.Room"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link href="Rooms('2')" rel="edit" title="Room" />
+  <link href="Rooms('2')/nr_Employees"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees"
+    title="nr_Employees" type="application/atom+xml; type=feed">
+    <m:inline>
+      <feed xmlns="http://www.w3.org/2005/Atom"
+        xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+        xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+        xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/">
+        <id>
+          http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees
+        </id>
+        <title type="text">Employees</title>
+        <updated>2013-04-03T10:53:26.024+02:00</updated>
+        <author>
+          <name />
+        </author>
+        <link href="Employees" rel="self" title="Employees" />
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('2')
+          </id>
+          <title type="text">Frederic Fall</title>
+          <updated>2003-07-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('2')" rel="edit" title="Employee" />
+          <link href="Employees('2')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('2')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('2')/$value" />
+          <m:properties>
+            <d:EmployeeId>2</d:EmployeeId>
+            <d:EmployeeName>Frederic Fall</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>32</d:Age>
+            <d:EntryDate>2003-07-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('2')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('3')
+          </id>
+          <title type="text">Jonathan Smith</title>
+          <updated>2013-04-03T10:53:26.025+02:00</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('3')" rel="edit" title="Employee" />
+          <link href="Employees('3')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('3')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('3')/$value" />
+          <m:properties>
+            <d:EmployeeId>3</d:EmployeeId>
+            <d:EmployeeName>Jonathan Smith</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>56</d:Age>
+            <d:EntryDate m:null="true" />
+            <d:ImageUrl>Employees('3')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('4')
+          </id>
+          <title type="text">Peter Burke</title>
+          <updated>2004-09-12T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('4')" rel="edit" title="Employee" />
+          <link href="Employees('4')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('4')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('4')/$value" />
+          <m:properties>
+            <d:EmployeeId>4</d:EmployeeId>
+            <d:EmployeeName>Peter Burke</d:EmployeeName>
+            <d:ManagerId>3</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>2</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>39</d:Age>
+            <d:EntryDate>2004-09-12T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('4')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('6')
+          </id>
+          <title type="text">Susan Bay</title>
+          <updated>2010-12-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('6')" rel="edit" title="Employee" />
+          <link href="Employees('6')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('6')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('6')/$value" />
+          <m:properties>
+            <d:EmployeeId>6</d:EmployeeId>
+            <d:EmployeeName>Susan Bay</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>3</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>29</d:Age>
+            <d:EntryDate>2010-12-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('6')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+      </feed>
+    </m:inline>
+  </link>
+  <link href="Rooms('2')/nr_Building"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building"
+    title="nr_Building" type="application/atom+xml; type=entry" />
+  <content type="application/xml">
+    <m:properties>
+      <d:Id>2</d:Id>
+      <d:Name>Room 2</d:Name>
+      <d:Seats>5</d:Seats>
+      <d:Version>2</d:Version>
+    </m:properties>
+  </content>
+</entry>
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+POST Employees HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/"
+  m:etag="W/2">
+  <id>
+    http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Rooms('2')
+  </id>
+  <title type="text">Room 2</title>
+  <updated>2013-04-03T10:53:26.021+02:00</updated>
+  <category term="RefScenario.Room"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link href="Rooms('2')" rel="edit" title="Room" />
+  <link href="Rooms('2')/nr_Employees"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees"
+    title="nr_Employees" type="application/atom+xml; type=feed">
+    <m:inline>
+      <feed xmlns="http://www.w3.org/2005/Atom"
+        xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+        xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+        xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/">
+        <id>
+          http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees
+        </id>
+        <title type="text">Employees</title>
+        <updated>2013-04-03T10:53:26.024+02:00</updated>
+        <author>
+          <name />
+        </author>
+        <link href="Employees" rel="self" title="Employees" />
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('2')
+          </id>
+          <title type="text">Frederic Fall</title>
+          <updated>2003-07-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('2')" rel="edit" title="Employee" />
+          <link href="Employees('2')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('2')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('2')/$value" />
+          <m:properties>
+            <d:EmployeeId>2</d:EmployeeId>
+            <d:EmployeeName>Frederic Fall</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>32</d:Age>
+            <d:EntryDate>2003-07-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('2')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('3')
+          </id>
+          <title type="text">Jonathan Smith</title>
+          <updated>2013-04-03T10:53:26.025+02:00</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('3')" rel="edit" title="Employee" />
+          <link href="Employees('3')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('3')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('3')/$value" />
+          <m:properties>
+            <d:EmployeeId>3</d:EmployeeId>
+            <d:EmployeeName>Jonathan Smith</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>56</d:Age>
+            <d:EntryDate m:null="true" />
+            <d:ImageUrl>Employees('3')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('4')
+          </id>
+          <title type="text">Peter Burke</title>
+          <updated>2004-09-12T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('4')" rel="edit" title="Employee" />
+          <link href="Employees('4')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('4')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('4')/$value" />
+          <m:properties>
+            <d:EmployeeId>4</d:EmployeeId>
+            <d:EmployeeName>Peter Burke</d:EmployeeName>
+            <d:ManagerId>3</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>2</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>39</d:Age>
+            <d:EntryDate>2004-09-12T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('4')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('6')
+          </id>
+          <title type="text">Susan Bay</title>
+          <updated>2010-12-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('6')" rel="edit" title="Employee" />
+          <link href="Employees('6')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('6')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('6')/$value" />
+          <m:properties>
+            <d:EmployeeId>6</d:EmployeeId>
+            <d:EmployeeName>Susan Bay</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>3</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>29</d:Age>
+            <d:EntryDate>2010-12-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('6')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+      </feed>
+    </m:inline>
+  </link>
+  <link href="Rooms('2')/nr_Building"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building"
+    title="nr_Building" type="application/atom+xml; type=entry" />
+  <content type="application/xml">
+    <m:properties>
+      <d:Id>2</d:Id>
+      <d:Name>Room 2</d:Name>
+      <d:Seats>5</d:Seats>
+      <d:Version>2</d:Version>
+    </m:properties>
+  </content>
+</entry>
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+PUT Employees('1') HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<?xml version='1.0' encoding='utf-8'?>
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:19000/abc/EntryXmlChangeTest/">
+  <id>http://localhost:19000/abc/EntryXmlChangeTest/Employees('9')</id>
+  <title type="text">Mister X</title>
+  <updated m:null='true'>Z</updated>
+  <category term="RefScenario.Employee"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <content type="image/jpeg" src="Employees('1')/$value" />
+  <m:properties>
+    <d:EmployeeId>1</d:EmployeeId>
+    <d:EmployeeName>Mister X</d:EmployeeName>
+    <d:ManagerId>1</d:ManagerId>
+    <d:RoomId>2</d:RoomId>
+    <d:TeamId>1</d:TeamId>
+    <d:Location m:type="RefScenario.c_Location">
+      <d:City m:type="RefScenario.c_City">
+        <d:PostalCode>69190</d:PostalCode>
+        <d:CityName>Walldorf</d:CityName>
+      </d:City>
+      <d:Country>Germany</d:Country>
+    </d:Location>
+    <d:EntryDate m:null='true'></d:EntryDate>
+    <d:ImageUrl>Employees('1')/$value</d:ImageUrl>
+  </m:properties>
+</entry>
+--changeset_f980-1cb6-94dd--
+--batch_8194-cf13-1f56
+Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+POST Employees HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/"
+  m:etag="W/2">
+  <id>
+    http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Rooms('2')
+  </id>
+  <title type="text">Room 2</title>
+  <updated>2013-04-03T10:53:26.021+02:00</updated>
+  <category term="RefScenario.Room"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link href="Rooms('2')" rel="edit" title="Room" />
+  <link href="Rooms('2')/nr_Employees"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees"
+    title="nr_Employees" type="application/atom+xml; type=feed">
+    <m:inline>
+      <feed xmlns="http://www.w3.org/2005/Atom"
+        xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+        xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+        xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/">
+        <id>
+          http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees
+        </id>
+        <title type="text">Employees</title>
+        <updated>2013-04-03T10:53:26.024+02:00</updated>
+        <author>
+          <name />
+        </author>
+        <link href="Employees" rel="self" title="Employees" />
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('2')
+          </id>
+          <title type="text">Frederic Fall</title>
+          <updated>2003-07-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('2')" rel="edit" title="Employee" />
+          <link href="Employees('2')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('2')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('2')/$value" />
+          <m:properties>
+            <d:EmployeeId>2</d:EmployeeId>
+            <d:EmployeeName>Frederic Fall</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>32</d:Age>
+            <d:EntryDate>2003-07-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('2')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('3')
+          </id>
+          <title type="text">Jonathan Smith</title>
+          <updated>2013-04-03T10:53:26.025+02:00</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('3')" rel="edit" title="Employee" />
+          <link href="Employees('3')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('3')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('3')/$value" />
+          <m:properties>
+            <d:EmployeeId>3</d:EmployeeId>
+            <d:EmployeeName>Jonathan Smith</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>56</d:Age>
+            <d:EntryDate m:null="true" />
+            <d:ImageUrl>Employees('3')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('4')
+          </id>
+          <title type="text">Peter Burke</title>
+          <updated>2004-09-12T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('4')" rel="edit" title="Employee" />
+          <link href="Employees('4')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('4')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('4')/$value" />
+          <m:properties>
+            <d:EmployeeId>4</d:EmployeeId>
+            <d:EmployeeName>Peter Burke</d:EmployeeName>
+            <d:ManagerId>3</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>2</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>39</d:Age>
+            <d:EntryDate>2004-09-12T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('4')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('6')
+          </id>
+          <title type="text">Susan Bay</title>
+          <updated>2010-12-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('6')" rel="edit" title="Employee" />
+          <link href="Employees('6')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('6')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('6')/$value" />
+          <m:properties>
+            <d:EmployeeId>6</d:EmployeeId>
+            <d:EmployeeName>Susan Bay</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>3</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>29</d:Age>
+            <d:EntryDate>2010-12-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('6')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+      </feed>
+    </m:inline>
+  </link>
+  <link href="Rooms('2')/nr_Building"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building"
+    title="nr_Building" type="application/atom+xml; type=entry" />
+  <content type="application/xml">
+    <m:properties>
+      <d:Id>2</d:Id>
+      <d:Name>Room 2</d:Name>
+      <d:Seats>5</d:Seats>
+      <d:Version>2</d:Version>
+    </m:properties>
+  </content>
+</entry>
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+POST Employees HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/"
+  m:etag="W/2">
+  <id>
+    http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Rooms('2')
+  </id>
+  <title type="text">Room 2</title>
+  <updated>2013-04-03T10:53:26.021+02:00</updated>
+  <category term="RefScenario.Room"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link href="Rooms('2')" rel="edit" title="Room" />
+  <link href="Rooms('2')/nr_Employees"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees"
+    title="nr_Employees" type="application/atom+xml; type=feed">
+    <m:inline>
+      <feed xmlns="http://www.w3.org/2005/Atom"
+        xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+        xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+        xml:base="http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/">
+        <id>
+          http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees
+        </id>
+        <title type="text">Employees</title>
+        <updated>2013-04-03T10:53:26.024+02:00</updated>
+        <author>
+          <name />
+        </author>
+        <link href="Employees" rel="self" title="Employees" />
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('2')
+          </id>
+          <title type="text">Frederic Fall</title>
+          <updated>2003-07-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('2')" rel="edit" title="Employee" />
+          <link href="Employees('2')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('2')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('2')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('2')/$value" />
+          <m:properties>
+            <d:EmployeeId>2</d:EmployeeId>
+            <d:EmployeeName>Frederic Fall</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>32</d:Age>
+            <d:EntryDate>2003-07-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('2')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('3')
+          </id>
+          <title type="text">Jonathan Smith</title>
+          <updated>2013-04-03T10:53:26.025+02:00</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('3')" rel="edit" title="Employee" />
+          <link href="Employees('3')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('3')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('3')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('3')/$value" />
+          <m:properties>
+            <d:EmployeeId>3</d:EmployeeId>
+            <d:EmployeeName>Jonathan Smith</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>1</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>56</d:Age>
+            <d:EntryDate m:null="true" />
+            <d:ImageUrl>Employees('3')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('4')
+          </id>
+          <title type="text">Peter Burke</title>
+          <updated>2004-09-12T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('4')" rel="edit" title="Employee" />
+          <link href="Employees('4')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('4')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('4')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('4')/$value" />
+          <m:properties>
+            <d:EmployeeId>4</d:EmployeeId>
+            <d:EmployeeName>Peter Burke</d:EmployeeName>
+            <d:ManagerId>3</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>2</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>39</d:Age>
+            <d:EntryDate>2004-09-12T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('4')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+        <entry>
+          <id>
+            http://localhost:8080/org.apache.olingo.odata2.ref.web/ReferenceScenario.svc/Employees('6')
+          </id>
+          <title type="text">Susan Bay</title>
+          <updated>2010-12-01T00:00:00Z</updated>
+          <category term="RefScenario.Employee"
+            scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <link href="Employees('6')" rel="edit" title="Employee" />
+          <link href="Employees('6')/$value" rel="edit-media"
+            type="application/octet-stream" />
+          <link href="Employees('6')/ne_Manager"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager"
+            title="ne_Manager" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Team"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team"
+            title="ne_Team" type="application/atom+xml; type=entry" />
+          <link href="Employees('6')/ne_Room"
+            rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room"
+            title="ne_Room" type="application/atom+xml; type=entry" />
+          <content type="application/octet-stream" src="Employees('6')/$value" />
+          <m:properties>
+            <d:EmployeeId>6</d:EmployeeId>
+            <d:EmployeeName>Susan Bay</d:EmployeeName>
+            <d:ManagerId>1</d:ManagerId>
+            <d:RoomId>2</d:RoomId>
+            <d:TeamId>3</d:TeamId>
+            <d:Location m:type="RefScenario.c_Location">
+              <d:City m:type="RefScenario.c_City">
+                <d:PostalCode>69190</d:PostalCode>
+                <d:CityName>Walldorf</d:CityName>
+              </d:City>
+              <d:Country>Germany</d:Country>
+            </d:Location>
+            <d:Age>29</d:Age>
+            <d:EntryDate>2010-12-01T00:00:00</d:EntryDate>
+            <d:ImageUrl>Employees('6')/$value</d:ImageUrl>
+          </m:properties>
+        </entry>
+      </feed>
+    </m:inline>
+  </link>
+  <link href="Rooms('2')/nr_Building"
+    rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building"
+    title="nr_Building" type="application/atom+xml; type=entry" />
+  <content type="application/xml">
+    <m:properties>
+      <d:Id>2</d:Id>
+      <d:Name>Room 2</d:Name>
+      <d:Seats>5</d:Seats>
+      <d:Version>2</d:Version>
+    </m:properties>
+  </content>
+</entry>
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+PUT Employees('1') HTTP/1.1
+Host: http://localhost/odata
+Connection: keep-alive
+Content-Type: application/atom+xml
+Accept: */*
+Accept-Encoding: gzip,deflate
+Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
+
+<?xml version='1.0' encoding='utf-8'?>
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xml:base="http://localhost:19000/abc/EntryXmlChangeTest/">
+  <id>http://localhost:19000/abc/EntryXmlChangeTest/Employees('9')</id>
+  <title type="text">Mister X</title>
+  <updated m:null='true'>Z</updated>
+  <category term="RefScenario.Employee"
+    scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <content type="image/jpeg" src="Employees('1')/$value" />
+  <m:properties>
+    <d:EmployeeId>1</d:EmployeeId>
+    <d:EmployeeName>Mister X</d:EmployeeName>
+    <d:ManagerId>1</d:ManagerId>
+    <d:RoomId>2</d:RoomId>
+    <d:TeamId>1</d:TeamId>
+    <d:Location m:type="RefScenario.c_Location">
+      <d:City m:type="RefScenario.c_City">
+        <d:PostalCode>69190</d:PostalCode>
+        <d:CityName>Walldorf</d:CityName>
+      </d:City>
+      <d:Country>Germany</d:Country>
+    </d:Location>
+    <d:EntryDate m:null='true'></d:EntryDate>
+    <d:ImageUrl>Employees('1')/$value</d:ImageUrl>
+  </m:properties>
+</entry>
+--changeset_f980-1cb6-94dd--
+--batch_8194-cf13-1f56--
