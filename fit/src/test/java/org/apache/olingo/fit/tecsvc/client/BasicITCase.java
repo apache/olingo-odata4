@@ -170,7 +170,6 @@ public class BasicITCase extends AbstractBaseTestITCase {
     }
   }
 
-  @Ignore("wrong value type!")
   @Test
   public void readEntity() throws IOException {
     final ODataEntityRequest<ODataEntity> request = getClient().getRetrieveRequestFactory()
