@@ -33,12 +33,14 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
@@ -74,7 +76,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
   }
 
   @Override
-  public void init(final OData odata, final ServiceMetadata edm) {
+  public void init(final OData odata, final ServiceMetadata serviceMetadata) {
     this.odata = odata;
   }
 
@@ -280,20 +282,24 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
         response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
       } else {
         final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
-        try {
-          final String value = type.valueToString(property.getValue(),
-              edmProperty.isNullable(), edmProperty.getMaxLength(),
-              edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode());
-          response.setContent(new ByteArrayInputStream(value.getBytes("UTF-8")));
-        } catch (final EdmPrimitiveTypeException e) {
-          throw new ODataApplicationException("Error in value formatting.",
-              HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT, e);
-        } catch (final UnsupportedEncodingException e) {
-          throw new ODataApplicationException("Encoding exception.",
-              HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT, e);
+        if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary)) {
+          response.setContent(new ByteArrayInputStream((byte[]) property.getValue()));
+        } else {
+          try {
+            final String value = type.valueToString(property.getValue(),
+                edmProperty.isNullable(), edmProperty.getMaxLength(),
+                edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode());
+            response.setContent(new ByteArrayInputStream(value.getBytes("UTF-8")));
+          } catch (final EdmPrimitiveTypeException e) {
+            throw new ODataApplicationException("Error in value formatting.",
+                HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT, e);
+          } catch (final UnsupportedEncodingException e) {
+            throw new ODataApplicationException("Encoding exception.",
+                HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT, e);
+          }
         }
+        response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-        response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.TEXT_PLAIN.toContentTypeString());
       }
     }
   }

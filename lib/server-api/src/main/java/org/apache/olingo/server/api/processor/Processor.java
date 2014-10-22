@@ -30,8 +30,9 @@ public interface Processor {
 
   /**
    * Initializes the processor for each HTTP request - response cycle.
-   * @param odata - Olingo's root object, acting as a factory for various object types
-   * @param edm - the EDM which needs to be created before the OData request handling takes place
+   * @param odata           Olingo's root object, acting as a factory for various object types
+   * @param serviceMetadata metadata of the OData service like the EDM that have to be created
+   *                        before the OData request handling takes place
    */
-  void init(OData odata, ServiceMetadata edm);
+  void init(OData odata, ServiceMetadata serviceMetadata);
 }

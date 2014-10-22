@@ -26,7 +26,7 @@ import org.apache.olingo.server.api.ODataServerError;
 /**
  * Processor which is called if any exception occurs inside the library or another processor.
  */
-public interface ExceptionProcessor extends Processor{
+public interface ExceptionProcessor extends Processor {
 
   /**
    * Processes an exception. MUST NOT throw an exception!
@@ -36,5 +36,5 @@ public interface ExceptionProcessor extends Processor{
    * @param requestedContentType the requested format for the error message
    */
   public void processException(ODataRequest request, ODataResponse response, ODataServerError serverError,
-      final ContentType requestedContentType);
+      ContentType requestedContentType);
 }

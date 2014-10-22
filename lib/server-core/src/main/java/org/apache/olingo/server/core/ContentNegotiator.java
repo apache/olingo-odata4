@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.core;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -27,44 +27,52 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.processor.CustomContentTypeSupport;
-import org.apache.olingo.server.api.processor.MetadataProcessor;
-import org.apache.olingo.server.api.processor.Processor;
+import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
+import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 
 public class ContentNegotiator {
 
   private ContentNegotiator() {}
 
-  private static List<ContentType> getDefaultSupportedContentTypes(final Class<? extends Processor> processorClass) {
-    List<ContentType> defaults = new ArrayList<ContentType>();
-
-    if (processorClass == MetadataProcessor.class) {
-      defaults.add(ODataFormat.XML.getContentType(ODataServiceVersion.V40));
-    } else {
-      defaults.add(ODataFormat.JSON.getContentType(ODataServiceVersion.V40));
-      defaults.add(ODataFormat.JSON_NO_METADATA.getContentType(ODataServiceVersion.V40));
+  private static List<ContentType> getDefaultSupportedContentTypes(final RepresentationType type) {
+    switch (type) {
+    case METADATA:
+      return Arrays.asList(ContentType.APPLICATION_XML);
+    case MEDIA:
+    case BINARY:
+      return Arrays.asList(ContentType.APPLICATION_OCTET_STREAM);
+    case VALUE:
+    case COUNT:
+      return Arrays.asList(ContentType.TEXT_PLAIN);
+    case BATCH:
+      return Arrays.asList(ContentType.MULTIPART_MIXED);
+    default:
+      return Arrays.asList(
+          ODataFormat.JSON.getContentType(ODataServiceVersion.V40),
+          ODataFormat.JSON_NO_METADATA.getContentType(ODataServiceVersion.V40));
     }
-
-    return defaults;
   }
 
-  private static List<ContentType> getSupportedContentTypes(final Processor processor,
-      final Class<? extends Processor> processorClass) {
-
-    List<ContentType> supportedContentTypes = getDefaultSupportedContentTypes(processorClass);
-
-    if (processor instanceof CustomContentTypeSupport) {
-      supportedContentTypes = ((CustomContentTypeSupport) processor)
-          .modifySupportedContentTypes(supportedContentTypes, processorClass);
+  private static List<ContentType> getSupportedContentTypes(
+      final CustomContentTypeSupport customContentTypeSupport, final RepresentationType representationType)
+          throws ContentNegotiatorException {
+    final List<ContentType> defaultSupportedContentTypes = getDefaultSupportedContentTypes(representationType);
+    final List<ContentType> result = customContentTypeSupport == null ? defaultSupportedContentTypes :
+        customContentTypeSupport.modifySupportedContentTypes(defaultSupportedContentTypes, representationType);
+    if (result == null || result.isEmpty()) {
+      throw new ContentNegotiatorException("No content type has been specified as supported.",
+          ContentNegotiatorException.MessageKeys.NO_CONTENT_TYPE_SUPPORTED);
+    } else {
+      return result;
     }
-
-    return supportedContentTypes;
   }
 
   public static ContentType doContentNegotiation(final FormatOption formatOption, final ODataRequest request,
-      final Processor processor, final Class<? extends Processor> processorClass) throws ContentNegotiatorException {
-    final List<ContentType> supportedContentTypes = getSupportedContentTypes(processor, processorClass);
+      final CustomContentTypeSupport customContentTypeSupport, final RepresentationType representationType)
+          throws ContentNegotiatorException {
+    final List<ContentType> supportedContentTypes =
+        getSupportedContentTypes(customContentTypeSupport, representationType);
     final String acceptHeaderValue = request.getHeader(HttpHeader.ACCEPT);
     ContentType result = null;
 
@@ -98,9 +106,7 @@ public class ContentNegotiator {
             ContentNegotiatorException.MessageKeys.UNSUPPORTED_CONTENT_TYPES, acceptedContentTypes.toString());
       }
     } else {
-      final ContentType requestedContentType = processorClass == MetadataProcessor.class ?
-          ODataFormat.XML.getContentType(ODataServiceVersion.V40) :
-          ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
+      final ContentType requestedContentType = getDefaultSupportedContentTypes(representationType).get(0);
       result = getAcceptedType(AcceptType.fromContentType(requestedContentType), supportedContentTypes);
       if (result == null) {
         throw new ContentNegotiatorException(

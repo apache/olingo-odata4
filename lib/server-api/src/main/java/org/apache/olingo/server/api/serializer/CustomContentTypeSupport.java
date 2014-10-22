@@ -16,30 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.processor;
+package org.apache.olingo.server.api.serializer;
 
 import java.util.List;
 
 import org.apache.olingo.commons.api.format.ContentType;
 
 /**
- * A processor which supports custom content types can implement this interface.
- * The processor can also remove default content types if the default serializers
+ * <p>Processors that supports custom content types can implement this interface.</p>
+ * <p>The processor can also remove default content types if the default (de-)serializers
  * of Olingo are not used. By default this interface is not implemented and
- * a processor supports content types implemented by Olingo's default serializer
+ * a processor supports content types implemented by Olingo's default (de-)serializer
  * (e.g., <code>application/xml</code> for the metadata and
- * </code>application/json</code> for the service document).
- * Requesting a content type that is not supported results in an HTTP error
- * 406 (Not Acceptable).
+ * </code>application/json</code> for the service document).</p>
+ * <p>Requesting a content type that is not supported results in an HTTP error
+ * 406 (Not Acceptable); sending content of an unsupported type results in an
+ * HTTP error 415 (Unsupported Media Type).</p>
  */
 public interface CustomContentTypeSupport {
 
   /**
    * Returns a list of supported content types.
-   * @param defaultContentTypes content types supported by Olingo's serializer
-   * @param processorClass the {@link Processor} of the current request
+   * @param defaultContentTypes content types supported by Olingo's (de-)serializer
+   * @param type                the current type of representation
    * @return modified list of supported content types
    */
   public List<ContentType> modifySupportedContentTypes(
-      List<ContentType> defaultContentTypes, Class<? extends Processor> processorClass);
+      List<ContentType> defaultContentTypes, RepresentationType type);
 }

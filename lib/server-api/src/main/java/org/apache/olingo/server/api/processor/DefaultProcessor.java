@@ -19,9 +19,7 @@
 package org.apache.olingo.server.api.processor;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -77,13 +75,9 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
   public void processException(ODataRequest request, ODataResponse response, ODataServerError serverError,
       ContentType requestedContentType) {
     try {
-      if (ContentType.APPLICATION_XML.equals(requestedContentType)) {
-        requestedContentType = ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
-      }
       ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-      InputStream responseEntity = serializer.error(serverError);
+      response.setContent(serializer.error(serverError));
       response.setStatusCode(serverError.getStatusCode());
-      response.setContent(responseEntity);
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     } catch (Exception e) {
       // This should never happen but to be sure we have this catch here to prevent sending a stacktrace to a client.

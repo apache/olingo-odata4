@@ -28,7 +28,7 @@ import org.apache.olingo.server.api.ServiceMetadata;
 public class DefaultRedirectProcessor implements RedirectProcessor {
 
   @Override
-  public void init(final OData odata, final ServiceMetadata edm) {}
+  public void init(final OData odata, final ServiceMetadata serviceMetadata) {}
 
   @Override
   public void redirect(final ODataRequest request, final ODataResponse response) {

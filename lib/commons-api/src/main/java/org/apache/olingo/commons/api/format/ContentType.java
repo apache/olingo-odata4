@@ -46,42 +46,38 @@ import java.util.TreeMap;
  */
 public final class ContentType {
 
-  public static final ContentType APPLICATION_XML = create("application/xml");
+  private static final String APPLICATION = "application";
+  private static final String TEXT = "text";
+  private static final String MULTIPART = "multipart";
 
-  public static final ContentType APPLICATION_ATOM_XML = create("application/atom+xml");
-
+  public static final ContentType APPLICATION_XML = new ContentType(APPLICATION, "xml", null);
+  public static final ContentType APPLICATION_ATOM_XML = new ContentType(APPLICATION, "atom+xml", null);
   public static final ContentType APPLICATION_ATOM_XML_ENTRY = create(APPLICATION_ATOM_XML, "type=entry");
-
   public static final ContentType APPLICATION_ATOM_XML_FEED = create(APPLICATION_ATOM_XML, "type=feed");
+  public static final ContentType APPLICATION_ATOM_SVC = new ContentType(APPLICATION, "atomsvc+xml", null);
 
-  public static final ContentType APPLICATION_ATOM_SVC = create("application/atomsvc+xml");
+  public static final ContentType APPLICATION_JSON = new ContentType(APPLICATION, "json", null);
 
-  public static final ContentType APPLICATION_JSON = create("application/json");
+  public static final ContentType APPLICATION_OCTET_STREAM = new ContentType(APPLICATION, "octet-stream", null);
 
-  public static final ContentType APPLICATION_OCTET_STREAM = create("application/octet-stream");
+  public static final ContentType APPLICATION_XHTML_XML = new ContentType(APPLICATION, "xhtml+xml", null);
+  public static final ContentType TEXT_HTML = new ContentType(TEXT, "html", null);
+  public static final ContentType TEXT_XML = new ContentType(TEXT, "xml", null);
+  public static final ContentType TEXT_PLAIN = new ContentType(TEXT, "plain", null);
 
-  public static final ContentType TEXT_PLAIN = create("text/plain");
+  public static final ContentType APPLICATION_SVG_XML = new ContentType(APPLICATION, "svg+xml", null);
 
-  public static final ContentType MULTIPART_MIXED = create("multipart/mixed");
+  public static final ContentType APPLICATION_FORM_URLENCODED =
+      new ContentType(APPLICATION, "x-www-form-urlencoded", null);
 
-  public static final ContentType APPLICATION_XHTML_XML = create("application/xhtml+xml");
+  public static final ContentType MULTIPART_MIXED = new ContentType(MULTIPART, "mixed", null);
 
-  public static final ContentType APPLICATION_SVG_XML = create("application/svg+xml");
-
-  public static final ContentType APPLICATION_FORM_URLENCODED = create("application/x-www-form-urlencoded");
-
-  public static final ContentType MULTIPART_FORM_DATA = create("multipart/form-data");
-
-  public static final ContentType TEXT_XML = create("text/xml");
-
-  public static final ContentType TEXT_HTML = create("text/html");
+  public static final ContentType MULTIPART_FORM_DATA = new ContentType(MULTIPART, "form-data", null);
 
   public static final String PARAMETER_CHARSET_UTF8 = "charset=utf-8";
 
   private final String type;
-
   private final String subtype;
-
   private final Map<String, String> parameters;
 
   /**
@@ -133,7 +129,7 @@ public final class ContentType {
   }
 
   /**
-   * Creates a content type from format and key-value pairs for parameters
+   * Creates a content type from format and key-value pairs for parameters.
    *
    * @param format for example "application/json"
    * @param parameters for example "a=b", "c=d"
@@ -151,7 +147,7 @@ public final class ContentType {
   }
 
   /**
-   * Creates a content type from format and key-value pairs for parameters
+   * Creates a content type from an existing content type and additional key-value pairs for parameters.
    *
    * @param contentType for example "application/json"
    * @param parameters for example "a=b", "c=d"
@@ -203,7 +199,7 @@ public final class ContentType {
     }
   }
 
-  private static void parse(final String format, final List<String> typeSubtype, final Map<String, String> parameters) {
+  private static void parse(final String format, List<String> typeSubtype, Map<String, String> parameters) {
     final String[] typesAndParameters = format.split(TypeUtil.PARAMETER_SEPARATOR, 2);
     final String types = typesAndParameters[0];
     final String params = (typesAndParameters.length > 1 ? typesAndParameters[1] : null);
@@ -253,50 +249,44 @@ public final class ContentType {
   }
 
   /**
-   * {@link ContentType}s are equal
-   * <ul>
-   * <li>if <code>type</code>, <code>subtype</code> and all <code>parameters</code> have the same value.</li>
-   * <li>if <code>type</code> and/or <code>subtype</code> is set to "*" (in such a case the <code>parameters</code> are
-   * ignored).</li>
-   * </ul>
-   *
-   * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code>.
+   * {@link ContentType}s are equal if <code>type</code>, <code>subtype</code>, and all <code>parameters</code>
+   * have the same value.
    */
   @Override
   public boolean equals(final Object obj) {
-    // NULL validation is done in method 'isEqualWithoutParameters(obj)'
-   final Boolean compatible = isEqualWithoutParameters(obj);
+    // basic checks
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
 
-    if (compatible == null) {
-      ContentType other = (ContentType) obj;
+    final ContentType other = (ContentType) obj;
 
-      // parameter checks
-      if (parameters == null) {
-        if (other.parameters != null) {
+    // type/subtype checks
+    if (!isCompatible(other)) {
+      return false;
+    }
+
+    // parameter checks
+    if (parameters.size() == other.parameters.size()) {
+      final Iterator<Entry<String, String>> entries = parameters.entrySet().iterator();
+      final Iterator<Entry<String, String>> otherEntries = other.parameters.entrySet().iterator();
+      while (entries.hasNext()) {
+        final Entry<String, String> e = entries.next();
+        final Entry<String, String> oe = otherEntries.next();
+         if (!areEqual(e.getKey(), oe.getKey())) {
           return false;
         }
-      } else if (parameters.size() == other.parameters.size()) {
-        final Iterator<Entry<String, String>> entries = parameters.entrySet().iterator();
-        final Iterator<Entry<String, String>> otherEntries = other.parameters.entrySet().iterator();
-        while (entries.hasNext()) {
-          final Entry<String, String> e = entries.next();
-          final Entry<String, String> oe = otherEntries.next();
-
-          if (!areEqual(e.getKey(), oe.getKey())) {
-            return false;
-          }
-          if (!areEqual(e.getValue(), oe.getValue())) {
-            return false;
-          }
+        if (!areEqual(e.getValue(), oe.getValue())) {
+          return false;
         }
-      } else {
-        return false;
       }
-      return true;
     } else {
-      // all tests run
-      return compatible.booleanValue();
+      return false;
     }
+    return true;
   }
 
   /**
@@ -304,71 +294,27 @@ public final class ContentType {
    * if <code>type</code> and <code>subtype</code> have the same value.</p>
    * <p>The set <code>parameters</code> are <b>always</b> ignored
    * (for compare with parameters see {@link #equals(Object)}).</p>
-   * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code>.
+   * @return <code>true</code> if both instances are compatible (see definition above), otherwise <code>false</code>.
    */
-  public boolean isCompatible(final ContentType obj) {
-    final Boolean compatible = isEqualWithoutParameters(obj);
-    return compatible == null || compatible.booleanValue();
+  public boolean isCompatible(final ContentType other) {
+    return type.equalsIgnoreCase(other.type) && subtype.equalsIgnoreCase(other.subtype);
   }
 
   /**
-   * Check equal without parameters. It is possible that no decision about <code>equal/none equal</code> can be
-   * determined a <code>NULL</code> is returned.
-   *
-   * @param obj to checked object
-   * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code> or
-   * <code>NULL</code> if no decision about <code>equal/none equal</code> could be determined.
-   */
-  private Boolean isEqualWithoutParameters(final Object obj) {
-    // basic checks
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-
-    ContentType other = (ContentType) obj;
-
-    // subtype checks
-    if (subtype == null) {
-      if (other.subtype != null) {
-        return false;
-      }
-    } else if (!subtype.equalsIgnoreCase(other.subtype)) {
-      return false;
-    }
-
-    // type checks
-    if (type == null) {
-      if (other.type != null) {
-        return false;
-      }
-    } else if (!type.equalsIgnoreCase(other.type)) {
-      return false;
-    }
-
-    return null;
-  }
-
-  /**
-   * Check whether both string are equal ignoring the case of the strings.
+   * Checks whether both strings are equal ignoring the case of the strings.
    *
    * @param first first string
    * @param second second string
-   * @return <code>true</code> if both strings are equal (by ignoring the case), otherwise <code>false</code> is
-   * returned
+   * @return <code>true</code> if both strings are equal (ignoring the case), otherwise <code>false</code>
    */
   private static boolean areEqual(final String first, final String second) {
     return first == null && second == null || first.equalsIgnoreCase(second);
   }
 
   /**
-   * Get {@link ContentType} as string as defined in RFC 7231 (http://www.ietf.org/rfc/rfc7231.txt, chapter 3.1.1.1:
-   * Media Type)
+   * Gets {@link ContentType} as string as defined in
+   * <a href="http://www.ietf.org/rfc/rfc7231.txt">RFC 7231</a>, chapter 3.1.1.1:
+   * Media Type.
    *
    * @return string representation of <code>ContentType</code> object
    */

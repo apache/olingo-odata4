@@ -61,7 +61,6 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class BasicITCase extends AbstractBaseTestITCase {
@@ -213,7 +212,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertNotNull(property.getPrimitiveValue());
     assertEquals("Test String1", property.getPrimitiveValue().toValue());
   }
-  
+
   @Test
   public void readSimplePropertyContextURL() throws Exception {
     ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
@@ -228,7 +227,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         "\"value\":\"Test String1\"}";
     assertEquals(expectedResult, IOUtils.toString(response.getRawResponse(), "UTF-8"));    
   }  
-  
+
   @Test
   public void readComplexProperty() throws Exception {
     ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
@@ -290,7 +289,6 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
   }   
 
-  @Ignore("Content Negotiation!")
   @Test
   public void readPropertyValue() throws Exception {
     final ODataValueRequest request = getClient().getRetrieveRequestFactory()

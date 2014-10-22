@@ -25,7 +25,7 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import java.util.List;
 
 /**
- *
+ * Metadata of an OData service like the Entity Data Model.
  */
 public interface ServiceMetadata {
   /**

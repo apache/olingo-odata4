@@ -30,6 +30,7 @@ public class ContentNegotiatorException extends ODataTranslatedException {
     UNSUPPORTED_CONTENT_TYPES,
     /** parameter: content type */
     UNSUPPORTED_CONTENT_TYPE,
+    NO_CONTENT_TYPE_SUPPORTED,
     /** parameter: format string */
     UNSUPPORTED_FORMAT_OPTION;
 

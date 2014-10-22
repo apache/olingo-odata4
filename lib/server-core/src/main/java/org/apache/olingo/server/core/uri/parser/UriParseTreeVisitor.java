@@ -651,7 +651,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   private String getName(final EdmType type) {
-    return type.getNamespace() + "." + type.getName();
+    return type.getFullQualifiedName().getFullQualifiedNameAsString();
   }
 
   @Override

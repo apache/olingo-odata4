@@ -21,6 +21,8 @@ package org.apache.olingo.server.core;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,18 +31,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.processor.CustomContentTypeSupport;
-import org.apache.olingo.server.api.processor.EntitySetProcessor;
-import org.apache.olingo.server.api.processor.MetadataProcessor;
-import org.apache.olingo.server.api.processor.Processor;
-import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
-import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
+import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 import org.junit.Test;
 
@@ -51,15 +46,15 @@ public class ContentNegotiatorTest {
   static final private String ACCEPT_CASE_FULL = "application/json;odata.metadata=full";
   static final private String ACCEPT_CASE_NONE = "application/json;odata.metadata=none";
   static final private String ACCEPT_CASE_JSONQ = "application/json;q=0.2";
-  static final private String ACCEPT_CASE_XML = "application/xml";
-  static final private String ACCEPT_CASE_WILDCARD1 = "*/*";
+  static final private String ACCEPT_CASE_XML = HttpContentType.APPLICATION_XML;
+  static final private String ACCEPT_CASE_WILDCARD1 = HttpContentType.WILDCARD;
   static final private String ACCEPT_CASE_WILDCARD2 = "application/*";
 
   //@formatter:off (Eclipse formatter)
   //CHECKSTYLE:OFF (Maven checkstyle)
 
   String[][] casesServiceDocument = {
-      /* expected               $format           accept                 additional content types */
+      /* expected               $format           accept                 modified content types */
       { ACCEPT_CASE_MIN,        null,             null,                  null             },
       { ACCEPT_CASE_MIN,        "json",           null,                  null             },
       { ACCEPT_CASE_MIN,        "json",           ACCEPT_CASE_JSONQ,     null             },
@@ -68,8 +63,8 @@ public class ContentNegotiatorTest {
       { ACCEPT_CASE_MIN,        null,             ACCEPT_CASE_JSONQ,     null             },
       { ACCEPT_CASE_MIN,        null,             ACCEPT_CASE_WILDCARD1, null             },
       { ACCEPT_CASE_MIN,        null,             ACCEPT_CASE_WILDCARD2, null             },
+      { ACCEPT_CASE_MIN,        null,             null,                  ACCEPT_CASE_MIN  },
       { "a/a",                  "a/a",            null,                  "a/a,b/b"        },
-      { "a/a",                  " a/a ",          null,                  " a/a , b/b "    },
       { "a/a;x=y",              "a/a",            ACCEPT_CASE_WILDCARD1, "a/a;x=y"        },
       { "a/a;v=w;x=y",          null,             "a/a;x=y",             "a/a;b=c,a/a;v=w;x=y" },
       { "a/a;v=w;x=y",          "a/a;x=y",        null,                  "a/a;b=c,a/a;v=w;x=y" },
@@ -79,7 +74,7 @@ public class ContentNegotiatorTest {
   };                                                                                          
 
   String[][] casesMetadata = {                                                                 
-      /* expected               $format           accept                 additional content types */
+      /* expected               $format           accept                 modified content types */
       { ACCEPT_CASE_XML,        null,             null,                  null             },
       { ACCEPT_CASE_XML,        "xml",            null,                  null             },
       { ACCEPT_CASE_XML,        "xml",            ACCEPT_CASE_XML,       null             },
@@ -88,12 +83,11 @@ public class ContentNegotiatorTest {
       { ACCEPT_CASE_XML,        null,             ACCEPT_CASE_WILDCARD1, null             },
       { ACCEPT_CASE_XML,        null,             ACCEPT_CASE_WILDCARD2, null             },
       { "a/a",                  "a/a",            null,                  "a/a,b/b"        },
-      { "a/a",                  " a/a ",          null,                  " a/a , b/b "    },
       { "a/a;x=y",              "a/a",            ACCEPT_CASE_WILDCARD1, "a/a;x=y"        }
   };
 
   String[][] casesFail = {                                                                 
-      /* expected               $format           accept                 additional content types */
+      /* expected               $format           accept                 modified content types */
       { null,                   "xxx/yyy",        null,                  null             },
       { null,                   "a/a",            null,                  "b/b"            },
       { null,                   "a/a;x=y",        null,                  "a/a;v=w"        },
@@ -101,71 +95,77 @@ public class ContentNegotiatorTest {
       { null,                   "atom",           null,                  null             }, // not yet supported
       { null,                   null,             ACCEPT_CASE_FULL,      null             }, // not yet supported
       { null,                   "a/b;charset=ISO-8859-1", null,          "a/b"            },
-      { null,                   null,             "a/b;charset=ISO-8859-1", "a/b"         }
+      { null,                   null,             "a/b;charset=ISO-8859-1", "a/b"         },
+      { null,                   null,             null,                  "text/plain"     }
   };
   //CHECKSTYLE:ON
   //@formatter:on
 
   @Test
-  public void testServiceDocumentSingleCase() throws Exception {
+  public void serviceDocumentSingleCase() throws Exception {
     testContentNegotiation(
         new String[] { ACCEPT_CASE_MIN_UTF8, null, ACCEPT_CASE_MIN_UTF8, null },
-        ServiceDocumentProcessor.class);
+        RepresentationType.SERVICE);
   }
 
   @Test
-  public void testServiceDocument() throws Exception {
+  public void serviceDocument() throws Exception {
     for (String[] useCase : casesServiceDocument) {
-      testContentNegotiation(useCase, ServiceDocumentProcessor.class);
+      testContentNegotiation(useCase, RepresentationType.SERVICE);
     }
   }
 
   @Test
-  public void testMetadataSingleCase() throws Exception {
-    testContentNegotiation(new String[] { ACCEPT_CASE_XML, null, null, null }, MetadataProcessor.class);
+  public void metadataSingleCase() throws Exception {
+    testContentNegotiation(new String[] { ACCEPT_CASE_XML, null, null, null }, RepresentationType.METADATA);
   }
 
   @Test(expected = ContentNegotiatorException.class)
-  public void testMetadataJsonFail() throws Exception {
-    testContentNegotiation(new String[] { null, "json", null, null }, MetadataProcessor.class);
+  public void metadataJsonFail() throws Exception {
+    testContentNegotiation(new String[] { null, "json", null, null }, RepresentationType.METADATA);
   }
 
   @Test
-  public void testMetadata() throws Exception {
+  public void metadata() throws Exception {
     for (String[] useCase : casesMetadata) {
-      testContentNegotiation(useCase, MetadataProcessor.class);
+      testContentNegotiation(useCase, RepresentationType.METADATA);
     }
   }
 
   @Test
-  public void testEntityCollectionFail() throws Exception {
+  public void entityCollectionFail() throws Exception {
     for (String[] useCase : casesFail) {
       try {
-        testContentNegotiation(useCase, EntitySetProcessor.class);
+        testContentNegotiation(useCase, RepresentationType.COLLECTION_ENTITY);
         fail("Exception expected for '" + useCase[1] + '|' + useCase[2] + '|' + useCase[3] + "'!");
       } catch (final ContentNegotiatorException e) {}
     }
   }
 
-  private void testContentNegotiation(final String[] useCase, final Class<? extends Processor> processorClass)
+  private void testContentNegotiation(final String[] useCase, final RepresentationType representationType)
       throws ContentNegotiatorException {
-    ODataRequest request = new ODataRequest();
-    request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("/" + (useCase[1] == null ? "" : "?$format=" + useCase[1]));
 
-    ProcessorStub p = new ProcessorStub(createCustomContentTypes(useCase[3]));
-
-    FormatOption fo = null;
+    FormatOption formatOption = null;
     if (useCase[1] != null) {
-      fo = mock(FormatOption.class);
-      when(fo.getFormat()).thenReturn(useCase[1].trim());
+      formatOption = mock(FormatOption.class);
+      when(formatOption.getFormat()).thenReturn(useCase[1]);
     }
 
+    ODataRequest request = new ODataRequest();
     if (useCase[2] != null) {
       request.addHeader(HttpHeader.ACCEPT, Arrays.asList(useCase[2]));
     }
 
-    final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(fo, request, p, processorClass);
+    CustomContentTypeSupport customContentTypeSupport = null;
+    if (useCase[3] != null) {
+      customContentTypeSupport = mock(CustomContentTypeSupport.class);
+      when(customContentTypeSupport.modifySupportedContentTypes(
+          anyListOf(ContentType.class), any(RepresentationType.class)))
+          .thenReturn(createCustomContentTypes(useCase[3]));
+    }
+
+    final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(
+        formatOption, request, customContentTypeSupport, representationType);
 
     assertNotNull(requestedContentType);
     if (useCase[0] != null) {
@@ -174,66 +174,13 @@ public class ContentNegotiatorTest {
   }
 
   private List<ContentType> createCustomContentTypes(final String contentTypeString) {
-
-    if (contentTypeString == null) {
-      return null;
-    }
-
-    String[] contentTypes = contentTypeString.split(",");
+    final String[] contentTypes = contentTypeString.split(",");
 
     List<ContentType> types = new ArrayList<ContentType>();
     for (int i = 0; i < contentTypes.length; i++) {
-      types.add(ContentType.create(contentTypes[i].trim()));
+      types.add(ContentType.create(contentTypes[i]));
     }
 
     return types;
-  }
-
-  private class ProcessorStub implements ServiceDocumentProcessor, MetadataProcessor,
-      EntitySetProcessor, CustomContentTypeSupport {
-
-    List<ContentType> customTypes;
-
-    ProcessorStub(final List<ContentType> types) {
-      customTypes = types;
-    }
-
-    @Override
-    public void init(final OData odata, final ServiceMetadata edm) {}
-
-    @Override
-    public List<ContentType> modifySupportedContentTypes(final List<ContentType> supportedContentTypes,
-        final Class<? extends Processor> processorClass) {
-      if (customTypes == null) {
-        return supportedContentTypes;
-      } else {
-        List<ContentType> modifiedTypes = new ArrayList<ContentType>(supportedContentTypes);
-        modifiedTypes.addAll(customTypes);
-        return modifiedTypes;
-      }
-    }
-
-    @Override
-    public void readServiceDocument(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-        final ContentType format) {
-      response.setHeader(HttpHeader.CONTENT_TYPE, format.toContentTypeString());
-    }
-
-    @Override
-    public void readEntitySet(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-        final ContentType requestedContentType) {
-      response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
-    }
-
-    @Override
-    public void readMetadata(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-        final ContentType requestedContentType) {
-      response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
-    }
-
-    @Override
-    public void countEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo) {
-      response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.TEXT_PLAIN.toContentTypeString());
-    }
   }
 }

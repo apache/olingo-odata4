@@ -19,6 +19,7 @@
 package org.apache.olingo.server.api;
 
 import org.apache.olingo.server.api.processor.Processor;
+import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +45,13 @@ public interface ODataHttpHandler {
    * "not implemented" exception will happen.</p>
    */
   void register(Processor processor);
+
+  /**
+   * Registers a service implementation for modifying the standard list of supported
+   * content types.
+   * @see CustomContentTypeSupport
+   */
+  void register(CustomContentTypeSupport customContentTypeSupport);
 
   /**
    * Sets the split parameter which is used for service resolution.

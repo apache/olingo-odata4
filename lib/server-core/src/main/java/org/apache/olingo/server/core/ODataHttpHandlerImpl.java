@@ -40,6 +40,7 @@ import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.processor.Processor;
+import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +86,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     } else {
       serverError = ODataExceptionHelper.createServerErrorObject(e);
     }
-    handler.handleException(odRequest, resp, serverError, null);
+    handler.handleException(odRequest, resp, serverError);
     return resp;
   }
 
@@ -229,5 +230,10 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   @Override
   public void register(final Processor processor) {
     handler.register(processor);
+  }
+
+  @Override
+  public void register(final CustomContentTypeSupport customContentTypeSupport) {
+    handler.register(customContentTypeSupport);
   }
 }
