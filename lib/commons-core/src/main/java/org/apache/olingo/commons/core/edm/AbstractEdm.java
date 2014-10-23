@@ -106,7 +106,6 @@ public abstract class AbstractEdm implements Edm {
         aliasToNamespaceInfo = new HashMap<String, String>();
         for (EdmSchema schema : schemas.values()) {
           final String namespace = schema.getNamespace();
-          schemas.put(namespace, schema);
 
           if (schema.getAlias() != null) {
             aliasToNamespaceInfo.put(schema.getAlias(), namespace);

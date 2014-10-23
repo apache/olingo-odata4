@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -59,7 +60,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   @Override
   public void process(final HttpServletRequest request, final HttpServletResponse response) {
     ODataRequest odRequest = null;
-    ODataResponse odResponse = null;
+    ODataResponse odResponse;
     try {
       odRequest = createODataRequest(request, split);
       odResponse = handler.process(odRequest);
@@ -99,11 +100,11 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
     InputStream input = odResponse.getContent();
     if (input != null) {
-      OutputStream output;
+      OutputStream output = null;
       try {
         output = response.getOutputStream();
         byte[] buffer = new byte[1024];
-        int n = 0;
+        int n;
         while (-1 != (n = input.read(buffer))) {
           output.write(buffer, 0, n);
         }
@@ -111,13 +112,18 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
         LOG.error(e.getMessage(), e);
         throw new ODataRuntimeException(e);
       } finally {
-        if (input != null) {
-          try {
-            input.close();
-          } catch (IOException e) {
-            throw new ODataRuntimeException(e);
-          }
-        }
+        closeStream(output);
+        closeStream(input);
+      }
+    }
+  }
+
+  private static void closeStream(Closeable closeable) {
+    if(closeable != null) {
+      try {
+        closeable.close();
+      } catch (IOException e) {
+        LOG.error(e.getMessage(), e);
       }
     }
   }
@@ -150,9 +156,9 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
         if (xHttpMethod == null && xHttpMethodOverride == null) {
           odRequest.setMethod(httpRequestMethod);
-        } else if (xHttpMethod == null && xHttpMethodOverride != null) {
+        } else if (xHttpMethod == null) {
           odRequest.setMethod(HttpMethod.valueOf(xHttpMethodOverride));
-        } else if (xHttpMethod != null && xHttpMethodOverride == null) {
+        } else if (xHttpMethodOverride == null) {
           odRequest.setMethod(HttpMethod.valueOf(xHttpMethod));
         } else {
           if (!xHttpMethod.equalsIgnoreCase(xHttpMethodOverride)) {
