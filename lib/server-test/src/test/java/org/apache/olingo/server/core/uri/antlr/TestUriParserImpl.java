@@ -1135,7 +1135,8 @@ public class TestUriParserImpl {
     testUri.run("ESTwoKeyNav", "$select=olingo.odata.test1.ETBaseTwoKeyNav")
         .isSelectStartType(0, EntityTypeProvider.nameETBaseTwoKeyNav);
 
-    testUri.run("ESTwoKeyNav/PropertyCompNav", "$select=olingo.odata.test1.CTTwoBasePrimCompNav")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='1')/PropertyCompNav",
+        "$select=olingo.odata.test1.CTTwoBasePrimCompNav")
         .isSelectStartType(0, ComplexTypeProvider.nameCTTwoBasePrimCompNav);
 
     testUri.run("ESTwoKeyNav", "$select=PropertyCompNav/olingo.odata.test1.CTTwoBasePrimCompNav")

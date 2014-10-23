@@ -27,6 +27,7 @@ public class UriParserSemanticException extends UriParserException {
     /** parameters: function-import name, function parameters */ FUNCTION_NOT_FOUND,
     /** parameter: resource part */ RESOURCE_PART_ONLY_FOR_TYPED_PARTS,
     /** parameter: resource part */ RESOURCE_PART_MUST_BE_PRECEDED_BY_STRUCTURAL_TYPE,
+    /** parameter: property name */ PROPERTY_AFTER_COLLECTION,
     /** parameters: type name, property name */ PROPERTY_NOT_IN_TYPE,
     /** parameters: type name, property name */ EXPRESSION_PROPERTY_NOT_IN_TYPE,
     /** parameter: property name */ UNKNOWN_PROPERTY_TYPE,

@@ -55,13 +55,13 @@ public class UriValidatorTest {
   private static final String URI_PROPERTY_COMPLEX_COLLECTION_COUNT =
       "/ESCompCollComp(1)/PropertyComp/CollPropertyComp/$count";
   private static final String URI_PROPERTY_PRIMITIVE = "/ESAllPrim(1)/PropertyString";
-  private static final String URI_PROPERTY_PRIMITIVE_COLLECTION = "/ESCollAllPrim/CollPropertyString";
+  private static final String URI_PROPERTY_PRIMITIVE_COLLECTION = "/ESCollAllPrim(1)/CollPropertyString";
   private static final String URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT =
-      "/ESCollAllPrim/CollPropertyString/$count";
+      "/ESCollAllPrim(1)/CollPropertyString/$count";
   private static final String URI_PROPERTY_PRIMITIVE_VALUE = "/ESAllPrim(1)/PropertyString/$value";
   private static final String URI_SINGLETON = "/SI";
-  private static final String URI_NAV_ENTITY = "/ESKeyNav/NavPropertyETKeyNavOne";
-  private static final String URI_NAV_ENTITY_SET = "/ESKeyNav/NavPropertyETKeyNavMany";
+  private static final String URI_NAV_ENTITY = "/ESKeyNav(1)/NavPropertyETKeyNavOne";
+  private static final String URI_NAV_ENTITY_SET = "/ESKeyNav(1)/NavPropertyETKeyNavMany";
 
   private static final String QO_FILTER = "$filter='1' eq '1'";
   private static final String QO_FORMAT = "$format=bla/bla";
@@ -341,9 +341,9 @@ public class UriValidatorTest {
       try {
         parseAndValidate(uri[0], uri[1], HttpMethod.GET);
       } catch (final UriParserException e) {
-        fail("Failed for uri: " + uri);
+        fail("Failed for uri: " + uri[0] + '?' + uri[1]);
       } catch (final UriValidationException e) {
-        fail("Failed for uri: " + uri);
+        fail("Failed for uri: " + uri[0] + '?' + uri[1]);
       }
     }
   }
@@ -355,7 +355,7 @@ public class UriValidatorTest {
     for (String[] uri : uris) {
       try {
         parseAndValidate(uri[0], uri[1], HttpMethod.GET);
-        fail("Validation Exception not thrown: " + uri);
+        fail("Validation Exception not thrown: " + uri[0] + '?' + uri[1]);
       } catch (UriParserSemanticException e) {
       } catch (UriValidationException e) {
       }

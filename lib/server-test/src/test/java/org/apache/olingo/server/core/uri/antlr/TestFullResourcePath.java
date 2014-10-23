@@ -955,6 +955,8 @@ public class TestFullResourcePath {
         .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
     testUri.runEx("ESAllPrim/$count/invalid")
         .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+    testUri.runEx("ESAllPrim/PropertyString")
+        .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_AFTER_COLLECTION);
     testUri.runEx("ESAllPrim(1)/whatever")
         .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE);
     // testUri.runEx("ESAllPrim(PropertyInt16='1')")
@@ -965,6 +967,9 @@ public class TestFullResourcePath {
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testUri.runEx("ESAllPrim(PropertyInt16=1,Invalid='1')")
         .isExSemantic(UriParserSemanticException.MessageKeys.NOT_ENOUGH_KEY_PROPERTIES);
+
+    testUri.runEx("ESBase/olingo.odata.test1.ETBase/PropertyInt16")
+        .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_AFTER_COLLECTION);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim/olingo.odata.test1.ETBaseTwoKeyTwoPrim"
         + "/olingo.odata.test1.ETTwoBaseTwoKeyTwoPrim")
@@ -2734,12 +2739,6 @@ public class TestFullResourcePath {
         .goPath().first()
         .isEntitySet("ESKeyNav")
         .n().isRef();
-
-    testUri.run("ESKeyNav/$count")
-        .isKind(UriInfoKind.resource)
-        .goPath().first()
-        .isEntitySet("ESKeyNav")
-        .n().isCount();
 
     testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
         .isKind(UriInfoKind.resource)
