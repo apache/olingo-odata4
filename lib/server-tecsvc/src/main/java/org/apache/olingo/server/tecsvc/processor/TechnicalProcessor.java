@@ -244,7 +244,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
       final EdmProperty edmProperty = uriProperty.getProperty();
       final Property property = entity.getProperty(edmProperty.getName());
       if (property == null) {
-        response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
+        throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
       } else {
         if (property.getValue() == null) {
           response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
@@ -272,7 +272,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
     final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
     if (entity == null) {
-      response.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
+      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
     } else {
       final UriResourceProperty uriProperty =
           (UriResourceProperty) uriInfo.getUriResourceParts().get(uriInfo.getUriResourceParts().size() - 2);
