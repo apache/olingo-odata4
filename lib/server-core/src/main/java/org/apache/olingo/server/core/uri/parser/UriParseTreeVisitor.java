@@ -182,6 +182,7 @@ import org.apache.olingo.server.core.uri.queryoption.expression.TypeLiteralImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.UnaryImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -1459,37 +1460,39 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       // get list of keys for lastType
       List<String> lastKeyPredicates = lastType.getKeyPredicateNames();
 
-      // if there is exactly one key defined in the EDM, then this key the the key written in the URI,
-      // so fill the keylist with this key and return
+      // If there is exactly one key defined in the EDM, then this key is the key written in the URI,
+      // so fill the keylist with this key and return.
       if (lastKeyPredicates.size() == 1) {
-        String keyName = lastKeyPredicates.get(0);
-        List<UriParameterImpl> list = new ArrayList<UriParameterImpl>();
-        list.add(new UriParameterImpl().setName(keyName).setText(valueText).setExpression(expression));
-        return list;
+        return Collections.singletonList(new UriParameterImpl()
+            .setName(lastKeyPredicates.get(0))
+            .setText(valueText)
+            .setExpression(expression));
       }
 
       // There are more keys defined in the EDM, but only one is written in the URI. This is allowed only if
-      // referential constrains are defined on this navigation property which can be used to will up all required
-      // key.
-      // for using referential constrains the last resource part must be a navigation property
+      // referential constraints are defined on this navigation property which can be used to fill up all
+      // required keys.
+      // For using referential constraints the last resource part must be a navigation property.
       if (!(context.contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl)) {
-        throw wrap(new UriParserSemanticException("Not enough key properties defined",
-            UriParserSemanticException.MessageKeys.NOT_ENOUGH_KEY_PROPERTIES));
+        throw wrap(new UriParserSemanticException("Wrong number of key properties.",
+            UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
+            Integer.toString(lastKeyPredicates.size()), "1"));
       }
       UriResourceNavigationPropertyImpl lastNav = (UriResourceNavigationPropertyImpl) last;
 
       // get the partner of the navigation property
       EdmNavigationProperty partner = lastNav.getProperty().getPartner();
       if (partner == null) {
-        throw wrap(new UriParserSemanticException("Not enough key properties defined",
-            UriParserSemanticException.MessageKeys.NOT_ENOUGH_KEY_PROPERTIES));
+        throw wrap(new UriParserSemanticException("Wrong number of key properties.",
+            UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
+            Integer.toString(lastKeyPredicates.size()), "1"));
       }
 
       // create the keylist
       List<UriParameterImpl> list = new ArrayList<UriParameterImpl>();
 
-      // find the key not filled by referential constrains and collect the other keys filled by
-      // referential constrains
+      // Find the keys not filled by referential constraints
+      // and collect the other keys filled by referential constraints.
       String missedKey = null;
       for (String item : lastKeyPredicates) {
         String property = partner.getReferencingPropertyName(item);
@@ -1548,22 +1551,25 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         return list;
       }
 
-      // if not, check if the missing key predicates can be satisfied with help of the defined referential constrains
-      // for using referential constrains the last resource part must be a navigation property
+      // if not, check if the missing key predicates can be satisfied with help of the defined
+      // referential constraints
+      // for using referential constraints the last resource part must be a navigation property
       if (!(context.contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl)) {
-        throw wrap(new UriParserSemanticException("Not enough key properties defined",
-            UriParserSemanticException.MessageKeys.NOT_ENOUGH_KEY_PROPERTIES));
+        throw wrap(new UriParserSemanticException("Wrong number of key properties.",
+            UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
+            Integer.toString(lastKeyPredicates.size()), Integer.toString(list.size())));
       }
       UriResourceNavigationPropertyImpl lastNav = (UriResourceNavigationPropertyImpl) last;
 
       // get the partner of the navigation property
       EdmNavigationProperty partner = lastNav.getProperty().getPartner();
       if (partner == null) {
-        throw wrap(new UriParserSemanticException("Not enough key properties defined",
-            UriParserSemanticException.MessageKeys.NOT_ENOUGH_KEY_PROPERTIES));
+        throw wrap(new UriParserSemanticException("Wrong number of key properties.",
+            UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
+            Integer.toString(lastKeyPredicates.size()), Integer.toString(list.size())));
       }
 
-      // fill missing keys from referential constrains
+      // fill missing keys from referential constraints
       for (String key : lastKeyPredicates) {
         boolean found = false;
         for (UriParameterImpl item : list) {
@@ -1582,15 +1588,25 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         }
       }
 
-      // check again if all keyPredicate are filled from the URI
+      // check again if all key predicates are filled from the URI
       if (list.size() == lastKeyPredicates.size()) {
         return list;
+      } else {
+        throw wrap(new UriParserSemanticException("Wrong number of key properties.",
+            UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
+            Integer.toString(lastKeyPredicates.size()), Integer.toString(list.size())));
       }
-
-      throw wrap(new UriParserSemanticException("Not enough key properties defined",
-          UriParserSemanticException.MessageKeys.NOT_ENOUGH_KEY_PROPERTIES));
+    } else {
+      if (context.contextReadingFunctionParameters) {
+        return Collections.emptyList();
+      } else {
+        final UriResource last = context.contextUriInfo.getLastResourcePart();
+        final int number = last instanceof UriResourcePartTyped ?
+            ((EdmEntityType) ((UriResourcePartTyped) last).getType()).getKeyPredicateNames().size() : 0;
+        throw wrap(new UriParserSemanticException("Wrong number of key properties.",
+            UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES, Integer.toString(number), "0"));
+      }
     }
-    return new ArrayList<String>();
   }
 
   @Override

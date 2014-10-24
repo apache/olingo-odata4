@@ -31,7 +31,6 @@ import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
-import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
@@ -959,14 +958,12 @@ public class TestFullResourcePath {
         .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_AFTER_COLLECTION);
     testUri.runEx("ESAllPrim(1)/whatever")
         .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE);
-    // testUri.runEx("ESAllPrim(PropertyInt16='1')")
-    //     .isExSemantic(UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE);
     testUri.runEx("ESAllPrim(PropertyInt16)")
         .isExSemantic(UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE);
     testUri.runEx("ESAllPrim(PropertyInt16=)")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testUri.runEx("ESAllPrim(PropertyInt16=1,Invalid='1')")
-        .isExSemantic(UriParserSemanticException.MessageKeys.NOT_ENOUGH_KEY_PROPERTIES);
+        .isExSemantic(UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
 
     testUri.runEx("ESBase/olingo.odata.test1.ETBase/PropertyInt16")
         .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_AFTER_COLLECTION);
@@ -1087,8 +1084,6 @@ public class TestFullResourcePath {
         .isKeyPredicate(1, "KeyAlias1", "2")
         .isKeyPredicate(2, "KeyAlias2", "'3'")
         .isKeyPredicate(3, "KeyAlias3", "'4'");
-
-    testUri.runEx("ESCollAllPrim(null)").isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
   }
 
   @Test
@@ -2660,6 +2655,7 @@ public class TestFullResourcePath {
         .goPath().first()
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1");
+    testUri.runEx("ESKeyNav()").isExSemantic(UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
 
     testUri.run("SINav")
         .isKind(UriInfoKind.resource)

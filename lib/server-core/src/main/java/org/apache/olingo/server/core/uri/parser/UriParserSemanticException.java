@@ -44,7 +44,7 @@ public class UriParserSemanticException extends UriParserException {
     /** parameter: expression */ ONLY_FOR_TYPED_PROPERTIES,
     /** parameter: value */ INVALID_KEY_VALUE,
     PARAMETERS_LIST_ONLY_FOR_TYPED_PARTS,
-    NOT_ENOUGH_KEY_PROPERTIES,
+    /** parameters: expected number, actual number */ WRONG_NUMBER_OF_KEY_PROPERTIES,
     NOT_ENOUGH_REFERENTIAL_CONSTRAINTS,
     KEY_NOT_ALLOWED,
     RESOURCE_PATH_NOT_TYPED,

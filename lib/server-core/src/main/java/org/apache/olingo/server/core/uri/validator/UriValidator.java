@@ -176,7 +176,7 @@ public class UriValidator {
   public void validate(final UriInfo uriInfo, final HttpMethod httpMethod) throws UriValidationException {
     validateForHttpMethod(uriInfo, httpMethod);
     validateQueryOptions(uriInfo);
-    validateKeyPredicateTypes(uriInfo);
+    validateKeyPredicates(uriInfo);
   }
 
   private ColumnIndex colIndex(final SystemQueryOptionKind queryOptionKind) throws UriValidationException {
@@ -613,38 +613,40 @@ public class UriValidator {
     return idx;
   }
 
-  private void validateKeyPredicateTypes(final UriInfo uriInfo) throws UriValidationException {
+  private void validateKeyPredicates(final UriInfo uriInfo) throws UriValidationException {
     for (UriResource pathSegment : uriInfo.getUriResourceParts()) {
       if (pathSegment.getKind() == UriResourceKind.entitySet) {
         UriResourceEntitySet pathEntitySet = (UriResourceEntitySet) pathSegment;
-
-        EdmEntityType type = pathEntitySet.getEntityType();
-        List<EdmKeyPropertyRef> keys = type.getKeyPropertyRefs();
         List<UriParameter> keyPredicates = pathEntitySet.getKeyPredicates();
 
-        if (null != keyPredicates) {
+        if (keyPredicates != null) {
 
+          final List<String> keyPredicateNames = pathEntitySet.getEntityType().getKeyPredicateNames();
           HashMap<String, EdmKeyPropertyRef> edmKeys = new HashMap<String, EdmKeyPropertyRef>();
-          for (EdmKeyPropertyRef key : keys) {
+          for (EdmKeyPropertyRef key : pathEntitySet.getEntityType().getKeyPropertyRefs()) {
             edmKeys.put(key.getKeyPropertyName(), key);
-            String alias = key.getAlias();
-            if (null != alias) {
+            final String alias = key.getAlias();
+            if (alias != null) {
               edmKeys.put(alias, key);
             }
           }
 
           for (UriParameter keyPredicate : keyPredicates) {
-            String name = keyPredicate.getName();
-            String alias = keyPredicate.getAlias();
-            String value = keyPredicate.getText();
-            if (alias != null) {
-              value = uriInfo.getValueForAlias(alias);
-            }
-            EdmKeyPropertyRef edmKey = edmKeys.get(name);
+            final String name = keyPredicate.getName();
+            final String alias = keyPredicate.getAlias();
+            final String value = alias == null ?
+                keyPredicate.getText() :
+                uriInfo.getValueForAlias(alias);
 
+            EdmKeyPropertyRef edmKey = edmKeys.get(name);
             if (edmKey == null) {
-              throw new UriValidationException("Unknown key property: " + name,
-                  UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
+              if (keyPredicateNames.contains(name)) {
+                throw new UriValidationException("Double key property: " + name,
+                    UriValidationException.MessageKeys.DOUBLE_KEY_PROPERTY, name);
+              } else {
+                throw new UriValidationException("Unknown key property: " + name,
+                    UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
+              }
             }
 
             final EdmProperty property = edmKey.getProperty();
@@ -662,6 +664,9 @@ public class UriValidator {
               throw new UriValidationException("PrimitiveTypeException", e,
                   UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
             }
+
+            edmKeys.remove(name);
+            edmKeys.remove(alias);
           }
         }
       }

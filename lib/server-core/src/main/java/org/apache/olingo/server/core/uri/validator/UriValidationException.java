@@ -43,6 +43,8 @@ public class UriValidationException extends ODataTranslatedException {
     SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD,
     /** parameter: invalid key property */
     INVALID_KEY_PROPERTY,
+    /** parameter: key property */
+    DOUBLE_KEY_PROPERTY,
     /** parameter: untyped segment name */
     LAST_SEGMENT_NOT_TYPED,
     /** parameter: untyped segment name */
