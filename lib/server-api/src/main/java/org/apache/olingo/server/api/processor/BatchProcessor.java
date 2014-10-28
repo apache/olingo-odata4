@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,14 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.batch.transformator;
+package org.apache.olingo.server.api.processor;
 
 import java.util.List;
 
-import org.apache.olingo.server.api.batch.BatchException;
-import org.apache.olingo.server.api.batch.BatchParserResult;
-import org.apache.olingo.server.core.batch.parser.BatchBodyPart;
+import org.apache.olingo.server.api.ODataRequest;
+import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.batch.BatchOperation;
 
-public interface BatchTransformator {
-  public List<BatchParserResult> transform(BatchBodyPart bodyPart) throws BatchException;
+public interface BatchProcessor extends Processor {
+  void executeBatch(BatchOperation operation, ODataRequest requst, ODataResponse response);
+
+  List<ODataResponse> executeChangeSet(BatchOperation operation, List<ODataRequest> requests);
 }

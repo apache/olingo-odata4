@@ -27,9 +27,9 @@ import java.util.List;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.ODataRequest;
+import org.apache.olingo.server.api.batch.BatchException;
 import org.apache.olingo.server.api.batch.BatchParserResult;
-import org.apache.olingo.server.core.batch.BatchException;
-import org.apache.olingo.server.core.batch.BatchException.MessageKeys;
+import org.apache.olingo.server.api.batch.BatchException.MessageKeys;
 import org.apache.olingo.server.core.batch.parser.BatchBodyPart;
 import org.apache.olingo.server.core.batch.parser.BatchChangeSetPart;
 import org.apache.olingo.server.core.batch.parser.BatchParserCommon;
@@ -84,10 +84,10 @@ public class BatchRequestTransformator implements BatchTransformator {
     final HeaderField contentIdRequest = getContentId(request);
 
     if (contentIdChangeRequestPart == null && contentIdRequest == null) {
-      throw new BatchException("Missing content type", MessageKeys.MISSING_CONTENT_ID, changeRequestPart.getHeaders()
+      throw new BatchException("Missing content id", MessageKeys.MISSING_CONTENT_ID, changeRequestPart.getHeaders()
           .getLineNumber());
     } else if (contentIdChangeRequestPart != null) {
-      request.getHeaders().replaceHeaderField(contentIdChangeRequestPart);
+        request.getHeaders().replaceHeaderField(contentIdChangeRequestPart);
     }
   }
 

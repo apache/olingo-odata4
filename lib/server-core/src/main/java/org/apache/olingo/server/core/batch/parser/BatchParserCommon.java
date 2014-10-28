@@ -29,7 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.olingo.commons.api.http.HttpContentType;
-import org.apache.olingo.server.core.batch.BatchException;
+import org.apache.olingo.server.api.batch.BatchException;
 import org.apache.olingo.server.core.batch.parser.BufferedReaderIncludingLineEndings.Line;
 
 public class BatchParserCommon {
@@ -186,7 +186,8 @@ public class BatchParserCommon {
   }
 
   public static void consumeBlankLine(final List<Line> remainingMessage, final boolean isStrict) throws BatchException {
-    if (remainingMessage.size() > 0 && remainingMessage.get(0).toString().matches("\\s*\r\n\\s*")) {
+    //TODO is \r\n to strict?
+    if (remainingMessage.size() > 0 && remainingMessage.get(0).toString().matches("\\s*(\r\n|\n)\\s*")) {
       remainingMessage.remove(0);
     } else {
       if (isStrict) {

@@ -31,9 +31,9 @@ import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.batch.BatchException;
 import org.apache.olingo.server.api.batch.ODataResponsePart;
-import org.apache.olingo.server.core.batch.BatchException;
-import org.apache.olingo.server.core.batch.BatchException.MessageKeys;
+import org.apache.olingo.server.api.batch.BatchException.MessageKeys;
 import org.apache.olingo.server.core.batch.parser.BatchParserCommon;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 

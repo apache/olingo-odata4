@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.server.core.batch.BatchException;
+import org.apache.olingo.server.api.batch.BatchException;
 import org.apache.olingo.server.core.batch.parser.BufferedReaderIncludingLineEndings.Line;
 
 public class BatchBodyPart implements BatchPart {

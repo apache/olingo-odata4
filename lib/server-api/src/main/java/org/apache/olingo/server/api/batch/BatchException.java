@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.batch;
+package org.apache.olingo.server.api.batch;
 
 import org.apache.olingo.server.api.ODataTranslatedException;
 
@@ -40,7 +40,7 @@ public class BatchException extends ODataTranslatedException {
     MISSING_CONTENT_ID,
     MISSING_CONTENT_TRANSFER_ENCODING,
     MISSING_CONTENT_TYPE,
-    MISSING_MANDATORY_HEADER, FORBIDDEN_HEADER;
+    MISSING_MANDATORY_HEADER, FORBIDDEN_HEADER, INVALID_CONTENT_ID;
 
     @Override
     public String getKey() {

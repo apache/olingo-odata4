@@ -35,6 +35,8 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.batch.BatchException;
+import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.processor.DefaultProcessor;
 import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
@@ -52,6 +54,7 @@ import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
+import org.apache.olingo.server.core.batch.handler.BatchHandler;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
@@ -115,7 +118,7 @@ public class ODataHandler {
 
   private void processInternal(final ODataRequest request, final ODataResponse response)
       throws ODataHandlerException, UriParserException, UriValidationException, ContentNegotiatorException,
-      ODataApplicationException, SerializerException {
+      ODataApplicationException, SerializerException, BatchException {
     validateODataVersion(request, response);
 
     uriInfo = new Parser().parseUri(request.getRawODataPath(), request.getRawQueryPath(), null,
@@ -157,6 +160,13 @@ public class ODataHandler {
       break;
     case resource:
       handleResourceDispatching(request, response);
+      break;
+    case batch:
+      BatchProcessor bp = selectProcessor(BatchProcessor.class);
+      
+      final BatchHandler handler = new BatchHandler(this, request, bp, true);
+      handler.process(response);
+      
       break;
     default:
       throw new ODataHandlerException("not implemented",

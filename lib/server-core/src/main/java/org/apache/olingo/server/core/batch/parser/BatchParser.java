@@ -25,9 +25,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.server.api.batch.BatchException;
 import org.apache.olingo.server.api.batch.BatchParserResult;
 import org.apache.olingo.server.api.batch.BatchRequestPart;
-import org.apache.olingo.server.core.batch.BatchException;
 import org.apache.olingo.server.core.batch.parser.BufferedReaderIncludingLineEndings.Line;
 import org.apache.olingo.server.core.batch.transformator.BatchRequestTransformator;
 

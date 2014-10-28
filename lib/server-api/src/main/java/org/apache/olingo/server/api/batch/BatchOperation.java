@@ -15,15 +15,22 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
- */
-package org.apache.olingo.server.core.batch.transformator;
+ */package org.apache.olingo.server.api.batch;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
-import org.apache.olingo.server.api.batch.BatchException;
-import org.apache.olingo.server.api.batch.BatchParserResult;
-import org.apache.olingo.server.core.batch.parser.BatchBodyPart;
+import org.apache.olingo.server.api.ODataRequest;
+import org.apache.olingo.server.api.ODataResponse;
 
-public interface BatchTransformator {
-  public List<BatchParserResult> transform(BatchBodyPart bodyPart) throws BatchException;
+public interface BatchOperation {
+  public List<BatchRequestPart> parseBatchRequest(InputStream in) throws BatchException;
+
+  public ODataResponse handleODataRequest(ODataRequest request);
+
+  public ODataResponsePart handleBatchRequest(BatchRequestPart request);
+
+  public void writeResponseParts(List<ODataResponsePart> batchResponses, ODataResponse response) throws BatchException,
+      IOException;
 }

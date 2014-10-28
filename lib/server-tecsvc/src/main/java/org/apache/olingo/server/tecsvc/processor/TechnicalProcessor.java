@@ -19,11 +19,14 @@
 package org.apache.olingo.server.tecsvc.processor;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
@@ -46,6 +49,11 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.batch.BatchException;
+import org.apache.olingo.server.api.batch.BatchOperation;
+import org.apache.olingo.server.api.batch.BatchRequestPart;
+import org.apache.olingo.server.api.batch.ODataResponsePart;
+import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.EntitySetProcessor;
 import org.apache.olingo.server.api.processor.PropertyProcessor;
@@ -66,7 +74,7 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
 /**
  * Technical Processor which provides currently implemented processor functionality.
  */
-public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, PropertyProcessor {
+public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, PropertyProcessor, BatchProcessor {
 
   private OData odata;
   private DataProvider dataProvider;
@@ -325,5 +333,34 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       }
     }
+  }
+
+  @Override
+  public void executeBatch(BatchOperation operation, ODataRequest requst, ODataResponse response) {
+    try {
+      final List<BatchRequestPart> parts = operation.parseBatchRequest(requst.getBody());
+      final List<ODataResponsePart> responseParts = new ArrayList<ODataResponsePart>();
+      
+      for(BatchRequestPart part : parts) {
+        responseParts.add(operation.handleBatchRequest(part));
+      }
+      
+      operation.writeResponseParts(responseParts, response);
+    } catch (BatchException e) {
+      throw new ODataRuntimeException(e);
+    } catch (IOException e) {
+      throw new ODataRuntimeException(e);
+    }
+  }
+
+  @Override
+  public List<ODataResponse> executeChangeSet(BatchOperation operation, List<ODataRequest> requests) {
+    List<ODataResponse> responses = new ArrayList<ODataResponse>();
+    
+    for(ODataRequest request : requests) {
+      responses.add(operation.handleODataRequest(request));
+    }
+    
+    return responses;
   }
 }
