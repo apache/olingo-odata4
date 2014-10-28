@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,18 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.processor;
+package org.apache.olingo.server.core.batch.handler;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.BatchOperation;
-import org.apache.olingo.server.api.batch.BatchRequestPart;
-
-public interface BatchProcessor extends Processor {
-  void executeBatch(BatchOperation operation, ODataRequest requests, ODataResponse response);
-
-  List<ODataResponse> executeChangeSet(BatchOperation operation, List<ODataRequest> requests,
-      BatchRequestPart requestPart);
+public class UriMapping {
+  private Map<String, String> uriMapping = new HashMap<String, String>();
+  
+  public void addMapping(final String contentId, final String uri) {
+    uriMapping.put(contentId, uri);
+  }
+  
+  public String getUri(final String contentId) {
+    return uriMapping.get(contentId);
+  }
 }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -44,21 +44,21 @@ public class BatchOperationImpl implements BatchOperation {
     partHandler = new BatchPartHandler(oDataHandler, batchProcessor, this);
     writer = new BatchResponseWriter();
     parser = new BatchParser(getContentType(request), request.getRawBaseUri(),
-                              request.getRawServiceResolutionUri(), isStrict);
+        request.getRawServiceResolutionUri(), isStrict);
   }
 
   @Override
   public List<BatchRequestPart> parseBatchRequest(InputStream in) throws BatchException {
     return parser.parseBatchRequest(in);
   }
-
+  
   @Override
-  public ODataResponse handleODataRequest(ODataRequest request) {
-    return partHandler.handleODataRequest(request);
+  public ODataResponse handleODataRequest(ODataRequest request, BatchRequestPart requestPart) {
+    return partHandler.handleODataRequest(request, requestPart);
   }
-
+  
   @Override
-  public ODataResponsePart handleBatchRequest(BatchRequestPart request) {
+  public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchException {
     return partHandler.handleBatchRequest(request);
   }
 

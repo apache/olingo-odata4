@@ -21,7 +21,6 @@ package org.apache.olingo.server.tecsvc.processor;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -74,7 +73,7 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
 /**
  * Technical Processor which provides currently implemented processor functionality.
  */
-public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, PropertyProcessor, BatchProcessor {
+public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, PropertyProcessor {
 
   private OData odata;
   private DataProvider dataProvider;
@@ -198,12 +197,12 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
     List<UriResource> subResPaths = resourcePaths.subList(1, resourcePaths.size());
     for (UriResource subResPath : subResPaths) {
       UriResourceKind kind = subResPath.getKind();
-      if(kind != UriResourceKind.primitiveProperty
-              && kind != UriResourceKind.complexProperty
-              && kind != UriResourceKind.count
-              && kind != UriResourceKind.value) {
+      if (kind != UriResourceKind.primitiveProperty
+          && kind != UriResourceKind.complexProperty
+          && kind != UriResourceKind.count
+          && kind != UriResourceKind.value) {
         throw new ODataApplicationException("Invalid resource type.",
-                HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
       }
     }
 
@@ -219,6 +218,7 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
       final EdmEntitySet entitySet, final boolean isSingleEntity,
       final ExpandOption expand, final SelectOption select,
       final List<UriParameter> keys, final String propertyPath) throws SerializerException {
+
     return ContextURL.with().entitySet(entitySet)
         .selectList(serializer.buildContextURLSelectList(entitySet, expand, select))
         .suffix(isSingleEntity && propertyPath == null ? Suffix.ENTITY : null)
@@ -226,7 +226,6 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
         .navOrPropertyPath(propertyPath)
         .build();
   }
-
   @Override
   public void readProperty(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
@@ -333,34 +332,5 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       }
     }
-  }
-
-  @Override
-  public void executeBatch(BatchOperation operation, ODataRequest requst, ODataResponse response) {
-    try {
-      final List<BatchRequestPart> parts = operation.parseBatchRequest(requst.getBody());
-      final List<ODataResponsePart> responseParts = new ArrayList<ODataResponsePart>();
-      
-      for(BatchRequestPart part : parts) {
-        responseParts.add(operation.handleBatchRequest(part));
-      }
-      
-      operation.writeResponseParts(responseParts, response);
-    } catch (BatchException e) {
-      throw new ODataRuntimeException(e);
-    } catch (IOException e) {
-      throw new ODataRuntimeException(e);
-    }
-  }
-
-  @Override
-  public List<ODataResponse> executeChangeSet(BatchOperation operation, List<ODataRequest> requests) {
-    List<ODataResponse> responses = new ArrayList<ODataResponse>();
-    
-    for(ODataRequest request : requests) {
-      responses.add(operation.handleODataRequest(request));
-    }
-    
-    return responses;
   }
 }

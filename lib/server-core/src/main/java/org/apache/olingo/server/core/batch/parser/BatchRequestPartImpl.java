@@ -25,6 +25,10 @@ import java.util.List;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.batch.BatchRequestPart;
 
+/**
+ * Has to be immutable!
+ *
+ */
 public class BatchRequestPartImpl implements BatchRequestPart {
 
   private List<ODataRequest> requests = new ArrayList<ODataRequest>();
