@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.communication.response;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
@@ -282,6 +283,14 @@ public abstract class AbstractODataResponse implements ODataResponse {
   public void close() {
     odataClient.getConfiguration().getHttpClientFactory().close(httpClient);
 
+    if (res instanceof Closeable){
+      try {
+        ((Closeable)res).close();
+      } catch (IOException e) {
+        LOG.error("Error closing HttpResponse", e);
+        throw new IllegalStateException(e);
+      }
+    }
     if (batchInfo != null) {
       batchInfo.setValidBatch(false);
     }
