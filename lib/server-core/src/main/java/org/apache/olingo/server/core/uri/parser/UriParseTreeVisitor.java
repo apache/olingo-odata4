@@ -282,11 +282,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   public UriResourceTypedImpl readResourcePathSegment(final PathSegmentContext ctx) {
 
-    boolean checkFirst = false;
-    if (context.contextUriInfo.getLastResourcePart() == null
-        || context.contextUriInfo.getLastResourcePart() instanceof UriResourceRootImpl) {
-      checkFirst = true;
-    }
+    final boolean checkFirst =
+        context.contextUriInfo.getLastResourcePart() == null
+        || context.contextUriInfo.getLastResourcePart() instanceof UriResourceRootImpl;
 
     String odi = ctx.vODI.getText();
 
@@ -1375,6 +1373,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     UriInfoImpl uriInfoImplpath = new UriInfoImpl().setKind(UriInfoKind.resource);
 
+    if (context.contextTypes.isEmpty()) {
+      throw wrap(new UriParserSemanticException("Expression '" + ctx.getText() + "' is not allowed as key value.",
+          UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, ctx.getText()));
+    }
     TypeInformation lastTypeInfo = context.contextTypes.peek();
 
     if (ctx.vIt != null || ctx.vIts != null) {
@@ -1444,8 +1446,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       ExpressionImpl expression = null;
       try {
         expression = (ExpressionImpl) ctx.vVO.accept(this);
-      } catch (Exception ex) {
-        throw wrap(new UriParserSemanticException("Invalid key value: " + valueText,
+      } catch (final RuntimeException e) {
+        throw wrap(new UriParserSemanticException("Invalid key value: " + valueText, e,
             UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, valueText));
       }
 

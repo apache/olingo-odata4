@@ -417,6 +417,11 @@ public class TestFullResourcePath {
         .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+
+    testUri.runEx("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNavParam(WrongParameter='1')")
+        .isExSemantic(UriParserSemanticException.MessageKeys.UNKNOWN_PART);
+    testUri.runEx("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString=wrong)")
+        .isExSemantic(UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE);
   }
 
   @Test
@@ -1084,6 +1089,11 @@ public class TestFullResourcePath {
         .isKeyPredicate(1, "KeyAlias1", "2")
         .isKeyPredicate(2, "KeyAlias2", "'3'")
         .isKeyPredicate(3, "KeyAlias3", "'4'");
+
+    testUri.runEx("ESTwoPrim(wrong)")
+        .isExSemantic(UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE);
+    testUri.runEx("ESTwoPrim(PropertyInt16=wrong)")
+        .isExSemantic(UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE);
   }
 
   @Test
@@ -3386,8 +3396,7 @@ public class TestFullResourcePath {
         .isFunction("UFCRTETTwoKeyNavParamCTTwoPrim")
         .isParameterAlias(0, "ParameterCTTwoPrim", "@ParamAlias");
 
-    testFilter.runOnETTwoKeyNav("PropertyComp"
-        + "/olingo.odata.test1.BFCCTPrimCompRTESTwoKeyNavParam"
+    testFilter.runOnETTwoKeyNav("PropertyComp/olingo.odata.test1.BFCCTPrimCompRTESTwoKeyNavParam"
         + "(ParameterString=PropertyComp/PropertyComp/PropertyString)(PropertyInt16=1,PropertyString='2')"
         + "/PropertyString eq 'SomeString'")
         .is("<<PropertyComp/BFCCTPrimCompRTESTwoKeyNavParam/PropertyString> eq <'SomeString'>>")
@@ -3538,7 +3547,6 @@ public class TestFullResourcePath {
         .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
         .n()
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
-
   }
 
   @Test
