@@ -28,6 +28,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
@@ -142,4 +143,26 @@ public final class ContextURLHelper {
     }
     return result;
   }
+
+  /**
+   * Builds a key predicate for the ContextURL.
+   * @param keys the keys as a list of {@link UriParameter} instances
+   * @return a String with the key predicate
+   */
+  public static String buildKeyPredicate(List<UriParameter> keys) throws SerializerException {
+    if (keys == null || keys.isEmpty()) {
+      return null;
+    } else if (keys.size() == 1) {
+      return Encoder.encode(keys.get(0).getText());
+    } else {
+      StringBuilder result = new StringBuilder();
+      for (final UriParameter key : keys) {
+        if (result.length() > 0) {
+          result.append(',');
+        }
+        result.append(Encoder.encode(key.getName())).append('=').append(Encoder.encode(key.getText()));
+      }
+      return result.toString();
+    }
+  }      
 }

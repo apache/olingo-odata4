@@ -27,9 +27,11 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
@@ -177,6 +179,37 @@ public class ContextURLHelperTest {
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, null)).build();
     assertEquals("$metadata#ESTwoPrim(NavPropertyETAllPrimOne(NavPropertyETTwoPrimOne(*)))",
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+
+  @Test
+  public void buildSingleKey() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");
+    final EdmProperty edmProperty = entitySet.getEntityType().getStructuralProperty("PropertyInt16");
+    UriParameter key = Mockito.mock(UriParameter.class);
+    Mockito.when(key.getName()).thenReturn(edmProperty.getName());
+    Mockito.when(key.getText()).thenReturn("42");
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .keyPath(ContextURLHelper.buildKeyPredicate(Arrays.asList(key)))
+        .navOrPropertyPath(edmProperty.getName()).build();
+    assertEquals("$metadata#ESTwoPrim(42)/PropertyInt16",
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+
+  @Test
+  public void buildCompoundKey() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoKeyNav");
+    final EdmProperty edmProperty = entitySet.getEntityType().getStructuralProperty("PropertyInt16");
+    UriParameter key1 = Mockito.mock(UriParameter.class);
+    Mockito.when(key1.getName()).thenReturn(edmProperty.getName());
+    Mockito.when(key1.getText()).thenReturn("1");
+    UriParameter key2 = Mockito.mock(UriParameter.class);
+    Mockito.when(key2.getName()).thenReturn("PropertyString");
+    Mockito.when(key2.getText()).thenReturn("'2'");
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .keyPath(ContextURLHelper.buildKeyPredicate(Arrays.asList(key1, key2)))
+        .navOrPropertyPath(edmProperty.getName()).build();
+    assertEquals("$metadata#ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyInt16",
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
 }

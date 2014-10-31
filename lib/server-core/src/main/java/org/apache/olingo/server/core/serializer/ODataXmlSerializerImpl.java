@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.serializer;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -35,6 +36,7 @@ import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
+import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
@@ -105,15 +107,20 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
+  public  InputStream entityProperty(EdmProperty edmProperty, Property property,
+    ODataSerializerOptions options) throws SerializerException{
+    throw new SerializerException("error serialization not implemented for XML format",
+      SerializerException.MessageKeys.NOT_IMPLEMENTED);
+  }
+
+  @Override
   public String buildContextURLSelectList(final EdmEntitySet edmEntitySet,
       final ExpandOption expand, final SelectOption select) throws SerializerException {
     return ContextURLHelper.buildSelectList(edmEntitySet.getEntityType(), expand, select);
   }
 
   @Override
-  public 	InputStream entityProperty(EdmProperty edmProperty, Property property,
-    ODataSerializerOptions options) throws SerializerException{
-    throw new SerializerException("error serialization not implemented for XML format",
-      SerializerException.MessageKeys.NOT_IMPLEMENTED);
-	}
+  public String buildContextURLKeyPredicate(final List<UriParameter> keys) throws SerializerException {
+    return ContextURLHelper.buildKeyPredicate(keys);
+  }
 }

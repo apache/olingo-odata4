@@ -19,7 +19,6 @@
 package org.apache.olingo.commons.api.data;
 
 import java.net.URI;
-import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -143,38 +142,17 @@ public class ContextURL {
       return this;
     }
     
-    public Builder keySegment(String value) {
-      if (value != null) {
-        contextURL.keyPath = value;
-      }
+    public Builder keyPath(final String value) {
+      contextURL.keyPath = value;
       return this;
     }  
-    
-    public Builder keySegment(Map<String, String> values) {
-      if (values != null && !values.isEmpty()) {
-        
-        if (values.size() == 1) {
-          return keySegment(values.values().iterator().next());
-        }
-        
-        StringBuilder sb = new StringBuilder();
-        for (String key: values.keySet()) {
-          if (sb.length() > 0) {
-            sb.append(",");
-          }
-          sb.append(key).append("=").append(values.get(key));
-        }
-        contextURL.keyPath = sb.toString();
-      }
-      return this;
-    }      
 
     public Builder entitySetOrSingletonOrType(final String entitySetOrSingletonOrType) {
       contextURL.entitySetOrSingletonOrType = entitySetOrSingletonOrType;
       return this;
     }
-    
-    public Builder propertyType(final EdmType type) {
+
+    public Builder type(final EdmType type) {
       contextURL.entitySetOrSingletonOrType = type.getFullQualifiedName().toString();
       return this;
     }

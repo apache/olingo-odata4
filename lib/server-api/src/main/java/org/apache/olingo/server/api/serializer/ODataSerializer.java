@@ -19,6 +19,7 @@
 package org.apache.olingo.server.api.serializer;
 
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
@@ -28,6 +29,7 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 
@@ -93,4 +95,11 @@ public interface ODataSerializer {
    */
   String buildContextURLSelectList(EdmEntitySet edmEntitySet, ExpandOption expand, SelectOption select)
       throws SerializerException;
+
+  /**
+   * Builds the key-predicate part of a {@link org.apache.olingo.commons.api.data.ContextURL ContextURL}.
+   * @param keys the keys as a list of {@link UriParameter} instances
+   * @return a String with the key predicate
+   */
+  String buildContextURLKeyPredicate(List<UriParameter> keys) throws SerializerException;
 }

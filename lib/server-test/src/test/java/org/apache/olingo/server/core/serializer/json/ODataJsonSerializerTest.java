@@ -28,9 +28,9 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -40,8 +40,8 @@ import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -52,7 +52,6 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -575,96 +574,70 @@ public class ODataJsonSerializerTest {
   }
 
   @Test
-  public void individualPrimitiveProperty() throws Exception {
+  public void primitiveProperty() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
-    final EntitySet entitySet = data.readAll(edmEntitySet);
-
-    EdmElement edmElement = edmEntitySet.getEntityType().getProperty("PropertyString");
-    Entity entity = entitySet.getEntities().get(0);
-
-    InputStream result = serializer
-        .entityProperty((EdmProperty) edmElement, entity.getProperty("PropertyString"),
+    final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyString");
+    final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
+    final String resultString = IOUtils.toString(serializer
+        .entityProperty(edmProperty, property,
             ODataSerializerOptions.with()
-                .contextURL(ContextURL.with().entitySetOrSingletonOrType("Edm.String")
+                .contextURL(ContextURL.with()
+                    .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName())
                     .build())
-                .build());
-    final String resultString = IOUtils.toString(result);
+                .build()));
     Assert.assertEquals("{"
-            + "\"@odata.context\":\"$metadata#Edm.String\","
+            + "\"@odata.context\":\"$metadata#ESAllPrim(32767)/PropertyString\","
             + "\"value\":\"First Resource - positive values\"}",
         resultString);
   }
 
   @Test(expected = SerializerException.class)
-  public void individualPrimitivePropertyNull() throws Exception {
-    PropertyImpl property = new PropertyImpl("Edm.String", "PropertyString", ValueType.PRIMITIVE, null);
+  public void primitivePropertyNull() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
-    EdmElement edmElement = edmEntitySet.getEntityType().getProperty("PropertyString");
-    serializer.entityProperty((EdmProperty) edmElement, property,
-            ODataSerializerOptions.with()
-                .contextURL(ContextURL.with().entitySetOrSingletonOrType("Edm.String")
-                    .build())
-                .build());
+    final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyString");
+    final Property property = new PropertyImpl("Edm.String", edmProperty.getName(), ValueType.PRIMITIVE, null);
+    serializer.entityProperty(edmProperty, property,
+        ODataSerializerOptions.with()
+            .contextURL(ContextURL.with()
+                .entitySet(edmEntitySet).keyPath("4242").navOrPropertyPath(edmProperty.getName())
+                .build())
+            .build());
   }
 
   @Test
-  public void individualPrimitivePropertyArray() throws Exception {
+  public void primitiveCollectionProperty() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCollAllPrim");
-    final EntitySet entitySet = data.readAll(edmEntitySet);
+    final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("CollPropertyString");
+    final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
 
-    EdmElement edmElement = edmEntitySet.getEntityType().getProperty("CollPropertyString");
-    Entity entity = entitySet.getEntities().get(0);
-
-    InputStream result = serializer
-        .entityProperty((EdmProperty) edmElement, entity.getProperty("CollPropertyString"),
+    final String resultString = IOUtils.toString(serializer
+        .entityProperty(edmProperty, property,
             ODataSerializerOptions.with()
-                .contextURL(ContextURL.with().entitySetOrSingletonOrType("Collection(Edm.String)")
+                .contextURL(ContextURL.with()
+                    .entitySet(edmEntitySet).keyPath("1").navOrPropertyPath(edmProperty.getName())
                     .build())
-                .build());
-    final String resultString = IOUtils.toString(result);
+                .build()));
     Assert.assertEquals("{"
-            + "\"@odata.context\":\"$metadata#Collection%28Edm.String%29\","
+            + "\"@odata.context\":\"$metadata#ESCollAllPrim(1)/CollPropertyString\","
             + "\"value\":[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"]}",
         resultString);
   }
 
   @Test
-  @Ignore("Serialization of value of primitive property is not done by json serializer")
-  public void individualPrimitivePropertyValue() throws Exception {
-    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
-    final EntitySet entitySet = data.readAll(edmEntitySet);
-
-    EdmElement edmElement = edmEntitySet.getEntityType().getProperty("PropertyString");
-    Entity entity = entitySet.getEntities().get(0);
-
-    InputStream result = serializer
-        .entityProperty((EdmProperty) edmElement, entity.getProperty("PropertyString"),
-            ODataSerializerOptions.with()
-                .contextURL(ContextURL.with().entitySetOrSingletonOrType("ESAllPrim(0)")
-                    .navOrPropertyPath("PropertyString")
-                    .build())
-                .build());
-    final String resultString = IOUtils.toString(result);
-    Assert.assertEquals("\"First Resource - positive values\"", resultString);
-  }
-
-  @Test
-  public void individualComplexProperty() throws Exception {
+  public void complexProperty() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
-    final EntitySet entitySet = data.readAll(edmEntitySet);
+    final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyComp");
+    final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty("PropertyComp");
 
-    EdmElement edmElement = edmEntitySet.getEntityType().getProperty("PropertyComp");
-    Entity entity = entitySet.getEntities().get(0);
-
-    InputStream result = serializer
-        .entityProperty((EdmProperty) edmElement, entity.getProperty("PropertyComp"),
+    final String resultString = IOUtils.toString(serializer
+        .entityProperty(edmProperty, property,
             ODataSerializerOptions.with()
-                .contextURL(ContextURL.with().entitySetOrSingletonOrType("ESMixPrimCollComp.PropertyComp")
+                .contextURL(ContextURL.with()
+                    .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName())
                     .build())
-                .build());
-    final String resultString = IOUtils.toString(result);
+                .build()));
     Assert.assertEquals("{"
-            + "\"@odata.context\":\"$metadata#ESMixPrimCollComp.PropertyComp\","
+            + "\"@odata.context\":\"$metadata#ESMixPrimCollComp(32767)/PropertyComp\","
             + "\"PropertyInt16\":111,\"PropertyString\":\"TEST A\"}",
         resultString);
   }
