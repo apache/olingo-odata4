@@ -39,7 +39,7 @@ public class BatchChangeSetSorterTest {
   public void test() throws BatchException {
     final List<ODataRequest> changeSet = new ArrayList<ODataRequest>();
     changeSet.add(createRequest(HttpMethod.POST, BASE_URI, "$1/Adress", "2"));
-    changeSet.add(createRequest(HttpMethod.POST, BASE_URI, "Employees", "1"));
+    changeSet.add(createRequest(HttpMethod.POST, BASE_URI, "/Employees", "1"));
     
    BatchChangeSetSorter sorter = new BatchChangeSetSorter(changeSet);
    final List<ODataRequest> sortedChangeSet = sorter.getOrderdRequests();
@@ -110,7 +110,7 @@ public class BatchChangeSetSorterTest {
   @Test
   public void testRewriting() {
     final String CONTENT_ID = "1";
-    final String ODATA_PATH ="$" + CONTENT_ID + "/Address";
+    final String ODATA_PATH ="/$" + CONTENT_ID + "/Address";
     final String RESOURCE_URI = "Employee('1')";
     final ODataRequest request = createRequest(HttpMethod.POST, BASE_URI, ODATA_PATH);
     

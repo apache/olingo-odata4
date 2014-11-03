@@ -26,7 +26,7 @@ import org.apache.olingo.server.api.batch.BatchOperation;
 import org.apache.olingo.server.api.batch.BatchRequestPart;
 
 public interface BatchProcessor extends Processor {
-  void executeBatch(BatchOperation operation, ODataRequest requests, ODataResponse response);
+  void executeBatch(BatchOperation operation, ODataRequest request, ODataResponse response);
 
   List<ODataResponse> executeChangeSet(BatchOperation operation, List<ODataRequest> requests,
       BatchRequestPart requestPart);

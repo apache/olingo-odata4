@@ -53,7 +53,7 @@ public class BatchOperationImpl implements BatchOperation {
   }
   
   @Override
-  public ODataResponse handleODataRequest(ODataRequest request, BatchRequestPart requestPart) {
+  public ODataResponse handleODataRequest(ODataRequest request, BatchRequestPart requestPart) throws BatchException {
     return partHandler.handleODataRequest(request, requestPart);
   }
   

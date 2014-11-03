@@ -27,7 +27,7 @@ import org.apache.olingo.server.api.ODataResponse;
 public interface BatchOperation {
   public List<BatchRequestPart> parseBatchRequest(InputStream in) throws BatchException;
 
-  public ODataResponse handleODataRequest(ODataRequest request, BatchRequestPart requestPart);
+  public ODataResponse handleODataRequest(ODataRequest request, BatchRequestPart requestPart) throws BatchException;
 
   public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchException;
 

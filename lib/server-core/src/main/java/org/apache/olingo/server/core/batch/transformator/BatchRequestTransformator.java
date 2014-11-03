@@ -38,7 +38,7 @@ import org.apache.olingo.server.core.batch.parser.BatchQueryOperation;
 import org.apache.olingo.server.core.batch.parser.BatchRequestPartImpl;
 import org.apache.olingo.server.core.batch.parser.Header;
 import org.apache.olingo.server.core.batch.parser.HeaderField;
-import org.apache.olingo.server.core.batch.transformator.BatchTransformatorCommon.HttpRequestStatusLine;
+import org.apache.olingo.server.core.batch.transformator.HttpRequestStatusLine.ODataURI;
 
 public class BatchRequestTransformator implements BatchTransformator {
   private final String baseUri;
@@ -111,20 +111,21 @@ public class BatchRequestTransformator implements BatchTransformator {
         new HttpRequestStatusLine(operation.getHttpStatusLine(), baseUri, rawServiceResolutionUri, operation
             .getHeaders());
     statusLine.validateHttpMethod(isChangeSet);
-
+    final ODataURI uri = statusLine.getUri();
+    
     validateBody(statusLine, operation);
     InputStream bodyStrean = getBodyStream(operation, statusLine);
 
     validateForbiddenHeader(operation);
-
+    
     final ODataRequest request = new ODataRequest();
     request.setBody(bodyStrean);
     request.setMethod(statusLine.getMethod());
-    request.setRawBaseUri(statusLine.getRawBaseUri());
-    request.setRawODataPath(statusLine.getRawODataPath());
-    request.setRawQueryPath(statusLine.getRawQueryPath());
-    request.setRawRequestUri(statusLine.getRawRequestUri());
-    request.setRawServiceResolutionUri(statusLine.getRawServiceResolutionUri());
+    request.setRawBaseUri(uri.getRawBaseUri());
+    request.setRawODataPath(uri.getRawODataPath());
+    request.setRawQueryPath(uri.getRawQueryPath());
+    request.setRawRequestUri(uri.getRawRequestUri());
+    request.setRawServiceResolutionUri(uri.getRawServiceResolutionUri());
 
     for (final HeaderField field : operation.getHeaders()) {
       request.addHeader(field.getFieldName(), field.getValues());
