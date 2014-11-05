@@ -442,7 +442,61 @@ public class MockedBatchHandlerTest {
 
     return contentId;
   }
-
+  
+  @Test(expected=BatchException.class)
+  public void testInvalidMethod() throws UnsupportedEncodingException, BatchException {
+    final String content = ""
+        + "--batch_12345" + CRLF
+        + "Content-Type: multipart/mixed; boundary=changeset_12345" + CRLF
+        + CRLF
+        + "--changeset_12345" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + "Content-Id: 1" + CRLF
+        + CRLF
+        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF 
+        + "Content-Type: application/json;odata=verbose" + CRLF
+        + CRLF
+        + CRLF
+        + "--changeset_12345--" + CRLF
+        + CRLF
+        + "--batch_12345--";
+    
+    final Map<String, List<String>> header = getMimeHeader();
+    final ODataResponse response = new ODataResponse();
+    final ODataRequest request = buildODataRequest(content, header);
+    request.setMethod(HttpMethod.GET);
+    
+    batchHandler.process(request, response, true);
+  }
+  
+  @Test(expected=BatchException.class)
+  public void testInvalidContentType() throws UnsupportedEncodingException, BatchException {
+    final String content = ""
+        + "--batch_12345" + CRLF
+        + "Content-Type: multipart/mixed; boundary=changeset_12345" + CRLF
+        + CRLF
+        + "--changeset_12345" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + "Content-Id: 1" + CRLF
+        + CRLF
+        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF 
+        + "Content-Type: application/json;odata=verbose" + CRLF
+        + CRLF
+        + CRLF
+        + "--changeset_12345--" + CRLF
+        + CRLF
+        + "--batch_12345--";
+    
+    final Map<String, List<String>> header = new HashMap<String, List<String>>();
+    header.put(HttpHeader.CONTENT_TYPE, Arrays.asList(new String[] { "application/http" }));
+    final ODataResponse response = new ODataResponse();
+    final ODataRequest request = buildODataRequest(content, header);
+    
+    batchHandler.process(request, response, true);
+  }
+  
   /*
    * Helper methods
    */

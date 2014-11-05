@@ -99,10 +99,11 @@ public class BatchChangeSetSorter {
   }
 
   private List<ODataRequest> getRequestsWithoutReferences() {
-    final List<ODataRequest> requestsWithoutReference = requestReferenceMapping.get(null);
+    List<ODataRequest> requests = requestReferenceMapping.get(null);
     requestReferenceMapping.remove(null);
-
-    return requestsWithoutReference;
+    
+    requests = (requests == null) ? new ArrayList<ODataRequest>() : requests;
+    return requests;
   }
 
   private void addRequestsToKnownContentIds(List<ODataRequest> requestsWithoutReference) {
