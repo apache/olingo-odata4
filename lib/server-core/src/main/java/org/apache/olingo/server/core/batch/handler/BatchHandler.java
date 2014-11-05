@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -30,38 +30,38 @@ import org.apache.olingo.server.core.ODataHandler;
 import org.apache.olingo.server.core.batch.parser.BatchParserCommon;
 
 public class BatchHandler {
-  private final BatchOperation operation;
   private final BatchProcessor batchProcessor;
-  private ODataRequest request;
+  private final ODataHandler oDataHandler;
 
-  public BatchHandler(final ODataHandler oDataHandler, final ODataRequest request, final BatchProcessor batchProcessor,
-      final boolean isStrict) {
-    
-    this.request = request;
+  public BatchHandler(final ODataHandler oDataHandler, final BatchProcessor batchProcessor) {
+
     this.batchProcessor = batchProcessor;
-    operation = new BatchOperationImpl(oDataHandler, request, batchProcessor, isStrict);
+    this.oDataHandler = oDataHandler;
   }
 
-  public void process(ODataResponse response) throws BatchException {
-    validateRequest();
+  public void process(final ODataRequest request, final ODataResponse response, final boolean isStrict)
+      throws BatchException {
+    validateRequest(request);
+    
+    final BatchOperation operation = new BatchOperationImpl(oDataHandler, request, batchProcessor, isStrict);
     batchProcessor.executeBatch(operation, request, response);
   }
-  
-  private void validateRequest() throws BatchException {
-    validateHttpMethod();
-    validateContentType();
+
+  private void validateRequest(final ODataRequest request) throws BatchException {
+    validateHttpMethod(request);
+    validateContentType(request);
   }
 
-  private void validateContentType() throws BatchException {
+  private void validateContentType(final ODataRequest request) throws BatchException {
     final String contentType = request.getHeader(HttpHeader.CONTENT_TYPE);
-    
-    if(contentType == null || !BatchParserCommon.PATTERN_MULTIPART_BOUNDARY.matcher(contentType).matches()) {
+
+    if (contentType == null || !BatchParserCommon.PATTERN_MULTIPART_BOUNDARY.matcher(contentType).matches()) {
       throw new BatchException("Invalid content type", MessageKeys.INVALID_CONTENT_TYPE, 0);
     }
   }
 
-  private void validateHttpMethod() throws BatchException {
-    if(request.getMethod() != HttpMethod.POST) {
+  private void validateHttpMethod(final ODataRequest request) throws BatchException {
+    if (request.getMethod() != HttpMethod.POST) {
       throw new BatchException("Invalid HTTP method", MessageKeys.INVALID_METHOD, 0);
     }
   }

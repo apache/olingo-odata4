@@ -162,10 +162,10 @@ public class ODataHandler {
       handleResourceDispatching(request, response);
       break;
     case batch:
-      BatchProcessor bp = selectProcessor(BatchProcessor.class);
+      final BatchProcessor bp = selectProcessor(BatchProcessor.class);
+      final BatchHandler handler = new BatchHandler(this, bp);
       
-      final BatchHandler handler = new BatchHandler(this, request, bp, true);
-      handler.process(response);
+      handler.process(request, response, true);
       
       break;
     default:

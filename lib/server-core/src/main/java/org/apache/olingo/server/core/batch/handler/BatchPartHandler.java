@@ -58,7 +58,8 @@ public class BatchPartHandler {
       final UriMapping mapping = replaceReference(request, requestPart);
 
       response = oDataHandler.process(request);
-       
+      
+      // Store resource URI
       final String resourceUri = getODataPath(request, response);
       final String contentId = request.getHeader(BatchParserCommon.HTTP_CONTENT_ID);
 
@@ -67,6 +68,7 @@ public class BatchPartHandler {
       response = oDataHandler.process(request);
     }
     
+    // Add content id to response
     final String contentId = request.getHeader(BatchParserCommon.HTTP_CONTENT_ID);
     if(contentId != null) {
       response.setHeader(BatchParserCommon.HTTP_CONTENT_ID, contentId);
@@ -85,7 +87,7 @@ public class BatchPartHandler {
       resourceUri = uri.getRawODataPath();
     } else {
       // Update, Upsert (PUT, PATCH, Delete)
-      // These methods still addresses a given URI, so we use the URI given by the request
+      // These methods still addresses a given resource, so we use the URI given by the request
       resourceUri = request.getRawODataPath();
     }
     
@@ -140,4 +142,15 @@ public class BatchPartHandler {
     return new ODataResponsePartImpl(responses, true);
   }
 
+  private static class UriMapping {
+    private Map<String, String> uriMapping = new HashMap<String, String>();
+    
+    public void addMapping(final String contentId, final String uri) {
+      uriMapping.put(contentId, uri);
+    }
+    
+    public String getUri(final String contentId) {
+      return uriMapping.get(contentId);
+    }
+  }
 }

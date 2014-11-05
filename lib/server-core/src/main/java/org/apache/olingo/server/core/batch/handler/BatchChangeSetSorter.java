@@ -38,7 +38,7 @@ public class BatchChangeSetSorter {
   final List<ODataRequest> orderdList = new ArrayList<ODataRequest>();
 
   private static Pattern referencePattern = Pattern.compile(REG_EX_REFERENCE);
-  private Set<String> knownContentId = new HashSet<String>();
+  private Set<String> knownContentIds = new HashSet<String>();
   private Map<String, List<ODataRequest>> requestReferenceMapping = new HashMap<String, List<ODataRequest>>();
 
   public BatchChangeSetSorter(List<ODataRequest> requests) throws BatchException {
@@ -52,15 +52,19 @@ public class BatchChangeSetSorter {
   private List<ODataRequest> sort(final List<ODataRequest> requests) throws BatchException {
     extractUrlReference(requests);
     
+    // Add requests without reference (roots)
     final List<ODataRequest> requestsWithoutReferences = getRequestsWithoutReferences();
     orderdList.addAll(requestsWithoutReferences);
     addRequestsToKnownContentIds(requestsWithoutReferences);
     
+    // Find all requests which can be processed (parent request has been processed)
+    // Compare level order
     boolean areRequestsProcessed = true;
     while (requestsToProcessAvailable() && areRequestsProcessed) {
-      areRequestsProcessed = processRemainingRequests(orderdList);
+      areRequestsProcessed = processNextLevel();
     }
 
+    // Check if there are some requests which are not connected to a tree
     if (requestsToProcessAvailable()) {
       throw new BatchException("Invalid content id", MessageKeys.INVALID_CONTENT_ID, 0);
     }
@@ -72,7 +76,7 @@ public class BatchChangeSetSorter {
     return requestReferenceMapping.keySet().size() != 0;
   }
 
-  private boolean processRemainingRequests(List<ODataRequest> orderdList) {
+  private boolean processNextLevel() {
     final List<ODataRequest> addedRequests = getRemainingRequestsWithKownContentId();
     addRequestsToKnownContentIds(addedRequests);
     orderdList.addAll(addedRequests);
@@ -83,10 +87,10 @@ public class BatchChangeSetSorter {
   private List<ODataRequest> getRemainingRequestsWithKownContentId() {
     List<ODataRequest> result = new ArrayList<ODataRequest>();
 
-    for (String contextId : knownContentId) {
-      List<ODataRequest> processedRequests = requestReferenceMapping.get(contextId);
-      if (processedRequests != null && processedRequests.size() != 0) {
-        result.addAll(processedRequests);
+    for (String contextId : knownContentIds) {
+      final List<ODataRequest> requestsToProcess = requestReferenceMapping.get(contextId);
+      if (requestsToProcess != null && requestsToProcess.size() != 0) {
+        result.addAll(requestsToProcess);
         requestReferenceMapping.remove(contextId);
       }
     }
@@ -105,7 +109,7 @@ public class BatchChangeSetSorter {
     for (ODataRequest request : requestsWithoutReference) {
       final String contentId = getContentIdFromHeader(request);
       if (contentId != null) {
-        knownContentId.add(contentId);
+        knownContentIds.add(contentId);
       }
     }
   }
@@ -130,18 +134,17 @@ public class BatchChangeSetSorter {
   }
 
   public static String getReferenceInURI(ODataRequest request) {
-    Matcher matcher = referencePattern.matcher(removeFollingPathSegments(removeFirstSplash(request.getRawODataPath())));
+    Matcher matcher = referencePattern.matcher(removeSlash(removeSlash(request.getRawODataPath(), true), false));
     return (matcher.matches()) ? matcher.group(1) : null;
   }
 
-  private static String removeFirstSplash(String rawODataPath) {
+  private static String removeSlash(String rawODataPath, boolean first) {
     final int indexOfSlash = rawODataPath.indexOf("/");
-    return (indexOfSlash == 0) ? rawODataPath.substring(1) : rawODataPath;
-  }
-
-  private static String removeFollingPathSegments(String rawODataPath) {
-    final int indexOfSlash = rawODataPath.indexOf("/");
-    return (indexOfSlash != -1) ? rawODataPath.substring(0, indexOfSlash) : rawODataPath;
+    if(first) {
+      return (indexOfSlash == 0) ? rawODataPath.substring(1) : rawODataPath;
+    } else {
+      return (indexOfSlash != -1) ? rawODataPath.substring(0, indexOfSlash) : rawODataPath;
+    }
   }
 
   public static void replaceContentIdReference(ODataRequest request, String contentId, String resourceUri) {

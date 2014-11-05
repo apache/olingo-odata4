@@ -61,8 +61,18 @@ public class MockedBatchHandlerTest {
   private static final String BATCH_REQUEST_URI = "http://localhost:8080/odata/$batch";
   private static final String BASE_URI = "http://localhost:8080/odata";
   private static final String CRLF = "\r\n";
-  private ODataHandler handler;
+  private ODataHandler oDataHandler;
+  private BatchHandler batchHandler;
   private int entityCounter = 1;
+
+  @Before
+  public void setup() {
+    final BatchProcessor batchProcessor = new BatchTestProcessorImpl();
+
+    entityCounter = 1;
+    oDataHandler = mock(ODataHandler.class);
+    batchHandler = new BatchHandler(oDataHandler, batchProcessor);
+  }
 
   @Test
   public void test() throws BatchException, IOException {
@@ -130,9 +140,9 @@ public class MockedBatchHandlerTest {
         + "--batch_12345--";
     final Map<String, List<String>> header = getMimeHeader();
     final ODataResponse response = new ODataResponse();
-    final BatchHandler batchHandler = buildBatchHandler(content, header);
+    final ODataRequest request = buildODataRequest(content, header);
 
-    batchHandler.process(response);
+    batchHandler.process(request, response, true);
 
     BufferedReaderIncludingLineEndings reader =
         new BufferedReaderIncludingLineEndings(new InputStreamReader(response.getContent()));
@@ -244,9 +254,9 @@ public class MockedBatchHandlerTest {
         + "--batch_12345--";
     final Map<String, List<String>> header = getMimeHeader();
     final ODataResponse response = new ODataResponse();
-    final BatchHandler batchHandler = buildBatchHandler(content, header);
+    final ODataRequest request = buildODataRequest(content, header);
 
-    batchHandler.process(response);
+    batchHandler.process(request, response, true);
 
     BufferedReaderIncludingLineEndings reader =
         new BufferedReaderIncludingLineEndings(new InputStreamReader(response.getContent()));
@@ -365,9 +375,9 @@ public class MockedBatchHandlerTest {
 
     final Map<String, List<String>> header = getMimeHeader();
     final ODataResponse response = new ODataResponse();
-    final BatchHandler batchHandler = buildBatchHandler(content, header);
+    final ODataRequest request = buildODataRequest(content, header);
 
-    batchHandler.process(response);
+    batchHandler.process(request, response, true);
 
     BufferedReaderIncludingLineEndings reader =
         new BufferedReaderIncludingLineEndings(new InputStreamReader(response.getContent()));
@@ -418,12 +428,6 @@ public class MockedBatchHandlerTest {
     assertEquals(45, line);
   }
 
-  @Before
-  public void setup() {
-    handler = null;
-    entityCounter = 1;
-  }
-
   private String checkChangeSetPartHeader(final List<String> response, int line) {
     assertEquals(CRLF, response.get(line++));
     assertTrue(response.get(line++).contains("--changeset_"));
@@ -442,7 +446,6 @@ public class MockedBatchHandlerTest {
   /*
    * Helper methods
    */
-
   private Map<String, List<String>> getMimeHeader() {
     final Map<String, List<String>> header = new HashMap<String, List<String>>();
     header.put(HttpHeader.CONTENT_TYPE, Arrays.asList(new String[] { BATCH_CONTENT_TYPE }));
@@ -450,24 +453,7 @@ public class MockedBatchHandlerTest {
     return header;
   }
 
-  private BatchHandler buildBatchHandler(final String content, Map<String, List<String>> header) throws BatchException,
-      UnsupportedEncodingException {
-
-    final ODataRequest request = buildODataRequest(content, header);
-    final ODataHandler oDataHandler = buildODataHandler(request);
-    final BatchProcessor batchProcessor = new BatchProcessorImpl();
-
-    return new BatchHandler(oDataHandler, request, batchProcessor, true);
-  }
-
-  private ODataHandler buildODataHandler(ODataRequest request) {
-    handler = mock(ODataHandler.class);
-    when(handler.process(request)).thenCallRealMethod();
-
-    return handler;
-  }
-
-  private ODataRequest buildODataRequest(String content, Map<String, List<String>> header)
+  private ODataRequest buildODataRequest(final String content, final Map<String, List<String>> header)
       throws UnsupportedEncodingException {
     final ODataRequest request = new ODataRequest();
 
@@ -490,7 +476,7 @@ public class MockedBatchHandlerTest {
   /**
    * Batch processor
    */
-  private class BatchProcessorImpl implements BatchProcessor {
+  private class BatchTestProcessorImpl implements BatchProcessor {
     @Override
     public void init(OData odata, ServiceMetadata serviceMetadata) {}
 
@@ -500,8 +486,8 @@ public class MockedBatchHandlerTest {
       List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
       for (ODataRequest request : requests) {
-        // Mock the processor of the changeset requests
-        when(handler.process(request)).then(new Answer<ODataResponse>() {
+        // Mock the processor for a given requests
+        when(oDataHandler.process(request)).then(new Answer<ODataResponse>() {
           @Override
           public ODataResponse answer(InvocationOnMock invocation) throws Throwable {
             Object[] arguments = invocation.getArguments();
@@ -565,7 +551,7 @@ public class MockedBatchHandlerTest {
       // Entity Collection
       oDataPath = parts[1];
     } else {
-      // Navigationproperty
+      // Navigation property
 
       final String navProperty = parts[parts.length - 1];
       if (navProperty.equals("NavPropertyETTwoPrimMany")) {
