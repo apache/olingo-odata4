@@ -18,60 +18,29 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.olingo.commons.api.data.ContextURL;
-import org.apache.olingo.commons.api.data.ContextURL.Suffix;
-import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.http.HttpContentType;
-import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.processor.EntityProcessor;
-import org.apache.olingo.server.api.processor.EntitySetProcessor;
-import org.apache.olingo.server.api.processor.PropertyProcessor;
-import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
-import org.apache.olingo.server.api.serializer.SerializerException;
-import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.uri.UriInfoResource;
-import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
-import org.apache.olingo.server.api.uri.UriResourceKind;
-import org.apache.olingo.server.api.uri.UriResourceProperty;
-import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
-import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
 /**
- * Technical Processor which provides currently implemented processor functionality.
+ * Technical Processor base.
  */
-public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, PropertyProcessor {
+public abstract class TechnicalProcessor implements Processor {
 
-  private OData odata;
-  private DataProvider dataProvider;
+  protected OData odata;
+  protected DataProvider dataProvider;
 
-  public TechnicalProcessor(final DataProvider dataProvider) {
+  protected TechnicalProcessor(final DataProvider dataProvider) {
     this.dataProvider = dataProvider;
   }
 
@@ -80,92 +49,23 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
     this.odata = odata;
   }
 
-  @Override
-  public void readEntitySet(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
-    validateOptions(uriInfo.asUriInfoResource());
-
-    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
-    final EntitySet entitySet = readEntitySetInternal(edmEntitySet,
-        uriInfo.getCountOption() != null && uriInfo.getCountOption().getValue());
-    if (entitySet == null) {
-      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
-    } else {
-      final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
-      ODataSerializer serializer = odata.createSerializer(format);
-      final ExpandOption expand = uriInfo.getExpandOption();
-      final SelectOption select = uriInfo.getSelectOption();
-      response.setContent(serializer.entitySet(edmEntitySet, entitySet,
-          ODataSerializerOptions.with()
-              .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                  getContextUrl(serializer, edmEntitySet, false, expand, select, null, null))
-              .count(uriInfo.getCountOption())
-              .expand(expand).select(select)
-              .build()));
-      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
+  protected EdmEntitySet getEdmEntitySet(final UriInfoResource uriInfo) throws ODataApplicationException {
+    final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
+    // first must be entity set
+    if (!(resourcePaths.get(0) instanceof UriResourceEntitySet)) {
+      throw new ODataApplicationException("Invalid resource type.",
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
-  }
 
-  @Override
-  public void readEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
-    validateOptions(uriInfo.asUriInfoResource());
-
-    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
-    final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
-    if (entity == null) {
-      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
-    } else {
-      final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
-      ODataSerializer serializer = odata.createSerializer(format);
-      final ExpandOption expand = uriInfo.getExpandOption();
-      final SelectOption select = uriInfo.getSelectOption();
-      response.setContent(serializer.entity(edmEntitySet, entity,
-          ODataSerializerOptions.with()
-              .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                  getContextUrl(serializer, edmEntitySet, true, expand, select, null, null))
-              .count(uriInfo.getCountOption())
-              .expand(expand).select(select)
-              .build()));
-      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
+    final UriResourceEntitySet uriResource = (UriResourceEntitySet) resourcePaths.get(0);
+    if (uriResource.getTypeFilterOnCollection() != null || uriResource.getTypeFilterOnEntry() != null) {
+      throw new ODataApplicationException("Type filters are not supported.",
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
+    return uriResource.getEntitySet();
   }
 
-  @Override
-  public void countEntitySet(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
-      throws ODataApplicationException, SerializerException {
-    final List<UriResource> resourceParts = uriInfo.asUriInfoResource().getUriResourceParts();
-    final int pos = resourceParts.size() - 2;
-    final EntitySet entitySet =
-        readEntitySetInternal(((UriResourceEntitySet) resourceParts.get(pos)).getEntitySet(), true);
-    if (entitySet == null) {
-      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
-    } else {
-      response.setContent(new ByteArrayInputStream(entitySet.getCount().toString().getBytes()));
-      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.TEXT_PLAIN);
-    }
-  }
-
-  private EntitySet readEntitySetInternal(final EdmEntitySet edmEntitySet,
-      final boolean withCount) throws DataProvider.DataProviderException {
-    EntitySet entitySet = dataProvider.readAll(edmEntitySet);
-    // TODO: set count (correctly) and next link
-    if (withCount && entitySet.getCount() == null) {
-      entitySet.setCount(entitySet.getEntities().size());
-    }
-    return entitySet;
-  }
-
-  private Entity readEntityInternal(final UriInfoResource uriInfo, final EdmEntitySet entitySet)
-      throws DataProvider.DataProviderException {
-    final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
-    return dataProvider.read(entitySet, resourceEntitySet.getKeyPredicates());
-  }
-
-  private void validateOptions(final UriInfoResource uriInfo) throws ODataApplicationException {
+  protected void validateOptions(final UriInfoResource uriInfo) throws ODataApplicationException {
     if (uriInfo.getCountOption() != null
         || !uriInfo.getCustomQueryOptions().isEmpty()
         || uriInfo.getFilterOption() != null
@@ -177,153 +77,6 @@ public class TechnicalProcessor implements EntitySetProcessor, EntityProcessor, 
         || uriInfo.getTopOption() != null) {
       throw new ODataApplicationException("Not all of the specified options are supported.",
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-    }
-  }
-
-  private EdmEntitySet getEdmEntitySet(final UriInfoResource uriInfo) throws ODataApplicationException {
-    final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
-    // first must be entity set
-    if (!(resourcePaths.get(0) instanceof UriResourceEntitySet)) {
-      throw new ODataApplicationException("Invalid resource type.",
-          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-    }
-    List<UriResource> subResPaths = resourcePaths.subList(1, resourcePaths.size());
-    for (UriResource subResPath : subResPaths) {
-      UriResourceKind kind = subResPath.getKind();
-      if(kind != UriResourceKind.primitiveProperty
-              && kind != UriResourceKind.complexProperty
-              && kind != UriResourceKind.count
-              && kind != UriResourceKind.value) {
-        throw new ODataApplicationException("Invalid resource type.",
-                HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-      }
-    }
-
-    final UriResourceEntitySet uriResource = (UriResourceEntitySet) resourcePaths.get(0);
-    if (uriResource.getTypeFilterOnCollection() != null || uriResource.getTypeFilterOnEntry() != null) {
-      throw new ODataApplicationException("Type filters are not supported.",
-          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-    }
-    return uriResource.getEntitySet();
-  }
-
-  private ContextURL getContextUrl(final ODataSerializer serializer,
-      final EdmEntitySet entitySet, final boolean isSingleEntity,
-      final ExpandOption expand, final SelectOption select,
-      final List<UriParameter> keys, final String propertyPath) throws SerializerException {
-    return ContextURL.with().entitySet(entitySet)
-        .selectList(serializer.buildContextURLSelectList(entitySet, expand, select))
-        .suffix(isSingleEntity && propertyPath == null ? Suffix.ENTITY : null)
-        .keyPath(serializer.buildContextURLKeyPredicate(keys))
-        .navOrPropertyPath(propertyPath)
-        .build();
-  }
-
-  @Override
-  public void readProperty(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType contentType) throws ODataApplicationException, SerializerException {
-    validateOptions(uriInfo.asUriInfoResource());
-
-    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
-    final List<UriResource> resourceParts = uriInfo.getUriResourceParts();
-    final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) resourceParts.get(0);
-    final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
-
-    if (entity == null) {
-      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
-    } else {
-      final List<String> path = getPropertyPath(resourceParts);
-      EdmProperty edmProperty = edmEntitySet.getEntityType().getStructuralProperty(path.get(0));
-      Property property = entity.getProperty(path.get(0));
-      for (final String name : path.subList(1, path.size())) {
-        if (property != null && (property.isLinkedComplex() || property.isComplex())) {
-          edmProperty = ((EdmComplexType) edmProperty.getType()).getStructuralProperty(name);
-          final List<Property> complex = property.isLinkedComplex() ?
-              property.asLinkedComplex().getValue() :
-              property.asComplex();
-          property = null;
-          for (final Property innerProperty : complex) {
-            if (innerProperty.getName().equals(name)) {
-              property = innerProperty;
-              break;
-            }
-          }
-        }
-      }
-      if (property == null) {
-        throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
-      } else {
-        if (property.getValue() == null) {
-          response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
-        } else {
-          final ODataFormat format = ODataFormat.fromContentType(contentType);
-          ODataSerializer serializer = odata.createSerializer(format);
-          response.setContent(serializer.entityProperty(edmProperty, property,
-              ODataSerializerOptions.with().contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                  getContextUrl(serializer, edmEntitySet, true, null, null,
-                      resourceEntitySet.getKeyPredicates(), buildPropertyPath(path)))
-                  .build()));
-          response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-          response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
-        }
-      }
-    }
-  }
-
-  private List<String> getPropertyPath(final List<UriResource> path) {
-    List<String> result = new LinkedList<String>();
-    int index = path.size();
-    while (path.get(--index) instanceof UriResourceProperty) {
-      result.add(0, ((UriResourceProperty) path.get(index)).getProperty().getName());
-    }
-    return result;
-  }
-
-  private String buildPropertyPath(final List<String> path) {
-    StringBuilder result = new StringBuilder();
-    for (final String segment : path) {
-      result.append(result.length() == 0 ? "" : '/').append(segment);
-    }
-    return result.toString();
-  }
-
-  @Override
-  public void readPropertyValue(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType contentType) throws ODataApplicationException, SerializerException {
-    validateOptions(uriInfo.asUriInfoResource());
-
-    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
-    final Entity entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
-    if (entity == null) {
-      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
-    } else {
-      final UriResourceProperty uriProperty =
-          (UriResourceProperty) uriInfo.getUriResourceParts().get(uriInfo.getUriResourceParts().size() - 2);
-      final EdmProperty edmProperty = uriProperty.getProperty();
-      final Property property = entity.getProperty(edmProperty.getName());
-      if (property == null || property.getValue() == null) {
-        response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
-      } else {
-        final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
-        if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary)) {
-          response.setContent(new ByteArrayInputStream((byte[]) property.getValue()));
-        } else {
-          try {
-            final String value = type.valueToString(property.getValue(),
-                edmProperty.isNullable(), edmProperty.getMaxLength(),
-                edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode());
-            response.setContent(new ByteArrayInputStream(value.getBytes("UTF-8")));
-          } catch (final EdmPrimitiveTypeException e) {
-            throw new ODataApplicationException("Error in value formatting.",
-                HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT, e);
-          } catch (final UnsupportedEncodingException e) {
-            throw new ODataApplicationException("Encoding exception.",
-                HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT, e);
-          }
-        }
-        response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
-        response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      }
     }
   }
 }

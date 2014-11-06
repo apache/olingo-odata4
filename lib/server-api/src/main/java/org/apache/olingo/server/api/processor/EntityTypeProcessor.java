@@ -26,13 +26,12 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor interface for handling EntitySets (i.e. collection of entities).
+ * Processor interface for handling a single instance of an Entity Type.
  */
-public interface EntitySetProcessor extends Processor {
+public interface EntityTypeProcessor extends Processor {
 
   /**
-   * Reads entities data from persistence and puts serialized content and status into the response.
-   * 
+   * Reads entity data from persistence and puts serialized content and status into the response.
    * @param request - OData request object containing raw HTTP information
    * @param response - OData response object for collecting response data
    * @param uriInfo - information of a parsed OData URI
@@ -40,19 +39,6 @@ public interface EntitySetProcessor extends Processor {
    * @throws ODataApplicationException
    * @throws SerializerException
    */
-  void readEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestedContentType)
+  void readEntityType(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestedContentType)
       throws ODataApplicationException, SerializerException;
-
-  /**
-   * Count entities from persistence and puts serialized content and status into the response.
-   * Response content type is <code>text/plain</code> by default.
-   * 
-   * @param request - OData request object containing raw http information.
-   * @param response - OData response object for collecting response data
-   * @param uriInfo - information of a parsed OData uri
-   * @throws ODataApplicationException
-   * @throws SerializerException
-   */
-  void countEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo) throws ODataApplicationException,
-      SerializerException;
 }

@@ -18,15 +18,21 @@
  */
 package org.apache.olingo.server.core;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpContentType;
@@ -34,311 +40,305 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.edm.provider.EdmProvider;
+import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edmx.EdmxReference;
-import org.apache.olingo.server.api.processor.EntitySetProcessor;
+import org.apache.olingo.server.api.processor.ComplexTypeCollectionProcessor;
+import org.apache.olingo.server.api.processor.ComplexTypeProcessor;
+import org.apache.olingo.server.api.processor.CountEntityTypeCollectionProcessor;
+import org.apache.olingo.server.api.processor.EntityTypeCollectionProcessor;
+import org.apache.olingo.server.api.processor.EntityTypeProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
-import org.apache.olingo.server.api.processor.PropertyProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveTypeCollectionProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveTypeProcessor;
+import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 public class ODataHandlerTest {
 
-  private ODataHandler handler;
-
-  @Before
-  public void before() {
-    OData odata = OData.newInstance();
-    ServiceMetadata metadata = odata.createServiceMetadata(
-            new EdmTechProvider(), Collections.<EdmxReference>emptyList());
-
-    handler = new ODataHandler(odata, metadata);
-  }
+  private static final String BASE_URI = "http://localhost/odata";
 
   @Test
-  public void testServiceDocumentNonDefault() throws Exception {
-    ODataRequest request = new ODataRequest();
-
-    request.setMethod(HttpMethod.GET);
-    request.setRawBaseUri("http://localhost/odata");
-    request.setRawODataPath("/");
-
-    ServiceDocumentProcessor processor = mock(ServiceDocumentProcessor.class);
-    handler.register(processor);
-
-    ODataResponse response = handler.process(request);
-
-    assertNotNull(response);
+  public void serviceDocumentNonDefault() throws Exception {
+    final ServiceDocumentProcessor processor = mock(ServiceDocumentProcessor.class);
+    final ODataResponse response = dispatch(HttpMethod.GET, "/", processor);
     assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
+
+    verify(processor).readServiceDocument(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, "/", processor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, "/", processor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, "/", processor);
+    dispatchMethodNotAllowed(HttpMethod.MERGE, "/", processor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, "/", processor);
   }
 
   @Test
-  public void testServiceDocumentDefault() throws Exception {
-    ODataRequest request = new ODataRequest();
-
-    request.setMethod(HttpMethod.GET);
-    request.setRawBaseUri("http://localhost/odata");
-    request.setRawODataPath("/");
-
-    ODataResponse response = handler.process(request);
-
-    assertNotNull(response);
+  public void serviceDocumentDefault() throws Exception {
+    final ODataResponse response = dispatch(HttpMethod.GET, "/", null);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     String ct = response.getHeaders().get(HttpHeader.CONTENT_TYPE);
-    assertTrue(ct.contains("application/json"));
-    assertTrue(ct.contains("odata.metadata=minimal"));
+    assertThat(ct, containsString("application/json"));
+    assertThat(ct, containsString("odata.metadata=minimal"));
 
     assertNotNull(response.getContent());
     String doc = IOUtils.toString(response.getContent());
 
-    assertTrue(doc.contains("\"@odata.context\" : \"http://localhost/odata/$metadata\""));
-    assertTrue(doc.contains("\"value\" :"));
+    assertThat(doc, containsString("\"@odata.context\" : \"" + BASE_URI + "/$metadata\""));
+    assertThat(doc, containsString("\"value\" :"));
   }
 
   @Test
-  public void testServiceDocumentRedirect() throws Exception {
-    ODataRequest request = new ODataRequest();
-
-    request.setMethod(HttpMethod.GET);
-    request.setRawBaseUri("http://localhost/odata");
-    request.setRawRequestUri("http://localhost/odata");
-    request.setRawODataPath("");
-
-    ODataResponse response = handler.process(request);
-
-    assertNotNull(response);
+  public void serviceDocumentRedirect() throws Exception {
+    final ODataResponse response = dispatch(HttpMethod.GET, "", null);
     assertEquals(HttpStatusCode.TEMPORARY_REDIRECT.getStatusCode(), response.getStatusCode());
-    assertEquals("http://localhost/odata/", response.getHeaders().get(HttpHeader.LOCATION));
+    assertEquals(BASE_URI + "/", response.getHeaders().get(HttpHeader.LOCATION));
   }
 
   @Test
-  public void testMetadataNonDefault() throws Exception {
-    ODataRequest request = new ODataRequest();
-
-    request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("$metadata");
-
-    MetadataProcessor processor = mock(MetadataProcessor.class);
-    handler.register(processor);
-
-    ODataResponse response = handler.process(request);
-
-    assertNotNull(response);
+  public void metadataNonDefault() throws Exception {
+    final MetadataProcessor processor = mock(MetadataProcessor.class);
+    final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", processor);
     assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
+
+    verify(processor).readMetadata(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, "$metadata", processor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, "$metadata", processor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, "$metadata", processor);
+    dispatchMethodNotAllowed(HttpMethod.MERGE, "$metadata", processor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, "$metadata", processor);
   }
 
   @Test
-  public void testMetadataDefault() throws Exception {
-    ODataRequest request = new ODataRequest();
-
-    request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("$metadata");
-
-    ODataResponse response = handler.process(request);
-
-    assertNotNull(response);
+  public void metadataDefault() throws Exception {
+    final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", null);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertEquals(HttpContentType.APPLICATION_XML, response.getHeaders().get(HttpHeader.CONTENT_TYPE));
 
     assertNotNull(response.getContent());
-    String doc = IOUtils.toString(response.getContent());
-
-    assertTrue(doc.contains("<edmx:Edmx Version=\"4.0\""));
+    assertThat(IOUtils.toString(response.getContent()),
+        containsString("<edmx:Edmx Version=\"4.0\""));
   }
 
   @Test
-  public void testMaxVersionNone() {
-    ODataRequest request = new ODataRequest();
-
-    request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("$metadata");
-
-    ODataResponse response = handler.process(request);
-    assertNotNull(response);
-
+  public void maxVersionNone() {
+    final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", null);
     assertEquals(ODataServiceVersion.V40.toString(), response.getHeaders().get(HttpHeader.ODATA_VERSION));
   }
 
   @Test
-  public void testMaxVersionSupported() {
-    ODataRequest request = new ODataRequest();
-
-    request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("$metadata");
-    request.addHeader(HttpHeader.ODATA_MAX_VERSION, Arrays.asList(ODataServiceVersion.V40.toString()));
-
-    ODataResponse response = handler.process(request);
-    assertNotNull(response);
-
+  public void maxVersionSupported() {
+    final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", null,
+        HttpHeader.ODATA_MAX_VERSION, ODataServiceVersion.V40.toString(), null);
     assertEquals(ODataServiceVersion.V40.toString(), response.getHeaders().get(HttpHeader.ODATA_VERSION));
   }
 
   @Test
-  public void testMaxVersionNotSupported() {
-    ODataRequest request = new ODataRequest();
-
-    request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("$metadata");
-    request.addHeader(HttpHeader.ODATA_MAX_VERSION, Arrays.asList(ODataServiceVersion.V30.toString()));
-
-    ODataResponse response = handler.process(request);
-    assertNotNull(response);
+  public void maxVersionNotSupported() {
+    final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", null,
+        HttpHeader.ODATA_MAX_VERSION, ODataServiceVersion.V30.toString(), null);
 
     assertEquals(ODataServiceVersion.V40.toString(), response.getHeaders().get(HttpHeader.ODATA_VERSION));
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), response.getStatusCode());
   }
 
   @Test
-  public void testContentNegotiationSupported() {
-    ODataRequest request = new ODataRequest();
-
-    request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("$metadata");
-    request.setRawQueryPath("$format=xml");
-
-    ODataResponse response = handler.process(request);
-    assertNotNull(response);
+  public void contentNegotiationSupported() {
+    final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", "$format=xml", null, null, null);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
   }
 
   @Test
-  public void testContentNegotiationNotSupported() {
-    ODataRequest request = new ODataRequest();
-
-    request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("$metadata");
-    request.setRawQueryPath("$format=not/Supported");
-
-    ODataResponse response = handler.process(request);
-    assertNotNull(response);
+  public void contentNegotiationNotSupported() {
+    final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", "$format=not/Supported", null, null, null);
     assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), response.getStatusCode());
   }
 
   @Test
-  public void testContentNegotiationNotSupported2() {
-    ODataRequest request = new ODataRequest();
-
-    request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("$metadata");
-    request.setRawQueryPath("$format=notSupported");
-
-    ODataResponse response = handler.process(request);
-    assertNotNull(response);
+  public void contentNegotiationNotSupported2() {
+    final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", "$format=notSupported", null, null, null);
     assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), response.getStatusCode());
   }
 
   @Test
-  public void testUnregisteredProcessor() {
-    ODataRequest request = new ODataRequest();
-
-    request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("ESAllPrim");
-
-    ODataResponse response = handler.process(request);
-    assertNotNull(response);
+  public void unregisteredProcessor() {
+    final ODataResponse response = dispatch(HttpMethod.GET, "ESAllPrim", null);
     assertEquals(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), response.getStatusCode());
   }
 
   @Test
-  public void testCount() throws Exception {
+  public void uriParserExceptionResultsInRightResponseNotFound() throws Exception {
+    final ODataResponse response = dispatch(HttpMethod.GET, "NotFound", null);
+    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), response.getStatusCode());
+  }
+
+  @Test
+  public void uriParserExceptionResultsInRightResponseBadRequest() throws Exception {
+    final ODataResponse response = dispatch(HttpMethod.GET, "ESAllPrim('122')", null);
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), response.getStatusCode());
+  }
+
+  @Test
+  public void applicationExceptionInProcessor() throws Exception {
+    MetadataProcessor processor = mock(MetadataProcessor.class);
+    doThrow(new ODataApplicationException("msg", 425, Locale.ENGLISH)).when(processor).readMetadata(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+    final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", processor);
+    assertEquals(425, response.getStatusCode());
+  }
+
+  @Test
+  public void uriParserExceptionResultsInRightResponseEdmCause() throws Exception {
+    final OData odata = OData.newInstance();
+    final ServiceMetadata serviceMetadata = odata.createServiceMetadata(
+        new EdmProvider() {
+          public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
+              throws ODataException {
+            throw new ODataException("msg");
+          }
+        },
+        Collections.<EdmxReference> emptyList());
+
     ODataRequest request = new ODataRequest();
-
     request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("ESAllPrim/$count");
+    request.setRawODataPath("EdmException");
 
-    EntitySetProcessor processor = mock(EntitySetProcessor.class);
-    handler.register(processor);
-
-    ODataResponse response = handler.process(request);
+    final ODataResponse response = new ODataHandler(odata, serviceMetadata).process(request);
     assertNotNull(response);
-    Mockito.verify(processor).countEntitySet(
-        Mockito.eq(request),
-        Mockito.any(ODataResponse.class),
-        Mockito.any(UriInfo.class));
+    assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
+  }
+
+  @Test
+  public void dispatchEntitySet() throws Exception {
+    final EntityTypeCollectionProcessor processor = mock(EntityTypeCollectionProcessor.class);
+    dispatch(HttpMethod.GET, "ESAllPrim", processor);
+
+    verify(processor).readEntityTypeCollection(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+  }
+
+  @Test
+  public void dispatchEntitySetCount() throws Exception {
+    final CountEntityTypeCollectionProcessor processor = mock(CountEntityTypeCollectionProcessor.class);
+    dispatch(HttpMethod.GET, "ESAllPrim/$count", processor);
+
+    verify(processor).countEntityTypeCollection(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, "ESAllPrim/$count", processor);
   }
 
   @Test
   public void dispatchCountWithNavigation() throws Exception {
-    ODataRequest request = new ODataRequest();
+    final CountEntityTypeCollectionProcessor processor = mock(CountEntityTypeCollectionProcessor.class);
+    dispatch(HttpMethod.GET, "ESAllPrim(0)/NavPropertyETTwoPrimMany/$count", processor);
 
-    request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("ESAllPrim(0)/NavPropertyETTwoPrimMany/$count");
-
-    EntitySetProcessor processor = mock(EntitySetProcessor.class);
-    handler.register(processor);
-
-    ODataResponse response = handler.process(request);
-    assertNotNull(response);
-    Mockito.verify(processor).countEntitySet(
-        Mockito.eq(request),
-        Mockito.any(ODataResponse.class),
-        Mockito.any(UriInfo.class));
+    verify(processor).countEntityTypeCollection(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
   }
 
   @Test
-  public void dispatchAddressPrimitiveProperty() throws Exception {
-    ODataRequest request = new ODataRequest();
+  public void dispatchEntity() throws Exception {
+    final EntityTypeProcessor processor = mock(EntityTypeProcessor.class);
+    dispatch(HttpMethod.GET, "ESAllPrim(0)", processor);
 
-    request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("ESAllPrim(0)/PropertyInt16");
-
-    PropertyProcessor processor = mock(PropertyProcessor.class);
-    handler.register(processor);
-
-    ODataResponse response = handler.process(request);
-    assertNotNull(response);
-
-    Mockito.verify(processor).readProperty(
-            Mockito.any(ODataRequest.class),
-            Mockito.any(ODataResponse.class),
-            Mockito.any(UriInfo.class),
-            Mockito.any(ContentType.class));
+    verify(processor).readEntityType(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
   }
 
   @Test
-  public void dispatchAddressPrimitivePropertyValue() throws Exception {
-    ODataRequest request = new ODataRequest();
+  public void dispatchPrimitiveProperty() throws Exception {
+    final PrimitiveTypeProcessor processor = mock(PrimitiveTypeProcessor.class);
+    dispatch(HttpMethod.GET, "ESAllPrim(0)/PropertyInt16", processor);
 
-    request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("ESAllPrim(0)/PropertyInt16/$value");
-
-    PropertyProcessor processor = mock(PropertyProcessor.class);
-    handler.register(processor);
-
-    ODataResponse response = handler.process(request);
-    assertNotNull(response);
-
-    Mockito.verify(processor).readPropertyValue(
-            Mockito.any(ODataRequest.class),
-            Mockito.any(ODataResponse.class),
-            Mockito.any(UriInfo.class),
-            Mockito.any(ContentType.class));
+    verify(processor).readPrimitiveType(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
   }
 
   @Test
-  public void dispatchAddressComplexProperty() throws Exception {
+  public void dispatchPrimitivePropertyValue() throws Exception {
+    final PrimitiveTypeProcessor processor = mock(PrimitiveTypeProcessor.class);
+    dispatch(HttpMethod.GET, "ESAllPrim(0)/PropertyInt16/$value", processor);
+
+    verify(processor).readPrimitiveTypeAsValue(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+  }
+
+  @Test
+  public void dispatchPrimitiveCollectionProperty() throws Exception {
+    final PrimitiveTypeCollectionProcessor processor = mock(PrimitiveTypeCollectionProcessor.class);
+    dispatch(HttpMethod.GET, "ESMixPrimCollComp(7)/CollPropertyString", processor);
+
+    verify(processor).readPrimitiveTypeCollection(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+  }
+
+  @Test
+  public void dispatchComplexProperty() throws Exception {
+    final ComplexTypeProcessor processor = mock(ComplexTypeProcessor.class);
+    dispatch(HttpMethod.GET, "ESMixPrimCollComp(7)/PropertyComp", processor);
+
+    verify(processor).readComplexType(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+  }
+
+  @Test
+  public void dispatchComplexCollectionProperty() throws Exception {
+    final ComplexTypeCollectionProcessor processor = mock(ComplexTypeCollectionProcessor.class);
+    dispatch(HttpMethod.GET, "ESMixPrimCollComp(7)/CollPropertyComp", processor);
+
+    verify(processor).readComplexTypeCollection(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+  }
+
+  private ODataResponse dispatch(final HttpMethod method, final String path, final String query,
+      final String headerName, final String headerValue, final Processor processor) {
     ODataRequest request = new ODataRequest();
+    request.setMethod(method);
+    request.setRawBaseUri(BASE_URI);
+    if (path.isEmpty()) {
+      request.setRawRequestUri(BASE_URI);
+    }
+    request.setRawODataPath(path);
+    request.setRawQueryPath(query);
 
-    request.setMethod(HttpMethod.GET);
-    request.setRawODataPath("ESMixPrimCollComp(7)/PropertyComp");
+    if (headerName != null) {
+      request.addHeader(headerName, Collections.singletonList(headerValue));
+    }
 
-    PropertyProcessor processor = mock(PropertyProcessor.class);
-    handler.register(processor);
+    final OData odata = OData.newInstance();
+    final ServiceMetadata metadata = odata.createServiceMetadata(
+        new EdmTechProvider(), Collections.<EdmxReference> emptyList());
 
-    ODataResponse response = handler.process(request);
+    ODataHandler handler = new ODataHandler(odata, metadata);
+
+    if (processor != null) {
+      handler.register(processor);
+    }
+
+    final ODataResponse response = handler.process(request);
     assertNotNull(response);
+    return response;
+  }
 
-    Mockito.verify(processor).readProperty(
-            Mockito.any(ODataRequest.class),
-            Mockito.any(ODataResponse.class),
-            Mockito.any(UriInfo.class),
-            Mockito.any(ContentType.class));
+  private ODataResponse dispatch(final HttpMethod method, final String path, final Processor processor) {
+    return dispatch(method, path, null, null, null, processor);
+  }
+
+  private void dispatchMethodNotAllowed(final HttpMethod method, final String path, final Processor processor) {
+    final ODataResponse response = dispatch(method, path, processor);
+    assertEquals(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatusCode());
+    assertNotNull(response.getContent());
   }
 }
