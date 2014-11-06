@@ -40,10 +40,7 @@ public class HttpRequestStatusLine {
 
   private static final Set<String> HTTP_BATCH_METHODS = new HashSet<String>(Arrays.asList(new String[] { "GET" }));
   private static final Set<String> HTTP_CHANGE_SET_METHODS = new HashSet<String>(Arrays.asList(new String[] { "POST",
-      "PUT", "DELETE", "MERGE", "PATCH" }));
-  // TODO Is Merge still supported?
-  // What`s New in OData 4: 2.7.2 Pruned: MERGE
-  // MERGE was used to do PATCH before PATCH existed. Now that we have PATCH, we no longer need MERGE. => No
+      "PUT", "DELETE", "PATCH" }));
   private static final String HTTP_VERSION = "HTTP/1.1";
 
   final private Line statusLine;
