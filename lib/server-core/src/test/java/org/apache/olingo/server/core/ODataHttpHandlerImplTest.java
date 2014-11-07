@@ -38,7 +38,6 @@ public class ODataHttpHandlerImplTest {
         { "GET", null, null, "GET" },
         { "GET", "xxx", "yyy", "GET" },
         { "PUT", "xxx", "yyy", "PUT" },
-        { "MERGE", "xxx", "yyy", "MERGE" },
         { "DELETE", "xxx", "yyy", "DELETE" },
         { "PATCH", "xxx", "yyy", "PATCH" },
 
@@ -47,7 +46,7 @@ public class ODataHttpHandlerImplTest {
         { "POST", null, "PATCH", "PATCH" },
 
         { "POST", "GET", null, "GET" },
-        { "POST", "MERGE", null, "MERGE" },
+        { "POST", "PATCH", null, "PATCH" },
 
         { "POST", "GET", "GET", "GET" },
     };
@@ -71,7 +70,7 @@ public class ODataHttpHandlerImplTest {
   public void extractMethodFail() throws Exception {
     String[][] mm = {
         { "POST", "bla", null },
-        { "POST", "MERGE", "PATCH" },
+        { "POST", "PUT", "PATCH" },
         { "OPTIONS", null, null },
         { "HEAD", null, null },
     };

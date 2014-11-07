@@ -77,7 +77,6 @@ public class ODataHandlerTest {
     dispatchMethodNotAllowed(HttpMethod.POST, "/", processor);
     dispatchMethodNotAllowed(HttpMethod.PUT, "/", processor);
     dispatchMethodNotAllowed(HttpMethod.PATCH, "/", processor);
-    dispatchMethodNotAllowed(HttpMethod.MERGE, "/", processor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, "/", processor);
   }
 
@@ -116,7 +115,6 @@ public class ODataHandlerTest {
     dispatchMethodNotAllowed(HttpMethod.POST, "$metadata", processor);
     dispatchMethodNotAllowed(HttpMethod.PUT, "$metadata", processor);
     dispatchMethodNotAllowed(HttpMethod.PATCH, "$metadata", processor);
-    dispatchMethodNotAllowed(HttpMethod.MERGE, "$metadata", processor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, "$metadata", processor);
   }
 
