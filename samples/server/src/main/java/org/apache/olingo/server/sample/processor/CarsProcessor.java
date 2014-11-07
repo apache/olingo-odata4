@@ -38,9 +38,12 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.processor.EntityProcessor;
-import org.apache.olingo.server.api.processor.EntitySetProcessor;
-import org.apache.olingo.server.api.processor.PropertyProcessor;
+import org.apache.olingo.server.api.processor.ComplexTypeCollectionProcessor;
+import org.apache.olingo.server.api.processor.ComplexTypeProcessor;
+import org.apache.olingo.server.api.processor.EntityTypeCollectionProcessor;
+import org.apache.olingo.server.api.processor.EntityTypeProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveTypeCollectionProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveTypeProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -59,7 +62,8 @@ import org.apache.olingo.server.sample.data.DataProvider.DataProviderException;
  * This is a very simple example which should give you a rough guideline on how to implement such an processor.
  * See the JavaDoc of the server.api interfaces for more information.
  */
-public class CarsProcessor implements EntitySetProcessor, EntityProcessor, PropertyProcessor {
+public class CarsProcessor implements EntityTypeCollectionProcessor, EntityTypeProcessor, PrimitiveTypeProcessor,
+    PrimitiveTypeCollectionProcessor, ComplexTypeProcessor, ComplexTypeCollectionProcessor {
 
   private OData odata;
   private DataProvider dataProvider;
@@ -76,7 +80,7 @@ public class CarsProcessor implements EntitySetProcessor, EntityProcessor, Prope
   }
 
   @Override
-  public void readEntitySet(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readEntityTypeCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     // First we have to figure out which entity set to use
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
@@ -108,7 +112,7 @@ public class CarsProcessor implements EntitySetProcessor, EntityProcessor, Prope
   }
 
   @Override
-  public void readEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readEntityType(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     // First we have to figure out which entity set the requested entity is in
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
@@ -144,8 +148,7 @@ public class CarsProcessor implements EntitySetProcessor, EntityProcessor, Prope
     }
   }
 
-  @Override
-  public void readProperty(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType contentType)
+  private void readProperty(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType contentType)
       throws ODataApplicationException, SerializerException {
     // To read a property we have to first get the entity out of the entity set
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
@@ -187,22 +190,7 @@ public class CarsProcessor implements EntitySetProcessor, EntityProcessor, Prope
       }
     }
   }
-
-  @Override
-  public void readPropertyValue(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType contentType)
-      throws ODataApplicationException, SerializerException {
-    throw new ODataApplicationException("Not implemented for this sample", HttpStatusCode.NOT_IMPLEMENTED
-        .getStatusCode(), Locale.ENGLISH);
-  }
-
-  @Override
-  public void countEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo)
-      throws ODataApplicationException, SerializerException {
-    // In this example we do not support the count system query option so we throw an exception
-    throw new ODataApplicationException("Not implemented for this sample", HttpStatusCode.NOT_IMPLEMENTED
-        .getStatusCode(), Locale.ENGLISH);
-  }
-
+  
   private Entity readEntityInternal(final UriInfoResource uriInfo, final EdmEntitySet entitySet)
       throws DataProvider.DataProviderException {
     // This method will extract the key values and pass them to the data provider
@@ -238,5 +226,37 @@ public class CarsProcessor implements EntitySetProcessor, EntityProcessor, Prope
         .suffix(isSingleEntity ? Suffix.ENTITY : null)
         .navOrPropertyPath(navOrPropertyPath)
         .build();
+  }
+
+  @Override
+  public void readComplexTypeCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+      ContentType format) throws ODataApplicationException, SerializerException {
+    readProperty(request, response, uriInfo, format);
+  }
+
+  @Override
+  public void readComplexType(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
+      throws ODataApplicationException, SerializerException {
+    readProperty(request, response, uriInfo, format);
+  }
+
+  @Override
+  public void readPrimitiveTypeCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+      ContentType format) throws ODataApplicationException, SerializerException {
+    readProperty(request, response, uriInfo, format);
+  }
+
+  @Override
+  public void readPrimitiveType(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
+      throws ODataApplicationException, SerializerException {
+    readProperty(request, response, uriInfo, format);
+  }
+
+  @Override
+  public void
+      readPrimitiveTypeAsValue(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
+          throws ODataApplicationException, SerializerException {
+    throw new ODataApplicationException("Not implemented for this sample", HttpStatusCode.NOT_IMPLEMENTED
+     .getStatusCode(), Locale.ENGLISH);
   }
 }
