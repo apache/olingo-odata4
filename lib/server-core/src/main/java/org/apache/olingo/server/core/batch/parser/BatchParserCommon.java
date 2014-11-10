@@ -123,19 +123,11 @@ public class BatchParserCommon {
     // Remove preamble
     if (messageParts.size() > 0) {
       messageParts.remove(0);
-    } else {
-      throw new BatchException("Missing boundary delimiter", BatchException.MessageKeys.MISSING_BOUNDARY_DELIMITER, ""
-          + lineNumer);
     }
 
     if (!isEndReached) {
       throw new BatchException("Missing close boundary delimiter", BatchException.MessageKeys.MISSING_CLOSE_DELIMITER,
           "" + lineNumer);
-    }
-
-    if (messageParts.size() == 0) {
-      throw new BatchException("No boundary delimiter found",
-          BatchException.MessageKeys.MISSING_BOUNDARY_DELIMITER, boundary, "" + lineNumer);
     }
 
     return messageParts;

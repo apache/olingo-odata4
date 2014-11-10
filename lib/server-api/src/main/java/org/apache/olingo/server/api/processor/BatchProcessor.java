@@ -24,10 +24,11 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.BatchOperation;
 import org.apache.olingo.server.api.batch.BatchRequestPart;
+import org.apache.olingo.server.api.batch.ODataResponsePart;
 
 public interface BatchProcessor extends Processor {
   void executeBatch(BatchOperation operation, ODataRequest request, ODataResponse response);
 
-  List<ODataResponse> executeChangeSet(BatchOperation operation, List<ODataRequest> requests,
+  ODataResponsePart executeChangeSet(BatchOperation operation, List<ODataRequest> requests,
       BatchRequestPart requestPart);
 }

@@ -50,14 +50,14 @@ public class BatchResponseWriterTest {
 
     List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
     responses.add(response);
-    parts.add(new ODataResponsePartImpl(responses, false));
+    parts.add(new ODataResponsePart(responses, false));
 
     ODataResponse changeSetResponse = new ODataResponse();
     changeSetResponse.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
     changeSetResponse.setHeader(BatchParserCommon.HTTP_CONTENT_ID, "1");
     responses = new ArrayList<ODataResponse>(1);
     responses.add(changeSetResponse);
-    parts.add(new ODataResponsePartImpl(responses, true));
+    parts.add(new ODataResponsePart(responses, true));
 
     BatchResponseWriter writer = new BatchResponseWriter();
     ODataResponse batchResponse = new ODataResponse();
@@ -109,7 +109,7 @@ public class BatchResponseWriterTest {
 
     List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
     responses.add(response);
-    parts.add(new ODataResponsePartImpl(responses, false));
+    parts.add(new ODataResponsePart(responses, false));
 
     ODataResponse batchResponse = new ODataResponse();
     new BatchResponseWriter().toODataResponse(parts, batchResponse);
@@ -144,7 +144,7 @@ public class BatchResponseWriterTest {
 
     List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
     responses.add(response);
-    parts.add(new ODataResponsePartImpl(responses, true));
+    parts.add(new ODataResponsePart(responses, true));
 
     BatchResponseWriter writer = new BatchResponseWriter();
     ODataResponse batchResponse = new ODataResponse();

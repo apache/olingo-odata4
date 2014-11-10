@@ -535,7 +535,7 @@ public class MockedBatchHandlerTest {
     public void init(OData odata, ServiceMetadata serviceMetadata) {}
 
     @Override
-    public List<ODataResponse> executeChangeSet(BatchOperation operation, List<ODataRequest> requests,
+    public ODataResponsePart executeChangeSet(BatchOperation operation, List<ODataRequest> requests,
         BatchRequestPart requestPart) {
       List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
@@ -557,7 +557,7 @@ public class MockedBatchHandlerTest {
         }
       }
 
-      return responses;
+      return new ODataResponsePart(responses, true);
     }
 
     @Override

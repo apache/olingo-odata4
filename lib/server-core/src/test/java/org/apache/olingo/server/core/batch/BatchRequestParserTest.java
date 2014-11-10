@@ -274,7 +274,8 @@ public class BatchRequestParserTest {
         + GET_REQUEST
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_BOUNDARY_DELIMITER);
+    final List<BatchRequestPart> parts = parse(batch);
+    assertEquals(0, parts.size());
   }
 
   @Test
@@ -450,14 +451,23 @@ public class BatchRequestParserTest {
         + "POST Employees('1')/EmployeeName HTTP/1.1" + CRLF
         + CRLF;
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_BOUNDARY_DELIMITER);
+    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_CLOSE_DELIMITER);
   }
-
+  
+  @Test
+  public void testEmptyRequest() throws BatchException, UnsupportedEncodingException {
+    final String batch = ""
+        + "--batch_8194-cf13-1f56--";
+    
+    final List<BatchRequestPart> parts = parse(batch);
+    assertEquals(0, parts.size());
+  }
+  
   @Test
   public void testBadRequest() throws UnsupportedEncodingException {
     final String batch = "This is a bad request. There is no syntax and also no semantic";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_BOUNDARY_DELIMITER);
+    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_CLOSE_DELIMITER);
   }
 
   @Test
@@ -496,7 +506,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testInvalidChangeSetBoundary() throws UnsupportedEncodingException {
+  public void testInvalidChangeSetBoundary() throws UnsupportedEncodingException, BatchException {
     final String batch = "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
         + CRLF
@@ -511,7 +521,12 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_BOUNDARY_DELIMITER);
+    final List<BatchRequestPart> parts = parse(batch);
+    assertEquals(1, parts.size());
+    
+    final BatchRequestPart part = parts.get(0);
+    assertTrue(part.isChangeSet());
+    assertEquals(0, part.getRequests().size());
   }
 
   @Test
@@ -1261,7 +1276,6 @@ public class BatchRequestParserTest {
     final List<BatchRequestPart> batchRequestParts = parser.parseBatchRequest(in);
 
     assertNotNull(batchRequestParts);
-    assertFalse(batchRequestParts.isEmpty());
 
     return batchRequestParts;
   }

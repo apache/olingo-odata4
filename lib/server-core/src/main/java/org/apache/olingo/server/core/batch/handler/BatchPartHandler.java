@@ -129,17 +129,14 @@ public class BatchPartHandler {
       final List<ODataResponse> responses = new ArrayList<ODataResponse>();
       responses.add(handleODataRequest(request.getRequests().get(0), request));
       
-      return new ODataResponsePartImpl(responses, false);
+      return new ODataResponsePart(responses, false);
     }
   }
 
   private ODataResponsePart handleChangeSet(BatchRequestPart request) throws BatchException {
-    final List<ODataResponse> responses = new ArrayList<ODataResponse>();
     final BatchChangeSetSorter sorter = new BatchChangeSetSorter(request.getRequests());
-
-    responses.addAll(batchProcessor.executeChangeSet(batchOperation, sorter.getOrderdRequests(), request));
     
-    return new ODataResponsePartImpl(responses, true);
+    return batchProcessor.executeChangeSet(batchOperation, sorter.getOrderdRequests(), request);
   }
 
   private static class UriMapping {

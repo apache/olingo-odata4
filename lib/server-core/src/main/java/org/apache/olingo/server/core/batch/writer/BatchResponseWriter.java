@@ -149,7 +149,7 @@ public class BatchResponseWriter {
     final Map<String, String> header = response.getHeaders();
 
     for (final String key : header.keySet()) {
-      // Requests do never have content id header
+      // Requests do never has a content id header
       if (!key.equalsIgnoreCase(BatchParserCommon.HTTP_CONTENT_ID)) {
         appendHeader(key, header.get(key), writer);
       }
