@@ -35,16 +35,16 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.processor.ComplexTypeCollectionProcessor;
-import org.apache.olingo.server.api.processor.ComplexTypeProcessor;
-import org.apache.olingo.server.api.processor.CountEntityTypeCollectionProcessor;
+import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
+import org.apache.olingo.server.api.processor.ComplexProcessor;
+import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.DefaultProcessor;
-import org.apache.olingo.server.api.processor.EntityTypeCollectionProcessor;
-import org.apache.olingo.server.api.processor.EntityTypeProcessor;
+import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
+import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.ExceptionProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
-import org.apache.olingo.server.api.processor.PrimitiveTypeCollectionProcessor;
-import org.apache.olingo.server.api.processor.PrimitiveTypeProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveProcessor;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
@@ -198,8 +198,8 @@ public class ODataHandler {
           final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
               request, customContentTypeSupport, RepresentationType.COLLECTION_ENTITY);
 
-          selectProcessor(EntityTypeCollectionProcessor.class)
-              .readEntityTypeCollection(request, response, uriInfo, requestedContentType);
+          selectProcessor(EntityCollectionProcessor.class)
+              .readEntityCollection(request, response, uriInfo, requestedContentType);
         } else {
           throw new ODataHandlerException("not implemented",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
@@ -209,8 +209,8 @@ public class ODataHandler {
           final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
               request, customContentTypeSupport, RepresentationType.ENTITY);
 
-          selectProcessor(EntityTypeProcessor.class)
-              .readEntityType(request, response, uriInfo, requestedContentType);
+          selectProcessor(EntityProcessor.class)
+              .readEntity(request, response, uriInfo, requestedContentType);
         } else {
           throw new ODataHandlerException("not implemented",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
@@ -222,8 +222,8 @@ public class ODataHandler {
       if (method.equals(HttpMethod.GET)) {
         final UriResource resource = uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
         if (resource instanceof UriResourceEntitySet || resource instanceof UriResourceNavigation) {
-          selectProcessor(CountEntityTypeCollectionProcessor.class)
-              .countEntityTypeCollection(request, response, uriInfo);
+          selectProcessor(CountEntityCollectionProcessor.class)
+              .countEntityCollection(request, response, uriInfo, ContentType.TEXT_PLAIN);
         } else {
           throw new ODataHandlerException(
               "Count of collections of primitive-type or complex-type instances is not implemented.",
@@ -243,11 +243,11 @@ public class ODataHandler {
         final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
             request, customContentTypeSupport, representationType);
         if (representationType == RepresentationType.PRIMITIVE) {
-          selectProcessor(PrimitiveTypeProcessor.class)
-              .readPrimitiveType(request, response, uriInfo, requestedContentType);
+          selectProcessor(PrimitiveProcessor.class)
+              .readPrimitive(request, response, uriInfo, requestedContentType);
         } else {
-          selectProcessor(PrimitiveTypeCollectionProcessor.class)
-              .readPrimitiveTypeCollection(request, response, uriInfo, requestedContentType);
+          selectProcessor(PrimitiveCollectionProcessor.class)
+              .readPrimitiveCollection(request, response, uriInfo, requestedContentType);
         }
       } else {
         throw new ODataHandlerException("not implemented",
@@ -263,11 +263,11 @@ public class ODataHandler {
         final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
             request, customContentTypeSupport, representationType);
         if (representationType == RepresentationType.COMPLEX) {
-          selectProcessor(ComplexTypeProcessor.class)
-              .readComplexType(request, response, uriInfo, requestedContentType);
+          selectProcessor(ComplexProcessor.class)
+              .readComplex(request, response, uriInfo, requestedContentType);
         } else {
-          selectProcessor(ComplexTypeCollectionProcessor.class)
-              .readComplexTypeCollection(request, response, uriInfo, requestedContentType);
+          selectProcessor(ComplexCollectionProcessor.class)
+              .readComplexCollection(request, response, uriInfo, requestedContentType);
         }
       } else {
         throw new ODataHandlerException("not implemented",
@@ -286,8 +286,8 @@ public class ODataHandler {
           final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
               request, customContentTypeSupport, representationType);
 
-          selectProcessor(PrimitiveTypeProcessor.class)
-              .readPrimitiveTypeAsValue(request, response, uriInfo, requestedContentType);
+          selectProcessor(PrimitiveProcessor.class)
+              .readPrimitiveAsValue(request, response, uriInfo, requestedContentType);
         } else {
           throw new ODataHandlerException("Media Entity is not implemented.",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);

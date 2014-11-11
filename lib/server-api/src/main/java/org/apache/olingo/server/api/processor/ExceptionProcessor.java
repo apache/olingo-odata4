@@ -30,11 +30,11 @@ public interface ExceptionProcessor extends Processor {
 
   /**
    * Processes an exception. MUST NOT throw an exception!
-   * @param request              the request
-   * @param response             the response
-   * @param serverError          the server error
-   * @param requestedContentType the requested format for the error message
+   * @param request     the request
+   * @param response    the response
+   * @param serverError the server error
+   * @param format      the requested format for the error message
    */
   public void processException(ODataRequest request, ODataResponse response, ODataServerError serverError,
-      ContentType requestedContentType);
+      ContentType format);
 }

@@ -26,14 +26,12 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor interface for handling a collection of primitive-type instances, e.g.,
- * a property of an entity defined as collection of primitive-type instances.
+ * Processor interface for handling a collection of entities, e.g., an Entity Set.
  */
-public interface PrimitiveTypeCollectionProcessor extends Processor {
+public interface EntityCollectionProcessor extends Processor {
 
   /**
-   * Reads primitive-type collection.
-   * If it is not available, for example due to permissions, the service responds with 404 Not Found.
+   * Reads entities data from persistence and puts serialized content and status into the response.
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
@@ -41,6 +39,6 @@ public interface PrimitiveTypeCollectionProcessor extends Processor {
    * @throws ODataApplicationException if the service implementation encounters a failure
    * @throws SerializerException       if serialization failed
    */
-  void readPrimitiveTypeCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
+  void readEntityCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
       throws ODataApplicationException, SerializerException;
 }

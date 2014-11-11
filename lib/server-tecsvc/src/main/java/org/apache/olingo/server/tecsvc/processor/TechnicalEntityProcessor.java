@@ -29,15 +29,14 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.processor.CountEntityTypeCollectionProcessor;
-import org.apache.olingo.server.api.processor.EntityTypeCollectionProcessor;
-import org.apache.olingo.server.api.processor.EntityTypeProcessor;
+import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
+import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
+import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -52,14 +51,14 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
  * Technical Processor for entity-related functionality.
  */
 public class TechnicalEntityProcessor extends TechnicalProcessor
-    implements EntityTypeCollectionProcessor, CountEntityTypeCollectionProcessor, EntityTypeProcessor {
+    implements EntityCollectionProcessor, CountEntityCollectionProcessor, EntityProcessor {
 
   public TechnicalEntityProcessor(final DataProvider dataProvider) {
     super(dataProvider);
   }
 
   @Override
-  public void readEntityTypeCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readEntityCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
     if (uriInfo.asUriInfoResource().getUriResourceParts().size() > 1) {
@@ -90,8 +89,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void countEntityTypeCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
-      throws ODataApplicationException, SerializerException {
+  public void countEntityCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+      final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
     final List<UriResource> resourceParts = uriInfo.asUriInfoResource().getUriResourceParts();
     final int pos = resourceParts.size() - 2;
@@ -106,12 +105,12 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     } else {
       response.setContent(new ByteArrayInputStream(entitySet.getCount().toString().getBytes()));
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.TEXT_PLAIN);
+      response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     }
   }
 
   @Override
-  public void readEntityType(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
     if (uriInfo.asUriInfoResource().getUriResourceParts().size() > 1) {

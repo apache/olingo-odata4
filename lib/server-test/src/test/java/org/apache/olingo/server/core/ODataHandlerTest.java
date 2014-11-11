@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -47,14 +48,14 @@ import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edmx.EdmxReference;
-import org.apache.olingo.server.api.processor.ComplexTypeCollectionProcessor;
-import org.apache.olingo.server.api.processor.ComplexTypeProcessor;
-import org.apache.olingo.server.api.processor.CountEntityTypeCollectionProcessor;
-import org.apache.olingo.server.api.processor.EntityTypeCollectionProcessor;
-import org.apache.olingo.server.api.processor.EntityTypeProcessor;
+import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
+import org.apache.olingo.server.api.processor.ComplexProcessor;
+import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
+import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
+import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
-import org.apache.olingo.server.api.processor.PrimitiveTypeCollectionProcessor;
-import org.apache.olingo.server.api.processor.PrimitiveTypeProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveProcessor;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
@@ -219,84 +220,84 @@ public class ODataHandlerTest {
 
   @Test
   public void dispatchEntitySet() throws Exception {
-    final EntityTypeCollectionProcessor processor = mock(EntityTypeCollectionProcessor.class);
+    final EntityCollectionProcessor processor = mock(EntityCollectionProcessor.class);
     dispatch(HttpMethod.GET, "ESAllPrim", processor);
 
-    verify(processor).readEntityTypeCollection(
+    verify(processor).readEntityCollection(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
   }
 
   @Test
   public void dispatchEntitySetCount() throws Exception {
-    final CountEntityTypeCollectionProcessor processor = mock(CountEntityTypeCollectionProcessor.class);
+    final CountEntityCollectionProcessor processor = mock(CountEntityCollectionProcessor.class);
     dispatch(HttpMethod.GET, "ESAllPrim/$count", processor);
 
-    verify(processor).countEntityTypeCollection(
-        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    verify(processor).countEntityCollection(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), eq(ContentType.TEXT_PLAIN));
 
     dispatchMethodNotAllowed(HttpMethod.POST, "ESAllPrim/$count", processor);
   }
 
   @Test
   public void dispatchCountWithNavigation() throws Exception {
-    final CountEntityTypeCollectionProcessor processor = mock(CountEntityTypeCollectionProcessor.class);
+    final CountEntityCollectionProcessor processor = mock(CountEntityCollectionProcessor.class);
     dispatch(HttpMethod.GET, "ESAllPrim(0)/NavPropertyETTwoPrimMany/$count", processor);
 
-    verify(processor).countEntityTypeCollection(
-        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    verify(processor).countEntityCollection(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), eq(ContentType.TEXT_PLAIN));
   }
 
   @Test
   public void dispatchEntity() throws Exception {
-    final EntityTypeProcessor processor = mock(EntityTypeProcessor.class);
+    final EntityProcessor processor = mock(EntityProcessor.class);
     dispatch(HttpMethod.GET, "ESAllPrim(0)", processor);
 
-    verify(processor).readEntityType(
+    verify(processor).readEntity(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
   }
 
   @Test
   public void dispatchPrimitiveProperty() throws Exception {
-    final PrimitiveTypeProcessor processor = mock(PrimitiveTypeProcessor.class);
+    final PrimitiveProcessor processor = mock(PrimitiveProcessor.class);
     dispatch(HttpMethod.GET, "ESAllPrim(0)/PropertyInt16", processor);
 
-    verify(processor).readPrimitiveType(
+    verify(processor).readPrimitive(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
   }
 
   @Test
   public void dispatchPrimitivePropertyValue() throws Exception {
-    final PrimitiveTypeProcessor processor = mock(PrimitiveTypeProcessor.class);
+    final PrimitiveProcessor processor = mock(PrimitiveProcessor.class);
     dispatch(HttpMethod.GET, "ESAllPrim(0)/PropertyInt16/$value", processor);
 
-    verify(processor).readPrimitiveTypeAsValue(
+    verify(processor).readPrimitiveAsValue(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
   }
 
   @Test
   public void dispatchPrimitiveCollectionProperty() throws Exception {
-    final PrimitiveTypeCollectionProcessor processor = mock(PrimitiveTypeCollectionProcessor.class);
+    final PrimitiveCollectionProcessor processor = mock(PrimitiveCollectionProcessor.class);
     dispatch(HttpMethod.GET, "ESMixPrimCollComp(7)/CollPropertyString", processor);
 
-    verify(processor).readPrimitiveTypeCollection(
+    verify(processor).readPrimitiveCollection(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
   }
 
   @Test
   public void dispatchComplexProperty() throws Exception {
-    final ComplexTypeProcessor processor = mock(ComplexTypeProcessor.class);
+    final ComplexProcessor processor = mock(ComplexProcessor.class);
     dispatch(HttpMethod.GET, "ESMixPrimCollComp(7)/PropertyComp", processor);
 
-    verify(processor).readComplexType(
+    verify(processor).readComplex(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
   }
 
   @Test
   public void dispatchComplexCollectionProperty() throws Exception {
-    final ComplexTypeCollectionProcessor processor = mock(ComplexTypeCollectionProcessor.class);
+    final ComplexCollectionProcessor processor = mock(ComplexCollectionProcessor.class);
     dispatch(HttpMethod.GET, "ESMixPrimCollComp(7)/CollPropertyComp", processor);
 
-    verify(processor).readComplexTypeCollection(
+    verify(processor).readComplexCollection(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
   }
 

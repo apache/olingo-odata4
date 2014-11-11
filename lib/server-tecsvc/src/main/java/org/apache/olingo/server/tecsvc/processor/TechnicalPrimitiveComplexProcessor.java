@@ -40,10 +40,10 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.processor.ComplexTypeCollectionProcessor;
-import org.apache.olingo.server.api.processor.ComplexTypeProcessor;
-import org.apache.olingo.server.api.processor.PrimitiveTypeCollectionProcessor;
-import org.apache.olingo.server.api.processor.PrimitiveTypeProcessor;
+import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
+import org.apache.olingo.server.api.processor.ComplexProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveProcessor;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -59,33 +59,33 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
  * Technical Processor which provides functionality related to primitive and complex types and collections thereof.
  */
 public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
-    implements PrimitiveTypeProcessor, PrimitiveTypeCollectionProcessor,
-    ComplexTypeProcessor, ComplexTypeCollectionProcessor {
+    implements PrimitiveProcessor, PrimitiveCollectionProcessor,
+    ComplexProcessor, ComplexCollectionProcessor {
 
   public TechnicalPrimitiveComplexProcessor(final DataProvider dataProvider) {
     super(dataProvider);
   }
 
   @Override
-  public void readPrimitiveType(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readPrimitive(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     readProperty(response, uriInfo, contentType);
   }
 
   @Override
-  public void readPrimitiveTypeCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readPrimitiveCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     readProperty(response, uriInfo, contentType);
   }
 
   @Override
-  public void readComplexType(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readComplex(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     readProperty(response, uriInfo, contentType);
   }
 
   @Override
-  public void readComplexTypeCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     readProperty(response, uriInfo, contentType);
   }
@@ -170,7 +170,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void readPrimitiveTypeAsValue(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readPrimitiveAsValue(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validateOptions(resource);

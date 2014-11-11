@@ -26,13 +26,12 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor interface for handling a primitive type, e.g., a primitive property of an entity.
+ * Processor interface for handling an instance of a complex type, e.g., a complex property of an entity.
  */
-public interface PrimitiveTypeProcessor extends Processor {
+public interface ComplexProcessor extends Processor {
 
   /**
-   * Reads primitive type.
-   * If its value is <code>null</code>, the service responds with 204 No Content.
+   * Reads complex-type instance.
    * If it is not available, for example due to permissions, the service responds with 404 Not Found.
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
@@ -41,20 +40,6 @@ public interface PrimitiveTypeProcessor extends Processor {
    * @throws ODataApplicationException if the service implementation encounters a failure
    * @throws SerializerException       if serialization failed
    */
-  void readPrimitiveType(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
-      throws ODataApplicationException, SerializerException;
-
-  /**
-   * Reads raw value of a primitive type, e.g., of a primitive property of an entity.
-   * If the value is <code>null</code>, the service responds with 204 No Content.
-   * If it is not available, for example due to permissions, the service responds with 404 Not Found.
-   * @param request  OData request object containing raw HTTP information
-   * @param response OData response object for collecting response data
-   * @param uriInfo  information of a parsed OData URI
-   * @param format   requested content type after content negotiation
-   * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws SerializerException       if serialization failed
-   */
-  void readPrimitiveTypeAsValue(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
+  void readComplex(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
       throws ODataApplicationException, SerializerException;
 }
