@@ -18,14 +18,13 @@
  */package org.apache.olingo.server.api.batch;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 
 public interface BatchOperation {
-  public List<BatchRequestPart> parseBatchRequest(InputStream in) throws BatchException;
+  public List<BatchRequestPart> parseBatchRequest(ODataRequest request, boolean isStrict) throws BatchException;
 
   public ODataResponse handleODataRequest(ODataRequest request, BatchRequestPart requestPart) throws BatchException;
 

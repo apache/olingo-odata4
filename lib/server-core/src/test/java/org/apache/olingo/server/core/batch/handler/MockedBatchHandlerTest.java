@@ -593,7 +593,7 @@ public class MockedBatchHandlerTest {
     @Override
     public void executeBatch(BatchOperation operation, ODataRequest request, ODataResponse response) {
       try {
-        final List<BatchRequestPart> parts = operation.parseBatchRequest(request.getBody());
+        final List<BatchRequestPart> parts = operation.parseBatchRequest(request, true);
         final List<ODataResponsePart> responseParts = new ArrayList<ODataResponsePart>();
 
         for (BatchRequestPart part : parts) {

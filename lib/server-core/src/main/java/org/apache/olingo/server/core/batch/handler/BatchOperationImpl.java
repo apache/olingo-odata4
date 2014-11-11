@@ -19,7 +19,6 @@
 package org.apache.olingo.server.core.batch.handler;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -43,13 +42,13 @@ public class BatchOperationImpl implements BatchOperation {
       final boolean isStrict) {
     partHandler = new BatchPartHandler(oDataHandler, batchProcessor, this);
     writer = new BatchResponseWriter();
-    parser = new BatchParser(getContentType(request), request.getRawBaseUri(),
-        request.getRawServiceResolutionUri(), isStrict);
+    parser = new BatchParser();
   }
 
   @Override
-  public List<BatchRequestPart> parseBatchRequest(InputStream in) throws BatchException {
-    return parser.parseBatchRequest(in);
+  public List<BatchRequestPart> parseBatchRequest(ODataRequest request, boolean isStrict) throws BatchException {
+    return parser.parseBatchRequest(request.getBody(), getContentType(request), request.getRawBaseUri(),
+        request.getRawServiceResolutionUri(), isStrict);
   }
   
   @Override

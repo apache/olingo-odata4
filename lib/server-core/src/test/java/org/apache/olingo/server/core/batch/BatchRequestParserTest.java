@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -196,8 +196,9 @@ public class BatchRequestParserTest {
         + "--batch_1.2+34:2j)0?" + CRLF
         + GET_REQUEST
         + "--batch_1.2+34:2j)0?--";
-    final BatchParser parser = new BatchParser(contentType, SERVICE_ROOT, "", true);
-    final List<BatchRequestPart> batchRequestParts = parser.parseBatchRequest(StringUtil.toInputStream(batch));
+    final BatchParser parser = new BatchParser();
+    final List<BatchRequestPart> batchRequestParts =
+        parser.parseBatchRequest(StringUtil.toInputStream(batch), contentType, SERVICE_ROOT, "", true);
 
     assertNotNull(batchRequestParts);
     assertFalse(batchRequestParts.isEmpty());
@@ -210,10 +211,10 @@ public class BatchRequestParserTest {
         + "--batch_1740-bb84-2f7f" + CRLF
         + GET_REQUEST
         + "--batch_1740-bb84-2f7f--";
-    final BatchParser parser = new BatchParser(invalidContentType, SERVICE_ROOT, "", true);
+    final BatchParser parser = new BatchParser();
 
     try {
-      parser.parseBatchRequest(StringUtil.toInputStream(batch));
+      parser.parseBatchRequest(StringUtil.toInputStream(batch), invalidContentType, SERVICE_ROOT, "", true);
       fail();
     } catch (BatchException e) {
       assertMessageKey(e, BatchException.MessageKeys.INVALID_CONTENT_TYPE);
@@ -224,15 +225,16 @@ public class BatchRequestParserTest {
   public void testContentTypeCharset() throws BatchException {
     final String contentType = "multipart/mixed; charset=UTF-8;boundary=batch_14d1-b293-b99a";
     final String batch = ""
-                    + "--batch_14d1-b293-b99a" + CRLF
-                    + GET_REQUEST
-                    + "--batch_14d1-b293-b99a--";
-    final BatchParser parser = new BatchParser(contentType, SERVICE_ROOT, "", true);
-    final List<BatchRequestPart> parts = parser.parseBatchRequest(StringUtil.toInputStream(batch));
-    
+        + "--batch_14d1-b293-b99a" + CRLF
+        + GET_REQUEST
+        + "--batch_14d1-b293-b99a--";
+    final BatchParser parser = new BatchParser();
+    final List<BatchRequestPart> parts =
+        parser.parseBatchRequest(StringUtil.toInputStream(batch), contentType, SERVICE_ROOT, "", true);
+
     assertEquals(1, parts.size());
   }
-  
+
   @Test
   public void testBatchWithoutBoundaryParameter() throws UnsupportedEncodingException {
     final String invalidContentType = "multipart/mixed";
@@ -240,10 +242,10 @@ public class BatchRequestParserTest {
         + "--batch_1740-bb84-2f7f" + CRLF
         + GET_REQUEST
         + "--batch_1740-bb84-2f7f--";
-    final BatchParser parser = new BatchParser(invalidContentType, SERVICE_ROOT, "", true);
+    final BatchParser parser = new BatchParser();
 
     try {
-      parser.parseBatchRequest(StringUtil.toInputStream(batch));
+      parser.parseBatchRequest(StringUtil.toInputStream(batch), invalidContentType, SERVICE_ROOT, "", true);
       fail();
     } catch (BatchException e) {
       assertMessageKey(e, BatchException.MessageKeys.INVALID_CONTENT_TYPE);
@@ -257,10 +259,10 @@ public class BatchRequestParserTest {
         + "--batch_1740-bb:84-2f7f" + CRLF
         + GET_REQUEST
         + "--batch_1740-bb:84-2f7f--";
-    final BatchParser parser = new BatchParser(invalidContentType, SERVICE_ROOT, "", true);
+    final BatchParser parser = new BatchParser();
 
     try {
-      parser.parseBatchRequest(StringUtil.toInputStream(batch));
+      parser.parseBatchRequest(StringUtil.toInputStream(batch), invalidContentType, SERVICE_ROOT, "", true);
       fail();
     } catch (BatchException e) {
       assertMessageKey(e, BatchException.MessageKeys.INVALID_BOUNDARY);
@@ -453,16 +455,16 @@ public class BatchRequestParserTest {
 
     parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_CLOSE_DELIMITER);
   }
-  
+
   @Test
   public void testEmptyRequest() throws BatchException, UnsupportedEncodingException {
     final String batch = ""
         + "--batch_8194-cf13-1f56--";
-    
+
     final List<BatchRequestPart> parts = parse(batch);
     assertEquals(0, parts.size());
   }
-  
+
   @Test
   public void testBadRequest() throws UnsupportedEncodingException {
     final String batch = "This is a bad request. There is no syntax and also no semantic";
@@ -523,7 +525,7 @@ public class BatchRequestParserTest {
 
     final List<BatchRequestPart> parts = parse(batch);
     assertEquals(1, parts.size());
-    
+
     final BatchRequestPart part = parts.get(0);
     assertTrue(part.isChangeSet());
     assertEquals(0, part.getRequests().size());
@@ -1272,8 +1274,9 @@ public class BatchRequestParserTest {
   }
 
   private List<BatchRequestPart> parse(final InputStream in, final boolean isStrict) throws BatchException {
-    final BatchParser parser = new BatchParser(CONTENT_TYPE, SERVICE_ROOT, "", isStrict);
-    final List<BatchRequestPart> batchRequestParts = parser.parseBatchRequest(in);
+    final BatchParser parser = new BatchParser();
+    final List<BatchRequestPart> batchRequestParts =
+        parser.parseBatchRequest(in, CONTENT_TYPE, SERVICE_ROOT, "", isStrict);
 
     assertNotNull(batchRequestParts);
 
@@ -1295,10 +1298,10 @@ public class BatchRequestParserTest {
 
   private void parseInvalidBatchBody(final String batch, final MessageKeys key, final boolean isStrict)
       throws UnsupportedEncodingException {
-    final BatchParser parser = new BatchParser(CONTENT_TYPE, SERVICE_ROOT, "", isStrict);
+    final BatchParser parser = new BatchParser();
 
     try {
-      parser.parseBatchRequest(StringUtil.toInputStream(batch));
+      parser.parseBatchRequest(StringUtil.toInputStream(batch), CONTENT_TYPE, SERVICE_ROOT, "", isStrict);
       fail("No exception thrown. Expect: " + key.toString());
     } catch (BatchException e) {
       assertMessageKey(e, key);

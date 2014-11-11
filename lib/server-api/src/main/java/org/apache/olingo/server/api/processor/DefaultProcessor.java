@@ -107,7 +107,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
     boolean continueOnError = shouldContinueOnError(request);
 
     try {
-      final List<BatchRequestPart> parts = operation.parseBatchRequest(request.getBody());
+      final List<BatchRequestPart> parts = operation.parseBatchRequest(request, true);
       final List<ODataResponsePart> responseParts = new ArrayList<ODataResponsePart>();
 
       for (BatchRequestPart part : parts) {

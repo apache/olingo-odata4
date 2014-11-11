@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -33,21 +33,18 @@ import org.apache.olingo.server.core.batch.transformator.BatchRequestTransformat
 
 public class BatchParser {
 
-  private final String contentTypeMime;
-  private final String baseUri;
-  private final String rawServiceResolutionUri;
-  private final boolean isStrict;
-  
-  public BatchParser(final String contentType, final String baseUri, final String serviceResolutionUri, 
-      final boolean isStrict) {
-    contentTypeMime = contentType;
-    this.baseUri = BatchParserCommon.removeEndingSlash(baseUri);
-    this.isStrict = isStrict;
-    this.rawServiceResolutionUri = serviceResolutionUri;
-  }
+  private String contentTypeMime;
+  private String rawServiceResolutionUri;
+  private boolean isStrict;
 
   @SuppressWarnings("unchecked")
-  public List<BatchRequestPart> parseBatchRequest(final InputStream in) throws BatchException {
+  public List<BatchRequestPart> parseBatchRequest(final InputStream in, final String contentType, final String baseUri,
+      final String serviceResolutionUri, final boolean isStrict) throws BatchException {
+    
+    contentTypeMime = contentType;
+    this.isStrict = isStrict;
+    this.rawServiceResolutionUri = serviceResolutionUri;
+
     return (List<BatchRequestPart>) parse(in, new BatchRequestTransformator(baseUri, rawServiceResolutionUri));
   }
 
