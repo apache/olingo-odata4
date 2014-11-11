@@ -200,6 +200,46 @@ public class MockedBatchHandlerTest {
   }
 
   @Test
+  public void testGetRequest() throws BatchException, IOException {
+    final String content = ""
+        + "--batch_12345" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + CRLF
+        + "GET ESAllPrim(0) HTTP/1.1" + CRLF
+        + CRLF
+        + CRLF
+        + "--batch_12345--";
+
+    final Map<String, List<String>> header = getMimeHeader();
+    final ODataResponse response = new ODataResponse();
+    final ODataRequest request = buildODataRequest(content, header);
+
+    batchHandler.process(request, response, true);
+
+    BufferedReaderIncludingLineEndings reader =
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(response.getContent()));
+
+    final List<String> responseContent = reader.toList();
+    int line = 0;
+
+    assertEquals(9, responseContent.size());
+    assertTrue(responseContent.get(line++).contains("--batch_"));
+    assertEquals("Content-Type: application/http" + CRLF, responseContent.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, responseContent.get(line++));
+    assertEquals(CRLF, responseContent.get(line++));
+    assertEquals("HTTP/1.1 200 OK" + CRLF, responseContent.get(line++));
+    assertEquals("Content-Length: 0" + CRLF, responseContent.get(line++));
+    assertEquals(CRLF, responseContent.get(line++));
+    assertEquals(CRLF, responseContent.get(line++));
+    assertTrue(responseContent.get(line++).contains("--batch_"));
+
+    assertEquals(9, line);
+
+    reader.close();
+  }
+
+  @Test
   public void testMultipleChangeSets() throws BatchException, IOException {
     final String content = ""
         + "--batch_12345" + CRLF
@@ -442,8 +482,8 @@ public class MockedBatchHandlerTest {
 
     return contentId;
   }
-  
-  @Test(expected=BatchException.class)
+
+  @Test(expected = BatchException.class)
   public void testInvalidMethod() throws UnsupportedEncodingException, BatchException {
     final String content = ""
         + "--batch_12345" + CRLF
@@ -454,23 +494,23 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 1" + CRLF
         + CRLF
-        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF 
+        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
         + "--changeset_12345--" + CRLF
         + CRLF
         + "--batch_12345--";
-    
+
     final Map<String, List<String>> header = getMimeHeader();
     final ODataResponse response = new ODataResponse();
     final ODataRequest request = buildODataRequest(content, header);
     request.setMethod(HttpMethod.GET);
-    
+
     batchHandler.process(request, response, true);
   }
-  
-  @Test(expected=BatchException.class)
+
+  @Test(expected = BatchException.class)
   public void testInvalidContentType() throws UnsupportedEncodingException, BatchException {
     final String content = ""
         + "--batch_12345" + CRLF
@@ -481,22 +521,22 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 1" + CRLF
         + CRLF
-        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF 
+        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
         + "--changeset_12345--" + CRLF
         + CRLF
         + "--batch_12345--";
-    
+
     final Map<String, List<String>> header = new HashMap<String, List<String>>();
     header.put(HttpHeader.CONTENT_TYPE, Arrays.asList(new String[] { "application/http" }));
     final ODataResponse response = new ODataResponse();
     final ODataRequest request = buildODataRequest(content, header);
-    
+
     batchHandler.process(request, response, true);
   }
-  
+
   /*
    * Helper methods
    */
@@ -540,16 +580,6 @@ public class MockedBatchHandlerTest {
       List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
       for (ODataRequest request : requests) {
-        // Mock the processor for a given requests
-        when(oDataHandler.process(request)).then(new Answer<ODataResponse>() {
-          @Override
-          public ODataResponse answer(InvocationOnMock invocation) throws Throwable {
-            Object[] arguments = invocation.getArguments();
-
-            return buildResponse((ODataRequest) arguments[0]);
-          }
-        });
-
         try {
           responses.add(operation.handleODataRequest(request, requestPart));
         } catch (BatchException e) {
@@ -567,6 +597,18 @@ public class MockedBatchHandlerTest {
         final List<ODataResponsePart> responseParts = new ArrayList<ODataResponsePart>();
 
         for (BatchRequestPart part : parts) {
+          for (final ODataRequest oDataRequest : part.getRequests()) {
+            // Mock the processor for a given requests
+            when(oDataHandler.process(oDataRequest)).then(new Answer<ODataResponse>() {
+              @Override
+              public ODataResponse answer(InvocationOnMock invocation) throws Throwable {
+                Object[] arguments = invocation.getArguments();
+
+                return buildResponse((ODataRequest) arguments[0]);
+              }
+            });
+          }
+
           responseParts.add(operation.handleBatchRequest(part));
         }
 
