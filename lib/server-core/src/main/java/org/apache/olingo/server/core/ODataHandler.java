@@ -37,20 +37,24 @@ import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.batch.BatchException;
 import org.apache.olingo.server.api.processor.BatchProcessor;
+import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
+import org.apache.olingo.server.api.processor.ComplexProcessor;
+import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.DefaultProcessor;
-import org.apache.olingo.server.api.processor.EntitySetProcessor;
+import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.ExceptionProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveProcessor;
 import org.apache.olingo.server.api.processor.Processor;
-import org.apache.olingo.server.api.processor.PropertyProcessor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
-import org.apache.olingo.server.api.uri.UriResourceKind;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
@@ -130,11 +134,10 @@ public class ODataHandler {
     switch (uriInfo.getKind()) {
     case metadata:
       if (method.equals(HttpMethod.GET)) {
-        MetadataProcessor mp = selectProcessor(MetadataProcessor.class);
-
-        ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request,
-            customContentTypeSupport, RepresentationType.METADATA);
-        mp.readMetadata(request, response, uriInfo, requestedContentType);
+        final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+            request, customContentTypeSupport, RepresentationType.METADATA);
+        selectProcessor(MetadataProcessor.class)
+            .readMetadata(request, response, uriInfo, requestedContentType);
       } else {
         throw new ODataHandlerException("HttpMethod " + method + " not allowed for metadata document",
             ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
@@ -143,15 +146,13 @@ public class ODataHandler {
     case service:
       if (method.equals(HttpMethod.GET)) {
         if ("".equals(request.getRawODataPath())) {
-          RedirectProcessor rdp = selectProcessor(RedirectProcessor.class);
-          rdp.redirect(request, response);
+          selectProcessor(RedirectProcessor.class).redirect(request, response);
         } else {
-          ServiceDocumentProcessor sdp = selectProcessor(ServiceDocumentProcessor.class);
+          final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+              request, customContentTypeSupport, RepresentationType.SERVICE);
 
-          ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request,
-              customContentTypeSupport, RepresentationType.SERVICE);
-
-          sdp.readServiceDocument(request, response, uriInfo, requestedContentType);
+          selectProcessor(ServiceDocumentProcessor.class)
+              .readServiceDocument(request, response, uriInfo, requestedContentType);
         }
       } else {
         throw new ODataHandlerException("HttpMethod " + method + " not allowed for service document",
@@ -195,113 +196,118 @@ public class ODataHandler {
 
   private void handleResourceDispatching(final ODataRequest request, final ODataResponse response)
       throws ODataHandlerException, ContentNegotiatorException, ODataApplicationException, SerializerException {
+    final HttpMethod method = request.getMethod();
     final int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
-    UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
+    final UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
 
     switch (lastPathSegment.getKind()) {
     case entitySet:
-      if (((UriResourcePartTyped) lastPathSegment).isCollection()) {
-        if (request.getMethod().equals(HttpMethod.GET)) {
-          EntitySetProcessor cp = selectProcessor(EntitySetProcessor.class);
-
-          ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request,
-              customContentTypeSupport, RepresentationType.COLLECTION_ENTITY);
-
-          cp.readEntitySet(request, response, uriInfo, requestedContentType);
-        } else {
-          throw new ODataHandlerException("not implemented",
-              ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
-        }
-      } else {
-        if (request.getMethod().equals(HttpMethod.GET)) {
-          EntityProcessor ep = selectProcessor(EntityProcessor.class);
-
-          ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request,
-              customContentTypeSupport, RepresentationType.ENTITY);
-
-          ep.readEntity(request, response, uriInfo, requestedContentType);
-        } else {
-          throw new ODataHandlerException("not implemented",
-              ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
-        }
-      }
-      break;
     case navigationProperty:
-      if (((UriResourceNavigation) lastPathSegment).isCollection()) {
-        if (request.getMethod().equals(HttpMethod.GET)) {
-          EntitySetProcessor cp = selectProcessor(EntitySetProcessor.class);
+      if (((UriResourcePartTyped) lastPathSegment).isCollection()) {
+        if (method.equals(HttpMethod.GET)) {
+          final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+              request, customContentTypeSupport, RepresentationType.COLLECTION_ENTITY);
 
-          ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request,
-              customContentTypeSupport, RepresentationType.COLLECTION_ENTITY);
-
-          cp.readEntitySet(request, response, uriInfo, requestedContentType);
+          selectProcessor(EntityCollectionProcessor.class)
+              .readEntityCollection(request, response, uriInfo, requestedContentType);
         } else {
           throw new ODataHandlerException("not implemented",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
       } else {
-        if (request.getMethod().equals(HttpMethod.GET)) {
-          EntityProcessor ep = selectProcessor(EntityProcessor.class);
+        if (method.equals(HttpMethod.GET)) {
+          final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+              request, customContentTypeSupport, RepresentationType.ENTITY);
 
-          ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request,
-              customContentTypeSupport, RepresentationType.ENTITY);
-
-          ep.readEntity(request, response, uriInfo, requestedContentType);
+          selectProcessor(EntityProcessor.class)
+              .readEntity(request, response, uriInfo, requestedContentType);
         } else {
           throw new ODataHandlerException("not implemented",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
       }
       break;
+
     case count:
-      if (request.getMethod().equals(HttpMethod.GET)) {
-        EntitySetProcessor cp = selectProcessor(EntitySetProcessor.class);
-        cp.countEntitySet(request, response, uriInfo);
+      if (method.equals(HttpMethod.GET)) {
+        final UriResource resource = uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
+        if (resource instanceof UriResourceEntitySet || resource instanceof UriResourceNavigation) {
+          selectProcessor(CountEntityCollectionProcessor.class)
+              .countEntityCollection(request, response, uriInfo, ContentType.TEXT_PLAIN);
+        } else {
+          throw new ODataHandlerException(
+              "Count of collections of primitive-type or complex-type instances is not implemented.",
+              ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+        }
       } else {
-        throw new ODataHandlerException("not implemented",
-            ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+        throw new ODataHandlerException("HTTP method " + method + " is not allowed for count.",
+            ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
       }
       break;
+
     case primitiveProperty:
-    case complexProperty:
-      if (request.getMethod().equals(HttpMethod.GET)) {
-        PropertyProcessor ep = selectProcessor(PropertyProcessor.class);
-
+      if (method.equals(HttpMethod.GET)) {
         final UriResourceProperty propertyResource = (UriResourceProperty) lastPathSegment;
-        final boolean isCollection = propertyResource.isCollection();
-        final boolean isComplex = propertyResource.getKind() == UriResourceKind.complexProperty;
-        final RepresentationType representationType =
-            isComplex ? isCollection ? RepresentationType.COLLECTION_COMPLEX : RepresentationType.COMPLEX :
-                isCollection ? RepresentationType.COLLECTION_PRIMITIVE : RepresentationType.PRIMITIVE;
-        ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request,
-            customContentTypeSupport, representationType);
-
-        ep.readProperty(request, response, uriInfo, requestedContentType);
+        final RepresentationType representationType = propertyResource.isCollection() ?
+            RepresentationType.COLLECTION_PRIMITIVE : RepresentationType.PRIMITIVE;
+        final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+            request, customContentTypeSupport, representationType);
+        if (representationType == RepresentationType.PRIMITIVE) {
+          selectProcessor(PrimitiveProcessor.class)
+              .readPrimitive(request, response, uriInfo, requestedContentType);
+        } else {
+          selectProcessor(PrimitiveCollectionProcessor.class)
+              .readPrimitiveCollection(request, response, uriInfo, requestedContentType);
+        }
       } else {
         throw new ODataHandlerException("not implemented",
             ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
       }
       break;
+
+    case complexProperty:
+      if (method.equals(HttpMethod.GET)) {
+        final UriResourceProperty propertyResource = (UriResourceProperty) lastPathSegment;
+        final RepresentationType representationType = propertyResource.isCollection() ?
+            RepresentationType.COLLECTION_COMPLEX : RepresentationType.COMPLEX;
+        final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+            request, customContentTypeSupport, representationType);
+        if (representationType == RepresentationType.COMPLEX) {
+          selectProcessor(ComplexProcessor.class)
+              .readComplex(request, response, uriInfo, requestedContentType);
+        } else {
+          selectProcessor(ComplexCollectionProcessor.class)
+              .readComplexCollection(request, response, uriInfo, requestedContentType);
+        }
+      } else {
+        throw new ODataHandlerException("not implemented",
+            ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+      }
+      break;
+
     case value:
-      if (request.getMethod().equals(HttpMethod.GET)) {
-        PropertyProcessor ep = selectProcessor(PropertyProcessor.class);
+      if (method.equals(HttpMethod.GET)) {
+        final UriResource resource = uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
+        if (resource instanceof UriResourceProperty) {
+          final RepresentationType representationType =
+              (EdmPrimitiveType) ((UriResourceProperty) resource).getType() ==
+              EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary) ?
+                  RepresentationType.BINARY : RepresentationType.VALUE;
+          final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+              request, customContentTypeSupport, representationType);
 
-        final UriResourceProperty propertyResource =
-            (UriResourceProperty) uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
-        final RepresentationType representationType =
-            (EdmPrimitiveType) propertyResource.getType() ==
-            EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary) ?
-                RepresentationType.BINARY :
-                RepresentationType.VALUE;
-        ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request,
-            customContentTypeSupport, representationType);
-
-        ep.readPropertyValue(request, response, uriInfo, requestedContentType);
+          selectProcessor(PrimitiveProcessor.class)
+              .readPrimitiveAsValue(request, response, uriInfo, requestedContentType);
+        } else {
+          throw new ODataHandlerException("Media Entity is not implemented.",
+              ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+        }
       } else {
         throw new ODataHandlerException("not implemented",
             ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
       }
       break;
+
     default:
       throw new ODataHandlerException("not implemented",
           ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);

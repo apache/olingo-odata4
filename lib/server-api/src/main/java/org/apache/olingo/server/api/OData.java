@@ -22,6 +22,7 @@ import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
+import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 
@@ -57,9 +58,15 @@ public abstract class OData {
    * Creates a new serializer object for rendering content in the specified format.
    * Serializers are used in Processor implementations.
    *
-   * @param format - any format supported by Olingo (XML, JSON ...)
+   * @param format any format supported by Olingo (XML, JSON ...)
    */
   public abstract ODataSerializer createSerializer(ODataFormat format) throws SerializerException;
+
+  /**
+   * Creates a new serializer object for rendering content in a fixed format, e.g., for binary output.
+   * Serializers are used in Processor implementations.
+   */
+  public abstract FixedFormatSerializer createFixedFormatSerializer() throws SerializerException;
 
   /**
    * Creates a new ODataHttpHandler for handling OData requests in an HTTP context.

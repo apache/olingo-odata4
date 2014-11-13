@@ -266,7 +266,6 @@ public class UriValidatorTest {
     validator.validate(uri, HttpMethod.PUT);
     validator.validate(uri, HttpMethod.DELETE);
     validator.validate(uri, HttpMethod.PATCH);
-    validator.validate(uri, HttpMethod.MERGE);
   }
 
   @Test

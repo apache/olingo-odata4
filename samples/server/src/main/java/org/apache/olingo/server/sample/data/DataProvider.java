@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.data.Entity;
@@ -40,8 +39,6 @@ import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.server.api.uri.UriParameter;
 
 public class DataProvider {
-
-  private static final UUID GUID = UUID.fromString("01234567-89ab-cdef-0123-456789abcdef");
 
   private Map<String, EntitySet> data;
 

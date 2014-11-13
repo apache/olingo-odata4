@@ -84,7 +84,6 @@ public class UriValidator {
         /*                              PUT  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false ,   false },
         /*                           DELETE  0 */ { false ,  false ,  false ,  false,   false ,  false,    false ,  false,   false ,  false ,     false,    false },
         /*                            PATCH  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false ,   false },
-        /*                            MERGE  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false ,   false },
     };
 
   //CHECKSTYLE:ON
@@ -154,8 +153,7 @@ public class UriValidator {
     POST(1),
     PUT(2),
     DELETE(3),
-    MERGE(4),
-    PATCH(5);
+    PATCH(4);
 
     private int idx;
 
@@ -601,9 +599,6 @@ public class UriValidator {
       break;
     case PATCH:
       idx = RowIndexForHttpMethod.PATCH;
-      break;
-    case MERGE:
-      idx = RowIndexForHttpMethod.MERGE;
       break;
     default:
       throw new UriValidationException("HTTP method not supported: " + httpMethod,

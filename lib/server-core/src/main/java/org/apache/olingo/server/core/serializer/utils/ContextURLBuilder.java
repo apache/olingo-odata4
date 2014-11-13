@@ -56,11 +56,11 @@ public final class ContextURLBuilder {
     if (contextURL.getKeyPath() != null) {
       result.append('(').append(contextURL.getKeyPath()).append(')');
     }
-    if (contextURL.getSelectList() != null) {
-      result.append('(').append(contextURL.getSelectList()).append(')');
-    }
     if (contextURL.getNavOrPropertyPath() != null) {
       result.append('/').append(contextURL.getNavOrPropertyPath());
+    }
+    if (contextURL.getSelectList() != null) {
+      result.append('(').append(contextURL.getSelectList()).append(')');
     }
     if (contextURL.isReference()) {
       if (contextURL.getEntitySetOrSingletonOrType() != null) {

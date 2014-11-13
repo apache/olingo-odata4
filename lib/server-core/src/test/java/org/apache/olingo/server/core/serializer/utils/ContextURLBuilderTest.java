@@ -119,9 +119,10 @@ public class ContextURLBuilderTest {
     contextURL = ContextURL.with().serviceRoot(URI.create("http://host/service/"))
         .entitySet(entitySet)
         .keyPath("one=1,two='two'")
-        .navOrPropertyPath("Name")
+        .navOrPropertyPath("ComplexName")
+        .selectList("Part1")
         .build();
-    assertEquals("http://host/service/$metadata#Customers(one=1,two='two')/Name",
+    assertEquals("http://host/service/$metadata#Customers(one=1,two='two')/ComplexName(Part1)",
         ContextURLBuilder.create(contextURL).toASCIIString());
   }  
 

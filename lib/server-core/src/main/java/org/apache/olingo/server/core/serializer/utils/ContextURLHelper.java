@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.olingo.commons.api.edm.EdmComplexType;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriParameter;
@@ -39,37 +39,37 @@ public final class ContextURLHelper {
   /** Builds a list of selected Properties for the ContextURL,
    *  taking care to preserve the order as defined in the EDM;
    *  returns NULL if no selection has taken place.
-   * @param entityType the Entity Type
-   * @param expand     the Expand option (from the URL's $expand query option)
-   * @param select     the Select option (from the URL's $select query option)
+   * @param type   the structured type
+   * @param expand the Expand option (from the URL's $expand query option)
+   * @param select the Select option (from the URL's $select query option)
    * @return a select-list String
    * @throws SerializerException if an unsupported feature is used
    */
-  public static String buildSelectList(final EdmEntityType entityType,
+  public static String buildSelectList(final EdmStructuredType type,
       final ExpandOption expand, final SelectOption select) throws SerializerException {
     StringBuilder result = new StringBuilder();
     if (ExpandSelectHelper.hasSelect(select)) {
-      handleSelect(entityType, select, result);
+      handleSelect(type, select, result);
     }
 
     if (ExpandSelectHelper.hasExpand(expand) && !ExpandSelectHelper.isExpandAll(expand)) {
-      handleExpand(entityType, expand, result);
+      handleExpand(type, expand, result);
     }
     return result.length() == 0 ? null : result.toString();
   }
 
-  private static void handleSelect(final EdmEntityType entityType, final SelectOption select, StringBuilder result) {
+  private static void handleSelect(final EdmStructuredType type, final SelectOption select, StringBuilder result) {
     if (ExpandSelectHelper.isAll(select)) {
       result.append('*');
     } else {
       final List<SelectItem> selectItems = select.getSelectItems();
       final Set<String> selectedPropertyNames = ExpandSelectHelper.getSelectedPropertyNames(selectItems);
-      for (final String propertyName : entityType.getPropertyNames()) {
+      for (final String propertyName : type.getPropertyNames()) {
         if (selectedPropertyNames.contains(propertyName)) {
           if (result.length() > 0) {
             result.append(',');
           }
-          final EdmProperty edmProperty = (EdmProperty) entityType.getProperty(propertyName);
+          final EdmProperty edmProperty = type.getStructuralProperty(propertyName);
           final Set<List<String>> selectedPaths = ExpandSelectHelper.getSelectedPaths(selectItems, propertyName);
           if (selectedPaths == null) {
             result.append(Encoder.encode(propertyName));
@@ -98,16 +98,16 @@ public final class ContextURLHelper {
     }
   }
 
-  private static void handleExpand(final EdmEntityType entityType, final ExpandOption expand, StringBuilder result)
+  private static void handleExpand(final EdmStructuredType type, final ExpandOption expand, StringBuilder result)
       throws SerializerException {
     final Set<String> expandedPropertyNames = ExpandSelectHelper.getExpandedPropertyNames(expand.getExpandItems());
-    for (final String propertyName : entityType.getNavigationPropertyNames()) {
+    for (final String propertyName : type.getNavigationPropertyNames()) {
       if (expandedPropertyNames.contains(propertyName)) {
         final ExpandItem expandItem = ExpandSelectHelper.getExpandItem(expand.getExpandItems(), propertyName);
         if (ExpandSelectHelper.hasExpand(expandItem.getExpandOption())
             && !ExpandSelectHelper.isExpandAll(expandItem.getExpandOption())
             || ExpandSelectHelper.hasSelect(expandItem.getSelectOption())) {
-          final String innerSelectList = buildSelectList(entityType.getNavigationProperty(propertyName).getType(),
+          final String innerSelectList = buildSelectList(type.getNavigationProperty(propertyName).getType(),
               expandItem.getExpandOption(), expandItem.getSelectOption());
           if (innerSelectList != null) {
             if (result.length() > 0) {

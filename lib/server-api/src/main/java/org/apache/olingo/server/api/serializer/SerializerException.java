@@ -36,7 +36,8 @@ public class SerializerException extends ODataTranslatedException {
     /** parameter: property name */ UNSUPPORTED_PROPERTY_TYPE,
     /** parameter: property name */ INCONSISTENT_PROPERTY_TYPE,
     /** parameter: property name */ MISSING_PROPERTY,
-    /** parameters: property name, property value */ WRONG_PROPERTY_VALUE;
+    /** parameters: property name, property value */ WRONG_PROPERTY_VALUE,
+    /** parameters: primitive-type name, value */ WRONG_PRIMITIVE_VALUE;
 
     @Override
     public String getKey() {

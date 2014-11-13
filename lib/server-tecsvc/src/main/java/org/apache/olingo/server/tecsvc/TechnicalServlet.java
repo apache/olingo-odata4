@@ -24,7 +24,8 @@ import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
-import org.apache.olingo.server.tecsvc.processor.TechnicalProcessor;
+import org.apache.olingo.server.tecsvc.processor.TechnicalEntityProcessor;
+import org.apache.olingo.server.tecsvc.processor.TechnicalPrimitiveComplexProcessor;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,8 @@ public class TechnicalServlet extends HttpServlet {
       }
 
       ODataHttpHandler handler = odata.createHandler(serviceMetadata);
-      handler.register(new TechnicalProcessor(dataProvider));
+      handler.register(new TechnicalEntityProcessor(dataProvider));
+      handler.register(new TechnicalPrimitiveComplexProcessor(dataProvider));
       handler.process(req, resp);
     } catch (RuntimeException e) {
       LOG.error("Server Error", e);

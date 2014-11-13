@@ -26,12 +26,13 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor interface for handling the service document.
+ * Processor interface for handling an instance of a complex type, e.g., a complex property of an entity.
  */
-public interface ServiceDocumentProcessor extends Processor {
+public interface ComplexProcessor extends Processor {
 
   /**
-   * Reads service-document information from persistency and puts serialized content and status into the response.
+   * Reads complex-type instance.
+   * If it is not available, for example due to permissions, the service responds with 404 Not Found.
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
@@ -39,6 +40,6 @@ public interface ServiceDocumentProcessor extends Processor {
    * @throws ODataApplicationException if the service implementation encounters a failure
    * @throws SerializerException       if serialization failed
    */
-  void readServiceDocument(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
+  void readComplex(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
       throws ODataApplicationException, SerializerException;
 }

@@ -26,33 +26,19 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor interface for handling EntitySets (i.e. collection of entities).
+ * Processor interface for handling a collection of entities, e.g., an Entity Set.
  */
-public interface EntitySetProcessor extends Processor {
+public interface EntityCollectionProcessor extends Processor {
 
   /**
    * Reads entities data from persistence and puts serialized content and status into the response.
-   * 
-   * @param request - OData request object containing raw HTTP information
-   * @param response - OData response object for collecting response data
-   * @param uriInfo - information of a parsed OData URI
-   * @param requestedContentType - requested content type after content negotiation
-   * @throws ODataApplicationException
-   * @throws SerializerException
+   * @param request  OData request object containing raw HTTP information
+   * @param response OData response object for collecting response data
+   * @param uriInfo  information of a parsed OData URI
+   * @param format   requested content type after content negotiation
+   * @throws ODataApplicationException if the service implementation encounters a failure
+   * @throws SerializerException       if serialization failed
    */
-  void readEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestedContentType)
+  void readEntityCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
       throws ODataApplicationException, SerializerException;
-
-  /**
-   * Count entities from persistence and puts serialized content and status into the response.
-   * Response content type is <code>text/plain</code> by default.
-   * 
-   * @param request - OData request object containing raw http information.
-   * @param response - OData response object for collecting response data
-   * @param uriInfo - information of a parsed OData uri
-   * @throws ODataApplicationException
-   * @throws SerializerException
-   */
-  void countEntitySet(ODataRequest request, ODataResponse response, UriInfo uriInfo) throws ODataApplicationException,
-      SerializerException;
 }
