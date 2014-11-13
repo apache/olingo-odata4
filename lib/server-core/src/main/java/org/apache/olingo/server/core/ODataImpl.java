@@ -25,10 +25,12 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
+import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.apache.olingo.server.core.serializer.ODataXmlSerializerImpl;
+import org.apache.olingo.server.core.serializer.FixedFormatSerializerImpl;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
+import org.apache.olingo.server.core.serializer.xml.ODataXmlSerializerImpl;
 
 import java.util.List;
 
@@ -52,6 +54,11 @@ public class ODataImpl extends OData {
     }
 
     return serializer;
+  }
+
+  @Override
+  public FixedFormatSerializer createFixedFormatSerializer() throws SerializerException {
+    return new FixedFormatSerializerImpl();
   }
 
   @Override

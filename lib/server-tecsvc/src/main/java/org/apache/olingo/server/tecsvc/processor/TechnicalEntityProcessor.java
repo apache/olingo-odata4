@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
-import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,8 +36,9 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
+import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
+import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -76,8 +76,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       ODataSerializer serializer = odata.createSerializer(format);
       final ExpandOption expand = uriInfo.getExpandOption();
       final SelectOption select = uriInfo.getSelectOption();
-      response.setContent(serializer.entitySet(edmEntitySet, entitySet,
-          ODataSerializerOptions.with()
+      response.setContent(serializer.entityCollection(edmEntitySet.getEntityType(), entitySet,
+          EntityCollectionSerializerOptions.with()
               .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                   getContextUrl(serializer, edmEntitySet, false, expand, select))
               .count(uriInfo.getCountOption())
@@ -103,7 +103,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     if (entitySet == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
     } else {
-      response.setContent(new ByteArrayInputStream(entitySet.getCount().toString().getBytes()));
+      response.setContent(odata.createFixedFormatSerializer().count(entitySet.getCount()));
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     }
@@ -129,11 +129,10 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       ODataSerializer serializer = odata.createSerializer(format);
       final ExpandOption expand = uriInfo.getExpandOption();
       final SelectOption select = uriInfo.getSelectOption();
-      response.setContent(serializer.entity(edmEntitySet, entity,
-          ODataSerializerOptions.with()
+      response.setContent(serializer.entity(edmEntitySet.getEntityType(), entity,
+          EntitySerializerOptions.with()
               .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                   getContextUrl(serializer, edmEntitySet, true, expand, select))
-              .count(uriInfo.getCountOption())
               .expand(expand).select(select)
               .build()));
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -155,7 +154,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       final EdmEntitySet entitySet, final boolean isSingleEntity,
       final ExpandOption expand, final SelectOption select) throws SerializerException {
     return ContextURL.with().entitySet(entitySet)
-        .selectList(serializer.buildContextURLSelectList(entitySet, expand, select))
+        .selectList(serializer.buildContextURLSelectList(entitySet.getEntityType(), expand, select))
         .suffix(isSingleEntity ? Suffix.ENTITY : null)
         .build();
   }

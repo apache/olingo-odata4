@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -27,11 +25,12 @@ import java.util.Locale;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -44,8 +43,12 @@ import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveProcessor;
+import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
+import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.ODataSerializerOptions;
+import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
+import org.apache.olingo.server.api.serializer.PrimitiveValueSerializerOptions;
+import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
@@ -53,14 +56,15 @@ import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
+import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
+import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
 /**
  * Technical Processor which provides functionality related to primitive and complex types and collections thereof.
  */
 public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
-    implements PrimitiveProcessor, PrimitiveCollectionProcessor,
-    ComplexProcessor, ComplexCollectionProcessor {
+    implements PrimitiveProcessor, PrimitiveCollectionProcessor, ComplexProcessor, ComplexCollectionProcessor {
 
   public TechnicalPrimitiveComplexProcessor(final DataProvider dataProvider) {
     super(dataProvider);
@@ -69,29 +73,29 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   @Override
   public void readPrimitive(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
-    readProperty(response, uriInfo, contentType);
+    readProperty(response, uriInfo, contentType, RepresentationType.PRIMITIVE);
   }
 
   @Override
   public void readPrimitiveCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
-    readProperty(response, uriInfo, contentType);
+    readProperty(response, uriInfo, contentType, RepresentationType.COLLECTION_PRIMITIVE);
   }
 
   @Override
   public void readComplex(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
-    readProperty(response, uriInfo, contentType);
+    readProperty(response, uriInfo, contentType, RepresentationType.COMPLEX);
   }
 
   @Override
   public void readComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
-    readProperty(response, uriInfo, contentType);
+    readProperty(response, uriInfo, contentType, RepresentationType.COLLECTION_COMPLEX);
   }
 
-  private void readProperty(ODataResponse response, final UriInfo uriInfo, final ContentType contentType)
-      throws ODataApplicationException, SerializerException {
+  private void readProperty(ODataResponse response, final UriInfo uriInfo, final ContentType contentType,
+      final RepresentationType representationType) throws ODataApplicationException, SerializerException {
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validateOptions(resource);
     validatePath(resource);
@@ -113,14 +117,40 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
         final ODataFormat format = ODataFormat.fromContentType(contentType);
         ODataSerializer serializer = odata.createSerializer(format);
-        response.setContent(serializer.entityProperty(edmProperty, property,
-            ODataSerializerOptions.with().contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                ContextURL.with().entitySet(edmEntitySet)
-                    .keyPath(serializer.buildContextURLKeyPredicate(
-                        ((UriResourceEntitySet) resourceParts.get(0)).getKeyPredicates()))
-                    .navOrPropertyPath(buildPropertyPath(path))
-                    .build())
-                .build()));
+        final ExpandOption expand = uriInfo.getExpandOption();
+        final SelectOption select = uriInfo.getSelectOption();
+        final ContextURL contextURL = format == ODataFormat.JSON_NO_METADATA ? null :
+            ContextURL.with().entitySet(edmEntitySet)
+                .keyPath(serializer.buildContextURLKeyPredicate(
+                    ((UriResourceEntitySet) resourceParts.get(0)).getKeyPredicates()))
+                .navOrPropertyPath(buildPropertyPath(path))
+                .selectList(edmProperty.isPrimitive() ? null :
+                    serializer.buildContextURLSelectList((EdmStructuredType) edmProperty.getType(), expand, select))
+                .build();
+        switch (representationType) {
+        case PRIMITIVE:
+          response.setContent(serializer.primitive((EdmPrimitiveType) edmProperty.getType(), property,
+              PrimitiveSerializerOptions.with().contextURL(contextURL).facetsFrom(edmProperty).build()));
+          break;
+        case COMPLEX:
+          response.setContent(serializer.complex((EdmComplexType) edmProperty.getType(), property,
+              ComplexSerializerOptions.with().contextURL(contextURL)
+                  .expand(expand).select(select)
+                  .build()));
+          break;
+        case COLLECTION_PRIMITIVE:
+          response.setContent(serializer.primitiveCollection((EdmPrimitiveType) edmProperty.getType(), property,
+              PrimitiveSerializerOptions.with().contextURL(contextURL).facetsFrom(edmProperty).build()));
+          break;
+        case COLLECTION_COMPLEX:
+          response.setContent(serializer.complexCollection((EdmComplexType) edmProperty.getType(), property,
+              ComplexSerializerOptions.with().contextURL(contextURL)
+                  .expand(expand).select(select)
+                  .build()));
+          break;
+        default:
+          break;
+        }
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
         response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
       }
@@ -187,22 +217,11 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     } else {
       final EdmProperty edmProperty = ((UriResourceProperty) resourceParts.get(path.size())).getProperty();
       final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
-      if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary)) {
-        response.setContent(new ByteArrayInputStream((byte[]) property.getValue()));
-      } else {
-        try {
-          final String value = type.valueToString(property.getValue(),
-              edmProperty.isNullable(), edmProperty.getMaxLength(),
-              edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode());
-          response.setContent(new ByteArrayInputStream(value.getBytes("UTF-8")));
-        } catch (final EdmPrimitiveTypeException e) {
-          throw new ODataApplicationException("Error in value formatting.",
-              HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT, e);
-        } catch (final UnsupportedEncodingException e) {
-          throw new ODataApplicationException("Encoding exception.",
-              HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT, e);
-        }
-      }
+      final FixedFormatSerializer serializer = odata.createFixedFormatSerializer();
+      response.setContent(type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary) ?
+          serializer.binary((byte[]) property.getValue()) :
+          serializer.primitiveValue(type, property.getValue(),
+              PrimitiveValueSerializerOptions.with().facetsFrom(edmProperty).build()));
       response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     }

@@ -24,7 +24,7 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 
 /** Options for the OData serializer. */
-public class ODataSerializerOptions {
+public class EntityCollectionSerializerOptions {
 
   private ContextURL contextURL;
   private CountOption count;
@@ -51,8 +51,6 @@ public class ODataSerializerOptions {
     return select;
   }
 
-  private ODataSerializerOptions() {}
-
   /** Initializes the options builder. */
   public static Builder with() {
     return new Builder();
@@ -61,10 +59,10 @@ public class ODataSerializerOptions {
   /** Builder of OData serializer options. */
   public static final class Builder {
 
-    private ODataSerializerOptions options;
+    private EntityCollectionSerializerOptions options;
 
     private Builder() {
-      options = new ODataSerializerOptions();
+      options = new EntityCollectionSerializerOptions();
     }
 
     /** Sets the {@link ContextURL}. */
@@ -92,7 +90,7 @@ public class ODataSerializerOptions {
     }
 
     /** Builds the OData serializer options. */
-    public ODataSerializerOptions build() {
+    public EntityCollectionSerializerOptions build() {
       return options;
     }
   }

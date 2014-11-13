@@ -25,8 +25,10 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.uri.UriParameter;
@@ -53,33 +55,6 @@ public interface ODataSerializer {
   InputStream metadataDocument(ServiceMetadata serviceMetadata) throws SerializerException;
 
   /**
-   * Writes entity data into an InputStream.
-   * @param edmEntitySet the {@link EdmEntitySet}
-   * @param entity       the data of the entity
-   * @param options      options for the serializer
-   */
-  InputStream entity(EdmEntitySet edmEntitySet, Entity entity, ODataSerializerOptions options)
-      throws SerializerException;
-
-  /**
-   * Writes entity data into an InputStream.
-   * @param edmProperty property definition
-   * @param property property value
-   * @param options options for the serializer
-   */
-  InputStream entityProperty(EdmProperty edmProperty, Property property, ODataSerializerOptions options)
-          throws SerializerException;
-
-  /**
-   * Writes entity-set data into an InputStream.
-   * @param edmEntitySet the {@link EdmEntitySet}
-   * @param entitySet    the data of the entity set
-   * @param options      options for the serializer
-   */
-  InputStream entitySet(EdmEntitySet edmEntitySet, EntitySet entitySet, ODataSerializerOptions options)
-      throws SerializerException;
-
-  /**
    * Writes an ODataError into an InputStream.
    * @param error the main error
    * @return inputStream containing the OData-formatted error
@@ -87,13 +62,67 @@ public interface ODataSerializer {
   InputStream error(ODataServerError error) throws SerializerException;
 
   /**
+   * Writes entity-collection data into an InputStream.
+   * @param entityType the {@link EdmEntityType}
+   * @param entitySet  the data of the entity set
+   * @param options    options for the serializer
+   */
+  InputStream entityCollection(EdmEntityType entityType, EntitySet entitySet,
+      EntityCollectionSerializerOptions options) throws SerializerException;
+
+  /**
+   * Writes entity data into an InputStream.
+   * @param entityType the {@link EdmEntityType}
+   * @param entity     the data of the entity
+   * @param options    options for the serializer
+   */
+  InputStream entity(EdmEntityType entityType, Entity entity, EntitySerializerOptions options)
+      throws SerializerException;
+
+  /**
+   * Writes primitive-type instance data into an InputStream.
+   * @param type     primitive type
+   * @param property property value
+   * @param options options for the serializer
+   */
+  InputStream primitive(EdmPrimitiveType type, Property property, PrimitiveSerializerOptions options)
+      throws SerializerException;
+
+  /**
+   * Writes complex-type instance data into an InputStream.
+   * @param type     complex type
+   * @param property property value
+   * @param options options for the serializer
+   */
+  InputStream complex(EdmComplexType type, Property property, ComplexSerializerOptions options)
+      throws SerializerException;
+
+  /**
+   * Writes data of a collection of primitive-type instances into an InputStream.
+   * @param type     primitive type
+   * @param property property value
+   * @param options options for the serializer
+   */
+  InputStream primitiveCollection(EdmPrimitiveType type, Property property, PrimitiveSerializerOptions options)
+      throws SerializerException;
+
+  /**
+   * Writes data of a collection of complex-type instances into an InputStream.
+   * @param type     complex type
+   * @param property property value
+   * @param options options for the serializer
+   */
+  InputStream complexCollection(EdmComplexType type, Property property, ComplexSerializerOptions options)
+      throws SerializerException;
+
+  /**
    * Builds the select-list part of a {@link org.apache.olingo.commons.api.data.ContextURL ContextURL}.
-   * @param edmEntitySet the Entity Set
-   * @param expand       the $expand option
-   * @param select       the $select option
+   * @param type   the {@link EdmStructuredType}
+   * @param expand the $expand option
+   * @param select the $select option
    * @return a String with the select list
    */
-  String buildContextURLSelectList(EdmEntitySet edmEntitySet, ExpandOption expand, SelectOption select)
+  String buildContextURLSelectList(EdmStructuredType type, ExpandOption expand, SelectOption select)
       throws SerializerException;
 
   /**
