@@ -18,17 +18,10 @@
  */
 package org.apache.olingo.server.tecsvc;
 
-import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.ODataHttpHandler;
-import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.edmx.EdmxReference;
-import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
-import org.apache.olingo.server.tecsvc.data.DataProvider;
-import org.apache.olingo.server.tecsvc.processor.TechnicalEntityProcessor;
-import org.apache.olingo.server.tecsvc.processor.TechnicalPrimitiveComplexProcessor;
-import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -36,10 +29,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
+import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataHttpHandler;
+import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
+import org.apache.olingo.server.tecsvc.data.DataProvider;
+import org.apache.olingo.server.tecsvc.processor.TechnicalBatchProcessor;
+import org.apache.olingo.server.tecsvc.processor.TechnicalEntityProcessor;
+import org.apache.olingo.server.tecsvc.processor.TechnicalPrimitiveComplexProcessor;
+import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TechnicalServlet extends HttpServlet {
 
@@ -67,6 +68,7 @@ public class TechnicalServlet extends HttpServlet {
       ODataHttpHandler handler = odata.createHandler(serviceMetadata);
       handler.register(new TechnicalEntityProcessor(dataProvider));
       handler.register(new TechnicalPrimitiveComplexProcessor(dataProvider));
+      handler.register(new TechnicalBatchProcessor(dataProvider));
       handler.process(req, resp);
     } catch (RuntimeException e) {
       LOG.error("Server Error", e);

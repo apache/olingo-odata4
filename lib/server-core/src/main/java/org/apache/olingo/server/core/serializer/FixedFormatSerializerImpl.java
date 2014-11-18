@@ -19,11 +19,16 @@
 package org.apache.olingo.server.core.serializer;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.batch.BatchException;
+import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveValueSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -55,5 +60,13 @@ public class FixedFormatSerializerImpl implements FixedFormatSerializer {
     } catch (final UnsupportedEncodingException e) {
       throw new SerializerException("Encoding exception.", e, SerializerException.MessageKeys.IO_EXCEPTION);
     }
+  }
+
+  //TODO: Signature
+  @Override
+  public void writeResponseParts(List<ODataResponsePart> batchResponses, ODataResponse response) throws BatchException,
+      IOException {
+    BatchResponseSerializer writer = new BatchResponseSerializer();
+    writer.toODataResponse(batchResponses, response);
   }
 }

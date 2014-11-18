@@ -18,21 +18,23 @@
  */
 package org.apache.olingo.server.core;
 
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.core.deserializer.FixedFormatDeserializerImpl;
 import org.apache.olingo.server.core.serializer.FixedFormatSerializerImpl;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 import org.apache.olingo.server.core.serializer.xml.ODataXmlSerializerImpl;
-
-import java.util.List;
 
 public class ODataImpl extends OData {
 
@@ -69,5 +71,10 @@ public class ODataImpl extends OData {
   @Override
   public ServiceMetadata createServiceMetadata(EdmProvider edmProvider, List<EdmxReference> references) {
     return new ServiceMetadataImpl(ODataServiceVersion.V40, edmProvider, references);
+  }
+
+  @Override
+  public FixedFormatDeserializer createFixedFormatDeserializer() {
+    return new FixedFormatDeserializerImpl();
   }
 }

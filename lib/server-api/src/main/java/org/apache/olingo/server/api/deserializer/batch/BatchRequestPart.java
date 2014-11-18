@@ -16,22 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.processor;
+package org.apache.olingo.server.api.deserializer.batch;
 
 import java.util.List;
 
 import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.BatchException;
-import org.apache.olingo.server.api.batch.BatchFacade;
-import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
-import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
-import org.apache.olingo.server.api.serializer.SerializerException;
 
-public interface BatchProcessor extends Processor {
-  // TODO:Check exception signature
-  void executeBatch(BatchFacade facade, ODataRequest request, ODataResponse response)
-      throws SerializerException, BatchException;
+/**
+ * A BatchPart
+ * <p> BatchPart represents a distinct MIME part of a Batch Request body. It can be ChangeSet or Query Operation
+ */
+public interface BatchRequestPart extends BatchDeserializerResult {
 
-  ODataResponsePart executeChangeSet(BatchFacade facade, List<ODataRequest> requests, BatchRequestPart requestPart);
+  /**
+   * Get the info if a BatchPart is a ChangeSet
+   * @return true or false
+   */
+  public boolean isChangeSet();
+
+  /**
+   * Get requests. If a BatchPart is a Query Operation, the list contains one request.
+   * @return a list of {@link ODataRequest}
+   */
+  public List<ODataRequest> getRequests();
 }

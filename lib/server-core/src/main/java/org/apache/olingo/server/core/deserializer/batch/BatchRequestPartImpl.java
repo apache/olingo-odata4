@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,22 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.processor;
+package org.apache.olingo.server.core.deserializer.batch;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.BatchException;
-import org.apache.olingo.server.api.batch.BatchFacade;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
-import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
-import org.apache.olingo.server.api.serializer.SerializerException;
 
-public interface BatchProcessor extends Processor {
-  // TODO:Check exception signature
-  void executeBatch(BatchFacade facade, ODataRequest request, ODataResponse response)
-      throws SerializerException, BatchException;
+/**
+ * Has to be immutable!
+ *
+ */
+public class BatchRequestPartImpl implements BatchRequestPart {
 
-  ODataResponsePart executeChangeSet(BatchFacade facade, List<ODataRequest> requests, BatchRequestPart requestPart);
+  private List<ODataRequest> requests = new ArrayList<ODataRequest>();
+  private boolean isChangeSet;
+  
+  public BatchRequestPartImpl(final boolean isChangeSet, final List<ODataRequest> requests) {
+    this.isChangeSet = isChangeSet;
+    this.requests = requests;
+  }
+
+  @Override
+  public boolean isChangeSet() {
+    return isChangeSet;
+  }
+
+  @Override
+  public List<ODataRequest> getRequests() {
+    return Collections.unmodifiableList(requests);
+  }
 }

@@ -16,9 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.processor;
-
-import java.util.List;
+package org.apache.olingo.server.core.batchhandler;
 
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -26,12 +24,24 @@ import org.apache.olingo.server.api.batch.BatchException;
 import org.apache.olingo.server.api.batch.BatchFacade;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
-import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.processor.BatchProcessor;
+import org.apache.olingo.server.core.ODataHandler;
 
-public interface BatchProcessor extends Processor {
-  // TODO:Check exception signature
-  void executeBatch(BatchFacade facade, ODataRequest request, ODataResponse response)
-      throws SerializerException, BatchException;
+public class BatchOperationImpl implements BatchFacade {
+  private final BatchPartHandler partHandler;
 
-  ODataResponsePart executeChangeSet(BatchFacade facade, List<ODataRequest> requests, BatchRequestPart requestPart);
+  public BatchOperationImpl(ODataHandler oDataHandler, ODataRequest request, BatchProcessor batchProcessor,
+      final boolean isStrict) {
+    partHandler = new BatchPartHandler(oDataHandler, batchProcessor, this);
+  }
+
+  @Override
+  public ODataResponse handleODataRequest(ODataRequest request, BatchRequestPart requestPart) throws BatchException {
+    return partHandler.handleODataRequest(request, requestPart);
+  }
+
+  @Override
+  public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchException {
+    return partHandler.handleBatchRequest(request);
+  }
 }

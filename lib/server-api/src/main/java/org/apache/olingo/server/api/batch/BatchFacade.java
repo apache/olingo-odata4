@@ -15,23 +15,15 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
- */
-package org.apache.olingo.server.api.processor;
-
-import java.util.List;
+ */package org.apache.olingo.server.api.batch;
 
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.BatchException;
-import org.apache.olingo.server.api.batch.BatchFacade;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
-import org.apache.olingo.server.api.serializer.SerializerException;
 
-public interface BatchProcessor extends Processor {
-  // TODO:Check exception signature
-  void executeBatch(BatchFacade facade, ODataRequest request, ODataResponse response)
-      throws SerializerException, BatchException;
+public interface BatchFacade {
+  public ODataResponse handleODataRequest(ODataRequest request, BatchRequestPart requestPart) throws BatchException;
 
-  ODataResponsePart executeChangeSet(BatchFacade facade, List<ODataRequest> requests, BatchRequestPart requestPart);
+  public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchException;
 }

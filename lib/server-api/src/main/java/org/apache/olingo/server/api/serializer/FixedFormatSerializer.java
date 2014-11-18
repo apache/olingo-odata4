@@ -18,16 +18,21 @@
  */
 package org.apache.olingo.server.api.serializer;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.batch.BatchException;
+import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 
 /** OData serializer for fixed output formats. */
 public interface FixedFormatSerializer {
 
   /**
    * Writes binary output into an InputStream.
-   * @param binary the binary data 
+   * @param binary the binary data
    */
   InputStream binary(byte[] binary) throws SerializerException;
 
@@ -39,10 +44,15 @@ public interface FixedFormatSerializer {
 
   /**
    * Writes the raw value of a primitive-type instance into an InputStream.
-   * @param type    the primitive type
-   * @param value   the value
+   * @param type the primitive type
+   * @param value the value
    * @param options options for the serializer
    */
   InputStream primitiveValue(EdmPrimitiveType type, Object value, PrimitiveValueSerializerOptions options)
       throws SerializerException;
+
+  // TODO: Document
+  // TODO: Delete IOException
+  void writeResponseParts(List<ODataResponsePart> batchResponses, ODataResponse response) throws BatchException,
+      IOException;
 }

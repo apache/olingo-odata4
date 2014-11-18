@@ -18,15 +18,16 @@
  */
 package org.apache.olingo.server.api;
 
+import java.util.List;
+
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
-
-import java.util.List;
 
 /**
  * Root object for serving factory tasks and support loose coupling of implementation (core) from the API.
@@ -68,6 +69,12 @@ public abstract class OData {
    */
   public abstract FixedFormatSerializer createFixedFormatSerializer() throws SerializerException;
 
+  /**
+   * Creates a new deserializer object for reading content in a fixed format, e.g., for binary input.
+   * Deserializers are used in Processor implementations.
+   */
+  public abstract FixedFormatDeserializer createFixedFormatDeserializer();
+  
   /**
    * Creates a new ODataHttpHandler for handling OData requests in an HTTP context.
    *
