@@ -22,9 +22,10 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.BatchException;
 import org.apache.olingo.server.api.batch.BatchFacade;
-import org.apache.olingo.server.api.batch.BatchException.MessageKeys;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
+import org.apache.olingo.server.api.batch.exception.BatchException;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.ODataHandler;
@@ -44,26 +45,26 @@ public class BatchHandler {
       throws SerializerException, BatchException {
     validateRequest(request);
     
-    final BatchFacade operation = new BatchOperationImpl(oDataHandler, request, batchProcessor, isStrict);
+    final BatchFacade operation = new BatchFascadeImpl(oDataHandler, request, batchProcessor, isStrict);
     batchProcessor.executeBatch(operation, request, response);
   }
 
-  private void validateRequest(final ODataRequest request) throws BatchException {
+  private void validateRequest(final ODataRequest request) throws BatchDeserializerException {
     validateHttpMethod(request);
     validateContentType(request);
   }
 
-  private void validateContentType(final ODataRequest request) throws BatchException {
+  private void validateContentType(final ODataRequest request) throws BatchDeserializerException {
     final String contentType = request.getHeader(HttpHeader.CONTENT_TYPE);
 
     if (contentType == null || !BatchParserCommon.PATTERN_MULTIPART_BOUNDARY.matcher(contentType).matches()) {
-      throw new BatchException("Invalid content type", MessageKeys.INVALID_CONTENT_TYPE, 0);
+      throw new BatchDeserializerException("Invalid content type", MessageKeys.INVALID_CONTENT_TYPE, 0);
     }
   }
 
-  private void validateHttpMethod(final ODataRequest request) throws BatchException {
+  private void validateHttpMethod(final ODataRequest request) throws BatchDeserializerException {
     if (request.getMethod() != HttpMethod.POST) {
-      throw new BatchException("Invalid HTTP method", MessageKeys.INVALID_METHOD, 0);
+      throw new BatchDeserializerException("Invalid HTTP method", MessageKeys.INVALID_METHOD, 0);
     }
   }
 }

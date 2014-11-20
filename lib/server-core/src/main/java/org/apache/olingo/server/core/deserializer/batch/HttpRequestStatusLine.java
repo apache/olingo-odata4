@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -28,9 +28,8 @@ import java.util.regex.Pattern;
 
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.server.api.batch.BatchException;
-import org.apache.olingo.server.api.batch.BatchException.MessageKeys;
-import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings.Line;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
 
 public class HttpRequestStatusLine {
   private static final Pattern PATTERN_RELATIVE_URI = Pattern.compile("([^/][^?]*)(?:\\?(.*))?");
@@ -52,7 +51,7 @@ public class HttpRequestStatusLine {
 
   public HttpRequestStatusLine(final Line httpStatusLine, final String baseUri, final String serviceResolutionUri,
       final Header requestHeader)
-      throws BatchException {
+          throws BatchDeserializerException {
     statusLine = httpStatusLine;
     requestBaseUri = baseUri;
     header = requestHeader;
@@ -60,7 +59,7 @@ public class HttpRequestStatusLine {
     parse();
   }
 
-  private void parse() throws BatchException {
+  private void parse() throws BatchDeserializerException {
     final String[] parts = statusLine.toString().split(" ");
 
     if (parts.length == 3) {
@@ -68,35 +67,40 @@ public class HttpRequestStatusLine {
       uri = new ODataURI(parts[1], requestBaseUri, statusLine.getLineNumber(), header.getHeaders(HttpHeader.HOST));
       httpVersion = parseHttpVersion(parts[2]);
     } else {
-      throw new BatchException("Invalid status line", MessageKeys.INVALID_STATUS_LINE, statusLine.getLineNumber());
+      throw new BatchDeserializerException("Invalid status line", MessageKeys.INVALID_STATUS_LINE, statusLine
+          .getLineNumber());
     }
   }
 
-  private HttpMethod parseMethod(final String method) throws BatchException {
+  private HttpMethod parseMethod(final String method) throws BatchDeserializerException {
     try {
       return HttpMethod.valueOf(method.trim());
     } catch (IllegalArgumentException e) {
-      throw new BatchException("Illegal http method", MessageKeys.INVALID_METHOD, statusLine.getLineNumber());
+      throw new BatchDeserializerException("Illegal http method", MessageKeys.INVALID_METHOD, statusLine
+          .getLineNumber());
     }
   }
 
-  private String parseHttpVersion(final String httpVersion) throws BatchException {
+  private String parseHttpVersion(final String httpVersion) throws BatchDeserializerException {
     if (!HTTP_VERSION.equals(httpVersion.trim())) {
-      throw new BatchException("Invalid http version", MessageKeys.INVALID_HTTP_VERSION, statusLine.getLineNumber());
+      throw new BatchDeserializerException("Invalid http version", MessageKeys.INVALID_HTTP_VERSION, statusLine
+          .getLineNumber());
     } else {
       return HTTP_VERSION;
     }
   }
 
-  public void validateHttpMethod(boolean isChangeSet) throws BatchException {
+  public void validateHttpMethod(final boolean isChangeSet) throws BatchDeserializerException {
     Set<String> validMethods = (isChangeSet) ? HTTP_CHANGE_SET_METHODS : HTTP_BATCH_METHODS;
 
     if (!validMethods.contains(getMethod().toString())) {
       if (isChangeSet) {
-        throw new BatchException("Invalid change set method", MessageKeys.INVALID_CHANGESET_METHOD, statusLine
+        throw new BatchDeserializerException("Invalid change set method", MessageKeys.INVALID_CHANGESET_METHOD,
+            statusLine
             .getLineNumber());
       } else {
-        throw new BatchException("Invalid query operation method", MessageKeys.INVALID_QUERY_OPERATION_METHOD,
+        throw new BatchDeserializerException("Invalid query operation method",
+            MessageKeys.INVALID_QUERY_OPERATION_METHOD,
             statusLine.getLineNumber());
       }
     }
@@ -127,12 +131,13 @@ public class HttpRequestStatusLine {
     private final String requestBaseUri;
     private final int lineNumber;
 
-    public ODataURI(final String rawUri, String requestBaseUri) throws BatchException {
+    public ODataURI(final String rawUri, final String requestBaseUri) throws BatchDeserializerException {
       this(rawUri, requestBaseUri, 0, new ArrayList<String>());
     }
 
-    public ODataURI(final String rawUri, String requestBaseUri, int lineNumber, List<String> hostHeader)
-        throws BatchException {
+    public ODataURI(final String rawUri, final String requestBaseUri, final int lineNumber,
+        final List<String> hostHeader)
+        throws BatchDeserializerException {
       this.lineNumber = lineNumber;
       this.requestBaseUri = requestBaseUri;
 
@@ -147,7 +152,8 @@ public class HttpRequestStatusLine {
         if (hostHeader != null && hostHeader.size() == 1) {
           buildUri(hostHeader.get(0) + absoluteUriWtithHostMatcher.group(1), absoluteUriWtithHostMatcher.group(2));
         } else {
-          throw new BatchException("Exactly one host header is required", MessageKeys.MISSING_MANDATORY_HEADER,
+          throw new BatchDeserializerException("Exactly one host header is required",
+              MessageKeys.MISSING_MANDATORY_HEADER,
               lineNumber);
         }
 
@@ -155,13 +161,13 @@ public class HttpRequestStatusLine {
         buildUri(requestBaseUri + "/" + relativeUriMatcher.group(1), relativeUriMatcher.group(2));
 
       } else {
-        throw new BatchException("Invalid uri", MessageKeys.INVALID_URI, lineNumber);
+        throw new BatchDeserializerException("Invalid uri", MessageKeys.INVALID_URI, lineNumber);
       }
     }
 
-    private void buildUri(final String resourceUri, final String queryOptions) throws BatchException {
+    private void buildUri(final String resourceUri, final String queryOptions) throws BatchDeserializerException {
       if (!resourceUri.startsWith(requestBaseUri)) {
-        throw new BatchException("Host do not match", MessageKeys.INVALID_URI, lineNumber);
+        throw new BatchDeserializerException("Host do not match", MessageKeys.INVALID_URI, lineNumber);
       }
 
       final int oDataPathIndex = resourceUri.indexOf(requestBaseUri);
@@ -182,7 +188,7 @@ public class HttpRequestStatusLine {
       return rawServiceResolutionUri;
     }
 
-    public void setRawServiceResolutionUri(String rawServiceResolutionUri) {
+    public void setRawServiceResolutionUri(final String rawServiceResolutionUri) {
       this.rawServiceResolutionUri = rawServiceResolutionUri;
     }
 
@@ -190,7 +196,7 @@ public class HttpRequestStatusLine {
       return rawQueryPath;
     }
 
-    public void setRawQueryPath(String rawQueryPath) {
+    public void setRawQueryPath(final String rawQueryPath) {
       this.rawQueryPath = rawQueryPath;
     }
 
@@ -198,7 +204,7 @@ public class HttpRequestStatusLine {
       return rawODataPath;
     }
 
-    public void setRawODataPath(String rawODataPath) {
+    public void setRawODataPath(final String rawODataPath) {
       this.rawODataPath = rawODataPath;
     }
 
@@ -206,7 +212,7 @@ public class HttpRequestStatusLine {
       return rawBaseUri;
     }
 
-    public void setRawBaseUri(String rawBaseUri) {
+    public void setRawBaseUri(final String rawBaseUri) {
       this.rawBaseUri = rawBaseUri;
     }
 
@@ -214,7 +220,7 @@ public class HttpRequestStatusLine {
       return rawRequestUri;
     }
 
-    public void setRawRequestUri(String rawRequestUri) {
+    public void setRawRequestUri(final String rawRequestUri) {
       this.rawRequestUri = rawRequestUri;
     }
 

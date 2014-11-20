@@ -26,15 +26,14 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.batch.BatchException;
-import org.apache.olingo.server.api.batch.BatchException.MessageKeys;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
+import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.core.deserializer.batch.BatchParser;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
@@ -43,8 +42,8 @@ import org.junit.Test;
 public class BatchRequestParserTest {
 
   private static final String SERVICE_ROOT = "http://localhost/odata";
-  private static final String CONTENT_TYPE = "multipart/mixed;boundary=batch_8194-cf13-1f56";
   private static final String CRLF = "\r\n";
+  private static final String BOUNDARY = "batch_8194-cf13-1f56";
   private static final String MIME_HEADERS = "Content-Type: application/http" + CRLF
       + "Content-Transfer-Encoding: binary" + CRLF;
   private static final String GET_REQUEST = ""
@@ -55,7 +54,7 @@ public class BatchRequestParserTest {
       + CRLF;
 
   @Test
-  public void test() throws IOException, BatchException, URISyntaxException {
+  public void test() throws Exception {
     final InputStream in = readFile("/batchWithPost.batch");
     final List<BatchRequestPart> batchRequestParts = parse(in);
 
@@ -100,7 +99,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testImageInContent() throws IOException, BatchException, URISyntaxException {
+  public void testImageInContent() throws Exception {
     final InputStream contentInputStream = readFile("/batchWithContent.batch");
     final String content = StringUtil.toString(contentInputStream);
     final String batch = ""
@@ -156,7 +155,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testPostWithoutBody() throws IOException, BatchException, URISyntaxException {
+  public void testPostWithoutBody() throws Exception {
     final String batch = CRLF
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
@@ -190,87 +189,68 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testBoundaryParameterWithQuotas() throws BatchException, UnsupportedEncodingException {
+  public void testBoundaryParameterWithQuotas() throws Exception {
     final String contentType = "multipart/mixed; boundary=\"batch_1.2+34:2j)0?\"";
+    final String boundary = BatchParserCommon.getBoundary(contentType, 0);
     final String batch = ""
         + "--batch_1.2+34:2j)0?" + CRLF
         + GET_REQUEST
         + "--batch_1.2+34:2j)0?--";
     final BatchParser parser = new BatchParser();
+    final BatchOptions batchOptions = BatchOptions.with().isStrict(true).rawBaseUri(SERVICE_ROOT).build();
     final List<BatchRequestPart> batchRequestParts =
-        parser.parseBatchRequest(StringUtil.toInputStream(batch), contentType, SERVICE_ROOT, "", true);
+        parser.parseBatchRequest(StringUtil.toInputStream(batch), boundary, batchOptions);
 
     assertNotNull(batchRequestParts);
     assertFalse(batchRequestParts.isEmpty());
   }
 
   @Test
-  public void testBatchWithInvalidContentType() throws UnsupportedEncodingException {
+  public void testBatchWithInvalidContentType() throws Exception {
     final String invalidContentType = "multipart;boundary=batch_1740-bb84-2f7f";
-    final String batch = ""
-        + "--batch_1740-bb84-2f7f" + CRLF
-        + GET_REQUEST
-        + "--batch_1740-bb84-2f7f--";
-    final BatchParser parser = new BatchParser();
 
     try {
-      parser.parseBatchRequest(StringUtil.toInputStream(batch), invalidContentType, SERVICE_ROOT, "", true);
+      BatchParserCommon.getBoundary(invalidContentType, 0);
       fail();
-    } catch (BatchException e) {
-      assertMessageKey(e, BatchException.MessageKeys.INVALID_CONTENT_TYPE);
+    } catch (BatchDeserializerException e) {
+      assertMessageKey(e, BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE);
     }
   }
 
   @Test
-  public void testContentTypeCharset() throws BatchException {
+  public void testContentTypeCharset() throws Exception {
     final String contentType = "multipart/mixed; charset=UTF-8;boundary=batch_14d1-b293-b99a";
-    final String batch = ""
-        + "--batch_14d1-b293-b99a" + CRLF
-        + GET_REQUEST
-        + "--batch_14d1-b293-b99a--";
-    final BatchParser parser = new BatchParser();
-    final List<BatchRequestPart> parts =
-        parser.parseBatchRequest(StringUtil.toInputStream(batch), contentType, SERVICE_ROOT, "", true);
+    final String boundary = BatchParserCommon.getBoundary(contentType, 0);
 
-    assertEquals(1, parts.size());
+    assertEquals("batch_14d1-b293-b99a", boundary);
   }
 
   @Test
-  public void testBatchWithoutBoundaryParameter() throws UnsupportedEncodingException {
+  public void testBatchWithoutBoundaryParameter() throws Exception {
     final String invalidContentType = "multipart/mixed";
-    final String batch = ""
-        + "--batch_1740-bb84-2f7f" + CRLF
-        + GET_REQUEST
-        + "--batch_1740-bb84-2f7f--";
-    final BatchParser parser = new BatchParser();
 
     try {
-      parser.parseBatchRequest(StringUtil.toInputStream(batch), invalidContentType, SERVICE_ROOT, "", true);
+      BatchParserCommon.getBoundary(invalidContentType, 0);
       fail();
-    } catch (BatchException e) {
-      assertMessageKey(e, BatchException.MessageKeys.INVALID_CONTENT_TYPE);
+    } catch (BatchDeserializerException e) {
+      assertMessageKey(e, BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE);
     }
   }
 
   @Test
-  public void testBoundaryParameterWithoutQuota() throws UnsupportedEncodingException {
+  public void testBoundaryParameterWithoutQuota() throws Exception {
     final String invalidContentType = "multipart/mixed;boundary=batch_1740-bb:84-2f7f";
-    final String batch = ""
-        + "--batch_1740-bb:84-2f7f" + CRLF
-        + GET_REQUEST
-        + "--batch_1740-bb:84-2f7f--";
-    final BatchParser parser = new BatchParser();
 
     try {
-      parser.parseBatchRequest(StringUtil.toInputStream(batch), invalidContentType, SERVICE_ROOT, "", true);
+      BatchParserCommon.getBoundary(invalidContentType, 0);
       fail();
-    } catch (BatchException e) {
-      assertMessageKey(e, BatchException.MessageKeys.INVALID_BOUNDARY);
+    } catch (BatchDeserializerException e) {
+      assertMessageKey(e, BatchDeserializerException.MessageKeys.INVALID_BOUNDARY);
     }
   }
 
   @Test
-  public void testWrongBoundaryString() throws BatchException, UnsupportedEncodingException {
+  public void testWrongBoundaryString() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f5" + CRLF
         + GET_REQUEST
@@ -281,7 +261,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testMissingHttpVersion() throws UnsupportedEncodingException {
+  public void testMissingHttpVersion() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: application/http" + CRLF
@@ -293,11 +273,11 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.INVALID_STATUS_LINE);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_STATUS_LINE);
   }
 
   @Test
-  public void testMissingHttpVersion2() throws UnsupportedEncodingException {
+  public void testMissingHttpVersion2() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: application/http" + CRLF
@@ -309,11 +289,11 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.INVALID_HTTP_VERSION);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_HTTP_VERSION);
   }
 
   @Test
-  public void testMissingHttpVersion3() throws UnsupportedEncodingException {
+  public void testMissingHttpVersion3() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: application/http" + CRLF
@@ -325,11 +305,11 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.INVALID_HTTP_VERSION);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_HTTP_VERSION);
   }
 
   @Test
-  public void testBoundaryWithoutHyphen() throws UnsupportedEncodingException {
+  public void testBoundaryWithoutHyphen() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + GET_REQUEST
@@ -337,11 +317,11 @@ public class BatchRequestParserTest {
         + GET_REQUEST
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.INVALID_CONTENT);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CONTENT);
   }
 
   @Test
-  public void testNoBoundaryString() throws UnsupportedEncodingException {
+  public void testNoBoundaryString() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + GET_REQUEST
@@ -349,11 +329,11 @@ public class BatchRequestParserTest {
         + GET_REQUEST
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.INVALID_CONTENT);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CONTENT);
   }
 
   @Test
-  public void testBatchBoundaryEqualsChangeSetBoundary() throws UnsupportedEncodingException {
+  public void testBatchBoundaryEqualsChangeSetBoundary() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed;boundary=batch_8194-cf13-1f56" + CRLF
@@ -372,11 +352,11 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_BLANK_LINE);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_BLANK_LINE);
   }
 
   @Test
-  public void testNoContentType() throws UnsupportedEncodingException {
+  public void testNoContentType() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Transfer-Encoding: binary" + CRLF
@@ -385,11 +365,11 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_CONTENT_TYPE);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CONTENT_TYPE);
   }
 
   @Test
-  public void testMimeHeaderContentType() throws UnsupportedEncodingException {
+  public void testMimeHeaderContentType() throws Exception {
     final String batch = "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: text/plain" + CRLF
         + "Content-Transfer-Encoding: binary" + CRLF
@@ -399,11 +379,11 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.INVALID_CONTENT_TYPE);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE);
   }
 
   @Test
-  public void testMimeHeaderEncoding() throws UnsupportedEncodingException {
+  public void testMimeHeaderEncoding() throws Exception {
     String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: application/http" + CRLF
@@ -414,11 +394,11 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.INVALID_CONTENT_TRANSFER_ENCODING);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CONTENT_TRANSFER_ENCODING);
   }
 
   @Test
-  public void testGetRequestMissingCRLF() throws UnsupportedEncodingException {
+  public void testGetRequestMissingCRLF() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -429,11 +409,11 @@ public class BatchRequestParserTest {
         + CRLF // Belongs to the
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_BLANK_LINE);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_BLANK_LINE);
   }
 
   @Test
-  public void testInvalidMethodForBatch() throws UnsupportedEncodingException {
+  public void testInvalidMethodForBatch() throws Exception {
     final String batch = "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
         + CRLF
@@ -442,22 +422,22 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.INVALID_QUERY_OPERATION_METHOD);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_QUERY_OPERATION_METHOD);
   }
 
   @Test
-  public void testNoBoundaryFound() throws UnsupportedEncodingException {
+  public void testNoBoundaryFound() throws Exception {
     final String batch = "batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
         + CRLF
         + "POST Employees('1')/EmployeeName HTTP/1.1" + CRLF
         + CRLF;
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_CLOSE_DELIMITER);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER);
   }
 
   @Test
-  public void testEmptyRequest() throws BatchException, UnsupportedEncodingException {
+  public void testEmptyRequest() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56--";
 
@@ -466,14 +446,14 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testBadRequest() throws UnsupportedEncodingException {
+  public void testBadRequest() throws Exception {
     final String batch = "This is a bad request. There is no syntax and also no semantic";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_CLOSE_DELIMITER);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER);
   }
 
   @Test
-  public void testNoMethod() throws UnsupportedEncodingException {
+  public void testNoMethod() throws Exception {
     final String batch = "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
         + CRLF
@@ -482,11 +462,11 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.INVALID_STATUS_LINE);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_STATUS_LINE);
   }
 
   @Test
-  public void testInvalidMethodForChangeset() throws UnsupportedEncodingException {
+  public void testInvalidMethodForChangeset() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
@@ -504,11 +484,11 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.INVALID_CHANGESET_METHOD);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CHANGESET_METHOD);
   }
 
   @Test
-  public void testInvalidChangeSetBoundary() throws UnsupportedEncodingException, BatchException {
+  public void testInvalidChangeSetBoundary() throws Exception {
     final String batch = "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
         + CRLF
@@ -532,7 +512,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testNestedChangeset() throws UnsupportedEncodingException {
+  public void testNestedChangeset() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
@@ -556,11 +536,11 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.INVALID_CONTENT_TYPE);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE);
   }
 
   @Test
-  public void testMissingContentTransferEncoding() throws UnsupportedEncodingException {
+  public void testMissingContentTransferEncoding() throws Exception {
     final String batch = "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
         + CRLF
@@ -577,11 +557,11 @@ public class BatchRequestParserTest {
         + "--changeset_f980-1cb6-94dd--" + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_CONTENT_TRANSFER_ENCODING);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CONTENT_TRANSFER_ENCODING);
   }
 
   @Test
-  public void testMissingContentType() throws UnsupportedEncodingException {
+  public void testMissingContentType() throws Exception {
     final String batch = "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
         + CRLF
@@ -598,31 +578,31 @@ public class BatchRequestParserTest {
         + "--changeset_f980-1cb6-94dd--" + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_CONTENT_TYPE);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CONTENT_TYPE);
   }
 
   @Test
-  public void testNoCloseDelimiter() throws BatchException, UnsupportedEncodingException {
+  public void testNoCloseDelimiter() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + GET_REQUEST;
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_CLOSE_DELIMITER);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER);
   }
 
   @Test
-  public void testNoCloseDelimiter2() throws BatchException, UnsupportedEncodingException {
+  public void testNoCloseDelimiter2() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
         + CRLF
         + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF;
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_CLOSE_DELIMITER);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER);
   }
 
   @Test
-  public void testInvalidUri() throws UnsupportedEncodingException {
+  public void testInvalidUri() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -632,11 +612,11 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.INVALID_URI);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_URI);
   }
 
   @Test
-  public void testUriWithAbsolutePath() throws BatchException, UnsupportedEncodingException {
+  public void testUriWithAbsolutePath() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -661,7 +641,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testUriWithAbsolutePathMissingHostHeader() throws BatchException, UnsupportedEncodingException {
+  public void testUriWithAbsolutePathMissingHostHeader() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -675,7 +655,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testUriWithAbsolutePathMissingHostDulpicatedHeader() throws BatchException, UnsupportedEncodingException {
+  public void testUriWithAbsolutePathMissingHostDulpicatedHeader() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -691,7 +671,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testUriWithAbsolutePathOtherHost() throws BatchException, UnsupportedEncodingException {
+  public void testUriWithAbsolutePathOtherHost() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -706,7 +686,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testUriWithAbsolutePathWrongPath() throws BatchException, UnsupportedEncodingException {
+  public void testUriWithAbsolutePathWrongPath() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -721,14 +701,14 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testNoCloseDelimiter3() throws UnsupportedEncodingException {
+  public void testNoCloseDelimiter3() throws Exception {
     final String batch = "--batch_8194-cf13-1f56" + CRLF + GET_REQUEST + "--batch_8194-cf13-1f56-"/* no hyphen */;
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.MISSING_CLOSE_DELIMITER);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER);
   }
 
   @Test
-  public void testNegativeContentLengthChangeSet() throws BatchException, IOException {
+  public void testNegativeContentLengthChangeSet() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
@@ -751,7 +731,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testNegativeContentLengthRequest() throws BatchException, IOException {
+  public void testNegativeContentLengthRequest() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
@@ -774,7 +754,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testContentLengthGreatherThanBodyLength() throws BatchException, IOException {
+  public void testContentLengthGreatherThanBodyLength() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
@@ -806,7 +786,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testContentLengthSmallerThanBodyLength() throws BatchException, IOException {
+  public void testContentLengthSmallerThanBodyLength() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
@@ -838,7 +818,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testNonNumericContentLength() throws UnsupportedEncodingException {
+  public void testNonNumericContentLength() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
@@ -856,11 +836,11 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.INVALID_HEADER);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_HEADER);
   }
 
   @Test
-  public void testNonStrictParser() throws BatchException, IOException {
+  public void testNonStrictParser() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed;boundary=changeset_8194-cf13-1f56" + CRLF
@@ -893,7 +873,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testNonStrictParserMoreCRLF() throws UnsupportedEncodingException {
+  public void testNonStrictParserMoreCRLF() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed;boundary=changeset_8194-cf13-1f56" + CRLF
@@ -909,11 +889,11 @@ public class BatchRequestParserTest {
         + "--changeset_8194-cf13-1f56--" + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchException.MessageKeys.INVALID_STATUS_LINE, false);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_STATUS_LINE, false);
   }
 
   @Test
-  public void testContentId() throws BatchException, UnsupportedEncodingException {
+  public void testContentId() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -970,7 +950,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testNoContentId() throws BatchException, UnsupportedEncodingException {
+  public void testNoContentId() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -1006,7 +986,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testPreamble() throws BatchException, IOException {
+  public void testPreamble() throws Exception {
     final String batch = ""
         + "This is a preamble and must be ignored" + CRLF
         + CRLF
@@ -1068,7 +1048,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testContentTypeCaseInsensitive() throws BatchException, IOException {
+  public void testContentTypeCaseInsensitive() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: muLTiParT/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
@@ -1090,7 +1070,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testContentTypeBoundaryCaseInsensitive() throws BatchException, IOException {
+  public void testContentTypeBoundaryCaseInsensitive() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed; bOunDaRy=changeset_f980-1cb6-94dd" + CRLF
@@ -1115,7 +1095,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testEpilog() throws BatchException, IOException {
+  public void testEpilog() throws Exception {
     String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -1178,13 +1158,13 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testLargeBatch() throws BatchException, IOException {
+  public void testLargeBatch() throws Exception {
     final InputStream in = readFile("/batchLarge.batch");
     parse(in);
   }
 
   @Test
-  public void testForddenHeaderAuthorisation() throws UnsupportedEncodingException {
+  public void testForddenHeaderAuthorisation() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -1199,7 +1179,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testForddenHeaderExpect() throws UnsupportedEncodingException {
+  public void testForddenHeaderExpect() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -1214,7 +1194,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testForddenHeaderFrom() throws UnsupportedEncodingException {
+  public void testForddenHeaderFrom() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -1229,7 +1209,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testForddenHeaderRange() throws UnsupportedEncodingException {
+  public void testForddenHeaderRange() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -1244,7 +1224,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testForddenHeaderMaxForwards() throws UnsupportedEncodingException {
+  public void testForddenHeaderMaxForwards() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -1259,7 +1239,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testForddenHeaderTE() throws UnsupportedEncodingException {
+  public void testForddenHeaderTE() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -1273,50 +1253,50 @@ public class BatchRequestParserTest {
     parseInvalidBatchBody(batch, MessageKeys.FORBIDDEN_HEADER);
   }
 
-  private List<BatchRequestPart> parse(final InputStream in, final boolean isStrict) throws BatchException {
+  private List<BatchRequestPart> parse(final InputStream in, final boolean isStrict) throws Exception {
     final BatchParser parser = new BatchParser();
+    final BatchOptions options = BatchOptions.with().isStrict(isStrict).rawBaseUri(SERVICE_ROOT).build();
     final List<BatchRequestPart> batchRequestParts =
-        parser.parseBatchRequest(in, CONTENT_TYPE, SERVICE_ROOT, "", isStrict);
+        parser.parseBatchRequest(in, BOUNDARY, options);
 
     assertNotNull(batchRequestParts);
 
     return batchRequestParts;
   }
 
-  private List<BatchRequestPart> parse(final InputStream in) throws BatchException {
+  private List<BatchRequestPart> parse(final InputStream in) throws Exception {
     return parse(in, true);
   }
 
-  private List<BatchRequestPart> parse(final String batch) throws BatchException, UnsupportedEncodingException {
+  private List<BatchRequestPart> parse(final String batch) throws Exception {
     return parse(batch, true);
   }
 
-  private List<BatchRequestPart> parse(final String batch, final boolean isStrict) throws BatchException,
-      UnsupportedEncodingException {
+  private List<BatchRequestPart> parse(final String batch, final boolean isStrict) throws Exception {
     return parse(StringUtil.toInputStream(batch), isStrict);
   }
 
   private void parseInvalidBatchBody(final String batch, final MessageKeys key, final boolean isStrict)
-      throws UnsupportedEncodingException {
+      throws Exception {
     final BatchParser parser = new BatchParser();
-
+    final BatchOptions options = BatchOptions.with().isStrict(isStrict).rawBaseUri(SERVICE_ROOT).build();
     try {
-      parser.parseBatchRequest(StringUtil.toInputStream(batch), CONTENT_TYPE, SERVICE_ROOT, "", isStrict);
+      parser.parseBatchRequest(StringUtil.toInputStream(batch), BOUNDARY, options);
       fail("No exception thrown. Expect: " + key.toString());
-    } catch (BatchException e) {
+    } catch (BatchDeserializerException e) {
       assertMessageKey(e, key);
     }
   }
 
-  private void parseInvalidBatchBody(final String batch, final MessageKeys key) throws UnsupportedEncodingException {
+  private void parseInvalidBatchBody(final String batch, final MessageKeys key) throws Exception {
     parseInvalidBatchBody(batch, key, true);
   }
 
-  private void assertMessageKey(final BatchException e, final MessageKeys key) {
+  private void assertMessageKey(final BatchDeserializerException e, final MessageKeys key) {
     assertEquals(key, e.getMessageKey());
   }
 
-  private InputStream readFile(final String fileName) throws IOException {
+  private InputStream readFile(final String fileName) throws Exception {
     final InputStream in = ClassLoader.class.getResourceAsStream(fileName);
     if (in == null) {
       throw new IOException("Requested file '" + fileName + "' was not found.");

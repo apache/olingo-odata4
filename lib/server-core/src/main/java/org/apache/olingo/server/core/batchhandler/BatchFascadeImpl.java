@@ -20,28 +20,29 @@ package org.apache.olingo.server.core.batchhandler;
 
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.BatchException;
 import org.apache.olingo.server.api.batch.BatchFacade;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.core.ODataHandler;
 
-public class BatchOperationImpl implements BatchFacade {
+public class BatchFascadeImpl implements BatchFacade {
   private final BatchPartHandler partHandler;
 
-  public BatchOperationImpl(ODataHandler oDataHandler, ODataRequest request, BatchProcessor batchProcessor,
+  public BatchFascadeImpl(ODataHandler oDataHandler, ODataRequest request, BatchProcessor batchProcessor,
       final boolean isStrict) {
     partHandler = new BatchPartHandler(oDataHandler, batchProcessor, this);
   }
 
   @Override
-  public ODataResponse handleODataRequest(ODataRequest request, BatchRequestPart requestPart) throws BatchException {
+  public ODataResponse handleODataRequest(ODataRequest request, BatchRequestPart requestPart)
+      throws BatchDeserializerException {
     return partHandler.handleODataRequest(request, requestPart);
   }
 
   @Override
-  public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchException {
+  public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchDeserializerException {
     return partHandler.handleBatchRequest(request);
   }
 }

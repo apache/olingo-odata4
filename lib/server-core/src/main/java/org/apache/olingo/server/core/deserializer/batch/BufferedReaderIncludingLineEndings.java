@@ -93,18 +93,18 @@ public class BufferedReaderIncludingLineEndings extends Reader {
 
     return bytesRead;
   }
-  
+
   public List<String> toList() throws IOException {
     final List<String> result = new ArrayList<String>();
     String currentLine;
-    
+
     while ((currentLine = readLine()) != null) {
       result.add(currentLine);
     }
 
     return result;
   }
-  
+
   public List<Line> toLineList() throws IOException {
     final List<Line> result = new ArrayList<Line>();
     String currentLine;
@@ -229,58 +229,5 @@ public class BufferedReaderIncludingLineEndings extends Reader {
     offset = 0;
 
     return limit;
-  }
-
-  public static class Line {
-    private final int lineNumber;
-    private final String content;
-
-    public Line(final String content, final int lineNumber) {
-      this.content = content;
-      this.lineNumber = lineNumber;
-    }
-
-    public int getLineNumber() {
-      return lineNumber;
-    }
-
-    @Override
-    public String toString() {
-      return content;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((content == null) ? 0 : content.hashCode());
-      result = prime * result + lineNumber;
-      return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-      if (this == obj) {
-        return true;
-      }
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
-        return false;
-      }
-      Line other = (Line) obj;
-      if (content == null) {
-        if (other.content != null) {
-          return false;
-        }
-      } else if (!content.equals(other.content)) {
-        return false;
-      }
-      if (lineNumber != other.lineNumber) {
-        return false;
-      }
-      return true;
-    }
   }
 }

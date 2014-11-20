@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -29,8 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.olingo.commons.api.http.HttpContentType;
-import org.apache.olingo.server.api.batch.BatchException;
-import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings.Line;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 
 public class BatchParserCommon {
 
@@ -40,7 +39,7 @@ public class BatchParserCommon {
   private static final Pattern PATTERN_LAST_CRLF = Pattern.compile("(.*)(\r\n){1}( *)", Pattern.DOTALL);
   private static final Pattern PATTERN_HEADER_LINE = Pattern.compile("([a-zA-Z\\-]+):\\s?(.*)\\s*");
   private static final String REG_EX_APPLICATION_HTTP = "application/http";
-  
+
   public static final Pattern PATTERN_MULTIPART_BOUNDARY = Pattern.compile("multipart/mixed(.*)",
       Pattern.CASE_INSENSITIVE);
   public static final Pattern PATTERN_CONTENT_TYPE_APPLICATION_HTTP = Pattern.compile(REG_EX_APPLICATION_HTTP,
@@ -48,14 +47,19 @@ public class BatchParserCommon {
   public static final String BINARY_ENCODING = "binary";
   public static final String HTTP_CONTENT_ID = "Content-Id";
   public static final String HTTP_CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
-  
+
   public static final String HTTP_EXPECT = "Expect";
   public static final String HTTP_FROM = "From";
   public static final String HTTP_MAX_FORWARDS = "Max-Forwards";
   public static final String HTTP_RANGE = "Range";
   public static final String HTTP_TE = "TE";
-  
-  public static String getBoundary(final String contentType, final int line) throws BatchException {
+
+  public static String getBoundary(final String contentType, final int line) throws BatchDeserializerException {
+    if (contentType == null) {
+      throw new BatchDeserializerException("Missing content type",
+          BatchDeserializerException.MessageKeys.MISSING_CONTENT_TYPE, line);
+    }
+
     if (contentType.toLowerCase(Locale.ENGLISH).startsWith("multipart/mixed")) {
       final String[] parameter = contentType.split(";");
 
@@ -66,14 +70,15 @@ public class BatchParserCommon {
           if (attrValue[1].matches(REG_EX_BOUNDARY)) {
             return trimQuota(attrValue[1].trim());
           } else {
-            throw new BatchException("Invalid boundary format", BatchException.MessageKeys.INVALID_BOUNDARY, "" + line);
+            throw new BatchDeserializerException("Invalid boundary format",
+                BatchDeserializerException.MessageKeys.INVALID_BOUNDARY, "" + line);
           }
         }
 
       }
     }
-    throw new BatchException("Content type is not multipart mixed", 
-        BatchException.MessageKeys.INVALID_CONTENT_TYPE, HttpContentType.MULTIPART_MIXED);
+    throw new BatchDeserializerException("Content type is not multipart mixed",
+        BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE, HttpContentType.MULTIPART_MIXED);
   }
 
   public static String removeEndingSlash(String content) {
@@ -92,7 +97,7 @@ public class BatchParserCommon {
   }
 
   public static List<List<Line>> splitMessageByBoundary(final List<Line> message, final String boundary)
-      throws BatchException {
+      throws BatchDeserializerException {
     final List<List<Line>> messageParts = new LinkedList<List<Line>>();
     List<Line> currentPart = new ArrayList<Line>();
     boolean isEndReached = false;
@@ -126,7 +131,8 @@ public class BatchParserCommon {
     }
 
     if (!isEndReached) {
-      throw new BatchException("Missing close boundary delimiter", BatchException.MessageKeys.MISSING_CLOSE_DELIMITER,
+      throw new BatchDeserializerException("Missing close boundary delimiter",
+          BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER,
           "" + lineNumer);
     }
 
@@ -177,26 +183,28 @@ public class BatchParserCommon {
     return headers;
   }
 
-  public static void consumeBlankLine(final List<Line> remainingMessage, final boolean isStrict) throws BatchException {
-    //TODO is \r\n to strict?
+  public static void consumeBlankLine(final List<Line> remainingMessage, final boolean isStrict)
+      throws BatchDeserializerException {
+    // TODO is \r\n to strict?
     if (remainingMessage.size() > 0 && remainingMessage.get(0).toString().matches("\\s*(\r\n|\n)\\s*")) {
       remainingMessage.remove(0);
     } else {
       if (isStrict) {
         final int lineNumber = (remainingMessage.size() > 0) ? remainingMessage.get(0).getLineNumber() : 0;
-        throw new BatchException("Missing blank line", BatchException.MessageKeys.MISSING_BLANK_LINE, "[None]", ""
-            + lineNumber);
+        throw new BatchDeserializerException("Missing blank line",
+            BatchDeserializerException.MessageKeys.MISSING_BLANK_LINE, "[None]", ""
+                + lineNumber);
       }
     }
   }
 
-  public static InputStream convertLineListToInputStream(List<Line> messageList) {
+  public static InputStream convertLineListToInputStream(final List<Line> messageList) {
     final String message = lineListToString(messageList);
 
     return new ByteArrayInputStream(message.getBytes());
   }
 
-  private static String lineListToString(List<Line> messageList) {
+  private static String lineListToString(final List<Line> messageList) {
     final StringBuilder builder = new StringBuilder();
 
     for (Line currentLine : messageList) {
@@ -205,15 +213,15 @@ public class BatchParserCommon {
 
     return builder.toString();
   }
-  
+
   public static String trimLineListToLength(final List<Line> list, final int length) {
     final String message = lineListToString(list);
     final int lastIndex = Math.min(length, message.length());
 
     return (lastIndex > 0) ? message.substring(0, lastIndex) : "";
   }
-  
-  public static InputStream convertLineListToInputStream(List<Line> list, int length) {
+
+  public static InputStream convertLineListToInputStream(final List<Line> list, final int length) {
     final String message = trimLineListToLength(list, length);
 
     return new ByteArrayInputStream(message.getBytes());

@@ -25,33 +25,28 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.server.api.batch.BatchException;
-import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerResult;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
-import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings.Line;
 
 public class BatchParser {
 
-  private String contentTypeMime;
-  private String rawServiceResolutionUri;
-  private boolean isStrict;
+  private BatchOptions options;
 
-  @SuppressWarnings("unchecked")
-  public List<BatchRequestPart> parseBatchRequest(final InputStream in, final String contentType, final String baseUri,
-      final String serviceResolutionUri, final boolean isStrict) throws BatchException {
+  public List<BatchRequestPart> parseBatchRequest(InputStream content, String boundary, BatchOptions options)
+      throws BatchDeserializerException {
+    this.options = options;
 
-    contentTypeMime = contentType;
-    this.isStrict = isStrict;
-    this.rawServiceResolutionUri = serviceResolutionUri;
-
-    return (List<BatchRequestPart>) parse(in, new BatchRequestTransformator(baseUri, rawServiceResolutionUri));
+    BatchRequestTransformator transformator = new BatchRequestTransformator(options.getRawBaseUri(), 
+                                                                            options.getRawServiceResolutionUri());
+    return parse(content, boundary, transformator);
   }
 
-  private List<? extends BatchDeserializerResult> parse(final InputStream in,
+  private List<BatchRequestPart> parse(final InputStream in, String boundary,
       final BatchRequestTransformator transformator)
-      throws BatchException {
+      throws BatchDeserializerException {
     try {
-      return parseBatch(in, transformator);
+      return parseBatch(in, boundary, transformator);
     } catch (IOException e) {
       throw new ODataRuntimeException(e);
     } finally {
@@ -63,14 +58,13 @@ public class BatchParser {
     }
   }
 
-  private List<BatchDeserializerResult> parseBatch(final InputStream in, final BatchRequestTransformator transformator)
-      throws IOException, BatchException {
-    final String boundary = BatchParserCommon.getBoundary(contentTypeMime, 1);
-    final List<BatchDeserializerResult> resultList = new LinkedList<BatchDeserializerResult>();
+  private List<BatchRequestPart> parseBatch(final InputStream in, final String boundary,
+      final BatchRequestTransformator transformator) throws IOException, BatchDeserializerException {
+    final List<BatchRequestPart> resultList = new LinkedList<BatchRequestPart>();
     final List<List<Line>> bodyPartStrings = splitBodyParts(in, boundary);
 
     for (List<Line> bodyPartString : bodyPartStrings) {
-      BatchBodyPart bodyPart = new BatchBodyPart(bodyPartString, boundary, isStrict).parse();
+      BatchBodyPart bodyPart = new BatchBodyPart(bodyPartString, boundary, options.isStrict()).parse();
       resultList.addAll(transformator.transform(bodyPart));
     }
 
@@ -78,7 +72,7 @@ public class BatchParser {
   }
 
   private List<List<Line>> splitBodyParts(final InputStream in, final String boundary) throws IOException,
-      BatchException {
+      BatchDeserializerException {
     final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
     final List<Line> message = reader.toLineList();
     reader.close();

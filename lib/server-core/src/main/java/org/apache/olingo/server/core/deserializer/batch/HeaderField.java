@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -21,101 +21,101 @@ package org.apache.olingo.server.core.deserializer.batch;
 import java.util.ArrayList;
 import java.util.List;
 
-  public class HeaderField implements Cloneable {
-    private final String fieldName;
-    private final List<String> values;
-    private final int lineNumber;
+public class HeaderField implements Cloneable {
+  private final String fieldName;
+  private final List<String> values;
+  private final int lineNumber;
 
-    public HeaderField(final String fieldName, final int lineNumber) {
-      this(fieldName, new ArrayList<String>(), lineNumber);
+  public HeaderField(final String fieldName, final int lineNumber) {
+    this(fieldName, new ArrayList<String>(), lineNumber);
+  }
+
+  public HeaderField(final String fieldName, final List<String> values, final int lineNumber) {
+    this.fieldName = fieldName;
+    this.values = values;
+    this.lineNumber = lineNumber;
+  }
+
+  public String getFieldName() {
+    return fieldName;
+  }
+
+  public List<String> getValues() {
+    return values;
+  }
+
+  public String getValue() {
+    final StringBuilder result = new StringBuilder();
+
+    for (final String value : values) {
+      result.append(value);
+      result.append(", ");
     }
 
-    public HeaderField(final String fieldName, final List<String> values, final int lineNumber) {
-      this.fieldName = fieldName;
-      this.values = values;
-      this.lineNumber = lineNumber;
+    if (result.length() > 0) {
+      result.delete(result.length() - 2, result.length());
     }
 
-    public String getFieldName() {
-      return fieldName;
-    }
+    return result.toString();
+  }
 
-    public List<String> getValues() {
-      return values;
-    }
+  public String getValueNotNull() {
+    final String value = getValue();
 
-    public String getValue() {
-      final StringBuilder result = new StringBuilder();
+    return (value == null) ? "" : value;
+  }
 
-      for (final String value : values) {
-        result.append(value);
-        result.append(", ");
-      }
+  @Override
+  public HeaderField clone() {
+    List<String> newValues = new ArrayList<String>();
+    newValues.addAll(values);
 
-      if (result.length() > 0) {
-        result.delete(result.length() - 2, result.length());
-      }
+    return new HeaderField(fieldName, newValues, lineNumber);
+  }
 
-      return result.toString();
-    }
+  public int getLineNumber() {
+    return lineNumber;
+  }
 
-    public String getValueNotNull() {
-      final String value = getValue();
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((fieldName == null) ? 0 : fieldName.hashCode());
+    result = prime * result + lineNumber;
+    result = prime * result + ((values == null) ? 0 : values.hashCode());
+    return result;
+  }
 
-      return (value == null) ? "" : value;
-    }
-
-    @Override
-    public HeaderField clone() {
-      List<String> newValues = new ArrayList<String>();
-      newValues.addAll(values);
-
-      return new HeaderField(fieldName, newValues, lineNumber);
-    }
-
-    public int getLineNumber() {
-      return lineNumber;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((fieldName == null) ? 0 : fieldName.hashCode());
-      result = prime * result + lineNumber;
-      result = prime * result + ((values == null) ? 0 : values.hashCode());
-      return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-      if (this == obj) {
-        return true;
-      }
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
-        return false;
-      }
-      HeaderField other = (HeaderField) obj;
-      if (fieldName == null) {
-        if (other.fieldName != null) {
-          return false;
-        }
-      } else if (!fieldName.equals(other.fieldName)) {
-        return false;
-      }
-      if (lineNumber != other.lineNumber) {
-        return false;
-      }
-      if (values == null) {
-        if (other.values != null) {
-          return false;
-        }
-      } else if (!values.equals(other.values)) {
-        return false;
-      }
+  @Override
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    HeaderField other = (HeaderField) obj;
+    if (fieldName == null) {
+      if (other.fieldName != null) {
+        return false;
+      }
+    } else if (!fieldName.equals(other.fieldName)) {
+      return false;
+    }
+    if (lineNumber != other.lineNumber) {
+      return false;
+    }
+    if (values == null) {
+      if (other.values != null) {
+        return false;
+      }
+    } else if (!values.equals(other.values)) {
+      return false;
+    }
+    return true;
+  }
 }

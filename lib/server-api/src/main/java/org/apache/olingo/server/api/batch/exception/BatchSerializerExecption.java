@@ -16,13 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.deserializer.batch;
+package org.apache.olingo.server.api.batch.exception;
 
-import java.util.List;
+public class BatchSerializerExecption extends BatchException {
 
-import org.apache.olingo.server.api.batch.BatchException;
-import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerResult;
+  private static final long serialVersionUID = 2634433974342796905L;
 
-public interface BatchTransformator {
-  public List<BatchDeserializerResult> transform(BatchBodyPart bodyPart) throws BatchException;
+  public static enum MessageKeys implements MessageKey {
+    MISSING_CONTENT_ID;
+
+    @Override
+    public String getKey() {
+      return name();
+    }
+  }
+
+  public BatchSerializerExecption(final String developmentMessage, final MessageKey messageKey,
+      final String... parameters) {
+    super(developmentMessage, messageKey, parameters);
+  }
+
+  @Override
+  protected String getBundleName() {
+    return DEFAULT_SERVER_BUNDLE_NAME;
+  }
+
 }

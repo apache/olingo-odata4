@@ -20,18 +20,17 @@ package org.apache.olingo.server.core.deserializer.batch;
 
 import java.util.List;
 
-import org.apache.olingo.server.api.batch.BatchException;
-import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings.Line;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 
 public class BatchChangeSetPart extends BatchQueryOperation {
   private BatchQueryOperation request;
 
-  public BatchChangeSetPart(final List<Line> message, final boolean isStrict) throws BatchException {
+  public BatchChangeSetPart(final List<Line> message, final boolean isStrict) throws BatchDeserializerException {
     super(message, isStrict);
   }
 
   @Override
-  public BatchChangeSetPart parse() throws BatchException {
+  public BatchChangeSetPart parse() throws BatchDeserializerException {
     headers = BatchParserCommon.consumeHeaders(message);
     BatchParserCommon.consumeBlankLine(message, isStrict);
 

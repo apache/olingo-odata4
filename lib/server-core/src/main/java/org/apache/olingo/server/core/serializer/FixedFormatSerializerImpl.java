@@ -25,8 +25,7 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.BatchException;
+import org.apache.olingo.server.api.batch.exception.BatchSerializerExecption;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveValueSerializerOptions;
@@ -61,10 +60,12 @@ public class FixedFormatSerializerImpl implements FixedFormatSerializer {
     }
   }
 
-  //TODO: Signature
+  // TODO: Signature
   @Override
-  public void writeResponseParts(List<ODataResponsePart> batchResponses, ODataResponse response) throws BatchException {
-    BatchResponseSerializer writer = new BatchResponseSerializer();
-    writer.toODataResponse(batchResponses, response);
+  public InputStream batchResponse(final List<ODataResponsePart> batchResponses, final String boundary)
+      throws BatchSerializerExecption {
+    final BatchResponseSerializer serializer = new BatchResponseSerializer();
+
+    return serializer.serialize(batchResponses, boundary);
   }
 }

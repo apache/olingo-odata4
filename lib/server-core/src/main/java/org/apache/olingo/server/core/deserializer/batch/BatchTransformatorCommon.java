@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,25 +23,27 @@ import java.util.regex.Pattern;
 
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.server.api.batch.BatchException;
-import org.apache.olingo.server.api.batch.BatchException.MessageKeys;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
 
 public class BatchTransformatorCommon {
 
-  public static void validateContentType(final Header headers, final Pattern pattern) throws BatchException {
+  public static void validateContentType(final Header headers, final Pattern pattern) 
+      throws BatchDeserializerException {
     List<String> contentTypes = headers.getHeaders(HttpHeader.CONTENT_TYPE);
 
     if (contentTypes.size() == 0) {
-      throw new BatchException("Missing content type", MessageKeys.MISSING_CONTENT_TYPE, headers.getLineNumber());
+      throw new BatchDeserializerException("Missing content type", MessageKeys.MISSING_CONTENT_TYPE, headers
+          .getLineNumber());
     }
     if (!headers.isHeaderMatching(HttpHeader.CONTENT_TYPE, pattern)) {
 
-      throw new BatchException("Invalid content type", MessageKeys.INVALID_CONTENT_TYPE,
+      throw new BatchDeserializerException("Invalid content type", MessageKeys.INVALID_CONTENT_TYPE,
           HttpContentType.MULTIPART_MIXED + " or " + HttpContentType.APPLICATION_HTTP);
     }
   }
 
-  public static void validateContentTransferEncoding(Header headers) throws BatchException {
+  public static void validateContentTransferEncoding(final Header headers) throws BatchDeserializerException {
     final HeaderField contentTransferField = headers.getHeaderField(BatchParserCommon.HTTP_CONTENT_TRANSFER_ENCODING);
 
     if (contentTransferField != null) {
@@ -50,20 +52,21 @@ public class BatchTransformatorCommon {
         String encoding = contentTransferValues.get(0);
 
         if (!BatchParserCommon.BINARY_ENCODING.equalsIgnoreCase(encoding)) {
-          throw new BatchException("Invalid content transfer encoding", MessageKeys.INVALID_CONTENT_TRANSFER_ENCODING,
+          throw new BatchDeserializerException("Invalid content transfer encoding",
+              MessageKeys.INVALID_CONTENT_TRANSFER_ENCODING,
               headers.getLineNumber());
         }
       } else {
-        throw new BatchException("Invalid header", MessageKeys.INVALID_HEADER, headers.getLineNumber());
+        throw new BatchDeserializerException("Invalid header", MessageKeys.INVALID_HEADER, headers.getLineNumber());
       }
     } else {
-      throw new BatchException("Missing mandatory content transfer encoding",
+      throw new BatchDeserializerException("Missing mandatory content transfer encoding",
           MessageKeys.MISSING_CONTENT_TRANSFER_ENCODING,
           headers.getLineNumber());
     }
   }
 
-  public static int getContentLength(Header headers) throws BatchException {
+  public static int getContentLength(final Header headers) throws BatchDeserializerException {
     final HeaderField contentLengthField = headers.getHeaderField(HttpHeader.CONTENT_LENGTH);
 
     if (contentLengthField != null && contentLengthField.getValues().size() == 1) {
@@ -73,13 +76,15 @@ public class BatchTransformatorCommon {
         int contentLength = Integer.parseInt(contentLengthValues.get(0));
 
         if (contentLength < 0) {
-          throw new BatchException("Invalid content length", MessageKeys.INVALID_CONTENT_LENGTH, contentLengthField
+          throw new BatchDeserializerException("Invalid content length", MessageKeys.INVALID_CONTENT_LENGTH,
+              contentLengthField
               .getLineNumber());
         }
 
         return contentLength;
       } catch (NumberFormatException e) {
-        throw new BatchException("Invalid header", MessageKeys.INVALID_HEADER, contentLengthField.getLineNumber());
+        throw new BatchDeserializerException("Invalid header", MessageKeys.INVALID_HEADER, contentLengthField
+            .getLineNumber());
       }
     }
 

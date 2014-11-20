@@ -28,7 +28,7 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.BatchException;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 import org.apache.olingo.server.core.deserializer.batch.HttpRequestStatusLine.ODataURI;
@@ -80,7 +80,7 @@ public class BatchReferenceRewriter {
   }
 
   public void addMapping(ODataRequest request, ODataResponse response, BatchRequestPart requestPart)
-      throws BatchException {
+      throws BatchDeserializerException {
     final UriMapping mapping = getUriMappingOrDefault(requestPart);
     final String resourceUri = getODataPath(request, response);
     final String contentId = request.getHeader(BatchParserCommon.HTTP_CONTENT_ID);
@@ -88,7 +88,7 @@ public class BatchReferenceRewriter {
     mapping.addMapping(contentId, resourceUri);
   }
   
-  private String getODataPath(ODataRequest request, ODataResponse response) throws BatchException {
+  private String getODataPath(ODataRequest request, ODataResponse response) throws BatchDeserializerException {
     String resourceUri = null;
 
     if (request.getMethod() == HttpMethod.POST) {

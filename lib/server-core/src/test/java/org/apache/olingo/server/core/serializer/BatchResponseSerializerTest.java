@@ -22,15 +22,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.BatchException;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.core.deserializer.StringUtil;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
@@ -38,11 +38,12 @@ import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingL
 import org.apache.olingo.server.core.serializer.BatchResponseSerializer;
 import org.junit.Test;
 
-public class BatchResponseWriterTest {
+public class BatchResponseSerializerTest {
   private static final String CRLF = "\r\n";
+  private static final String BOUNDARY = "batch_" + UUID.randomUUID().toString();
 
   @Test
-  public void testBatchResponse() throws IOException, BatchException {
+  public void testBatchResponse() throws Exception {
     final List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
     ODataResponse response = new ODataResponse();
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -60,14 +61,11 @@ public class BatchResponseWriterTest {
     responses.add(changeSetResponse);
     parts.add(new ODataResponsePart(responses, true));
 
-    BatchResponseSerializer writer = new BatchResponseSerializer();
-    ODataResponse batchResponse = new ODataResponse();
-    writer.toODataResponse(parts, batchResponse);
-
-    assertEquals(202, batchResponse.getStatusCode());
-    assertNotNull(batchResponse.getContent());
+    BatchResponseSerializer serializer = new BatchResponseSerializer();
+    final InputStream content = serializer.serialize(parts, BOUNDARY);
+    assertNotNull(content);
     final BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchResponse.getContent()));
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(content));
     final List<String> body = reader.toList();
     reader.close();
     
@@ -101,7 +99,7 @@ public class BatchResponseWriterTest {
   }
 
   @Test
-  public void testResponse() throws IOException, BatchException {
+  public void testResponse() throws Exception {
     List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
     ODataResponse response = new ODataResponse();
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -112,13 +110,12 @@ public class BatchResponseWriterTest {
     responses.add(response);
     parts.add(new ODataResponsePart(responses, false));
 
-    ODataResponse batchResponse = new ODataResponse();
-    new BatchResponseSerializer().toODataResponse(parts, batchResponse);
-
-    assertEquals(202, batchResponse.getStatusCode());
-    assertNotNull(batchResponse.getContent());
+    final BatchResponseSerializer serializer = new BatchResponseSerializer();
+    final InputStream content = serializer.serialize(parts, BOUNDARY);
+    
+    assertNotNull(content);
     final BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchResponse.getContent()));
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(content));
     final List<String> body = reader.toList();
     reader.close();
     
@@ -137,7 +134,7 @@ public class BatchResponseWriterTest {
   }
 
   @Test
-  public void testChangeSetResponse() throws IOException, BatchException {
+  public void testChangeSetResponse() throws Exception {
     List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
     ODataResponse response = new ODataResponse();
     response.setHeader(BatchParserCommon.HTTP_CONTENT_ID, "1");
@@ -147,15 +144,13 @@ public class BatchResponseWriterTest {
     responses.add(response);
     parts.add(new ODataResponsePart(responses, true));
 
-    BatchResponseSerializer writer = new BatchResponseSerializer();
-    ODataResponse batchResponse = new ODataResponse();
-    writer.toODataResponse(parts, batchResponse);
-
-    assertEquals(202, batchResponse.getStatusCode());
-    assertNotNull(batchResponse.getContent());
+    BatchResponseSerializer serializer = new BatchResponseSerializer();
+    final InputStream content = serializer.serialize(parts, BOUNDARY);
+    
+    assertNotNull(content);
 
     final BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchResponse.getContent()));
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(content));
     final List<String> body = reader.toList();
     reader.close();
     

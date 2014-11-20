@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.BatchException;
 import org.apache.olingo.server.api.batch.BatchFacade;
+import org.apache.olingo.server.api.batch.exception.BatchException;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.serializer.SerializerException;

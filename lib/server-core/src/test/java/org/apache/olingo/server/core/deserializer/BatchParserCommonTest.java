@@ -24,10 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.server.api.batch.BatchException;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 import org.apache.olingo.server.core.deserializer.batch.Header;
-import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings.Line;
+import org.apache.olingo.server.core.deserializer.batch.Line;
 import org.junit.Test;
 
 public class BatchParserCommonTest {
@@ -35,7 +34,7 @@ public class BatchParserCommonTest {
   private static final String CRLF = "\r\n";
 
   @Test
-  public void testMultipleHeader() throws BatchException {
+  public void testMultipleHeader() throws Exception {
     String[] messageRaw = new String[] {
         "Content-Id: 1" + CRLF,
         "Content-Id: 2" + CRLF,
@@ -55,7 +54,7 @@ public class BatchParserCommonTest {
   }
   
   @Test
-  public void testMultipleHeaderSameValue() throws BatchException {
+  public void testMultipleHeaderSameValue() throws Exception {
     String[] messageRaw = new String[] {
         "Content-Id: 1" + CRLF,
         "Content-Id: 1" + CRLF,
@@ -74,7 +73,7 @@ public class BatchParserCommonTest {
   }
   
   @Test
-  public void testHeaderSperatedByComma() throws BatchException {
+  public void testHeaderSperatedByComma() throws Exception {
     String[] messageRaw = new String[] {
         "Content-Id: 1" + CRLF,
         "Upgrade: HTTP/2.0, SHTTP/1.3, IRC/6.9, RTA/x11" + CRLF,
@@ -96,7 +95,7 @@ public class BatchParserCommonTest {
   }
   
   @Test
-  public void testMultipleAcceptHeader() throws BatchException {
+  public void testMultipleAcceptHeader() throws Exception {
     String[] messageRaw = new String[] {
         "Accept: application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1" + CRLF,
         "Accept: text/plain;q=0.3" + CRLF,
@@ -115,7 +114,7 @@ public class BatchParserCommonTest {
   }
   
   @Test
-  public void testMultipleAcceptHeaderSameValue() throws BatchException {
+  public void testMultipleAcceptHeaderSameValue() throws Exception {
     String[] messageRaw = new String[] {
         "Accept: application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1" + CRLF,
         "Accept: application/atomsvc+xml;q=0.8" + CRLF,
@@ -134,7 +133,7 @@ public class BatchParserCommonTest {
   }
   
   @Test
-  public void testMultipleAccepLanguagetHeader() throws BatchException {
+  public void testMultipleAccepLanguagetHeader() throws Exception {
     String[] messageRaw = new String[] {
         "Accept-Language:en-US,en;q=0.7,en-UK;q=0.9" + CRLF,
         "Accept-Language: de-DE;q=0.3" + CRLF,
@@ -152,7 +151,7 @@ public class BatchParserCommonTest {
   }
   
   @Test
-  public void testMultipleAccepLanguagetHeaderSameValue() throws BatchException {
+  public void testMultipleAccepLanguagetHeaderSameValue() throws Exception {
     String[] messageRaw = new String[] {
         "Accept-Language:en-US,en;q=0.7,en-UK;q=0.9" + CRLF,
         "Accept-Language:en-US,en;q=0.7" + CRLF,

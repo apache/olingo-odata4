@@ -22,8 +22,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.BatchException;
+import org.apache.olingo.server.api.batch.exception.BatchSerializerExecption;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 
 /** OData serializer for fixed output formats. */
@@ -52,5 +51,5 @@ public interface FixedFormatSerializer {
 
   // TODO: Document
   // TODO: Return type
-  void writeResponseParts(List<ODataResponsePart> batchResponses, ODataResponse response) throws BatchException;
+  InputStream batchResponse(List<ODataResponsePart> batchResponses, String boundary) throws BatchSerializerExecption;
 }

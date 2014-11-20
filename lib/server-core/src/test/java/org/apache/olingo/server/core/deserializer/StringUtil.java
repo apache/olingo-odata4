@@ -19,7 +19,6 @@
 package org.apache.olingo.server.core.deserializer;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -30,7 +29,7 @@ import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingL
 public class StringUtil {
   
   
-  public static String toString(final InputStream in) throws IOException {
+  public static String toString(final InputStream in) throws Exception {
     final StringBuilder builder = new StringBuilder();
     final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
     String currentLine;

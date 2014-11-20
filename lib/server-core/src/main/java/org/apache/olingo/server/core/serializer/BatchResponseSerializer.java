@@ -18,11 +18,10 @@
  */
 package org.apache.olingo.server.core.serializer;
 
-import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -32,11 +31,10 @@ import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.BatchException;
-import org.apache.olingo.server.api.batch.BatchException.MessageKeys;
+import org.apache.olingo.server.api.batch.exception.BatchSerializerExecption;
+import org.apache.olingo.server.api.batch.exception.BatchSerializerExecption.MessageKeys;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
-import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 
 public class BatchResponseSerializer {
   private static final int BUFFER_SIZE = 4096;
@@ -45,63 +43,59 @@ public class BatchResponseSerializer {
   private static final String SP = " ";
   private static final String CRLF = "\r\n";
 
-  public void toODataResponse(final List<ODataResponsePart> batchResponse, final ODataResponse response)
-      throws BatchException {
-    final String boundary = generateBoundary("batch");
+  public InputStream serialize(final List<ODataResponsePart> responses, final String boundary)
+      throws BatchSerializerExecption {
+    StringBuilder builder = createBody(responses, boundary);
 
-    setStatusCode(response);
-    ResponseWriter writer = createBody(batchResponse, boundary);
-
-    response.setContent(writer.toInputStream());
-    setHttpHeader(response, writer, boundary);
+    return new ByteArrayInputStream(builder.toString().getBytes());
   }
 
-  private ResponseWriter createBody(final List<ODataResponsePart> batchResponses, final String boundary)
-      throws BatchException {
-    final ResponseWriter writer = new ResponseWriter();
+  private StringBuilder createBody(final List<ODataResponsePart> batchResponses, final String boundary)
+      throws BatchSerializerExecption {
+    final StringBuilder builder = new StringBuilder();
 
     for (final ODataResponsePart part : batchResponses) {
-      writer.append(getDashBoundary(boundary));
+      builder.append(getDashBoundary(boundary));
 
       if (part.isChangeSet()) {
-        appendChangeSet(part, writer);
+        appendChangeSet(part, builder);
       } else {
-        appendBodyPart(part.getResponses().get(0), writer, false);
+        appendBodyPart(part.getResponses().get(0), builder, false);
       }
     }
-    writer.append(getCloseDelimiter(boundary));
+    builder.append(getCloseDelimiter(boundary));
 
-    return writer;
+    return builder;
   }
 
-  private void appendChangeSet(ODataResponsePart part, ResponseWriter writer) throws BatchException {
+  private void appendChangeSet(ODataResponsePart part, StringBuilder builder) throws BatchSerializerExecption {
     final String changeSetBoundary = generateBoundary("changeset");
 
-    appendChangeSetHeader(writer, changeSetBoundary);
-    writer.append(CRLF);
+    appendChangeSetHeader(builder, changeSetBoundary);
+    builder.append(CRLF);
 
     for (final ODataResponse response : part.getResponses()) {
-      writer.append(getDashBoundary(changeSetBoundary));
-      appendBodyPart(response, writer, true);
+      builder.append(getDashBoundary(changeSetBoundary));
+      appendBodyPart(response, builder, true);
     }
 
-    writer.append(getCloseDelimiter(changeSetBoundary));
-    writer.append(CRLF);
+    builder.append(getCloseDelimiter(changeSetBoundary));
+    builder.append(CRLF);
   }
 
-  private void appendBodyPart(ODataResponse response, ResponseWriter writer, boolean isChangeSet) 
-      throws BatchException {
+  private void appendBodyPart(ODataResponse response, StringBuilder builder, boolean isChangeSet)
+      throws BatchSerializerExecption {
     byte[] body = getBody(response);
 
-    appendBodyPartHeader(response, writer, isChangeSet);
-    writer.append(CRLF);
+    appendBodyPartHeader(response, builder, isChangeSet);
+    builder.append(CRLF);
 
-    appendStatusLine(response, writer);
-    appendResponseHeader(response, body.length, writer);
-    writer.append(CRLF);
+    appendStatusLine(response, builder);
+    appendResponseHeader(response, body.length, builder);
+    builder.append(CRLF);
 
-    writer.append(body);
-    writer.append(CRLF);
+    builder.append(new String(body));
+    builder.append(CRLF);
   }
 
   private byte[] getBody(final ODataResponse response) {
@@ -115,8 +109,8 @@ public class BatchResponseSerializer {
       try {
         while ((n = content.read(buffer, 0, buffer.length)) != -1) {
           out.write(buffer, 0, n);
-          out.flush();
         }
+        out.flush();
       } catch (IOException e) {
         throw new ODataRuntimeException(e);
       }
@@ -127,21 +121,21 @@ public class BatchResponseSerializer {
     }
   }
 
-  private void appendChangeSetHeader(ResponseWriter writer, final String changeSetBoundary) {
+  private void appendChangeSetHeader(StringBuilder builder, final String changeSetBoundary) {
     appendHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED.toString() + "; boundary="
-        + changeSetBoundary, writer);
+        + changeSetBoundary, builder);
   }
 
-  private void appendHeader(String name, String value, ResponseWriter writer) {
-    writer.append(name)
+  private void appendHeader(String name, String value, StringBuilder builder) {
+    builder.append(name)
         .append(COLON)
         .append(SP)
         .append(value)
         .append(CRLF);
   }
 
-  private void appendStatusLine(ODataResponse response, ResponseWriter writer) {
-    writer.append("HTTP/1.1")
+  private void appendStatusLine(ODataResponse response, StringBuilder builder) {
+    builder.append("HTTP/1.1")
         .append(SP)
         .append("" + response.getStatusCode())
         .append(SP)
@@ -149,41 +143,32 @@ public class BatchResponseSerializer {
         .append(CRLF);
   }
 
-  private void appendResponseHeader(ODataResponse response, int contentLength, ResponseWriter writer) {
+  private void appendResponseHeader(ODataResponse response, int contentLength, StringBuilder builder) {
     final Map<String, String> header = response.getHeaders();
 
     for (final String key : header.keySet()) {
       // Requests do never has a content id header
       if (!key.equalsIgnoreCase(BatchParserCommon.HTTP_CONTENT_ID)) {
-        appendHeader(key, header.get(key), writer);
+        appendHeader(key, header.get(key), builder);
       }
     }
 
-    appendHeader(HttpHeader.CONTENT_LENGTH, "" + contentLength, writer);
+    appendHeader(HttpHeader.CONTENT_LENGTH, "" + contentLength, builder);
   }
 
-  private void appendBodyPartHeader(ODataResponse response, ResponseWriter writer, boolean isChangeSet)
-      throws BatchException {
-    appendHeader(HttpHeader.CONTENT_TYPE, HttpContentType.APPLICATION_HTTP, writer);
-    appendHeader(BatchParserCommon.HTTP_CONTENT_TRANSFER_ENCODING, BatchParserCommon.BINARY_ENCODING, writer);
+  private void appendBodyPartHeader(ODataResponse response, StringBuilder builder, boolean isChangeSet)
+      throws BatchSerializerExecption {
+    appendHeader(HttpHeader.CONTENT_TYPE, HttpContentType.APPLICATION_HTTP, builder);
+    appendHeader(BatchParserCommon.HTTP_CONTENT_TRANSFER_ENCODING, BatchParserCommon.BINARY_ENCODING, builder);
 
     if (isChangeSet) {
       if (response.getHeaders().get(BatchParserCommon.HTTP_CONTENT_ID) != null) {
         appendHeader(BatchParserCommon.HTTP_CONTENT_ID, response.getHeaders().get(BatchParserCommon.HTTP_CONTENT_ID),
-            writer);
+            builder);
       } else {
-        throw new BatchException("Missing content id", MessageKeys.MISSING_CONTENT_ID, "");
+        throw new BatchSerializerExecption("Missing content id", MessageKeys.MISSING_CONTENT_ID);
       }
     }
-  }
-
-  private void setHttpHeader(ODataResponse response, ResponseWriter writer, final String boundary) {
-    response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED.toString() + "; boundary=" + boundary);
-    response.setHeader(HttpHeader.CONTENT_LENGTH, "" + writer.length());
-  }
-
-  private void setStatusCode(final ODataResponse response) {
-    response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
   }
 
   private String getDashBoundary(String boundary) {
@@ -196,49 +181,5 @@ public class BatchResponseSerializer {
 
   private String generateBoundary(final String value) {
     return value + "_" + UUID.randomUUID().toString();
-  }
-
-  private static class ResponseWriter {
-    private CircleStreamBuffer buffer = new CircleStreamBuffer();
-    private BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(buffer.getOutputStream()));
-    private int length = 0;
-
-    public ResponseWriter append(final String content) {
-      length += content.length();
-      try {
-        writer.write(content);
-      } catch (IOException e) {
-        throw new ODataRuntimeException(e);
-      }
-
-      return this;
-    }
-
-    public ResponseWriter append(final byte[] content) {
-      length += content.length;
-      try {
-        writer.flush();
-        buffer.getOutputStream().write(content, 0, content.length);
-      } catch (IOException e) {
-        throw new ODataRuntimeException(e);
-      }
-
-      return this;
-    }
-
-    public int length() {
-      return length;
-    }
-
-    public InputStream toInputStream() {
-      try {
-        writer.flush();
-        writer.close();
-      } catch (IOException e) {
-        throw new ODataRuntimeException(e);
-      }
-
-      return buffer.getInputStream();
-    }
   }
 }

@@ -16,36 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.deserializer.batch;
+package org.apache.olingo.server.api.batch.exception;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import org.apache.olingo.server.api.ODataTranslatedException;
 
-import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
+public class BatchException extends ODataTranslatedException {
+  private static final long serialVersionUID = 8747815702545202733L;
 
-/**
- * Has to be immutable!
- *
- */
-public class BatchRequestPartImpl implements BatchRequestPart {
+  public static enum MessageKeys implements MessageKey {
+    ;
 
-  private List<ODataRequest> requests = new ArrayList<ODataRequest>();
-  private boolean isChangeSet;
+    @Override
+    public String getKey() {
+      return name();
+    }
+  }
 
-  public BatchRequestPartImpl(final boolean isChangeSet, final List<ODataRequest> requests) {
-    this.isChangeSet = isChangeSet;
-    this.requests = requests;
+  public BatchException(final String developmentMessage, final MessageKey messageKey, final int lineNumber) {
+    this(developmentMessage, messageKey, "" + lineNumber);
+  }
+
+  public BatchException(final String developmentMessage, final MessageKey messageKey, final String... parameters) {
+    super(developmentMessage, messageKey, parameters);
   }
 
   @Override
-  public boolean isChangeSet() {
-    return isChangeSet;
-  }
-
-  @Override
-  public List<ODataRequest> getRequests() {
-    return Collections.unmodifiableList(requests);
+  protected String getBundleName() {
+    return DEFAULT_SERVER_BUNDLE_NAME;
   }
 }

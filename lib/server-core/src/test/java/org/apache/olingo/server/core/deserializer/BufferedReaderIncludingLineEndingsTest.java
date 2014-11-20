@@ -21,13 +21,11 @@ package org.apache.olingo.server.core.deserializer;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings;
-import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings.Line;
+import org.apache.olingo.server.core.deserializer.batch.Line;
 import org.junit.Test;
 
 public class BufferedReaderIncludingLineEndingsTest {
@@ -50,7 +48,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   private static final String TEXT_EMPTY = "";
 
   @Test
-  public void testSimpleText() throws IOException {
+  public void testSimpleText() throws Exception {
     final String TEXT = "Test";
     BufferedReaderIncludingLineEndings reader = create(TEXT);
 
@@ -61,7 +59,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testNoText() throws IOException {
+  public void testNoText() throws Exception {
     final String TEXT = "";
     BufferedReaderIncludingLineEndings reader = create(TEXT);
 
@@ -71,7 +69,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testNoBytes() throws IOException {
+  public void testNoBytes() throws Exception {
     BufferedReaderIncludingLineEndings reader =
         new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(new byte[0])));
 
@@ -81,7 +79,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testCRLF() throws IOException {
+  public void testCRLF() throws Exception {
     final String TEXT = "Test\r\n" +
         "Test2";
 
@@ -95,7 +93,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testLF() throws IOException {
+  public void testLF() throws Exception {
     final String TEXT = "Test\n" +
         "Test2";
 
@@ -109,7 +107,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testCR() throws IOException {
+  public void testCR() throws Exception {
     final String TEXT = "Test\r" +
         "Test2";
 
@@ -123,7 +121,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testCombined() throws IOException {
+  public void testCombined() throws Exception {
     BufferedReaderIncludingLineEndings reader = create(TEXT_COMBINED);
 
     assertEquals("Test\r", reader.readLine());
@@ -143,7 +141,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testCombinedBufferSizeTwo() throws IOException {
+  public void testCombinedBufferSizeTwo() throws Exception {
     BufferedReaderIncludingLineEndings reader = create(TEXT_COMBINED, 2);
 
     assertEquals("Test\r", reader.readLine());
@@ -163,7 +161,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testCombinedBufferSizeOne() throws IOException {
+  public void testCombinedBufferSizeOne() throws Exception {
     final String TEXT = "Test\r" +
         "Test2\r\n" +
         "Test3\n" +
@@ -196,7 +194,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testDoubleLF() throws IOException {
+  public void testDoubleLF() throws Exception {
     final String TEXT = "Test\r" +
         "\r";
 
@@ -208,7 +206,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testSkipSimple() throws IOException {
+  public void testSkipSimple() throws Exception {
     BufferedReaderIncludingLineEndings reader = create(TEXT_SMALL);
 
     assertEquals(5, reader.skip(5)); // Test\r
@@ -219,7 +217,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testSkipBufferOne() throws IOException {
+  public void testSkipBufferOne() throws Exception {
     BufferedReaderIncludingLineEndings reader = create(TEXT_SMALL, 1);
 
     assertEquals(5, reader.skip(5)); // Test\r
@@ -230,7 +228,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testReadThanSkip() throws IOException {
+  public void testReadThanSkip() throws Exception {
     final String TEXT = "Test\r" +
         "\r" +
         "123";
@@ -246,7 +244,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testReadMoreBufferCapacityThanCharacterAvailable() throws IOException {
+  public void testReadMoreBufferCapacityThanCharacterAvailable() throws Exception {
     final String TEXT = "Foo";
     char[] buffer = new char[20];
 
@@ -262,7 +260,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testSkipZero() throws IOException {
+  public void testSkipZero() throws Exception {
     final String TEXT = "Test\r" +
         "123\r\n";
 
@@ -277,7 +275,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testSkipToMuch() throws IOException {
+  public void testSkipToMuch() throws Exception {
     BufferedReaderIncludingLineEndings reader = create(TEXT_SMALL);
 
     assertEquals(8, reader.skip(10)); // Test\r
@@ -286,7 +284,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testReadBufferOne() throws IOException {
+  public void testReadBufferOne() throws Exception {
     BufferedReaderIncludingLineEndings reader = create(TEXT_SMALL, 1);
 
     assertEquals('T', reader.read());
@@ -302,7 +300,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testReadZeroBytes() throws IOException {
+  public void testReadZeroBytes() throws Exception {
     BufferedReaderIncludingLineEndings reader = create(TEXT_SMALL, 1);
 
     char[] buffer = new char[3];
@@ -316,7 +314,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testRead() throws IOException {
+  public void testRead() throws Exception {
     BufferedReaderIncludingLineEndings reader = create(TEXT_SMALL);
 
     assertEquals('T', reader.read());
@@ -332,7 +330,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test(expected = IndexOutOfBoundsException.class)
-  public void testFailReadBufferAndOffsetBiggerThanBuffer() throws IOException {
+  public void testFailReadBufferAndOffsetBiggerThanBuffer() throws Exception {
     BufferedReaderIncludingLineEndings reader = create("");
 
     final char[] buffer = new char[3];
@@ -340,7 +338,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test(expected = IndexOutOfBoundsException.class)
-  public void testFailLengthNegative() throws IOException {
+  public void testFailLengthNegative() throws Exception {
     final char[] buffer = new char[3];
     BufferedReaderIncludingLineEndings reader = create("123");
 
@@ -349,7 +347,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test(expected = IndexOutOfBoundsException.class)
-  public void testFailOffsetNegative() throws IOException {
+  public void testFailOffsetNegative() throws Exception {
     final char[] buffer = new char[3];
     BufferedReaderIncludingLineEndings reader = create("123");
 
@@ -358,7 +356,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testReadAndReadLine() throws IOException {
+  public void testReadAndReadLine() throws Exception {
     final String TEXT = "Test\r" +
         "bar\n" +
         "123\r\n" +
@@ -392,54 +390,54 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
   
   @Test(expected = IllegalArgumentException.class)
-  public void testSkipNegative() throws IOException {
+  public void testSkipNegative() throws Exception {
     BufferedReaderIncludingLineEndings reader = create("123");
     reader.skip(-1);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testFailBufferSizeZero() throws IOException {
+  public void testFailBufferSizeZero() throws Exception {
     BufferedReaderIncludingLineEndings reader = create(TEXT_EMPTY, 0);
     reader.close();
   }
 
   @Test(expected = NullPointerException.class)
-  public void testInputStreamIsNull() throws IOException {
+  public void testInputStreamIsNull() throws Exception {
     // Same behaviour like BufferedReader
     BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(null);
     reader.close();
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testFailBufferSizeNegative() throws IOException {
+  public void testFailBufferSizeNegative() throws Exception {
     BufferedReaderIncludingLineEndings reader = create(TEXT_EMPTY, -1);
     reader.close();
   }
 
   @Test
-  public void testMarkSupoorted() throws IOException {
+  public void testMarkSupoorted() throws Exception {
     BufferedReaderIncludingLineEndings reader = create(TEXT_EMPTY);
 
     assertEquals(false, reader.markSupported());
     reader.close();
   }
 
-  @Test(expected = IOException.class)
-  public void testFailMark() throws IOException {
+  @Test(expected = Exception.class)
+  public void testFailMark() throws Exception {
     BufferedReaderIncludingLineEndings reader = create("123");
 
     reader.mark(1);
   }
 
-  @Test(expected = IOException.class)
-  public void testFailReset() throws IOException {
+  @Test(expected = Exception.class)
+  public void testFailReset() throws Exception {
     BufferedReaderIncludingLineEndings reader = create("123");
 
     reader.reset();
   }
 
   @Test
-  public void testReady() throws IOException {
+  public void testReady() throws Exception {
     BufferedReaderIncludingLineEndings reader = create("123\r123");
     assertEquals(false, reader.ready());
     assertEquals("123\r", reader.readLine());
@@ -451,7 +449,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   @Test
-  public void testToList() throws IOException {
+  public void testToList() throws Exception {
     BufferedReaderIncludingLineEndings reader = create(TEXT_COMBINED);
     List<Line> stringList = reader.toLineList();
 
@@ -470,13 +468,12 @@ public class BufferedReaderIncludingLineEndingsTest {
     reader.close();
   }
 
-  private BufferedReaderIncludingLineEndings create(final String inputString) throws UnsupportedEncodingException {
+  private BufferedReaderIncludingLineEndings create(final String inputString) throws Exception {
     return new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(inputString
         .getBytes("UTF-8"))));
   }
 
-  private BufferedReaderIncludingLineEndings create(final String inputString, int bufferSize)
-      throws UnsupportedEncodingException {
+  private BufferedReaderIncludingLineEndings create(final String inputString, int bufferSize) throws Exception {
     return new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(inputString
         .getBytes("UTF-8"))), bufferSize);
   }

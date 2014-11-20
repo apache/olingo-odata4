@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.server.core.deserializer;
 
+import java.io.InputStream;
 import java.util.List;
 
-import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.batch.BatchException;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
+import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.core.deserializer.batch.BatchParser;
 
@@ -31,13 +31,10 @@ public class FixedFormatDeserializerImpl implements FixedFormatDeserializer {
 
   // TODO: Deserializer
   @Override
-  public List<BatchRequestPart> parseBatchRequest(ODataRequest request, boolean isStrict) throws BatchException {
-    BatchParser parser = new BatchParser();
-    return parser.parseBatchRequest(request.getBody(), getContentType(request), request.getRawBaseUri(),
-        request.getRawServiceResolutionUri(), isStrict);
-  }
+  public List<BatchRequestPart> parseBatchRequest(InputStream content, String boundary, BatchOptions options)
+      throws BatchDeserializerException {
+    final BatchParser parser = new BatchParser();
 
-  private String getContentType(ODataRequest request) {
-    return request.getHeader(HttpHeader.CONTENT_TYPE);
+    return parser.parseBatchRequest(content, boundary, options);
   }
 }

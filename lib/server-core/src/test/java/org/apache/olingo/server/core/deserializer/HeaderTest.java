@@ -113,14 +113,6 @@ public class HeaderTest {
     assertFalse(header.isHeaderMatching(HttpHeader.CONTENT_TYPE, BatchParserCommon.PATTERN_MULTIPART_BOUNDARY));
   }
 
-//  @Test
-//  public void testMatcherFail() {
-//    Header header = new Header(1);
-//    header.addHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + ";boundary=123", 1);
-//
-//    assertFalse(header.isHeaderMatching(HttpHeader.CONTENT_TYPE, BatchParserCommon.PATTERN_HEADER_LINE));
-//  }
-
   @Test
   public void testDuplicatedAddList() {
     Header header = new Header(1);

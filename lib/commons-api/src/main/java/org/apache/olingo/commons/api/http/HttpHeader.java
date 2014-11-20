@@ -162,4 +162,11 @@ public interface HttpHeader {
    */
   public static final String ODATA_MAX_VERSION = "OData-MaxVersion";
 
+  /**
+   * OData Prefer Header
+   * See {@link <a href="http://docs.oasis-open.org/odata/odata/v4.0/errata01/os/complete/part1-protocol/
+   * odata-v4.0-errata01-os-part1-protocol-complete.html#_Toc399426728">OData Version 4.0 Part 1:
+   * Protocol Plus Errata 01</a>}
+   */
+  public static final String PREFER = "Prefer";
 }

@@ -18,12 +18,14 @@
  */
 package org.apache.olingo.server.api.deserializer;
 
+import java.io.InputStream;
 import java.util.List;
 
-import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.batch.BatchException;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 
 public interface FixedFormatDeserializer {
-  public List<BatchRequestPart> parseBatchRequest(ODataRequest request, boolean isStrict) throws BatchException;
+  public List<BatchRequestPart> parseBatchRequest(InputStream content, String boundary, BatchOptions options)
+      throws BatchDeserializerException;
 }

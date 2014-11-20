@@ -21,14 +21,16 @@ package org.apache.olingo.server.core.batchhandler;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -36,8 +38,10 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.batch.BatchException;
 import org.apache.olingo.server.api.batch.BatchFacade;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.batch.exception.BatchException;
+import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
@@ -469,22 +473,7 @@ public class MockedBatchHandlerTest {
     assertEquals(45, line);
   }
 
-  private String checkChangeSetPartHeader(final List<String> response, int line) {
-    assertEquals(CRLF, response.get(line++));
-    assertTrue(response.get(line++).contains("--changeset_"));
-    assertEquals("Content-Type: application/http" + CRLF, response.get(line++));
-    assertEquals("Content-Transfer-Encoding: binary" + CRLF, response.get(line++));
-
-    assertTrue(response.get(line).contains("Content-Id:"));
-    String contentId = response.get(line).split(":")[1].trim();
-    line++;
-
-    assertEquals(CRLF, response.get(line++));
-
-    return contentId;
-  }
-
-  @Test(expected = BatchException.class)
+  @Test(expected = BatchDeserializerException.class)
   public void testInvalidMethod() throws Exception {
     final String content = ""
         + "--batch_12345" + CRLF
@@ -511,7 +500,7 @@ public class MockedBatchHandlerTest {
     batchHandler.process(request, response, true);
   }
 
-  @Test(expected = BatchException.class)
+  @Test(expected = BatchDeserializerException.class)
   public void testInvalidContentType() throws Exception {
     final String content = ""
         + "--batch_12345" + CRLF
@@ -541,6 +530,21 @@ public class MockedBatchHandlerTest {
   /*
    * Helper methods
    */
+  private String checkChangeSetPartHeader(final List<String> response, int line) {
+    assertEquals(CRLF, response.get(line++));
+    assertTrue(response.get(line++).contains("--changeset_"));
+    assertEquals("Content-Type: application/http" + CRLF, response.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, response.get(line++));
+
+    assertTrue(response.get(line).contains("Content-Id:"));
+    String contentId = response.get(line).split(":")[1].trim();
+    line++;
+
+    assertEquals(CRLF, response.get(line++));
+
+    return contentId;
+  }
+
   private Map<String, List<String>> getMimeHeader() {
     final Map<String, List<String>> header = new HashMap<String, List<String>>();
     header.put(HttpHeader.CONTENT_TYPE, Arrays.asList(new String[] { BATCH_CONTENT_TYPE }));
@@ -549,7 +553,7 @@ public class MockedBatchHandlerTest {
   }
 
   private ODataRequest buildODataRequest(final String content, final Map<String, List<String>> header)
-      throws UnsupportedEncodingException {
+      throws Exception {
     final ODataRequest request = new ODataRequest();
 
     for (final String key : header.keySet()) {
@@ -581,14 +585,14 @@ public class MockedBatchHandlerTest {
     }
 
     @Override
-    public ODataResponsePart executeChangeSet(BatchFacade operation, List<ODataRequest> requests,
+    public ODataResponsePart executeChangeSet(BatchFacade fascade, List<ODataRequest> requests,
         BatchRequestPart requestPart) {
       List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
       for (ODataRequest request : requests) {
         try {
-          responses.add(operation.handleODataRequest(request, requestPart));
-        } catch (BatchException e) {
+          responses.add(fascade.handleODataRequest(request, requestPart));
+        } catch (Exception e) {
           fail();
         }
       }
@@ -597,9 +601,12 @@ public class MockedBatchHandlerTest {
     }
 
     @Override
-    public void executeBatch(BatchFacade operation, ODataRequest request, ODataResponse response)
-        throws SerializerException, BatchException {
-      final List<BatchRequestPart> parts = odata.createFixedFormatDeserializer().parseBatchRequest(request, true);
+    public void executeBatch(BatchFacade fascade, ODataRequest request, ODataResponse response)
+        throws BatchException, SerializerException {
+      final String boundary = getBoundary(request.getHeader(HttpHeader.CONTENT_TYPE));
+      final BatchOptions options = BatchOptions.with().isStrict(true).rawBaseUri(BASE_URI).build();
+      final List<BatchRequestPart> parts =
+          odata.createFixedFormatDeserializer().parseBatchRequest(request.getBody(), boundary, options);
       final List<ODataResponsePart> responseParts = new ArrayList<ODataResponsePart>();
 
       for (BatchRequestPart part : parts) {
@@ -615,10 +622,20 @@ public class MockedBatchHandlerTest {
           });
         }
 
-        responseParts.add(operation.handleBatchRequest(part));
+        responseParts.add(fascade.handleBatchRequest(part));
       }
 
-      odata.createFixedFormatSerializer().writeResponseParts(responseParts, response);
+      final String responeBoundary = "batch_" + UUID.randomUUID().toString();
+      final InputStream responseStream =
+          odata.createFixedFormatSerializer().batchResponse(responseParts, responeBoundary);
+      
+      response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
+      response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + ";boundary=" + responeBoundary);
+      response.setContent(responseStream);
+    }
+
+    private String getBoundary(String contentType) throws BatchDeserializerException {
+      return BatchParserCommon.getBoundary(contentType, 0);
     }
   }
 

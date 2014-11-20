@@ -19,11 +19,13 @@
 
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 
 public interface BatchFacade {
-  public ODataResponse handleODataRequest(ODataRequest request, BatchRequestPart requestPart) throws BatchException;
+  public ODataResponse handleODataRequest(ODataRequest request, BatchRequestPart requestPart)
+      throws BatchDeserializerException;
 
-  public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchException;
+  public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchDeserializerException;
 }
