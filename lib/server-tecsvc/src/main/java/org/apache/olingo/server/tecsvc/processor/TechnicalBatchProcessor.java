@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,29 +47,24 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
       throws SerializerException, BatchException {
     boolean continueOnError = shouldContinueOnError(request);
 
-    try {
+    final List<BatchRequestPart> parts = odata.createFixedFormatDeserializer().parseBatchRequest(request, true);
+    final List<ODataResponsePart> responseParts = new ArrayList<ODataResponsePart>();
 
-      final List<BatchRequestPart> parts = odata.createFixedFormatDeserializer().parseBatchRequest(request, true);
-      final List<ODataResponsePart> responseParts = new ArrayList<ODataResponsePart>();
+    for (BatchRequestPart part : parts) {
+      final ODataResponsePart responsePart = operation.handleBatchRequest(part);
+      responseParts.add(responsePart); // Also add failed responses
 
-      for (BatchRequestPart part : parts) {
-        final ODataResponsePart responsePart = operation.handleBatchRequest(part);
-        responseParts.add(responsePart); // Also add failed responses
+      if (responsePart.getResponses().get(0).getStatusCode() >= 400
+          && !continueOnError) {
 
-        if (responsePart.getResponses().get(0).getStatusCode() >= 400
-            && !continueOnError) {
+        // Perform some additions actions
+        // ...
 
-          // Perform some additions actions
-          // ...
-
-          break; // Stop processing, but serialize all recent requests
-        }
+        break; // Stop processing, but serialize all recent requests
       }
-
-      odata.createFixedFormatSerializer().writeResponseParts(responseParts, response); // Serialize responses
-    } catch (IOException e) {
-      throw new ODataRuntimeException(e);
     }
+
+    odata.createFixedFormatSerializer().writeResponseParts(responseParts, response); // Serialize responses
   }
 
   private boolean shouldContinueOnError(ODataRequest request) {

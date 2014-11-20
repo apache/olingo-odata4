@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.api.serializer;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -52,7 +51,6 @@ public interface FixedFormatSerializer {
       throws SerializerException;
 
   // TODO: Document
-  // TODO: Delete IOException
-  void writeResponseParts(List<ODataResponsePart> batchResponses, ODataResponse response) throws BatchException,
-      IOException;
+  // TODO: Return type
+  void writeResponseParts(List<ODataResponsePart> batchResponses, ODataResponse response) throws BatchException;
 }

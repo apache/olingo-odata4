@@ -21,7 +21,6 @@ package org.apache.olingo.server.core.batchhandler;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -85,10 +83,28 @@ public class MockedBatchHandlerTest {
         + "--changeset_12345" + CRLF
         + "Content-Type: application/http" + CRLF
         + "Content-Transfer-Encoding: binary" + CRLF
+        + "Content-Id: 3" + CRLF
+        + CRLF
+        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF // Relative URI
+        + "Content-Type: application/json;odata=verbose" + CRLF
+        + CRLF
+        + CRLF
+        + "--changeset_12345" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 4" + CRLF
         + CRLF
         + "PUT /$3/PropertyInt32 HTTP/1.1" + CRLF // Absolute URI with separate Host header and ref.
         + "Host: http://localhost:8080/odata" + CRLF
+        + "Content-Type: application/json;odata=verbose" + CRLF
+        + CRLF
+        + CRLF
+        + "--changeset_12345" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + "Content-Id: 1" + CRLF
+        + CRLF
+        + "POST http://localhost:8080/odata/ESAllPrim HTTP/1.1" + CRLF // Absolute URI
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -107,24 +123,6 @@ public class MockedBatchHandlerTest {
         + "Content-Id: 2" + CRLF
         + CRLF
         + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF // Relative URI with ref.
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 1" + CRLF
-        + CRLF
-        + "POST http://localhost:8080/odata/ESAllPrim HTTP/1.1" + CRLF // Absolute URI
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 3" + CRLF
-        + CRLF
-        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF // Relative URI
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -251,19 +249,19 @@ public class MockedBatchHandlerTest {
         + "--changeset_12345" + CRLF
         + "Content-Type: application/http" + CRLF
         + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 2" + CRLF
+        + "Content-Id: 1" + CRLF
         + CRLF
-        + "POST /$1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
-        + "Host: http://localhost:8080/odata" + CRLF
+        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
         + "--changeset_12345" + CRLF
         + "Content-Type: application/http" + CRLF
         + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 1" + CRLF
+        + "Content-Id: 2" + CRLF
         + CRLF
-        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
+        + "POST /$1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
+        + "Host: http://localhost:8080/odata" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -275,19 +273,19 @@ public class MockedBatchHandlerTest {
         + "--changeset_54321" + CRLF
         + "Content-Type: application/http" + CRLF
         + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 2" + CRLF
+        + "Content-Id: 1" + CRLF
         + CRLF
-        + "POST /$1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
-        + "Host: http://localhost:8080/odata" + CRLF
+        + "PUT ESAllPrim(2) HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
         + "--changeset_54321" + CRLF
         + "Content-Type: application/http" + CRLF
         + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 1" + CRLF
+        + "Content-Id: 2" + CRLF
         + CRLF
-        + "PUT ESAllPrim(2) HTTP/1.1" + CRLF
+        + "POST /$1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
+        + "Host: http://localhost:8080/odata" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -377,9 +375,9 @@ public class MockedBatchHandlerTest {
         + "--changeset_12345" + CRLF
         + "Content-Type: application/http" + CRLF
         + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 4" + CRLF
+        + "Content-Id: 1" + CRLF
         + CRLF
-        + "POST $3/NavPropertyETTwoPrimOne HTTP/1.1" + CRLF
+        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -396,18 +394,18 @@ public class MockedBatchHandlerTest {
         + "--changeset_12345" + CRLF
         + "Content-Type: application/http" + CRLF
         + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 1" + CRLF
+        + "Content-Id: 3" + CRLF
         + CRLF
-        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
+        + "POST $2/NavPropertyETAllPrimMany HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
         + "--changeset_12345" + CRLF
         + "Content-Type: application/http" + CRLF
         + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 3" + CRLF
+        + "Content-Id: 4" + CRLF
         + CRLF
-        + "POST $2/NavPropertyETAllPrimMany HTTP/1.1" + CRLF
+        + "POST $3/NavPropertyETTwoPrimOne HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -601,30 +599,26 @@ public class MockedBatchHandlerTest {
     @Override
     public void executeBatch(BatchFacade operation, ODataRequest request, ODataResponse response)
         throws SerializerException, BatchException {
-      try {
-        final List<BatchRequestPart> parts = odata.createFixedFormatDeserializer().parseBatchRequest(request, true);
-        final List<ODataResponsePart> responseParts = new ArrayList<ODataResponsePart>();
+      final List<BatchRequestPart> parts = odata.createFixedFormatDeserializer().parseBatchRequest(request, true);
+      final List<ODataResponsePart> responseParts = new ArrayList<ODataResponsePart>();
 
-        for (BatchRequestPart part : parts) {
-          for (final ODataRequest oDataRequest : part.getRequests()) {
-            // Mock the processor for a given requests
-            when(oDataHandler.process(oDataRequest)).then(new Answer<ODataResponse>() {
-              @Override
-              public ODataResponse answer(InvocationOnMock invocation) throws Throwable {
-                Object[] arguments = invocation.getArguments();
+      for (BatchRequestPart part : parts) {
+        for (final ODataRequest oDataRequest : part.getRequests()) {
+          // Mock the processor for a given requests
+          when(oDataHandler.process(oDataRequest)).then(new Answer<ODataResponse>() {
+            @Override
+            public ODataResponse answer(InvocationOnMock invocation) throws Throwable {
+              Object[] arguments = invocation.getArguments();
 
-                return buildResponse((ODataRequest) arguments[0]);
-              }
-            });
-          }
-
-          responseParts.add(operation.handleBatchRequest(part));
+              return buildResponse((ODataRequest) arguments[0]);
+            }
+          });
         }
 
-        odata.createFixedFormatSerializer().writeResponseParts(responseParts, response);
-      } catch (IOException e) {
-        throw new ODataRuntimeException(e);
+        responseParts.add(operation.handleBatchRequest(part));
       }
+
+      odata.createFixedFormatSerializer().writeResponseParts(responseParts, response);
     }
   }
 

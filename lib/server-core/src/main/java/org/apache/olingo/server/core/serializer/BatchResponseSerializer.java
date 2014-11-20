@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -45,7 +46,7 @@ public class BatchResponseSerializer {
   private static final String CRLF = "\r\n";
 
   public void toODataResponse(final List<ODataResponsePart> batchResponse, final ODataResponse response)
-      throws IOException, BatchException {
+      throws BatchException {
     final String boundary = generateBoundary("batch");
 
     setStatusCode(response);
@@ -56,7 +57,7 @@ public class BatchResponseSerializer {
   }
 
   private ResponseWriter createBody(final List<ODataResponsePart> batchResponses, final String boundary)
-      throws IOException, BatchException {
+      throws BatchException {
     final ResponseWriter writer = new ResponseWriter();
 
     for (final ODataResponsePart part : batchResponses) {
@@ -73,7 +74,7 @@ public class BatchResponseSerializer {
     return writer;
   }
 
-  private void appendChangeSet(ODataResponsePart part, ResponseWriter writer) throws IOException, BatchException {
+  private void appendChangeSet(ODataResponsePart part, ResponseWriter writer) throws BatchException {
     final String changeSetBoundary = generateBoundary("changeset");
 
     appendChangeSetHeader(writer, changeSetBoundary);
@@ -88,10 +89,10 @@ public class BatchResponseSerializer {
     writer.append(CRLF);
   }
 
-  private void appendBodyPart(ODataResponse response, ResponseWriter writer, boolean isChangeSet) throws IOException,
-      BatchException {
+  private void appendBodyPart(ODataResponse response, ResponseWriter writer, boolean isChangeSet) 
+      throws BatchException {
     byte[] body = getBody(response);
-    
+
     appendBodyPartHeader(response, writer, isChangeSet);
     writer.append(CRLF);
 
@@ -103,31 +104,35 @@ public class BatchResponseSerializer {
     writer.append(CRLF);
   }
 
-  private byte[] getBody(final ODataResponse response) throws IOException {
+  private byte[] getBody(final ODataResponse response) {
     final InputStream content = response.getContent();
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    
+
     if (content != null) {
       byte[] buffer = new byte[BUFFER_SIZE];
       int n;
 
-      while ((n = content.read(buffer, 0, buffer.length)) != -1) {
-        out.write(buffer, 0, n);
+      try {
+        while ((n = content.read(buffer, 0, buffer.length)) != -1) {
+          out.write(buffer, 0, n);
+          out.flush();
+        }
+      } catch (IOException e) {
+        throw new ODataRuntimeException(e);
       }
-      out.flush();
-      
+
       return out.toByteArray();
     } else {
       return new byte[0];
     }
   }
 
-  private void appendChangeSetHeader(ResponseWriter writer, final String changeSetBoundary) throws IOException {
+  private void appendChangeSetHeader(ResponseWriter writer, final String changeSetBoundary) {
     appendHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED.toString() + "; boundary="
         + changeSetBoundary, writer);
   }
 
-  private void appendHeader(String name, String value, ResponseWriter writer) throws IOException {
+  private void appendHeader(String name, String value, ResponseWriter writer) {
     writer.append(name)
         .append(COLON)
         .append(SP)
@@ -135,7 +140,7 @@ public class BatchResponseSerializer {
         .append(CRLF);
   }
 
-  private void appendStatusLine(ODataResponse response, ResponseWriter writer) throws IOException {
+  private void appendStatusLine(ODataResponse response, ResponseWriter writer) {
     writer.append("HTTP/1.1")
         .append(SP)
         .append("" + response.getStatusCode())
@@ -144,8 +149,7 @@ public class BatchResponseSerializer {
         .append(CRLF);
   }
 
-  private void appendResponseHeader(ODataResponse response, int contentLength, ResponseWriter writer)
-      throws IOException {
+  private void appendResponseHeader(ODataResponse response, int contentLength, ResponseWriter writer) {
     final Map<String, String> header = response.getHeaders();
 
     for (final String key : header.keySet()) {
@@ -159,7 +163,7 @@ public class BatchResponseSerializer {
   }
 
   private void appendBodyPartHeader(ODataResponse response, ResponseWriter writer, boolean isChangeSet)
-      throws BatchException, IOException {
+      throws BatchException {
     appendHeader(HttpHeader.CONTENT_TYPE, HttpContentType.APPLICATION_HTTP, writer);
     appendHeader(BatchParserCommon.HTTP_CONTENT_TRANSFER_ENCODING, BatchParserCommon.BINARY_ENCODING, writer);
 
@@ -199,18 +203,26 @@ public class BatchResponseSerializer {
     private BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(buffer.getOutputStream()));
     private int length = 0;
 
-    public ResponseWriter append(final String content) throws IOException {
+    public ResponseWriter append(final String content) {
       length += content.length();
-      writer.write(content);
-      
+      try {
+        writer.write(content);
+      } catch (IOException e) {
+        throw new ODataRuntimeException(e);
+      }
+
       return this;
     }
 
-    public ResponseWriter append(final byte[] content) throws IOException {
+    public ResponseWriter append(final byte[] content) {
       length += content.length;
-      writer.flush();
-      buffer.getOutputStream().write(content, 0, content.length);
-      
+      try {
+        writer.flush();
+        buffer.getOutputStream().write(content, 0, content.length);
+      } catch (IOException e) {
+        throw new ODataRuntimeException(e);
+      }
+
       return this;
     }
 
@@ -218,9 +230,13 @@ public class BatchResponseSerializer {
       return length;
     }
 
-    public InputStream toInputStream() throws IOException {
-      writer.flush();
-      writer.close();
+    public InputStream toInputStream() {
+      try {
+        writer.flush();
+        writer.close();
+      } catch (IOException e) {
+        throw new ODataRuntimeException(e);
+      }
 
       return buffer.getInputStream();
     }

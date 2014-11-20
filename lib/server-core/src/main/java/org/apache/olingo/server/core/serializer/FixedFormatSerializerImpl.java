@@ -19,7 +19,6 @@
 package org.apache.olingo.server.core.serializer;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -64,8 +63,7 @@ public class FixedFormatSerializerImpl implements FixedFormatSerializer {
 
   //TODO: Signature
   @Override
-  public void writeResponseParts(List<ODataResponsePart> batchResponses, ODataResponse response) throws BatchException,
-      IOException {
+  public void writeResponseParts(List<ODataResponsePart> batchResponses, ODataResponse response) throws BatchException {
     BatchResponseSerializer writer = new BatchResponseSerializer();
     writer.toODataResponse(batchResponses, response);
   }

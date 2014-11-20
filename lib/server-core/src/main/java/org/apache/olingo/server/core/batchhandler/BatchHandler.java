@@ -33,7 +33,7 @@ import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 public class BatchHandler {
   private final BatchProcessor batchProcessor;
   private final ODataHandler oDataHandler;
-
+  
   public BatchHandler(final ODataHandler oDataHandler, final BatchProcessor batchProcessor) {
 
     this.batchProcessor = batchProcessor;
