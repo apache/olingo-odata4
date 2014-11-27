@@ -585,13 +585,12 @@ public class MockedBatchHandlerTest {
     }
 
     @Override
-    public ODataResponsePart executeChangeSet(BatchFacade fascade, List<ODataRequest> requests,
-        BatchRequestPart requestPart) {
+    public ODataResponsePart executeChangeSet(BatchFacade fascade, List<ODataRequest> requests) {
       List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
       for (ODataRequest request : requests) {
         try {
-          responses.add(fascade.handleODataRequest(request, requestPart));
+          responses.add(fascade.handleODataRequest(request));
         } catch (Exception e) {
           fail();
         }

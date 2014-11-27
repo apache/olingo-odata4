@@ -56,9 +56,9 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
     boolean continueOnError = isContinueOnError(request);
 
     final String boundary = getBoundary(request.getHeader(HttpHeader.CONTENT_TYPE));
-    final BatchOptions options =
-        BatchOptions.with().rawBaseUri(request.getRawBaseUri()).rawServiceResolutionUri(
-            request.getRawServiceResolutionUri()).build();
+    final BatchOptions options = BatchOptions.with()
+                                         .rawBaseUri(request.getRawBaseUri())
+                                         .rawServiceResolutionUri(request.getRawServiceResolutionUri()).build();
     final List<BatchRequestPart> parts = odata.createFixedFormatDeserializer().parseBatchRequest(request.getBody(),
         boundary, options);
     final List<ODataResponsePart> responseParts = new ArrayList<ODataResponsePart>();
@@ -132,13 +132,12 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
   }
 
   @Override
-  public ODataResponsePart executeChangeSet(BatchFacade fascade, List<ODataRequest> requests,
-      BatchRequestPart requestPart) {
+  public ODataResponsePart executeChangeSet(BatchFacade fascade, List<ODataRequest> requests) {
     List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
     for (ODataRequest request : requests) {
       try {
-        final ODataResponse oDataResponse = fascade.handleODataRequest(request, requestPart);
+        final ODataResponse oDataResponse = fascade.handleODataRequest(request);
         final int statusCode = oDataResponse.getStatusCode();
 
         if (statusCode < 400) {

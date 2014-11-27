@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -29,7 +29,6 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
-import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 import org.apache.olingo.server.core.deserializer.batch.HttpRequestStatusLine.ODataURI;
 
@@ -37,7 +36,7 @@ public class BatchReferenceRewriter {
   private static final String REG_EX_REFERENCE = "\\$(.*)(/.*)?";
   private static final Pattern REFERENCE_PATTERN = Pattern.compile(REG_EX_REFERENCE);
 
-  private Map<BatchRequestPart, UriMapping> uriMapping = new HashMap<BatchRequestPart, UriMapping>();
+  private Map<String, String> contentIdMapping = new HashMap<String, String>();
 
   public String getReferenceInURI(ODataRequest request) {
     Matcher matcher = REFERENCE_PATTERN.matcher(removeSlash(removeSlash(request.getRawODataPath(), true), false));
@@ -45,18 +44,11 @@ public class BatchReferenceRewriter {
     return (matcher.matches()) ? matcher.group(1) : null;
   }
 
-  public void replaceContentIdReference(ODataRequest request, String contentId, String resourceUri) {
-    final String newUri = request.getRawODataPath().replace("/$" + contentId, resourceUri);
-    request.setRawODataPath(newUri);
-    request.setRawRequestUri(request.getRawBaseUri() + "/" + newUri);
-  }
-
-  public UriMapping replaceReference(ODataRequest request, BatchRequestPart requestPart) {
-    final UriMapping mapping = getUriMappingOrDefault(requestPart);
+  public void replaceReference(ODataRequest request) {
     final String reference = getReferenceInURI(request);
 
     if (reference != null) {
-      final String replacement = mapping.getUri(reference);
+      final String replacement = contentIdMapping.get(reference);
 
       if (replacement != null) {
         replaceContentIdReference(request, reference, replacement);
@@ -64,30 +56,22 @@ public class BatchReferenceRewriter {
         throw new ODataRuntimeException("Required Content-Id for reference \"" + reference + "\" not found.");
       }
     }
-
-    return mapping;
   }
 
-  private UriMapping getUriMappingOrDefault(final BatchRequestPart requestPart) {
-    UriMapping mapping = uriMapping.get(requestPart);
-
-    if (mapping == null) {
-      mapping = new UriMapping();
-    }
-    uriMapping.put(requestPart, mapping);
-
-    return mapping;
+  private void replaceContentIdReference(ODataRequest request, String contentId, String resourceUri) {
+    final String newUri = request.getRawODataPath().replace("/$" + contentId, resourceUri);
+    request.setRawODataPath(newUri);
+    request.setRawRequestUri(request.getRawBaseUri() + "/" + newUri);
   }
 
-  public void addMapping(ODataRequest request, ODataResponse response, BatchRequestPart requestPart)
+  public void addMapping(ODataRequest request, ODataResponse response)
       throws BatchDeserializerException {
-    final UriMapping mapping = getUriMappingOrDefault(requestPart);
     final String resourceUri = getODataPath(request, response);
     final String contentId = request.getHeader(BatchParserCommon.HTTP_CONTENT_ID);
 
-    mapping.addMapping(contentId, resourceUri);
+    contentIdMapping.put(contentId, resourceUri);
   }
-  
+
   private String getODataPath(ODataRequest request, ODataResponse response) throws BatchDeserializerException {
     String resourceUri = null;
 
@@ -104,7 +88,7 @@ public class BatchReferenceRewriter {
 
     return resourceUri;
   }
-  
+
   private String removeSlash(String rawODataPath, boolean first) {
     final int indexOfSlash = rawODataPath.indexOf("/");
     if (first) {

@@ -24,7 +24,6 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.BatchFacade;
 import org.apache.olingo.server.api.batch.exception.BatchException;
-import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.serializer.SerializerException;
 
@@ -33,5 +32,5 @@ public interface BatchProcessor extends Processor {
   void executeBatch(BatchFacade facade, ODataRequest request, ODataResponse response)
       throws SerializerException, BatchException;
 
-  ODataResponsePart executeChangeSet(BatchFacade facade, List<ODataRequest> requests, BatchRequestPart requestPart);
+  ODataResponsePart executeChangeSet(BatchFacade facade, List<ODataRequest> requests);
 }

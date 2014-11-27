@@ -51,7 +51,7 @@ public class BatchRequestTransformator {
       requests.add(processQueryOperation(bodyPart, baseUri, queryOperation));
     }
 
-    resultList.add(new BatchRequestPartImpl(bodyPart.isChangeSet(), requests));
+    resultList.add(new BatchRequestPart(bodyPart.isChangeSet(), requests));
     return resultList;
   }
 

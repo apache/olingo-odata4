@@ -18,25 +18,56 @@
  */
 package org.apache.olingo.server.api.deserializer.batch;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.server.api.ODataRequest;
 
 /**
  * A BatchPart
- * <p> BatchPart represents a distinct MIME part of a Batch Request body. It can be ChangeSet or Query Operation
+ * <p> BatchPart represents a distinct MIME part of a Batch Request body. It can be a ChangeSet or a Query Operation
  */
-public interface BatchRequestPart {
-
+public class BatchRequestPart {
+  private List<ODataRequest> requests = new ArrayList<ODataRequest>();
+  private boolean isChangeSet;
+  
+  /**
+   * Creates a new instance of BachRequestPart
+   * 
+   * @param isChangeSet   True, if this instance represents a change set
+   * @param requests      A list of {@link ODataRequest}
+   */
+  public BatchRequestPart(final boolean isChangeSet, final List<ODataRequest> requests) {
+    this.isChangeSet = isChangeSet;
+    this.requests = requests;
+  }
+  
+  /**
+   * Creates a new instance of BachRequestPart
+   * 
+   * @param isChangeSet   True, if this instance represents a change set
+   * @param requests      A single {@link ODataRequest}
+   */
+  public BatchRequestPart(final boolean isChangeSet, final ODataRequest request) {
+    this.isChangeSet = isChangeSet;
+    this.requests = new ArrayList<ODataRequest>();
+    this.requests.add(request);
+  }
+  
   /**
    * Get the info if a BatchPart is a ChangeSet
    * @return true or false
    */
-  public boolean isChangeSet();
+  public boolean isChangeSet() {
+    return isChangeSet;
+  }
 
   /**
    * Get requests. If a BatchPart is a Query Operation, the list contains one request.
    * @return a list of {@link ODataRequest}
    */
-  public List<ODataRequest> getRequests();
+  public List<ODataRequest> getRequests() {
+    return Collections.unmodifiableList(requests);
+  }
 }

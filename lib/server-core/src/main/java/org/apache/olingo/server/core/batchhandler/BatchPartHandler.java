@@ -34,25 +34,39 @@ public class BatchPartHandler {
   private final BatchProcessor batchProcessor;
   private final BatchFacade batchFascade;
   private final BatchReferenceRewriter rewriter;
-  
+
   public BatchPartHandler(final ODataHandler oDataHandler, final BatchProcessor processor,
       final BatchFacade batchFascade) {
     this.oDataHandler = oDataHandler;
     this.batchProcessor = processor;
     this.batchFascade = batchFascade;
-    rewriter = new BatchReferenceRewriter();
+    this.rewriter = new BatchReferenceRewriter();
   }
 
-  public ODataResponse handleODataRequest(ODataRequest request, BatchRequestPart requestPart)
+  public ODataResponse handleODataRequest(ODataRequest request) throws BatchDeserializerException {
+    return handle(request, true);
+  }
+
+  public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchDeserializerException {
+    if (request.isChangeSet()) {
+      return handleChangeSet(request);
+    } else {
+      final ODataResponse response = handle(request.getRequests().get(0), false);
+
+      return new ODataResponsePart(response, false);
+    }
+  }
+
+  public ODataResponse handle(ODataRequest request, boolean isChangeSet)
       throws BatchDeserializerException {
     final ODataResponse response;
 
-    if (requestPart.isChangeSet()) {
-      rewriter.replaceReference(request, requestPart);
+    if (isChangeSet) {
+      rewriter.replaceReference(request);
 
       response = oDataHandler.process(request);
 
-      rewriter.addMapping(request, response, requestPart);
+      rewriter.addMapping(request, response);
     } else {
       response = oDataHandler.process(request);
     }
@@ -66,17 +80,8 @@ public class BatchPartHandler {
     return response;
   }
 
-  public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchDeserializerException {
-    if (request.isChangeSet()) {
-      return handleChangeSet(request);
-    } else {
-      final ODataResponse response = handleODataRequest(request.getRequests().get(0), request);
-
-      return new ODataResponsePart(response, false);
-    }
-  }
-  
   private ODataResponsePart handleChangeSet(BatchRequestPart request) {
-    return batchProcessor.executeChangeSet(batchFascade, request.getRequests(), request);
+    return batchProcessor.executeChangeSet(batchFascade, request.getRequests());
   }
+
 }

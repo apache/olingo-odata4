@@ -36,9 +36,8 @@ public class BatchFascadeImpl implements BatchFacade {
   }
 
   @Override
-  public ODataResponse handleODataRequest(ODataRequest request, BatchRequestPart requestPart)
-      throws BatchDeserializerException {
-    return partHandler.handleODataRequest(request, requestPart);
+  public ODataResponse handleODataRequest(ODataRequest request) throws BatchDeserializerException {
+    return partHandler.handleODataRequest(request);
   }
 
   @Override

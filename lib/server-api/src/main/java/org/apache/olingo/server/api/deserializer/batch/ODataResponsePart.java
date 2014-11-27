@@ -23,6 +23,11 @@ import java.util.List;
 
 import org.apache.olingo.server.api.ODataResponse;
 
+/**
+ * An ODataResponsePart represents a collections of ODataResponses.
+ * A list of ODataResponseParts can be combined by the BatchSerializer to a single
+ * OData batch response.
+ */
 public class ODataResponsePart {
   private List<ODataResponse> responses;
   private boolean isChangeSet;
