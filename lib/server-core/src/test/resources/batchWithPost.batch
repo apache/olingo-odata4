@@ -2,7 +2,7 @@
 Content-Type: application/http
 Content-Transfer-Encoding: binary
 
-GET http://localhost/odata/Employees('2')/EmployeeName?$format=json HTTP/1.1
+GET Employees('2')/EmployeeName?$format=json HTTP/1.1
 Accept: application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1
 Accept-Language:en-US,en;q=0.7,en-UK;q=0.9
 MaxDataServiceVersion: 2.0

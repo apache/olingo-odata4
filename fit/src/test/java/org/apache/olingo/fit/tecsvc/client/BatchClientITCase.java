@@ -42,6 +42,7 @@ import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.api.uri.UriFormat;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
 import org.apache.olingo.client.core.uri.URIUtils;
@@ -65,6 +66,7 @@ public class BatchClientITCase extends AbstractTestITCase {
   @Before
   public void setup() {
     client.getConfiguration().setContinueOnError(false);
+    client.getConfiguration().setBatchUriFormat(UriFormat.RELATIVE);
   }
 
   @Test
@@ -162,7 +164,6 @@ public class BatchClientITCase extends AbstractTestITCase {
   @Test
   public void testErrorWithContinueOnErrorPreferHeader() {
     client.getConfiguration().setContinueOnError(true);
-
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
     request.setAccept(ACCEPT);
 
@@ -446,9 +447,9 @@ public class BatchClientITCase extends AbstractTestITCase {
   }
 
   private void appendGetRequest(final BatchManager manager, final String segment, final Object key) {
-    URIBuilder targetURI = client.newURIBuilder(SERVICE_URI);
+    URIBuilder targetURI = client.newBatchURIBuilder(SERVICE_URI);
     targetURI.appendEntitySetSegment(segment).appendKeySegment(key);
-
+    
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
     queryReq.setFormat(ODataFormat.JSON);
     manager.addRequest(queryReq);

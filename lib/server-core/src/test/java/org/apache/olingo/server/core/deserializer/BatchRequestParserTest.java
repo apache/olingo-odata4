@@ -602,7 +602,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testInvalidUri() throws Exception {
+  public void testAbsoluteUri() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -612,7 +612,7 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_URI);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.FORBIDDEN_ABSOLUTE_URI);
   }
 
   @Test
@@ -627,17 +627,7 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    final List<BatchRequestPart> parts = parse(batch);
-    assertEquals(1, parts.size());
-
-    final BatchRequestPart part = parts.get(0);
-    assertEquals(1, part.getRequests().size());
-    final ODataRequest request = part.getRequests().get(0);
-
-    assertEquals("http://localhost/odata/Employees('1')/EmployeeName", request.getRawRequestUri());
-    assertEquals("http://localhost/odata", request.getRawBaseUri());
-    assertEquals("/Employees('1')/EmployeeName", request.getRawODataPath());
-    assertEquals("", request.getRawQueryPath());
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_URI);
   }
 
   @Test
@@ -651,23 +641,7 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, MessageKeys.MISSING_MANDATORY_HEADER);
-  }
-
-  @Test
-  public void testUriWithAbsolutePathMissingHostDulpicatedHeader() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + MIME_HEADERS
-        + CRLF
-        + "GET /odata/Employees('1')/EmployeeName HTTP/1.1" + CRLF
-        + "Host: http://localhost" + CRLF
-        + "Host: http://localhost/odata" + CRLF
-        + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    parseInvalidBatchBody(batch, MessageKeys.MISSING_MANDATORY_HEADER);
+    parseInvalidBatchBody(batch, MessageKeys.INVALID_URI);
   }
 
   @Test

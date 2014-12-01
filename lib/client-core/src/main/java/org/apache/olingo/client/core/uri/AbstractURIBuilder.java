@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -62,6 +62,7 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
       return value;
     }
   }
+
   /**
    * Logger.
    */
@@ -90,10 +91,11 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
    * service.
    */
   protected AbstractURIBuilder(
-          final ODataServiceVersion version, final Configuration configuration, final String serviceRoot) {
+      final ODataServiceVersion version, final Configuration configuration, final String serviceRoot) {
 
     this.version = version;
     this.configuration = configuration;
+
     segments.add(new Segment(SegmentType.SERVICEROOT, serviceRoot));
   }
 
@@ -137,8 +139,8 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
     final String segValue = URIUtils.escape(version, val);
 
     segments.add(configuration.isKeyAsSegment()
-            ? new Segment(SegmentType.KEY_AS_SEGMENT, segValue)
-            : new Segment(SegmentType.KEY, "(" + segValue + ")"));
+        ? new Segment(SegmentType.KEY_AS_SEGMENT, segValue)
+        : new Segment(SegmentType.KEY, "(" + segValue + ")"));
 
     return getThis();
   }
@@ -187,7 +189,7 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
   @Override
   public UB appendOperationCallSegment(final String operation) {
     segments.add(new Segment(
-            segments.size() == 1 ? SegmentType.UNBOUND_OPERATION : SegmentType.BOUND_OPERATION, operation));
+        segments.size() == 1 ? SegmentType.UNBOUND_OPERATION : SegmentType.BOUND_OPERATION, operation));
     return getThis();
   }
 
@@ -268,17 +270,18 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
   @Override
   public URI build() {
     final StringBuilder segmentsBuilder = new StringBuilder();
+
     for (Segment seg : segments) {
       if (segmentsBuilder.length() > 0 && seg.getType() != SegmentType.KEY) {
         switch (seg.getType()) {
-          case BOUND_OPERATION:
-            segmentsBuilder.append(getBoundOperationSeparator());
-            break;
+        case BOUND_OPERATION:
+          segmentsBuilder.append(getBoundOperationSeparator());
+          break;
 
-          default:
-            if (segmentsBuilder.length() > 0 && segmentsBuilder.charAt(segmentsBuilder.length() - 1) != '/') {
-              segmentsBuilder.append('/');
-            }
+        default:
+          if (segmentsBuilder.length() > 0 && segmentsBuilder.charAt(segmentsBuilder.length() - 1) != '/') {
+            segmentsBuilder.append('/');
+          }
         }
       }
 
@@ -330,7 +333,7 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
       final StringBuilder keyBuilder = new StringBuilder().append('(');
       for (Map.Entry<String, Object> entry : segmentValues.entrySet()) {
         keyBuilder.append(entry.getKey()).append('=').append(
-                escape ? URIUtils.escape(version, entry.getValue()) : entry.getValue());
+            escape ? URIUtils.escape(version, entry.getValue()) : entry.getValue());
         keyBuilder.append(',');
       }
       keyBuilder.deleteCharAt(keyBuilder.length() - 1).append(')');

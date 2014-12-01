@@ -30,7 +30,6 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
-import org.apache.olingo.server.core.deserializer.batch.HttpRequestStatusLine.ODataURI;
 
 public class BatchRequestTransformator {
   private final String baseUri;
@@ -101,10 +100,8 @@ public class BatchRequestTransformator {
       final boolean isChangeSet)
       throws BatchDeserializerException {
     final HttpRequestStatusLine statusLine =
-        new HttpRequestStatusLine(operation.getHttpStatusLine(), baseUri, rawServiceResolutionUri, operation
-            .getHeaders());
+        new HttpRequestStatusLine(operation.getHttpStatusLine(), baseUri, rawServiceResolutionUri);
     statusLine.validateHttpMethod(isChangeSet);
-    final ODataURI uri = statusLine.getUri();
 
     validateBody(statusLine, operation);
     InputStream bodyStrean = getBodyStream(operation, statusLine);
@@ -114,11 +111,11 @@ public class BatchRequestTransformator {
     final ODataRequest request = new ODataRequest();
     request.setBody(bodyStrean);
     request.setMethod(statusLine.getMethod());
-    request.setRawBaseUri(uri.getRawBaseUri());
-    request.setRawODataPath(uri.getRawODataPath());
-    request.setRawQueryPath(uri.getRawQueryPath());
-    request.setRawRequestUri(uri.getRawRequestUri());
-    request.setRawServiceResolutionUri(uri.getRawServiceResolutionUri());
+    request.setRawBaseUri(statusLine.getRawBaseUri());
+    request.setRawODataPath(statusLine.getRawODataPath());
+    request.setRawQueryPath(statusLine.getRawQueryPath());
+    request.setRawRequestUri(statusLine.getRawRequestUri());
+    request.setRawServiceResolutionUri(statusLine.getRawServiceResolutionUri());
 
     for (final HeaderField field : operation.getHeaders()) {
       request.addHeader(field.getFieldName(), field.getValues());

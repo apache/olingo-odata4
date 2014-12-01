@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 import org.apache.olingo.client.api.Configuration;
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.HttpUriRequestFactory;
+import org.apache.olingo.client.api.uri.UriFormat;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.apache.olingo.client.core.http.DefaultHttpUriRequestFactory;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -58,6 +59,8 @@ public class ConfigurationImpl implements Configuration {
   private static final String CHUNKING = "chunking";
 
   private static final String CONTINUE_ON_ERROR = "continueOnError";
+
+  private static final String BATCH_URI_FORMAT = "batchUriFormat";
 
   private final Map<String, Object> CONF = new HashMap<String, Object>();
 
@@ -229,5 +232,15 @@ public class ConfigurationImpl implements Configuration {
   @Override
   public void setExecutor(final ExecutorService executorService) {
     executor = executorService;
+  }
+
+  @Override
+  public UriFormat getUriFormat() {
+    return (UriFormat) getProperty(BATCH_URI_FORMAT, UriFormat.ABSOLUTE);
+  }
+
+  @Override
+  public void setBatchUriFormat(UriFormat format) {
+    setProperty(BATCH_URI_FORMAT, format);
   }
 }

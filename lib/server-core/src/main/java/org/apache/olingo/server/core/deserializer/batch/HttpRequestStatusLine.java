@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,23 +18,20 @@
  */
 package org.apache.olingo.server.core.deserializer.batch;
 
-import java.util.ArrayList;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
 
 public class HttpRequestStatusLine {
   private static final Pattern PATTERN_RELATIVE_URI = Pattern.compile("([^/][^?]*)(?:\\?(.*))?");
-  private static final Pattern PATTERN_ABSOLUTE_URI_WITH_HOST = Pattern.compile("(/[^?]*)(?:\\?(.*))?");
-  private static final Pattern PATTERN_ABSOLUTE_URI = Pattern.compile("(http[s]?://[^?]*)(?:\\?(.*))?");
 
   private static final Set<String> HTTP_BATCH_METHODS = new HashSet<String>(Arrays.asList(new String[] { "GET" }));
   private static final Set<String> HTTP_CHANGE_SET_METHODS = new HashSet<String>(Arrays.asList(new String[] { "POST",
@@ -46,15 +43,16 @@ public class HttpRequestStatusLine {
 
   private HttpMethod method;
   private String httpVersion;
-  private Header header;
-  private ODataURI uri;
+  private String rawServiceResolutionUri;
+  private String rawQueryPath;
+  private String rawODataPath;
+  private String rawBaseUri;
+  private String rawRequestUri;
 
-  public HttpRequestStatusLine(final Line httpStatusLine, final String baseUri, final String serviceResolutionUri,
-      final Header requestHeader)
-          throws BatchDeserializerException {
+  public HttpRequestStatusLine(final Line httpStatusLine, final String baseUri, final String serviceResolutionUrir)
+      throws BatchDeserializerException {
     statusLine = httpStatusLine;
     requestBaseUri = baseUri;
-    header = requestHeader;
 
     parse();
   }
@@ -64,11 +62,46 @@ public class HttpRequestStatusLine {
 
     if (parts.length == 3) {
       method = parseMethod(parts[0]);
-      uri = new ODataURI(parts[1], requestBaseUri, statusLine.getLineNumber(), header.getHeaders(HttpHeader.HOST));
+      // uri = new ODataURI(parts[1], requestBaseUri, statusLine.getLineNumber(), header.getHeaders(HttpHeader.HOST));
+      parseUri(parts[1], requestBaseUri);
       httpVersion = parseHttpVersion(parts[2]);
     } else {
       throw new BatchDeserializerException("Invalid status line", MessageKeys.INVALID_STATUS_LINE, statusLine
           .getLineNumber());
+    }
+  }
+
+  private void parseUri(String rawUri, String baseUrl) throws BatchDeserializerException {
+    try {
+      final URI uri = new URI(rawUri);
+
+      if (uri.isAbsolute()) {
+        throw new BatchDeserializerException("Forbidden absolute uri", MessageKeys.FORBIDDEN_ABSOLUTE_URI, statusLine
+            .getLineNumber());
+      } else {
+        final Matcher relativeUriMatcher = PATTERN_RELATIVE_URI.matcher(rawUri);
+
+        if (relativeUriMatcher.matches()) {
+          buildUri(relativeUriMatcher.group(1), relativeUriMatcher.group(2));
+        } else {
+          throw new BatchDeserializerException("Malformed uri", MessageKeys.INVALID_URI, statusLine.getLineNumber());
+        }
+      }
+    } catch (URISyntaxException e) {
+      throw new BatchDeserializerException("Malformed uri", MessageKeys.INVALID_URI, statusLine.getLineNumber());
+    }
+  }
+
+  private void buildUri(final String oDataPath, final String queryOptions) throws BatchDeserializerException {
+    rawBaseUri = requestBaseUri;
+    rawODataPath = "/" + oDataPath;
+    rawRequestUri = requestBaseUri + rawODataPath;
+
+    if (queryOptions != null) {
+      rawRequestUri += "?" + queryOptions;
+      rawQueryPath = queryOptions;
+    } else {
+      rawQueryPath = "";
     }
   }
 
@@ -96,8 +129,7 @@ public class HttpRequestStatusLine {
     if (!validMethods.contains(getMethod().toString())) {
       if (isChangeSet) {
         throw new BatchDeserializerException("Invalid change set method", MessageKeys.INVALID_CHANGESET_METHOD,
-            statusLine
-            .getLineNumber());
+            statusLine.getLineNumber());
       } else {
         throw new BatchDeserializerException("Invalid query operation method",
             MessageKeys.INVALID_QUERY_OPERATION_METHOD,
@@ -118,114 +150,27 @@ public class HttpRequestStatusLine {
     return statusLine.getLineNumber();
   }
 
-  public ODataURI getUri() {
-    return uri;
+  public String getRequestBaseUri() {
+    return requestBaseUri;
   }
 
-  public static class ODataURI {
-    private String rawServiceResolutionUri;
-    private String rawQueryPath;
-    private String rawODataPath;
-    private String rawBaseUri;
-    private String rawRequestUri;
-    private final String requestBaseUri;
-    private final int lineNumber;
+  public String getRawServiceResolutionUri() {
+    return rawServiceResolutionUri;
+  }
 
-    public ODataURI(final String rawUri, final String requestBaseUri) throws BatchDeserializerException {
-      this(rawUri, requestBaseUri, 0, new ArrayList<String>());
-    }
+  public String getRawQueryPath() {
+    return rawQueryPath;
+  }
 
-    public ODataURI(final String rawUri, final String requestBaseUri, final int lineNumber,
-        final List<String> hostHeader)
-        throws BatchDeserializerException {
-      this.lineNumber = lineNumber;
-      this.requestBaseUri = requestBaseUri;
+  public String getRawODataPath() {
+    return rawODataPath;
+  }
 
-      final Matcher absoluteUriMatcher = PATTERN_ABSOLUTE_URI.matcher(rawUri);
-      final Matcher absoluteUriWtithHostMatcher = PATTERN_ABSOLUTE_URI_WITH_HOST.matcher(rawUri);
-      final Matcher relativeUriMatcher = PATTERN_RELATIVE_URI.matcher(rawUri);
+  public String getRawBaseUri() {
+    return rawBaseUri;
+  }
 
-      if (absoluteUriMatcher.matches()) {
-        buildUri(absoluteUriMatcher.group(1), absoluteUriMatcher.group(2));
-
-      } else if (absoluteUriWtithHostMatcher.matches()) {
-        if (hostHeader != null && hostHeader.size() == 1) {
-          buildUri(hostHeader.get(0) + absoluteUriWtithHostMatcher.group(1), absoluteUriWtithHostMatcher.group(2));
-        } else {
-          throw new BatchDeserializerException("Exactly one host header is required",
-              MessageKeys.MISSING_MANDATORY_HEADER,
-              lineNumber);
-        }
-
-      } else if (relativeUriMatcher.matches()) {
-        buildUri(requestBaseUri + "/" + relativeUriMatcher.group(1), relativeUriMatcher.group(2));
-
-      } else {
-        throw new BatchDeserializerException("Invalid uri", MessageKeys.INVALID_URI, lineNumber);
-      }
-    }
-
-    private void buildUri(final String resourceUri, final String queryOptions) throws BatchDeserializerException {
-      if (!resourceUri.startsWith(requestBaseUri)) {
-        throw new BatchDeserializerException("Host do not match", MessageKeys.INVALID_URI, lineNumber);
-      }
-
-      final int oDataPathIndex = resourceUri.indexOf(requestBaseUri);
-
-      rawBaseUri = requestBaseUri;
-      rawODataPath = resourceUri.substring(oDataPathIndex + requestBaseUri.length());
-      rawRequestUri = requestBaseUri + rawODataPath;
-
-      if (queryOptions != null) {
-        rawRequestUri += "?" + queryOptions;
-        rawQueryPath = queryOptions;
-      } else {
-        rawQueryPath = "";
-      }
-    }
-
-    public String getRawServiceResolutionUri() {
-      return rawServiceResolutionUri;
-    }
-
-    public void setRawServiceResolutionUri(final String rawServiceResolutionUri) {
-      this.rawServiceResolutionUri = rawServiceResolutionUri;
-    }
-
-    public String getRawQueryPath() {
-      return rawQueryPath;
-    }
-
-    public void setRawQueryPath(final String rawQueryPath) {
-      this.rawQueryPath = rawQueryPath;
-    }
-
-    public String getRawODataPath() {
-      return rawODataPath;
-    }
-
-    public void setRawODataPath(final String rawODataPath) {
-      this.rawODataPath = rawODataPath;
-    }
-
-    public String getRawBaseUri() {
-      return rawBaseUri;
-    }
-
-    public void setRawBaseUri(final String rawBaseUri) {
-      this.rawBaseUri = rawBaseUri;
-    }
-
-    public String getRawRequestUri() {
-      return rawRequestUri;
-    }
-
-    public void setRawRequestUri(final String rawRequestUri) {
-      this.rawRequestUri = rawRequestUri;
-    }
-
-    public String getRequestBaseUri() {
-      return requestBaseUri;
-    }
+  public String getRawRequestUri() {
+    return rawRequestUri;
   }
 }

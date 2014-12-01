@@ -52,7 +52,9 @@ public interface CommonODataClient<UT extends CommonUpdateType> {
   ODataPreferences newPreferences();
 
   CommonURIBuilder<?> newURIBuilder(String serviceRoot);
-
+  
+  CommonURIBuilder<?> newBatchURIBuilder(String serviceRoot);
+  
   CommonFilterFactory getFilterFactory();
 
   ODataSerializer getSerializer(ODataFormat format);

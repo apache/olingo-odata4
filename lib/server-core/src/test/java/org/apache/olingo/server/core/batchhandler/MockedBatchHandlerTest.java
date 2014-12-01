@@ -89,7 +89,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 3" + CRLF
         + CRLF
-        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF // Relative URI
+        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF 
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -98,8 +98,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 4" + CRLF
         + CRLF
-        + "PUT /$3/PropertyInt32 HTTP/1.1" + CRLF // Absolute URI with separate Host header and ref.
-        + "Host: http://localhost:8080/odata" + CRLF
+        + "PUT $3/PropertyInt32 HTTP/1.1" + CRLF 
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -108,7 +107,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 1" + CRLF
         + CRLF
-        + "POST http://localhost:8080/odata/ESAllPrim HTTP/1.1" + CRLF // Absolute URI
+        + "POST ESAllPrim HTTP/1.1" + CRLF 
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -117,7 +116,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 5" + CRLF
         + CRLF
-        + "POST http://localhost:8080/odata/$1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF // Absolute URI with ref.
+        + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF 
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -126,7 +125,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 2" + CRLF
         + CRLF
-        + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF // Relative URI with ref.
+        + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -135,8 +134,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 6" + CRLF
         + CRLF
-        + "PUT /ESAllPrim(1) HTTP/1.1" + CRLF // Absolute URI with separate Host header
-        + "Host: http://localhost:8080/odata"
+        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF 
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -264,8 +262,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 2" + CRLF
         + CRLF
-        + "POST /$1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
-        + "Host: http://localhost:8080/odata" + CRLF
+        + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -288,8 +285,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 2" + CRLF
         + CRLF
-        + "POST /$1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
-        + "Host: http://localhost:8080/odata" + CRLF
+        + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -390,8 +386,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 2" + CRLF
         + CRLF
-        + "POST /$1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
-        + "Host: http://localhost:8080/odata" + CRLF
+        + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
