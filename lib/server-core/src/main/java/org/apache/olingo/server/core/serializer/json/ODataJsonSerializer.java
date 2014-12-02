@@ -370,7 +370,7 @@ public class ODataJsonSerializer implements ODataSerializer {
         writeComplexValue(type, ((LinkedComplexValue) value).getValue(), selectedPaths, json);
         break;
       case COLLECTION_COMPLEX:
-        writeComplexValue(type, property.asComplex(), selectedPaths, json);
+        writeComplexValue(type, ((Property) value).asComplex(), selectedPaths, json);
         break;
       default:
         throw new SerializerException("Property type not yet supported!",
