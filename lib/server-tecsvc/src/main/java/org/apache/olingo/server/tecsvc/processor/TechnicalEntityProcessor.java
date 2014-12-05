@@ -33,9 +33,11 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
+import org.apache.olingo.server.api.processor.MediaProcessor;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
@@ -43,6 +45,7 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
@@ -51,7 +54,7 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
  * Technical Processor for entity-related functionality.
  */
 public class TechnicalEntityProcessor extends TechnicalProcessor
-    implements EntityCollectionProcessor, CountEntityCollectionProcessor, EntityProcessor {
+    implements EntityCollectionProcessor, CountEntityCollectionProcessor, EntityProcessor, MediaProcessor {
 
   public TechnicalEntityProcessor(final DataProvider dataProvider) {
     super(dataProvider);
@@ -61,10 +64,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   public void readEntityCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
-    if (uriInfo.asUriInfoResource().getUriResourceParts().size() > 1) {
-      throw new ODataApplicationException("Invalid resource type.",
-          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-    }
+    blockNavigation(uriInfo);
 
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
     final EntitySet entitySet = readEntitySetInternal(edmEntitySet,
@@ -92,14 +92,12 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   public void countEntityCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
+    blockNavigation(uriInfo);
+
     final List<UriResource> resourceParts = uriInfo.asUriInfoResource().getUriResourceParts();
-    final int pos = resourceParts.size() - 2;
-    if (pos > 0) {
-      throw new ODataApplicationException("Invalid resource type.",
-          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-    }
     final EntitySet entitySet =
-        readEntitySetInternal(((UriResourceEntitySet) resourceParts.get(pos)).getEntitySet(), true);
+        readEntitySetInternal(((UriResourceEntitySet) resourceParts.get(resourceParts.size() - 2)).getEntitySet(),
+            true);
     if (entitySet == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
     } else {
@@ -113,10 +111,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   public void readEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
-    if (uriInfo.asUriInfoResource().getUriResourceParts().size() > 1) {
-      throw new ODataApplicationException("Invalid resource type.",
-          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-    }
+    blockNavigation(uriInfo);
 
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
     final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
@@ -137,6 +132,90 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
               .build()));
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
+    }
+  }
+
+  @Override
+  public void readMedia(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+      final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
+    blockNavigation(uriInfo);
+    final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
+    final Entity entity = dataProvider.read(resourceEntitySet.getEntitySet(), resourceEntitySet.getKeyPredicates());
+    if (entity == null) {
+      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+    } else {
+      response.setContent(odata.createFixedFormatSerializer()
+          .binary(dataProvider.readMedia(entity)));
+      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+      response.setHeader(HttpHeader.CONTENT_TYPE, entity.getMediaContentType());
+    }
+  }
+
+  @Override
+  public void createMedia(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+      final ContentType requestedContentType)
+      throws ODataApplicationException, DeserializerException, SerializerException {
+    blockNavigation(uriInfo);
+    final String contentType = request.getHeader(HttpHeader.CONTENT_TYPE);
+    if (contentType == null) {
+      throw new ODataApplicationException("The Content-Type HTTP header is missing.",
+          HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
+    }
+    throw new ODataApplicationException("Not yet supported.",
+        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
+  public void updateMedia(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+      final ContentType requestedContentType)
+      throws ODataApplicationException, DeserializerException, SerializerException {
+    blockNavigation(uriInfo);
+    final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
+    final EdmEntitySet edmEntitySet = resourceEntitySet.getEntitySet();
+    final Entity entity = dataProvider.read(edmEntitySet, resourceEntitySet.getKeyPredicates());
+    if (entity == null) {
+      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+    }
+    final String contentType = request.getHeader(HttpHeader.CONTENT_TYPE);
+    if (contentType == null) {
+      throw new ODataApplicationException("The Content-Type HTTP header is missing.",
+          HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
+    }
+    dataProvider.setMedia(entity, odata.createFixedFormatDeserializer().binary(request.getBody()), contentType);
+
+    final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
+    ODataSerializer serializer = odata.createSerializer(format);
+    response.setContent(serializer.entity(edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
+                getContextUrl(serializer, edmEntitySet, true, null, null))
+            .build()));
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
+  }
+
+  @Override
+  public void deleteMedia(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
+      throws ODataApplicationException {
+    blockNavigation(uriInfo);
+    final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
+    final Entity entity = dataProvider.read(resourceEntitySet.getEntitySet(), resourceEntitySet.getKeyPredicates());
+    if (entity == null) {
+      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+    } else {
+      dataProvider.delete(resourceEntitySet.getEntitySet(), entity);
+      response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+    }
+  }
+
+  private void blockNavigation(final UriInfo uriInfo) throws ODataApplicationException {
+    final List<UriResource> parts = uriInfo.asUriInfoResource().getUriResourceParts();
+    if (parts.size() > 2
+        || parts.size() == 2
+            && parts.get(1).getKind() != UriResourceKind.count
+            && parts.get(1).getKind() != UriResourceKind.value) {
+      throw new ODataApplicationException("Invalid resource type.",
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
   }
 

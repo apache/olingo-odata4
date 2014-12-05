@@ -18,11 +18,13 @@
  */
 package org.apache.olingo.server.tecsvc.data;
 
+import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,6 +54,7 @@ import org.apache.olingo.server.api.uri.UriParameter;
 public class DataProvider {
 
   private static final UUID GUID = UUID.fromString("01234567-89ab-cdef-0123-456789abcdef");
+  private static final String MEDIA_PROPERTY_NAME = "$value";
 
   private Map<String, EntitySet> data;
 
@@ -105,6 +108,43 @@ public class DataProvider {
         throw new DataProviderException("Wrong key!", e);
       }
     }
+  }
+
+  public void delete(final EdmEntitySet edmEntitySet, final Entity entity) throws DataProviderException {
+    deleteLinksTo(entity);
+    data.get(edmEntitySet.getName()).getEntities().remove(entity);
+  }
+
+  public void deleteLinksTo(final Entity to) throws DataProviderException {
+    for (final String entitySet : data.keySet()) {
+      for (final Entity entity : data.get(entitySet).getEntities()) {
+        for (Iterator<Link> linkIterator = entity.getNavigationLinks().iterator(); linkIterator.hasNext();) {
+          final Link link = linkIterator.next();
+          if (to.equals(link.getInlineEntity())) {
+            linkIterator.remove();
+          } else if (link.getInlineEntitySet() != null) {
+            for (Iterator<Entity> iterator = link.getInlineEntitySet().getEntities().iterator(); iterator.hasNext();) {
+              if (to.equals(iterator.next())) {
+                iterator.remove();
+              }
+            }
+            if (link.getInlineEntitySet().getEntities().isEmpty()) {
+              linkIterator.remove();
+            }
+          }
+        }
+      }
+    }
+  }
+
+  public byte[] readMedia(final Entity entity) {
+    return (byte[]) entity.getProperty(MEDIA_PROPERTY_NAME).asPrimitive();
+  }
+
+  public void setMedia(Entity entity, byte[] media, String type) {
+    entity.getProperties().remove(entity.getProperty(MEDIA_PROPERTY_NAME));
+    entity.addProperty(createPrimitive(MEDIA_PROPERTY_NAME, media));
+    entity.setMediaContentType(type);
   }
 
   public static class DataProviderException extends ODataApplicationException {
@@ -455,25 +495,34 @@ public class DataProvider {
 
     Entity entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 1));
-    entity.setMediaContentType("image/png");
+    setMedia(entity, createImage("darkturquoise"), "image/svg+xml");
     entitySet.getEntities().add(entity);
 
     entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 2));
-    entity.setMediaContentType("image/bmp");
+    setMedia(entity, createImage("royalblue"), "image/svg+xml");
     entitySet.getEntities().add(entity);
 
     entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 3));
-    entity.setMediaContentType("image/jpeg");
+    setMedia(entity, createImage("crimson"), "image/svg+xml");
     entitySet.getEntities().add(entity);
 
     entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 4));
-    entity.setMediaContentType("foo");
+    setMedia(entity, createImage("black"), "image/svg+xml");
     entitySet.getEntities().add(entity);
 
     return entitySet;
+  }
+
+  private static byte[] createImage(final String color) {
+    return ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+          + "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" viewBox=\"0 0 100 100\">\n"
+          + "  <g stroke=\"darkmagenta\" stroke-width=\"16\" fill=\"" + color + "\">\n"
+          + "    <circle cx=\"50\" cy=\"50\" r=\"42\"/>\n"
+          + "  </g>\n"
+          + "</svg>\n").getBytes(Charset.forName("UTF-8"));
   }
 
   private void linkESTwoPrim() {

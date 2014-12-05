@@ -53,6 +53,7 @@ import org.apache.olingo.server.api.processor.ComplexProcessor;
 import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
+import org.apache.olingo.server.api.processor.MediaProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveProcessor;
@@ -254,6 +255,49 @@ public class ODataHandlerTest {
 
     verify(processor).readEntity(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+  }
+
+  @Test
+  public void dispatchMedia() throws Exception {
+    final MediaProcessor processor = mock(MediaProcessor.class);
+    dispatch(HttpMethod.GET, "ESMedia(1)/$value", processor);
+
+    verify(processor).readMedia(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+  }
+
+  @Test
+  public void dispatchMediaCreate() throws Exception {
+    final MediaProcessor processor = mock(MediaProcessor.class);
+    dispatch(HttpMethod.POST, "ESMedia", processor);
+
+    verify(processor).createMedia(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+  }
+
+  @Test
+  public void dispatchMediaPut() throws Exception {
+    final MediaProcessor processor = mock(MediaProcessor.class);
+    dispatch(HttpMethod.PUT, "ESMedia(1)/$value", processor);
+
+    verify(processor).updateMedia(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+  }
+
+  @Test
+  public void dispatchMediaDelete() throws Exception {
+    final MediaProcessor processor = mock(MediaProcessor.class);
+    dispatch(HttpMethod.DELETE, "ESMedia(1)/$value", processor);
+
+    verify(processor).deleteMedia(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+  }
+
+  @Test
+  public void dispatchMediaDeleteIndirect() throws Exception {
+    final MediaProcessor processor = mock(MediaProcessor.class);
+    dispatch(HttpMethod.DELETE, "ESMedia(1)", processor);
+
+    verify(processor).deleteMedia(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
   }
 
   @Test

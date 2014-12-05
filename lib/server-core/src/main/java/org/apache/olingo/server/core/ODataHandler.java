@@ -21,6 +21,7 @@ package org.apache.olingo.server.core;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -36,6 +37,7 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.batch.exception.BatchException;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
@@ -44,6 +46,7 @@ import org.apache.olingo.server.api.processor.DefaultProcessor;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.ExceptionProcessor;
+import org.apache.olingo.server.api.processor.MediaProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveProcessor;
@@ -107,6 +110,9 @@ public class ODataHandler {
     } catch (SerializerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
+    } catch (DeserializerException e) {
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      handleException(request, response, serverError);
     } catch (ODataHandlerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
@@ -122,7 +128,7 @@ public class ODataHandler {
 
   private void processInternal(final ODataRequest request, final ODataResponse response)
       throws ODataHandlerException, UriParserException, UriValidationException, ContentNegotiatorException,
-      ODataApplicationException, SerializerException, BatchException {
+      ODataApplicationException, SerializerException, DeserializerException, BatchException {
     validateODataVersion(request, response);
 
     uriInfo = new Parser().parseUri(request.getRawODataPath(), request.getRawQueryPath(), null,
@@ -195,7 +201,8 @@ public class ODataHandler {
   }
 
   private void handleResourceDispatching(final ODataRequest request, final ODataResponse response)
-      throws ODataHandlerException, ContentNegotiatorException, ODataApplicationException, SerializerException {
+      throws ODataHandlerException, ContentNegotiatorException, ODataApplicationException,
+      SerializerException, DeserializerException {
     final HttpMethod method = request.getMethod();
     final int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     final UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
@@ -210,9 +217,19 @@ public class ODataHandler {
 
           selectProcessor(EntityCollectionProcessor.class)
               .readEntityCollection(request, response, uriInfo, requestedContentType);
+        } else if (method.equals(HttpMethod.POST)) {
+          if (isMedia(lastPathSegment)) {
+            final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+                request, customContentTypeSupport, RepresentationType.ENTITY);
+            selectProcessor(MediaProcessor.class)
+                .createMedia(request, response, uriInfo, requestedContentType);
+          } else {
+            throw new ODataHandlerException("not implemented",
+                ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+          }
         } else {
-          throw new ODataHandlerException("not implemented",
-              ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+          throw new ODataHandlerException("HTTP method not allowed.",
+              ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
         }
       } else {
         if (method.equals(HttpMethod.GET)) {
@@ -221,6 +238,14 @@ public class ODataHandler {
 
           selectProcessor(EntityProcessor.class)
               .readEntity(request, response, uriInfo, requestedContentType);
+        } else if (method.equals(HttpMethod.DELETE)) {
+          if (isMedia(lastPathSegment)) {
+            selectProcessor(MediaProcessor.class)
+                .deleteMedia(request, response, uriInfo);
+          } else {
+            throw new ODataHandlerException("not implemented",
+                ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+          }
         } else {
           throw new ODataHandlerException("not implemented",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
@@ -286,9 +311,9 @@ public class ODataHandler {
       break;
 
     case value:
-      if (method.equals(HttpMethod.GET)) {
-        final UriResource resource = uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
-        if (resource instanceof UriResourceProperty) {
+      final UriResource resource = uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
+      if (resource instanceof UriResourceProperty) {
+        if (method.equals(HttpMethod.GET)) {
           final RepresentationType representationType =
               (EdmPrimitiveType) ((UriResourceProperty) resource).getType() ==
               EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary) ?
@@ -299,12 +324,27 @@ public class ODataHandler {
           selectProcessor(PrimitiveProcessor.class)
               .readPrimitiveAsValue(request, response, uriInfo, requestedContentType);
         } else {
-          throw new ODataHandlerException("Media Entity is not implemented.",
+          throw new ODataHandlerException("not implemented",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
         }
       } else {
-        throw new ODataHandlerException("not implemented",
-            ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+        if (method.equals(HttpMethod.GET)) {
+          final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+              request, customContentTypeSupport, RepresentationType.MEDIA);
+          selectProcessor(MediaProcessor.class)
+              .readMedia(request, response, uriInfo, requestedContentType);
+        } else if (method.equals(HttpMethod.PUT)) {
+          final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+              request, customContentTypeSupport, RepresentationType.ENTITY);
+          selectProcessor(MediaProcessor.class)
+              .updateMedia(request, response, uriInfo, requestedContentType);
+        } else if (method.equals(HttpMethod.DELETE)) {
+          selectProcessor(MediaProcessor.class)
+              .deleteMedia(request, response, uriInfo);
+        } else {
+          throw new ODataHandlerException("not implemented",
+              ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+        }
       }
       break;
 
@@ -325,6 +365,13 @@ public class ODataHandler {
             ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
       }
     }
+  }
+
+  private boolean isMedia(final UriResource pathSegment) {
+    return pathSegment instanceof UriResourceEntitySet
+        && ((UriResourceEntitySet) pathSegment).getEntityType().hasStream()
+        || pathSegment instanceof UriResourceNavigation
+        && ((EdmEntityType) ((UriResourceNavigation) pathSegment).getType()).hasStream();
   }
 
   private <T extends Processor> T selectProcessor(final Class<T> cls) throws ODataHandlerException {

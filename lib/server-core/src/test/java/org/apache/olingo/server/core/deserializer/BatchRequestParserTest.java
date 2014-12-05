@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.ODataRequest;
@@ -101,7 +102,7 @@ public class BatchRequestParserTest {
   @Test
   public void testImageInContent() throws Exception {
     final InputStream contentInputStream = readFile("/batchWithContent.batch");
-    final String content = StringUtil.toString(contentInputStream);
+    final String content = IOUtils.toString(contentInputStream);
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -148,7 +149,7 @@ public class BatchRequestParserTest {
           assertEquals("application/octet-stream", request.getHeader(HttpHeader.CONTENT_TYPE));
 
           final InputStream body = request.getBody();
-          assertEquals(content, StringUtil.toString(body));
+          assertEquals(content, IOUtils.toString(body));
         }
       }
     }
@@ -199,7 +200,7 @@ public class BatchRequestParserTest {
     final BatchParser parser = new BatchParser();
     final BatchOptions batchOptions = BatchOptions.with().isStrict(true).rawBaseUri(SERVICE_ROOT).build();
     final List<BatchRequestPart> batchRequestParts =
-        parser.parseBatchRequest(StringUtil.toInputStream(batch), boundary, batchOptions);
+        parser.parseBatchRequest(IOUtils.toInputStream(batch), boundary, batchOptions);
 
     assertNotNull(batchRequestParts);
     assertFalse(batchRequestParts.isEmpty());
@@ -754,7 +755,7 @@ public class BatchRequestParserTest {
         assertEquals(1, multipart.getRequests().size());
 
         final ODataRequest request = multipart.getRequests().get(0);
-        assertEquals("{\"EmployeeName\":\"Peter Fall\"}", StringUtil.toString(request.getBody()));
+        assertEquals("{\"EmployeeName\":\"Peter Fall\"}", IOUtils.toString(request.getBody()));
       }
     }
   }
@@ -786,7 +787,7 @@ public class BatchRequestParserTest {
         assertEquals(1, multipart.getRequests().size());
 
         final ODataRequest request = multipart.getRequests().get(0);
-        assertEquals("{\"Employee", StringUtil.toString(request.getBody()));
+        assertEquals("{\"Employee", IOUtils.toString(request.getBody()));
       }
     }
   }
@@ -841,7 +842,7 @@ public class BatchRequestParserTest {
 
     final ODataRequest changeRequest = part.getRequests().get(0);
     assertEquals("{\"EmployeeName\":\"Frederic Fall MODIFIED\"}",
-        StringUtil.toString(changeRequest.getBody()));
+        IOUtils.toString(changeRequest.getBody()));
     assertEquals("application/json;odata=verbose", changeRequest.getHeader(HttpHeader.CONTENT_TYPE));
     assertEquals(HttpMethod.PUT, changeRequest.getMethod());
   }
@@ -1016,9 +1017,9 @@ public class BatchRequestParserTest {
     assertEquals(2, changeSetPart.getRequests().size());
     assertEquals("/9j/4AAQSkZJRgABAQEBLAEsAAD/4RM0RXhpZgAATU0AKgAAAAgABwESAAMAAAABAAEAAAEaAAUAAAABAAAAYgEbAAUAAAA"
         + CRLF,
-        StringUtil.toString(changeSetPart.getRequests().get(0).getBody()));
+        IOUtils.toString(changeSetPart.getRequests().get(0).getBody()));
     assertEquals("{\"EmployeeName\":\"Peter Fall\"}",
-        StringUtil.toString(changeSetPart.getRequests().get(1).getBody()));
+        IOUtils.toString(changeSetPart.getRequests().get(1).getBody()));
   }
 
   @Test
@@ -1126,9 +1127,9 @@ public class BatchRequestParserTest {
     assertEquals(2, changeSetPart.getRequests().size());
     assertEquals("/9j/4AAQSkZJRgABAQEBLAEsAAD/4RM0RXhpZgAATU0AKgAAAAgABwESAAMAAAABAAEAAAEaAAUAAAABAAAAYgEbAAUAAAA"
         + CRLF,
-        StringUtil.toString(changeSetPart.getRequests().get(0).getBody()));
+        IOUtils.toString(changeSetPart.getRequests().get(0).getBody()));
     assertEquals("{\"EmployeeName\":\"Peter Fall\"}",
-        StringUtil.toString(changeSetPart.getRequests().get(1).getBody()));
+        IOUtils.toString(changeSetPart.getRequests().get(1).getBody()));
   }
 
   @Test
@@ -1247,7 +1248,7 @@ public class BatchRequestParserTest {
   }
 
   private List<BatchRequestPart> parse(final String batch, final boolean isStrict) throws Exception {
-    return parse(StringUtil.toInputStream(batch), isStrict);
+    return parse(IOUtils.toInputStream(batch), isStrict);
   }
 
   private void parseInvalidBatchBody(final String batch, final MessageKeys key, final boolean isStrict)
@@ -1255,7 +1256,7 @@ public class BatchRequestParserTest {
     final BatchParser parser = new BatchParser();
     final BatchOptions options = BatchOptions.with().isStrict(isStrict).rawBaseUri(SERVICE_ROOT).build();
     try {
-      parser.parseBatchRequest(StringUtil.toInputStream(batch), BOUNDARY, options);
+      parser.parseBatchRequest(IOUtils.toInputStream(batch), BOUNDARY, options);
       fail("No exception thrown. Expect: " + key.toString());
     } catch (BatchDeserializerException e) {
       assertMessageKey(e, key);

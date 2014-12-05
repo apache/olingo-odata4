@@ -26,6 +26,14 @@ import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 
 public interface FixedFormatDeserializer {
+
+  /**
+   * Reads binary data from an InputStream.
+   * @param content the binary data as input stream
+   * @return the binary data
+   */
+  byte[] binary(InputStream content) throws DeserializerException;
+
   public List<BatchRequestPart> parseBatchRequest(InputStream content, String boundary, BatchOptions options)
       throws BatchDeserializerException;
 }

@@ -325,7 +325,7 @@ public class ODataJsonSerializerTest {
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .build()));
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia/$entity\","
-        + "\"@odata.mediaEtag\":\"theMediaETag\",\"@odata.mediaContentType\":\"image/png\","
+        + "\"@odata.mediaEtag\":\"theMediaETag\",\"@odata.mediaContentType\":\"image/svg+xml\","
         + "\"PropertyInt16\":1}";
     Assert.assertEquals(expectedResult, resultString);
   }
@@ -338,10 +338,10 @@ public class ODataJsonSerializerTest {
         EntityCollectionSerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build()));
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia\",\"value\":["
-        + "{\"@odata.mediaContentType\":\"image/png\",\"PropertyInt16\":1},"
-        + "{\"@odata.mediaContentType\":\"image/bmp\",\"PropertyInt16\":2},"
-        + "{\"@odata.mediaContentType\":\"image/jpeg\",\"PropertyInt16\":3},"
-        + "{\"@odata.mediaContentType\":\"foo\",\"PropertyInt16\":4}]}";
+        + "{\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":1},"
+        + "{\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":2},"
+        + "{\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":3},"
+        + "{\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":4}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
 

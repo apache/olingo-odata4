@@ -28,11 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
-import org.apache.olingo.server.core.deserializer.StringUtil;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings;
 import org.apache.olingo.server.core.serializer.BatchResponseSerializer;
@@ -48,7 +48,7 @@ public class BatchResponseSerializerTest {
     ODataResponse response = new ODataResponse();
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, "application/json");
-    response.setContent(StringUtil.toInputStream("Walter Winter" + CRLF));
+    response.setContent(IOUtils.toInputStream("Walter Winter" + CRLF));
 
     List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
     responses.add(response);
@@ -104,7 +104,7 @@ public class BatchResponseSerializerTest {
     ODataResponse response = new ODataResponse();
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, "application/json");
-    response.setContent(StringUtil.toInputStream("Walter Winter"));
+    response.setContent(IOUtils.toInputStream("Walter Winter"));
 
     List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
     responses.add(response);

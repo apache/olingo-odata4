@@ -18,16 +18,36 @@
  */
 package org.apache.olingo.server.core.deserializer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.core.deserializer.batch.BatchParser;
 
 public class FixedFormatDeserializerImpl implements FixedFormatDeserializer {
+
+  @Override
+  public byte[] binary(InputStream content) throws DeserializerException {
+    ByteArrayOutputStream result = new ByteArrayOutputStream();
+    byte[] buffer = new byte[128];
+    int count = -1;
+    try {
+      while ((count = content.read(buffer)) > -1) {
+        result.write(buffer, 0, count);
+      }
+      result.flush();
+    } catch (final IOException e) {
+      throw new DeserializerException("An I/O exception occurred.", e,
+          DeserializerException.MessageKeys.IO_EXCEPTION);
+    }
+    return result.toByteArray();
+  }
 
   // TODO: Deserializer
   @Override
