@@ -43,7 +43,6 @@ import org.apache.olingo.client.core.communication.request.v4.AsyncRequestFactor
 import org.apache.olingo.client.core.serialization.v4.ODataBinderImpl;
 import org.apache.olingo.client.core.serialization.v4.ODataDeserializerImpl;
 import org.apache.olingo.client.core.serialization.v4.ODataReaderImpl;
-import org.apache.olingo.client.core.uri.v4.BatchURIBuilderImpl;
 import org.apache.olingo.client.core.uri.v4.FilterFactoryImpl;
 import org.apache.olingo.client.core.uri.v4.URIBuilderImpl;
 import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
@@ -92,11 +91,6 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   @Override
   public URIBuilder newURIBuilder(final String serviceRoot) {
     return new URIBuilderImpl(getServiceVersion(), getConfiguration(), serviceRoot);
-  }
-  
-  @Override
-  public URIBuilder newBatchURIBuilder(String serviceRoot) {
-    return new BatchURIBuilderImpl(getServiceVersion(), getConfiguration(), serviceRoot);
   }
   
   @Override

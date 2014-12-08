@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -42,7 +43,6 @@ import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.api.uri.UriFormat;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
 import org.apache.olingo.client.core.uri.URIUtils;
@@ -66,7 +66,6 @@ public class BatchClientITCase extends AbstractTestITCase {
   @Before
   public void setup() {
     client.getConfiguration().setContinueOnError(false);
-    client.getConfiguration().setBatchUriFormat(UriFormat.RELATIVE);
   }
 
   @Test
@@ -86,14 +85,14 @@ public class BatchClientITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void getBatchRequest() {
+  public void getBatchRequestWithRelativeUris() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
     request.setAccept(ACCEPT);
 
     final BatchManager payload = request.payloadManager();
 
     // create new request
-    appendGetRequest(payload, "ESAllPrim", 32767);
+    appendGetRequest(payload, "ESAllPrim", 32767, true);
 
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
@@ -118,15 +117,47 @@ public class BatchClientITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void testErrorWithoutContinueOnErrorPreferHeader() {
+  public void getBatchRequest() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
     request.setAccept(ACCEPT);
 
     final BatchManager payload = request.payloadManager();
 
-    appendGetRequest(payload, "ESAllPrim", 32767); // Without error
-    appendGetRequest(payload, "ESAllPrim", 42); // Error ( Key does not exist )
-    appendGetRequest(payload, "ESAllPrim", 0); // Without error
+    // create new request
+    appendGetRequest(payload, "ESAllPrim", 32767, false);
+
+    // Fetch result
+    final ODataBatchResponse response = payload.getResponse();
+
+    assertEquals(202, response.getStatusCode());
+    assertEquals("Accepted", response.getStatusMessage());
+
+    final Iterator<ODataBatchResponseItem> iter = response.getBody();
+    assertTrue(iter.hasNext());
+
+    ODataBatchResponseItem item = iter.next();
+    assertFalse(item.isChangeset());
+
+    ODataResponse oDataResonse = item.next();
+    assertNotNull(oDataResonse);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResonse.getStatusCode());
+    assertEquals(1, oDataResonse.getHeader("OData-Version").size());
+    assertEquals("4.0", oDataResonse.getHeader("OData-Version").toArray()[0]);
+    assertEquals(1, oDataResonse.getHeader("Content-Length").size());
+    assertEquals("538", oDataResonse.getHeader("Content-Length").toArray()[0]);
+    assertEquals("application/json;odata.metadata=minimal", oDataResonse.getContentType());
+  }
+
+  @Test
+  public void testErrorWithoutContinueOnErrorPreferHeader() throws URISyntaxException {
+    final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    request.setAccept(ACCEPT);
+
+    final BatchManager payload = request.payloadManager();
+
+    appendGetRequest(payload, "ESAllPrim", 32767, false); // Without error
+    appendGetRequest(payload, "ESAllPrim", 42, false); // Error ( Key does not exist )
+    appendGetRequest(payload, "ESAllPrim", 0, false); // Without error
 
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
@@ -162,16 +193,16 @@ public class BatchClientITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void testErrorWithContinueOnErrorPreferHeader() {
+  public void testErrorWithContinueOnErrorPreferHeader() throws URISyntaxException {
     client.getConfiguration().setContinueOnError(true);
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
     request.setAccept(ACCEPT);
 
     final BatchManager payload = request.payloadManager();
 
-    appendGetRequest(payload, "ESAllPrim", 32767); // Without error
-    appendGetRequest(payload, "ESAllPrim", 42); // Error ( Key does not exist )
-    appendGetRequest(payload, "ESAllPrim", 0); // Without error
+    appendGetRequest(payload, "ESAllPrim", 32767, false); // Without error
+    appendGetRequest(payload, "ESAllPrim", 42, false); // Error ( Key does not exist )
+    appendGetRequest(payload, "ESAllPrim", 0, false); // Without error
 
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
@@ -317,10 +348,10 @@ public class BatchClientITCase extends AbstractTestITCase {
     return entity;
   }
 
-  //TODO If write support is implemented, remove ignore tag
+  // TODO If write support is implemented, remove ignore tag
   @Test
   @Ignore("Not implemented")
-  public void changesetBatchRequest() {
+  public void changesetBatchRequest() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
     request.setAccept(ACCEPT);
 
@@ -328,7 +359,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     // -----------------------------
     // - Append get request
     // -----------------------------
-    appendGetRequest(payload, "ESAllPrim", 32767); // Without error
+    appendGetRequest(payload, "ESAllPrim", 32767, false); // Without error
 
     // -----------------------------
     // - Append change set
@@ -397,7 +428,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     // -----------------------------
     // - Append get request
     // -----------------------------
-    appendGetRequest(payload, "ESAllPrim", 32767); // Without error
+    appendGetRequest(payload, "ESAllPrim", 32767, false); // Without error
 
     // -----------------------------
     // - Fetch result
@@ -446,11 +477,13 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertFalse(item.isChangeset());
   }
 
-  private void appendGetRequest(final BatchManager manager, final String segment, final Object key) {
-    URIBuilder targetURI = client.newBatchURIBuilder(SERVICE_URI);
+  private void appendGetRequest(final BatchManager manager, final String segment, final Object key, boolean isRelative)
+      throws URISyntaxException {
+    final URIBuilder targetURI = client.newURIBuilder(SERVICE_URI);
     targetURI.appendEntitySetSegment(segment).appendKeySegment(key);
-    
-    ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
+    final URI uri = (isRelative) ? new URI(SERVICE_URI).relativize(targetURI.build()) : targetURI.build();
+
+    ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(uri);
     queryReq.setFormat(ODataFormat.JSON);
     manager.addRequest(queryReq);
   }

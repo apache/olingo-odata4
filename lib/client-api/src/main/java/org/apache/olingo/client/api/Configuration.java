@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.HttpUriRequestFactory;
-import org.apache.olingo.client.api.uri.UriFormat;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
@@ -270,18 +269,4 @@ public interface Configuration {
    * @param executorService new executor services.
    */
   void setExecutor(ExecutorService executorService);
-  
-  /**
-   * Returns the current URI format
-   *
-   * @return current URI format
-   */
-  UriFormat getUriFormat();
-  
-  /**
-   * Sets the current URI format
-   * 
-   * @param format new URI format
-   */
-  void setBatchUriFormat(UriFormat format);
 }
