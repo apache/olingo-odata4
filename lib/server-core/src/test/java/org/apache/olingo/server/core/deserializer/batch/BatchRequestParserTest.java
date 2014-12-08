@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.deserializer;
+package org.apache.olingo.server.core.deserializer.batch;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -188,7 +188,32 @@ public class BatchRequestParserTest {
       }
     }
   }
-
+  
+  @Test
+  public void testAbsoluteUri() throws Exception {
+    final String batch = ""
+        + "--batch_8194-cf13-1f56" + CRLF
+        + MIME_HEADERS
+        + CRLF
+        + "GET http://localhost/odata/Employees('1')/EmployeeName?$top=1 HTTP/1.1" + CRLF
+        + CRLF
+        + CRLF
+        + "--batch_8194-cf13-1f56--";
+    
+    final List<BatchRequestPart> batchRequestParts = parse(batch);
+    
+    assertEquals(1, batchRequestParts.size());
+    final BatchRequestPart part = batchRequestParts.get(0);
+    
+    assertEquals(1, part.getRequests().size());
+    final ODataRequest request = part.getRequests().get(0);
+    
+    assertEquals("/Employees('1')/EmployeeName", request.getRawODataPath());
+    assertEquals("$top=1", request.getRawQueryPath());
+    assertEquals("http://localhost/odata/Employees('1')/EmployeeName?$top=1", request.getRawRequestUri());
+    assertEquals("http://localhost/odata", request.getRawBaseUri());
+  }
+  
   @Test
   public void testBoundaryParameterWithQuotas() throws Exception {
     final String contentType = "multipart/mixed; boundary=\"batch_1.2+34:2j)0?\"";
@@ -527,8 +552,7 @@ public class BatchRequestParserTest {
         + "Content-Id: 1" + CRLF
         + CRLF
         + "POST Employees('2') HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "MaxDataServiceVersion: 2.0" + CRLF
+        + "Content-Type: application/json;odata=verbose" + CRLF        + "MaxDataServiceVersion: 2.0" + CRLF
         + "Content-Id: 2"
         + CRLF
         + "--changeset_f980-1cb6-94dd--" + CRLF
@@ -600,20 +624,6 @@ public class BatchRequestParserTest {
         + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF;
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER);
-  }
-
-  @Test
-  public void testAbsoluteUri() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + MIME_HEADERS
-        + CRLF
-        + "GET http://localhost/aa/odata/Employees('1')/EmployeeName HTTP/1.1" + CRLF
-        + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.FORBIDDEN_ABSOLUTE_URI);
   }
 
   @Test

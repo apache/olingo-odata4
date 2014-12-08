@@ -39,8 +39,8 @@ public class BatchDeserializerException extends BatchException {
     MISSING_CONTENT_TRANSFER_ENCODING,
     MISSING_CONTENT_TYPE,
     MISSING_MANDATORY_HEADER,
-    FORBIDDEN_HEADER, 
-    FORBIDDEN_ABSOLUTE_URI;
+    FORBIDDEN_HEADER,
+    INVALID_BASE_URI;
 
     @Override
     public String getKey() {

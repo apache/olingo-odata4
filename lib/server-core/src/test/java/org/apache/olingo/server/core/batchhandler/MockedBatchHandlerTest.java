@@ -116,7 +116,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 5" + CRLF
         + CRLF
-        + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF 
+        + "POST http://localhost:8080/odata/$1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF 
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -276,7 +276,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 1" + CRLF
         + CRLF
-        + "PUT ESAllPrim(2) HTTP/1.1" + CRLF
+        + "PUT http://localhost:8080/odata/ESAllPrim(2) HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF

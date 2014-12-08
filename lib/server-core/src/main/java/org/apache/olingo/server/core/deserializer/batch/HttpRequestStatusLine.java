@@ -49,11 +49,12 @@ public class HttpRequestStatusLine {
   private String rawBaseUri;
   private String rawRequestUri;
 
-  public HttpRequestStatusLine(final Line httpStatusLine, final String baseUri, final String serviceResolutionUrir)
+  public HttpRequestStatusLine(final Line httpStatusLine, final String baseUri, final String serviceResolutionUri)
       throws BatchDeserializerException {
     statusLine = httpStatusLine;
     requestBaseUri = baseUri;
-
+    rawServiceResolutionUri = serviceResolutionUri;
+    
     parse();
   }
 
@@ -71,23 +72,40 @@ public class HttpRequestStatusLine {
     }
   }
 
-  private void parseUri(String rawUri, String baseUrl) throws BatchDeserializerException {
+  private void parseUri(String rawUri, String baseUri) throws BatchDeserializerException {
     try {
       final URI uri = new URI(rawUri);
 
       if (uri.isAbsolute()) {
-        throw new BatchDeserializerException("Forbidden absolute uri", MessageKeys.FORBIDDEN_ABSOLUTE_URI, statusLine
-            .getLineNumber());
+        parseAbsoluteUri(rawUri, baseUri);
       } else {
-        final Matcher relativeUriMatcher = PATTERN_RELATIVE_URI.matcher(rawUri);
-
-        if (relativeUriMatcher.matches()) {
-          buildUri(relativeUriMatcher.group(1), relativeUriMatcher.group(2));
-        } else {
-          throw new BatchDeserializerException("Malformed uri", MessageKeys.INVALID_URI, statusLine.getLineNumber());
-        }
+        parseRelativeUri(rawUri);
       }
     } catch (URISyntaxException e) {
+      throw new BatchDeserializerException("Malformed uri", MessageKeys.INVALID_URI, statusLine.getLineNumber());
+    }
+  }
+
+  private void parseAbsoluteUri(String rawUri, String baseUri) throws BatchDeserializerException {
+    if (rawUri.startsWith(baseUri)) {
+      final String relativeUri = removeLeadingSlash(rawUri.substring(baseUri.length()));
+      parseRelativeUri(relativeUri);
+    } else {
+      throw new BatchDeserializerException("Base uri do not match", MessageKeys.INVALID_BASE_URI, statusLine
+          .getLineNumber());
+    }
+  }
+
+  private String removeLeadingSlash(String value) {
+    return (value.length() > 0 && value.charAt(0) == '/') ? value.substring(1) : value;
+  }
+
+  private void parseRelativeUri(String rawUri) throws BatchDeserializerException {
+    final Matcher relativeUriMatcher = PATTERN_RELATIVE_URI.matcher(rawUri);
+
+    if (relativeUriMatcher.matches()) {
+      buildUri(relativeUriMatcher.group(1), relativeUriMatcher.group(2));
+    } else {
       throw new BatchDeserializerException("Malformed uri", MessageKeys.INVALID_URI, statusLine.getLineNumber());
     }
   }
