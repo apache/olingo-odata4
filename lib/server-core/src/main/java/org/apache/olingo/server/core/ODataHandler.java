@@ -36,7 +36,7 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.batch.exception.BatchException;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
@@ -110,6 +110,9 @@ public class ODataHandler {
     } catch (SerializerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
+    } catch (BatchDeserializerException e) {
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      handleException(request, response, serverError);
     } catch (DeserializerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
@@ -128,7 +131,7 @@ public class ODataHandler {
 
   private void processInternal(final ODataRequest request, final ODataResponse response)
       throws ODataHandlerException, UriParserException, UriValidationException, ContentNegotiatorException,
-      ODataApplicationException, SerializerException, DeserializerException, BatchException {
+      ODataApplicationException, SerializerException, DeserializerException {
     validateODataVersion(request, response);
 
     uriInfo = new Parser().parseUri(request.getRawODataPath(), request.getRawQueryPath(), null,

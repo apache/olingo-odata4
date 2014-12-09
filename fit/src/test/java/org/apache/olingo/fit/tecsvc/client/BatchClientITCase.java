@@ -191,7 +191,66 @@ public class BatchClientITCase extends AbstractTestITCase {
     // Check if third request is available
     assertFalse(iter.hasNext());
   }
+  
+  @Test
+  public void testInvalidAbsoluteUri() throws URISyntaxException {
+    final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    request.setAccept(ACCEPT);
 
+    final BatchManager payload = request.payloadManager();
+    final URI uri = new URI(SERVICE_URI + "/../ESAllPrim(32767)");
+    final ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(uri);
+    queryReq.setFormat(ODataFormat.JSON);
+    payload.addRequest(queryReq);
+
+    // Fetch result
+    final ODataBatchResponse response = payload.getResponse();
+    assertEquals(202, response.getStatusCode());
+
+    final Iterator<ODataBatchResponseItem> bodyIterator = response.getBody();
+    assertTrue(bodyIterator.hasNext());
+    
+    ODataBatchResponseItem item = bodyIterator.next();
+    assertFalse(item.isChangeset());
+    
+    final ODataResponse oDataResponse = item.next();
+    assertEquals(400, oDataResponse.getStatusCode());
+  }
+  
+  @Test
+  @Ignore
+  public void testInvalidHost() throws URISyntaxException {
+    final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    request.setAccept(ACCEPT);
+
+    final BatchManager payload = request.payloadManager();
+    final URI uri = new URI("http://otherhost/odata/ESAllPrim(32767)");
+    final ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(uri);
+    queryReq.setFormat(ODataFormat.JSON);
+    payload.addRequest(queryReq);
+
+    // Fetch result
+    final ODataBatchResponse response = payload.getResponse();
+    assertEquals(400, response.getStatusCode());
+  }
+  
+  @Test
+  @Ignore
+  public void testInvalidAbsoluteRequest() throws URISyntaxException {
+    final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    request.setAccept(ACCEPT);
+
+    final BatchManager payload = request.payloadManager();
+    final URI uri = new URI("/ESAllPrim(32767)");
+    final ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(uri);
+    queryReq.setFormat(ODataFormat.JSON);
+    payload.addRequest(queryReq);
+
+    // Fetch result
+    final ODataBatchResponse response = payload.getResponse();
+    assertEquals(400, response.getStatusCode());
+  }
+  
   @Test
   public void testErrorWithContinueOnErrorPreferHeader() throws URISyntaxException {
     client.getConfiguration().setContinueOnError(true);

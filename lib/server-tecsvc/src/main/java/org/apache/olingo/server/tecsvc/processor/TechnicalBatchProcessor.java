@@ -32,7 +32,6 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.BatchFacade;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
-import org.apache.olingo.server.api.batch.exception.BatchException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
@@ -50,7 +49,7 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
 
   @Override
   public void executeBatch(BatchFacade fascade, ODataRequest request, ODataResponse response)
-      throws SerializerException, BatchException {
+      throws SerializerException, BatchDeserializerException {
 
     // TODO refactor isContinueOnError
     boolean continueOnError = isContinueOnError(request);

@@ -40,7 +40,6 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.batch.BatchFacade;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
-import org.apache.olingo.server.api.batch.exception.BatchException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
@@ -596,7 +595,7 @@ public class MockedBatchHandlerTest {
 
     @Override
     public void executeBatch(BatchFacade fascade, ODataRequest request, ODataResponse response)
-        throws BatchException, SerializerException {
+        throws SerializerException, BatchDeserializerException {
       final String boundary = getBoundary(request.getHeader(HttpHeader.CONTENT_TYPE));
       final BatchOptions options = BatchOptions.with().isStrict(true).rawBaseUri(BASE_URI).build();
       final List<BatchRequestPart> parts =

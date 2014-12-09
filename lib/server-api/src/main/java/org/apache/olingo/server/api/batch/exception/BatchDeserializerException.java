@@ -18,7 +18,9 @@
  */
 package org.apache.olingo.server.api.batch.exception;
 
-public class BatchDeserializerException extends BatchException {
+import org.apache.olingo.server.api.deserializer.DeserializerException;
+
+public class BatchDeserializerException extends DeserializerException {
   public static enum MessageKeys implements MessageKey {
     INVALID_BOUNDARY,
     INVALID_CHANGESET_METHOD,
@@ -60,8 +62,4 @@ public class BatchDeserializerException extends BatchException {
     super(developmentMessage, messageKey, parameters);
   }
 
-  @Override
-  protected String getBundleName() {
-    return DEFAULT_SERVER_BUNDLE_NAME;
-  }
 }

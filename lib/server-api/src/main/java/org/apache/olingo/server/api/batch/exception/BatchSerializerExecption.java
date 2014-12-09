@@ -18,7 +18,9 @@
  */
 package org.apache.olingo.server.api.batch.exception;
 
-public class BatchSerializerExecption extends BatchException {
+import org.apache.olingo.server.api.serializer.SerializerException;
+
+public class BatchSerializerExecption extends SerializerException {
 
   private static final long serialVersionUID = 2634433974342796905L;
 

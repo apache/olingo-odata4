@@ -25,7 +25,7 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.BatchFacade;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
-import org.apache.olingo.server.api.batch.exception.BatchException;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.ODataHandler;
@@ -42,7 +42,7 @@ public class BatchHandler {
   }
 
   public void process(final ODataRequest request, final ODataResponse response, final boolean isStrict)
-      throws SerializerException, BatchException {
+      throws DeserializerException, SerializerException {
     validateRequest(request);
     
     final BatchFacade operation = new BatchFascadeImpl(oDataHandler, request, batchProcessor, isStrict);

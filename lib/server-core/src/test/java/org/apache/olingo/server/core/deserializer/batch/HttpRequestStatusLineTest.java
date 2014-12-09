@@ -44,7 +44,7 @@ public class HttpRequestStatusLineTest {
   
   @Test
   public void testAbsoluteWithRelativePath() throws BatchDeserializerException {
-    final HttpRequestStatusLine line = parse("http://localhost/odata../../Employee?$top=2");
+    final HttpRequestStatusLine line = parse("http://localhost/odata/../../Employee?$top=2");
     assertEquals("/../../Employee", line.getRawODataPath());
     assertEquals("$top=2", line.getRawQueryPath());
     assertEquals("http://localhost/odata/../../Employee?$top=2", line.getRawRequestUri());
