@@ -33,8 +33,8 @@ public interface ExceptionProcessor extends Processor {
    * @param request     the request
    * @param response    the response
    * @param serverError the server error
-   * @param format      the requested format for the error message
+   * @param responseFormat      the requested format for the error message
    */
   public void processException(ODataRequest request, ODataResponse response, ODataServerError serverError,
-      ContentType format);
+      ContentType responseFormat);
 }

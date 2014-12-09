@@ -26,19 +26,21 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor interface for handling a collection of entities, e.g., an Entity Set.
+ * Processor interface for handling counting a collection of primitive properties, e.g. an collection of EdmString.
  */
-public interface EntityCollectionProcessor extends Processor {
+public interface CountPrimitiveCollectionProcessor extends Processor {
 
   /**
-   * Reads entities data from persistence and puts serialized content and status into the response.
-   * @param request  OData request object containing raw HTTP information
+   * Counts primitive properties from persistence and puts serialized content and status into the response.
+   * Response content type is <code>text/plain</code> by default.
+   * @param request  OData request object containing raw HTTP information.
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
    * @param responseFormat   requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
    * @throws SerializerException       if serialization failed
    */
-  void readEntityCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
+  void countPrimitiveCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+                                ContentType responseFormat)
       throws ODataApplicationException, SerializerException;
 }

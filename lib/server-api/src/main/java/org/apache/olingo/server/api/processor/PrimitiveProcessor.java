@@ -37,24 +37,10 @@ public interface PrimitiveProcessor extends Processor {
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
-   * @param format   requested content type after content negotiation
+   * @param responseFormat   requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
    * @throws SerializerException       if serialization failed
    */
-  void readPrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
-      throws ODataApplicationException, SerializerException;
-
-  /**
-   * Reads raw value of a primitive-type instance, e.g., of a primitive property of an entity.
-   * If the value is <code>null</code>, the service responds with 204 No Content.
-   * If it is not available, for example due to permissions, the service responds with 404 Not Found.
-   * @param request  OData request object containing raw HTTP information
-   * @param response OData response object for collecting response data
-   * @param uriInfo  information of a parsed OData URI
-   * @param format   requested content type after content negotiation
-   * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws SerializerException       if serialization failed
-   */
-  void readPrimitiveAsValue(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
+  void readPrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
       throws ODataApplicationException, SerializerException;
 }

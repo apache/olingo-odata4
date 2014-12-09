@@ -37,7 +37,7 @@ import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
-import org.apache.olingo.server.api.processor.MediaProcessor;
+import org.apache.olingo.server.api.processor.MediaEntityProcessor;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
@@ -54,7 +54,7 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
  * Technical Processor for entity-related functionality.
  */
 public class TechnicalEntityProcessor extends TechnicalProcessor
-    implements EntityCollectionProcessor, CountEntityCollectionProcessor, EntityProcessor, MediaProcessor {
+    implements EntityCollectionProcessor, CountEntityCollectionProcessor, EntityProcessor, MediaEntityProcessor {
 
   public TechnicalEntityProcessor(final DataProvider dataProvider) {
     super(dataProvider);
@@ -136,8 +136,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void readMedia(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
+  public void readMediaEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+                              final ContentType responseFormat) throws ODataApplicationException, SerializerException {
     blockNavigation(uriInfo);
     final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
     final Entity entity = dataProvider.read(resourceEntitySet.getEntitySet(), resourceEntitySet.getKeyPredicates());
@@ -152,8 +152,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void createMedia(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestedContentType)
+  public void createEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+                           final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
     blockNavigation(uriInfo);
     final String contentType = request.getHeader(HttpHeader.CONTENT_TYPE);
@@ -166,8 +166,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void updateMedia(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestedContentType)
+  public void updateMediaEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+                                final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
     blockNavigation(uriInfo);
     final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
@@ -183,7 +183,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     }
     dataProvider.setMedia(entity, odata.createFixedFormatDeserializer().binary(request.getBody()), contentType);
 
-    final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
+    final ODataFormat format = ODataFormat.fromContentType(responseFormat);
     ODataSerializer serializer = odata.createSerializer(format);
     response.setContent(serializer.entity(edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
@@ -191,11 +191,11 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
                 getContextUrl(serializer, edmEntitySet, true, null, null))
             .build()));
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-    response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
+    response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
   }
 
   @Override
-  public void deleteMedia(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
+  public void deleteEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
       throws ODataApplicationException {
     blockNavigation(uriInfo);
     final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);

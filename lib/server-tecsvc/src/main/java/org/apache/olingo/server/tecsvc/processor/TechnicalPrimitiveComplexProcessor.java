@@ -43,6 +43,7 @@ import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveValueProcessor;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
@@ -64,7 +65,8 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
  * Technical Processor which provides functionality related to primitive and complex types and collections thereof.
  */
 public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
-    implements PrimitiveProcessor, PrimitiveCollectionProcessor, ComplexProcessor, ComplexCollectionProcessor {
+    implements PrimitiveProcessor, PrimitiveValueProcessor, PrimitiveCollectionProcessor,
+        ComplexProcessor, ComplexCollectionProcessor {
 
   public TechnicalPrimitiveComplexProcessor(final DataProvider dataProvider) {
     super(dataProvider);
@@ -200,7 +202,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void readPrimitiveAsValue(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readPrimitiveValue(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validateOptions(resource);

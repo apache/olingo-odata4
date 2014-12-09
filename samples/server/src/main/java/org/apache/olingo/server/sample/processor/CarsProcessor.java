@@ -18,7 +18,9 @@
  */
 package org.apache.olingo.server.sample.processor;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,6 +35,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
@@ -40,10 +43,13 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
+import org.apache.olingo.server.api.processor.MediaEntityProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveValueProcessor;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
@@ -65,8 +71,8 @@ import org.apache.olingo.server.sample.data.DataProvider.DataProviderException;
  * This is a very simple example which should give you a rough guideline on how to implement such an processor.
  * See the JavaDoc of the server.api interfaces for more information.
  */
-public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor,
-    PrimitiveProcessor, ComplexProcessor {
+public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor, MediaEntityProcessor,
+    PrimitiveProcessor, PrimitiveValueProcessor, ComplexProcessor {
 
   private OData odata;
   private DataProvider dataProvider;
@@ -150,6 +156,86 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
     }
   }
 
+  @Override
+  public void createEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+                           ContentType requestFormat, ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @Override
+  public void deleteEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo)
+          throws ODataApplicationException {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @Override
+  public void readPrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
+          throws ODataApplicationException, SerializerException {
+    readProperty(response, uriInfo, format, false);
+  }
+
+  @Override
+  public void readComplex(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
+          throws ODataApplicationException, SerializerException {
+    readProperty(response, uriInfo, format, true);
+  }
+
+  @Override
+  public void readPrimitiveValue(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
+          throws ODataApplicationException, SerializerException {
+    // First we have to figure out which entity set the requested entity is in
+    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
+    // Next we fetch the requested entity from the database
+    final Entity entity;
+    try {
+      entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
+    } catch (DataProviderException e) {
+      throw new ODataApplicationException(e.getMessage(), 500, Locale.ENGLISH);
+    }
+    if (entity == null) {
+      // If no entity was found for the given key we throw an exception.
+      throw new ODataApplicationException("No entity found for this key", HttpStatusCode.NOT_FOUND
+              .getStatusCode(), Locale.ENGLISH);
+    } else {
+      // Next we get the property value from the entity and pass the value to serialization
+      UriResourceProperty uriProperty = (UriResourceProperty) uriInfo
+              .getUriResourceParts().get(uriInfo.getUriResourceParts().size() - 1);
+      EdmProperty edmProperty = uriProperty.getProperty();
+      Property property = entity.getProperty(edmProperty.getName());
+      if (property == null) {
+        throw new ODataApplicationException("No property found", HttpStatusCode.NOT_FOUND
+                .getStatusCode(), Locale.ENGLISH);
+      } else {
+        if (property.getValue() == null) {
+          response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+        } else {
+          String value = String.valueOf(property.getValue());
+          ByteArrayInputStream serializerContent = new ByteArrayInputStream(
+                  value.getBytes(Charset.forName("UTF-8")));
+          response.setContent(serializerContent);
+          response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+          response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.TEXT_PLAIN);
+        }
+      }
+    }
+  }
+
+  @Override
+  public void readMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+                              ContentType responseFormat)
+          throws ODataApplicationException, SerializerException {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @Override
+  public void updateMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+                                ContentType requestFormat, ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new UnsupportedOperationException("Not yet implemented");
+
+  }
+
   private void readProperty(ODataResponse response, UriInfo uriInfo, ContentType contentType,
       boolean complex) throws ODataApplicationException, SerializerException {
     // To read a property we have to first get the entity out of the entity set
@@ -172,7 +258,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
       EdmProperty edmProperty = uriProperty.getProperty();
       Property property = entity.getProperty(edmProperty.getName());
       if (property == null) {
-        throw new ODataApplicationException("No porperty found", HttpStatusCode.NOT_FOUND
+        throw new ODataApplicationException("No property found", HttpStatusCode.NOT_FOUND
             .getStatusCode(), Locale.ENGLISH);
       } else {
         if (property.getValue() == null) {
@@ -230,24 +316,5 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
         .suffix(isSingleEntity ? Suffix.ENTITY : null)
         .navOrPropertyPath(navOrPropertyPath)
         .build();
-  }
-
-  @Override
-  public void readPrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
-      throws ODataApplicationException, SerializerException {
-    readProperty(response, uriInfo, format, false);
-  }
-
-  @Override
-  public void readComplex(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
-      throws ODataApplicationException, SerializerException {
-    readProperty(response, uriInfo, format, true);
-  }
-
-  @Override
-  public void readPrimitiveAsValue(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
-      throws ODataApplicationException, SerializerException {
-    throw new ODataApplicationException("Not implemented for this sample",
-        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
   }
 }
