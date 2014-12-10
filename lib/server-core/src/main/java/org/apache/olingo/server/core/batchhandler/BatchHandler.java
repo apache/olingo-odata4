@@ -46,7 +46,7 @@ public class BatchHandler {
     validateRequest(request);
     
     final BatchFacade operation = new BatchFascadeImpl(oDataHandler, request, batchProcessor, isStrict);
-    batchProcessor.executeBatch(operation, request, response);
+    batchProcessor.processBatch(operation, request, response);
   }
 
   private void validateRequest(final ODataRequest request) throws BatchDeserializerException {

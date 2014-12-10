@@ -42,7 +42,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
  * <p>This implementation is registered in the ODataHandler by default.
  * The default can be replaced by re-registering a custom implementation.</p>
  */
-public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProcessor, ExceptionProcessor  {
+public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProcessor, ErrorProcessor {
   private OData odata;
   private ServiceMetadata serviceMetadata;
 
@@ -71,8 +71,8 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
   }
 
   @Override
-  public void processException(ODataRequest request, ODataResponse response, ODataServerError serverError,
-      ContentType requestedContentType) {
+  public void processError(ODataRequest request, ODataResponse response, ODataServerError serverError,
+                           ContentType requestedContentType) {
     try {
       ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
       response.setContent(serializer.error(serverError));

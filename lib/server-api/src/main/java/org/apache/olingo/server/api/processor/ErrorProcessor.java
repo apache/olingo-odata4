@@ -24,17 +24,17 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
 
 /**
- * Processor which is called if any exception occurs inside the library or another processor.
+ * Processor which is called if any error/exception occurs inside the library or another processor.
  */
-public interface ExceptionProcessor extends Processor {
+public interface ErrorProcessor extends Processor {
 
   /**
-   * Processes an exception. MUST NOT throw an exception!
-   * @param request     the request
-   * @param response    the response
+   * Processes an error/exception. MUST NOT throw an exception!
+   * @param request  OData request object containing raw HTTP information
+   * @param response OData response object for collecting response data
    * @param serverError the server error
-   * @param responseFormat      the requested format for the error message
+   * @param responseFormat   requested content type after content negotiation
    */
-  public void processException(ODataRequest request, ODataResponse response, ODataServerError serverError,
-      ContentType responseFormat);
+  public void processError(ODataRequest request, ODataResponse response, ODataServerError serverError,
+                           ContentType responseFormat);
 }

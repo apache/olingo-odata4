@@ -45,7 +45,7 @@ import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.DefaultProcessor;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
-import org.apache.olingo.server.api.processor.ExceptionProcessor;
+import org.apache.olingo.server.api.processor.ErrorProcessor;
 import org.apache.olingo.server.api.processor.MediaEntityProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
@@ -183,9 +183,9 @@ public class ODataHandler {
   }
 
   public void handleException(ODataRequest request, ODataResponse response, ODataServerError serverError) {
-    ExceptionProcessor exceptionProcessor;
+    ErrorProcessor exceptionProcessor;
     try {
-      exceptionProcessor = selectProcessor(ExceptionProcessor.class);
+      exceptionProcessor = selectProcessor(ErrorProcessor.class);
     } catch (ODataHandlerException e) {
       // This cannot happen since there is always an ExceptionProcessor registered.
       exceptionProcessor = new DefaultProcessor();
@@ -198,7 +198,7 @@ public class ODataHandler {
     } catch (final ContentNegotiatorException e) {
       requestedContentType = ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
     }
-    exceptionProcessor.processException(request, response, serverError, requestedContentType);
+    exceptionProcessor.processError(request, response, serverError, requestedContentType);
   }
 
   private void handleResourceDispatching(final ODataRequest request, final ODataResponse response)
@@ -261,7 +261,7 @@ public class ODataHandler {
         final UriResource resource = uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
         if (resource instanceof UriResourceEntitySet || resource instanceof UriResourceNavigation) {
           selectProcessor(CountEntityCollectionProcessor.class)
-              .countEntityCollection(request, response, uriInfo, ContentType.TEXT_PLAIN);
+              .countEntityCollection(request, response, uriInfo);
         } else {
           throw new ODataHandlerException(
               "Count of collections of primitive-type or complex-type instances is not implemented.",

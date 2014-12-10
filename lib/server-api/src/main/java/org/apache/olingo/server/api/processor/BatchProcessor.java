@@ -29,8 +29,8 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 
 public interface BatchProcessor extends Processor {
   // TODO:Check exception signature
-  void executeBatch(BatchFacade facade, ODataRequest request, ODataResponse response)
+  void processBatch(BatchFacade facade, ODataRequest request, ODataResponse response)
       throws SerializerException, BatchException;
 
-  ODataResponsePart executeChangeSet(BatchFacade facade, List<ODataRequest> requests);
+  ODataResponsePart processChangeSet(BatchFacade facade, List<ODataRequest> requests);
 }

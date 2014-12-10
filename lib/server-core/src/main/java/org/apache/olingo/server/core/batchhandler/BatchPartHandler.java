@@ -81,7 +81,7 @@ public class BatchPartHandler {
   }
 
   private ODataResponsePart handleChangeSet(BatchRequestPart request) {
-    return batchProcessor.executeChangeSet(batchFascade, request.getRequests());
+    return batchProcessor.processChangeSet(batchFascade, request.getRequests());
   }
 
 }
