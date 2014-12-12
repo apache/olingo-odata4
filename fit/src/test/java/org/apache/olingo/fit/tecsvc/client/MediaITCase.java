@@ -31,8 +31,10 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
+import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
+import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.v4.ODataClient;
@@ -111,6 +113,38 @@ public final class MediaITCase extends AbstractBaseTestITCase {
     // Check that the media stream has changed.
     // This check has to be in the same session in order to access the same data provider.
     ODataMediaRequest mediaRequest = client.getRetrieveRequestFactory().getMediaRequest(uri);
+    mediaRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
+    ODataRetrieveResponse<InputStream> mediaResponse = mediaRequest.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), mediaResponse.getStatusCode());
+    assertEquals(ContentType.TEXT_PLAIN.toContentTypeString(), mediaResponse.getContentType());
+    assertEquals("just a test", IOUtils.toString(mediaResponse.getBody()));
+  }
+
+  @Test
+  public void create() throws Exception {
+    final CommonODataClient<?> client = getClient();
+    ODataMediaEntityCreateRequest<CommonODataEntity> request =
+        client.getCUDRequestFactory().getMediaEntityCreateRequest(
+            client.newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESMedia").build(),
+            IOUtils.toInputStream("just a test"));
+    request.setContentType(ContentType.TEXT_PLAIN.toContentTypeString());
+    assertNotNull(request);
+
+    final ODataMediaEntityCreateResponse<CommonODataEntity> response = request.payloadManager().getResponse();
+    assertEquals(HttpStatusCode.CREATED.getStatusCode(), response.getStatusCode());
+    assertEquals(request.getURI() + "(5)", response.getHeader(HttpHeader.LOCATION).iterator().next());
+    final CommonODataEntity entity = response.getBody();
+    assertNotNull(entity);
+    final CommonODataProperty property = entity.getProperty("PropertyInt16");
+    assertNotNull(property);
+    assertNotNull(property.getPrimitiveValue());
+    assertEquals(5, property.getPrimitiveValue().toValue());
+
+    // Check that the media stream has been created.
+    // This check has to be in the same session in order to access the same data provider.
+    ODataMediaRequest mediaRequest = client.getRetrieveRequestFactory().getMediaRequest(
+        client.newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESMedia")
+            .appendKeySegment(5).appendValueSegment().build());
     mediaRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
     ODataRetrieveResponse<InputStream> mediaResponse = mediaRequest.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), mediaResponse.getStatusCode());

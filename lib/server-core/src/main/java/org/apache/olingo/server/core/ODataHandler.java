@@ -220,10 +220,9 @@ public class ODataHandler {
               .readEntityCollection(request, response, uriInfo, requestedContentType);
         } else if (method.equals(HttpMethod.POST)) {
           if (isMedia(lastPathSegment)) {
+            final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
             final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
                 request, customContentTypeSupport, RepresentationType.ENTITY);
-            final ContentType requestFormat =
-                    ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
             selectProcessor(MediaEntityProcessor.class)
                 .createEntity(request, response, uriInfo, requestFormat, responseFormat);
           } else {
@@ -242,13 +241,8 @@ public class ODataHandler {
           selectProcessor(EntityProcessor.class)
               .readEntity(request, response, uriInfo, requestedContentType);
         } else if (method.equals(HttpMethod.DELETE)) {
-          if (isMedia(lastPathSegment)) {
-            selectProcessor(MediaEntityProcessor.class)
-                .deleteEntity(request, response, uriInfo);
-          } else {
-            throw new ODataHandlerException("not implemented",
-                ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
-          }
+          selectProcessor(isMedia(lastPathSegment) ? MediaEntityProcessor.class : EntityProcessor.class)
+              .deleteEntity(request, response, uriInfo);
         } else {
           throw new ODataHandlerException("not implemented",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
@@ -337,8 +331,7 @@ public class ODataHandler {
           selectProcessor(MediaEntityProcessor.class)
               .readMediaEntity(request, response, uriInfo, requestedContentType);
         } else if (method.equals(HttpMethod.PUT)) {
-          final ContentType requestFormat =
-                  ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
+          final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
           final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
                   request, customContentTypeSupport, RepresentationType.ENTITY);
           selectProcessor(MediaEntityProcessor.class)

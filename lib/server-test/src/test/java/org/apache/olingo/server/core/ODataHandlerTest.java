@@ -259,6 +259,14 @@ public class ODataHandlerTest {
   }
 
   @Test
+  public void dispatchEntityDelete() throws Exception {
+    final EntityProcessor processor = mock(EntityProcessor.class);
+    dispatch(HttpMethod.DELETE, "ESAllPrim(0)", processor);
+
+    verify(processor).deleteEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+  }
+
+  @Test
   public void dispatchMedia() throws Exception {
     final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
     dispatch(HttpMethod.GET, "ESMedia(1)/$value", processor);
@@ -277,7 +285,7 @@ public class ODataHandlerTest {
   }
 
   @Test
-  public void dispatchMediaPut() throws Exception {
+  public void dispatchMediaUpdate() throws Exception {
     final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
     dispatch(HttpMethod.PUT, "ESMedia(1)/$value", processor);
 

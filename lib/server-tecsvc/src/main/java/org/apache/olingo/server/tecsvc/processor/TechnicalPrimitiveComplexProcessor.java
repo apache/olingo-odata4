@@ -51,6 +51,7 @@ import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.PrimitiveValueSerializerOptions;
 import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -121,13 +122,14 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
         ODataSerializer serializer = odata.createSerializer(format);
         final ExpandOption expand = uriInfo.getExpandOption();
         final SelectOption select = uriInfo.getSelectOption();
+        final UriHelper helper = odata.createUriHelper();
         final ContextURL contextURL = format == ODataFormat.JSON_NO_METADATA ? null :
             ContextURL.with().entitySet(edmEntitySet)
-                .keyPath(serializer.buildContextURLKeyPredicate(
+                .keyPath(helper.buildContextURLKeyPredicate(
                     ((UriResourceEntitySet) resourceParts.get(0)).getKeyPredicates()))
                 .navOrPropertyPath(buildPropertyPath(path))
                 .selectList(edmProperty.isPrimitive() ? null :
-                    serializer.buildContextURLSelectList((EdmStructuredType) edmProperty.getType(), expand, select))
+                    helper.buildContextURLSelectList((EdmStructuredType) edmProperty.getType(), expand, select))
                 .build();
         switch (representationType) {
         case PRIMITIVE:

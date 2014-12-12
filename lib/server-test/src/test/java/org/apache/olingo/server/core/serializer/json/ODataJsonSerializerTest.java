@@ -48,12 +48,14 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.serializer.ExpandSelectMock;
+import org.apache.olingo.server.core.uri.UriHelperImpl;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.hamcrest.CoreMatchers;
@@ -69,6 +71,7 @@ public class ODataJsonSerializerTest {
       new FullQualifiedName("olingo.odata.test1", "Container"));
   private final DataProvider data = new DataProvider();
   private final ODataSerializer serializer = new ODataJsonSerializer(ODataFormat.JSON);
+  private final UriHelper helper = new UriHelperImpl();
 
   @Test
   public void entitySimple() throws Exception {
@@ -358,7 +361,7 @@ public class ODataJsonSerializerTest {
         .entity(entityType, entity,
             EntitySerializerOptions.with()
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
-                    .selectList(serializer.buildContextURLSelectList(entityType, null, select))
+                    .selectList(helper.buildContextURLSelectList(entityType, null, select))
                     .suffix(Suffix.ENTITY).build())
                 .select(select)
                 .build());
@@ -399,7 +402,7 @@ public class ODataJsonSerializerTest {
         .entityCollection(entityType, entitySet,
             EntityCollectionSerializerOptions.with()
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
-                    .selectList(serializer.buildContextURLSelectList(entityType, null, select))
+                    .selectList(helper.buildContextURLSelectList(entityType, null, select))
                     .build())
                 .select(select)
                 .build());
@@ -424,7 +427,7 @@ public class ODataJsonSerializerTest {
         .entityCollection(entityType, entitySet,
             EntityCollectionSerializerOptions.with()
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
-                    .selectList(serializer.buildContextURLSelectList(entityType, null, select))
+                    .selectList(helper.buildContextURLSelectList(entityType, null, select))
                     .build())
                 .select(select)
                 .build()));
@@ -484,7 +487,7 @@ public class ODataJsonSerializerTest {
         .entity(entityType, entity,
             EntitySerializerOptions.with()
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
-                    .selectList(serializer.buildContextURLSelectList(entityType, expand, select))
+                    .selectList(helper.buildContextURLSelectList(entityType, expand, select))
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
                 .build()));
@@ -511,7 +514,7 @@ public class ODataJsonSerializerTest {
         .entity(entityType, entity,
             EntitySerializerOptions.with()
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
-                    .selectList(serializer.buildContextURLSelectList(entityType, expand, select))
+                    .selectList(helper.buildContextURLSelectList(entityType, expand, select))
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
                 .select(select)
@@ -538,7 +541,7 @@ public class ODataJsonSerializerTest {
         .entity(entityType, entity,
             EntitySerializerOptions.with()
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
-                    .selectList(serializer.buildContextURLSelectList(entityType, expand, select))
+                    .selectList(helper.buildContextURLSelectList(entityType, expand, select))
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
                 .select(select)
@@ -569,7 +572,7 @@ public class ODataJsonSerializerTest {
         .entity(entityType, entity,
             EntitySerializerOptions.with()
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
-                    .selectList(serializer.buildContextURLSelectList(entityType, expand, select))
+                    .selectList(helper.buildContextURLSelectList(entityType, expand, select))
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
                 .build()));

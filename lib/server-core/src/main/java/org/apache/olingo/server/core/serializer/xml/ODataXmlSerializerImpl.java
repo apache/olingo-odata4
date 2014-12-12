@@ -19,7 +19,6 @@
 package org.apache.olingo.server.core.serializer.xml;
 
 import java.io.InputStream;
-import java.util.List;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -32,20 +31,15 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
+import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
-import org.apache.olingo.server.api.uri.UriParameter;
-import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
-import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
-import org.apache.olingo.server.core.serializer.utils.ContextURLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,16 +133,5 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
       final ComplexSerializerOptions options) throws SerializerException {
     throw new SerializerException("Serialization not implemented for XML format.",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
-  }
-
-  @Override
-  public String buildContextURLSelectList(final EdmStructuredType type,
-      final ExpandOption expand, final SelectOption select) throws SerializerException {
-    return ContextURLHelper.buildSelectList(type, expand, select);
-  }
-
-  @Override
-  public String buildContextURLKeyPredicate(final List<UriParameter> keys) throws SerializerException {
-    return ContextURLHelper.buildKeyPredicate(keys);
   }
 }
