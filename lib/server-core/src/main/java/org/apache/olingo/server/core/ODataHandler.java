@@ -222,12 +222,15 @@ public class ODataHandler {
           if (isMedia(lastPathSegment)) {
             final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
             final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
-                request, customContentTypeSupport, RepresentationType.ENTITY);
+                    request, customContentTypeSupport, RepresentationType.ENTITY);
             selectProcessor(MediaEntityProcessor.class)
-                .createEntity(request, response, uriInfo, requestFormat, responseFormat);
+                .createMediaEntity(request, response, uriInfo, requestFormat, responseFormat);
           } else {
-            throw new ODataHandlerException("not implemented",
-                ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+            final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
+            final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+                    request, customContentTypeSupport, RepresentationType.ENTITY);
+            selectProcessor(EntityProcessor.class)
+                    .createEntity(request, response, uriInfo, requestFormat, responseFormat);
           }
         } else {
           throw new ODataHandlerException("HTTP method not allowed.",

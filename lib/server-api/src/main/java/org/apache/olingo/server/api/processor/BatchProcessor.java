@@ -23,14 +23,34 @@ import java.util.List;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.BatchFacade;
+import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.batch.exception.BatchException;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.serializer.SerializerException;
 
+/**
+ * Processor interface for handling a single instance of an Entity Type.
+ */
 public interface BatchProcessor extends Processor {
-  // TODO:Check exception signature
+
+  /**
+   * Process a complete batch request and puts serialized content and status into the response.
+   * @param facade   BatchFacade which should be used for further batch part handling
+   * @param request  OData request object containing raw HTTP information
+   * @param response OData response object for collecting response data
+   * @throws BatchException               if the service implementation encounters a failure
+   * @throws BatchDeserializerException   if de-serialization failed
+   */
   void processBatch(BatchFacade facade, ODataRequest request, ODataResponse response)
       throws SerializerException, BatchException;
 
-  ODataResponsePart processChangeSet(BatchFacade facade, List<ODataRequest> requests);
+  /**
+   * Process a batch change set (containing several batch requests)
+   * and puts serialized content and status into the response.
+   * @param facade    BatchFacade which should be used for further batch part handling
+   * @param requests  List of ODataRequests which are included in the to be processed change set
+   * @throws BatchDeserializerException   if de-serialization failed
+   */
+  ODataResponsePart processChangeSet(BatchFacade facade, List<ODataRequest> requests)
+          throws BatchDeserializerException;
 }

@@ -30,6 +30,7 @@ public interface ErrorProcessor extends Processor {
 
   /**
    * Processes an error/exception. MUST NOT throw an exception!
+   *
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param serverError the server error

@@ -132,33 +132,30 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
   }
 
   @Override
-  public ODataResponsePart processChangeSet(BatchFacade fascade, List<ODataRequest> requests) {
+  public ODataResponsePart processChangeSet(BatchFacade fascade, List<ODataRequest> requests)
+          throws BatchDeserializerException {
     List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
     for (ODataRequest request : requests) {
-      try {
-        final ODataResponse oDataResponse = fascade.handleODataRequest(request);
-        final int statusCode = oDataResponse.getStatusCode();
+      final ODataResponse oDataResponse = fascade.handleODataRequest(request);
+      final int statusCode = oDataResponse.getStatusCode();
 
-        if (statusCode < 400) {
-          responses.add(oDataResponse);
-        } else {
-          // Rollback
-          // ...
+      if (statusCode < 400) {
+        responses.add(oDataResponse);
+      } else {
+        // Rollback
+        // ...
 
-          // OData Version 4.0 Part 1: Protocol Plus Errata 01
-          // 11.7.4 Responding to a Batch Request
-          //
-          // When a request within a change set fails, the change set response is not represented using
-          // the multipart/mixed media type. Instead, a single response, using the application/http media type
-          // and a Content-Transfer-Encoding header with a value of binary, is returned that applies to all requests
-          // in the change set and MUST be formatted according to the Error Handling defined
-          // for the particular response format.
+        // OData Version 4.0 Part 1: Protocol Plus Errata 01
+        // 11.7.4 Responding to a Batch Request
+        //
+        // When a request within a change set fails, the change set response is not represented using
+        // the multipart/mixed media type. Instead, a single response, using the application/http media type
+        // and a Content-Transfer-Encoding header with a value of binary, is returned that applies to all requests
+        // in the change set and MUST be formatted according to the Error Handling defined
+        // for the particular response format.
 
-          return new ODataResponsePart(oDataResponse, false);
-        }
-      } catch (BatchDeserializerException e) {
-        throw new ODataRuntimeException(e);
+        return new ODataResponsePart(oDataResponse, false);
       }
     }
 

@@ -55,6 +55,7 @@ import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
+import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.UriInfo;
@@ -317,5 +318,54 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
         .suffix(isSingleEntity ? Suffix.ENTITY : null)
         .navOrPropertyPath(navOrPropertyPath)
         .build();
+  }
+
+  @Override
+  public void updatePrimitive(final ODataRequest request, final ODataResponse response,
+                              final UriInfo uriInfo, final ContentType requestFormat,
+                              final ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("Primitive property update is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
+  public void deletePrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo) throws
+          ODataApplicationException {
+    throw new ODataApplicationException("Primitive property delete is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
+  public void updateComplex(final ODataRequest request, final ODataResponse response,
+                            final UriInfo uriInfo, final ContentType requestFormat,
+                            final ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("Complex property update is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
+  public void deleteComplex(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo)
+          throws ODataApplicationException {
+    throw new ODataApplicationException("Complex property delete is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
+  public void createMediaEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+                                final ContentType requestFormat, final ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("MediaEntity create is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
+  public void updateEntity(final ODataRequest request, final ODataResponse response,
+                           final UriInfo uriInfo, final ContentType requestFormat,
+                           final ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("Entity update is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
 }

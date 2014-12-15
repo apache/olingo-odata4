@@ -44,14 +44,14 @@ public interface ReferenceProcessor extends Processor {
       throws ODataApplicationException, SerializerException;
 
   /**
-   * Creates entity reference data in the persistence and puts content, status, and Location into the response.
+   * Creates entity reference in the persistence and puts content, status, and Location into the response.
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
    * @param requestFormat   content type of body sent with request
    * @param responseFormat   requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws DeserializerException     if deserialization failed
+   * @throws DeserializerException     if de-serialization failed
    * @throws SerializerException       if serialization failed
    */
   void createReference(ODataRequest request, ODataResponse response, UriInfo uriInfo,
@@ -59,27 +59,29 @@ public interface ReferenceProcessor extends Processor {
           throws ODataApplicationException, DeserializerException, SerializerException;
 
   /**
-   * Update entity media reference in the persistence and puts content, status, and Location into the response.
+   * Update entity reference in the persistence and puts content, status, and Location into the response.
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
    * @param requestFormat   content type of body sent with request
    * @param responseFormat   requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws DeserializerException     if deserialization failed
+   * @throws DeserializerException     if de-serialization failed
    * @throws SerializerException       if serialization failed
    */
   void updateReference(ODataRequest request, ODataResponse response, UriInfo uriInfo,
                        ContentType requestFormat, ContentType responseFormat)
           throws ODataApplicationException, DeserializerException, SerializerException;
 
-
   /**
-   * Deletes entity (related to reference) from persistence and puts the status into the response.
+   * Deletes reference to an entity from persistence and puts the status into the response.
+   * Delete on a reference only removes the reference to and not the entity itself
+   * (see chapter "11.4.6.2 Remove a Reference to an Entity")
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
    * @throws ODataApplicationException if the service implementation encounters a failure
    */
-  void deleteReference(ODataRequest request, ODataResponse response, UriInfo uriInfo) throws ODataApplicationException;
+  void deleteReference(ODataRequest request, ODataResponse response, UriInfo uriInfo)
+          throws ODataApplicationException;
 }

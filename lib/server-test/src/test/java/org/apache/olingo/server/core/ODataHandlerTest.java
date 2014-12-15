@@ -267,6 +267,15 @@ public class ODataHandlerTest {
   }
 
   @Test
+  public void dispatchEntityCreate() throws Exception {
+    final EntityProcessor processor = mock(EntityProcessor.class);
+    dispatch(HttpMethod.POST, "ESAllPrim", processor);
+
+    verify(processor).createEntity(any(ODataRequest.class), any(ODataResponse.class),
+            any(UriInfo.class), any(ContentType.class), any(ContentType.class));
+  }
+
+  @Test
   public void dispatchMedia() throws Exception {
     final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
     dispatch(HttpMethod.GET, "ESMedia(1)/$value", processor);
@@ -280,7 +289,7 @@ public class ODataHandlerTest {
     final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
     dispatch(HttpMethod.POST, "ESMedia", processor);
 
-    verify(processor).createEntity(any(ODataRequest.class), any(ODataResponse.class),
+    verify(processor).createMediaEntity(any(ODataRequest.class), any(ODataResponse.class),
             any(UriInfo.class), any(ContentType.class), any(ContentType.class));
   }
 
