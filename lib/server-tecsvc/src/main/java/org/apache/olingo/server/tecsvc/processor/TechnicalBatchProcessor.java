@@ -49,7 +49,7 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
   }
 
   @Override
-  public void executeBatch(BatchFacade fascade, ODataRequest request, ODataResponse response)
+  public void processBatch(BatchFacade fascade, ODataRequest request, ODataResponse response)
       throws SerializerException, BatchException {
 
     // TODO refactor isContinueOnError
@@ -132,7 +132,7 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
   }
 
   @Override
-  public ODataResponsePart executeChangeSet(BatchFacade fascade, List<ODataRequest> requests) {
+  public ODataResponsePart processChangeSet(BatchFacade fascade, List<ODataRequest> requests) {
     List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
     for (ODataRequest request : requests) {

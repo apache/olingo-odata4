@@ -235,7 +235,7 @@ public class ODataHandlerTest {
     dispatch(HttpMethod.GET, "ESAllPrim/$count", processor);
 
     verify(processor).countEntityCollection(
-        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), eq(ContentType.TEXT_PLAIN));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, "ESAllPrim/$count", processor);
   }
@@ -246,7 +246,7 @@ public class ODataHandlerTest {
     dispatch(HttpMethod.GET, "ESAllPrim(0)/NavPropertyETTwoPrimMany/$count", processor);
 
     verify(processor).countEntityCollection(
-        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), eq(ContentType.TEXT_PLAIN));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
   }
 
   @Test

@@ -580,7 +580,7 @@ public class MockedBatchHandlerTest {
     }
 
     @Override
-    public ODataResponsePart executeChangeSet(BatchFacade fascade, List<ODataRequest> requests) {
+    public ODataResponsePart processChangeSet(BatchFacade fascade, List<ODataRequest> requests) {
       List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
       for (ODataRequest request : requests) {
@@ -595,7 +595,7 @@ public class MockedBatchHandlerTest {
     }
 
     @Override
-    public void executeBatch(BatchFacade fascade, ODataRequest request, ODataResponse response)
+    public void processBatch(BatchFacade fascade, ODataRequest request, ODataResponse response)
         throws BatchException, SerializerException {
       final String boundary = getBoundary(request.getHeader(HttpHeader.CONTENT_TYPE));
       final BatchOptions options = BatchOptions.with().isStrict(true).rawBaseUri(BASE_URI).build();

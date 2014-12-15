@@ -28,6 +28,7 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -89,8 +90,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void countEntityCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
+  public void countEntityCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
+          throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
     blockNavigation(uriInfo);
 
@@ -103,7 +104,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     } else {
       response.setContent(odata.createFixedFormatSerializer().count(entitySet.getCount()));
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
+      response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.TEXT_PLAIN);
     }
   }
 
