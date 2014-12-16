@@ -23,8 +23,6 @@ import java.util.List;
 
 /**
  * REST resource for an <tt>ODataLinkCollection</tt>.
- * 
- * @see org.apache.olingo.client.api.domain.ODataLinkCollection
  */
 public interface LinkCollection {
 

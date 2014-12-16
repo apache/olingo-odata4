@@ -24,6 +24,5 @@ package org.apache.olingo.commons.api.domain;
  * @see CommonODataEntitySet
  * @see CommonODataEntity
  * @see CommonODataProperty
- * @see ODataNoContent
  */
 public interface ODataInvokeResult {}

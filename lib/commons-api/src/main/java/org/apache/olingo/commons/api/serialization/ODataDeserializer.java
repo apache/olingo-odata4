@@ -59,7 +59,7 @@ public interface ODataDeserializer {
    * Gets the ODataError object represented by the given InputStream.
    * 
    * @param input stream to be parsed and de-serialized.
-   * @return
+   * @return parsed ODataError object represented by the given InputStream
    */
   ODataError toError(InputStream input) throws ODataDeserializerException;
 }
