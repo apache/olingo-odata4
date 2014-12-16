@@ -27,54 +27,61 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor interface for handling Entity Media.
+ * Processor interface for handling a single instance of an Entity Reference.
  */
-public interface MediaProcessor extends Processor {
+public interface ReferenceProcessor extends Processor {
 
   /**
-   * Reads entity media data from persistence and puts content and status into the response.
+   * Reads entity reference from persistence and put it as serialized content and status into the response.
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
-   * @param format   requested content type after content negotiation
+   * @param responseFormat   requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
    * @throws SerializerException       if serialization failed
    */
-  void readMedia(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
+  void readReference(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
       throws ODataApplicationException, SerializerException;
 
   /**
-   * Creates entity media data in the persistence and puts content, status, and Location into the response.
+   * Creates entity reference in the persistence and puts content, status, and Location into the response.
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
-   * @param format   requested content type after content negotiation
+   * @param requestFormat   content type of body sent with request
+   * @param responseFormat   requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws DeserializerException     if deserialization failed
+   * @throws DeserializerException     if de-serialization failed
    * @throws SerializerException       if serialization failed
    */
-  void createMedia(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
-      throws ODataApplicationException, DeserializerException, SerializerException;
+  void createReference(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+                    ContentType requestFormat, ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException;
 
   /**
-   * Updates entity media data in the persistence and puts content and status into the response.
+   * Update entity reference in the persistence and puts content, status, and Location into the response.
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
-   * @param format   requested content type after content negotiation
+   * @param requestFormat   content type of body sent with request
+   * @param responseFormat   requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws DeserializerException     if deserialization failed
+   * @throws DeserializerException     if de-serialization failed
    * @throws SerializerException       if serialization failed
    */
-  void updateMedia(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
-      throws ODataApplicationException, DeserializerException, SerializerException;
+  void updateReference(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+                       ContentType requestFormat, ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException;
 
   /**
-   * Deletes entity media data from persistence and puts the status into the response.
+   * Deletes reference to an entity from persistence and puts the status into the response.
+   * Delete on a reference only removes the reference to and not the entity itself
+   * (see chapter "11.4.6.2 Remove a Reference to an Entity")
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
    * @throws ODataApplicationException if the service implementation encounters a failure
    */
-  void deleteMedia(ODataRequest request, ODataResponse response, UriInfo uriInfo) throws ODataApplicationException;
+  void deleteReference(ODataRequest request, ODataResponse response, UriInfo uriInfo)
+          throws ODataApplicationException;
 }

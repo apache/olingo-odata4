@@ -137,6 +137,21 @@ public class DataProvider {
     }
   }
 
+  public Entity create(final EdmEntitySet edmEntitySet) throws DataProviderException {
+    List<Entity> entities = readAll(edmEntitySet).getEntities();
+    Entity entity = new EntityImpl();
+    final List<String> keyNames = edmEntitySet.getEntityType().getKeyPredicateNames();
+    if (keyNames.size() == 1 && keyNames.get(0).equals("PropertyInt16")) {
+      entity.addProperty(createPrimitive("PropertyInt16",
+          entities.isEmpty() ? 1 :
+              (Integer) entities.get(entities.size() - 1).getProperty("PropertyInt16").getValue() + 1));
+    } else {
+      throw new DataProviderException("Key construction not supported!");
+    }
+    entities.add(entity);
+    return entity;
+  }
+
   public byte[] readMedia(final Entity entity) {
     return (byte[]) entity.getProperty(MEDIA_PROPERTY_NAME).asPrimitive();
   }

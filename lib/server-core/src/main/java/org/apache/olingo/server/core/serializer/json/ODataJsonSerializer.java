@@ -51,13 +51,11 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
-import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.utils.ContextURLBuilder;
-import org.apache.olingo.server.core.serializer.utils.ContextURLHelper;
 import org.apache.olingo.server.core.serializer.utils.ExpandSelectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -558,16 +556,5 @@ public class ODataJsonSerializer implements ODataSerializer {
           property.getName(), property.getValue().toString());
     }
     return buffer.getInputStream();
-  }
-
-  @Override
-  public String buildContextURLSelectList(final EdmStructuredType type,
-      final ExpandOption expand, final SelectOption select) throws SerializerException {
-    return ContextURLHelper.buildSelectList(type, expand, select);
-  }
-
-  @Override
-  public String buildContextURLKeyPredicate(final List<UriParameter> keys) throws SerializerException {
-    return ContextURLHelper.buildKeyPredicate(keys);
   }
 }

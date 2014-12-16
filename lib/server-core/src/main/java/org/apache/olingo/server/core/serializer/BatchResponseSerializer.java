@@ -31,8 +31,8 @@ import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.exception.BatchSerializerExecption;
-import org.apache.olingo.server.api.batch.exception.BatchSerializerExecption.MessageKeys;
+import org.apache.olingo.server.api.batch.exception.BatchSerializerException;
+import org.apache.olingo.server.api.batch.exception.BatchSerializerException.MessageKeys;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 
@@ -44,14 +44,14 @@ public class BatchResponseSerializer {
   private static final String CRLF = "\r\n";
 
   public InputStream serialize(final List<ODataResponsePart> responses, final String boundary)
-      throws BatchSerializerExecption {
+      throws BatchSerializerException {
     StringBuilder builder = createBody(responses, boundary);
 
     return new ByteArrayInputStream(builder.toString().getBytes());
   }
 
   private StringBuilder createBody(final List<ODataResponsePart> batchResponses, final String boundary)
-      throws BatchSerializerExecption {
+      throws BatchSerializerException {
     final StringBuilder builder = new StringBuilder();
 
     for (final ODataResponsePart part : batchResponses) {
@@ -68,7 +68,7 @@ public class BatchResponseSerializer {
     return builder;
   }
 
-  private void appendChangeSet(ODataResponsePart part, StringBuilder builder) throws BatchSerializerExecption {
+  private void appendChangeSet(ODataResponsePart part, StringBuilder builder) throws BatchSerializerException {
     final String changeSetBoundary = generateBoundary("changeset");
 
     appendChangeSetHeader(builder, changeSetBoundary);
@@ -84,7 +84,7 @@ public class BatchResponseSerializer {
   }
 
   private void appendBodyPart(ODataResponse response, StringBuilder builder, boolean isChangeSet)
-      throws BatchSerializerExecption {
+      throws BatchSerializerException {
     byte[] body = getBody(response);
 
     appendBodyPartHeader(response, builder, isChangeSet);
@@ -157,7 +157,7 @@ public class BatchResponseSerializer {
   }
 
   private void appendBodyPartHeader(ODataResponse response, StringBuilder builder, boolean isChangeSet)
-      throws BatchSerializerExecption {
+      throws BatchSerializerException {
     appendHeader(HttpHeader.CONTENT_TYPE, HttpContentType.APPLICATION_HTTP, builder);
     appendHeader(BatchParserCommon.HTTP_CONTENT_TRANSFER_ENCODING, BatchParserCommon.BINARY_ENCODING, builder);
 
@@ -166,7 +166,7 @@ public class BatchResponseSerializer {
         appendHeader(BatchParserCommon.HTTP_CONTENT_ID, response.getHeaders().get(BatchParserCommon.HTTP_CONTENT_ID),
             builder);
       } else {
-        throw new BatchSerializerExecption("Missing content id", MessageKeys.MISSING_CONTENT_ID);
+        throw new BatchSerializerException("Missing content id", MessageKeys.MISSING_CONTENT_ID);
       }
     }
   }

@@ -26,19 +26,21 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor interface for handling the service document.
+ * Processor interface for handling an instance of a primitive type, e.g., a primitive property of an entity.
  */
-public interface ServiceDocumentProcessor extends Processor {
+public interface PrimitiveValueProcessor extends PrimitiveProcessor {
 
   /**
-   * Reads service-document information from persistence and puts serialized content and status into the response.
+   * Reads raw value of a primitive-type instance, e.g., of a primitive property of an entity.
+   * If the value is <code>null</code>, the service responds with 204 No Content.
+   * If it is not available, for example due to permissions, the service responds with 404 Not Found.
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
    * @param responseFormat   requested content type after content negotiation
-   * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws SerializerException       if serialization failed
+   * @throws org.apache.olingo.server.api.ODataApplicationException if the service implementation encounters a failure
+   * @throws org.apache.olingo.server.api.serializer.SerializerException       if serialization failed
    */
-  void readServiceDocument(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
+  void readPrimitiveValue(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
       throws ODataApplicationException, SerializerException;
 }

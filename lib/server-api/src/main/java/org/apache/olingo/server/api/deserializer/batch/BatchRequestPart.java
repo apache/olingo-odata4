@@ -47,7 +47,7 @@ public class BatchRequestPart {
    * Creates a new instance of BachRequestPart
    * 
    * @param isChangeSet   True, if this instance represents a change set
-   * @param requests      A single {@link ODataRequest}
+   * @param request       A single {@link ODataRequest}
    */
   public BatchRequestPart(final boolean isChangeSet, final ODataRequest request) {
     this.isChangeSet = isChangeSet;

@@ -47,7 +47,7 @@ public interface ExpressionVisitor<T> {
   /**
    * Called for each traversed {@link Unary} expression
    * @param operator Operator kind
-   * @param Application return value of sub tree
+   * @param operand  return value of sub tree
    * @return Application return value of type T
    * @throws ExpressionVisitException Thrown if an exception while traversing occured
    * @throws ODataApplicationException Thrown by the application
@@ -60,7 +60,7 @@ public interface ExpressionVisitor<T> {
    * @param methodCall Method
    * @param parameters List of application return values created by visiting each method parameter
    * @return Application return value of type T
-   * @throws ExpressionVisitException Thrown if an exception while traversing occured
+   * @throws ExpressionVisitException Thrown if an exception while traversing occurred
    * @throws ODataApplicationException Thrown by the application
    */
   T visitMethodCall(MethodKind methodCall, List<T> parameters)

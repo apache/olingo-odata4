@@ -53,10 +53,11 @@ import org.apache.olingo.server.api.processor.ComplexProcessor;
 import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
-import org.apache.olingo.server.api.processor.MediaProcessor;
+import org.apache.olingo.server.api.processor.MediaEntityProcessor;
 import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveProcessor;
+import org.apache.olingo.server.api.processor.PrimitiveValueProcessor;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
@@ -234,7 +235,7 @@ public class ODataHandlerTest {
     dispatch(HttpMethod.GET, "ESAllPrim/$count", processor);
 
     verify(processor).countEntityCollection(
-        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), eq(ContentType.TEXT_PLAIN));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, "ESAllPrim/$count", processor);
   }
@@ -245,7 +246,7 @@ public class ODataHandlerTest {
     dispatch(HttpMethod.GET, "ESAllPrim(0)/NavPropertyETTwoPrimMany/$count", processor);
 
     verify(processor).countEntityCollection(
-        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), eq(ContentType.TEXT_PLAIN));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
   }
 
   @Test
@@ -258,46 +259,63 @@ public class ODataHandlerTest {
   }
 
   @Test
+  public void dispatchEntityDelete() throws Exception {
+    final EntityProcessor processor = mock(EntityProcessor.class);
+    dispatch(HttpMethod.DELETE, "ESAllPrim(0)", processor);
+
+    verify(processor).deleteEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+  }
+
+  @Test
+  public void dispatchEntityCreate() throws Exception {
+    final EntityProcessor processor = mock(EntityProcessor.class);
+    dispatch(HttpMethod.POST, "ESAllPrim", processor);
+
+    verify(processor).createEntity(any(ODataRequest.class), any(ODataResponse.class),
+            any(UriInfo.class), any(ContentType.class), any(ContentType.class));
+  }
+
+  @Test
   public void dispatchMedia() throws Exception {
-    final MediaProcessor processor = mock(MediaProcessor.class);
+    final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
     dispatch(HttpMethod.GET, "ESMedia(1)/$value", processor);
 
-    verify(processor).readMedia(
-        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+    verify(processor).readMediaEntity(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
   }
 
   @Test
   public void dispatchMediaCreate() throws Exception {
-    final MediaProcessor processor = mock(MediaProcessor.class);
+    final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
     dispatch(HttpMethod.POST, "ESMedia", processor);
 
-    verify(processor).createMedia(
-        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+    verify(processor).createMediaEntity(any(ODataRequest.class), any(ODataResponse.class),
+            any(UriInfo.class), any(ContentType.class), any(ContentType.class));
   }
 
   @Test
-  public void dispatchMediaPut() throws Exception {
-    final MediaProcessor processor = mock(MediaProcessor.class);
+  public void dispatchMediaUpdate() throws Exception {
+    final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
     dispatch(HttpMethod.PUT, "ESMedia(1)/$value", processor);
 
-    verify(processor).updateMedia(
-        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+    verify(processor).updateMediaEntity(any(ODataRequest.class), any(ODataResponse.class),
+            any(UriInfo.class), any(ContentType.class), any(ContentType.class));
   }
 
   @Test
   public void dispatchMediaDelete() throws Exception {
-    final MediaProcessor processor = mock(MediaProcessor.class);
+    final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
     dispatch(HttpMethod.DELETE, "ESMedia(1)/$value", processor);
 
-    verify(processor).deleteMedia(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    verify(processor).deleteEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
   }
 
   @Test
   public void dispatchMediaDeleteIndirect() throws Exception {
-    final MediaProcessor processor = mock(MediaProcessor.class);
+    final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
     dispatch(HttpMethod.DELETE, "ESMedia(1)", processor);
 
-    verify(processor).deleteMedia(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    verify(processor).deleteEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
   }
 
   @Test
@@ -311,11 +329,11 @@ public class ODataHandlerTest {
 
   @Test
   public void dispatchPrimitivePropertyValue() throws Exception {
-    final PrimitiveProcessor processor = mock(PrimitiveProcessor.class);
+    final PrimitiveValueProcessor processor = mock(PrimitiveValueProcessor.class);
     dispatch(HttpMethod.GET, "ESAllPrim(0)/PropertyInt16/$value", processor);
 
-    verify(processor).readPrimitiveAsValue(
-        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+    verify(processor).readPrimitiveValue(any(ODataRequest.class), any(ODataResponse.class),
+            any(UriInfo.class), any(ContentType.class));
   }
 
   @Test

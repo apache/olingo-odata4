@@ -31,10 +31,12 @@ import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.core.deserializer.FixedFormatDeserializerImpl;
 import org.apache.olingo.server.core.serializer.FixedFormatSerializerImpl;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 import org.apache.olingo.server.core.serializer.xml.ODataXmlSerializerImpl;
+import org.apache.olingo.server.core.uri.UriHelperImpl;
 
 public class ODataImpl extends OData {
 
@@ -59,7 +61,7 @@ public class ODataImpl extends OData {
   }
 
   @Override
-  public FixedFormatSerializer createFixedFormatSerializer() throws SerializerException {
+  public FixedFormatSerializer createFixedFormatSerializer() {
     return new FixedFormatSerializerImpl();
   }
 
@@ -76,5 +78,10 @@ public class ODataImpl extends OData {
   @Override
   public FixedFormatDeserializer createFixedFormatDeserializer() {
     return new FixedFormatDeserializerImpl();
+  }
+
+  @Override
+  public UriHelper createUriHelper() {
+    return new UriHelperImpl();
   }
 }

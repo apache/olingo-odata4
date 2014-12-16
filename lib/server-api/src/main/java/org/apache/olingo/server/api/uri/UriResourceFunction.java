@@ -38,7 +38,7 @@ public interface UriResourceFunction extends UriResourcePartTyped {
   /**
    * Convenience method which returns the {@link EdmFunctionImport} which was used in
    * the resource path to define the {@link EdmFunction}.
-   * @return
+   * @return Function Import used in the resource path
    */
   EdmFunctionImport getFunctionImport();
 

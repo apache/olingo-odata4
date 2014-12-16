@@ -19,7 +19,6 @@
 package org.apache.olingo.server.api.serializer;
 
 import java.io.InputStream;
-import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
@@ -28,12 +27,8 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.uri.UriParameter;
-import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
-import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 
 /** OData serializer */
 public interface ODataSerializer {
@@ -114,21 +109,4 @@ public interface ODataSerializer {
    */
   InputStream complexCollection(EdmComplexType type, Property property, ComplexSerializerOptions options)
       throws SerializerException;
-
-  /**
-   * Builds the select-list part of a {@link org.apache.olingo.commons.api.data.ContextURL ContextURL}.
-   * @param type   the {@link EdmStructuredType}
-   * @param expand the $expand option
-   * @param select the $select option
-   * @return a String with the select list
-   */
-  String buildContextURLSelectList(EdmStructuredType type, ExpandOption expand, SelectOption select)
-      throws SerializerException;
-
-  /**
-   * Builds the key-predicate part of a {@link org.apache.olingo.commons.api.data.ContextURL ContextURL}.
-   * @param keys the keys as a list of {@link UriParameter} instances
-   * @return a String with the key predicate
-   */
-  String buildContextURLKeyPredicate(List<UriParameter> keys) throws SerializerException;
 }

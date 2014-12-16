@@ -28,6 +28,7 @@ import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.uri.UriHelper;
 
 /**
  * Root object for serving factory tasks and support loose coupling of implementation (core) from the API.
@@ -67,7 +68,7 @@ public abstract class OData {
    * Creates a new serializer object for rendering content in a fixed format, e.g., for binary output.
    * Serializers are used in Processor implementations.
    */
-  public abstract FixedFormatSerializer createFixedFormatSerializer() throws SerializerException;
+  public abstract FixedFormatSerializer createFixedFormatSerializer();
 
   /**
    * Creates a new deserializer object for reading content in a fixed format, e.g., for binary input.
@@ -89,4 +90,10 @@ public abstract class OData {
    * @param references list of edmx references
    */
   public abstract ServiceMetadata createServiceMetadata(EdmProvider edmProvider, List<EdmxReference> references);
+
+  /**
+   * Creates a new URI helper object for performing URI-related tasks.
+   * It can be used in Processor implementations.
+   */
+  public abstract UriHelper createUriHelper();
 }

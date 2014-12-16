@@ -40,18 +40,18 @@ import org.mockito.Mockito;
 
 public class DataProviderTest {
 
-  private final Edm edm =
-          OData.newInstance().createServiceMetadata(new EdmTechProvider(
-                          Collections.<EdmxReference>emptyList()),
-                          Collections.<EdmxReference>emptyList()).getEdm();
+  private final Edm edm = OData.newInstance().createServiceMetadata(new EdmTechProvider(
+      Collections.<EdmxReference> emptyList()), Collections.<EdmxReference> emptyList())
+      .getEdm();
   private final EdmEntityContainer entityContainer = edm.getEntityContainer(
-          new FullQualifiedName("olingo.odata.test1", "Container"));
+      new FullQualifiedName("olingo.odata.test1", "Container"));
 
   private final EdmEntitySet esAllPrim = entityContainer.getEntitySet("ESAllPrim");
   private final EdmEntitySet esAllKey = entityContainer.getEntitySet("ESAllKey");
   private final EdmEntitySet esCompAllPrim = entityContainer.getEntitySet("ESCompAllPrim");
   private final EdmEntitySet esCollAllPrim = entityContainer.getEntitySet("ESCollAllPrim");
   private final EdmEntitySet esMixPrimCollComp = entityContainer.getEntitySet("ESMixPrimCollComp");
+  private final EdmEntitySet esMedia = entityContainer.getEntitySet("ESMedia");
 
   @Test
   public void esAllPrimEntity() throws Exception {
@@ -152,6 +152,20 @@ public class DataProviderTest {
     //
     Assert.assertEquals(4, outSet.getEntities().get(1).getProperties().size());
     Assert.assertEquals(4, outSet.getEntities().get(2).getProperties().size());
+  }
+
+  @Test
+  public void esMedia() throws Exception {
+    DataProvider dataProvider = new DataProvider();
+    Entity entity = dataProvider.read(esMedia, Arrays.asList(mockParameter("PropertyInt16", "3")));
+    Assert.assertNotNull(dataProvider.readMedia(entity));
+    dataProvider.delete(esMedia, entity);
+    Assert.assertEquals(3, dataProvider.readAll(esMedia).getEntities().size());
+    entity = dataProvider.create(esMedia);
+    Assert.assertEquals(5, entity.getProperty("PropertyInt16").getValue());
+    dataProvider.setMedia(entity, new byte[] { 1, 2, 3, 4 }, "x/y");
+    Assert.assertArrayEquals(new byte[] { 1, 2, 3, 4 }, dataProvider.readMedia(entity));
+    Assert.assertEquals("x/y", entity.getMediaContentType());
   }
 
   private static UriParameter mockParameter(final String name, final String text) {

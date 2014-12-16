@@ -19,26 +19,23 @@
 package org.apache.olingo.server.api.processor;
 
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.serializer.SerializerException;
-import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.ODataServerError;
 
 /**
- * Processor interface for handling the service document.
+ * Processor which is called if any error/exception occurs inside the library or another processor.
  */
-public interface ServiceDocumentProcessor extends Processor {
+public interface ErrorProcessor extends Processor {
 
   /**
-   * Reads service-document information from persistence and puts serialized content and status into the response.
+   * Processes an error/exception. MUST NOT throw an exception!
+   *
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
-   * @param uriInfo  information of a parsed OData URI
+   * @param serverError the server error
    * @param responseFormat   requested content type after content negotiation
-   * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws SerializerException       if serialization failed
    */
-  void readServiceDocument(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
-      throws ODataApplicationException, SerializerException;
+  public void processError(ODataRequest request, ODataResponse response, ODataServerError serverError,
+                           ContentType responseFormat);
 }

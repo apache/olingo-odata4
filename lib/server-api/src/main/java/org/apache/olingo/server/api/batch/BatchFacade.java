@@ -30,8 +30,8 @@ import org.apache.olingo.server.api.processor.BatchProcessor;
  * Within a {@link BatchProcessor} implementation BatchRequestsParts should be passed to
  * {@link BatchFacade#handleBatchRequest(BatchRequestPart)}. If only if the BatchRequests part represents
  * a change set, the request will be delegated to
- * {@link BatchProcessor#executeChangeSet(BatchFacade, java.util.List, BatchRequestPart)}. Otherwise the requests
- * will be directly executed.
+ * {@link org.apache.olingo.server.api.processor.BatchProcessor#processChangeSet(BatchFacade, java.util.List)}.
+ * Otherwise the requests will be directly executed.
  * 
  * The processor implementation could use {@link BatchFacade#handleODataRequest(ODataRequest)} to processes
  * requests in a change set.

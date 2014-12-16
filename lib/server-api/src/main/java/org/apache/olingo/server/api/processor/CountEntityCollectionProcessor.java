@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.api.processor;
 
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -26,7 +25,7 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor interface for handling counting a collection of entities, e.g., an Entity Set.
+ * Processor interface for handling counting a collection of entities, e.g. an Entity Set.
  */
 public interface CountEntityCollectionProcessor extends Processor {
 
@@ -36,10 +35,9 @@ public interface CountEntityCollectionProcessor extends Processor {
    * @param request  OData request object containing raw HTTP information.
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
-   * @param format   requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
    * @throws SerializerException       if serialization failed
    */
-  void countEntityCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType format)
+  void countEntityCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo)
       throws ODataApplicationException, SerializerException;
 }

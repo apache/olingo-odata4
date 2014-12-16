@@ -27,14 +27,12 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor interface for handling a collection of primitive-type instances, e.g.,
- * a property of an entity defined as collection of primitive-type instances.
+ * Processor interface for handling Entity Media.
  */
-public interface PrimitiveCollectionProcessor extends Processor {
+public interface MediaEntityProcessor extends EntityProcessor {
 
   /**
-   * Reads primitive-type collection.
-   * If it is not available, for example due to permissions, the service responds with 404 Not Found.
+   * Reads entity media data from persistence and puts content and status into the response.
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
@@ -42,15 +40,11 @@ public interface PrimitiveCollectionProcessor extends Processor {
    * @throws ODataApplicationException if the service implementation encounters a failure
    * @throws SerializerException       if serialization failed
    */
-  void readPrimitiveCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-                               ContentType responseFormat)
+  void readMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
       throws ODataApplicationException, SerializerException;
 
   /**
-   * Update (replace) primitive-type collection with send data in the persistence and
-   * puts content, status, and Location into the response.
-   * Update of primitive-type collection is equal to a complete replace
-   * of the property (see chapter "11.4.9.4 Update a Collection Property").
+   * Creates an entity with send media data in the persistence and puts content, status and Location into the response.
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
@@ -60,19 +54,22 @@ public interface PrimitiveCollectionProcessor extends Processor {
    * @throws DeserializerException     if deserialization failed
    * @throws SerializerException       if serialization failed
    */
-  void updatePrimitiveCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-                       ContentType requestFormat, ContentType responseFormat)
+  void createMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+                    ContentType requestFormat, ContentType responseFormat)
           throws ODataApplicationException, DeserializerException, SerializerException;
 
   /**
-   * Deletes primitive-type collection from an entity and puts the status into the response.
-   * Deletion for primitive-type collection is equal to
-   * set the content to <code>EMPTY</code>.
+   * Updates entity media data in the persistence and puts content and status into the response.
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
+   * @param requestFormat   content type of body sent with request
+   * @param responseFormat  requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
+   * @throws DeserializerException     if deserialization failed
+   * @throws SerializerException       if serialization failed
    */
-  void deletePrimitiveCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo)
-          throws ODataApplicationException;
+  void updateMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+                         ContentType requestFormat, ContentType responseFormat)
+      throws ODataApplicationException, DeserializerException, SerializerException;
 }

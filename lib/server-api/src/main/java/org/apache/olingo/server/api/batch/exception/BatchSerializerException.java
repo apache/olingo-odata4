@@ -16,25 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.processor;
+package org.apache.olingo.server.api.batch.exception;
 
-import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.serializer.SerializerException;
 
-/**
- * Processor which is called if any exception occurs inside the library or another processor.
- */
-public interface ExceptionProcessor extends Processor {
+public class BatchSerializerException extends SerializerException {
 
-  /**
-   * Processes an exception. MUST NOT throw an exception!
-   * @param request     the request
-   * @param response    the response
-   * @param serverError the server error
-   * @param format      the requested format for the error message
-   */
-  public void processException(ODataRequest request, ODataResponse response, ODataServerError serverError,
-      ContentType format);
+  private static final long serialVersionUID = 2634433974342796905L;
+
+  public static enum MessageKeys implements MessageKey {
+    MISSING_CONTENT_ID;
+
+    @Override
+    public String getKey() {
+      return name();
+    }
+  }
+
+  public BatchSerializerException(final String developmentMessage, final MessageKey messageKey,
+      final String... parameters) {
+    super(developmentMessage, messageKey, parameters);
+  }
+
+  @Override
+  protected String getBundleName() {
+    return DEFAULT_SERVER_BUNDLE_NAME;
+  }
+
 }

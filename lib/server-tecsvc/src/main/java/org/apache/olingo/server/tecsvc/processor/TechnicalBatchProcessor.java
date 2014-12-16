@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -32,11 +31,11 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.BatchFacade;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.batch.exception.BatchSerializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
-import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
 public class TechnicalBatchProcessor extends TechnicalProcessor implements BatchProcessor {
@@ -48,9 +47,8 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
   }
 
   @Override
-  public void executeBatch(BatchFacade fascade, ODataRequest request, ODataResponse response)
-      throws SerializerException, BatchDeserializerException {
-
+  public void processBatch(BatchFacade fascade, ODataRequest request, ODataResponse response)
+      throws BatchSerializerException, BatchDeserializerException {
     // TODO refactor isContinueOnError
     boolean continueOnError = isContinueOnError(request);
 
@@ -131,33 +129,30 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
   }
 
   @Override
-  public ODataResponsePart executeChangeSet(BatchFacade fascade, List<ODataRequest> requests) {
+  public ODataResponsePart processChangeSet(BatchFacade fascade, List<ODataRequest> requests)
+          throws BatchDeserializerException {
     List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
     for (ODataRequest request : requests) {
-      try {
-        final ODataResponse oDataResponse = fascade.handleODataRequest(request);
-        final int statusCode = oDataResponse.getStatusCode();
+      final ODataResponse oDataResponse = fascade.handleODataRequest(request);
+      final int statusCode = oDataResponse.getStatusCode();
 
-        if (statusCode < 400) {
-          responses.add(oDataResponse);
-        } else {
-          // Rollback
-          // ...
+      if (statusCode < 400) {
+        responses.add(oDataResponse);
+      } else {
+        // Rollback
+        // ...
 
-          // OData Version 4.0 Part 1: Protocol Plus Errata 01
-          // 11.7.4 Responding to a Batch Request
-          //
-          // When a request within a change set fails, the change set response is not represented using
-          // the multipart/mixed media type. Instead, a single response, using the application/http media type
-          // and a Content-Transfer-Encoding header with a value of binary, is returned that applies to all requests
-          // in the change set and MUST be formatted according to the Error Handling defined
-          // for the particular response format.
+        // OData Version 4.0 Part 1: Protocol Plus Errata 01
+        // 11.7.4 Responding to a Batch Request
+        //
+        // When a request within a change set fails, the change set response is not represented using
+        // the multipart/mixed media type. Instead, a single response, using the application/http media type
+        // and a Content-Transfer-Encoding header with a value of binary, is returned that applies to all requests
+        // in the change set and MUST be formatted according to the Error Handling defined
+        // for the particular response format.
 
-          return new ODataResponsePart(oDataResponse, false);
-        }
-      } catch (BatchDeserializerException e) {
-        throw new ODataRuntimeException(e);
+        return new ODataResponsePart(oDataResponse, false);
       }
     }
 

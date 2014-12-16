@@ -80,8 +80,8 @@ public class BatchPartHandler {
     return response;
   }
 
-  private ODataResponsePart handleChangeSet(BatchRequestPart request) {
-    return batchProcessor.executeChangeSet(batchFascade, request.getRequests());
+  private ODataResponsePart handleChangeSet(BatchRequestPart request) throws BatchDeserializerException {
+    return batchProcessor.processChangeSet(batchFascade, request.getRequests());
   }
 
 }

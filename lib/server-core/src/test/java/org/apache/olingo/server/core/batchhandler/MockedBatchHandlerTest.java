@@ -18,7 +18,11 @@
  */
 package org.apache.olingo.server.core.batchhandler;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -40,22 +44,18 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.batch.BatchFacade;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.batch.exception.BatchSerializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
-import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.ODataHandler;
-import org.apache.olingo.server.core.batchhandler.BatchHandler;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class MockedBatchHandlerTest {
 
@@ -579,7 +579,7 @@ public class MockedBatchHandlerTest {
     }
 
     @Override
-    public ODataResponsePart executeChangeSet(BatchFacade fascade, List<ODataRequest> requests) {
+    public ODataResponsePart processChangeSet(BatchFacade fascade, List<ODataRequest> requests) {
       List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
       for (ODataRequest request : requests) {
@@ -594,8 +594,8 @@ public class MockedBatchHandlerTest {
     }
 
     @Override
-    public void executeBatch(BatchFacade fascade, ODataRequest request, ODataResponse response)
-        throws SerializerException, BatchDeserializerException {
+    public void processBatch(BatchFacade fascade, ODataRequest request, ODataResponse response)
+        throws BatchDeserializerException, BatchSerializerException {
       final String boundary = getBoundary(request.getHeader(HttpHeader.CONTENT_TYPE));
       final BatchOptions options = BatchOptions.with().isStrict(true).rawBaseUri(BASE_URI).build();
       final List<BatchRequestPart> parts =
