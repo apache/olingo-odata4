@@ -72,7 +72,8 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
       if (baseTypeName != null) {
         baseType = buildBaseType(baseTypeName);
       }
-      if (baseType == null) {
+      if (baseType == null
+          || (baseType.isAbstract() && ((AbstractEdmEntityType) baseType).getKeyPropertyRefs().size() == 0)) {
         entityBaseType = null;
 
         final List<PropertyRef> key = entityType.getKey();

@@ -116,7 +116,112 @@ public class EdmEntityTypeImplTest {
 
     typeWithComplexKey = EdmEntityTypeImpl.getInstance(edm, typeWithComplexKeyName, typeWithComplexKeyProvider);
   }
+  
+  @Test
+  public void testAbstractBaseTypeWithoutKey() throws Exception {
+    EdmProvider provider = mock(EdmProvider.class);
+    EdmProviderImpl edm = new EdmProviderImpl(provider);
 
+    FullQualifiedName baseName = new FullQualifiedName("namespace", "BaseTypeName");
+    EntityType baseType = new EntityType();
+    baseType.setName(baseName.getName());
+    List<Property> properties = new ArrayList<Property>();
+    properties.add(new Property().setName("Id").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    properties.add(new Property().setName("Name").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    baseType.setProperties(properties);
+    List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
+    navigationProperties.add(new NavigationProperty().setName("nav1"));
+    baseType.setNavigationProperties(navigationProperties);
+    when(provider.getEntityType(baseName)).thenReturn(baseType);
+    baseType.setAbstract(true);
+    EdmEntityType edmAbstarctBaseType = EdmEntityTypeImpl.getInstance(edm, baseName, baseType);
+    
+    FullQualifiedName typeName = new FullQualifiedName("namespace", "typeName");
+    EntityType type = new EntityType();
+    type.setName(typeName.getName());
+    type.setBaseType(baseName);
+    List<Property> typeProperties = new ArrayList<Property>();
+    typeProperties.add(new Property().setName("address").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    typeProperties.add(new Property().setName("email").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    type.setProperties(typeProperties);
+    List<PropertyRef> key = new ArrayList<PropertyRef>();
+    key.add(new PropertyRef().setPropertyName("email"));
+    type.setKey(key);
+    List<NavigationProperty> typeNavigationProperties = new ArrayList<NavigationProperty>();
+    typeNavigationProperties.add(new NavigationProperty().setName("nav2"));
+    type.setNavigationProperties(typeNavigationProperties);
+    when(provider.getEntityType(typeName)).thenReturn(type);
+
+    EdmEntityType edmType = EdmEntityTypeImpl.getInstance(edm, typeName, type);
+    
+    assertEquals(2, edmAbstarctBaseType.getPropertyNames().size());
+    
+    assertEquals(1, edmType.getKeyPropertyRefs().size());
+    assertEquals("email", edmType.getKeyPredicateNames().get(0));
+    
+    assertEquals(4, edmType.getPropertyNames().size());
+    assertEquals("Id", edmType.getPropertyNames().get(0));
+    assertEquals("Name", edmType.getPropertyNames().get(1));
+    assertEquals("address", edmType.getPropertyNames().get(2));
+    assertEquals("email", edmType.getPropertyNames().get(3));
+    
+    assertEquals(2, edmType.getNavigationPropertyNames().size());
+    assertEquals("nav1", edmType.getNavigationPropertyNames().get(0));
+    assertEquals("nav2", edmType.getNavigationPropertyNames().get(1));
+  }
+  
+  @Test
+  public void testAbstractBaseTypeWithtKey() throws Exception {
+    EdmProvider provider = mock(EdmProvider.class);
+    EdmProviderImpl edm = new EdmProviderImpl(provider);
+
+    FullQualifiedName baseName = new FullQualifiedName("namespace", "BaseTypeName");
+    EntityType baseType = new EntityType();
+    baseType.setName(baseName.getName());
+    List<Property> properties = new ArrayList<Property>();
+    properties.add(new Property().setName("Id").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    properties.add(new Property().setName("Name").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    baseType.setProperties(properties);
+    List<PropertyRef> key = new ArrayList<PropertyRef>();
+    key.add(new PropertyRef().setPropertyName("Id"));
+    baseType.setKey(key);
+    List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
+    navigationProperties.add(new NavigationProperty().setName("nav1"));
+    baseType.setNavigationProperties(navigationProperties);
+    when(provider.getEntityType(baseName)).thenReturn(baseType);
+    baseType.setAbstract(true);
+    EdmEntityType edmAbstarctBaseType = EdmEntityTypeImpl.getInstance(edm, baseName, baseType);
+    
+    FullQualifiedName typeName = new FullQualifiedName("namespace", "typeName");
+    EntityType type = new EntityType();
+    type.setName(typeName.getName());
+    type.setBaseType(baseName);
+    List<Property> typeProperties = new ArrayList<Property>();
+    typeProperties.add(new Property().setName("address").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    typeProperties.add(new Property().setName("email").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    type.setProperties(typeProperties);
+    List<NavigationProperty> typeNavigationProperties = new ArrayList<NavigationProperty>();
+    typeNavigationProperties.add(new NavigationProperty().setName("nav2"));
+    type.setNavigationProperties(typeNavigationProperties);
+    when(provider.getEntityType(typeName)).thenReturn(type);
+    EdmEntityType edmType = EdmEntityTypeImpl.getInstance(edm, typeName, type);
+    
+    assertEquals(2, edmAbstarctBaseType.getPropertyNames().size());
+    
+    assertEquals(1, edmType.getKeyPropertyRefs().size());
+    assertEquals("Id", edmType.getKeyPredicateNames().get(0));
+    
+    assertEquals(4, edmType.getPropertyNames().size());
+    assertEquals("Id", edmType.getPropertyNames().get(0));
+    assertEquals("Name", edmType.getPropertyNames().get(1));
+    assertEquals("address", edmType.getPropertyNames().get(2));
+    assertEquals("email", edmType.getPropertyNames().get(3));
+    
+    assertEquals(2, edmType.getNavigationPropertyNames().size());
+    assertEquals("nav1", edmType.getNavigationPropertyNames().get(0));
+    assertEquals("nav2", edmType.getNavigationPropertyNames().get(1));
+  }
+  
   @Test
   public void hasStream() {
     assertFalse(typeWithBaseType.hasStream());
