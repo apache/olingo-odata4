@@ -21,7 +21,6 @@ package org.apache.olingo.server.tecsvc.processor;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 import org.apache.olingo.commons.api.format.ContentType;
@@ -39,7 +38,6 @@ import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
 public class TechnicalBatchProcessor extends TechnicalProcessor implements BatchProcessor {
-  // TODO remove
   private static final String PREFERENCE_CONTINUE_ON_ERROR = "odata.continue-on-error";
 
   public TechnicalBatchProcessor(DataProvider dataProvider) {
@@ -49,10 +47,9 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
   @Override
   public void processBatch(BatchFacade fascade, ODataRequest request, ODataResponse response)
       throws BatchSerializerException, BatchDeserializerException {
-    // TODO refactor isContinueOnError
     boolean continueOnError = isContinueOnError(request);
 
-    final String boundary = getBoundary(request.getHeader(HttpHeader.CONTENT_TYPE));
+    final String boundary = fascade.extractBoundaryFromContentType(request.getHeader(HttpHeader.CONTENT_TYPE));
     final BatchOptions options = BatchOptions.with()
                                          .rawBaseUri(request.getRawBaseUri())
                                          .rawServiceResolutionUri(request.getRawServiceResolutionUri()).build();
@@ -82,7 +79,6 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
     response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
   }
 
-  // TODO refactor isContinueOnError
   private boolean isContinueOnError(ODataRequest request) {
     final List<String> preferValues = request.getHeaders(HttpHeader.PREFER);
 
@@ -94,38 +90,6 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
       }
     }
     return false;
-
-  }
-
-  // TODO refactor getBoundary
-  private String getBoundary(String contentType) {
-    if (contentType == null) {
-      throw new IllegalArgumentException("Content mustn`t be null.");
-    }
-
-    if (contentType.toLowerCase(Locale.ENGLISH).startsWith("multipart/mixed")) {
-      final String[] parameter = contentType.split(";");
-
-      for (final String pair : parameter) {
-        final String[] attrValue = pair.split("=");
-        if (attrValue.length == 2 && "boundary".equals(attrValue[0].trim().toLowerCase(Locale.ENGLISH))) {
-          if (attrValue[1].matches("([a-zA-Z0-9_\\-\\.'\\+]{1,70})|\"([a-zA-Z0-9_\\-\\.'\\+\\s\\" +
-              "(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\"")) {
-
-            String boundary = attrValue[1].trim();
-            if (boundary.matches("\".*\"")) {
-              boundary = boundary.replace("\"", "");
-            }
-
-            return boundary;
-          } else {
-            throw new IllegalArgumentException("Invalid boundary");
-          }
-        }
-
-      }
-    }
-    throw new IllegalArgumentException("Content type is not multipart mixed.");
   }
 
   @Override

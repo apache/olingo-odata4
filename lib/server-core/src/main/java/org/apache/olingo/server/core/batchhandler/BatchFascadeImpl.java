@@ -26,6 +26,7 @@ import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.core.ODataHandler;
+import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 
 public class BatchFascadeImpl implements BatchFacade {
   private final BatchPartHandler partHandler;
@@ -43,5 +44,10 @@ public class BatchFascadeImpl implements BatchFacade {
   @Override
   public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchDeserializerException {
     return partHandler.handleBatchRequest(request);
+  }
+
+  @Override
+  public String extractBoundaryFromContentType(String contentType) throws BatchDeserializerException {
+    return BatchParserCommon.getBoundary(contentType, 0);
   }
 }

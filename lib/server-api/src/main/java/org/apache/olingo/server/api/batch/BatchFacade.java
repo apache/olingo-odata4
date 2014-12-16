@@ -55,4 +55,13 @@ public interface BatchFacade {
    * @throws BatchDeserializerException
    */
   public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchDeserializerException;
+  
+  /**
+   * Extracts the boundary of a multipart/mixed header. 
+   * See RFC 2046#5.1
+   * 
+   * @param contentType    Content Type
+   * @return               Boundary
+   */
+  public String extractBoundaryFromContentType(String contentType) throws BatchDeserializerException;
 }
