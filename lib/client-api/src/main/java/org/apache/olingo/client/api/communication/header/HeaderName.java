@@ -153,8 +153,6 @@ public enum HeaderName {
    * request), and a server MAY honor the header for HTTP POST, PUT, PATCH, and MERGE requests. A Prefer header with a
    * value of “return-content” MUST NOT be specified on a DELETE request, a batch request as a whole, or a PUT request
    * to update a named stream.
-   *
-   * @see ODataPreferenceNames.
    */
   prefer("Prefer", Arrays.asList(ODataServiceVersion.V30, ODataServiceVersion.V40)),
   /**

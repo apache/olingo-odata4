@@ -33,7 +33,6 @@ import org.apache.olingo.commons.api.http.HttpMethod;
  * @see org.apache.olingo.client.api.communication.request.batch.v3.BatchRequestFactory
  * @see org.apache.olingo.client.api.communication.request.batch.v4.BatchRequestFactory
  * @see org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory
- * @see org.apache.olingo.client.api.communication.request.streamed.StreamedRequestFactory
  */
 public interface ODataRequest {
 

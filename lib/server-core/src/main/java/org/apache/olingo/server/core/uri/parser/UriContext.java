@@ -26,6 +26,10 @@ import org.apache.olingo.server.core.uri.queryoption.SelectItemImpl;
 
 import java.util.Stack;
 
+/**
+ * UriContext object used for holding information for URI parsing.
+ *
+ */
 public class UriContext {
 
   public static class LambdaVariables {
@@ -48,11 +52,14 @@ public class UriContext {
   // CHECKSTYLE:OFF (Maven checkstyle)
   /**
    * Set within method
-   * {@link #visitExpandItem(org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandPathContext ctx)} and {@link
-   * #visitExpandPathExtension(final
-   * ExpandPathExtensionContext ctx)} to allow nodes
+   * {@link org.apache.olingo.server.core.uri.antlr.UriParserBaseVisitor#visitExpandItem(
+   * org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandItemContext ctx)}
+   * and {@link
+   * org.apache.olingo.server.core.uri.antlr.UriParserBaseVisitor#visitExpandPathExtension(
+   * org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandPathExtensionContext ctx)} to allow nodes
    * deeper in the expand tree at
-   * {@link #visitExpandPathExtension (org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandPathExtensionContext ctx)}
+   * {@link org.apache.olingo.server.core.uri.antlr.UriParserBaseVisitor#visitExpandPathExtension(
+   * org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandPathExtensionContext ctx)}
    * appending path
    * segments to the currently processed {@link ExpandItemImpl}.
    */
@@ -61,10 +68,12 @@ public class UriContext {
 
   /**
    * Set within method
-   * {@link #visitSelectItem(org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectItemContext ctx)} to allow
+   * {@link org.apache.olingo.server.core.uri.antlr.UriParserBaseVisitor#visitSelectItem(
+   * org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectItemContext ctx)} to allow
    * nodes
    * deeper in the expand tree at
-   * {@link #visitSelectSegment(org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectSegmentContext ctx)}
+   * {@link org.apache.olingo.server.core.uri.antlr.UriParserBaseVisitor#visitSelectSegment(
+   * org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectSegmentContext ctx)}
    * appending path segments to the
    * currently processed {@link SelectItemImpl}.
    */

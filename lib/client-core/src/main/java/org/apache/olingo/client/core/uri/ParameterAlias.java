@@ -40,7 +40,7 @@ public class ParameterAlias {
   /**
    * Gets parameter alias.
    *
-   * @return
+   * @return parameter alias
    */
   public String getAlias() {
     return alias;

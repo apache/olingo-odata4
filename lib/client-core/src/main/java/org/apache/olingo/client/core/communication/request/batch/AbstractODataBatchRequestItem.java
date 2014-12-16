@@ -78,7 +78,6 @@ public abstract class AbstractODataBatchRequestItem extends AbstractODataStreame
    * <p>
    * Use this method to stream changeset items.
    *
-   * @param request request to be batched.
    * @param contentId changeset item id.
    */
   protected void streamRequestHeader(final String contentId) {

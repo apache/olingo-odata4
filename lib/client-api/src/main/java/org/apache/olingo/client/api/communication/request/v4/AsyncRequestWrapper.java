@@ -50,7 +50,7 @@ public interface AsyncRequestWrapper<R extends ODataResponse> {
   /**
    * execute the request for the first time.
    *
-   * @return
+   * @return the current AsyncRequestWrapper instance.
    */
   AsyncResponseWrapper<R> execute();
 }
