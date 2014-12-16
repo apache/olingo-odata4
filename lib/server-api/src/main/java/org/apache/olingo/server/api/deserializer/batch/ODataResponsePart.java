@@ -54,11 +54,11 @@ public class ODataResponsePart {
    * A list of ODataResponseParts can be combined by the BatchSerializer to a single
    * OData batch response.
    *  
-   * @param responses     A single {@link ODataResponse}
+   * @param response      A single {@link ODataResponse}
    * @param isChangeSet   True this ODataResponsePart represents a change set, otherwise false
    */
   public ODataResponsePart(ODataResponse response, boolean isChangeSet) {
-    this.responses = Arrays.asList(new ODataResponse[] { response });
+    this.responses = Arrays.asList(response);
     this.isChangeSet = isChangeSet;
   }
   

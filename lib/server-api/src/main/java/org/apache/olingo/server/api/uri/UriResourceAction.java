@@ -35,7 +35,7 @@ public interface UriResourceAction extends UriResourcePartTyped {
   /**
    * Convenience method which returns the {@link EdmActionImport} which was used in
    * the resource path to define the {@link EdmAction}.
-   * @return
+   * @return Action Import used in the resource path
    */
   EdmActionImport getActionImport();
 
