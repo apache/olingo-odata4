@@ -75,6 +75,8 @@ public class SchemaProvider {
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETTwoBaseTwoKeyNav));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETCompMixPrimCollComp));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETKeyPrimNav));
+    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAbstract));
+    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAbstractBase));
 
     // ComplexTypes
     List<ComplexType> complexType = new ArrayList<ComplexType>();

@@ -71,11 +71,10 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
     if (!baseTypeChecked) {
       if (baseTypeName != null) {
         baseType = buildBaseType(baseTypeName);
+        entityBaseType = (EdmEntityType) baseType;
       }
       if (baseType == null
           || (baseType.isAbstract() && ((AbstractEdmEntityType) baseType).getKeyPropertyRefs().size() == 0)) {
-        entityBaseType = null;
-
         final List<PropertyRef> key = entityType.getKey();
         if (key != null) {
           final List<EdmKeyPropertyRef> edmKey = new ArrayList<EdmKeyPropertyRef>();
@@ -84,8 +83,6 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
           }
           setEdmKeyPropertyRef(edmKey);
         }
-      } else {
-        entityBaseType = (EdmEntityType) baseType;
       }
       baseTypeChecked = true;
     }

@@ -127,15 +127,21 @@ public class MetadataDocumentTest {
             + "IncludeInServiceDocument=\"false\"/>"));
 
     assertThat(metadata, containsString("</EntityContainer></Schema></edmx:DataServices></edmx:Edmx>"));
+
+    // BaseTypeCheck
+    assertThat(metadata, containsString("<EntityType Name=\"ETBase\" BaseType=\"olingo.odata.test1.ETTwoPrim\">"));
+    assertThat(metadata, containsString("<EntityType Name=\"ETAbstract\" Abstract=\"true\"/>"));
+    assertThat(metadata,
+        containsString("<EntityType Name=\"ETAbstractBase\" BaseType=\"olingo.odata.test1.ETAbstract\">"));
   }
 
   /**
    * <code>
-   *  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml">
-   *    <edmx:Include Namespace="Org.OData.Core.V1" Alias="Core"/>
-   *  </edmx:Reference>
+   * <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml">
+   * <edmx:Include Namespace="Org.OData.Core.V1" Alias="Core"/>
+   * </edmx:Reference>
    * </code>
-   *
+   * 
    * @return default emdx reference
    */
   private List<EdmxReference> getEdmxReferences() {

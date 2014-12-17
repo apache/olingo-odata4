@@ -154,6 +154,7 @@ public class EdmEntityTypeImplTest {
 
     EdmEntityType edmType = EdmEntityTypeImpl.getInstance(edm, typeName, type);
     
+    assertNotNull(edmType.getBaseType());
     assertEquals(2, edmAbstarctBaseType.getPropertyNames().size());
     
     assertEquals(1, edmType.getKeyPropertyRefs().size());
@@ -206,6 +207,7 @@ public class EdmEntityTypeImplTest {
     when(provider.getEntityType(typeName)).thenReturn(type);
     EdmEntityType edmType = EdmEntityTypeImpl.getInstance(edm, typeName, type);
     
+    assertNotNull(edmType.getBaseType());
     assertEquals(2, edmAbstarctBaseType.getPropertyNames().size());
     
     assertEquals(1, edmType.getKeyPropertyRefs().size());

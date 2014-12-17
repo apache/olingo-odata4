@@ -72,6 +72,9 @@ public class EntityTypeProvider {
   public static final FullQualifiedName nameETTwoKeyTwoPrim = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETTwoKeyTwoPrim");
   public static final FullQualifiedName nameETTwoPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETTwoPrim");
+  public static final FullQualifiedName nameETAbstract = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETAbstract");
+  public static final FullQualifiedName nameETAbstractBase = new FullQualifiedName(SchemaProvider.NAMESPACE,
+      "ETAbstractBase");
 
   public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
     if (entityTypeName.equals(nameETAllPrim)) {
@@ -401,6 +404,18 @@ public class EntityTypeProvider {
           .setProperties(
               Arrays.asList(PropertyProvider.propertyInt16_NotNullable,
                   PropertyProvider.propertyMixedPrimCollComp_CTMixPrimCollComp));
+    } else if (entityTypeName.equals(nameETAbstract)) {
+      return new EntityType()
+          .setName("ETAbstract")
+          .setAbstract(true);
+
+    } else if (entityTypeName.equals(nameETAbstractBase)) {
+      return new EntityType()
+          .setName("ETAbstractBase")
+          .setBaseType(nameETAbstract)
+          .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString));
     }
 
     return null;

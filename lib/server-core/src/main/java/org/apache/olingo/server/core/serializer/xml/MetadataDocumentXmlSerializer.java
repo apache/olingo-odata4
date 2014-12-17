@@ -105,7 +105,8 @@ public class MetadataDocumentXmlSerializer {
   private static final String URI = "Uri";
   private static final String SCHEMA = "Schema";
   private static final String DATA_SERVICES = "DataServices";
-
+  private static final String ABSTRACT = "Abstract";
+  
   private final ServiceMetadata serviceMetadata;
 
   private final static String EDMX = "Edmx";
@@ -404,6 +405,10 @@ public class MetadataDocumentXmlSerializer {
 
       if (entityType.getBaseType() != null) {
         writer.writeAttribute(XML_BASE_TYPE, getFullQualifiedName(entityType.getBaseType(), false));
+      }
+      
+      if(entityType.isAbstract()){
+        writer.writeAttribute(ABSTRACT, "true");
       }
 
       appendKey(writer, entityType);
