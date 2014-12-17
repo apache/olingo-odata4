@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -222,22 +221,31 @@ public class ODataHandlerTest {
 
   @Test
   public void dispatchEntitySet() throws Exception {
+    final String uri = "ESAllPrim";
     final EntityCollectionProcessor processor = mock(EntityCollectionProcessor.class);
-    dispatch(HttpMethod.GET, "ESAllPrim", processor);
 
+    dispatch(HttpMethod.GET, uri, processor);
     verify(processor).readEntityCollection(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
   }
 
   @Test
   public void dispatchEntitySetCount() throws Exception {
+    final String uri = "ESAllPrim/$count";
     final CountEntityCollectionProcessor processor = mock(CountEntityCollectionProcessor.class);
-    dispatch(HttpMethod.GET, "ESAllPrim/$count", processor);
 
+    dispatch(HttpMethod.GET, uri, processor);
     verify(processor).countEntityCollection(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
-    dispatchMethodNotAllowed(HttpMethod.POST, "ESAllPrim/$count", processor);
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
   }
 
   @Test
@@ -251,63 +259,45 @@ public class ODataHandlerTest {
 
   @Test
   public void dispatchEntity() throws Exception {
+    final String uri = "ESAllPrim(0)";
     final EntityProcessor processor = mock(EntityProcessor.class);
-    dispatch(HttpMethod.GET, "ESAllPrim(0)", processor);
 
+    dispatch(HttpMethod.GET, uri, processor);
     verify(processor).readEntity(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
-  }
 
-  @Test
-  public void dispatchEntityDelete() throws Exception {
-    final EntityProcessor processor = mock(EntityProcessor.class);
-    dispatch(HttpMethod.DELETE, "ESAllPrim(0)", processor);
-
+    dispatch(HttpMethod.DELETE, uri, processor);
     verify(processor).deleteEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
-  }
 
-  @Test
-  public void dispatchEntityCreate() throws Exception {
-    final EntityProcessor processor = mock(EntityProcessor.class);
     dispatch(HttpMethod.POST, "ESAllPrim", processor);
+    verify(processor).createEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class), any(ContentType.class));
 
-    verify(processor).createEntity(any(ODataRequest.class), any(ODataResponse.class),
-            any(UriInfo.class), any(ContentType.class), any(ContentType.class));
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
   }
 
   @Test
   public void dispatchMedia() throws Exception {
+    final String uri = "ESMedia(1)/$value";
     final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
-    dispatch(HttpMethod.GET, "ESMedia(1)/$value", processor);
 
+    dispatch(HttpMethod.GET, uri, processor);
     verify(processor).readMediaEntity(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
-  }
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
-  @Test
-  public void dispatchMediaCreate() throws Exception {
-    final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
     dispatch(HttpMethod.POST, "ESMedia", processor);
+    verify(processor).createMediaEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class), any(ContentType.class));
 
-    verify(processor).createMediaEntity(any(ODataRequest.class), any(ODataResponse.class),
-            any(UriInfo.class), any(ContentType.class), any(ContentType.class));
-  }
+    dispatch(HttpMethod.PUT, uri, processor);
+    verify(processor).updateMediaEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class), any(ContentType.class));
 
-  @Test
-  public void dispatchMediaUpdate() throws Exception {
-    final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
-    dispatch(HttpMethod.PUT, "ESMedia(1)/$value", processor);
-
-    verify(processor).updateMediaEntity(any(ODataRequest.class), any(ODataResponse.class),
-            any(UriInfo.class), any(ContentType.class), any(ContentType.class));
-  }
-
-  @Test
-  public void dispatchMediaDelete() throws Exception {
-    final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
-    dispatch(HttpMethod.DELETE, "ESMedia(1)/$value", processor);
-
+    dispatch(HttpMethod.DELETE, uri, processor);
     verify(processor).deleteEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
   }
 
   @Test
@@ -320,47 +310,77 @@ public class ODataHandlerTest {
 
   @Test
   public void dispatchPrimitiveProperty() throws Exception {
+    final String uri = "ESAllPrim(0)/PropertyInt16";
     final PrimitiveProcessor processor = mock(PrimitiveProcessor.class);
-    dispatch(HttpMethod.GET, "ESAllPrim(0)/PropertyInt16", processor);
 
+    dispatch(HttpMethod.GET, uri, processor);
     verify(processor).readPrimitive(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatch(HttpMethod.DELETE, uri, processor);
+    verify(processor).deletePrimitive(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
   }
 
   @Test
   public void dispatchPrimitivePropertyValue() throws Exception {
+    final String uri = "ESAllPrim(0)/PropertyInt16/$value";
     final PrimitiveValueProcessor processor = mock(PrimitiveValueProcessor.class);
-    dispatch(HttpMethod.GET, "ESAllPrim(0)/PropertyInt16/$value", processor);
 
-    verify(processor).readPrimitiveValue(any(ODataRequest.class), any(ODataResponse.class),
-            any(UriInfo.class), any(ContentType.class));
+    dispatch(HttpMethod.GET, uri, processor);
+    verify(processor).readPrimitiveValue(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.DELETE, uri, processor);
+    verify(processor).deletePrimitive(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
   }
 
   @Test
   public void dispatchPrimitiveCollectionProperty() throws Exception {
+    final String uri = "ESMixPrimCollComp(7)/CollPropertyString";
     final PrimitiveCollectionProcessor processor = mock(PrimitiveCollectionProcessor.class);
-    dispatch(HttpMethod.GET, "ESMixPrimCollComp(7)/CollPropertyString", processor);
 
+    dispatch(HttpMethod.GET, uri, processor);
     verify(processor).readPrimitiveCollection(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatch(HttpMethod.DELETE, uri, processor);
+    verify(processor).deletePrimitiveCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
   }
 
   @Test
   public void dispatchComplexProperty() throws Exception {
+    final String uri = "ESMixPrimCollComp(7)/PropertyComp";
     final ComplexProcessor processor = mock(ComplexProcessor.class);
-    dispatch(HttpMethod.GET, "ESMixPrimCollComp(7)/PropertyComp", processor);
 
+    dispatch(HttpMethod.GET, uri, processor);
     verify(processor).readComplex(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatch(HttpMethod.DELETE, uri, processor);
+    verify(processor).deleteComplex(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
   }
 
   @Test
   public void dispatchComplexCollectionProperty() throws Exception {
+    final String uri = "ESMixPrimCollComp(7)/CollPropertyComp";
     final ComplexCollectionProcessor processor = mock(ComplexCollectionProcessor.class);
-    dispatch(HttpMethod.GET, "ESMixPrimCollComp(7)/CollPropertyComp", processor);
 
+    dispatch(HttpMethod.GET, uri, processor);
     verify(processor).readComplexCollection(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatch(HttpMethod.DELETE, uri, processor);
+    verify(processor).deleteComplexCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
   }
 
   private ODataResponse dispatch(final HttpMethod method, final String path, final String query,
