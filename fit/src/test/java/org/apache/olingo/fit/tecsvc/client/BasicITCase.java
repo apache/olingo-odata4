@@ -32,15 +32,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
@@ -48,7 +45,6 @@ import org.apache.olingo.client.api.edm.xml.v4.Reference;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
@@ -191,116 +187,6 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertEquals(2000, iterator.next().asPrimitive().toValue());
     assertEquals(30112, iterator.next().asPrimitive().toValue());
   }
-
-  @Test
-  public void readSimpleProperty() throws Exception {
-    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
-        .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)            
-            .appendEntitySetSegment("ESTwoPrim")
-            .appendKeySegment(32766)
-            .appendPropertySegment("PropertyString")
-            .build());
-    
-    assertNotNull(request);
-
-    ODataRetrieveResponse<ODataProperty> response = request.execute();
-    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
-
-    final ODataProperty property = response.getBody();
-    assertNotNull(property);
-    assertNotNull(property.getPrimitiveValue());
-    assertEquals("Test String1", property.getPrimitiveValue().toValue());
-  }
-
-  @Test
-  public void readSimplePropertyContextURL() throws Exception {
-    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
-        .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)            
-            .appendEntitySetSegment("ESTwoPrim")
-            .appendKeySegment(32766)
-            .appendPropertySegment("PropertyString")
-            .build());    
-    ODataRetrieveResponse<ODataProperty> response = request.execute();
-    String expectedResult = 
-        "{\"@odata.context\":\"$metadata#ESTwoPrim(32766)/PropertyString\"," +
-        "\"value\":\"Test String1\"}";
-    assertEquals(expectedResult, IOUtils.toString(response.getRawResponse(), "UTF-8"));    
-  }  
-
-  @Test
-  public void readComplexProperty() throws Exception {
-    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
-        .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)            
-            .appendEntitySetSegment("ESMixPrimCollComp")
-            .appendKeySegment(7)
-            .appendPropertySegment("PropertyComp")
-            .build());    
-    ODataRetrieveResponse<ODataProperty> response = request.execute();
-    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
-
-    final ODataProperty property = response.getBody();
-    assertNotNull(property);
-    assertNotNull(property.getComplexValue());
-    assertEquals("TEST B", property.getComplexValue().get("PropertyString").getPrimitiveValue().toValue());   
-  }  
-
-  @Test
-  public void readComplexPropertyContextURL() throws Exception {
-    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
-        .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)            
-            .appendEntitySetSegment("ESMixPrimCollComp")
-            .appendKeySegment(7)
-            .appendPropertySegment("PropertyComp")
-            .build());    
-    ODataRetrieveResponse<ODataProperty> response = request.execute();
-    String expectedResult = 
-        "{\"@odata.context\":\"$metadata#ESMixPrimCollComp(7)/PropertyComp\"," +
-        "\"PropertyInt16\":222,\"PropertyString\":\"TEST B\"}";
-    assertEquals(expectedResult, IOUtils.toString(response.getRawResponse(), "UTF-8"));    
-  }  
-
-  @Test
-  public void readUnknownProperty() throws Exception {
-    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
-        .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)            
-            .appendEntitySetSegment("ESTwoPrim")
-            .appendKeySegment(32766)
-            .appendPropertySegment("Unknown")
-            .build());
-    try {
-     request.execute();
-     fail("Expected exception not thrown!");
-    } catch (final ODataClientErrorException e) {
-      assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), e.getStatusLine().getStatusCode());
-    }
-  }
-
-  @Test
-  public void readNoContentProperty() throws Exception {
-    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
-        .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)            
-            .appendEntitySetSegment("ESTwoPrim")
-            .appendKeySegment(-32766)
-            .appendPropertySegment("PropertyString")
-            .build());    
-    ODataRetrieveResponse<ODataProperty> response = request.execute();
-    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-  }   
-
-  @Test
-  public void readPropertyValue() throws Exception {
-    final ODataValueRequest request = getClient().getRetrieveRequestFactory()
-        .getPropertyValueRequest(getClient().newURIBuilder(SERVICE_URI)            
-            .appendEntitySetSegment("ESTwoPrim")
-            .appendKeySegment(32766)
-            .appendPropertySegment("PropertyString")
-            .appendValueSegment()
-            .build());
-    ODataRetrieveResponse<ODataPrimitiveValue> response = request.execute();
-    assertEquals("Test String1", response.getBody().toValue());
-  }   
 
   @Override
   protected CommonODataClient<?> getClient() {
