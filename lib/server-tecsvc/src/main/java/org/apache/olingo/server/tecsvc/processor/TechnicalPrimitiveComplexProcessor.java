@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -84,7 +85,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   public void updatePrimitive(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new UnsupportedOperationException("Actual not yet supported");
+    throw new ODataApplicationException("Not supported yet.",
+        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
 
   @Override
@@ -103,7 +105,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   public void updatePrimitiveCollection(final ODataRequest request, final ODataResponse response,
       final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new UnsupportedOperationException("Actual not yet supported");
+    throw new ODataApplicationException("Not supported yet.",
+        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
 
   @Override
@@ -122,7 +125,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   public void updateComplex(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new UnsupportedOperationException("Actual not yet supported");
+    throw new ODataApplicationException("Not supported yet.",
+        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
 
   @Override
@@ -141,7 +145,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   public void updateComplexCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new UnsupportedOperationException("Actual not yet supported");
+    throw new ODataApplicationException("Not supported yet.",
+        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
 
   @Override
@@ -226,7 +231,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     final Property property = getPropertyData(resourceEntitySet, path);
 
     if (edmProperty.isNullable() == null || edmProperty.isNullable()) {
-      property.setValue(property.getValueType(), null);
+      property.setValue(property.getValueType(), edmProperty.isCollection() ? Collections.emptyList() : null);
       response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
     } else {
       throw new ODataApplicationException("Not nullable.", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);

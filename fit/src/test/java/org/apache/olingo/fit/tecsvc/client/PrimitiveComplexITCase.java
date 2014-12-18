@@ -22,6 +22,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
@@ -110,6 +111,27 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
     } catch (final ODataClientErrorException e) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
     }
+  }
+
+  @Test
+  public void deletePrimitiveCollection() throws Exception {
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
+        .appendEntitySetSegment("ESMixPrimCollComp").appendKeySegment(7).appendPropertySegment("CollPropertyString")
+        .build();
+    final ODataDeleteResponse response = getClient().getCUDRequestFactory().getDeleteRequest(uri).execute();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+
+    // Check that the property is not gone but empty now.
+    // This check has to be in the same session in order to access the same data provider.
+    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(uri);
+    request.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
+    final ODataRetrieveResponse<ODataProperty> propertyResponse = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), propertyResponse.getStatusCode());
+    final ODataProperty property = propertyResponse.getBody();
+    assertNotNull(property);
+    assertNotNull(property.getCollectionValue());
+    assertTrue(property.getCollectionValue().isEmpty());
   }
 
   @Test

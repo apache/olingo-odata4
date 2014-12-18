@@ -43,6 +43,7 @@ import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
@@ -175,6 +176,7 @@ public class UriValidator {
     validateForHttpMethod(uriInfo, httpMethod);
     validateQueryOptions(uriInfo);
     validateKeyPredicates(uriInfo);
+    validatePropertyOperations(uriInfo, httpMethod);
   }
 
   private ColumnIndex colIndex(final SystemQueryOptionKind queryOptionKind) throws UriValidationException {
@@ -664,6 +666,28 @@ public class UriValidator {
             edmKeys.remove(alias);
           }
         }
+      }
+    }
+  }
+
+  private void validatePropertyOperations(final UriInfo uriInfo, final HttpMethod method)
+      throws UriValidationException {
+    final List<UriResource> parts = uriInfo.getUriResourceParts();
+    final UriResource last = parts.size() > 0 ? parts.get(parts.size() - 1) : null;
+    final UriResource previous = parts.size() > 1 ? parts.get(parts.size() - 2) : null;
+    if (last != null
+        && (last.getKind() == UriResourceKind.primitiveProperty
+        || last.getKind() == UriResourceKind.complexProperty
+        || last.getKind() == UriResourceKind.value && previous.getKind() == UriResourceKind.primitiveProperty)) {
+      final EdmProperty property = ((UriResourceProperty)
+          (last.getKind() == UriResourceKind.value ? previous : last)).getProperty();
+      if (method == HttpMethod.PATCH && property.isCollection()) {
+        throw new UriValidationException("Attempt to patch collection property.",
+            UriValidationException.MessageKeys.UNSUPPORTED_HTTP_METHOD, method.toString());
+      }
+      if (method == HttpMethod.DELETE && property.isNullable() != null && !property.isNullable()) {
+        throw new UriValidationException("Attempt to delete non-nullable property.",
+            UriValidationException.MessageKeys.UNSUPPORTED_HTTP_METHOD, method.toString());
       }
     }
   }

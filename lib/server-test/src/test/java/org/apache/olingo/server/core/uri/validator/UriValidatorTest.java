@@ -346,18 +346,21 @@ public class UriValidatorTest {
   public void checkNonValidSystemQueryOption() throws Exception {
     for (final String[] uriArray : urisWithNonValidSystemQueryOptions) {
       final String[] uri = constructUri(uriArray);
-      try {
-        new UriValidator().validate(
-            new Parser().parseUri(uri[0], uri[1], null, edm),
-            HttpMethod.GET);
-        fail("Validation Exception not thrown: " + uri[0] + '?' + uri[1]);
-      } catch (final UriParserException e) {
-        fail("Wrong Exception thrown: " + uri[0] + '?' + uri[1]);
-      } catch (final UriValidationException e) {
-        assertEquals(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED,
-            e.getMessageKey());
-      }
+      validateWrong(uri[0], uri[1], HttpMethod.GET,
+          UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
     }
+  }
+
+  @Test
+  public void propertyOperations() throws Exception {
+    validateWrong(URI_PROPERTY_PRIMITIVE_COLLECTION, null, HttpMethod.PATCH,
+        UriValidationException.MessageKeys.UNSUPPORTED_HTTP_METHOD);
+    validateWrong(URI_PROPERTY_COMPLEX_COLLECTION, null, HttpMethod.PATCH,
+        UriValidationException.MessageKeys.UNSUPPORTED_HTTP_METHOD);
+    validateWrong("ESKeyNav(1)/PropertyString", null, HttpMethod.DELETE,
+        UriValidationException.MessageKeys.UNSUPPORTED_HTTP_METHOD);
+    validateWrong("ESKeyNav(1)/PropertyString/$value", null, HttpMethod.DELETE,
+        UriValidationException.MessageKeys.UNSUPPORTED_HTTP_METHOD);
   }
 
   private String[] constructUri(final String[] uriParameterArray) {
@@ -370,5 +373,17 @@ public class UriValidatorTest {
       query += uriParameterArray[i];
     }
     return new String[] { path, query };
+  }
+
+  private void validateWrong(final String path, final String query, final HttpMethod method,
+      final UriValidationException.MessageKeys expectedMessageKey) {
+    try {
+        new UriValidator().validate(new Parser().parseUri(path, query, null, edm), method);
+      fail("Validation Exception not thrown: " + method + ' ' + path + '?' + query);
+    } catch (final UriParserException e) {
+      fail("Wrong Exception thrown: " + method + ' ' + path + '?' + query);
+    } catch (final UriValidationException e) {
+      assertEquals(expectedMessageKey, e.getMessageKey());
+    }
   }
 }

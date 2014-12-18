@@ -310,7 +310,7 @@ public class ODataHandlerTest {
 
   @Test
   public void dispatchPrimitiveProperty() throws Exception {
-    final String uri = "ESAllPrim(0)/PropertyInt16";
+    final String uri = "ESAllPrim(0)/PropertyString";
     final PrimitiveProcessor processor = mock(PrimitiveProcessor.class);
 
     dispatch(HttpMethod.GET, uri, processor);
@@ -325,7 +325,7 @@ public class ODataHandlerTest {
 
   @Test
   public void dispatchPrimitivePropertyValue() throws Exception {
-    final String uri = "ESAllPrim(0)/PropertyInt16/$value";
+    final String uri = "ESAllPrim(0)/PropertyString/$value";
     final PrimitiveValueProcessor processor = mock(PrimitiveValueProcessor.class);
 
     dispatch(HttpMethod.GET, uri, processor);
