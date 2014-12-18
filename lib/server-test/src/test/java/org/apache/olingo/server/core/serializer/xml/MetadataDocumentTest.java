@@ -130,7 +130,7 @@ public class MetadataDocumentTest {
 
     // BaseTypeCheck
     assertThat(metadata, containsString("<EntityType Name=\"ETBase\" BaseType=\"olingo.odata.test1.ETTwoPrim\">"));
-    assertThat(metadata, containsString("<EntityType Name=\"ETAbstract\" Abstract=\"true\"/>"));
+    assertThat(metadata, containsString("<EntityType Name=\"ETAbstract\" Abstract=\"true\">"));
     assertThat(metadata,
         containsString("<EntityType Name=\"ETAbstractBase\" BaseType=\"olingo.odata.test1.ETAbstract\">"));
   }

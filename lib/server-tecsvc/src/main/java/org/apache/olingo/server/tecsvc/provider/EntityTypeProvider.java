@@ -407,7 +407,8 @@ public class EntityTypeProvider {
     } else if (entityTypeName.equals(nameETAbstract)) {
       return new EntityType()
           .setName("ETAbstract")
-          .setAbstract(true);
+          .setAbstract(true)
+          .setProperties(Arrays.asList(PropertyProvider.propertyString));
 
     } else if (entityTypeName.equals(nameETAbstractBase)) {
       return new EntityType()
@@ -415,7 +416,7 @@ public class EntityTypeProvider {
           .setBaseType(nameETAbstract)
           .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
           .setProperties(Arrays.asList(
-              PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString));
+              PropertyProvider.propertyInt16_NotNullable));
     }
 
     return null;

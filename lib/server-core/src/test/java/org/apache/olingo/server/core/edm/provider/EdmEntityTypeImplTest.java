@@ -136,6 +136,10 @@ public class EdmEntityTypeImplTest {
     baseType.setAbstract(true);
     EdmEntityType edmAbstarctBaseType = EdmEntityTypeImpl.getInstance(edm, baseName, baseType);
     
+    assertEquals(2, edmAbstarctBaseType.getPropertyNames().size());
+    assertEquals("Id", edmAbstarctBaseType.getPropertyNames().get(0));
+    assertEquals("Name", edmAbstarctBaseType.getPropertyNames().get(1));
+    
     FullQualifiedName typeName = new FullQualifiedName("namespace", "typeName");
     EntityType type = new EntityType();
     type.setName(typeName.getName());
