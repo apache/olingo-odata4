@@ -68,13 +68,13 @@ public class MetadataDocumentTest {
             + "<Key><PropertyRef Name=\"PropertyInt16\"/></Key>"
             + "<Property Name=\"PropertyInt16\" Type=\"Edm.Int16\" Nullable=\"false\"/>"
             + "<Property Name=\"PropertyString\" Type=\"Edm.String\"/>"
-            + "<NavigationProperty Name=\"NavPropertyETAllPrimOne\" Type=\"olingo.odata.test1.ETAllPrim\"/>"
+            + "<NavigationProperty Name=\"NavPropertyETAllPrimOne\" Type=\"Namespace1_Alias.ETAllPrim\"/>"
             + "<NavigationProperty Name=\"NavPropertyETAllPrimMany\" "
-            + "Type=\"Collection(olingo.odata.test1.ETAllPrim)\"/>"
+            + "Type=\"Collection(Namespace1_Alias.ETAllPrim)\"/>"
             + "</EntityType>"));
 
     assertThat(metadata,
-        containsString("<EntityType Name=\"ETBase\" BaseType=\"olingo.odata.test1.ETTwoPrim\">"
+        containsString("<EntityType Name=\"ETBase\" BaseType=\"Namespace1_Alias.ETTwoPrim\">"
             + "<Property Name=\"AdditionalPropertyString_5\" Type=\"Edm.String\"/>"
             + "</EntityType>"));
 
@@ -83,7 +83,7 @@ public class MetadataDocumentTest {
             + "<Property Name=\"PropertyInt16\" Type=\"Edm.Int16\"/></ComplexType>"));
 
     assertThat(metadata,
-        containsString("<ComplexType Name=\"CTBase\" BaseType=\"olingo.odata.test1.CTTwoPrim\">"
+        containsString("<ComplexType Name=\"CTBase\" BaseType=\"Namespace1_Alias.CTTwoPrim\">"
             + "<Property Name=\"AdditionalPropString\" Type=\"Edm.String\"/></ComplexType>"));
 
     // TODO: TypeDefinition
@@ -96,8 +96,8 @@ public class MetadataDocumentTest {
     assertThat(metadata,
         containsString("<Action Name=\"BAESAllPrimRTETAllPrim\" IsBound=\"true\">"
             + "<Parameter Name=\"ParameterESAllPrim\" "
-            + "Type=\"Collection(olingo.odata.test1.ETAllPrim)\" Nullable=\"false\"/>"
-            + "<ReturnType Type=\"olingo.odata.test1.ETAllPrim\"/></Action>"));
+            + "Type=\"Collection(Namespace1_Alias.ETAllPrim)\" Nullable=\"false\"/>"
+            + "<ReturnType Type=\"Namespace1_Alias.ETAllPrim\"/></Action>"));
 
     assertThat(metadata,
         containsString("<Function Name=\"UFNRTInt16\" IsBound=\"false\" IsComposable=\"false\">"
@@ -105,34 +105,34 @@ public class MetadataDocumentTest {
 
     assertThat(metadata,
         containsString("<Function Name=\"BFCESTwoKeyNavRTESTwoKeyNav\" IsBound=\"true\" IsComposable=\"true\">"
-            + "<Parameter Name=\"BindingParam\" Type=\"Collection(olingo.odata.test1.ETTwoKeyNav)\" "
+            + "<Parameter Name=\"BindingParam\" Type=\"Collection(Namespace1_Alias.ETTwoKeyNav)\" "
             + "Nullable=\"false\"/>"
-            + "<ReturnType Type=\"Collection(olingo.odata.test1.ETTwoKeyNav)\" Nullable=\"false\"/></Function>"));
+            + "<ReturnType Type=\"Collection(Namespace1_Alias.ETTwoKeyNav)\" Nullable=\"false\"/></Function>"));
 
     assertThat(metadata, containsString("<EntityContainer Name=\"Container\">"));
 
     assertThat(metadata,
-        containsString("<EntitySet Name=\"ESTwoPrim\" EntityType=\"olingo.odata.test1.ETTwoPrim\"/>"));
+        containsString("<EntitySet Name=\"ESTwoPrim\" EntityType=\"Namespace1_Alias.ETTwoPrim\"/>"));
 
     assertThat(metadata,
-        containsString("<Singleton Name=\"SINav\" EntityType=\"olingo.odata.test1.ETTwoKeyNav\">"
+        containsString("<Singleton Name=\"SINav\" EntityType=\"Namespace1_Alias.ETTwoKeyNav\">"
             + "<NavigationPropertyBinding Path=\"NavPropertyETTwoKeyNavMany\" Target=\"ESTwoKeyNav\"/>"
             + "</Singleton>"));
 
     assertThat(metadata,
-        containsString("<ActionImport Name=\"AIRTPrimParam\" Action=\"olingo.odata.test1.UARTPrimParam\"/>"));
+        containsString("<ActionImport Name=\"AIRTPrimParam\" Action=\"Namespace1_Alias.UARTPrimParam\"/>"));
 
     assertThat(metadata,
-        containsString("<FunctionImport Name=\"FINInvisible2RTInt16\" Function=\"olingo.odata.test1.UFNRTInt16\" "
+        containsString("<FunctionImport Name=\"FINInvisible2RTInt16\" Function=\"Namespace1_Alias.UFNRTInt16\" "
             + "IncludeInServiceDocument=\"false\"/>"));
 
     assertThat(metadata, containsString("</EntityContainer></Schema></edmx:DataServices></edmx:Edmx>"));
 
     // BaseTypeCheck
-    assertThat(metadata, containsString("<EntityType Name=\"ETBase\" BaseType=\"olingo.odata.test1.ETTwoPrim\">"));
+    assertThat(metadata, containsString("<EntityType Name=\"ETBase\" BaseType=\"Namespace1_Alias.ETTwoPrim\">"));
     assertThat(metadata, containsString("<EntityType Name=\"ETAbstract\" Abstract=\"true\">"));
     assertThat(metadata,
-        containsString("<EntityType Name=\"ETAbstractBase\" BaseType=\"olingo.odata.test1.ETAbstract\">"));
+        containsString("<EntityType Name=\"ETAbstractBase\" BaseType=\"Namespace1_Alias.ETAbstract\">"));
   }
 
   /**

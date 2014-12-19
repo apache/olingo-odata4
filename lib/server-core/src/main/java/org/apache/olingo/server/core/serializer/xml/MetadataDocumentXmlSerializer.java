@@ -18,6 +18,13 @@
  */
 package org.apache.olingo.server.core.serializer.xml;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
@@ -42,16 +49,12 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
 import org.apache.olingo.server.api.edmx.EdmxReferenceIncludeAnnotation;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import java.util.List;
 
 public class MetadataDocumentXmlSerializer {
 
@@ -106,14 +109,15 @@ public class MetadataDocumentXmlSerializer {
   private static final String SCHEMA = "Schema";
   private static final String DATA_SERVICES = "DataServices";
   private static final String ABSTRACT = "Abstract";
-  
-  private final ServiceMetadata serviceMetadata;
 
   private final static String EDMX = "Edmx";
   private final static String PREFIX_EDMX = "edmx";
   private final static String NS_EDMX = "http://docs.oasis-open.org/odata/ns/edmx";
 
   private final static String NS_EDM = "http://docs.oasis-open.org/odata/ns/edm";
+
+  private final ServiceMetadata serviceMetadata;
+  private final Map<String, String> namespaceToAlias = new HashMap<String, String>();
 
   public MetadataDocumentXmlSerializer(final ServiceMetadata serviceMetadata) {
     this.serviceMetadata = serviceMetadata;
@@ -146,8 +150,9 @@ public class MetadataDocumentXmlSerializer {
     writer.writeStartElement(NS_EDM, SCHEMA);
     writer.writeDefaultNamespace(NS_EDM);
     writer.writeAttribute(XML_NAMESPACE, schema.getNamespace());
-    if(schema.getAlias() != null) {
+    if (schema.getAlias() != null) {
       writer.writeAttribute(XML_ALIAS, schema.getAlias());
+      namespaceToAlias.put(schema.getNamespace(), schema.getAlias());
     }
 
     // EnumTypes
@@ -204,7 +209,14 @@ public class MetadataDocumentXmlSerializer {
       writer.writeAttribute(XML_NAME, container.getName());
       FullQualifiedName parentContainerName = container.getParentContainerName();
       if (parentContainerName != null) {
-        writer.writeAttribute(XML_EXTENDS, parentContainerName.getFullQualifiedNameAsString());
+        String parentContainerNameString;
+        if (namespaceToAlias.get(parentContainerName.getNamespace()) != null) {
+          parentContainerNameString =
+              namespaceToAlias.get(parentContainerName.getNamespace()) + "." + parentContainerName.getName();
+        } else {
+          parentContainerNameString = parentContainerName.getFullQualifiedNameAsString();
+        }
+        writer.writeAttribute(XML_EXTENDS, parentContainerNameString);
       }
 
       // EntitySets
@@ -217,7 +229,13 @@ public class MetadataDocumentXmlSerializer {
       appendActionImports(writer, container.getActionImports());
 
       // FunctionImports
-      appendFunctionImports(writer, container.getFunctionImports(), container.getNamespace());
+      String containerNamespace;
+      if (namespaceToAlias.get(container.getNamespace()) != null) {
+        containerNamespace = namespaceToAlias.get(container.getNamespace());
+      } else {
+        containerNamespace = container.getNamespace();
+      }
+      appendFunctionImports(writer, container.getFunctionImports(), containerNamespace);
 
       writer.writeEndElement();
     }
@@ -228,7 +246,16 @@ public class MetadataDocumentXmlSerializer {
     for (EdmFunctionImport functionImport : functionImports) {
       writer.writeStartElement(XML_FUNCTION_IMPORT);
       writer.writeAttribute(XML_NAME, functionImport.getName());
-      writer.writeAttribute(XML_FUNCTION, functionImport.getFunctionFqn().getFullQualifiedNameAsString());
+      
+      String functionFQNString;
+      FullQualifiedName functionFqn = functionImport.getFunctionFqn();
+      if (namespaceToAlias.get(functionFqn.getNamespace()) != null) {
+        functionFQNString = namespaceToAlias.get(functionFqn.getNamespace()) + "." + functionFqn.getName();
+      } else {
+        functionFQNString = functionFqn.getFullQualifiedNameAsString();
+      }
+      writer.writeAttribute(XML_FUNCTION, functionFQNString);
+      
       EdmEntitySet returnedEntitySet = functionImport.getReturnedEntitySet();
       if (returnedEntitySet != null) {
         writer.writeAttribute(XML_ENTITY_SET, containerNamespace + "." + returnedEntitySet.getName());
@@ -245,7 +272,7 @@ public class MetadataDocumentXmlSerializer {
     for (EdmActionImport actionImport : actionImports) {
       writer.writeStartElement(XML_ACTION_IMPORT);
       writer.writeAttribute(XML_NAME, actionImport.getName());
-      writer.writeAttribute(XML_ACTION, getFullQualifiedName(actionImport.getUnboundAction(), false));
+      writer.writeAttribute(XML_ACTION, getAliasedFullQualifiedName(actionImport.getUnboundAction(), false));
       // TODO: Annotations
       writer.writeEndElement();
     }
@@ -256,7 +283,7 @@ public class MetadataDocumentXmlSerializer {
     for (EdmSingleton singleton : singletons) {
       writer.writeStartElement(XML_SINGLETON);
       writer.writeAttribute(XML_NAME, singleton.getName());
-      writer.writeAttribute(XML_ENTITY_TYPE, getFullQualifiedName(singleton.getEntityType(), false));
+      writer.writeAttribute(XML_ENTITY_TYPE, getAliasedFullQualifiedName(singleton.getEntityType(), false));
 
       appendNavigationPropertyBindings(writer, singleton);
       // TODO: Annotations
@@ -281,7 +308,7 @@ public class MetadataDocumentXmlSerializer {
     for (EdmEntitySet entitySet : entitySets) {
       writer.writeStartElement(XML_ENTITY_SET);
       writer.writeAttribute(XML_NAME, entitySet.getName());
-      writer.writeAttribute(XML_ENTITY_TYPE, getFullQualifiedName(entitySet.getEntityType(), false));
+      writer.writeAttribute(XML_ENTITY_TYPE, getAliasedFullQualifiedName(entitySet.getEntityType(), false));
 
       appendNavigationPropertyBindings(writer, entitySet);
       // TODO: Annotations
@@ -311,7 +338,13 @@ public class MetadataDocumentXmlSerializer {
     EdmReturnType returnType = operation.getReturnType();
     if (returnType != null) {
       writer.writeEmptyElement(XML_RETURN_TYPE);
-      writer.writeAttribute(XML_TYPE, getFullQualifiedName(returnType.getType(), returnType.isCollection()));
+      String returnTypeFqnString;
+      if (EdmTypeKind.PRIMITIVE.equals(returnType.getType().getKind())) {
+        returnTypeFqnString = getFullQualifiedName(returnType.getType(), returnType.isCollection());
+      } else {
+        returnTypeFqnString = getAliasedFullQualifiedName(returnType.getType(), returnType.isCollection());
+      }
+      writer.writeAttribute(XML_TYPE, returnTypeFqnString);
 
       appendReturnTypeFacets(writer, returnType);
     }
@@ -323,7 +356,13 @@ public class MetadataDocumentXmlSerializer {
       EdmParameter parameter = operation.getParameter(parameterName);
       writer.writeEmptyElement(XML_PARAMETER);
       writer.writeAttribute(XML_NAME, parameterName);
-      writer.writeAttribute(XML_TYPE, getFullQualifiedName(parameter.getType(), parameter.isCollection()));
+      String typeFqnString;
+      if (EdmTypeKind.PRIMITIVE.equals(parameter.getType().getKind())) {
+        typeFqnString = getFullQualifiedName(parameter.getType(), parameter.isCollection());
+      } else {
+        typeFqnString = getAliasedFullQualifiedName(parameter.getType(), parameter.isCollection());
+      }
+      writer.writeAttribute(XML_TYPE, typeFqnString);
 
       appendParameterFacets(writer, parameter);
     }
@@ -382,7 +421,7 @@ public class MetadataDocumentXmlSerializer {
       writer.writeAttribute(XML_NAME, complexType.getName());
 
       if (complexType.getBaseType() != null) {
-        writer.writeAttribute(XML_BASE_TYPE, getFullQualifiedName(complexType.getBaseType(), false));
+        writer.writeAttribute(XML_BASE_TYPE, getAliasedFullQualifiedName(complexType.getBaseType(), false));
       }
 
       appendProperties(writer, complexType);
@@ -404,10 +443,10 @@ public class MetadataDocumentXmlSerializer {
       }
 
       if (entityType.getBaseType() != null) {
-        writer.writeAttribute(XML_BASE_TYPE, getFullQualifiedName(entityType.getBaseType(), false));
+        writer.writeAttribute(XML_BASE_TYPE, getAliasedFullQualifiedName(entityType.getBaseType(), false));
       }
-      
-      if(entityType.isAbstract()){
+
+      if (entityType.isAbstract()) {
         writer.writeAttribute(ABSTRACT, "true");
       }
 
@@ -432,7 +471,7 @@ public class MetadataDocumentXmlSerializer {
 
       writer.writeStartElement(XML_NAVIGATION_PROPERTY);
       writer.writeAttribute(XML_NAME, navigationPropertyName);
-      writer.writeAttribute(XML_TYPE, getFullQualifiedName(navigationProperty.getType(), navigationProperty
+      writer.writeAttribute(XML_TYPE, getAliasedFullQualifiedName(navigationProperty.getType(), navigationProperty
           .isCollection()));
       if (navigationProperty.isNullable() != null) {
         writer.writeAttribute(XML_NULLABLE, "" + navigationProperty.isNullable());
@@ -464,7 +503,13 @@ public class MetadataDocumentXmlSerializer {
       EdmProperty property = type.getStructuralProperty(propertyName);
       writer.writeEmptyElement(XML_PROPERTY);
       writer.writeAttribute(XML_NAME, propertyName);
-      writer.writeAttribute(XML_TYPE, getFullQualifiedName(property.getType(), property.isCollection()));
+      String fqnString;
+      if (property.isPrimitive()) {
+        fqnString = getFullQualifiedName(property.getType(), property.isCollection());
+      } else {
+        fqnString = getAliasedFullQualifiedName(property.getType(), property.isCollection());
+      }
+      writer.writeAttribute(XML_TYPE, fqnString);
 
       // Facets
       if (property.isNullable() != null) {
@@ -544,7 +589,20 @@ public class MetadataDocumentXmlSerializer {
     return isCollection ? "Collection(" + name + ")" : name;
   }
 
-  /** Appends references, e.g., to the OData Core Vocabulary, as defined in the OData specification
+  private String getAliasedFullQualifiedName(final EdmType type, final boolean isCollection) {
+    FullQualifiedName fqn = type.getFullQualifiedName();
+    final String name;
+    if (namespaceToAlias.get(fqn.getNamespace()) != null) {
+      name = namespaceToAlias.get(fqn.getNamespace()) + "." + fqn.getName();
+    } else {
+      name = fqn.getFullQualifiedNameAsString();
+    }
+
+    return isCollection ? "Collection(" + name + ")" : name;
+  }
+
+  /**
+   * Appends references, e.g., to the OData Core Vocabulary, as defined in the OData specification
    * and mentioned in its Common Schema Definition Language (CSDL) document.
    */
   private void appendReference(final XMLStreamWriter writer) throws XMLStreamException {
@@ -556,7 +614,8 @@ public class MetadataDocumentXmlSerializer {
       for (EdmxReferenceInclude include : includes) {
         writer.writeStartElement(PREFIX_EDMX, INCLUDE, NS_EDMX);
         writer.writeAttribute(XML_NAMESPACE, include.getNamespace());
-        if(include.getAlias() != null) {
+        if (include.getAlias() != null) {
+          // Reference Aliases are ignored for now since they are not V2 compatible
           writer.writeAttribute(XML_ALIAS, include.getAlias());
         }
         writer.writeEndElement();
@@ -566,10 +625,10 @@ public class MetadataDocumentXmlSerializer {
       for (EdmxReferenceIncludeAnnotation includeAnnotation : includeAnnotations) {
         writer.writeStartElement(PREFIX_EDMX, INCLUDE_ANNOTATIONS, NS_EDMX);
         writer.writeAttribute(XML_TERM_NAMESPACE, includeAnnotation.getTermNamespace());
-        if(includeAnnotation.getQualifier() != null) {
+        if (includeAnnotation.getQualifier() != null) {
           writer.writeAttribute(XML_QUALIFIER, includeAnnotation.getQualifier());
         }
-        if(includeAnnotation.getTargetNamespace() != null) {
+        if (includeAnnotation.getTargetNamespace() != null) {
           writer.writeAttribute(XML_TARGET_NAMESPACE, includeAnnotation.getTargetNamespace());
         }
         writer.writeEndElement();
