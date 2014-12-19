@@ -25,6 +25,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Collections;
@@ -35,6 +36,7 @@ import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -47,9 +49,12 @@ import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
+import org.apache.olingo.server.api.processor.CountComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
+import org.apache.olingo.server.api.processor.CountPrimitiveCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.processor.MediaEntityProcessor;
@@ -58,6 +63,8 @@ import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveValueProcessor;
 import org.apache.olingo.server.api.processor.Processor;
+import org.apache.olingo.server.api.processor.ReferenceCollectionProcessor;
+import org.apache.olingo.server.api.processor.ReferenceProcessor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
@@ -220,6 +227,20 @@ public class ODataHandlerTest {
   }
 
   @Test
+  public void dispatchBatch() throws Exception {
+    final String uri = "$batch";
+    final BatchProcessor processor = mock(BatchProcessor.class);
+
+    dispatch(HttpMethod.POST, uri, processor);
+    // TODO: Verify that batch processing has been called.
+
+    dispatchMethodNotAllowed(HttpMethod.GET, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
+  }
+
+  @Test
   public void dispatchEntitySet() throws Exception {
     final String uri = "ESAllPrim";
     final EntityCollectionProcessor processor = mock(EntityCollectionProcessor.class);
@@ -265,6 +286,16 @@ public class ODataHandlerTest {
     dispatch(HttpMethod.GET, uri, processor);
     verify(processor).readEntity(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatch(HttpMethod.PUT, uri, processor);
+    verify(processor).updateEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.PATCH, uri, processor);
+    verify(processor, times(2)).updateEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
 
     dispatch(HttpMethod.DELETE, uri, processor);
     verify(processor).deleteEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
@@ -317,6 +348,16 @@ public class ODataHandlerTest {
     verify(processor).readPrimitive(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
+    dispatch(HttpMethod.PUT, uri, processor);
+    verify(processor).updatePrimitive(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.PATCH, uri, processor);
+    verify(processor, times(2)).updatePrimitive(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
     dispatch(HttpMethod.DELETE, uri, processor);
     verify(processor).deletePrimitive(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
@@ -332,10 +373,17 @@ public class ODataHandlerTest {
     verify(processor).readPrimitiveValue(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
         any(ContentType.class));
 
+    dispatch(HttpMethod.PUT, uri, null, HttpHeader.CONTENT_TYPE, ContentType.TEXT_PLAIN.toContentTypeString(),
+        processor);
+    verify(processor).updatePrimitive(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
     dispatch(HttpMethod.DELETE, uri, processor);
     verify(processor).deletePrimitive(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
   }
 
   @Test
@@ -347,10 +395,29 @@ public class ODataHandlerTest {
     verify(processor).readPrimitiveCollection(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
+    dispatch(HttpMethod.PUT, uri, processor);
+    verify(processor).updatePrimitiveCollection(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
     dispatch(HttpMethod.DELETE, uri, processor);
     verify(processor).deletePrimitiveCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+  }
+
+  @Test
+  public void dispatchPrimitiveCollectionPropertyCount() throws Exception {
+    final String uri = "ESMixPrimCollComp(7)/CollPropertyString/$count";
+    final CountPrimitiveCollectionProcessor processor = mock(CountPrimitiveCollectionProcessor.class);
+
+    dispatch(HttpMethod.GET, uri, processor);
+    verify(processor).countPrimitiveCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
   }
 
   @Test
@@ -361,6 +428,16 @@ public class ODataHandlerTest {
     dispatch(HttpMethod.GET, uri, processor);
     verify(processor).readComplex(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatch(HttpMethod.PUT, uri, processor);
+    verify(processor).updateComplex(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.PATCH, uri, processor);
+    verify(processor, times(2)).updateComplex(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
 
     dispatch(HttpMethod.DELETE, uri, processor);
     verify(processor).deleteComplex(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
@@ -377,10 +454,70 @@ public class ODataHandlerTest {
     verify(processor).readComplexCollection(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
+    dispatch(HttpMethod.PUT, uri, processor);
+    verify(processor).updateComplexCollection(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
     dispatch(HttpMethod.DELETE, uri, processor);
     verify(processor).deleteComplexCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+  }
+
+  @Test
+  public void dispatchComplexCollectionPropertyCount() throws Exception {
+    final String uri = "ESMixPrimCollComp(7)/CollPropertyComp/$count";
+    final CountComplexCollectionProcessor processor = mock(CountComplexCollectionProcessor.class);
+
+    dispatch(HttpMethod.GET, uri, processor);
+    verify(processor).countComplexCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
+  }
+
+  @Test
+  public void dispatchReference() throws Exception {
+    final String uri = "ESAllPrim(0)/NavPropertyETTwoPrimOne/$ref";
+    final ReferenceProcessor processor = mock(ReferenceProcessor.class);
+
+    dispatch(HttpMethod.GET, uri, processor);
+    verify(processor).readReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.PUT, uri, processor);
+    verify(processor).updateReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.PATCH, uri, processor);
+    verify(processor, times(2)).updateReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.DELETE, uri, processor);
+    verify(processor).deleteReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+
+    dispatch(HttpMethod.POST, uri.replace("One", "Many"), processor);
+    verify(processor).createReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+  }
+
+  @Test
+  public void dispatchReferenceCollection() throws Exception {
+    final String uri = "ESAllPrim(0)/NavPropertyETTwoPrimMany/$ref";
+    final ReferenceCollectionProcessor processor = mock(ReferenceCollectionProcessor.class);
+
+    dispatch(HttpMethod.GET, uri, processor);
+    verify(processor).readReferenceCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
   }
 
   private ODataResponse dispatch(final HttpMethod method, final String path, final String query,
@@ -397,6 +534,8 @@ public class ODataHandlerTest {
     if (headerName != null) {
       request.addHeader(headerName, Collections.singletonList(headerValue));
     }
+    request.addHeader(HttpHeader.CONTENT_TYPE, Collections.singletonList(
+        ODataFormat.JSON.getContentType(ODataServiceVersion.V40).toContentTypeString()));
 
     final OData odata = OData.newInstance();
     final ServiceMetadata metadata = odata.createServiceMetadata(

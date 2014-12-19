@@ -138,4 +138,17 @@ public class ContentNegotiator {
     }
     return null;
   }
+
+  public static void checkSupport(final ContentType contentType,
+      final CustomContentTypeSupport customContentTypeSupport, final RepresentationType representationType)
+          throws ContentNegotiatorException {
+    for (final ContentType supportedContentType :
+      getSupportedContentTypes(customContentTypeSupport, representationType)) {
+      if (AcceptType.fromContentType(supportedContentType).get(0).matches(contentType)) {
+        return;
+      }
+    }
+    throw new ContentNegotiatorException("unsupported content type: " + contentType,
+        ContentNegotiatorException.MessageKeys.UNSUPPORTED_CONTENT_TYPE, contentType.toContentTypeString());
+  }
 }

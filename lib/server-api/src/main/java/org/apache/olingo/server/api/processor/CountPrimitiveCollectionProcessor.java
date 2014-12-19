@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.api.processor;
 
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -36,11 +35,9 @@ public interface CountPrimitiveCollectionProcessor extends Processor {
    * @param request  OData request object containing raw HTTP information.
    * @param response OData response object for collecting response data
    * @param uriInfo  information of a parsed OData URI
-   * @param responseFormat   requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
    * @throws SerializerException       if serialization failed
    */
-  void countPrimitiveCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-                                ContentType responseFormat)
+  void countPrimitiveCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo)
       throws ODataApplicationException, SerializerException;
 }

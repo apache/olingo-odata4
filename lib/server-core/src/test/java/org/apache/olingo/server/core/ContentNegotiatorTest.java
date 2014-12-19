@@ -30,7 +30,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataRequest;
@@ -142,6 +144,31 @@ public class ContentNegotiatorTest {
     }
   }
 
+  @Test
+  public void checkSupport() throws Exception {
+    ContentNegotiator.checkSupport(ODataFormat.JSON.getContentType(ODataServiceVersion.V40), null,
+        RepresentationType.ENTITY);
+    ContentNegotiator.checkSupport(ContentType.TEXT_PLAIN, null, RepresentationType.VALUE);
+    try {
+      ContentNegotiator.checkSupport(ContentType.APPLICATION_SVG_XML, null, RepresentationType.ENTITY);
+      fail("Exception expected.");
+    } catch (final ContentNegotiatorException e) {
+      assertEquals(ContentNegotiatorException.MessageKeys.UNSUPPORTED_CONTENT_TYPE, e.getMessageKey());
+    }
+
+    ContentNegotiator.checkSupport(ContentType.create("a/b"), createCustomContentTypeSupport("a/b"),
+        RepresentationType.ENTITY);
+    ContentNegotiator.checkSupport(ContentType.create("a/b", "c=d"), createCustomContentTypeSupport("a/b"),
+        RepresentationType.ENTITY);
+    try {
+      ContentNegotiator.checkSupport(ContentType.create("a/b"), createCustomContentTypeSupport("a/b;c=d"),
+          RepresentationType.ENTITY);
+      fail("Exception expected.");
+    } catch (final ContentNegotiatorException e) {
+      assertEquals(ContentNegotiatorException.MessageKeys.UNSUPPORTED_CONTENT_TYPE, e.getMessageKey());
+    }
+  }
+
   private void testContentNegotiation(final String[] useCase, final RepresentationType representationType)
       throws ContentNegotiatorException {
 
@@ -156,13 +183,8 @@ public class ContentNegotiatorTest {
       request.addHeader(HttpHeader.ACCEPT, Arrays.asList(useCase[2]));
     }
 
-    CustomContentTypeSupport customContentTypeSupport = null;
-    if (useCase[3] != null) {
-      customContentTypeSupport = mock(CustomContentTypeSupport.class);
-      when(customContentTypeSupport.modifySupportedContentTypes(
-          anyListOf(ContentType.class), any(RepresentationType.class)))
-          .thenReturn(createCustomContentTypes(useCase[3]));
-    }
+    final CustomContentTypeSupport customContentTypeSupport = useCase[3] == null ? null :
+        createCustomContentTypeSupport(useCase[3]);
 
     final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(
         formatOption, request, customContentTypeSupport, representationType);
@@ -173,7 +195,7 @@ public class ContentNegotiatorTest {
     }
   }
 
-  private List<ContentType> createCustomContentTypes(final String contentTypeString) {
+  private CustomContentTypeSupport createCustomContentTypeSupport(final String contentTypeString) {
     final String[] contentTypes = contentTypeString.split(",");
 
     List<ContentType> types = new ArrayList<ContentType>();
@@ -181,6 +203,10 @@ public class ContentNegotiatorTest {
       types.add(ContentType.create(contentTypes[i]));
     }
 
-    return types;
+    CustomContentTypeSupport customContentTypeSupport = mock(CustomContentTypeSupport.class);
+    when(customContentTypeSupport.modifySupportedContentTypes(
+        anyListOf(ContentType.class), any(RepresentationType.class)))
+        .thenReturn(types);
+    return customContentTypeSupport;
   }
 }
