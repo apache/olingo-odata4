@@ -53,6 +53,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import java.io.Writer;
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
@@ -526,6 +527,20 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     }
   }
 
+  private void reference(final Writer outWriter, final ResWrap<URI> container) throws XMLStreamException {
+    final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(outWriter);
+    
+    writer.writeStartDocument();
+    
+    writer.writeStartElement(Constants.ATTR_METADATA, Constants.ATTR_REF);
+    writer.writeNamespace(Constants.ATTR_METADATA, version.getNamespace(NamespaceKey.METADATA));
+    writer.writeAttribute(Constants.ATTR_METADATA, Constants.CONTEXT, container.getContextURL().toASCIIString());
+    writer.writeAttribute(Constants.ATOM_ATTR_ID, container.getPayload().toASCIIString());
+    writer.writeEndElement();
+    
+    writer.writeEndDocument();
+  }
+
   @Override
   @SuppressWarnings("unchecked")
   public <T> void write(final Writer writer, final ResWrap<T> container) throws ODataSerializerException {
@@ -540,6 +555,8 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
         property(writer, (Property) obj);
       } else if (obj instanceof Link) {
         link(writer, (Link) obj);
+      } else if(obj instanceof URI) {
+        reference(writer,(ResWrap<URI>) container);
       }
     } catch (final XMLStreamException e) {
       throw new ODataSerializerException(e);

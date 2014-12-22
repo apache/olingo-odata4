@@ -21,9 +21,12 @@ package org.apache.olingo.client.api.communication.response.v4;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 
 /**
- * This class implements the response to an OData delete request.
+ * This class implements the response to an OData Reference Adding request.
  *
- * @see org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest
+ * If the request was successful, the service response has status code 204 and
+ * the body has to be empty.
+ *
+ * @see org.apache.olingo.api.request.cud.v4.ODataReferenceAddingRequest
  */
 public interface ODataReferenceAddingResponse extends ODataResponse {
 }

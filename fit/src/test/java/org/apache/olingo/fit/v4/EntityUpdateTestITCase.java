@@ -18,16 +18,8 @@
  */
 package org.apache.olingo.fit.v4;
 
-import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
-import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
-import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
-import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -35,8 +27,19 @@ import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.v4.ODataReferenceAddingRequest;
+import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
+import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
+import org.apache.olingo.client.api.communication.response.v4.ODataReferenceAddingResponse;
+import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class EntityUpdateTestITCase extends AbstractTestITCase {
 
@@ -72,6 +75,30 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     } finally {
       getClient().getCUDRequestFactory().getDeleteRequest(upsertURI).execute();
     }
+  }
+
+  @Test
+  @Ignore
+  public void testUpateSingleValuedNavtiogationReference() throws Exception {
+    URI targetURI =
+        getClient().newURIBuilder(testStaticServiceRootURL)
+            .appendEntitySetSegment("People")
+            .appendKeySegment(1)
+            .appendNavigationSegment("Parent")
+            .build();
+
+    URI reference = getClient().newURIBuilder(testStaticServiceRootURL)
+        .appendEntitySetSegment("People")
+        .appendKeySegment(0)
+        .build();
+
+    final ODataReferenceAddingRequest request =
+        getClient().getCUDRequestFactory().getReferenceSingleChangeRequest(new URI(testStaticServiceRootURL),
+            targetURI, reference);
+
+    final ODataReferenceAddingResponse response = request.execute();
+
+    assertEquals(204, response.getStatusCode());
   }
 
   @Test

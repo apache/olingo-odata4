@@ -479,10 +479,12 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
           final PersistenceChanges changeset) {
 
     LOG.debug("Update '{}'", targetRef);
+    URI sericeRoot = handler.getClient().newURIBuilder(handler.getClient().getServiceRoot()).build();
+    
     if (service.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) >= 1) {
       final ODataReferenceAddingRequest req =
               ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
-              getReferenceAddingRequest(source, targetRef);
+              getReferenceAddingRequest(sericeRoot, source, targetRef);
 
       req.setPrefer(new ODataPreferences(service.getClient().getServiceVersion()).returnContent());
 

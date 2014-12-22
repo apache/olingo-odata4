@@ -20,6 +20,7 @@ package org.apache.olingo.commons.core.serialization;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
@@ -47,6 +48,7 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -100,6 +102,15 @@ public class JsonSerializer implements ODataSerializer {
     }
   }
 
+  private void reference(ResWrap<URI>container, JsonGenerator json) throws IOException {
+    json.writeStartObject();
+    
+    json.writeStringField(Constants.JSON_CONTEXT, container.getContextURL().toASCIIString());
+    json.writeStringField(Constants.JSON_ID, container.getPayload().toASCIIString());
+    
+    json.writeEndObject();
+  }
+
   @SuppressWarnings("unchecked")
   @Override
   public <T> void write(final Writer writer, final ResWrap<T> container) throws ODataSerializerException {
@@ -114,6 +125,8 @@ public class JsonSerializer implements ODataSerializer {
         new JsonPropertySerializer(version, serverMode).doContainerSerialize((ResWrap<Property>) container, json);
       } else if (obj instanceof Link) {
         link((Link) obj, json);
+      } else if(obj instanceof URI) {
+        reference((ResWrap<URI>) container, json);
       }
       json.flush();
     } catch (final IOException e) {

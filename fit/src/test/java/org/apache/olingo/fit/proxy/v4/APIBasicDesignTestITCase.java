@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.TimeZone;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
@@ -106,7 +107,23 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     assertEquals("http://localhost:9080/stub/StaticService/V40/Static.svc/Orders(7)",
             orders.iterator().next().readEntityReferenceID());
   }
-
+  
+  @Test
+  public void changeSingleNavigationProperty() {
+    /*
+     * See OData Spec 11.4.6.3 
+     * Alternatively, a relationship MAY be updated as part of an update to the source entity by including 
+     * the required binding information for the new target entity.
+     * 
+     * => use PATCH instead of PUT
+     */
+    final Person person1 = container.getPeople().getByKey(1).load();
+    final Person person5 = container.getPeople().getByKey(5).load();
+    
+    person1.setParent(person5);
+    container.flush();
+  }
+  
   @Test
   public void addViaReference() {
     final Order order = container.getOrders().getByKey(8).load();

@@ -55,7 +55,7 @@ public class ODataLinkUpdateRequestImpl extends AbstractODataBasicRequest<ODataL
    * @param targetURI entity URI.
    * @param link entity to be linked.
    */
-  ODataLinkUpdateRequestImpl(final CommonODataClient<?> odataClient,
+  public ODataLinkUpdateRequestImpl(final CommonODataClient<?> odataClient,
           final HttpMethod method, final URI targetURI, final ODataLink link) {
     super(odataClient, method, targetURI);
     // set request body

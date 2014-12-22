@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -30,6 +31,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
@@ -101,6 +103,25 @@ public class ODataWriterImpl implements ODataWriter {
     }
     try {
       client.getSerializer(format).write(writer, client.getBinder().getLink(link));
+
+      return new ByteArrayInputStream(output.toByteArray());
+    } finally {
+      IOUtils.closeQuietly(output);
+    }
+  }
+
+  @Override
+  public InputStream writeReference(ResWrap<URI> reference, ODataFormat format) throws ODataSerializerException {
+    final ByteArrayOutputStream output = new ByteArrayOutputStream();
+    OutputStreamWriter writer = null;
+    
+    try {
+      writer = new OutputStreamWriter(output, Constants.UTF8);
+    } catch (final UnsupportedEncodingException e) {
+    }
+    
+    try {
+      client.getSerializer(format).write(writer, reference);
 
       return new ByteArrayInputStream(output.toByteArray());
     } finally {

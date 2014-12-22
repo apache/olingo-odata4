@@ -61,6 +61,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -70,6 +71,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -85,6 +87,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
+
 import javax.ws.rs.BadRequestException;
 
 @Service
@@ -175,7 +178,29 @@ public class V4Services extends AbstractServices {
       return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(), e);
     }
   }
+  
+  @PUT
+  @Path("/People(1)/Parent")
+  @SuppressWarnings("unused")
+  public Response changeSingleValuedNavigationPropertyReference(
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
+      final String content) {
 
+    try {
+        final Accept contentTypeValue = Accept.parse(contentType, version);
+        assert contentTypeValue == Accept.JSON;
+        
+        ResWrap<Entity> entity = jsonDeserializer.toEntity(IOUtils.toInputStream(content, Constants.ENCODING));
+        
+        return Response.noContent().type(MediaType.APPLICATION_JSON).build();
+      }catch (Exception e) {
+        LOG.error("While update single property reference", e);
+        return xml.createFaultResponse(accept, e);
+      }
+  }
+  
   @POST
   @Path("/async/$batch")
   public Response async(

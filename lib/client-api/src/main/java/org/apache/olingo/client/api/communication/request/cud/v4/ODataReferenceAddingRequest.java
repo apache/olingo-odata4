@@ -23,7 +23,15 @@ import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.response.v4.ODataReferenceAddingResponse;
 
 /**
- * This class implements an OData delete request.
+ * This class implements an OData reference adding request.
+ * 
+ * ODataReferenceAdding requests eighter add or change the reference of navigation properties.
+ * 
+ * If the navigation property is a collection of navigation references, the request adds a new reference to the
+ * collection.  [OData Protocol 4.0 - 11.4.6.1]
+ * 
+ * If the request addresses an navigation property, which references a single entity, the reference will
+ * be changed to the value provided by the request. [OData-Protocol 4.0 - 11.4.6.3]
  */
 public interface ODataReferenceAddingRequest
         extends ODataBasicRequest<ODataReferenceAddingResponse>, ODataBatchableRequest {

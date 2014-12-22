@@ -19,8 +19,10 @@
 package org.apache.olingo.client.api.serialization;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Collection;
 
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
@@ -79,4 +81,15 @@ public interface ODataWriter {
    */
   InputStream writeLink(ODataLink link, ODataFormat format)
       throws ODataSerializerException;
+  
+  /**
+   * Writes a entity reference
+   * 
+   * @param reference reference to be serialized
+   * @param format  serialization format
+   * @return stream of serialized objects 
+   * @throws ODataSerializerException
+   */
+  InputStream writeReference(ResWrap<URI> reference, ODataFormat format)
+    throws ODataSerializerException;
 }
