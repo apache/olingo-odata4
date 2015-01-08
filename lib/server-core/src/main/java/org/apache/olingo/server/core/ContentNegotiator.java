@@ -151,4 +151,17 @@ public class ContentNegotiator {
     throw new ContentNegotiatorException("unsupported content type: " + contentType,
         ContentNegotiatorException.MessageKeys.UNSUPPORTED_CONTENT_TYPE, contentType.toContentTypeString());
   }
+
+  public static boolean isSupported(final ContentType contentType,
+                                  final CustomContentTypeSupport customContentTypeSupport,
+                                  final RepresentationType representationType) throws ContentNegotiatorException {
+
+    for (final ContentType supportedContentType :
+            getSupportedContentTypes(customContentTypeSupport, representationType)) {
+      if (AcceptType.fromContentType(supportedContentType).get(0).matches(contentType)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
