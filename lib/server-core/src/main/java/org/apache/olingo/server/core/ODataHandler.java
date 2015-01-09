@@ -21,8 +21,13 @@ package org.apache.olingo.server.core;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -61,7 +66,9 @@ import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourcePrimitiveProperty;
@@ -221,34 +228,43 @@ public class ODataHandler {
           throws ODataHandlerException, ContentNegotiatorException, ODataApplicationException,
           SerializerException, DeserializerException {
 
-    final HttpMethod method = request.getMethod();
     final int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     final UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
 
     switch (lastPathSegment.getKind()) {
+      case action:
+        handleActionDispatching(request, response, (UriResourceAction) lastPathSegment);
+        break;
+
+      case function:
+        handleFunctionDispatching(request, response, (UriResourceFunction) lastPathSegment);
+        break;
+
       case entitySet:
       case navigationProperty:
-        handleEntityDispatching(request, response, method, (UriResourcePartTyped) lastPathSegment);
+        handleEntityDispatching(request, response, (UriResourcePartTyped) lastPathSegment);
         break;
 
       case count:
-        handleCountDispatching(request, response, method, lastPathSegmentIndex);
+        handleCountDispatching(request, response, lastPathSegmentIndex);
         break;
 
       case primitiveProperty:
-        handlePrimitivePropertyDispatching(request, response, method, (UriResourceProperty) lastPathSegment);
+        handlePrimitivePropertyDispatching(request, response, false,
+                ((UriResourceProperty) lastPathSegment).isCollection());
         break;
 
       case complexProperty:
-        handleComplexPropertyDispatching(request, response, method, (UriResourceProperty) lastPathSegment);
+        handleComplexPropertyDispatching(request, response, false,
+                ((UriResourceProperty) lastPathSegment).isCollection());
         break;
 
       case value:
-        handleValueDispatching(request, response, method, lastPathSegmentIndex);
+        handleValueDispatching(request, response, lastPathSegmentIndex);
         break;
 
       case ref:
-        handleReferenceDispatching(request, response, method, lastPathSegmentIndex);
+        handleReferenceDispatching(request, response, lastPathSegmentIndex);
         break;
 
       default:
@@ -257,10 +273,88 @@ public class ODataHandler {
     }
   }
 
+  private void handleFunctionDispatching(ODataRequest request, ODataResponse response,
+                                         UriResourceFunction uriResourceFunction)
+          throws ODataHandlerException, SerializerException, ContentNegotiatorException,
+          ODataApplicationException, DeserializerException {
+    final HttpMethod method = request.getMethod();
+    if(method != HttpMethod.GET) {
+      throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
+              ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
+    }
+
+    EdmFunctionImport functionImport = uriResourceFunction.getFunctionImport();
+    // could be null for bound functions
+    if(functionImport == null) {
+      throw new ODataHandlerException("not implemented",
+              ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+    }
+    //
+
+    List<EdmFunction> unboundFunctions = functionImport.getUnboundFunctions();
+    if(unboundFunctions == null || unboundFunctions.isEmpty()) {
+      throw new ODataHandlerException("No unbound function defined for function import",
+              ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+    }
+    EdmReturnType returnType = unboundFunctions.get(0).getReturnType();
+    handleOperationDispatching(request, response, uriResourceFunction, false, returnType);
+  }
+
+  private void handleActionDispatching(ODataRequest request, ODataResponse response,
+                                       UriResourceAction uriResourceAction)
+          throws ODataHandlerException, SerializerException, ContentNegotiatorException,
+          ODataApplicationException, DeserializerException {
+
+    final HttpMethod method = request.getMethod();
+    if(request.getMethod() != HttpMethod.POST) {
+      throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
+              ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
+    }
+
+    EdmActionImport functionImport = uriResourceAction.getActionImport();
+    // could be null for bound functions
+    if(functionImport == null) {
+      throw new ODataHandlerException("not implemented",
+              ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+    }
+    //
+
+    EdmAction unboundFunctions = functionImport.getUnboundAction();
+    if(unboundFunctions == null) {
+      throw new ODataHandlerException("No unbound function defined for function import",
+              ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+    }
+    EdmReturnType returnType = unboundFunctions.getReturnType();
+    handleOperationDispatching(request, response, uriResourceAction, true, returnType);
+  }
+
+
+  private void handleOperationDispatching(ODataRequest request, ODataResponse response,
+                                          UriResourcePartTyped uriResource,
+                                          boolean isAction, EdmReturnType edmReturnTypeKind)
+          throws ODataHandlerException, SerializerException, ContentNegotiatorException,
+          ODataApplicationException, DeserializerException {
+
+    switch (edmReturnTypeKind.getType().getKind()) {
+      case ENTITY:
+        handleEntityDispatching(request, response, uriResource);
+        break;
+      case PRIMITIVE:
+        handlePrimitivePropertyDispatching(request, response, isAction, edmReturnTypeKind.isCollection());
+        break;
+      default:
+        throw new ODataHandlerException("not implemented",
+                ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+    }
+  }
+
+
+
   private void handleReferenceDispatching(final ODataRequest request, final ODataResponse response,
-                                          final HttpMethod method, final int lastPathSegmentIndex)
+                                          final int lastPathSegmentIndex)
           throws ContentNegotiatorException, ODataApplicationException, SerializerException, ODataHandlerException,
           DeserializerException {
+    final HttpMethod method = request.getMethod();
     if (((UriResourcePartTyped) uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1)).isCollection()) {
       if (method == HttpMethod.GET) {
         final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
@@ -297,9 +391,10 @@ public class ODataHandler {
   }
 
   private void handleValueDispatching(final ODataRequest request, final ODataResponse response,
-                                      final HttpMethod method, final int lastPathSegmentIndex)
+                                      final int lastPathSegmentIndex)
           throws ContentNegotiatorException, ODataApplicationException, SerializerException, ODataHandlerException,
           DeserializerException {
+    final HttpMethod method = request.getMethod();
     final UriResource resource = uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
     if (resource instanceof UriResourceProperty) {
       final RepresentationType valueRepresentationType =
@@ -347,12 +442,12 @@ public class ODataHandler {
   }
 
   private void handleComplexPropertyDispatching(final ODataRequest request, final ODataResponse response,
-                                                final HttpMethod method,
-                                                final UriResourceProperty complexPropertyResource)
+                                                final boolean isAction, final boolean isCollection)
           throws ContentNegotiatorException, ODataApplicationException, SerializerException, ODataHandlerException,
           DeserializerException {
 
-    final RepresentationType complexRepresentationType = complexPropertyResource.isCollection() ?
+    final HttpMethod method = request.getMethod();
+    final RepresentationType complexRepresentationType = isCollection ?
             RepresentationType.COLLECTION_COMPLEX : RepresentationType.COMPLEX;
     if (method == HttpMethod.GET) {
       final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
@@ -376,6 +471,18 @@ public class ODataHandler {
         selectProcessor(ComplexCollectionProcessor.class)
                 .updateComplexCollection(request, response, uriInfo, requestFormat, responseFormat);
       }
+    } else if (method == HttpMethod.POST && isAction) {
+      final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
+      checkContentTypeSupport(requestFormat, complexRepresentationType);
+      final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+              request, customContentTypeSupport, complexRepresentationType);
+      if (complexRepresentationType == RepresentationType.COMPLEX) {
+        selectProcessor(ComplexProcessor.class)
+                .processComplex(request, response, uriInfo, requestFormat, responseFormat);
+      } else {
+        selectProcessor(ComplexCollectionProcessor.class)
+                .updateComplexCollection(request, response, uriInfo, requestFormat, responseFormat);
+      }
     } else if (method == HttpMethod.DELETE) {
       if (complexRepresentationType == RepresentationType.COMPLEX) {
         selectProcessor(ComplexProcessor.class).deleteComplex(request, response, uriInfo);
@@ -389,10 +496,12 @@ public class ODataHandler {
   }
 
   private void handlePrimitivePropertyDispatching(final ODataRequest request, final ODataResponse response,
-                                                  final HttpMethod method, final UriResourceProperty propertyResource)
+                                                  boolean isAction, final boolean isCollection)
           throws ContentNegotiatorException, ODataApplicationException, SerializerException, ODataHandlerException,
           DeserializerException {
-    final RepresentationType representationType = propertyResource.isCollection() ?
+
+    final HttpMethod method = request.getMethod();
+    final RepresentationType representationType = isCollection ?
             RepresentationType.COLLECTION_PRIMITIVE : RepresentationType.PRIMITIVE;
     if (method == HttpMethod.GET) {
       final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
@@ -421,6 +530,18 @@ public class ODataHandler {
       } else {
         selectProcessor(PrimitiveCollectionProcessor.class).deletePrimitiveCollection(request, response, uriInfo);
       }
+    } else if (method == HttpMethod.POST && isAction) {
+      final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
+      checkContentTypeSupport(requestFormat, representationType);
+      final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+              request, customContentTypeSupport, representationType);
+      if (representationType == RepresentationType.PRIMITIVE) {
+        selectProcessor(PrimitiveProcessor.class)
+                .processPrimitive(request, response, uriInfo, requestFormat, responseFormat);
+      } else {
+        selectProcessor(PrimitiveCollectionProcessor.class)
+                .processPrimitiveCollection(request, response, uriInfo,  requestFormat, responseFormat);
+      }
     } else {
       throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
               ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
@@ -428,9 +549,10 @@ public class ODataHandler {
   }
 
   private void handleCountDispatching(final ODataRequest request, final ODataResponse response,
-                                      final HttpMethod method, final int lastPathSegmentIndex)
+                                      final int lastPathSegmentIndex)
           throws ODataApplicationException, SerializerException, ODataHandlerException {
 
+    final HttpMethod method = request.getMethod();
     if (method == HttpMethod.GET) {
       final UriResource resource = uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
       if (resource instanceof UriResourceEntitySet || resource instanceof UriResourceNavigation) {
@@ -450,11 +572,11 @@ public class ODataHandler {
   }
 
   private void handleEntityDispatching(final ODataRequest request, final ODataResponse response,
-                                       final HttpMethod method,
                                        final UriResourcePartTyped uriResourcePart)
           throws ContentNegotiatorException, ODataApplicationException, SerializerException, ODataHandlerException,
           DeserializerException {
 
+    final HttpMethod method = request.getMethod();
     if (uriResourcePart.isCollection()) {
       if (method == HttpMethod.GET) {
         final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),

@@ -107,6 +107,7 @@ public class SchemaProvider {
     actions.addAll(prov.getActions(ActionProvider.nameBAESTwoKeyNavRTESTwoKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAETBaseTwoKeyNavRTETBaseTwoKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTString));
     actions.addAll(prov.getActions(ActionProvider.nameUARTPrimParam));
     actions.addAll(prov.getActions(ActionProvider.nameUARTPrimCollParam));
     actions.addAll(prov.getActions(ActionProvider.nameUARTCompParam));

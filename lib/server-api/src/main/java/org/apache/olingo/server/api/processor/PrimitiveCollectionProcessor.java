@@ -75,4 +75,20 @@ public interface PrimitiveCollectionProcessor extends Processor {
    */
   void deletePrimitiveCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo)
           throws ODataApplicationException;
+
+
+  /**
+   * Process an action which has as return type a primitive-type collection.
+   * @param request  OData request object containing raw HTTP information
+   * @param response OData response object for collecting response data
+   * @param uriInfo  information of a parsed OData URI
+   * @param requestFormat   content type of body sent with request
+   * @param responseFormat   requested content type after content negotiation
+   * @throws ODataApplicationException if the service implementation encounters a failure
+   * @throws DeserializerException     if deserialization failed
+   * @throws SerializerException       if serialization failed
+   */
+  void processPrimitiveCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+                                 ContentType requestFormat, ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException;
 }

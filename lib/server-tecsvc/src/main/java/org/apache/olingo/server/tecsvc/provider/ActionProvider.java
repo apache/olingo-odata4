@@ -46,6 +46,8 @@ public class ActionProvider {
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETTwoKeyNavRTETTwoKeyNav");
 
   // Unbound Actions
+  public static final FullQualifiedName nameUARTString = new FullQualifiedName(SchemaProvider.NAMESPACE,
+          "UARTString");
   public static final FullQualifiedName nameUARTCompCollParam = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UARTCompCollParam");
   public static final FullQualifiedName nameUARTCompParam = new FullQualifiedName(SchemaProvider.NAMESPACE,
@@ -62,8 +64,13 @@ public class ActionProvider {
       "UARTPrimCollParam");
 
   public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
-    if (actionName.equals(nameUARTPrimParam)) {
+    if (actionName.equals(nameUARTString)) {
       return Arrays.asList(
+              new Action().setName(nameUARTString.getName())
+                      .setReturnType(new ReturnType().setType(PropertyProvider.nameString))
+      );
+    } else if (actionName.equals(nameUARTPrimParam)) {
+        return Arrays.asList(
           new Action().setName("UARTPrimParam")
               .setParameters(Arrays.asList(
                   new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)))

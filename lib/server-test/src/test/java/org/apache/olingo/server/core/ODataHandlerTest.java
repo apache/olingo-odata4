@@ -279,6 +279,40 @@ public class ODataHandlerTest {
   }
 
   @Test
+  public void dispatchFunction() throws Exception {
+    final String uri = "FICRTCollString()";
+    final PrimitiveCollectionProcessor processor = mock(PrimitiveCollectionProcessor.class);
+
+    dispatch(HttpMethod.GET, uri, processor);
+    verify(processor).readPrimitiveCollection(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+//    dispatch(HttpMethod.GET, uri, processor);
+//    verify(processor).readEntity(
+//            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+  }
+
+
+  @Test
+  public void dispatchAction() throws Exception {
+    final String uri = "AIRTString";
+
+    PrimitiveProcessor processor = mock(PrimitiveProcessor.class);
+    dispatch(HttpMethod.POST, uri, processor);
+    verify(processor).processPrimitive(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+            any(ContentType.class), any(ContentType.class));
+
+//    dispatch(HttpMethod.POST, uri, processor);
+//    verify(processor).readEntity(
+//            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.GET, uri, processor);
+  }
+
+  @Test
   public void dispatchEntity() throws Exception {
     final String uri = "ESAllPrim(0)";
     final EntityProcessor processor = mock(EntityProcessor.class);

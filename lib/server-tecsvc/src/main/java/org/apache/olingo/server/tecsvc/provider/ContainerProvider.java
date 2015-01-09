@@ -98,6 +98,7 @@ public class ContainerProvider {
     // ActionImports
     List<ActionImport> actionImports = new ArrayList<ActionImport>();
     container.setActionImports(actionImports);
+    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTString"));
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTPrimParam"));
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTPrimCollParam"));
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTCompParam"));
@@ -261,7 +262,12 @@ public class ContainerProvider {
   public ActionImport getActionImport(final FullQualifiedName entityContainer, final String name) throws ODataException
   {
     if (entityContainer.equals(nameContainer)) {
-      if (name.equals("AIRTPrimParam")) {
+      if (name.equals("AIRTString")) {
+        return new ActionImport()
+                .setName("AIRTString")
+                .setAction(ActionProvider.nameUARTString);
+
+      } else if (name.equals("AIRTPrimParam")) {
         return new ActionImport()
             .setName("AIRTPrimParam")
             .setAction(ActionProvider.nameUARTPrimParam);

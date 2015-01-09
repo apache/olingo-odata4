@@ -96,6 +96,14 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
+  public void processPrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+      ContentType requestFormat, ContentType responseFormat)
+      throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("Not supported yet.",
+        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
   public void readPrimitiveCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     readProperty(response, uriInfo, contentType, RepresentationType.COLLECTION_PRIMITIVE);
@@ -116,6 +124,14 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
+  public void processPrimitiveCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType
+      requestFormat, ContentType responseFormat) throws ODataApplicationException, DeserializerException,
+      SerializerException {
+    throw new ODataApplicationException("Not supported yet.",
+        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
   public void readComplex(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     readProperty(response, uriInfo, contentType, RepresentationType.COMPLEX);
@@ -125,6 +141,14 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   public void updateComplex(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("Not supported yet.",
+        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
+  public void processComplex(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType
+      requestFormat, ContentType responseFormat) throws ODataApplicationException, DeserializerException,
+      SerializerException {
     throw new ODataApplicationException("Not supported yet.",
         HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
@@ -145,6 +169,14 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   public void updateComplexCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("Not supported yet.",
+        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
+  public void processComplexCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType
+      requestFormat, ContentType responseFormat) throws ODataApplicationException, DeserializerException,
+      SerializerException {
     throw new ODataApplicationException("Not supported yet.",
         HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
@@ -190,28 +222,28 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
                     helper.buildContextURLSelectList((EdmStructuredType) edmProperty.getType(), expand, select))
                 .build();
         switch (representationType) {
-          case PRIMITIVE:
-            response.setContent(serializer.primitive((EdmPrimitiveType) edmProperty.getType(), property,
-                PrimitiveSerializerOptions.with().contextURL(contextURL).facetsFrom(edmProperty).build()));
-            break;
-          case COMPLEX:
-            response.setContent(serializer.complex((EdmComplexType) edmProperty.getType(), property,
-                ComplexSerializerOptions.with().contextURL(contextURL)
-                    .expand(expand).select(select)
-                    .build()));
-            break;
-          case COLLECTION_PRIMITIVE:
-            response.setContent(serializer.primitiveCollection((EdmPrimitiveType) edmProperty.getType(), property,
-                PrimitiveSerializerOptions.with().contextURL(contextURL).facetsFrom(edmProperty).build()));
-            break;
-          case COLLECTION_COMPLEX:
-            response.setContent(serializer.complexCollection((EdmComplexType) edmProperty.getType(), property,
-                ComplexSerializerOptions.with().contextURL(contextURL)
-                    .expand(expand).select(select)
-                    .build()));
-            break;
-          default:
-            break;
+        case PRIMITIVE:
+          response.setContent(serializer.primitive((EdmPrimitiveType) edmProperty.getType(), property,
+              PrimitiveSerializerOptions.with().contextURL(contextURL).facetsFrom(edmProperty).build()));
+          break;
+        case COMPLEX:
+          response.setContent(serializer.complex((EdmComplexType) edmProperty.getType(), property,
+              ComplexSerializerOptions.with().contextURL(contextURL)
+                  .expand(expand).select(select)
+                  .build()));
+          break;
+        case COLLECTION_PRIMITIVE:
+          response.setContent(serializer.primitiveCollection((EdmPrimitiveType) edmProperty.getType(), property,
+              PrimitiveSerializerOptions.with().contextURL(contextURL).facetsFrom(edmProperty).build()));
+          break;
+        case COLLECTION_COMPLEX:
+          response.setContent(serializer.complexCollection((EdmComplexType) edmProperty.getType(), property,
+              ComplexSerializerOptions.with().contextURL(contextURL)
+                  .expand(expand).select(select)
+                  .build()));
+          break;
+        default:
+          break;
         }
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
         response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
@@ -239,7 +271,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   private Property getPropertyData(final UriResourceEntitySet resourceEntitySet, final List<String> path)
-          throws ODataApplicationException {
+      throws ODataApplicationException {
     final Entity entity = dataProvider.read(resourceEntitySet.getEntitySet(), resourceEntitySet.getKeyPredicates());
     if (entity == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
