@@ -36,7 +36,9 @@ import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
+import org.apache.olingo.server.tecsvc.provider.ActionProvider;
 import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
+import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
 import org.junit.Test;
@@ -160,37 +162,37 @@ public class TestUriParserImpl {
   @Test
   public void runActionImport_VarReturnType() {
 
-    testRes.run("AIRTPrimParam").isKind(UriInfoKind.resource)
+    testRes.run(ContainerProvider.AIRT_STRING).isKind(UriInfoKind.resource)
         .first()
-        .isActionImport("AIRTPrimParam")
-        .isAction("UARTPrimParam")
+        .isActionImport(ContainerProvider.AIRT_STRING)
+        .isAction(ActionProvider.nameUARTString.getName())
         .isType(PropertyProvider.nameString, false);
 
-    testRes.run("AIRTPrimCollParam").isKind(UriInfoKind.resource)
-        .first()
-        .isActionImport("AIRTPrimCollParam")
-        .isAction("UARTPrimCollParam")
-        .isType(PropertyProvider.nameString, true);
+    testRes.run(ContainerProvider.AIRT_COLL_STRING_TWO_PARAM).isKind(UriInfoKind.resource)
+            .first()
+            .isActionImport(ContainerProvider.AIRT_COLL_STRING_TWO_PARAM)
+            .isAction(ActionProvider.nameUARTCollStringTwoParam.getName())
+            .isType(PropertyProvider.nameString, true);
 
-    testRes.run("AIRTCompParam").isKind(UriInfoKind.resource)
+    testRes.run(ContainerProvider.AIRTCT_TWO_PRIM_PARAM).isKind(UriInfoKind.resource)
         .first()
-        .isActionImport("AIRTCompParam")
-        .isAction("UARTCompParam")
+        .isActionImport(ContainerProvider.AIRTCT_TWO_PRIM_PARAM)
+        .isAction(ActionProvider.nameUARTCTTwoPrimParam.getName())
         .isType(ComplexTypeProvider.nameCTTwoPrim, false);
 
-    testRes.run("AIRTCompCollParam").isKind(UriInfoKind.resource)
+    testRes.run(ContainerProvider.AIRT_COLL_CT_TWO_PRIM_PARAM).isKind(UriInfoKind.resource)
         .first()
-        .isActionImport("AIRTCompCollParam")
-        .isAction("UARTCompCollParam")
+        .isActionImport(ContainerProvider.AIRT_COLL_CT_TWO_PRIM_PARAM)
+        .isAction(ActionProvider.nameUARTCollCTTwoPrimParam.getName())
         .isType(ComplexTypeProvider.nameCTTwoPrim, true);
 
-    testRes.run("AIRTETParam").isKind(UriInfoKind.resource)
+    testRes.run(ContainerProvider.AIRTET_TWO_KEY_TWO_PRIM_PARAM).isKind(UriInfoKind.resource)
         .first()
-        .isActionImport("AIRTETParam")
-        .isAction("UARTETParam")
+        .isActionImport(ContainerProvider.AIRTET_TWO_KEY_TWO_PRIM_PARAM)
+        .isAction(ActionProvider.nameUARTETTwoKeyTwoPrimParam.getName())
         .isType(EntityTypeProvider.nameETTwoKeyTwoPrim, false);
 
-    testUri.runEx("AIRTPrimParam/invalidElement")
+    testUri.runEx(ContainerProvider.AIRT_STRING + "/invalidElement")
         .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_MUST_BE_PRECEDED_BY_STRUCTURAL_TYPE);
   }
 

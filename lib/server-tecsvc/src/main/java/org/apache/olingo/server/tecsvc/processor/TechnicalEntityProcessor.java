@@ -90,6 +90,15 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
+  public void processEntityCollection(final ODataRequest request, final ODataResponse response,
+                                      final UriInfo uriInfo,
+                                      final ContentType requestFormat, final ContentType  responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("Process entity collection is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
   public void countEntityCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
           throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
@@ -245,6 +254,15 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       dataProvider.delete(resourceEntitySet.getEntitySet(), entity);
       response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
     }
+  }
+
+  @Override
+  public void processEntity(final ODataRequest request, final ODataResponse response,
+                            final UriInfo uriInfo, final ContentType requestFormat,
+                            final ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("Process entity is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
 
   private void blockNavigation(final UriInfo uriInfo) throws ODataApplicationException {

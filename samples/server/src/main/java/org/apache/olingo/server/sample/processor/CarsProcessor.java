@@ -55,9 +55,7 @@ import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
-import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -123,6 +121,15 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
   }
 
   @Override
+  public void processEntityCollection(final ODataRequest request, final ODataResponse response,
+                                      final UriInfo uriInfo,
+                                      final ContentType requestFormat, final ContentType  responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("Process entity collection is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
   public void readEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     // First we have to figure out which entity set the requested entity is in
@@ -169,6 +176,15 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
   public void deleteEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo)
           throws ODataApplicationException {
     throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @Override
+  public void processEntity(final ODataRequest request, final ODataResponse response,
+                            final UriInfo uriInfo, final ContentType requestFormat,
+                            final ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("Process entity is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
 
   @Override
@@ -341,7 +357,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
                              final UriInfo uriInfo, final ContentType requestFormat,
                              final ContentType responseFormat)
           throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new ODataApplicationException("Process Primitive property update is not supported yet.",
+    throw new ODataApplicationException("Process Primitive property is not supported yet.",
             HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
 
@@ -359,7 +375,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
                              final UriInfo uriInfo, final ContentType requestFormat,
                              final ContentType responseFormat)
           throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new ODataApplicationException("Process Complex property update is not supported yet.",
+    throw new ODataApplicationException("Process Complex property is not supported yet.",
             HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
 

@@ -334,7 +334,7 @@ public class ODataHandler {
 
     switch (edmReturnTypeKind.getType().getKind()) {
       case ENTITY:
-        handleEntityDispatching(request, response, edmReturnTypeKind.isCollection(), false);
+        handleEntityDispatching(request, response, edmReturnTypeKind.isCollection(), false, isAction);
         break;
       case PRIMITIVE:
         handlePrimitivePropertyDispatching(request, response, isAction, edmReturnTypeKind.isCollection());
@@ -480,7 +480,7 @@ public class ODataHandler {
                 .processComplex(request, response, uriInfo, requestFormat, responseFormat);
       } else {
         selectProcessor(ComplexCollectionProcessor.class)
-                .updateComplexCollection(request, response, uriInfo, requestFormat, responseFormat);
+                .processComplexCollection(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else if (method == HttpMethod.DELETE) {
       if (complexRepresentationType == RepresentationType.COMPLEX) {
@@ -574,11 +574,11 @@ public class ODataHandler {
                                        final UriResourcePartTyped uriResourcePart)
           throws ContentNegotiatorException, ODataApplicationException, SerializerException, ODataHandlerException,
           DeserializerException {
-    handleEntityDispatching(request, response, uriResourcePart.isCollection(), isMedia(uriResourcePart));
+    handleEntityDispatching(request, response, uriResourcePart.isCollection(), isMedia(uriResourcePart), false);
   }
 
   private void handleEntityDispatching(final ODataRequest request, final ODataResponse response,
-                                       final boolean isCollection, final boolean isMedia)
+                                       final boolean isCollection, final boolean isMedia, boolean isAction)
           throws ContentNegotiatorException, ODataApplicationException, SerializerException, ODataHandlerException,
           DeserializerException {
 
@@ -591,14 +591,19 @@ public class ODataHandler {
         selectProcessor(EntityCollectionProcessor.class)
                 .readEntityCollection(request, response, uriInfo, requestedContentType);
       } else if (method == HttpMethod.POST) {
-        if (isMedia) {
           final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
+        if (isMedia) {
           final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
                   request, customContentTypeSupport, RepresentationType.ENTITY);
           selectProcessor(MediaEntityProcessor.class)
                   .createMediaEntity(request, response, uriInfo, requestFormat, responseFormat);
+        } else if(isAction) {
+          checkContentTypeSupport(requestFormat, RepresentationType.ENTITY);
+          final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+                  request, customContentTypeSupport, RepresentationType.ENTITY);
+          selectProcessor(EntityCollectionProcessor.class)
+                  .processEntityCollection(request, response, uriInfo, requestFormat, responseFormat);
         } else {
-          final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
           checkContentTypeSupport(requestFormat, RepresentationType.ENTITY);
           final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
                   request, customContentTypeSupport, RepresentationType.ENTITY);
@@ -621,6 +626,12 @@ public class ODataHandler {
         final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
                 request, customContentTypeSupport, RepresentationType.ENTITY);
         selectProcessor(EntityProcessor.class).updateEntity(request, response, uriInfo, requestFormat, responseFormat);
+      } else if (method == HttpMethod.POST && isAction) {
+        final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
+        checkContentTypeSupport(requestFormat, RepresentationType.ENTITY);
+        final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+                request, customContentTypeSupport, RepresentationType.ENTITY);
+        selectProcessor(EntityProcessor.class).processEntity(request, response, uriInfo, requestFormat, responseFormat);
       } else if (method == HttpMethod.DELETE) {
         selectProcessor(isMedia ? MediaEntityProcessor.class : EntityProcessor.class)
                 .deleteEntity(request, response, uriInfo);
