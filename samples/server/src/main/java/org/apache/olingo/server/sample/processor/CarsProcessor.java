@@ -337,11 +337,29 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
   }
 
   @Override
+  public void processPrimitive(final ODataRequest request, final ODataResponse response,
+                             final UriInfo uriInfo, final ContentType requestFormat,
+                             final ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("Process Primitive property update is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
   public void updateComplex(final ODataRequest request, final ODataResponse response,
                             final UriInfo uriInfo, final ContentType requestFormat,
                             final ContentType responseFormat)
           throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Complex property update is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
+  public void processComplex(final ODataRequest request, final ODataResponse response,
+                             final UriInfo uriInfo, final ContentType requestFormat,
+                             final ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("Process Complex property update is not supported yet.",
             HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
 

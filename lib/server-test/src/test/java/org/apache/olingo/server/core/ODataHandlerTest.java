@@ -280,18 +280,39 @@ public class ODataHandlerTest {
 
   @Test
   public void dispatchFunction() throws Exception {
-    final String uri = "FICRTCollString()";
-    final PrimitiveCollectionProcessor processor = mock(PrimitiveCollectionProcessor.class);
-
-    dispatch(HttpMethod.GET, uri, processor);
-    verify(processor).readPrimitiveCollection(
+    EntityProcessor entityProcessor = mock(EntityProcessor.class);
+    dispatch(HttpMethod.GET, "FICRTETKeyNav()", entityProcessor);
+    verify(entityProcessor).readEntity(
             any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
-//    dispatch(HttpMethod.GET, uri, processor);
-//    verify(processor).readEntity(
-//            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+    EntityCollectionProcessor entityCollectionProcessor = mock(EntityCollectionProcessor.class);
+    dispatch(HttpMethod.GET, "FICRTESTwoKeyNavParam(ParameterInt16=123)", entityCollectionProcessor);
+    verify(entityCollectionProcessor).readEntityCollection(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
-    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    PrimitiveProcessor primitiveProcessor = mock(PrimitiveProcessor.class);
+    dispatch(HttpMethod.GET, "FICRTString()", primitiveProcessor);
+    verify(primitiveProcessor).readPrimitive(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    PrimitiveCollectionProcessor primitiveCollectionProcessor = mock(PrimitiveCollectionProcessor.class);
+    dispatch(HttpMethod.GET, "FICRTCollString()", primitiveCollectionProcessor);
+    verify(primitiveCollectionProcessor).readPrimitiveCollection(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    ComplexProcessor complexProcessor = mock(ComplexProcessor.class);
+    dispatch(HttpMethod.GET, "FICRTCTTwoPrim()", complexProcessor);
+    verify(complexProcessor).readComplex(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    ComplexCollectionProcessor complexCollectionProcessor = mock(ComplexCollectionProcessor.class);
+    dispatch(HttpMethod.GET, "FICRTCollCTTwoPrim()", complexCollectionProcessor);
+    verify(complexCollectionProcessor).readComplexCollection(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, "FICRTCollString()", mock(Processor.class));
+    dispatchMethodNotAllowed(HttpMethod.PUT, "FICRTCollString()", mock(Processor.class));
+    dispatchMethodNotAllowed(HttpMethod.DELETE, "FICRTCollString()", mock(Processor.class));
   }
 
 

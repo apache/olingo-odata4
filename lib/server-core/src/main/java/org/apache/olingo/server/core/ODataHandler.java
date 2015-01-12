@@ -273,8 +273,8 @@ public class ODataHandler {
     }
   }
 
-  private void handleFunctionDispatching(ODataRequest request, ODataResponse response,
-                                         UriResourceFunction uriResourceFunction)
+  private void handleFunctionDispatching(final ODataRequest request, final ODataResponse response,
+                                         final UriResourceFunction uriResourceFunction)
           throws ODataHandlerException, SerializerException, ContentNegotiatorException,
           ODataApplicationException, DeserializerException {
     final HttpMethod method = request.getMethod();
@@ -286,10 +286,9 @@ public class ODataHandler {
     EdmFunctionImport functionImport = uriResourceFunction.getFunctionImport();
     // could be null for bound functions
     if(functionImport == null) {
-      throw new ODataHandlerException("not implemented",
+      throw new ODataHandlerException("Bound functions are not implemented yet",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
-    //
 
     List<EdmFunction> unboundFunctions = functionImport.getUnboundFunctions();
     if(unboundFunctions == null || unboundFunctions.isEmpty()) {
@@ -297,11 +296,11 @@ public class ODataHandler {
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
     EdmReturnType returnType = unboundFunctions.get(0).getReturnType();
-    handleOperationDispatching(request, response, uriResourceFunction, false, returnType);
+    handleOperationDispatching(request, response, false, returnType);
   }
 
-  private void handleActionDispatching(ODataRequest request, ODataResponse response,
-                                       UriResourceAction uriResourceAction)
+  private void handleActionDispatching(final ODataRequest request, final ODataResponse response,
+                                       final UriResourceAction uriResourceAction)
           throws ODataHandlerException, SerializerException, ContentNegotiatorException,
           ODataApplicationException, DeserializerException {
 
@@ -311,43 +310,43 @@ public class ODataHandler {
               ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
     }
 
-    EdmActionImport functionImport = uriResourceAction.getActionImport();
-    // could be null for bound functions
-    if(functionImport == null) {
-      throw new ODataHandlerException("not implemented",
+    EdmActionImport actionImport = uriResourceAction.getActionImport();
+    // could be null for bound actions
+    if(actionImport == null) {
+      throw new ODataHandlerException("Bound actions are not implemented yet",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
-    //
 
-    EdmAction unboundFunctions = functionImport.getUnboundAction();
-    if(unboundFunctions == null) {
+    EdmAction unboundActions = actionImport.getUnboundAction();
+    if(unboundActions == null) {
       throw new ODataHandlerException("No unbound function defined for function import",
               ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
-    EdmReturnType returnType = unboundFunctions.getReturnType();
-    handleOperationDispatching(request, response, uriResourceAction, true, returnType);
+    EdmReturnType returnType = unboundActions.getReturnType();
+    handleOperationDispatching(request, response, true, returnType);
   }
 
 
-  private void handleOperationDispatching(ODataRequest request, ODataResponse response,
-                                          UriResourcePartTyped uriResource,
-                                          boolean isAction, EdmReturnType edmReturnTypeKind)
+  private void handleOperationDispatching(final ODataRequest request, final ODataResponse response,
+                                          final boolean isAction, final EdmReturnType edmReturnTypeKind)
           throws ODataHandlerException, SerializerException, ContentNegotiatorException,
           ODataApplicationException, DeserializerException {
 
     switch (edmReturnTypeKind.getType().getKind()) {
       case ENTITY:
-        handleEntityDispatching(request, response, uriResource);
+        handleEntityDispatching(request, response, edmReturnTypeKind.isCollection(), false);
         break;
       case PRIMITIVE:
         handlePrimitivePropertyDispatching(request, response, isAction, edmReturnTypeKind.isCollection());
+        break;
+      case COMPLEX:
+        handleComplexPropertyDispatching(request, response, isAction, edmReturnTypeKind.isCollection());
         break;
       default:
         throw new ODataHandlerException("not implemented",
                 ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
   }
-
 
 
   private void handleReferenceDispatching(final ODataRequest request, final ODataResponse response,
@@ -575,9 +574,16 @@ public class ODataHandler {
                                        final UriResourcePartTyped uriResourcePart)
           throws ContentNegotiatorException, ODataApplicationException, SerializerException, ODataHandlerException,
           DeserializerException {
+    handleEntityDispatching(request, response, uriResourcePart.isCollection(), isMedia(uriResourcePart));
+  }
+
+  private void handleEntityDispatching(final ODataRequest request, final ODataResponse response,
+                                       final boolean isCollection, final boolean isMedia)
+          throws ContentNegotiatorException, ODataApplicationException, SerializerException, ODataHandlerException,
+          DeserializerException {
 
     final HttpMethod method = request.getMethod();
-    if (uriResourcePart.isCollection()) {
+    if (isCollection) {
       if (method == HttpMethod.GET) {
         final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
                 request, customContentTypeSupport, RepresentationType.COLLECTION_ENTITY);
@@ -585,7 +591,7 @@ public class ODataHandler {
         selectProcessor(EntityCollectionProcessor.class)
                 .readEntityCollection(request, response, uriInfo, requestedContentType);
       } else if (method == HttpMethod.POST) {
-        if (isMedia(uriResourcePart)) {
+        if (isMedia) {
           final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
           final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
                   request, customContentTypeSupport, RepresentationType.ENTITY);
@@ -616,7 +622,7 @@ public class ODataHandler {
                 request, customContentTypeSupport, RepresentationType.ENTITY);
         selectProcessor(EntityProcessor.class).updateEntity(request, response, uriInfo, requestFormat, responseFormat);
       } else if (method == HttpMethod.DELETE) {
-        selectProcessor(isMedia(uriResourcePart) ? MediaEntityProcessor.class : EntityProcessor.class)
+        selectProcessor(isMedia ? MediaEntityProcessor.class : EntityProcessor.class)
                 .deleteEntity(request, response, uriInfo);
       } else {
         throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
