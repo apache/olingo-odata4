@@ -80,7 +80,6 @@ public class BatchResponseSerializer {
     }
 
     builder.append(getCloseDelimiter(changeSetBoundary));
-    builder.append(CRLF);
   }
 
   private void appendBodyPart(ODataResponse response, StringBuilder builder, boolean isChangeSet)

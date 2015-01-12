@@ -70,7 +70,7 @@ public class BatchResponseSerializerTest {
     reader.close();
     
     int line = 0;
-    assertEquals(25, body.size());
+    assertEquals(24, body.size());
     assertTrue(body.get(line++).contains("--batch_"));
     assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
     assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
@@ -94,10 +94,63 @@ public class BatchResponseSerializerTest {
     assertEquals(CRLF, body.get(line++));
     assertEquals(CRLF, body.get(line++));
     assertTrue(body.get(line++).contains("--changeset_"));
-    assertEquals(CRLF, body.get(line++));
     assertTrue(body.get(line++).contains("--batch_"));
   }
 
+  @Test
+  public void testBatchResponseWithEndingCRLF() throws Exception {
+    final List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
+    ODataResponse response = new ODataResponse();
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+    response.setContent(IOUtils.toInputStream("Walter Winter"));
+
+    List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
+    responses.add(response);
+    parts.add(new ODataResponsePart(responses, false));
+
+    ODataResponse changeSetResponse = new ODataResponse();
+    changeSetResponse.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+    changeSetResponse.setHeader(BatchParserCommon.HTTP_CONTENT_ID, "1");
+    responses = new ArrayList<ODataResponse>(1);
+    responses.add(changeSetResponse);
+    parts.add(new ODataResponsePart(responses, true));
+
+    BatchResponseSerializer serializer = new BatchResponseSerializer();
+    final InputStream content = serializer.serialize(parts, BOUNDARY);
+    assertNotNull(content);
+    final BufferedReaderIncludingLineEndings reader =
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(content));
+    final List<String> body = reader.toList();
+    reader.close();
+    
+    int line = 0;
+    assertEquals(23, body.size());
+    assertTrue(body.get(line++).contains("--batch_"));
+    assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("HTTP/1.1 200 OK" + CRLF, body.get(line++));
+    assertEquals("Content-Type: application/json" + CRLF, body.get(line++));
+    assertEquals("Content-Length: 13" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("Walter Winter" + CRLF, body.get(line++));
+    assertTrue(body.get(line++).contains("--batch_"));
+    assertTrue(body.get(line++).contains("Content-Type: multipart/mixed; boundary=changeset_"));
+    assertEquals(CRLF, body.get(line++));
+    assertTrue(body.get(line++).contains("--changeset_"));
+    assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
+    assertEquals("Content-Id: 1" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("HTTP/1.1 204 No Content" + CRLF, body.get(line++));
+    assertEquals("Content-Length: 0" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertTrue(body.get(line++).contains("--changeset_"));
+    assertTrue(body.get(line++).contains("--batch_"));
+  }
+  
   @Test
   public void testResponse() throws Exception {
     List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
@@ -155,7 +208,7 @@ public class BatchResponseSerializerTest {
     reader.close();
     
     int line = 0;
-    assertEquals(15, body.size());
+    assertEquals(14, body.size());
     assertTrue(body.get(line++).contains("--batch_"));
     assertTrue(body.get(line++).contains("Content-Type: multipart/mixed; boundary=changeset_"));
     assertEquals(CRLF, body.get(line++));
@@ -169,7 +222,6 @@ public class BatchResponseSerializerTest {
     assertEquals(CRLF, body.get(line++));
     assertEquals(CRLF, body.get(line++));
     assertTrue(body.get(line++).contains("--changeset_"));
-    assertEquals(CRLF, body.get(line++));
     assertTrue(body.get(line++).contains("--batch_"));
   }
 }

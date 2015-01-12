@@ -153,7 +153,7 @@ public class MockedBatchHandlerTest {
     reader.close();
 
     int line = 0;
-    assertEquals(63, responseContent.size());
+    assertEquals(62, responseContent.size());
 
     // Check change set
     assertTrue(responseContent.get(line++).contains("--batch_"));
@@ -187,7 +187,6 @@ public class MockedBatchHandlerTest {
       } else {
         fail();
       }
-
       assertEquals(CRLF, responseContent.get(line++));
     }
 
@@ -196,9 +195,8 @@ public class MockedBatchHandlerTest {
     assertTrue(responseContent.get(line++).contains("--changeset_"));
 
     // Close batch
-    assertEquals(CRLF, responseContent.get(line++));
     assertTrue(responseContent.get(line++).contains("--batch_"));
-    assertEquals(63, line);
+    assertEquals(62, line);
   }
 
   @Test
@@ -305,7 +303,7 @@ public class MockedBatchHandlerTest {
     reader.close();
 
     int line = 0;
-    assertEquals(49, responseContent.size());
+    assertEquals(47, responseContent.size());
 
     // Check first change set
     assertTrue(responseContent.get(line++).contains("--batch_"));
@@ -333,7 +331,6 @@ public class MockedBatchHandlerTest {
     assertTrue(responseContent.get(line++).contains("--changeset_"));
 
     // Check second change set
-    assertEquals(CRLF, responseContent.get(line++));
     assertTrue(responseContent.get(line++).contains("--batch_"));
     assertTrue(responseContent.get(line++).contains("Content-Type: multipart/mixed; boundary=changeset_"));
 
@@ -359,10 +356,9 @@ public class MockedBatchHandlerTest {
     assertTrue(responseContent.get(line++).contains("--changeset_"));
 
     // Close batch
-    assertEquals(CRLF, responseContent.get(line++));
     assertTrue(responseContent.get(line++).contains("--batch_"));
 
-    assertEquals(49, line);
+    assertEquals(47, line);
   }
 
   @Test
@@ -425,7 +421,7 @@ public class MockedBatchHandlerTest {
     reader.close();
 
     int line = 0;
-    assertEquals(45, responseContent.size());
+    assertEquals(44, responseContent.size());
 
     // Check change set
     assertTrue(responseContent.get(line++).contains("--batch_"));
@@ -462,9 +458,8 @@ public class MockedBatchHandlerTest {
     assertTrue(responseContent.get(line++).contains("--changeset_"));
 
     // Close batch
-    assertEquals(CRLF, responseContent.get(line++));
     assertTrue(responseContent.get(line++).contains("--batch_"));
-    assertEquals(45, line);
+    assertEquals(44, line);
   }
 
   @Test(expected = BatchDeserializerException.class)
