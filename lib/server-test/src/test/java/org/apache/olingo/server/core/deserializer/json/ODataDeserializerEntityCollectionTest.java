@@ -34,18 +34,19 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.junit.Test;
 
-public class ODataDeserializerEntitySetTest extends AbstractODataDeserializerTest {
+public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserializerTest {
 
   @Test
   public void esAllPrim() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("ESAllPrim.json");
-    EntitySet entitySet = OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
-    
+    EntitySet entitySet =
+        OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+
     assertNotNull(entitySet);
     assertEquals(3, entitySet.getEntities().size());
-    
-    //Check first entity
+
+    // Check first entity
     Entity entity = entitySet.getEntities().get(0);
     List<Property> properties = entity.getProperties();
     assertNotNull(properties);
@@ -68,16 +69,17 @@ public class ODataDeserializerEntitySetTest extends AbstractODataDeserializerTes
     assertNotNull(entity.getProperty("PropertyGuid").getValue());
     assertNotNull(entity.getProperty("PropertyTimeOfDay").getValue());
   }
-  
+
   @Test
   public void eSCompCollComp() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETCompCollComp"));
     InputStream stream = getFileAsStream("ESCompCollComp.json");
-    EntitySet entitySet = OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
-    
+    EntitySet entitySet =
+        OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+
     assertNotNull(entitySet);
     assertEquals(2, entitySet.getEntities().size());
-    
-    //Since entity deserialization is called we do not check all entities here excplicitly
-  }  
+
+    // Since entity deserialization is called we do not check all entities here excplicitly
+  }
 }

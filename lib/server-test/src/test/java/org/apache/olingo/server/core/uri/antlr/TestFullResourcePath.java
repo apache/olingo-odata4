@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.server.core.uri.antlr;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.core.Encoder;
@@ -35,18 +38,13 @@ import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
-import org.apache.olingo.server.tecsvc.provider.ActionProvider;
 import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.EnumTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
-import org.apache.olingo.server.tecsvc.provider.SchemaProvider;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 
 public class TestFullResourcePath {
   Edm edm = null;
