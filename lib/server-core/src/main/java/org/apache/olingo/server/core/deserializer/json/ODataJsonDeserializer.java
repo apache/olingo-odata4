@@ -62,7 +62,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class ODataJsonDeserializer implements ODataDeserializer {
 
   @Override
-  public EntitySet entitySet(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException {
+  public EntitySet entityCollection(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException {
     try {
       JsonParser parser = new JsonFactory(new ObjectMapper()).createParser(stream);
       final ObjectNode tree = parser.getCodec().readTree(parser);

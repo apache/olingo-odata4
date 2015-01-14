@@ -40,7 +40,7 @@ public class ODataDeserializerEntitySetTest extends AbstractODataDeserializerTes
   public void esAllPrim() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("ESAllPrim.json");
-    EntitySet entitySet = OData.newInstance().createDeserializer(ODataFormat.JSON).entitySet(stream, edmEntityType);
+    EntitySet entitySet = OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
     
     assertNotNull(entitySet);
     assertEquals(3, entitySet.getEntities().size());
@@ -73,7 +73,7 @@ public class ODataDeserializerEntitySetTest extends AbstractODataDeserializerTes
   public void eSCompCollComp() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETCompCollComp"));
     InputStream stream = getFileAsStream("ESCompCollComp.json");
-    EntitySet entitySet = OData.newInstance().createDeserializer(ODataFormat.JSON).entitySet(stream, edmEntityType);
+    EntitySet entitySet = OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
     
     assertNotNull(entitySet);
     assertEquals(2, entitySet.getEntities().size());

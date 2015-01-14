@@ -28,6 +28,6 @@ public interface ODataDeserializer {
 
   Entity entity(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException;
 
-  EntitySet entitySet(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException;
+  EntitySet entityCollection(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException;
 
 }
