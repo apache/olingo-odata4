@@ -1,0 +1,35 @@
+{
+	"@odata.context" : "$metadata#ESCompCollComp",
+	"value" : [{
+			"PropertyInt16" : 32767,
+			"PropertyComp" : {
+				"CollPropertyComp" : [{
+						"PropertyInt16" : 555,
+						"PropertyString" : "1 Test Complex in Complex Property"
+					}, {
+						"PropertyInt16" : 666,
+						"PropertyString" : "2 Test Complex in Complex property"
+					}, {
+						"PropertyInt16" : 777,
+						"PropertyString" : "3 Test Complex in Complex property"
+					}
+				]
+			}
+		}, {
+			"PropertyInt16" : 12345,
+			"PropertyComp" : {
+				"CollPropertyComp" : [{
+						"PropertyInt16" : 888,
+						"PropertyString" : "11 Test Complex in Complex property"
+					}, {
+						"PropertyInt16" : 999,
+						"PropertyString" : "12 Test Complex in Complex property"
+					}, {
+						"PropertyInt16" : 0,
+						"PropertyString" : "13 Test Complex in Complex property"
+					}
+				]
+			}
+		}
+	]
+}

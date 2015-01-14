@@ -22,7 +22,9 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
+import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
@@ -96,4 +98,6 @@ public abstract class OData {
    * It can be used in Processor implementations.
    */
   public abstract UriHelper createUriHelper();
+
+  public abstract ODataDeserializer createDeserializer(ODataFormat format) throws DeserializerException;
 }

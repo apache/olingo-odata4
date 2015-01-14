@@ -25,7 +25,9 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
+import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
@@ -33,6 +35,7 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.core.deserializer.FixedFormatDeserializerImpl;
+import org.apache.olingo.server.core.deserializer.json.ODataJsonDeserializer;
 import org.apache.olingo.server.core.serializer.FixedFormatSerializerImpl;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 import org.apache.olingo.server.core.serializer.xml.ODataXmlSerializerImpl;
@@ -83,5 +86,24 @@ public class ODataImpl extends OData {
   @Override
   public UriHelper createUriHelper() {
     return new UriHelperImpl();
+  }
+
+  @Override
+  public ODataDeserializer createDeserializer(ODataFormat format) throws DeserializerException{
+    ODataDeserializer serializer;
+    switch (format) {
+    case JSON:
+    case JSON_NO_METADATA:
+    case JSON_FULL_METADATA:
+      serializer = new ODataJsonDeserializer();
+      break;
+    case XML:
+      //We do not support xml deserialization right now so this mus lead to an error
+    default:
+      throw new DeserializerException("Unsupported format: " + format,
+          SerializerException.MessageKeys.UNSUPPORTED_FORMAT, format.toString());
+    }
+
+    return serializer;
   }
 }

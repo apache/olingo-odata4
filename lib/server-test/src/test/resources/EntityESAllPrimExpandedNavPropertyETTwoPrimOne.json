@@ -1,0 +1,23 @@
+{
+	"@odata.context" : "$metadata#ESAllPrim/$entity",
+	"PropertyInt16" : 32767,
+	"PropertyString" : "First Resource - positive values",
+	"PropertyBoolean" : true,
+	"PropertyByte" : 255,
+	"PropertySByte" : 127,
+	"PropertyInt32" : 2147483647,
+	"PropertyInt64" : 9223372036854775807,
+	"PropertySingle" : 1.79000000E+20,
+	"PropertyDouble" : -1.7900000000000000E+19,
+	"PropertyDecimal" : 34,
+	"PropertyBinary" : "ASNFZ4mrze8=",
+	"PropertyDate" : "2012-12-03",
+	"PropertyDateTimeOffset" : "2012-12-03T07:16:23Z",
+	"PropertyDuration" : "P0DT0H0M6S",
+	"PropertyGuid" : "01234567-89ab-cdef-0123-456789abcdef",
+	"PropertyTimeOfDay" : "03:26:05",
+	"NavPropertyETTwoPrimOne" : {
+		"PropertyInt16" : 32767,
+		"PropertyString" : "Test String4"
+	}
+}

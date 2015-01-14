@@ -28,7 +28,18 @@ public class DeserializerException extends ODataTranslatedException {
   /** Keys for exception texts in the resource bundle. */
   public static enum MessageKeys implements MessageKey {
     NOT_IMPLEMENTED,
-    IO_EXCEPTION;
+    IO_EXCEPTION,
+    //TODO: create texts for the following message keys:
+    /** parameter: format */ UNSUPPORTED_FORMAT, 
+    JSON_SYNTAX_EXCEPTION, 
+    /** parameter: propertyName */ INVALID_NULL_PROPERTY, 
+    TREE_NOT_EMPTY, 
+    /** parameter: propertyName */ INVALID_VALUE_FOR_PROPERTY, 
+    /** parameter: propertyName */ INVALID_TYPE_FOR_PROPERTY, 
+    VALUE_ARRAY_NOT_PRESENT, 
+    VALUE_TAG_MUST_BE_AN_ARRAY, 
+    INVALID_ENTITY, 
+    /** parameter: navigationPropertyName */INVALID_VALUE_FOR_NAVIGATION_PROPERTY;
 
     @Override
     public String getKey() {
