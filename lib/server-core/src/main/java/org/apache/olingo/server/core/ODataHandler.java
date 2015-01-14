@@ -42,6 +42,12 @@ import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
+import org.apache.olingo.server.api.processor.ActionComplexProcessor;
+import org.apache.olingo.server.api.processor.ActionEntityCollectionProcessor;
+import org.apache.olingo.server.api.processor.ActionEntityProcessor;
+import org.apache.olingo.server.api.processor.ActionPrimitiveCollectionProcessor;
+import org.apache.olingo.server.api.processor.ActionPrimitiveProcessor;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
@@ -476,11 +482,11 @@ public class ODataHandler {
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
               request, customContentTypeSupport, complexRepresentationType);
       if (complexRepresentationType == RepresentationType.COMPLEX) {
-        selectProcessor(ComplexProcessor.class)
-                .processComplex(request, response, uriInfo, requestFormat, responseFormat);
+        selectProcessor(ActionComplexProcessor.class)
+                .processActionComplex(request, response, uriInfo, requestFormat, responseFormat);
       } else {
-        selectProcessor(ComplexCollectionProcessor.class)
-                .processComplexCollection(request, response, uriInfo, requestFormat, responseFormat);
+        selectProcessor(ActionComplexCollectionProcessor.class)
+                .processActionComplexCollection(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else if (method == HttpMethod.DELETE) {
       if (complexRepresentationType == RepresentationType.COMPLEX) {
@@ -535,11 +541,11 @@ public class ODataHandler {
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
               request, customContentTypeSupport, representationType);
       if (representationType == RepresentationType.PRIMITIVE) {
-        selectProcessor(PrimitiveProcessor.class)
-                .processPrimitive(request, response, uriInfo, requestFormat, responseFormat);
+        selectProcessor(ActionPrimitiveProcessor.class)
+                .processActionPrimitive(request, response, uriInfo, requestFormat, responseFormat);
       } else {
-        selectProcessor(PrimitiveCollectionProcessor.class)
-                .processPrimitiveCollection(request, response, uriInfo,  requestFormat, responseFormat);
+        selectProcessor(ActionPrimitiveCollectionProcessor.class)
+                .processActionPrimitiveCollection(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else {
       throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
@@ -601,8 +607,8 @@ public class ODataHandler {
           checkContentTypeSupport(requestFormat, RepresentationType.ENTITY);
           final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
                   request, customContentTypeSupport, RepresentationType.ENTITY);
-          selectProcessor(EntityCollectionProcessor.class)
-                  .processEntityCollection(request, response, uriInfo, requestFormat, responseFormat);
+          selectProcessor(ActionEntityCollectionProcessor.class)
+                  .processActionEntityCollection(request, response, uriInfo, requestFormat, responseFormat);
         } else {
           checkContentTypeSupport(requestFormat, RepresentationType.ENTITY);
           final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
@@ -631,7 +637,8 @@ public class ODataHandler {
         checkContentTypeSupport(requestFormat, RepresentationType.ENTITY);
         final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
                 request, customContentTypeSupport, RepresentationType.ENTITY);
-        selectProcessor(EntityProcessor.class).processEntity(request, response, uriInfo, requestFormat, responseFormat);
+        selectProcessor(ActionEntityProcessor.class).processActionEntity(
+                request, response, uriInfo, requestFormat, responseFormat);
       } else if (method == HttpMethod.DELETE) {
         selectProcessor(isMedia ? MediaEntityProcessor.class : EntityProcessor.class)
                 .deleteEntity(request, response, uriInfo);

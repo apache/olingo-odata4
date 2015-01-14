@@ -41,6 +41,10 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
+import org.apache.olingo.server.api.processor.ActionComplexProcessor;
+import org.apache.olingo.server.api.processor.ActionPrimitiveCollectionProcessor;
+import org.apache.olingo.server.api.processor.ActionPrimitiveProcessor;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
@@ -68,8 +72,10 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
  * Technical Processor which provides functionality related to primitive and complex types and collections thereof.
  */
 public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
-    implements PrimitiveProcessor, PrimitiveValueProcessor, PrimitiveCollectionProcessor,
-    ComplexProcessor, ComplexCollectionProcessor {
+    implements PrimitiveProcessor, PrimitiveValueProcessor, ActionPrimitiveProcessor,
+        PrimitiveCollectionProcessor, ActionPrimitiveCollectionProcessor,
+        ComplexProcessor, ActionComplexProcessor,
+        ComplexCollectionProcessor, ActionComplexCollectionProcessor {
 
   public TechnicalPrimitiveComplexProcessor(final DataProvider dataProvider) {
     super(dataProvider);
@@ -96,8 +102,9 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void processPrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-      ContentType requestFormat, ContentType responseFormat)
+  public void processActionPrimitive(final ODataRequest request, final ODataResponse response,
+                                      final UriInfo uriInfo,
+                                      final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Not supported yet.",
         HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
@@ -124,8 +131,10 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void processPrimitiveCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType
-      requestFormat, ContentType responseFormat) throws ODataApplicationException, DeserializerException,
+  public void processActionPrimitiveCollection(final ODataRequest request, final ODataResponse response,
+                                               final UriInfo uriInfo,
+                                               final ContentType requestFormat, final ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException,
       SerializerException {
     throw new ODataApplicationException("Not supported yet.",
         HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
@@ -146,7 +155,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void processComplex(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType
+  public void processActionComplex(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType
       requestFormat, ContentType responseFormat) throws ODataApplicationException, DeserializerException,
       SerializerException {
     throw new ODataApplicationException("Not supported yet.",
@@ -174,9 +183,10 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void processComplexCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType
-      requestFormat, ContentType responseFormat) throws ODataApplicationException, DeserializerException,
-      SerializerException {
+  public void processActionComplexCollection(ODataRequest request, ODataResponse response,
+                                             UriInfo uriInfo, ContentType requestFormat,
+                                             ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Not supported yet.",
         HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }

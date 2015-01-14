@@ -49,6 +49,12 @@ import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
+import org.apache.olingo.server.api.processor.ActionComplexProcessor;
+import org.apache.olingo.server.api.processor.ActionEntityCollectionProcessor;
+import org.apache.olingo.server.api.processor.ActionEntityProcessor;
+import org.apache.olingo.server.api.processor.ActionPrimitiveCollectionProcessor;
+import org.apache.olingo.server.api.processor.ActionPrimitiveProcessor;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
@@ -319,57 +325,57 @@ public class ODataHandlerTest {
 
   @Test
   public void dispatchAction() throws Exception {
-    PrimitiveProcessor primitiveProcessor = mock(PrimitiveProcessor.class);
+    ActionPrimitiveProcessor primitiveProcessor = mock(ActionPrimitiveProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRT_STRING, primitiveProcessor);
-    verify(primitiveProcessor).processPrimitive(
+    verify(primitiveProcessor).processActionPrimitive(
             any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
             any(ContentType.class), any(ContentType.class));
 
-    PrimitiveCollectionProcessor primitiveCollectionProcessor = mock(PrimitiveCollectionProcessor.class);
+    ActionPrimitiveCollectionProcessor primitiveCollectionProcessor = mock(ActionPrimitiveCollectionProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRT_COLL_STRING_TWO_PARAM, primitiveCollectionProcessor);
-    verify(primitiveCollectionProcessor).processPrimitiveCollection(
+    verify(primitiveCollectionProcessor).processActionPrimitiveCollection(
             any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
             any(ContentType.class), any(ContentType.class));
 
-    ComplexProcessor complexProcessor = mock(ComplexProcessor.class);
+    ActionComplexProcessor complexProcessor = mock(ActionComplexProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRTCT_TWO_PRIM_PARAM, complexProcessor);
-    verify(complexProcessor).processComplex(
+    verify(complexProcessor).processActionComplex(
             any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
             any(ContentType.class), any(ContentType.class));
 
-    ComplexCollectionProcessor complexCollectionProcessor = mock(ComplexCollectionProcessor.class);
+    ActionComplexCollectionProcessor complexCollectionProcessor = mock(ActionComplexCollectionProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRT_COLL_CT_TWO_PRIM_PARAM, complexCollectionProcessor);
-    verify(complexCollectionProcessor).processComplexCollection(
+    verify(complexCollectionProcessor).processActionComplexCollection(
             any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
             any(ContentType.class), any(ContentType.class));
 
-    EntityProcessor entityProcessor = mock(EntityProcessor.class);
+    ActionEntityProcessor entityProcessor = mock(ActionEntityProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRTET_TWO_KEY_TWO_PRIM_PARAM, entityProcessor);
-    verify(entityProcessor).processEntity(
+    verify(entityProcessor).processActionEntity(
             any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
             any(ContentType.class), any(ContentType.class));
 
-    EntityCollectionProcessor entityCollectionProcessor = mock(EntityCollectionProcessor.class);
+    ActionEntityCollectionProcessor entityCollectionProcessor = mock(ActionEntityCollectionProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRT_COLL_ET_KEY_NAV_PARAM, entityCollectionProcessor);
-    verify(entityCollectionProcessor).processEntityCollection(
+    verify(entityCollectionProcessor).processActionEntityCollection(
             any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
             any(ContentType.class), any(ContentType.class));
 
-    EntityProcessor entityProcessorEs = mock(EntityProcessor.class);
+    ActionEntityProcessor entityProcessorEs = mock(ActionEntityProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRTES_ALL_PRIM_PARAM, entityProcessorEs);
-    verify(entityProcessorEs).processEntity(
+    verify(entityProcessorEs).processActionEntity(
             any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
             any(ContentType.class), any(ContentType.class));
 
-    EntityCollectionProcessor entityCollectionProcessorEs = mock(EntityCollectionProcessor.class);
+    ActionEntityCollectionProcessor entityCollectionProcessorEs = mock(ActionEntityCollectionProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRT_COLL_ES_ALL_PRIM_PARAM, entityCollectionProcessorEs);
-    verify(entityCollectionProcessorEs).processEntityCollection(
+    verify(entityCollectionProcessorEs).processActionEntityCollection(
             any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
             any(ContentType.class), any(ContentType.class));
 
     dispatchMethodNotAllowed(HttpMethod.GET, "AIRTString", mock(Processor.class));
   }
-  
+
   @Test
   public void dispatchEntity() throws Exception {
     final String uri = "ESAllPrim(0)";
