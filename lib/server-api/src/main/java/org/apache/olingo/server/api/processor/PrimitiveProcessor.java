@@ -72,4 +72,5 @@ public interface PrimitiveProcessor extends Processor {
    */
   void deletePrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo)
           throws ODataApplicationException;
+
 }

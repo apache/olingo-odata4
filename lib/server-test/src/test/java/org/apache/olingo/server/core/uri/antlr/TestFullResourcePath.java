@@ -35,10 +35,13 @@ import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
+import org.apache.olingo.server.tecsvc.provider.ActionProvider;
 import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
+import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.EnumTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
+import org.apache.olingo.server.tecsvc.provider.SchemaProvider;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -2724,15 +2727,15 @@ public class TestFullResourcePath {
         .isType(PropertyProvider.nameString)
         .isParameter(0, "ParameterInt16", "1");
 
-    testUri.run("AIRTETParam")
+    testUri.run(ContainerProvider.AIRT_STRING)
         .isKind(UriInfoKind.resource)
         .goPath().first()
-        .isActionImport("AIRTETParam");
+        .isActionImport(ContainerProvider.AIRT_STRING);
 
-    testUri.run("AIRTPrimParam")
+    testUri.run(ContainerProvider.AIRT_COLL_ES_ALL_PRIM_PARAM)
         .isKind(UriInfoKind.resource)
         .goPath().first()
-        .isActionImport("AIRTPrimParam");
+        .isActionImport(ContainerProvider.AIRT_COLL_ES_ALL_PRIM_PARAM);
 
     testUri.run("ESKeyNav/$count")
         .isKind(UriInfoKind.resource)

@@ -34,11 +34,14 @@ import java.util.List;
 
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
+import org.apache.olingo.client.api.communication.ODataServerErrorException;
+import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
+import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.edm.xml.v4.Reference;
@@ -52,9 +55,11 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.commons.core.domain.v4.ODataEntityImpl;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
@@ -179,6 +184,42 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ODataEntity entity = response.getBody();
     assertNotNull(entity);
     final ODataProperty property = entity.getProperty("CollPropertyInt16");
+    assertNotNull(property);
+    assertNotNull(property.getCollectionValue());
+    assertEquals(3, property.getCollectionValue().size());
+    Iterator<ODataValue> iterator = property.getCollectionValue().iterator();
+    assertEquals(1000, iterator.next().asPrimitive().toValue());
+    assertEquals(2000, iterator.next().asPrimitive().toValue());
+    assertEquals(30112, iterator.next().asPrimitive().toValue());
+  }
+
+  /**
+   * Actual an create request for an entity will lead to an "501 - Not Implemented" response
+   * and hence to an ODataServerErrorException
+   */
+  @Test(expected = ODataServerErrorException.class)
+  public void createEntity() throws IOException {
+    final ODataEntityRequest<ODataEntity> request = getClient().getRetrieveRequestFactory()
+            .getEntityRequest(getClient().newURIBuilder(SERVICE_URI)
+                    .appendEntitySetSegment("ESCollAllPrim").appendKeySegment(1).build());
+    assertNotNull(request);
+
+    final ODataRetrieveResponse<ODataEntity> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
+
+    final ODataEntity entity = response.getBody();
+    assertNotNull(entity);
+
+    final ODataEntityCreateRequest<ODataEntity> createRequest = getClient().getCUDRequestFactory()
+            .getEntityCreateRequest(getClient().newURIBuilder(SERVICE_URI)
+                    .appendEntitySetSegment("ESCollAllPrim").build(), entity);
+    assertNotNull(createRequest);
+    ODataEntityCreateResponse<ODataEntity> createResponse = createRequest.execute();
+
+    final ODataEntity createdEntity = createResponse.getBody();
+    assertNotNull(createdEntity);
+    final ODataProperty property = createdEntity.getProperty("CollPropertyInt16");
     assertNotNull(property);
     assertNotNull(property.getCollectionValue());
     assertEquals(3, property.getCollectionValue().size());

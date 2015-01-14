@@ -36,6 +36,14 @@ import java.util.List;
 public class ContainerProvider {
 
   public static final FullQualifiedName nameContainer = new FullQualifiedName(SchemaProvider.NAMESPACE, "Container");
+  public static final String AIRT_STRING = "AIRTString";
+  public static final String AIRT_COLL_STRING_TWO_PARAM = "AIRTCollStringTwoParam";
+  public static final String AIRTCT_TWO_PRIM_PARAM = "AIRTCTTwoPrimParam";
+  public static final String AIRT_COLL_CT_TWO_PRIM_PARAM = "AIRTCollCTTwoPrimParam";
+  public static final String AIRTET_TWO_KEY_TWO_PRIM_PARAM = "AIRTETTwoKeyTwoPrimParam";
+  public static final String AIRT_COLL_ET_KEY_NAV_PARAM = "AIRTCollETKeyNavParam";
+  public static final String AIRTES_ALL_PRIM_PARAM = "AIRTESAllPrimParam";
+  public static final String AIRT_COLL_ES_ALL_PRIM_PARAM = "AIRTCollESAllPrimParam";
 
   EntityContainerInfo entityContainerInfoTest1 =
       new EntityContainerInfo().setContainerName(nameContainer);
@@ -98,12 +106,14 @@ public class ContainerProvider {
     // ActionImports
     List<ActionImport> actionImports = new ArrayList<ActionImport>();
     container.setActionImports(actionImports);
-    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTPrimParam"));
-    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTPrimCollParam"));
-    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTCompParam"));
-    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTCompCollParam"));
-    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTETParam"));
-    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTETCollAllPrimParam"));
+    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_STRING));
+    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_COLL_STRING_TWO_PARAM));
+    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRTCT_TWO_PRIM_PARAM));
+    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_COLL_CT_TWO_PRIM_PARAM));
+    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRTET_TWO_KEY_TWO_PRIM_PARAM));
+    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_COLL_ET_KEY_NAV_PARAM));
+    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRTES_ALL_PRIM_PARAM));
+    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_COLL_ES_ALL_PRIM_PARAM));
 
     // FunctionImports
     List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
@@ -258,38 +268,48 @@ public class ContainerProvider {
     return null;
   }
 
-  public ActionImport getActionImport(final FullQualifiedName entityContainer, final String name) throws ODataException
-  {
+  public ActionImport getActionImport(final FullQualifiedName entityContainer, final String name)
+          throws ODataException {
     if (entityContainer.equals(nameContainer)) {
-      if (name.equals("AIRTPrimParam")) {
+      if (name.equals(AIRT_STRING)) {
         return new ActionImport()
-            .setName("AIRTPrimParam")
-            .setAction(ActionProvider.nameUARTPrimParam);
+                .setName(AIRT_STRING)
+                .setAction(ActionProvider.nameUARTString);
 
-      } else if (name.equals("AIRTPrimCollParam")) {
+      } else if (name.equals(AIRT_COLL_STRING_TWO_PARAM)) {
         return new ActionImport()
-            .setName("AIRTPrimCollParam")
-            .setAction(ActionProvider.nameUARTPrimCollParam);
+            .setName(AIRT_COLL_STRING_TWO_PARAM)
+            .setAction(ActionProvider.nameUARTCollStringTwoParam);
 
-      } else if (name.equals("AIRTCompParam")) {
+      } else if (name.equals(AIRTCT_TWO_PRIM_PARAM)) {
         return new ActionImport()
-            .setName("AIRTCompParam")
-            .setAction(ActionProvider.nameUARTCompParam);
+            .setName(AIRTCT_TWO_PRIM_PARAM)
+            .setAction(ActionProvider.nameUARTCTTwoPrimParam);
 
-      } else if (name.equals("AIRTCompCollParam")) {
+      } else if (name.equals(AIRT_COLL_CT_TWO_PRIM_PARAM)) {
         return new ActionImport()
-            .setName("AIRTCompCollParam")
-            .setAction(ActionProvider.nameUARTCompCollParam);
+            .setName(AIRT_COLL_CT_TWO_PRIM_PARAM)
+            .setAction(ActionProvider.nameUARTCollCTTwoPrimParam);
 
-      } else if (name.equals("AIRTETParam")) {
+      } else if (name.equals(AIRTET_TWO_KEY_TWO_PRIM_PARAM)) {
         return new ActionImport()
-            .setName("AIRTETParam")
-            .setAction(ActionProvider.nameUARTETParam);
+            .setName(AIRTET_TWO_KEY_TWO_PRIM_PARAM)
+            .setAction(ActionProvider.nameUARTETTwoKeyTwoPrimParam);
 
-      } else if (name.equals("AIRTETCollAllPrimParam")) {
+      } else if (name.equals(AIRT_COLL_ET_KEY_NAV_PARAM)) {
         return new ActionImport()
-            .setName("AIRTETCollAllPrimParam")
-            .setAction(ActionProvider.nameUARTESParam);
+            .setName(AIRT_COLL_ET_KEY_NAV_PARAM)
+            .setAction(ActionProvider.nameUARTCollETKeyNavParam);
+
+      } else if (name.equals(AIRTES_ALL_PRIM_PARAM)) {
+        return new ActionImport()
+            .setName(AIRTES_ALL_PRIM_PARAM)
+            .setAction(ActionProvider.nameUARTETAllPrimParam);
+
+      } else if (name.equals(AIRT_COLL_ES_ALL_PRIM_PARAM)) {
+        return new ActionImport()
+            .setName(AIRT_COLL_ES_ALL_PRIM_PARAM)
+            .setAction(ActionProvider.nameUARTCollETAllPrimParam);
       }
     }
 

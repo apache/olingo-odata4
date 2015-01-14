@@ -81,4 +81,5 @@ public interface EntityProcessor extends Processor {
    * @throws ODataApplicationException if the service implementation encounters a failure
    */
   void deleteEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo) throws ODataApplicationException;
+
 }

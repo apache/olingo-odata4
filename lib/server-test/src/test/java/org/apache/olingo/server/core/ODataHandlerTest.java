@@ -49,6 +49,12 @@ import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
+import org.apache.olingo.server.api.processor.ActionComplexProcessor;
+import org.apache.olingo.server.api.processor.ActionEntityCollectionProcessor;
+import org.apache.olingo.server.api.processor.ActionEntityProcessor;
+import org.apache.olingo.server.api.processor.ActionPrimitiveCollectionProcessor;
+import org.apache.olingo.server.api.processor.ActionPrimitiveProcessor;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
@@ -67,6 +73,7 @@ import org.apache.olingo.server.api.processor.ReferenceCollectionProcessor;
 import org.apache.olingo.server.api.processor.ReferenceProcessor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
 
@@ -276,6 +283,97 @@ public class ODataHandlerTest {
 
     verify(processor).countEntityCollection(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+  }
+
+  @Test
+  public void dispatchFunction() throws Exception {
+    EntityProcessor entityProcessor = mock(EntityProcessor.class);
+    dispatch(HttpMethod.GET, "FICRTETKeyNav()", entityProcessor);
+    verify(entityProcessor).readEntity(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    EntityCollectionProcessor entityCollectionProcessor = mock(EntityCollectionProcessor.class);
+    dispatch(HttpMethod.GET, "FICRTESTwoKeyNavParam(ParameterInt16=123)", entityCollectionProcessor);
+    verify(entityCollectionProcessor).readEntityCollection(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    PrimitiveProcessor primitiveProcessor = mock(PrimitiveProcessor.class);
+    dispatch(HttpMethod.GET, "FICRTString()", primitiveProcessor);
+    verify(primitiveProcessor).readPrimitive(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    PrimitiveCollectionProcessor primitiveCollectionProcessor = mock(PrimitiveCollectionProcessor.class);
+    dispatch(HttpMethod.GET, "FICRTCollString()", primitiveCollectionProcessor);
+    verify(primitiveCollectionProcessor).readPrimitiveCollection(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    ComplexProcessor complexProcessor = mock(ComplexProcessor.class);
+    dispatch(HttpMethod.GET, "FICRTCTTwoPrim()", complexProcessor);
+    verify(complexProcessor).readComplex(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    ComplexCollectionProcessor complexCollectionProcessor = mock(ComplexCollectionProcessor.class);
+    dispatch(HttpMethod.GET, "FICRTCollCTTwoPrim()", complexCollectionProcessor);
+    verify(complexCollectionProcessor).readComplexCollection(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, "FICRTCollString()", mock(Processor.class));
+    dispatchMethodNotAllowed(HttpMethod.PUT, "FICRTCollString()", mock(Processor.class));
+    dispatchMethodNotAllowed(HttpMethod.DELETE, "FICRTCollString()", mock(Processor.class));
+  }
+
+
+  @Test
+  public void dispatchAction() throws Exception {
+    ActionPrimitiveProcessor primitiveProcessor = mock(ActionPrimitiveProcessor.class);
+    dispatch(HttpMethod.POST, ContainerProvider.AIRT_STRING, primitiveProcessor);
+    verify(primitiveProcessor).processActionPrimitive(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+            any(ContentType.class), any(ContentType.class));
+
+    ActionPrimitiveCollectionProcessor primitiveCollectionProcessor = mock(ActionPrimitiveCollectionProcessor.class);
+    dispatch(HttpMethod.POST, ContainerProvider.AIRT_COLL_STRING_TWO_PARAM, primitiveCollectionProcessor);
+    verify(primitiveCollectionProcessor).processActionPrimitiveCollection(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+            any(ContentType.class), any(ContentType.class));
+
+    ActionComplexProcessor complexProcessor = mock(ActionComplexProcessor.class);
+    dispatch(HttpMethod.POST, ContainerProvider.AIRTCT_TWO_PRIM_PARAM, complexProcessor);
+    verify(complexProcessor).processActionComplex(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+            any(ContentType.class), any(ContentType.class));
+
+    ActionComplexCollectionProcessor complexCollectionProcessor = mock(ActionComplexCollectionProcessor.class);
+    dispatch(HttpMethod.POST, ContainerProvider.AIRT_COLL_CT_TWO_PRIM_PARAM, complexCollectionProcessor);
+    verify(complexCollectionProcessor).processActionComplexCollection(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+            any(ContentType.class), any(ContentType.class));
+
+    ActionEntityProcessor entityProcessor = mock(ActionEntityProcessor.class);
+    dispatch(HttpMethod.POST, ContainerProvider.AIRTET_TWO_KEY_TWO_PRIM_PARAM, entityProcessor);
+    verify(entityProcessor).processActionEntity(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+            any(ContentType.class), any(ContentType.class));
+
+    ActionEntityCollectionProcessor entityCollectionProcessor = mock(ActionEntityCollectionProcessor.class);
+    dispatch(HttpMethod.POST, ContainerProvider.AIRT_COLL_ET_KEY_NAV_PARAM, entityCollectionProcessor);
+    verify(entityCollectionProcessor).processActionEntityCollection(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+            any(ContentType.class), any(ContentType.class));
+
+    ActionEntityProcessor entityProcessorEs = mock(ActionEntityProcessor.class);
+    dispatch(HttpMethod.POST, ContainerProvider.AIRTES_ALL_PRIM_PARAM, entityProcessorEs);
+    verify(entityProcessorEs).processActionEntity(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+            any(ContentType.class), any(ContentType.class));
+
+    ActionEntityCollectionProcessor entityCollectionProcessorEs = mock(ActionEntityCollectionProcessor.class);
+    dispatch(HttpMethod.POST, ContainerProvider.AIRT_COLL_ES_ALL_PRIM_PARAM, entityCollectionProcessorEs);
+    verify(entityCollectionProcessorEs).processActionEntityCollection(
+            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+            any(ContentType.class), any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.GET, "AIRTString", mock(Processor.class));
   }
 
   @Test

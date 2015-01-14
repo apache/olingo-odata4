@@ -89,9 +89,9 @@ public class MetadataDocumentTest {
     // TODO: TypeDefinition
     // assertThat(metadata, containsString("<TypeDefinition Name=\"typeDef\" Type=\"Edm.Int16\"/>"));
 
-    assertThat(metadata, containsString("<Action Name=\"UARTPrimParam\" IsBound=\"false\">"
+    assertThat(metadata, containsString("<Action Name=\"UARTCTTwoPrimParam\" IsBound=\"false\">"
         + "<Parameter Name=\"ParameterInt16\" Type=\"Edm.Int16\"/>"
-        + "<ReturnType Type=\"Edm.String\"/></Action>"));
+        + "<ReturnType Type=\"Namespace1_Alias.CTTwoPrim\"/></Action>"));
 
     assertThat(metadata,
         containsString("<Action Name=\"BAESAllPrimRTETAllPrim\" IsBound=\"true\">"
@@ -120,7 +120,7 @@ public class MetadataDocumentTest {
             + "</Singleton>"));
 
     assertThat(metadata,
-        containsString("<ActionImport Name=\"AIRTPrimParam\" Action=\"Namespace1_Alias.UARTPrimParam\"/>"));
+        containsString("<ActionImport Name=\"AIRTCTTwoPrimParam\" Action=\"Namespace1_Alias.UARTCTTwoPrimParam\"/>"));
 
     assertThat(metadata,
         containsString("<FunctionImport Name=\"FINInvisible2RTInt16\" Function=\"Namespace1_Alias.UFNRTInt16\" "

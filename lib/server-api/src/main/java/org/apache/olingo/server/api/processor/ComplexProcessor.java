@@ -43,6 +43,7 @@ public interface ComplexProcessor extends Processor {
    */
   void readComplex(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
       throws ODataApplicationException, SerializerException;
+
   /**
    * Update complex-type instance with send data in the persistence and
    * puts content, status, and Location into the response.

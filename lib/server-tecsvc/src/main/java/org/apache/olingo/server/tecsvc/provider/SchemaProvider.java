@@ -107,12 +107,14 @@ public class SchemaProvider {
     actions.addAll(prov.getActions(ActionProvider.nameBAESTwoKeyNavRTESTwoKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAETBaseTwoKeyNavRTETBaseTwoKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav));
-    actions.addAll(prov.getActions(ActionProvider.nameUARTPrimParam));
-    actions.addAll(prov.getActions(ActionProvider.nameUARTPrimCollParam));
-    actions.addAll(prov.getActions(ActionProvider.nameUARTCompParam));
-    actions.addAll(prov.getActions(ActionProvider.nameUARTCompCollParam));
-    actions.addAll(prov.getActions(ActionProvider.nameUARTETParam));
-    actions.addAll(prov.getActions(ActionProvider.nameUARTESParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTString));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTCollStringTwoParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTCTTwoPrimParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTCollCTTwoPrimParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTETTwoKeyTwoPrimParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTCollETKeyNavParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTETAllPrimParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTCollETAllPrimParam));
 
     // Functions
     List<Function> functions = new ArrayList<Function>();

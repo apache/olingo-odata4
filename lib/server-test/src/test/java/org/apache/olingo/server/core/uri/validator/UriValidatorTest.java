@@ -27,6 +27,7 @@ import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
+import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
 
@@ -152,9 +153,9 @@ public class UriValidatorTest {
 
       { "ESTwoKeyNav/olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav" },
       { "ESAllPrim/olingo.odata.test1.BAESAllPrimRTETAllPrim" },
-      { "AIRTPrimCollParam" },
-      { "AIRTETParam" },
-      { "AIRTPrimParam" }
+      { ContainerProvider.AIRT_COLL_STRING_TWO_PARAM },
+      { ContainerProvider.AIRTET_TWO_KEY_TWO_PRIM_PARAM },
+      { ContainerProvider.AIRT_STRING }
   };
 
   private String[][] urisWithNonValidSystemQueryOptions = {

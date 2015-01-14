@@ -35,6 +35,8 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.processor.ActionEntityCollectionProcessor;
+import org.apache.olingo.server.api.processor.ActionEntityProcessor;
 import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
@@ -55,7 +57,8 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
  * Technical Processor for entity-related functionality.
  */
 public class TechnicalEntityProcessor extends TechnicalProcessor
-    implements EntityCollectionProcessor, CountEntityCollectionProcessor, EntityProcessor, MediaEntityProcessor {
+    implements EntityCollectionProcessor, ActionEntityCollectionProcessor, CountEntityCollectionProcessor,
+        EntityProcessor, ActionEntityProcessor, MediaEntityProcessor {
 
   public TechnicalEntityProcessor(final DataProvider dataProvider) {
     super(dataProvider);
@@ -87,6 +90,15 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     }
+  }
+
+  @Override
+  public void processActionEntityCollection(final ODataRequest request, final ODataResponse response,
+                                      final UriInfo uriInfo,
+                                      final ContentType requestFormat, final ContentType  responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("Process entity collection is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
 
   @Override
@@ -245,6 +257,15 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       dataProvider.delete(resourceEntitySet.getEntitySet(), entity);
       response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
     }
+  }
+
+  @Override
+  public void processActionEntity(final ODataRequest request, final ODataResponse response,
+                            final UriInfo uriInfo, final ContentType requestFormat,
+                            final ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+    throw new ODataApplicationException("Process entity is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
 
   private void blockNavigation(final UriInfo uriInfo) throws ODataApplicationException {

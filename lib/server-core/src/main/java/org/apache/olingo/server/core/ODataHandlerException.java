@@ -29,7 +29,8 @@ public class ODataHandlerException extends ODataTranslatedException {
     /** parameter: HTTP method */ INVALID_HTTP_METHOD,
     /** parameter: HTTP method */ HTTP_METHOD_NOT_ALLOWED,
     /** parameter: processor interface */ PROCESSOR_NOT_IMPLEMENTED,
-    FUNCTIONALITY_NOT_IMPLEMENTED,
+    /** no parameter */ FUNCTIONALITY_NOT_IMPLEMENTED,
+    /** parameter: content type */ UNSUPPORTED_CONTENT_TYPE,
     /** parameter: version */ ODATA_VERSION_NOT_SUPPORTED;
 
     @Override

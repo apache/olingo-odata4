@@ -135,7 +135,7 @@ public class ExpressionTest {
     EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETKeyNav);
 
     // UriResourceImplTyped
-    EdmAction action = edm.getUnboundAction(ActionProvider.nameUARTPrimParam);
+    EdmAction action = edm.getUnboundAction(ActionProvider.nameUARTString);
     UriInfoResource uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action)).asUriInfoResource();
     expression.setResourcePath(uriInfo);
@@ -143,20 +143,20 @@ public class ExpressionTest {
 
     // check accept and path
     assertEquals(uriInfo, expression.getResourcePath());
-    assertEquals("<UARTPrimParam>", expression.accept(new FilterTreeToText()));
+    assertEquals("<UARTString>", expression.accept(new FilterTreeToText()));
 
     // UriResourceImplTyped check collection = false case
     assertEquals(false, expression.isCollection());
 
     // UriResourceImplTyped check collection = true case
-    action = edm.getUnboundAction(ActionProvider.nameUARTPrimCollParam);
+    action = edm.getUnboundAction(ActionProvider.nameUARTCollStringTwoParam);
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action))
         .asUriInfoResource());
     assertEquals(true, expression.isCollection());
 
     // UriResourceImplTyped with filter
-    action = edm.getUnboundAction(ActionProvider.nameUARTPrimParam);
+    action = edm.getUnboundAction(ActionProvider.nameUARTString);
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action).setTypeFilter(entityType))
         .asUriInfoResource());

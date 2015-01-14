@@ -76,19 +76,19 @@ public class UriResourceImplTest {
     assertEquals("", impl.toString());
 
     // action
-    EdmAction action = edm.getUnboundAction(ActionProvider.nameUARTETParam);
+    EdmAction action = edm.getUnboundAction(ActionProvider.nameUARTETTwoKeyTwoPrimParam);
     impl.setAction(action);
     assertEquals(action, impl.getAction());
-    assertEquals(ActionProvider.nameUARTETParam.getName(), impl.toString());
+    assertEquals(ActionProvider.nameUARTETTwoKeyTwoPrimParam.getName(), impl.toString());
 
     // action import
     impl = new UriResourceActionImpl();
-    EdmActionImport actionImport = edm.getEntityContainer(null).getActionImport("AIRTPrimParam");
+    EdmActionImport actionImport = edm.getEntityContainer(null).getActionImport("AIRTCTTwoPrimParam");
     impl.setActionImport(actionImport);
     assertEquals(actionImport, impl.getActionImport());
     assertEquals(actionImport.getUnboundAction(), impl.getAction());
     assertEquals(false, impl.isCollection());
-    assertEquals("AIRTPrimParam", impl.toString());
+    assertEquals("AIRTCTTwoPrimParam", impl.toString());
     assertEquals(actionImport.getUnboundAction().getReturnType().getType(), impl.getType());
   }
 
