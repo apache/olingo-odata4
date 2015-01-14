@@ -390,7 +390,7 @@ public class BatchTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @SuppressWarnings({"unchecked"})
+  @SuppressWarnings({"unchecked", "rawtypes"})
   public void batchRequest() throws EdmPrimitiveTypeException {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);

@@ -24,10 +24,27 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 
+/**
+ * Deserializer on OData server side.
+ */
 public interface ODataDeserializer {
 
+  /**
+   * Deserializes an entity stream into an {@link Entity} object.
+   * @param stream
+   * @param edmEntityType
+   * @return deserialized {@link Entity} object
+   * @throws DeserializerException
+   */
   Entity entity(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException;
 
+  /**
+   * Deserializes an entity collection stream into an {@link EntitySet} object.
+   * @param stream
+   * @param edmEntityType
+   * @return deserialized {@link EntitySet} object
+   * @throws DeserializerException
+   */
   EntitySet entityCollection(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException;
 
 }
