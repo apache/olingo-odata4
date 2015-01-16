@@ -31,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
@@ -43,7 +42,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
@@ -55,6 +53,8 @@ import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -64,13 +64,18 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   @Override
   public EntitySet entityCollection(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException {
     try {
-      JsonParser parser = new JsonFactory(new ObjectMapper()).createParser(stream);
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
+      JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
       final ObjectNode tree = parser.getCodec().readTree(parser);
 
       return consumeEntitySetNode(edmEntityType, tree);
     } catch (JsonParseException e) {
       throw new DeserializerException("An JsonParseException occourred", e,
           DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
+    } catch (JsonMappingException e) {
+      throw new DeserializerException("Duplicate property detected", e,
+          DeserializerException.MessageKeys.DUPLICATE_PROPERTY);
     } catch (IOException e) {
       throw new DeserializerException("An IOException occourred", e, DeserializerException.MessageKeys.IO_EXCEPTION);
     }
@@ -150,7 +155,9 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   @Override
   public Entity entity(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException {
     try {
-      JsonParser parser = new JsonFactory(new ObjectMapper()).createParser(stream);
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
+      JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
       final ObjectNode tree = parser.getCodec().readTree(parser);
 
       return consumeEntityNode(edmEntityType, tree);
@@ -158,6 +165,9 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     } catch (JsonParseException e) {
       throw new DeserializerException("An JsonParseException occourred", e,
           DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
+    } catch (JsonMappingException e) {
+      throw new DeserializerException("Duplicate property detected", e,
+          DeserializerException.MessageKeys.DUPLICATE_PROPERTY);
     } catch (IOException e) {
       throw new DeserializerException("An IOException occourred", e, DeserializerException.MessageKeys.IO_EXCEPTION);
     }
@@ -229,28 +239,10 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     // TODO: Add custom annotation support
     while (fieldsIterator.hasNext()) {
       Map.Entry<String, JsonNode> field = (Map.Entry<String, JsonNode>) fieldsIterator.next();
-      if (field.getKey().endsWith(Constants.JSON_NAVIGATION_LINK)) {
-        final Link link = new LinkImpl();
-        link.setTitle(getAnnotationName(field));
-        link.setRel(ODataServiceVersion.V40.getNamespace(ODataServiceVersion.NamespaceKey.NAVIGATION_LINK_REL)
-            + getAnnotationName(field));
 
-        if (field.getValue().isValueNode()) {
-          link.setHref(field.getValue().textValue());
-          link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
-        }
-
-        entity.getNavigationLinks().add(link);
-        toRemove.add(field.getKey());
-      } else if (field.getKey().endsWith(Constants.JSON_ASSOCIATION_LINK)) {
-        final LinkImpl link = new LinkImpl();
-        link.setTitle(getAnnotationName(field));
-        link.setRel(ODataServiceVersion.V40.getNamespace(ODataServiceVersion.NamespaceKey.ASSOCIATION_LINK_REL)
-            + getAnnotationName(field));
-        link.setHref(field.getValue().textValue());
-        link.setType(ODataLinkType.ASSOCIATION.toString());
-        entity.getAssociationLinks().add(link);
-
+      if (field.getKey().endsWith(Constants.JSON_NAVIGATION_LINK)
+          || field.getKey().endsWith(Constants.JSON_ASSOCIATION_LINK) || field.getKey().endsWith(Constants.JSON_TYPE)) {
+        //navigation links, association links and type information have to be ignored in requests.
         toRemove.add(field.getKey());
       }
     }
@@ -264,10 +256,6 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
 
     return entity;
-  }
-
-  private String getAnnotationName(final Map.Entry<String, JsonNode> entry) {
-    return entry.getKey().substring(0, entry.getKey().indexOf('@'));
   }
 
   private void consumeODataEntityAnnotations(ObjectNode tree, EntityImpl entity, EdmEntityType edmEntityType) {
@@ -520,4 +508,14 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, edmProperty.getName());
     }
   }
+
+//  @Override
+//  public Entity entity(InputStream stream, EdmEntityType edmEntityType)
+//      throws DeserializerException {
+//    try {
+//      return new JsonDeserializer(ODataServiceVersion.V40, true).toEntity(stream).getPayload();
+//    } catch (Exception e) {
+//      throw new DeserializerException("", e, DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
+//    }
+//  }
 }

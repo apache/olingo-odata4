@@ -31,6 +31,7 @@ public interface ODataDeserializer {
 
   /**
    * Deserializes an entity stream into an {@link Entity} object.
+   * Validates: property types, no double properties, correct json types 
    * @param stream
    * @param edmEntityType
    * @return deserialized {@link Entity} object
@@ -46,5 +47,7 @@ public interface ODataDeserializer {
    * @throws DeserializerException
    */
   EntitySet entityCollection(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException;
+  
+  
 
 }
