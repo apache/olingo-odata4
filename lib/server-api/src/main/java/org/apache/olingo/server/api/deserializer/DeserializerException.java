@@ -33,7 +33,7 @@ public class DeserializerException extends ODataTranslatedException {
     /** parameter: format */ UNSUPPORTED_FORMAT, 
     JSON_SYNTAX_EXCEPTION, 
     /** parameter: propertyName */ INVALID_NULL_PROPERTY, 
-    TREE_NOT_EMPTY, 
+    /** parameter: keyName */ UNKOWN_CONTENT, 
     /** parameter: propertyName */ INVALID_VALUE_FOR_PROPERTY, 
     /** parameter: propertyName */ INVALID_TYPE_FOR_PROPERTY, 
     VALUE_ARRAY_NOT_PRESENT, 

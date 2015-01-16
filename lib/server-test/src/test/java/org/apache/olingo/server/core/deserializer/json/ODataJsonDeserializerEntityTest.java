@@ -265,7 +265,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   }
 
   @Test
-  public void ingoreSomeAnnotations() throws Exception {
+  public void ingoreSomeAnnotationsInEntityTypes() throws Exception {
     // We have to ignore @odata.navigation, @odata.association and @odata.type annotations on server side
     String entityString =
         "{\"PropertyInt16\":32767,"
@@ -277,6 +277,25 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+  }
+
+  @Test
+  public void ingoreSomeAnnotationsInComplexTypes() throws Exception {
+    final String entityString = "{"
+        + "\"PropertyInt16\":32767,"
+        + "\"CollPropertyString\":"
+        + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
+        + "\"PropertyComp\":{\"PropertyInt16\":111,\"Navigation@odata.navigationLink\": 12," +
+        "\"Association@odata.associationLink\": 12,\"PropertyString@odata.type\": 12,\"PropertyString\":\"TEST A\"},"
+        + "\"CollPropertyComp\":["
+        + "{\"PropertyInt16\":123,\"PropertyString\":\"TEST 1\"},"
+        + "{\"PropertyInt16\":456,\"Navigation@odata.navigationLink\": 12," +
+        "\"Association@odata.associationLink\": 12,\"PropertyString@odata.type\": 12,\"PropertyString\":\"TEST 2\"},"
+        + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
+
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
   }
 
 //  ---------------------------------- Negative Tests -----------------------------------------------------------
@@ -453,6 +472,73 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void unkownContentInEntity() throws Exception {
+    final String entityString = "{"
+        + "\"PropertyInt16\":32767,"
+        + "\"unknown\": 12,"
+        + "\"CollPropertyString\":"
+        + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
+        + "\"PropertyComp\":{\"PropertyInt16\":111,\"PropertyString\":\"TEST A\"},"
+        + "\"CollPropertyComp\":["
+        + "{\"PropertyInt16\":123,\"PropertyString\":\"TEST 1\"},"
+        + "{\"PropertyInt16\":456,\"PropertyString\":\"TEST 2\"},"
+        + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
+
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    try {
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.UNKOWN_CONTENT, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void unkownContentInComplexProperty() throws Exception {
+    final String entityString = "{"
+        + "\"PropertyInt16\":32767,"
+        + "\"CollPropertyString\":"
+        + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
+        + "\"PropertyComp\":{\"PropertyInt16\":111,\"unknown\": 12,\"PropertyString\":\"TEST A\"},"
+        + "\"CollPropertyComp\":["
+        + "{\"PropertyInt16\":123,\"PropertyString\":\"TEST 1\"},"
+        + "{\"PropertyInt16\":456,\"PropertyString\":\"TEST 2\"},"
+        + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
+
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    try {
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.UNKOWN_CONTENT, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void unkownContentInComplexCollectionProperty() throws Exception {
+    final String entityString = "{"
+        + "\"PropertyInt16\":32767,"
+        + "\"CollPropertyString\":"
+        + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
+        + "\"PropertyComp\":{\"PropertyInt16\":111,\"PropertyString\":\"TEST A\"},"
+        + "\"CollPropertyComp\":["
+        + "{\"PropertyInt16\":123,\"PropertyString\":\"TEST 1\"},"
+        + "{\"PropertyInt16\":456,\"unknown\": 12,\"PropertyString\":\"TEST 2\"},"
+        + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
+
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    try {
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.UNKOWN_CONTENT, e.getMessageKey());
       throw e;
     }
   }

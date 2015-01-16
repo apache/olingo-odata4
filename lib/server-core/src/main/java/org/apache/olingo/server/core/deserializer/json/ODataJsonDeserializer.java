@@ -104,7 +104,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
     if (tree.size() != 0) {
       throw new DeserializerException("Tree should be empty but still has content left.",
-          DeserializerException.MessageKeys.TREE_NOT_EMPTY);
+          DeserializerException.MessageKeys.UNKOWN_CONTENT);
     }
     return entitySet;
   }
@@ -242,7 +242,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
       if (field.getKey().endsWith(Constants.JSON_NAVIGATION_LINK)
           || field.getKey().endsWith(Constants.JSON_ASSOCIATION_LINK) || field.getKey().endsWith(Constants.JSON_TYPE)) {
-        //navigation links, association links and type information have to be ignored in requests.
+        // navigation links, association links and type information have to be ignored in requests.
         toRemove.add(field.getKey());
       }
     }
@@ -251,8 +251,9 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     tree.remove(toRemove);
 
     if (tree.size() != 0) {
-      throw new DeserializerException("Tree should be empty but still has content left.",
-          DeserializerException.MessageKeys.TREE_NOT_EMPTY);
+      final String unkownField = tree.fieldNames().next();
+      throw new DeserializerException("Tree should be empty but still has content left: " + unkownField,
+          DeserializerException.MessageKeys.UNKOWN_CONTENT, unkownField);
     }
 
     return entity;
@@ -371,12 +372,26 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           valueArray.add(value);
           // If navigationProperties are present we have to consume them and create a LinkedComplexValue Object
           // TODO: Complex Type Navigation Deserialization
-          // read and add all annotations
-          // TODO: read Complex Type Annotations
+          final List<String> toRemove = new ArrayList<String>();
+          Iterator<Entry<String, JsonNode>> fieldsIterator = arrayElement.fields();
+          // TODO: Add custom annotation support
+          while (fieldsIterator.hasNext()) {
+            Map.Entry<String, JsonNode> field = (Map.Entry<String, JsonNode>) fieldsIterator.next();
+
+            if (field.getKey().endsWith(Constants.JSON_NAVIGATION_LINK)
+                || field.getKey().endsWith(Constants.JSON_ASSOCIATION_LINK)
+                || field.getKey().endsWith(Constants.JSON_TYPE)) {
+              // navigation links, association links and type information have to be ignored in requests.
+              toRemove.add(field.getKey());
+            }
+          }
+          // remove here to avoid iterator issues.
+          ((ObjectNode) arrayElement).remove(toRemove);
           // Afterwards the node must be empty
           if (arrayElement.size() != 0) {
-            throw new DeserializerException("Tree should be empty but still has content left.",
-                DeserializerException.MessageKeys.TREE_NOT_EMPTY);
+            final String unkownField = arrayElement.fieldNames().next();
+            throw new DeserializerException("Tree should be empty but still has content left: " + unkownField,
+                DeserializerException.MessageKeys.UNKOWN_CONTENT, unkownField);
           }
         }
         property.setValue(ValueType.COLLECTION_COMPLEX, valueArray);
@@ -406,12 +421,26 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
         // read and add all navigation properties
         // TODO: Complex Type Navigation Deserialization
-        // read and add all annotations
-        // TODO: read Complex Type Annotations
+        final List<String> toRemove = new ArrayList<String>();
+        Iterator<Entry<String, JsonNode>> fieldsIterator = jsonNode.fields();
+        // TODO: Add custom annotation support
+        while (fieldsIterator.hasNext()) {
+          Map.Entry<String, JsonNode> field = (Map.Entry<String, JsonNode>) fieldsIterator.next();
+
+          if (field.getKey().endsWith(Constants.JSON_NAVIGATION_LINK)
+              || field.getKey().endsWith(Constants.JSON_ASSOCIATION_LINK)
+              || field.getKey().endsWith(Constants.JSON_TYPE)) {
+            // navigation links, association links and type information have to be ignored in requests.
+            toRemove.add(field.getKey());
+          }
+        }
+        // remove here to avoid iterator issues.
+        ((ObjectNode) jsonNode).remove(toRemove);
         // Afterwards the node must be empty
         if (jsonNode.size() != 0) {
-          throw new DeserializerException("Tree should be empty but still has content left.",
-              DeserializerException.MessageKeys.TREE_NOT_EMPTY);
+          final String unkownField = jsonNode.fieldNames().next();
+          throw new DeserializerException("Tree should be empty but still has content left: " + unkownField,
+              DeserializerException.MessageKeys.UNKOWN_CONTENT, unkownField);
         }
         break;
       default:
