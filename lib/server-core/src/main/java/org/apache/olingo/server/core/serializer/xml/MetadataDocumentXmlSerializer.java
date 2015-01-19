@@ -58,6 +58,7 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 
 public class MetadataDocumentXmlSerializer {
 
+  private static final String TRUE = "true";
   private static final String XML_EXTENDS = "Extends";
   private static final String XML_TARGET = "Target";
   private static final String XML_PATH = "Path";
@@ -423,7 +424,11 @@ public class MetadataDocumentXmlSerializer {
       if (complexType.getBaseType() != null) {
         writer.writeAttribute(XML_BASE_TYPE, getAliasedFullQualifiedName(complexType.getBaseType(), false));
       }
-
+      
+      if(complexType.isAbstract()) {
+        writer.writeAttribute(ABSTRACT, TRUE);
+      }
+      
       appendProperties(writer, complexType);
 
       appendNavigationProperties(writer, complexType);
@@ -447,7 +452,7 @@ public class MetadataDocumentXmlSerializer {
       }
 
       if (entityType.isAbstract()) {
-        writer.writeAttribute(ABSTRACT, "true");
+        writer.writeAttribute(ABSTRACT, TRUE);
       }
 
       appendKey(writer, entityType);

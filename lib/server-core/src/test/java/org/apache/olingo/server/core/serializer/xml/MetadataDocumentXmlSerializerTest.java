@@ -34,6 +34,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -65,6 +66,7 @@ import org.apache.olingo.server.api.edmx.EdmxReferenceIncludeAnnotation;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.ServiceMetadataImpl;
+import org.apache.olingo.server.core.edm.provider.EdmComplexTypeImpl;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -227,7 +229,43 @@ public class MetadataDocumentXmlSerializerTest {
     assertTrue(metadata.contains("<FunctionImport Name=\"FINRTInt16\" " +
         "Function=\"Alias.UFNRTInt16\" IncludeInServiceDocument=\"true\"/>"));
   }
+  
+  @Test
+  public void writeAbstractComplexType() throws Exception {
+    EdmSchema schema = mock(EdmSchema.class);
+    when(schema.getNamespace()).thenReturn("MyNamespace");
+    Edm edm = mock(Edm.class);
+    when(edm.getSchemas()).thenReturn(Arrays.asList(schema));
+    ServiceMetadata serviceMetadata = mock(ServiceMetadata.class);
+    when(serviceMetadata.getEdm()).thenReturn(edm);
+    List<EdmComplexType> complexTypes = new ArrayList<EdmComplexType>();
 
+    FullQualifiedName name = new FullQualifiedName("namespace", "ComplexType");
+    ComplexType complexType = new ComplexType();
+    complexType.setAbstract(true);
+    complexType.setName(name.getName());
+    complexType.setOpenType(true);
+    List<Property> properties = new ArrayList<Property>();
+    
+    properties.add(new Property().setName("prop1").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    properties.add(new Property().setName("prop2").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    
+    complexType.setProperties(properties);
+    EdmComplexTypeImpl c1 = EdmComplexTypeImpl.getInstance(edm, name, complexType);
+    complexTypes.add(c1);
+    
+    when(schema.getComplexTypes()).thenReturn(complexTypes);
+    
+    
+    InputStream metadataStream = serializer.metadataDocument(serviceMetadata);
+    String metadata = IOUtils.toString(metadataStream);
+    
+    assertTrue(metadata.contains("<ComplexType Name=\"ComplexType\" Abstract=\"true\">" 
+        + "<Property Name=\"prop1\" Type=\"Edm.String\"/>" 
+        + "<Property Name=\"prop2\" Type=\"Edm.String\"/>" 
+        + "</ComplexType>"));
+  }
+  
   private class LocalProvider extends EdmProvider {
     private final static String nameSpace = "namespace";
 
