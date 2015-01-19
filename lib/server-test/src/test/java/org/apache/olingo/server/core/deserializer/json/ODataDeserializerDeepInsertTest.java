@@ -31,6 +31,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.junit.Test;
 
 public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTest {
@@ -51,6 +52,13 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
   }
 
   @Test
+  public void esAllPrimExpandedToOneWithODataAnnotations() throws Exception {
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    InputStream stream = getFileAsStream("EntityESAllPrimExpandedNavPropertyETTwoPrimOneWithODataAnnotations.json");
+    OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+  }
+
+  @Test
   public void esAllPrimExpandedToMany() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("EntityESAllPrimExpandedNavPropertyETTwoPrimMany.json");
@@ -66,4 +74,34 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
     assertEquals(1, navigationLink.getInlineEntitySet().getEntities().size());
   }
 
+  @Test
+  public void esAllPrimExpandedToManyWithODataAnnotations() throws Exception {
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    InputStream stream = getFileAsStream("EntityESAllPrimExpandedNavPropertyETTwoPrimManyWithODataAnnotations.json");
+    OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void esAllPrimExpandedToOneWithCustomAnnotations() throws Exception {
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    InputStream stream = getFileAsStream("EntityESAllPrimExpandedNavPropertyETTwoPrimOneWithCustomAnnotations.json");
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void esAllPrimExpandedToManyWithCustomAnnotations() throws Exception {
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    InputStream stream = getFileAsStream("EntityESAllPrimExpandedNavPropertyETTwoPrimManyWithCustomAnnotations.json");
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
+      throw e;
+    }
+  }
 }

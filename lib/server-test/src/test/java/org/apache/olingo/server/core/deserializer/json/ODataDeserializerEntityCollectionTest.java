@@ -32,6 +32,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.junit.Test;
 
 public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserializerTest {
@@ -81,5 +82,36 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     assertEquals(2, entitySet.getEntities().size());
 
     // Since entity deserialization is called we do not check all entities here excplicitly
+  }
+
+  @Test
+  public void esAllPrimODataAnnotationsAreIgnored() throws Exception {
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    InputStream stream = getFileAsStream("ESAllPrimWithODataAnnotations.json");
+    OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void esAllPrimCustomAnnotationsLeadToNotImplemented() throws Exception {
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    InputStream stream = getFileAsStream("ESAllPrimWithCustomAnnotations.json");
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
+      throw e;
+    }
+  }
+  
+  @Test(expected = DeserializerException.class)
+  public void esAllPrimDoubleKeysLeadToException() throws Exception {
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    InputStream stream = getFileAsStream("ESAllPrimWithDoubleKey.json");
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.DUPLICATE_JSON_PROPERTY, e.getMessageKey());
+      throw e;
+    }
   }
 }

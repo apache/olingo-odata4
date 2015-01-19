@@ -40,7 +40,9 @@ public class DeserializerException extends ODataTranslatedException {
     VALUE_TAG_MUST_BE_AN_ARRAY, 
     INVALID_ENTITY, 
     /** parameter: navigationPropertyName */INVALID_VALUE_FOR_NAVIGATION_PROPERTY, 
-    DUPLICATE_PROPERTY;
+    DUPLICATE_PROPERTY, 
+    DUPLICATE_JSON_PROPERTY, 
+    /** parameters: primitiveTypeName, propertyName */ UNKNOWN_PRIMITIVE_TYPE;
 
     @Override
     public String getKey() {

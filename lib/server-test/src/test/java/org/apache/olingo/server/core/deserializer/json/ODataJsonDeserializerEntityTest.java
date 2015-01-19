@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.deserializer.json;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -35,7 +36,6 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTest {
@@ -265,7 +265,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   }
 
   @Test
-  public void ingoreSomeAnnotationsInEntityTypes() throws Exception {
+  public void ignoreSomeAnnotationsInEntityTypes() throws Exception {
     // We have to ignore @odata.navigation, @odata.association and @odata.type annotations on server side
     String entityString =
         "{\"PropertyInt16\":32767,"
@@ -280,7 +280,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   }
 
   @Test
-  public void ingoreSomeAnnotationsInComplexTypes() throws Exception {
+  public void ignoreSomeAnnotationsInComplexTypes() throws Exception {
     final String entityString = "{"
         + "\"PropertyInt16\":32767,"
         + "\"CollPropertyString\":"
@@ -296,6 +296,32 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
+  }
+
+  @Test
+  public void odataControlInformationIsIgnoredForRequests() throws Exception {
+    String entityString =
+        "{"
+            + "\"@odata.context\":\"http://localhost:8080\","
+            + "\"@odata.metadataEtag\":\"metadataEtag\","
+            + "\"@odata.id\":\"value\","
+            + "\"@odata.editLink\":\"value\","
+            + "\"@odata.readLink\":\"value\","
+            + "\"@odata.etag\":\"value\","
+            + "\"@odata.mediaEtag\":\"value\","
+            + "\"@odata.mediaReadLink\":\"value\","
+            + "\"@odata.mediaEditLink\":\"value\","
+            + "\"PropertyInt16\":32767,"
+            + "\"PropertyString\":\"First Resource - positive values\""
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    Entity entity =
+        deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+    assertNotNull(entity);
+    List<Property> properties = entity.getProperties();
+    assertNotNull(properties);
+    assertEquals(2, properties.size());
   }
 
 //  ---------------------------------- Negative Tests -----------------------------------------------------------
@@ -452,9 +478,8 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     }
   }
 
-  @Ignore
   @Test(expected = DeserializerException.class)
-  public void customAnnotationsLeadToNotImplemented() throws Exception {
+  public void customAnnotationInEntityLeadToNotImplemented() throws Exception {
     final String entityString = "{"
         + "\"PropertyInt16\":32767,"
         + "\"CollPropertyString@custom.annotation\": 12,"
@@ -463,6 +488,51 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "\"PropertyComp\":{\"PropertyInt16\":111,\"PropertyString\":\"TEST A\"},"
         + "\"CollPropertyComp\":["
         + "{\"PropertyInt16\":123,\"PropertyString\":\"TEST 1\"},"
+        + "{\"PropertyInt16\":456,\"PropertyString\":\"TEST 2\"},"
+        + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
+
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    try {
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void customAnnotationInComplexValueLeadToNotImplemented() throws Exception {
+    final String entityString = "{"
+        + "\"PropertyInt16\":32767,"
+        + "\"CollPropertyString\":"
+        + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
+        + "\"PropertyComp\":{\"PropertyInt16\":111," +
+        "\"CollPropertyString@custom.annotation\": 12,\"PropertyString\":\"TEST A\"},"
+        + "\"CollPropertyComp\":["
+        + "{\"PropertyInt16\":123,\"PropertyString\":\"TEST 1\"},"
+        + "{\"PropertyInt16\":456,\"PropertyString\":\"TEST 2\"},"
+        + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
+
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    try {
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void customAnnotationInComplexCollectionValueLeadToNotImplemented() throws Exception {
+    final String entityString = "{"
+        + "\"PropertyInt16\":32767,"
+        + "\"CollPropertyString\":"
+        + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
+        + "\"PropertyComp\":{\"PropertyInt16\":111,\"PropertyString\":\"TEST A\"},"
+        + "\"CollPropertyComp\":["
+        + "{\"PropertyInt16\":123,\"CollPropertyString@custom.annotation\": 12,\"PropertyString\":\"TEST 1\"},"
         + "{\"PropertyInt16\":456,\"PropertyString\":\"TEST 2\"},"
         + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
 
@@ -543,4 +613,142 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     }
   }
 
+  @Test
+  public void propertyInt16JsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertyInt16\":\"32767\"}");
+    checkPropertyJsonType("{\"PropertyInt16\":true}");
+    checkPropertyJsonType("{\"PropertyInt16\":[]}");
+    checkPropertyJsonType("{\"PropertyInt16\":{}}");
+  }
+
+  @Test
+  public void propertyInt32JsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertyInt32\":\"2147483647\"}");
+    checkPropertyJsonType("{\"PropertyInt32\":true}");
+    checkPropertyJsonType("{\"PropertyInt32\":[]}");
+    checkPropertyJsonType("{\"PropertyInt32\":{}}");
+  }
+
+  @Test
+  public void propertyInt64JsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertyInt64\":\"9223372036854775807\"}");
+    checkPropertyJsonType("{\"PropertyInt64\":true}");
+    checkPropertyJsonType("{\"PropertyInt64\":[]}");
+    checkPropertyJsonType("{\"PropertyInt64\":{}}");
+  }
+
+  @Test
+  public void propertyStringJsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertyString\":32767}");
+    checkPropertyJsonType("{\"PropertyString\":true}");
+    checkPropertyJsonType("{\"PropertyString\":[]}");
+    checkPropertyJsonType("{\"PropertyString\":{}}");
+  }
+
+  @Test
+  public void propertyBooleanJsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertyBoolean\":\"true\"}");
+    checkPropertyJsonType("{\"PropertyBoolean\":123}");
+    checkPropertyJsonType("{\"PropertyBoolean\":[]}");
+    checkPropertyJsonType("{\"PropertyBoolean\":{}}");
+  }
+
+  @Test
+  public void propertyByteJsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertyByte\":\"255\"}");
+    checkPropertyJsonType("{\"PropertyByte\":true}");
+    checkPropertyJsonType("{\"PropertyByte\":[]}");
+    checkPropertyJsonType("{\"PropertyByte\":{}}");
+  }
+
+  @Test
+  public void propertySByteJsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertySByte\":\"127\"}");
+    checkPropertyJsonType("{\"PropertySByte\":true}");
+    checkPropertyJsonType("{\"PropertySByte\":[]}");
+    checkPropertyJsonType("{\"PropertySByte\":{}}");
+  }
+
+  @Test
+  public void propertySingleJsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertySingle\":\"1.79E20\"}");
+    checkPropertyJsonType("{\"PropertySingle\":true}");
+    checkPropertyJsonType("{\"PropertySingle\":[]}");
+    checkPropertyJsonType("{\"PropertySingle\":{}}");
+  }
+
+  @Test
+  public void propertyDoubleJsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertyDouble\":\"-1.79E19\"}");
+    checkPropertyJsonType("{\"PropertyDouble\":true}");
+    checkPropertyJsonType("{\"PropertyDouble\":[]}");
+    checkPropertyJsonType("{\"PropertyDouble\":{}}");
+  }
+
+  @Test
+  public void propertyDecimalJsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertyDecimal\":\"34\"}");
+    checkPropertyJsonType("{\"PropertyDecimal\":true}");
+    checkPropertyJsonType("{\"PropertyDecimal\":[]}");
+    checkPropertyJsonType("{\"PropertyDecimal\":{}}");
+  }
+
+  @Test
+  public void propertyBinaryJsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertyBinary\":32767}");
+    checkPropertyJsonType("{\"PropertyBinary\":true}");
+    checkPropertyJsonType("{\"PropertyBinary\":[]}");
+    checkPropertyJsonType("{\"PropertyBinary\":{}}");
+  }
+
+  @Test
+  public void propertyDateJsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertyDate\":32767}");
+    checkPropertyJsonType("{\"PropertyDate\":true}");
+    checkPropertyJsonType("{\"PropertyDate\":[]}");
+    checkPropertyJsonType("{\"PropertyDate\":{}}");
+  }
+
+  @Test
+  public void propertyDateTimeOffsetJsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertyDateTimeOffset\":32767}");
+    checkPropertyJsonType("{\"PropertyDateTimeOffset\":true}");
+    checkPropertyJsonType("{\"PropertyDateTimeOffset\":[]}");
+    checkPropertyJsonType("{\"PropertyDateTimeOffset\":{}}");
+  }
+
+  @Test
+  public void propertyDurationJsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertyDuration\":32767}");
+    checkPropertyJsonType("{\"PropertyDuration\":true}");
+    checkPropertyJsonType("{\"PropertyDuration\":[]}");
+    checkPropertyJsonType("{\"PropertyDuration\":{}}");
+  }
+
+  @Test
+  public void propertyGuidTimeOffsetJsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertyGuid\":32767}");
+    checkPropertyJsonType("{\"PropertyGuid\":true}");
+    checkPropertyJsonType("{\"PropertyGuid\":[]}");
+    checkPropertyJsonType("{\"PropertyGuid\":{}}");
+  }
+
+  @Test
+  public void propertyTimeOfDayJsonTypesNegativeCheck() throws Exception {
+    checkPropertyJsonType("{\"PropertyTimeOfDay\":32767}");
+    checkPropertyJsonType("{\"PropertyTimeOfDay\":true}");
+    checkPropertyJsonType("{\"PropertyTimeOfDay\":[]}");
+    checkPropertyJsonType("{\"PropertyTimeOfDay\":{}}");
+  }
+
+  private void checkPropertyJsonType(String entityString) throws DeserializerException {
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+      fail("Expected an exception but was not thrown: " + this.getClass().getName());
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, e.getMessageKey());
+    }
+  }
 }
