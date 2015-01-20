@@ -47,7 +47,6 @@ import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
-import org.apache.olingo.server.api.processor.MediaEntityProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveValueProcessor;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
@@ -71,13 +70,13 @@ import org.apache.olingo.server.sample.data.DataProvider.DataProviderException;
  * This is a very simple example which should give you a rough guideline on how to implement such an processor.
  * See the JavaDoc of the server.api interfaces for more information.
  */
-public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor, MediaEntityProcessor,
+public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor,
     PrimitiveProcessor, PrimitiveValueProcessor, ComplexProcessor {
 
   private OData odata;
   private DataProvider dataProvider;
 
-  // This constructor is application specific and not mandatory for the olingo library. We use it here to simulate the
+  // This constructor is application specific and not mandatory for the Olingo library. We use it here to simulate the
   // database access
   public CarsProcessor(final DataProvider dataProvider) {
     this.dataProvider = dataProvider;
@@ -109,7 +108,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
     InputStream serializedContent = serializer.entityCollection(edmEntitySet.getEntityType(), entitySet,
         EntityCollectionSerializerOptions.with()
             .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                getContextUrl(serializer, edmEntitySet, false, expand, select, null))
+                getContextUrl(edmEntitySet, false, expand, select, null))
             .count(uriInfo.getCountOption())
             .expand(expand).select(select)
             .build());
@@ -127,7 +126,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
 
     // Next we fetch the requested entity from the database
-    Entity entity = null;
+    Entity entity;
     try {
       entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
     } catch (DataProviderException e) {
@@ -147,7 +146,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
       InputStream serializedContent = serializer.entity(edmEntitySet.getEntityType(), entity,
           EntitySerializerOptions.with()
               .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                  getContextUrl(serializer, edmEntitySet, true, expand, select, null))
+                  getContextUrl(edmEntitySet, true, expand, select, null))
               .expand(expand).select(select)
               .build());
       response.setContent(serializedContent);
@@ -160,13 +159,15 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
   public void createEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
                            ContentType requestFormat, ContentType responseFormat)
           throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new UnsupportedOperationException("Not yet implemented");
+    throw new ODataApplicationException("Entity create is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
   }
 
   @Override
   public void deleteEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo)
           throws ODataApplicationException {
-    throw new UnsupportedOperationException("Not yet implemented");
+    throw new ODataApplicationException("Entity delete is not supported yet.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
   }
 
   @Override
@@ -221,21 +222,6 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
     }
   }
 
-  @Override
-  public void readMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-                              ContentType responseFormat)
-          throws ODataApplicationException, SerializerException {
-    throw new UnsupportedOperationException("Not yet implemented");
-  }
-
-  @Override
-  public void updateMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-                                ContentType requestFormat, ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new UnsupportedOperationException("Not yet implemented");
-
-  }
-
   private void readProperty(ODataResponse response, UriInfo uriInfo, ContentType contentType,
       boolean complex) throws ODataApplicationException, SerializerException {
     // To read a property we have to first get the entity out of the entity set
@@ -244,13 +230,14 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
     try {
       entity = readEntityInternal(uriInfo.asUriInfoResource(), edmEntitySet);
     } catch (DataProviderException e) {
-      throw new ODataApplicationException(e.getMessage(), 500, Locale.ENGLISH);
+      throw new ODataApplicationException(e.getMessage(),
+              HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ENGLISH);
     }
 
     if (entity == null) {
       // If no entity was found for the given key we throw an exception.
-      throw new ODataApplicationException("No entity found for this key", HttpStatusCode.NOT_FOUND
-          .getStatusCode(), Locale.ENGLISH);
+      throw new ODataApplicationException("No entity found for this key",
+              HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ENGLISH);
     } else {
       // Next we get the property value from the entity and pass the value to serialization
       UriResourceProperty uriProperty = (UriResourceProperty) uriInfo
@@ -258,8 +245,8 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
       EdmProperty edmProperty = uriProperty.getProperty();
       Property property = entity.getProperty(edmProperty.getName());
       if (property == null) {
-        throw new ODataApplicationException("No property found", HttpStatusCode.NOT_FOUND
-            .getStatusCode(), Locale.ENGLISH);
+        throw new ODataApplicationException("No property found",
+                HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ENGLISH);
       } else {
         if (property.getValue() == null) {
           response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
@@ -267,7 +254,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
           final ODataFormat format = ODataFormat.fromContentType(contentType);
           ODataSerializer serializer = odata.createSerializer(format);
           final ContextURL contextURL = format == ODataFormat.JSON_NO_METADATA ? null :
-              getContextUrl(serializer, edmEntitySet, true, null, null, edmProperty.getName());
+              getContextUrl(edmEntitySet, true, null, null, edmProperty.getName());
           InputStream serializerContent = complex ?
               serializer.complex((EdmComplexType) edmProperty.getType(), property,
                   ComplexSerializerOptions.with().contextURL(contextURL).build()) :
@@ -312,8 +299,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
     return uriResource.getEntitySet();
   }
 
-  private ContextURL getContextUrl(final ODataSerializer serializer,
-      final EdmEntitySet entitySet, final boolean isSingleEntity,
+  private ContextURL getContextUrl(final EdmEntitySet entitySet, final boolean isSingleEntity,
       final ExpandOption expand, final SelectOption select, final String navOrPropertyPath)
       throws SerializerException {
 
@@ -330,14 +316,14 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
                               final ContentType responseFormat)
           throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Primitive property update is not supported yet.",
-            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
   }
 
   @Override
   public void deletePrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo) throws
           ODataApplicationException {
     throw new ODataApplicationException("Primitive property delete is not supported yet.",
-            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
   }
 
   @Override
@@ -346,22 +332,14 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
                             final ContentType responseFormat)
           throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Complex property update is not supported yet.",
-            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
   }
 
   @Override
   public void deleteComplex(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo)
           throws ODataApplicationException {
     throw new ODataApplicationException("Complex property delete is not supported yet.",
-            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-  }
-
-  @Override
-  public void createMediaEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-                                final ContentType requestFormat, final ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new ODataApplicationException("MediaEntity create is not supported yet.",
-            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
   }
 
   @Override
@@ -370,6 +348,6 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
                            final ContentType responseFormat)
           throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Entity update is not supported yet.",
-            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
   }
 }

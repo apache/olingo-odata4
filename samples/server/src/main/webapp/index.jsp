@@ -37,8 +37,9 @@
   <ul>
     <li><a href="cars.svc/">Service Document</a></li>
     <li><a href="cars.svc/$metadata">Metadata</a></li>
-    <li>Entity Set <a href="cars.svc/Cars">Cars</a></li>
-    <li>Entity <a href="cars.svc/Cars(0)">Cars(0)</a></li>
+    <li>Entity Set: <a href="cars.svc/Cars">Cars</a></li>
+    <li>Entity: <a href="cars.svc/Cars(1)">Cars(1)</a></li>
+    <li>Primitive Property: <a href="cars.svc/Cars(1)/Price">Cars(1)/Price</a></li>
   </ul>
   <hr>
   <div class="version">
