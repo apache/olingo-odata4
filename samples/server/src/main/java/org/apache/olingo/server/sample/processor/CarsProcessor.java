@@ -272,7 +272,13 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
               serializer.complex((EdmComplexType) edmProperty.getType(), property,
                   ComplexSerializerOptions.with().contextURL(contextURL).build()) :
               serializer.primitive((EdmPrimitiveType) edmProperty.getType(), property,
-                  PrimitiveSerializerOptions.with().contextURL(contextURL).build());
+                                    PrimitiveSerializerOptions.with()
+                                    .contextURL(contextURL)
+                                    .scale(edmProperty.getScale())
+                                    .nullable(edmProperty.isNullable())
+                                    .precision(edmProperty.getPrecision())
+                                    .maxLength(edmProperty.getMaxLength())
+                                    .unicode(edmProperty.isUnicode()).build());
           response.setContent(serializerContent);
           response.setStatusCode(HttpStatusCode.OK.getStatusCode());
           response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
