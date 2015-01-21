@@ -31,6 +31,7 @@ public class LinkedComplexValueImpl implements LinkedComplexValue {
   private final List<Property> value = new ArrayList<Property>();
   private final List<Link> associationLinks = new ArrayList<Link>();
   private final List<Link> navigationLinks = new ArrayList<Link>();
+  private final List<Link> bindingLinks = new ArrayList<Link>();
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
@@ -73,5 +74,15 @@ public class LinkedComplexValueImpl implements LinkedComplexValue {
   @Override
   public List<Annotation> getAnnotations() {
     return annotations;
+  }
+
+  @Override
+  public Link getNavigationBinding(String name) {
+    return getOneByTitle(name, bindingLinks);
+  }
+
+  @Override
+  public List<Link> getNavigationBindings() {
+    return bindingLinks;
   }
 }

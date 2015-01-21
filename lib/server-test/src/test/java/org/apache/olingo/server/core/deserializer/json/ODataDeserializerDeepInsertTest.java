@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.apache.olingo.commons.api.data.Entity;
@@ -101,6 +102,70 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
       OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void expandedToOneInvalidNullValue() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"NavPropertyETTwoPrimOne\":null"
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void expandedToOneInvalidStringValue() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"NavPropertyETTwoPrimOne\":\"First Resource - positive values\""
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_VALUE_FOR_NAVIGATION_PROPERTY, e.getMessageKey());
+      throw e;
+    }
+  }
+  
+  @Test(expected = DeserializerException.class)
+  public void expandedToManyInvalidNullValue() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"NavPropertyETTwoPrimMany\":null"
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void expandedToManyInvalidStringValue() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"NavPropertyETTwoPrimMany\":\"First Resource - positive values\""
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_VALUE_FOR_NAVIGATION_PROPERTY, e.getMessageKey());
       throw e;
     }
   }

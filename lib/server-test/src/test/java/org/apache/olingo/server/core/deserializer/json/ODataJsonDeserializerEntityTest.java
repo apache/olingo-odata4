@@ -20,6 +20,7 @@ package org.apache.olingo.server.core.deserializer.json;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -29,8 +30,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
@@ -324,6 +327,56 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertEquals(2, properties.size());
   }
 
+  @Test
+  public void etAllPrimBindingOperation() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"PropertyString\":\"First Resource - positive values\","
+            + "\"NavPropertyETTwoPrimOne@odata.bind\":\"ESTwoPrim(2)\","
+            + "\"NavPropertyETTwoPrimMany@odata.bind\":[\"ESTwoPrim(2)\",\"ESTwoPrim(3)\"]"
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    Entity entity =
+        deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+    assertNotNull(entity);
+
+    Link bindingToOne = entity.getNavigationBinding("NavPropertyETTwoPrimOne");
+    assertNotNull(bindingToOne);
+    assertEquals("NavPropertyETTwoPrimOne", bindingToOne.getTitle());
+    assertEquals("ESTwoPrim(2)", bindingToOne.getBindingLink());
+    assertEquals(ODataLinkType.ENTITY_BINDING.toString(), bindingToOne.getType());
+    assertTrue(bindingToOne.getBindingLinks().isEmpty());
+    assertNull(bindingToOne.getHref());
+    assertNull(bindingToOne.getRel());
+
+    Link bindingToMany = entity.getNavigationBinding("NavPropertyETTwoPrimMany");
+    assertNotNull(bindingToMany);
+    assertEquals("NavPropertyETTwoPrimMany", bindingToMany.getTitle());
+    assertNotNull(bindingToMany.getBindingLinks());
+    assertEquals(2, bindingToMany.getBindingLinks().size());
+    assertEquals(ODataLinkType.ENTITY_COLLECTION_BINDING.toString(), bindingToMany.getType());
+    assertNull(bindingToMany.getBindingLink());
+    assertNull(bindingToMany.getHref());
+    assertNull(bindingToMany.getRel());
+  }
+
+  @Test
+  public void etAllPrimBindingOperationEmptyArray() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"PropertyString\":\"First Resource - positive values\","
+            + "\"NavPropertyETTwoPrimMany@odata.bind\":[]"
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    Entity entity =
+        deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+    Link bindingToMany = entity.getNavigationBinding("NavPropertyETTwoPrimMany");
+    assertNotNull(bindingToMany);
+    assertTrue(bindingToMany.getBindingLinks().isEmpty());
+  }
+
 //  ---------------------------------- Negative Tests -----------------------------------------------------------
 
   @Test(expected = DeserializerException.class)
@@ -350,7 +403,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
       ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
     } catch (DeserializerException e) {
-      assertEquals(DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, e.getMessageKey());
+      assertEquals(DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, e.getMessageKey());
       throw e;
     }
   }
@@ -617,129 +670,260 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   public void propertyInt16JsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertyInt16\":\"32767\"}");
     checkPropertyJsonType("{\"PropertyInt16\":true}");
-    checkPropertyJsonType("{\"PropertyInt16\":[]}");
-    checkPropertyJsonType("{\"PropertyInt16\":{}}");
   }
 
   @Test
   public void propertyInt32JsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertyInt32\":\"2147483647\"}");
     checkPropertyJsonType("{\"PropertyInt32\":true}");
-    checkPropertyJsonType("{\"PropertyInt32\":[]}");
-    checkPropertyJsonType("{\"PropertyInt32\":{}}");
   }
 
   @Test
   public void propertyInt64JsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertyInt64\":\"9223372036854775807\"}");
     checkPropertyJsonType("{\"PropertyInt64\":true}");
-    checkPropertyJsonType("{\"PropertyInt64\":[]}");
-    checkPropertyJsonType("{\"PropertyInt64\":{}}");
   }
 
   @Test
   public void propertyStringJsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertyString\":32767}");
     checkPropertyJsonType("{\"PropertyString\":true}");
-    checkPropertyJsonType("{\"PropertyString\":[]}");
-    checkPropertyJsonType("{\"PropertyString\":{}}");
   }
 
   @Test
   public void propertyBooleanJsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertyBoolean\":\"true\"}");
     checkPropertyJsonType("{\"PropertyBoolean\":123}");
-    checkPropertyJsonType("{\"PropertyBoolean\":[]}");
-    checkPropertyJsonType("{\"PropertyBoolean\":{}}");
   }
 
   @Test
   public void propertyByteJsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertyByte\":\"255\"}");
     checkPropertyJsonType("{\"PropertyByte\":true}");
-    checkPropertyJsonType("{\"PropertyByte\":[]}");
-    checkPropertyJsonType("{\"PropertyByte\":{}}");
   }
 
   @Test
   public void propertySByteJsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertySByte\":\"127\"}");
     checkPropertyJsonType("{\"PropertySByte\":true}");
-    checkPropertyJsonType("{\"PropertySByte\":[]}");
-    checkPropertyJsonType("{\"PropertySByte\":{}}");
   }
 
   @Test
   public void propertySingleJsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertySingle\":\"1.79E20\"}");
     checkPropertyJsonType("{\"PropertySingle\":true}");
-    checkPropertyJsonType("{\"PropertySingle\":[]}");
-    checkPropertyJsonType("{\"PropertySingle\":{}}");
   }
 
   @Test
   public void propertyDoubleJsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertyDouble\":\"-1.79E19\"}");
     checkPropertyJsonType("{\"PropertyDouble\":true}");
-    checkPropertyJsonType("{\"PropertyDouble\":[]}");
-    checkPropertyJsonType("{\"PropertyDouble\":{}}");
   }
 
   @Test
   public void propertyDecimalJsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertyDecimal\":\"34\"}");
     checkPropertyJsonType("{\"PropertyDecimal\":true}");
-    checkPropertyJsonType("{\"PropertyDecimal\":[]}");
-    checkPropertyJsonType("{\"PropertyDecimal\":{}}");
   }
 
   @Test
   public void propertyBinaryJsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertyBinary\":32767}");
     checkPropertyJsonType("{\"PropertyBinary\":true}");
-    checkPropertyJsonType("{\"PropertyBinary\":[]}");
-    checkPropertyJsonType("{\"PropertyBinary\":{}}");
   }
 
   @Test
   public void propertyDateJsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertyDate\":32767}");
     checkPropertyJsonType("{\"PropertyDate\":true}");
-    checkPropertyJsonType("{\"PropertyDate\":[]}");
-    checkPropertyJsonType("{\"PropertyDate\":{}}");
   }
 
   @Test
   public void propertyDateTimeOffsetJsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertyDateTimeOffset\":32767}");
     checkPropertyJsonType("{\"PropertyDateTimeOffset\":true}");
-    checkPropertyJsonType("{\"PropertyDateTimeOffset\":[]}");
-    checkPropertyJsonType("{\"PropertyDateTimeOffset\":{}}");
   }
 
   @Test
   public void propertyDurationJsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertyDuration\":32767}");
     checkPropertyJsonType("{\"PropertyDuration\":true}");
-    checkPropertyJsonType("{\"PropertyDuration\":[]}");
-    checkPropertyJsonType("{\"PropertyDuration\":{}}");
   }
 
   @Test
   public void propertyGuidTimeOffsetJsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertyGuid\":32767}");
     checkPropertyJsonType("{\"PropertyGuid\":true}");
-    checkPropertyJsonType("{\"PropertyGuid\":[]}");
-    checkPropertyJsonType("{\"PropertyGuid\":{}}");
   }
 
   @Test
   public void propertyTimeOfDayJsonTypesNegativeCheck() throws Exception {
     checkPropertyJsonType("{\"PropertyTimeOfDay\":32767}");
     checkPropertyJsonType("{\"PropertyTimeOfDay\":true}");
-    checkPropertyJsonType("{\"PropertyTimeOfDay\":[]}");
-    checkPropertyJsonType("{\"PropertyTimeOfDay\":{}}");
   }
+
+  @Test(expected = DeserializerException.class)
+  public void bindOperationWrongJsonTypeForToOne() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"PropertyString\":\"First Resource - positive values\","
+            + "\"NavPropertyETTwoPrimOne@odata.bind\":[\"ESTwoPrim(2)\"]"
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void bindOperationWrongJsonTypeForToMany() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"PropertyString\":\"First Resource - positive values\","
+            + "\"NavPropertyETTwoPrimMany@odata.bind\":\"ESTwoPrim(2)\""
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void bindOperationWrongJsonTypeForToManyNumberInArray() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"PropertyString\":\"First Resource - positive values\","
+            + "\"NavPropertyETTwoPrimMany@odata.bind\":[123,456]"
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void bindOperationWrongAnnotationFormat() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"PropertyString\":\"First Resource - positive values\","
+            + "\"@odata.bind\":\"ESTwoPrim(2)\""
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.NAVIGATION_PROPERTY_NOT_FOUND, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void bindingOperationNullOnToOne() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"PropertyString\":\"First Resource - positive values\","
+            + "\"NavPropertyETTwoPrimOne@odata.bind\":null"
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_NULL_ANNOTATION, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void bindingOperationNullOnToMany() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"PropertyString\":\"First Resource - positive values\","
+            + "\"NavPropertyETTwoPrimMany@odata.bind\":null"
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_NULL_ANNOTATION, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void bindingOperationNullInArray() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"PropertyString\":\"First Resource - positive values\","
+            + "\"NavPropertyETTwoPrimMany@odata.bind\":[null]"
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_NULL_ANNOTATION, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void invalidJsonSyntax() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION, e.getMessageKey());
+      throw e;
+    }
+  }
+  
+
+  @Test(expected = DeserializerException.class)
+  public void invalidJsonValueForPrimTypeArray() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":[]}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_TYPE_FOR_PROPERTY, e.getMessageKey());
+      throw e;
+    }
+  }
+  
+  @Test(expected = DeserializerException.class)
+  public void invalidJsonValueForPrimTypeObject() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":{}}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_TYPE_FOR_PROPERTY, e.getMessageKey());
+      throw e;
+    }
+  }
+
 
   private void checkPropertyJsonType(String entityString) throws DeserializerException {
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());

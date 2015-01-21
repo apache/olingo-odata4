@@ -51,4 +51,18 @@ public interface Linked {
    * @return links.
    */
   List<Link> getNavigationLinks();
+
+  /**
+   * Gets binding link with given name, if available, otherwise <tt>null</tt>.
+   * @param name candidate link name
+   * @return binding link with given name, if available, otherwise <tt>null</tt>
+   */
+  Link getNavigationBinding(String name);
+
+  /**
+   * Gets binding links.
+   * 
+   * @return links.
+   */
+  List<Link> getNavigationBindings();
 }

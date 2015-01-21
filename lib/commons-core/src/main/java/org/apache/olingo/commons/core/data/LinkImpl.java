@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.core.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
@@ -31,6 +34,8 @@ public class LinkImpl extends AbstractAnnotatedObject implements Link {
   private String mediaETag;
   private Entity entity;
   private EntitySet entitySet;
+  private String bindingLink;
+  private List<String> bindingLinks = new ArrayList<String>();
 
   @Override
   public String getTitle() {
@@ -100,5 +105,25 @@ public class LinkImpl extends AbstractAnnotatedObject implements Link {
   @Override
   public void setInlineEntitySet(final EntitySet entitySet) {
     this.entitySet = entitySet;
+  }
+
+  @Override
+  public String getBindingLink() {
+    return bindingLink;
+  }
+
+  @Override
+  public List<String> getBindingLinks() {
+    return bindingLinks;
+  }
+
+  @Override
+  public void setBindingLink(String bindingLink) {
+    this.bindingLink = bindingLink;
+  }
+
+  @Override
+  public void setBindingLinks(List<String> bindingLinks) {
+    this.bindingLinks = bindingLinks;
   }
 }

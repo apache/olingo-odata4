@@ -42,7 +42,17 @@ public enum ODataLinkType {
   /**
    * Media-edit link.
    */
-  MEDIA_EDIT("*/*");
+  MEDIA_EDIT("*/*"), 
+  
+  /**
+   * Entity binding link.
+   */
+  ENTITY_BINDING(ContentType.APPLICATION_XML),
+  
+  /**
+   * Entity collection binding link.
+   */
+  ENTITY_COLLECTION_BINDING(ContentType.APPLICATION_XML);
 
   private String type;
 

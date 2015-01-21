@@ -20,7 +20,9 @@ package org.apache.olingo.server.core.deserializer.json;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.List;
@@ -91,6 +93,17 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
   }
 
+  @Test
+  public void emptyETAllPrim() throws Exception {
+    String entityCollectionString = "{\"value\" : []}";
+    InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    EntitySet entityCollection =
+        OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+    assertNotNull(entityCollection.getEntities());
+    assertTrue(entityCollection.getEntities().isEmpty());
+  }
+
   @Test(expected = DeserializerException.class)
   public void esAllPrimCustomAnnotationsLeadToNotImplemented() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
@@ -102,7 +115,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
       throw e;
     }
   }
-  
+
   @Test(expected = DeserializerException.class)
   public void esAllPrimDoubleKeysLeadToException() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
@@ -111,6 +124,127 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
       OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.DUPLICATE_JSON_PROPERTY, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void wrongValueTagJsonValueNull() throws Exception {
+    String entityCollectionString = "{\"value\" : null}";
+    InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.VALUE_TAG_MUST_BE_AN_ARRAY, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void wrongValueTagJsonValueNumber() throws Exception {
+    String entityCollectionString = "{\"value\" : 1234}";
+    InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.VALUE_TAG_MUST_BE_AN_ARRAY, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void wrongValueTagJsonValueObject() throws Exception {
+    String entityCollectionString = "{\"value\" : {}}";
+    InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.VALUE_TAG_MUST_BE_AN_ARRAY, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void valueTagMissing() throws Exception {
+    String entityCollectionString = "{}";
+    InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.VALUE_ARRAY_NOT_PRESENT, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void wrongValueInValueArrayNumber() throws Exception {
+    String entityCollectionString = "{\"value\" : [1234,123]}";
+    InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_ENTITY, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void wrongValueInValueArrayNestedArray() throws Exception {
+    String entityCollectionString = "{\"value\" : [[],[]]}";
+    InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_ENTITY, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void invalidJsonSyntax() throws Exception {
+    String entityCollectionString = "{\"value\" : }";
+    InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void unknownContentInCollection() throws Exception {
+    String entityCollectionString = "{\"value\" : [],"
+        + "\"unknown\":null"
+        + "}";
+    InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.UNKOWN_CONTENT, e.getMessageKey());
+      throw e;
+    }
+  }
+  
+  @Test(expected = DeserializerException.class)
+  public void customAnnotationNotSupportedYet() throws Exception {
+    String entityCollectionString = "{\"value\" : [],"
+        + "\"@custom.annotation\":null"
+        + "}";
+    InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
+    try {
+      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
       throw e;
     }
   }

@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.commons.api.data;
 
+import java.util.List;
+
 public interface Link extends Annotatable {
 
   /**
@@ -117,5 +119,29 @@ public interface Link extends Annotatable {
    * @param entitySet entity set.
    */
   void setInlineEntitySet(EntitySet entitySet);
+
+  /**
+   * If this is a "toOne" relationship this method delivers the binding link or <tt>null</tt> if not set.
+   * @return String the binding link.
+   */
+  String getBindingLink();
+
+  /**
+   * Sets the binding link.
+   * @param bindingLink
+   */
+  void setBindingLink(String bindingLink);
+
+  /**
+   * If this is a "toMany" relationship this method delivers the binding links or <tt>emptyList</tt> if not set.
+   * @return a list of binding links.
+   */
+  List<String> getBindingLinks();
+
+  /**
+   * Sets the binding links. List MUST NOT be <tt>null</tt>.
+   * @param bindingLinks
+   */
+  void setBindingLinks(List<String> bindingLinks);
 
 }

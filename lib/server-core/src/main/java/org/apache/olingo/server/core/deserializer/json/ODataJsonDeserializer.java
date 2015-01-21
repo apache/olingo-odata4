@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
@@ -130,7 +131,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     Iterator<JsonNode> arrayIterator = jsonNode.iterator();
     while (arrayIterator.hasNext()) {
       JsonNode arrayElement = (JsonNode) arrayIterator.next();
-      if (arrayElement.isContainerNode() && arrayElement.isArray()) {
+      if (arrayElement.isArray() || arrayElement.isValueNode()) {
         throw new DeserializerException("Nested Arrays and primitive values are not allowed for an entity value.",
             DeserializerException.MessageKeys.INVALID_ENTITY);
       }
@@ -171,8 +172,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       JsonNode jsonNode = tree.get(propertyName);
       if (jsonNode != null) {
         EdmProperty edmProperty = (EdmProperty) edmEntityType.getProperty(propertyName);
-        if (jsonNode.isNull() == true && edmProperty.isNullable() != null
-            && edmProperty.isNullable().booleanValue() == false) {
+        boolean isNullable = edmProperty.isNullable() == null ? false : edmProperty.isNullable();
+        if (jsonNode.isNull() && !isNullable) {
           throw new DeserializerException("Property: " + propertyName + " must not be null.",
               DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, propertyName);
         }
@@ -189,8 +190,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       JsonNode jsonNode = tree.get(navigationPropertyName);
       if (jsonNode != null) {
         EdmNavigationProperty edmNavigationProperty = edmEntityType.getNavigationProperty(navigationPropertyName);
-        if (jsonNode.isNull() == true && edmNavigationProperty.isNullable() != null
-            && edmNavigationProperty.isNullable().booleanValue() == false) {
+        boolean isNullable = edmNavigationProperty.isNullable() == null ? false : edmNavigationProperty.isNullable();
+        if (jsonNode.isNull() && !isNullable) {
           throw new DeserializerException("Property: " + navigationPropertyName + " must not be null.",
               DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, navigationPropertyName);
         }
@@ -223,7 +224,11 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     while (fieldsIterator.hasNext()) {
       Map.Entry<String, JsonNode> field = fieldsIterator.next();
 
-      if (field.getKey().contains(ODATA_CONTROL_INFORMATION_PREFIX)) {
+      if (field.getKey().contains(Constants.JSON_BIND_LINK_SUFFIX)) {
+        Link bindingLink = consumeBindingLink(field.getKey(), field.getValue(), edmEntityType);
+        entity.getNavigationBindings().add(bindingLink);
+        toRemove.add(field.getKey());
+      } else if (field.getKey().contains(ODATA_CONTROL_INFORMATION_PREFIX)) {
         // Control Information is ignored for requests as per specification chapter "4.5 Control Information"
         toRemove.add(field.getKey());
       } else if (field.getKey().contains(ODATA_ANNOTATION_MARKER)) {
@@ -242,6 +247,56 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
 
     return entity;
+  }
+
+  private Link consumeBindingLink(String key, JsonNode jsonNode, EdmEntityType edmEntityType)
+      throws DeserializerException {
+    String[] splitKey = key.split("@");
+    String navigationPropertyName = splitKey[0];
+    EdmNavigationProperty edmNavigationProperty = edmEntityType.getNavigationProperty(navigationPropertyName);
+    if (edmNavigationProperty == null) {
+      throw new DeserializerException("Invalid navigationPropertyName: " + navigationPropertyName,
+          DeserializerException.MessageKeys.NAVIGATION_PROPERTY_NOT_FOUND, navigationPropertyName);
+    }
+    LinkImpl bindingLink = new LinkImpl();
+    bindingLink.setTitle(navigationPropertyName);
+
+    if (edmNavigationProperty.isCollection()) {
+      checkNullNode(key, jsonNode);
+      if (!jsonNode.isArray()) {
+        throw new DeserializerException("Binding annotation: " + key + " must be an array.",
+            DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, key);
+      }
+      List<String> bindingLinkStrings = new ArrayList<String>();
+      Iterator<JsonNode> arrayIterator = jsonNode.iterator();
+      while (arrayIterator.hasNext()) {
+        JsonNode arrayValue = arrayIterator.next();
+        checkNullNode(key, arrayValue);
+        if (!arrayValue.isTextual()) {
+          throw new DeserializerException("Binding annotation: " + key + " must have string valueed array.",
+              DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, key);
+        }
+        bindingLinkStrings.add(arrayValue.asText());
+      }
+      bindingLink.setType(ODataLinkType.ENTITY_COLLECTION_BINDING.toString());
+      bindingLink.setBindingLinks(bindingLinkStrings);
+    } else {
+      checkNullNode(key, jsonNode);
+      if (!jsonNode.isValueNode()) {
+        throw new DeserializerException("Binding annotation: " + key + " must be a string value.",
+            DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, key);
+      }
+      bindingLink.setBindingLink(jsonNode.asText());
+      bindingLink.setType(ODataLinkType.ENTITY_BINDING.toString());
+    }
+    return bindingLink;
+  }
+
+  private void checkNullNode(String key, JsonNode jsonNode) throws DeserializerException {
+    if (jsonNode.isNull()) {
+      throw new DeserializerException("Annotation: " + key + "must not have a null value.",
+          DeserializerException.MessageKeys.INVALID_NULL_ANNOTATION, key);
+    }
   }
 
   private Property consumePropertyNode(EdmProperty edmProperty, JsonNode jsonNode) throws DeserializerException {
@@ -381,7 +436,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       EdmProperty edmProperty = (EdmProperty) edmType.getProperty(propertyName);
       JsonNode subNode = jsonNode.get(propertyName);
       if (subNode != null) {
-        if (subNode.isNull() && edmProperty.isNullable() != null && edmProperty.isNullable().booleanValue() == false) {
+        boolean isNullable = edmProperty.isNullable() == null ? false : edmProperty.isNullable();
+        if (subNode.isNull() && !isNullable) {
           throw new DeserializerException("Property: " + propertyName + " must not be null.",
               DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, propertyName);
         }
@@ -441,7 +497,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     if (!jsonNode.isValueNode()) {
       throw new DeserializerException(
           "Inavlid value for property: " + edmProperty.getName() + " must not be an object or array.",
-          DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, edmProperty.getName());
+          DeserializerException.MessageKeys.INVALID_TYPE_FOR_PROPERTY, edmProperty.getName());
     }
     try {
       EdmPrimitiveType edmPrimitiveType = (EdmPrimitiveType) edmProperty.getType();

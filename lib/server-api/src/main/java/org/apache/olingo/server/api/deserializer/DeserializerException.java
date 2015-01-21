@@ -42,7 +42,10 @@ public class DeserializerException extends ODataTranslatedException {
     /** parameter: navigationPropertyName */INVALID_VALUE_FOR_NAVIGATION_PROPERTY, 
     DUPLICATE_PROPERTY, 
     DUPLICATE_JSON_PROPERTY, 
-    /** parameters: primitiveTypeName, propertyName */ UNKNOWN_PRIMITIVE_TYPE;
+    /** parameters: primitiveTypeName, propertyName */ UNKNOWN_PRIMITIVE_TYPE, 
+    /** parameter: navigationPropertyName */NAVIGATION_PROPERTY_NOT_FOUND, 
+    /** parameter: annotationName */INVALID_ANNOTATION_TYPE, 
+    /** parameter: annotationName */INVALID_NULL_ANNOTATION;
 
     @Override
     public String getKey() {

@@ -42,6 +42,7 @@ public class EntityImpl extends AbstractODataObject implements Entity {
   private final List<Link> associationLinks = new ArrayList<Link>();
   private final List<Link> navigationLinks = new ArrayList<Link>();
   private final List<Link> mediaEditLinks = new ArrayList<Link>();
+  private final List<Link> bindingLinks = new ArrayList<Link>();
 
   private final List<ODataOperation> operations = new ArrayList<ODataOperation>();
 
@@ -125,6 +126,16 @@ public class EntityImpl extends AbstractODataObject implements Entity {
   @Override
   public List<Link> getMediaEditLinks() {
     return mediaEditLinks;
+  }
+  
+  @Override
+  public Link getNavigationBinding(String name) {
+    return getOneByTitle(name, bindingLinks);
+  }
+
+  @Override
+  public List<Link> getNavigationBindings() {
+    return bindingLinks;
   }
 
   @Override
