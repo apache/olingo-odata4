@@ -45,11 +45,12 @@ public class ComplexTypeProvider {
       "CTNavFiveProp");
   public static final FullQualifiedName nameCTPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTPrim");
   public static final FullQualifiedName nameCTPrimComp = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTPrimComp");
-  public static final FullQualifiedName nameCTPrimEnum = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTPrimEnum");
   public static final FullQualifiedName nameCTTwoBase = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTTwoBase");
   public static final FullQualifiedName nameCTTwoBasePrimCompNav =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "CTTwoBasePrimCompNav");
   public static final FullQualifiedName nameCTTwoPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTTwoPrim");
+  public static final FullQualifiedName nameCTMixEnumTypeDefColl = new FullQualifiedName(SchemaProvider.NAMESPACE,
+      "CTMixEnumTypeDefColl");
 
   public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
 
@@ -157,19 +158,21 @@ public class ComplexTypeProvider {
               PropertyProvider.navPropertyETKeyNavOne_ETKeyNav,
               PropertyProvider.collectionNavPropertyETKeyNavMany_ETKeyNav));
 
-    } else if (complexTypeName.equals(nameCTPrimEnum)) {
-      return new ComplexType()
-          .setName("CTPrimEnum")
-          .setProperties(Arrays.asList(PropertyProvider.propertyInt16, PropertyProvider.propertyEnumString_ENString));
-
     } else if (complexTypeName.equals(nameCTTwoBasePrimCompNav)) {
       return new ComplexType()
           .setName("CTTwoBasePrimCompNav")
           .setBaseType(nameCTBasePrimCompNav);
 
+    } else if (complexTypeName.equals(nameCTMixEnumTypeDefColl)) {
+      return new ComplexType()
+          .setName(nameCTMixEnumTypeDefColl.getName())
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyEnumString_ENString,
+              PropertyProvider.collPropertyEnumString_ENString,
+              PropertyProvider.propertyTypeDefinition_TDString,
+              PropertyProvider.collPropertyTypeDefinition_TDString));
     }
 
     return null;
   }
-
 }

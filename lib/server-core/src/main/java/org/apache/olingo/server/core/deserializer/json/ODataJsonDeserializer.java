@@ -306,7 +306,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     if (edmProperty.isCollection()) {
       if (!jsonNode.isArray()) {
         throw new DeserializerException("Value for property: " + edmProperty.getName()
-            + " must be an arrat but is not.", DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY,
+            + " must be an arrat but is not.", DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY,
             edmProperty.getName());
       }
       List<Object> valueArray = new ArrayList<Object>();
@@ -370,7 +370,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         break;
       default:
         throw new DeserializerException("Invalid Type Kind for a property found: " + edmProperty.getType().getKind(),
-            DeserializerException.MessageKeys.INVALID_TYPE_FOR_PROPERTY, edmProperty.getName());
+            DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY, edmProperty.getName());
       }
 
     } else {
@@ -416,7 +416,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         break;
       default:
         throw new DeserializerException("Invalid Type Kind for a property found: " + edmProperty.getType().getKind(),
-            DeserializerException.MessageKeys.INVALID_TYPE_FOR_PROPERTY, edmProperty.getName());
+            DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY, edmProperty.getName());
       }
     }
     return property;
@@ -426,7 +426,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     if (jsonNode.isArray() || !jsonNode.isContainerNode()) {
       throw new DeserializerException(
           "Inavlid value for property: " + edmComplexProperty.getName() + " must not be an array or primitive value.",
-          DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, edmComplexProperty.getName());
+          DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY, edmComplexProperty.getName());
     }
     // Even if there are no properties defined we have to give back an empty list
     List<Property> propertyList = new ArrayList<Property>();
@@ -476,7 +476,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     if (!jsonNode.isValueNode()) {
       throw new DeserializerException(
           "Inavlid value for property: " + edmProperty.getName() + " must not be an object or array.",
-          DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, edmProperty.getName());
+          DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY, edmProperty.getName());
     }
     try {
       EdmEnumType edmEnumType = (EdmEnumType) edmProperty.getType();
@@ -497,7 +497,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     if (!jsonNode.isValueNode()) {
       throw new DeserializerException(
           "Inavlid value for property: " + edmProperty.getName() + " must not be an object or array.",
-          DeserializerException.MessageKeys.INVALID_TYPE_FOR_PROPERTY, edmProperty.getName());
+          DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY, edmProperty.getName());
     }
     try {
       EdmPrimitiveType edmPrimitiveType = (EdmPrimitiveType) edmProperty.getType();

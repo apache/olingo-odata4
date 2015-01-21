@@ -25,6 +25,7 @@ import org.apache.olingo.server.api.edm.provider.EntityType;
 import org.apache.olingo.server.api.edm.provider.EnumType;
 import org.apache.olingo.server.api.edm.provider.Function;
 import org.apache.olingo.server.api.edm.provider.Schema;
+import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +78,7 @@ public class SchemaProvider {
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETKeyPrimNav));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAbstract));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAbstractBase));
+    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETMixEnumTypeDefCollComp));
 
     // ComplexTypes
     List<ComplexType> complexType = new ArrayList<ComplexType>();
@@ -92,13 +94,16 @@ public class SchemaProvider {
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTCompCollComp));
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTPrimComp));
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTNavFiveProp));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTPrimEnum));
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTBasePrimCompNav));
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoBasePrimCompNav));
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTCompNav));
+    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTMixEnumTypeDefColl));
 
     // TypeDefinitions
-
+    List<TypeDefinition> typeDefinitions = new ArrayList<TypeDefinition>();
+    schema.setTypeDefinitions(typeDefinitions);
+    typeDefinitions.add(prov.getTypeDefinition(TypeDefinitionProvider.nameTDString));
+    
     // Actions
     List<Action> actions = new ArrayList<Action>();
     schema.setActions(actions);

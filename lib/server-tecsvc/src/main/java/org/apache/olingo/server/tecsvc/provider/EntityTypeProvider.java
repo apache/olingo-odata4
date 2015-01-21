@@ -76,6 +76,9 @@ public class EntityTypeProvider {
   public static final FullQualifiedName nameETAbstractBase = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETAbstractBase");
 
+  public static final FullQualifiedName nameETMixEnumTypeDefCollComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
+      "ETMixEnumTypeDefCollComp");
+
   public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
     if (entityTypeName.equals(nameETAllPrim)) {
       return new EntityType()
@@ -336,12 +339,10 @@ public class EntityTypeProvider {
                   PropertyProvider.propertyComp_CTPrimComp_NotNullable,
                   new Property().setName("PropertyCompNav").setType(ComplexTypeProvider.nameCTBasePrimCompNav)
                       .setNullable(false),
-                  PropertyProvider.propertyCompEnum_CTPrimEnum_NotNullable,
                   PropertyProvider.collPropertyComp_CTPrimComp,
                   new Property().setName("CollPropertyCompNav").setType(ComplexTypeProvider.nameCTNavFiveProp)
                       .setCollection(true),
-                  PropertyProvider.collPropertyString, PropertyProvider.propertyCompTwoPrim_CTTwoPrim,
-                  PropertyProvider.propertyEnumString_ENString
+                  PropertyProvider.collPropertyString, PropertyProvider.propertyCompTwoPrim_CTTwoPrim
                   ))
           .setNavigationProperties(Arrays.asList(
               new NavigationProperty()
@@ -417,6 +418,18 @@ public class EntityTypeProvider {
           .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
           .setProperties(Arrays.asList(
               PropertyProvider.propertyInt16_NotNullable));
+    } else if (entityTypeName.equals(nameETMixEnumTypeDefCollComp)) {
+      return new EntityType()
+          .setName(nameETMixEnumTypeDefCollComp.getName())
+          .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyInt16_NotNullable,
+              PropertyProvider.propertyEnumString_ENString,
+              PropertyProvider.collPropertyEnumString_ENString,
+              PropertyProvider.propertyTypeDefinition_TDString,
+              PropertyProvider.collPropertyTypeDefinition_TDString,
+              PropertyProvider.propertyComp_CTMixEnumTypeDefColl,
+              PropertyProvider.propertyCompColl_CTMixEnumTypeDefColl));
     }
 
     return null;

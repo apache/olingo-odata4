@@ -508,11 +508,6 @@ public class PropertyProvider {
       .setName("PropertyCompComp")
       .setType(ComplexTypeProvider.nameCTCompComp);
 
-  public static final Property propertyCompEnum_CTPrimEnum_NotNullable = new Property()
-      .setName("PropertyCompEnum")
-      .setType(ComplexTypeProvider.nameCTPrimEnum)
-      .setNullable(false);
-
   public static final Property propertyCompTwoPrim_CTTwoPrim = new Property()
       .setName("PropertyCompTwoPrim")
       .setType(ComplexTypeProvider.nameCTTwoPrim);
@@ -520,6 +515,15 @@ public class PropertyProvider {
   public static final Property propertyMixedPrimCollComp_CTMixPrimCollComp = new Property()
       .setName("PropertyMixedPrimCollComp")
       .setType(ComplexTypeProvider.nameCTMixPrimCollComp);
+
+  public static final Property propertyComp_CTMixEnumTypeDefColl = new Property()
+      .setName("PropertyCTMixEnumTypeDefColl")
+      .setType(ComplexTypeProvider.nameCTMixEnumTypeDefColl);
+
+  public static final Property propertyCompColl_CTMixEnumTypeDefColl = new Property()
+      .setName("PropertyCTMixEnumTypeDefColl")
+      .setType(ComplexTypeProvider.nameCTMixEnumTypeDefColl)
+      .setCollection(true);
 
   // Navigation Properties -------------------------------------------------------------------------------------------
   public static final NavigationProperty collectionNavPropertyETKeyNavMany_ETKeyNav = new NavigationProperty()
@@ -588,6 +592,18 @@ public class PropertyProvider {
       .setName("PropertyEnumString")
       .setType(EnumTypeProvider.nameENString);
 
-  // TypeDefinition Properties ---------------------------------------------------------------------------------------
+  public static final Property collPropertyEnumString_ENString = new Property()
+      .setName("PropertyEnumString")
+      .setType(EnumTypeProvider.nameENString)
+      .setCollection(true);
 
+  // TypeDefinition Properties ---------------------------------------------------------------------------------------
+  public static final Property propertyTypeDefinition_TDString = new Property()
+      .setName("PropertyTypeDefinitionString")
+      .setType(TypeDefinitionProvider.nameTDString);
+
+  public static final Property collPropertyTypeDefinition_TDString = new Property()
+      .setName("CollPropertyTypeDefinitionString")
+      .setType(TypeDefinitionProvider.nameTDString)
+      .setCollection(true);
 }

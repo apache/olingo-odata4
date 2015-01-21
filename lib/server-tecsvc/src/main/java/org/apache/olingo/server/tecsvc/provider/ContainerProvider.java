@@ -95,6 +95,7 @@ public class ContainerProvider {
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESBaseTwoKeyNav"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCompMixPrimCollComp"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESFourKeyAlias"));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESMixEnumTypeDefCollComp"));
 
     // Singletons
     List<Singleton> singletons = new ArrayList<Singleton>();
@@ -262,6 +263,9 @@ public class ContainerProvider {
         return new EntitySet()
             .setName("ESFourKeyAlias")
             .setType(EntityTypeProvider.nameETFourKeyAlias);
+      } else if (name.equals("ESMixEnumTypeDefCollComp")) {
+        return new EntitySet().setName("ESMixEnumTypeDefCollComp").setType(
+            EntityTypeProvider.nameETMixEnumTypeDefCollComp);
       }
     }
 
@@ -269,12 +273,12 @@ public class ContainerProvider {
   }
 
   public ActionImport getActionImport(final FullQualifiedName entityContainer, final String name)
-          throws ODataException {
+      throws ODataException {
     if (entityContainer.equals(nameContainer)) {
       if (name.equals(AIRT_STRING)) {
         return new ActionImport()
-                .setName(AIRT_STRING)
-                .setAction(ActionProvider.nameUARTString);
+            .setName(AIRT_STRING)
+            .setAction(ActionProvider.nameUARTString);
 
       } else if (name.equals(AIRT_COLL_STRING_TWO_PARAM)) {
         return new ActionImport()

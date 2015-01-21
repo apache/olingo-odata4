@@ -18,12 +18,19 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 
 public class TypeDefinitionProvider {
 
+  public static final FullQualifiedName nameTDString = new FullQualifiedName(SchemaProvider.NAMESPACE, "TDString");
+
   public TypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) {
+    if (nameTDString.equals(typeDefinitionName)) {
+      return new TypeDefinition().setName(nameTDString.getName()).setUnderlyingType(
+          EdmPrimitiveTypeKind.String.getFullQualifiedName());
+    }
     return null;
   }
 

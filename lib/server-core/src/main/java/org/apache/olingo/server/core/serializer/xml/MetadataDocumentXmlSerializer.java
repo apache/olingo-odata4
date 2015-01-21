@@ -185,7 +185,7 @@ public class MetadataDocumentXmlSerializer {
     for (EdmTypeDefinition definition : typeDefinitions) {
       writer.writeEmptyElement(XML_TYPE_DEFINITION);
       writer.writeAttribute(XML_NAME, definition.getName());
-      writer.writeAttribute(XML_TYPE, getFullQualifiedName(definition.getUnderlyingType(), false));
+      writer.writeAttribute(XML_UNDERLYING_TYPE, getFullQualifiedName(definition.getUnderlyingType(), false));
 
       // Facets
       if (definition.getMaxLength() != null) {
