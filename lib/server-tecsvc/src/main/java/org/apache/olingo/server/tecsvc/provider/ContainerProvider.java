@@ -95,7 +95,7 @@ public class ContainerProvider {
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESBaseTwoKeyNav"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCompMixPrimCollComp"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESFourKeyAlias"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESMixEnumTypeDefCollComp"));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESMixEnumDefCollComp"));
 
     // Singletons
     List<Singleton> singletons = new ArrayList<Singleton>();
@@ -263,9 +263,10 @@ public class ContainerProvider {
         return new EntitySet()
             .setName("ESFourKeyAlias")
             .setType(EntityTypeProvider.nameETFourKeyAlias);
-      } else if (name.equals("ESMixEnumTypeDefCollComp")) {
-        return new EntitySet().setName("ESMixEnumTypeDefCollComp").setType(
-            EntityTypeProvider.nameETMixEnumTypeDefCollComp);
+        
+      } else if (name.equals("ESMixEnumDefCollComp")) {
+        return new EntitySet().setName("ESMixEnumDefCollComp").setType(
+            EntityTypeProvider.nameETMixEnumDefCollComp);
       }
     }
 

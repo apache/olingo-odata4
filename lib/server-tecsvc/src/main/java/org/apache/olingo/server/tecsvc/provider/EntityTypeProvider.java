@@ -76,8 +76,8 @@ public class EntityTypeProvider {
   public static final FullQualifiedName nameETAbstractBase = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETAbstractBase");
 
-  public static final FullQualifiedName nameETMixEnumTypeDefCollComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
-      "ETMixEnumTypeDefCollComp");
+  public static final FullQualifiedName nameETMixEnumDefCollComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
+      "ETMixEnumDefCollComp");
 
   public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
     if (entityTypeName.equals(nameETAllPrim)) {
@@ -418,9 +418,9 @@ public class EntityTypeProvider {
           .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
           .setProperties(Arrays.asList(
               PropertyProvider.propertyInt16_NotNullable));
-    } else if (entityTypeName.equals(nameETMixEnumTypeDefCollComp)) {
+    } else if (entityTypeName.equals(nameETMixEnumDefCollComp)) {
       return new EntityType()
-          .setName(nameETMixEnumTypeDefCollComp.getName())
+          .setName(nameETMixEnumDefCollComp.getName())
           .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
           .setProperties(Arrays.asList(
               PropertyProvider.propertyInt16_NotNullable,

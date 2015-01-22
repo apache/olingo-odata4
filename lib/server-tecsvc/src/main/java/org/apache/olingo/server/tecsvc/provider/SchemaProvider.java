@@ -78,7 +78,7 @@ public class SchemaProvider {
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETKeyPrimNav));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAbstract));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAbstractBase));
-    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETMixEnumTypeDefCollComp));
+    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETMixEnumDefCollComp));
 
     // ComplexTypes
     List<ComplexType> complexType = new ArrayList<ComplexType>();
@@ -97,7 +97,7 @@ public class SchemaProvider {
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTBasePrimCompNav));
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoBasePrimCompNav));
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTCompNav));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTMixEnumTypeDefColl));
+    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTMixEnumDefColl));
 
     // TypeDefinitions
     List<TypeDefinition> typeDefinitions = new ArrayList<TypeDefinition>();

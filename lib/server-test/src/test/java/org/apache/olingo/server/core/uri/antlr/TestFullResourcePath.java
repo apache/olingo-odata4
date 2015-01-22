@@ -4452,39 +4452,39 @@ public class TestFullResourcePath {
   @Test
   public void testHas() throws ExpressionVisitException, ODataApplicationException, UriParserException {
 
-    testFilter.runOnETMixEnumTypeDefCollComp("PropertyEnumString has olingo.odata.test1.ENString'String1'")
+    testFilter.runOnETMixEnumDefCollComp("PropertyEnumString has olingo.odata.test1.ENString'String1'")
         .is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String1>>>")
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
-    testFilter.runOnETMixEnumTypeDefCollComp(
-        "PropertyCTMixEnumTypeDefColl/PropertyEnumString has olingo.odata.test1.ENString'String2'")
-        .is("<<PropertyCTMixEnumTypeDefColl/PropertyEnumString> has <olingo.odata.test1.ENString<String2>>>")
+    testFilter.runOnETMixEnumDefCollComp(
+        "PropertyCompMixedEnumTypeDefColl/PropertyEnumString has olingo.odata.test1.ENString'String2'")
+        .is("<<PropertyCompMixedEnumTypeDefColl/PropertyEnumString> has <olingo.odata.test1.ENString<String2>>>")
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
-        .first().isComplex("PropertyCTMixEnumTypeDefColl")
+        .first().isComplex("PropertyCompMixedEnumTypeDefColl")
         .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
         .isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String2"));
 
     testFilter
-        .runOnETMixEnumTypeDefCollComp(
-            "PropertyCTMixEnumTypeDefColl/PropertyEnumString has olingo.odata.test1.ENString'String2' eq true")
-        .is("<<<PropertyCTMixEnumTypeDefColl/PropertyEnumString> has " +
-        		"<olingo.odata.test1.ENString<String2>>> eq <true>>")
+        .runOnETMixEnumDefCollComp(
+            "PropertyCompMixedEnumTypeDefColl/PropertyEnumString has olingo.odata.test1.ENString'String2' eq true")
+        .is("<<<PropertyCompMixedEnumTypeDefColl/PropertyEnumString> has " +
+            "<olingo.odata.test1.ENString<String2>>> eq <true>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left()
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().left().goPath()
-        .first().isComplex("PropertyCTMixEnumTypeDefColl")
+        .first().isComplex("PropertyCompMixedEnumTypeDefColl")
         .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
         .root().left().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String2"));
 
-    testFilter.runOnETMixEnumTypeDefCollComp("PropertyEnumString has olingo.odata.test1.ENString'String3'")
+    testFilter.runOnETMixEnumDefCollComp("PropertyEnumString has olingo.odata.test1.ENString'String3'")
         .is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String3>>>")
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
@@ -4493,7 +4493,7 @@ public class TestFullResourcePath {
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String3"));
 
-    testFilter.runOnETMixEnumTypeDefCollComp("PropertyEnumString has olingo.odata.test1.ENString'String,String3'")
+    testFilter.runOnETMixEnumDefCollComp("PropertyEnumString has olingo.odata.test1.ENString'String,String3'")
         .is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String,String3>>>")
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
@@ -4502,7 +4502,7 @@ public class TestFullResourcePath {
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String", "String3"));
 
-    testFilter.runOnETMixEnumTypeDefCollComp("PropertyEnumString has null")
+    testFilter.runOnETMixEnumDefCollComp("PropertyEnumString has null")
         .is("<<PropertyEnumString> has <null>>")
         .root()
         .isBinary(BinaryOperatorKind.HAS)
@@ -4719,38 +4719,41 @@ public class TestFullResourcePath {
         .goUpFilterValidator()
         .root().right().isLiteral("12:34:55.12345678901");
 
-    testFilter.runOnETMixEnumTypeDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String1'")
+    testFilter.runOnETMixEnumDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String1'")
         .is("<<PropertyEnumString> eq <olingo.odata.test1.ENString<String1>>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left().goPath().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
-    testFilter.runOnETMixEnumTypeDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String2'")
+    testFilter.runOnETMixEnumDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String2'")
         .is("<<PropertyEnumString> eq <olingo.odata.test1.ENString<String2>>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left().goPath().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String2"));
 
-    testFilter.runOnETMixEnumTypeDefCollComp(
-        "PropertyCTMixEnumTypeDefColl/PropertyEnumString eq olingo.odata.test1.ENString'String3'")
-        .is("<<PropertyCTMixEnumTypeDefColl/PropertyEnumString> eq <olingo.odata.test1.ENString<String3>>>")
+    testFilter.runOnETMixEnumDefCollComp(
+        "PropertyCompMixedEnumTypeDefColl/PropertyEnumString eq olingo.odata.test1.ENString'String3'")
+        .is("<<PropertyCompMixedEnumTypeDefColl/PropertyEnumString> eq <olingo.odata.test1.ENString<String3>>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left().goPath()
-        .first().isComplex("PropertyCTMixEnumTypeDefColl")
+        .first().isComplex("PropertyCompMixedEnumTypeDefColl")
         .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString).goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String3"));
 
-    testFilter.runOnETMixEnumTypeDefCollComp(
-        "PropertyCTMixEnumTypeDefColl/PropertyEnumString eq PropertyCTMixEnumTypeDefColl/PropertyEnumString")
-        .is("<<PropertyCTMixEnumTypeDefColl/PropertyEnumString> eq <PropertyCTMixEnumTypeDefColl/PropertyEnumString>>")
+    testFilter
+        .runOnETMixEnumDefCollComp(
+            "PropertyCompMixedEnumTypeDefColl/PropertyEnumString eq " +
+            "PropertyCompMixedEnumTypeDefColl/PropertyEnumString")
+        .is("<<PropertyCompMixedEnumTypeDefColl/PropertyEnumString> eq " +
+        		"<PropertyCompMixedEnumTypeDefColl/PropertyEnumString>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left().goPath()
-        .first().isComplex("PropertyCTMixEnumTypeDefColl")
+        .first().isComplex("PropertyCompMixedEnumTypeDefColl")
         .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString).goUpFilterValidator()
         .root().right().goPath()
-        .first().isComplex("PropertyCTMixEnumTypeDefColl")
+        .first().isComplex("PropertyCompMixedEnumTypeDefColl")
         .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString).goUpFilterValidator();
 
   }
@@ -5070,12 +5073,12 @@ public class TestFullResourcePath {
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("12:34:55.123456789012");
 
-    testFilter.runOrderByOnETMixEnumTypeDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String1'")
+    testFilter.runOrderByOnETMixEnumDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String1'")
         .isSortOrder(0, false)
         .goOrder(0).left().goPath().isComplex("PropertyEnumString").goUpFilterValidator()
         .goOrder(0).right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
-    testFilter.runOrderByOnETMixEnumTypeDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String1' desc")
+    testFilter.runOrderByOnETMixEnumDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String1' desc")
         .isSortOrder(0, true)
         .goOrder(0).left().goPath().isComplex("PropertyEnumString").goUpFilterValidator()
         .goOrder(0).right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));

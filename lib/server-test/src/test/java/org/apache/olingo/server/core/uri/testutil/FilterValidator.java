@@ -113,8 +113,8 @@ public class FilterValidator implements TestValidator {
     return runUriOrderBy("ESTwoKeyNav", "$orderby=" + orderBy.trim());
   }
   
-  public FilterValidator runOrderByOnETMixEnumTypeDefCollComp(final String orderBy) throws UriParserException {
-    return runUriOrderBy("ESMixEnumTypeDefCollComp", "$orderby=" + orderBy.trim());
+  public FilterValidator runOrderByOnETMixEnumDefCollComp(final String orderBy) throws UriParserException {
+    return runUriOrderBy("ESMixEnumDefCollComp", "$orderby=" + orderBy.trim());
   }
 
   public FilterValidator runOrderByOnETTwoKeyNavEx(final String orderBy) throws UriParserException {
@@ -125,8 +125,8 @@ public class FilterValidator implements TestValidator {
     return runUri("ESTwoKeyNav", "$filter=" + filter.trim());
   }
   
-  public FilterValidator runOnETMixEnumTypeDefCollComp(final String filter) throws UriParserException {
-    return runUri("ESMixEnumTypeDefCollComp", "$filter=" + filter.trim());
+  public FilterValidator runOnETMixEnumDefCollComp(final String filter) throws UriParserException {
+    return runUri("ESMixEnumDefCollComp", "$filter=" + filter.trim());
   }
 
   public FilterValidator runOnETTwoKeyNavSingle(final String filter) throws UriParserException {
