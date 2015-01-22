@@ -521,7 +521,7 @@ public class PropertyProvider {
       .setType(ComplexTypeProvider.nameCTMixEnumTypeDefColl);
 
   public static final Property propertyCompColl_CTMixEnumTypeDefColl = new Property()
-      .setName("PropertyCTMixEnumTypeDefColl")
+      .setName("CollPropertyCTMixEnumTypeDefColl")
       .setType(ComplexTypeProvider.nameCTMixEnumTypeDefColl)
       .setCollection(true);
 
@@ -593,7 +593,7 @@ public class PropertyProvider {
       .setType(EnumTypeProvider.nameENString);
 
   public static final Property collPropertyEnumString_ENString = new Property()
-      .setName("PropertyEnumString")
+      .setName("CollPropertyEnumString")
       .setType(EnumTypeProvider.nameENString)
       .setCollection(true);
 

@@ -118,7 +118,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
     // remove here to avoid iterator issues.
     tree.remove(toRemove);
-    checkEmptyJsonNode(tree);
+    assertJsonNodeIsEmpty(tree);
 
     return entitySet;
   }
@@ -129,7 +129,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     for (JsonNode arrayElement : jsonNode) {
       if (arrayElement.isArray() || arrayElement.isValueNode()) {
         throw new DeserializerException("Nested Arrays and primitive values are not allowed for an entity value.",
-                DeserializerException.MessageKeys.INVALID_ENTITY);
+            DeserializerException.MessageKeys.INVALID_ENTITY);
       }
 
       entities.add(consumeEntityNode(edmEntityType, (ObjectNode) arrayElement));
@@ -167,12 +167,12 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     consumeEntityProperties(edmEntityType, tree, entity);
 
     // Check and consume all expanded Navigation Properties
-    consumeEntityNavigationProperties(edmEntityType, tree, entity);
+    consumeExpandedNavigationProperties(edmEntityType, tree, entity);
 
     // consume remaining json node fields
-    consumeAllJsonNodeFields(edmEntityType, tree, entity);
+    consumeRemainingJsonNodeFields(edmEntityType, tree, entity);
 
-    checkEmptyJsonNode(tree);
+    assertJsonNodeIsEmpty(tree);
 
     return entity;
   }
@@ -180,14 +180,15 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   /**
    * Consume all remaining fields of Json ObjectNode and try to map found values
    * to according Entity fields and omit to be ignored OData fields (e.g. control information).
-   *
+   * 
    * @param edmEntityType edm entity type which for which the json node is consumed
    * @param node json node which is consumed
    * @param entity entity instance which is filled
    * @throws DeserializerException if an exception during consummation occurs
    */
-  private void consumeAllJsonNodeFields(final EdmEntityType edmEntityType, final ObjectNode node, final EntityImpl
-          entity) throws DeserializerException {
+  private void consumeRemainingJsonNodeFields(final EdmEntityType edmEntityType, final ObjectNode node,
+      final EntityImpl
+      entity) throws DeserializerException {
     final List<String> toRemove = new ArrayList<String>();
     Iterator<Entry<String, JsonNode>> fieldsIterator = node.fields();
     while (fieldsIterator.hasNext()) {
@@ -210,7 +211,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   }
 
   private void consumeEntityProperties(final EdmEntityType edmEntityType, final ObjectNode node, final EntityImpl
-          entity) throws DeserializerException {
+      entity) throws DeserializerException {
     List<String> propertyNames = edmEntityType.getPropertyNames();
     for (String propertyName : propertyNames) {
       JsonNode jsonNode = node.get(propertyName);
@@ -228,8 +229,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
   }
 
-  private void consumeEntityNavigationProperties(final EdmEntityType edmEntityType, final ObjectNode node, final
-  EntityImpl entity) throws DeserializerException {
+  private void consumeExpandedNavigationProperties(final EdmEntityType edmEntityType, final ObjectNode node,
+      final EntityImpl entity) throws DeserializerException {
     List<String> navigationPropertyNames = edmEntityType.getNavigationPropertyNames();
     for (String navigationPropertyName : navigationPropertyNames) {
       // read expanded navigation property
@@ -279,24 +280,24 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     bindingLink.setTitle(navigationPropertyName);
 
     if (edmNavigationProperty.isCollection()) {
-      checkNullNode(key, jsonNode);
+      assertIsNullNode(key, jsonNode);
       if (!jsonNode.isArray()) {
         throw new DeserializerException("Binding annotation: " + key + " must be an array.",
             DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, key);
       }
       List<String> bindingLinkStrings = new ArrayList<String>();
       for (JsonNode arrayValue : jsonNode) {
-        checkNullNode(key, arrayValue);
+        assertIsNullNode(key, arrayValue);
         if (!arrayValue.isTextual()) {
           throw new DeserializerException("Binding annotation: " + key + " must have string valued array.",
-                  DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, key);
+              DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, key);
         }
         bindingLinkStrings.add(arrayValue.asText());
       }
       bindingLink.setType(ODataLinkType.ENTITY_COLLECTION_BINDING.toString());
       bindingLink.setBindingLinks(bindingLinkStrings);
     } else {
-      checkNullNode(key, jsonNode);
+      assertIsNullNode(key, jsonNode);
       if (!jsonNode.isValueNode()) {
         throw new DeserializerException("Binding annotation: " + key + " must be a string value.",
             DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, key);
@@ -307,7 +308,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     return bindingLink;
   }
 
-  private void checkNullNode(String key, JsonNode jsonNode) throws DeserializerException {
+  private void assertIsNullNode(String key, JsonNode jsonNode) throws DeserializerException {
     if (jsonNode.isNull()) {
       throw new DeserializerException("Annotation: " + key + "must not have a null value.",
           DeserializerException.MessageKeys.INVALID_NULL_ANNOTATION, key);
@@ -327,8 +328,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   }
 
   private void consumePropertySingleNode(final EdmProperty edmProperty,
-                                         final JsonNode jsonNode, final Property property)
-          throws DeserializerException {
+      final JsonNode jsonNode, final Property property)
+      throws DeserializerException {
     switch (edmProperty.getType().getKind()) {
     case PRIMITIVE:
       Object value = readPrimitiveValue(edmProperty, jsonNode);
@@ -363,7 +364,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       // remove here to avoid iterator issues.
       ((ObjectNode) jsonNode).remove(toRemove);
       // Afterwards the node must be empty
-      checkEmptyJsonNode(jsonNode);
+      assertJsonNodeIsEmpty(jsonNode);
       break;
     default:
       throw new DeserializerException("Invalid Type Kind for a property found: " + edmProperty.getType().getKind(),
@@ -372,7 +373,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   }
 
   private void consumePropertyCollectionNode(final EdmProperty edmProperty, final JsonNode jsonNode,
-                                             final Property property) throws DeserializerException {
+      final Property property) throws DeserializerException {
     if (!jsonNode.isArray()) {
       throw new DeserializerException("Value for property: " + edmProperty.getName()
           + " must be an array but is not.", DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY,
@@ -429,7 +430,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         // remove here to avoid iterator issues.
         ((ObjectNode) arrayElement).remove(toRemove);
         // Afterwards the node must be empty
-        checkEmptyJsonNode(arrayElement);
+        assertJsonNodeIsEmpty(arrayElement);
       }
       property.setValue(ValueType.COLLECTION_COMPLEX, valueArray);
       break;
@@ -473,9 +474,9 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       checkJsonTypeBasedOnPrimitiveType(edmProperty.getName(), edmTypeDefinition.getUnderlyingType().getName(),
           jsonNode);
       return edmTypeDefinition.valueOfString(jsonNode.asText(), edmProperty.isNullable(),
-              edmTypeDefinition.getMaxLength(),
-              edmTypeDefinition.getPrecision(), edmTypeDefinition.getScale(), edmTypeDefinition.isUnicode(),
-              edmTypeDefinition.getDefaultType());
+          edmTypeDefinition.getMaxLength(),
+          edmTypeDefinition.getPrecision(), edmTypeDefinition.getScale(), edmTypeDefinition.isUnicode(),
+          edmTypeDefinition.getDefaultType());
     } catch (EdmPrimitiveTypeException e) {
       throw new DeserializerException(
           "Invalid value: " + jsonNode.asText() + " for property: " + edmProperty.getName(), e,
@@ -490,7 +491,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       checkJsonTypeBasedOnPrimitiveType(edmProperty.getName(), edmEnumType.getUnderlyingType().getName(), jsonNode);
       return edmEnumType
           .valueOfString(jsonNode.asText(), edmProperty.isNullable(), edmProperty.getMaxLength(), edmProperty
-                  .getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(), edmEnumType.getDefaultType());
+              .getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(), edmEnumType.getDefaultType());
     } catch (EdmPrimitiveTypeException e) {
       throw new DeserializerException(
           "Invalid value: " + jsonNode.asText() + " for property: " + edmProperty.getName(), e,
@@ -516,32 +517,32 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   /**
    * Check if JsonNode is a value node (<code>jsonNode.isValueNode()</code>) and if not throw
    * an DeserializerException.
-   *
+   * 
    * @param edmProperty property which is checked
    * @param jsonNode node which is checked
    * @throws DeserializerException is thrown if json node is not a value node
    */
   private void checkForValueNode(final EdmProperty edmProperty, final JsonNode jsonNode)
-          throws DeserializerException {
+      throws DeserializerException {
     if (!jsonNode.isValueNode()) {
       throw new DeserializerException(
-              "Invalid value for property: " + edmProperty.getName() + " must not be an object or array.",
-              DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY, edmProperty.getName());
+          "Invalid value for property: " + edmProperty.getName() + " must not be an object or array.",
+          DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY, edmProperty.getName());
     }
   }
 
   /**
    * Validate that node is empty (<code>node.size == 0</code>) and if not throw
    * an <code>DeserializerException</code>.
-   *
+   * 
    * @param node node to be checked
    * @throws DeserializerException if node is not empty
    */
-  private void checkEmptyJsonNode(JsonNode node) throws DeserializerException {
+  private void assertJsonNodeIsEmpty(JsonNode node) throws DeserializerException {
     if (node.size() != 0) {
       final String unknownField = node.fieldNames().next();
       throw new DeserializerException("Tree should be empty but still has content left: " + unknownField,
-              DeserializerException.MessageKeys.UNKOWN_CONTENT, unknownField);
+          DeserializerException.MessageKeys.UNKOWN_CONTENT, unknownField);
     }
   }
 
@@ -576,7 +577,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
             + " property: " + propertyName, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, propertyName);
       }
       break;
-    //Strings
+    // Strings
     case String:
     case Binary:
     case Date:
