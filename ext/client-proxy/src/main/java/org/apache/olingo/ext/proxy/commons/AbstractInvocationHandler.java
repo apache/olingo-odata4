@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -20,11 +20,12 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.util.Arrays;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -78,63 +79,67 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
     for (int i = 0; i < selfMethods.length && !result; i++) {
       result = method.getName().equals(selfMethods[i].getName())
-              && Arrays.equals(method.getParameterTypes(), selfMethods[i].getParameterTypes());
+          && Arrays.equals(method.getParameterTypes(), selfMethods[i].getParameterTypes());
     }
 
     return result;
   }
 
   protected Object invokeSelfMethod(final Method method, final Object[] args)
-          throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-
-    return getClass().getMethod(method.getName(), method.getParameterTypes()).invoke(this, args);
+      throws Throwable {
+    //Try as per https://amitstechblog.wordpress.com/2011/07/24/java-proxies-and-undeclaredthrowableexception/
+    try {
+      return getClass().getMethod(method.getName(), method.getParameterTypes()).invoke(this, args);
+    } catch (UndeclaredThrowableException e) {
+      throw e.getCause();
+    }
   }
 
   protected ComplexType<?> getComplex(
-          final String name,
-          final ODataValue value,
-          final Class<?> ref,
-          final EntityInvocationHandler handler,
-          final URI baseURI,
-          final boolean collectionItem) {
+      final String name,
+      final ODataValue value,
+      final Class<?> ref,
+      final EntityInvocationHandler handler,
+      final URI baseURI,
+      final boolean collectionItem) {
 
     final CommonURIBuilder<?> targetURI;
     if (collectionItem) {
       targetURI = null;
     } else {
       targetURI = baseURI == null
-              ? null : getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name);
+          ? null : getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name);
     }
 
     final ComplexInvocationHandler complexHandler;
     Class<?> actualRef = ref;
     if (value == null) {
       complexHandler = ComplexInvocationHandler.getInstance(
-              actualRef,
-              service,
-              targetURI);
+          actualRef,
+          service,
+          targetURI);
     } else {
       actualRef = CoreUtils.getComplexTypeRef(service, value); // handle derived types
       complexHandler = ComplexInvocationHandler.getInstance(
-              value.asComplex(),
-              actualRef,
-              service,
-              targetURI);
+          value.asComplex(),
+          actualRef,
+          service,
+          targetURI);
     }
 
     complexHandler.setEntityHandler(handler);
 
     final ComplexType<?> res = ComplexType.class.cast(Proxy.newProxyInstance(
-            Thread.currentThread().getContextClassLoader(),
-            new Class<?>[] {actualRef}, complexHandler));
+        Thread.currentThread().getContextClassLoader(),
+        new Class<?>[] { actualRef }, complexHandler));
 
     return res;
   }
 
   protected boolean isDeleted(final EntityInvocationHandler handler) {
     return (getContext().entityContext().isAttached(handler)
-            && getContext().entityContext().getStatus(handler) == AttachedEntityStatus.DELETED)
-            || getContext().entityContext().getFurtherDeletes().contains(handler.getEntityURI());
+        && getContext().entityContext().getStatus(handler) == AttachedEntityStatus.DELETED)
+        || getContext().entityContext().getFurtherDeletes().contains(handler.getEntityURI());
   }
 
   protected <S extends EntityType<?>> void deleteEntity(final EntityInvocationHandler handler, final URI entitySetURI) {
@@ -147,7 +152,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     }
 
     final String name = handler.getUUID().getType().
-            getAnnotation(org.apache.olingo.ext.proxy.api.annotations.EntityType.class).name();
+        getAnnotation(org.apache.olingo.ext.proxy.api.annotations.EntityType.class).name();
 
     final String namespace = handler.getUUID().getType().getAnnotation(Namespace.class).value();
 
@@ -181,8 +186,8 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
   }
 
   protected static CommonURIBuilder<?> buildEntitySetURI(
-          final Class<?> ref,
-          final AbstractService<?> service) {
+      final Class<?> ref,
+      final AbstractService<?> service) {
 
     final String containerNS;
     final String entitySetName;
@@ -205,7 +210,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
   }
 
   protected static CommonURIBuilder<?> buildEntitySetURI(
-          final String containerNS, final String entitySetName, final AbstractService<?> service) {
+      final String containerNS, final String entitySetName, final AbstractService<?> service) {
 
     final CommonURIBuilder<?> uriBuilder = service.getClient().newURIBuilder();
     final Edm edm = service.getClient().getCachedEdm();
