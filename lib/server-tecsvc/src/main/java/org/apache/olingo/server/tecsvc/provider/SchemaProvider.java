@@ -97,7 +97,7 @@ public class SchemaProvider {
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTBasePrimCompNav));
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoBasePrimCompNav));
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTCompNav));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTMixEnumDefColl));
+    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTMixEnumDef));
 
     // TypeDefinitions
     List<TypeDefinition> typeDefinitions = new ArrayList<TypeDefinition>();

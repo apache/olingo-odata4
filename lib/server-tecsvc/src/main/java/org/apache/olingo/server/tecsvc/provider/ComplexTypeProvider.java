@@ -49,8 +49,8 @@ public class ComplexTypeProvider {
   public static final FullQualifiedName nameCTTwoBasePrimCompNav =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "CTTwoBasePrimCompNav");
   public static final FullQualifiedName nameCTTwoPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTTwoPrim");
-  public static final FullQualifiedName nameCTMixEnumDefColl = new FullQualifiedName(SchemaProvider.NAMESPACE,
-      "CTMixEnumDefColl");
+  public static final FullQualifiedName nameCTMixEnumDef = new FullQualifiedName(SchemaProvider.NAMESPACE,
+      "CTMixEnumDef");
 
   public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
 
@@ -163,9 +163,9 @@ public class ComplexTypeProvider {
           .setName("CTTwoBasePrimCompNav")
           .setBaseType(nameCTBasePrimCompNav);
 
-    } else if (complexTypeName.equals(nameCTMixEnumDefColl)) {
+    } else if (complexTypeName.equals(nameCTMixEnumDef)) {
       return new ComplexType()
-          .setName(nameCTMixEnumDefColl.getName())
+          .setName(nameCTMixEnumDef.getName())
           .setProperties(Arrays.asList(
               PropertyProvider.propertyEnumString_ENString,
               PropertyProvider.collPropertyEnumString_ENString,

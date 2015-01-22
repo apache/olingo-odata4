@@ -517,12 +517,12 @@ public class PropertyProvider {
       .setType(ComplexTypeProvider.nameCTMixPrimCollComp);
 
   public static final Property propertyComp_CTMixEnumTypeDefColl = new Property()
-      .setName("PropertyCompMixedEnumTypeDefColl")
-      .setType(ComplexTypeProvider.nameCTMixEnumDefColl);
+      .setName("PropertyCompMixedEnumDef")
+      .setType(ComplexTypeProvider.nameCTMixEnumDef);
 
   public static final Property propertyCompColl_CTMixEnumTypeDefColl = new Property()
-      .setName("CollPropertyCompMixedEnumDefColl")
-      .setType(ComplexTypeProvider.nameCTMixEnumDefColl)
+      .setName("CollPropertyCompMixedEnumDef")
+      .setType(ComplexTypeProvider.nameCTMixEnumDef)
       .setCollection(true);
 
   // Navigation Properties -------------------------------------------------------------------------------------------
@@ -600,10 +600,12 @@ public class PropertyProvider {
   // TypeDefinition Properties ---------------------------------------------------------------------------------------
   public static final Property propertyTypeDefinition_TDString = new Property()
       .setName("PropertyDefString")
-      .setType(TypeDefinitionProvider.nameTDString);
+      .setType(TypeDefinitionProvider.nameTDString)
+      .setMaxLength(15);
 
   public static final Property collPropertyTypeDefinition_TDString = new Property()
       .setName("CollPropertyDefString")
       .setType(TypeDefinitionProvider.nameTDString)
+      .setMaxLength(15)
       .setCollection(true);
 }

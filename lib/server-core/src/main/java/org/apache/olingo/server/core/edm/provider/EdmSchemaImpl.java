@@ -74,7 +74,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
     final List<TypeDefinition> providerTypeDefinitions = schema.getTypeDefinitions();
     if (providerTypeDefinitions != null) {
       for (TypeDefinition def : providerTypeDefinitions) {
-        typeDefinitions.add(new EdmTypeDefinitionImpl(edm, new FullQualifiedName("namespace", def.getName()), def));
+        typeDefinitions.add(new EdmTypeDefinitionImpl(edm, new FullQualifiedName(namespace, def.getName()), def));
       }
     }
     return typeDefinitions;

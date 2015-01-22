@@ -434,7 +434,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertNotNull(defProperty);
     assertEquals("string", defProperty.getValue());
 
-    Property complexProperty = entity.getProperty("PropertyCompMixedEnumTypeDefColl");
+    Property complexProperty = entity.getProperty("PropertyCompMixedEnumDef");
     List<Property> value = (List<Property>) complexProperty.getValue();
     assertEquals((short) 2, value.get(0).getValue());
   }
@@ -1099,7 +1099,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   public void eTMixEnumDefCollCompNavInvalidComplexEnumValueNull() throws Exception {
     String entityString = "{"
         + "\"PropertyEnumString\" : 2,"
-        + "\"PropertyCompMixedEnumTypeDefColl\" : {"
+        + "\"PropertyCompMixedEnumDef\" : {"
         + "\"PropertyEnumString\" : null"
         + "}}";
 

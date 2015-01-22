@@ -94,7 +94,7 @@ public class EdmSchemaImplTest {
 
   @Test
   public void basicGetters() {
-    assertEquals("namespace", schema.getNamespace());
+    assertEquals("org.namespace", schema.getNamespace());
     assertEquals("alias", schema.getAlias());
   }
 
@@ -105,7 +105,7 @@ public class EdmSchemaImplTest {
     assertEquals(2, typeDefinitions.size());
 
     for (EdmTypeDefinition def : typeDefinitions) {
-      assertTrue(def == edm.getTypeDefinition(new FullQualifiedName("namespace", def.getName())));
+      assertTrue(def == edm.getTypeDefinition(new FullQualifiedName("org.namespace", def.getName())));
     }
   }
 
@@ -116,7 +116,7 @@ public class EdmSchemaImplTest {
     assertEquals(2, enumTypes.size());
 
     for (EdmEnumType enumType : enumTypes) {
-      assertTrue(enumType == edm.getEnumType(new FullQualifiedName("namespace", enumType.getName())));
+      assertTrue(enumType == edm.getEnumType(new FullQualifiedName("org.namespace", enumType.getName())));
     }
   }
 
@@ -127,7 +127,7 @@ public class EdmSchemaImplTest {
     assertEquals(2, entityTypes.size());
 
     for (EdmEntityType entityType : entityTypes) {
-      assertTrue(entityType == edm.getEntityType(new FullQualifiedName("namespace", entityType.getName())));
+      assertTrue(entityType == edm.getEntityType(new FullQualifiedName("org.namespace", entityType.getName())));
     }
   }
 
@@ -138,7 +138,7 @@ public class EdmSchemaImplTest {
     assertEquals(2, complexTypes.size());
 
     for (EdmComplexType complexType : complexTypes) {
-      assertTrue(complexType == edm.getComplexType(new FullQualifiedName("namespace", complexType.getName())));
+      assertTrue(complexType == edm.getComplexType(new FullQualifiedName("org.namespace", complexType.getName())));
     }
   }
 
@@ -149,7 +149,7 @@ public class EdmSchemaImplTest {
     assertEquals(2, actions.size());
 
     for (EdmAction action : actions) {
-      assertTrue(action == edm.getUnboundAction(new FullQualifiedName("namespace", action.getName())));
+      assertTrue(action == edm.getUnboundAction(new FullQualifiedName("org.namespace", action.getName())));
     }
   }
 
@@ -160,7 +160,7 @@ public class EdmSchemaImplTest {
     assertEquals(2, functions.size());
 
     for (EdmFunction function : functions) {
-      FullQualifiedName functionName = new FullQualifiedName("namespace", function.getName());
+      FullQualifiedName functionName = new FullQualifiedName("org.namespace", function.getName());
       assertTrue(function == edm.getUnboundFunction(functionName, null));
     }
   }
@@ -203,6 +203,9 @@ public class EdmSchemaImplTest {
   }
 
   private class LocalProvider extends EdmProvider {
+
+    private static final String ALIAS = "alias";
+    private static final String NAMESPACE = "org.namespace";
 
     @Override
     public EnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
@@ -277,36 +280,36 @@ public class EdmSchemaImplTest {
     @Override
     public List<Schema> getSchemas() throws ODataException {
       Schema providerSchema = new Schema();
-      providerSchema.setNamespace("namespace");
-      providerSchema.setAlias("alias");
+      providerSchema.setNamespace(NAMESPACE);
+      providerSchema.setAlias(ALIAS);
       EntityContainer container = new EntityContainer().setName("container");
 
       List<EntitySet> entitySets = new ArrayList<EntitySet>();
       entitySets.add(new EntitySet().setName("entitySetName")
-          .setType(new FullQualifiedName("namespace", "entityType1")));
+          .setType(new FullQualifiedName(NAMESPACE, "entityType1")));
       entitySets
-          .add(new EntitySet().setName("entitySetName2").setType(new FullQualifiedName("namespace", "entityType2")));
+          .add(new EntitySet().setName("entitySetName2").setType(new FullQualifiedName(NAMESPACE, "entityType2")));
       container.setEntitySets(entitySets);
 
       List<Singleton> singletons = new ArrayList<Singleton>();
       singletons.add(new Singleton().setName("singletonName")
-          .setType(new FullQualifiedName("namespace", "entityType1")));
+          .setType(new FullQualifiedName(NAMESPACE, "entityType1")));
       singletons
-          .add(new Singleton().setName("singletonName2").setType(new FullQualifiedName("namespace", "entityType2")));
+          .add(new Singleton().setName("singletonName2").setType(new FullQualifiedName(NAMESPACE, "entityType2")));
       container.setSingletons(singletons);
 
       List<ActionImport> actionImports = new ArrayList<ActionImport>();
       actionImports.add(new ActionImport().setName("actionImportName").setAction(
-          new FullQualifiedName("namespace", "action1")));
+          new FullQualifiedName(NAMESPACE, "action1")));
       actionImports.add(new ActionImport().setName("actionImportName2").setAction(
-          new FullQualifiedName("namespace", "action2")));
+          new FullQualifiedName(NAMESPACE, "action2")));
       container.setActionImports(actionImports);
 
       List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
       functionImports.add(new FunctionImport().setName("functionImportName").setFunction(
-          new FullQualifiedName("namespace", "function1")));
+          new FullQualifiedName(NAMESPACE, "function1")));
       functionImports.add(new FunctionImport().setName("functionImportName2").setFunction(
-          new FullQualifiedName("namespace", "function2")));
+          new FullQualifiedName(NAMESPACE, "function2")));
       container.setFunctionImports(functionImports);
       providerSchema.setEntityContainer(container);
 
@@ -323,13 +326,13 @@ public class EdmSchemaImplTest {
       List<EntityType> entityTypes = new ArrayList<EntityType>();
       entityTypes.add(new EntityType().setName("entityType1"));
       entityTypes.add(new EntityType().setName("entityType2")
-          .setBaseType(new FullQualifiedName("namespace", "entityType1")));
+          .setBaseType(new FullQualifiedName(NAMESPACE, "entityType1")));
       providerSchema.setEntityTypes(entityTypes);
 
       List<ComplexType> complexTypes = new ArrayList<ComplexType>();
       complexTypes.add(new ComplexType().setName("complexType1"));
       complexTypes.add(new ComplexType().setName("complexType2").setBaseType(
-          new FullQualifiedName("namespace", "complexType1")));
+          new FullQualifiedName(NAMESPACE, "complexType1")));
       providerSchema.setComplexTypes(complexTypes);
 
       List<Action> actions = new ArrayList<Action>();

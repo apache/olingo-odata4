@@ -133,6 +133,12 @@ public class MetadataDocumentTest {
     assertThat(metadata, containsString("<EntityType Name=\"ETAbstract\" Abstract=\"true\">"));
     assertThat(metadata,
         containsString("<EntityType Name=\"ETAbstractBase\" BaseType=\"Namespace1_Alias.ETAbstract\">"));
+
+    // TypeDefCheck
+    assertThat(metadata,
+        containsString("<Property Name=\"PropertyDefString\" Type=\"Namespace1_Alias.TDString\" MaxLength=\"15\"/>"));
+    assertThat(metadata, containsString("<Property Name=\"CollPropertyDefString\" " +
+        "Type=\"Collection(Namespace1_Alias.TDString)\" MaxLength=\"15\"/>"));
   }
 
   /**
