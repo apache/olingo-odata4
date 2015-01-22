@@ -39,7 +39,6 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTest {
@@ -416,26 +415,26 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertTrue(bindingToMany.getBindingLinks().isEmpty());
   }
 
-  @Ignore
   @SuppressWarnings("unchecked")
   @Test
   public void eTTwoKeyNavEnumTest() throws Exception {
-    String entityString = "{"
-        + "\"PropertyEnumString\" : 2,"
-        + "\"PropertyCompEnum\" : {"
-        + "\"PropertyEnumString\" : 2"
-        + "}}";
-
-    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    InputStream stream = getFileAsStream("EntityETMixEnumDefCollComp.json");
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     Entity entity =
-        deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoKeyNav")));
+        deserializer.entity(stream, edm
+            .getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
+
+    assertEquals(6, entity.getProperties().size());
 
     Property enumProperty = entity.getProperty("PropertyEnumString");
     assertNotNull(enumProperty);
     assertEquals((short) 2, enumProperty.getValue());
 
-    Property complexProperty = entity.getProperty("PropertyCompEnum");
+    Property defProperty = entity.getProperty("PropertyDefString");
+    assertNotNull(defProperty);
+    assertEquals("string", defProperty.getValue());
+
+    Property complexProperty = entity.getProperty("PropertyCompMixedEnumTypeDefColl");
     List<Property> value = (List<Property>) complexProperty.getValue();
     assertEquals((short) 2, value.get(0).getValue());
   }
@@ -1078,9 +1077,8 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     }
   }
 
-  @Ignore
   @Test(expected = DeserializerException.class)
-  public void eTTwoKeyNavInvalidEnumValueNull() throws Exception {
+  public void eTMixEnumDefCollCompInvalidEnumValueNull() throws Exception {
     String entityString = "{"
         + "\"PropertyEnumString\" : null,"
         + "\"PropertyCompEnum\" : {"
@@ -1090,35 +1088,33 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     try {
-      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoKeyNav")));
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, e.getMessageKey());
       throw e;
     }
   }
 
-  @Ignore
   @Test(expected = DeserializerException.class)
-  public void eTTwoKeyNavInvalidComplexEnumValueNull() throws Exception {
+  public void eTMixEnumDefCollCompNavInvalidComplexEnumValueNull() throws Exception {
     String entityString = "{"
         + "\"PropertyEnumString\" : 2,"
-        + "\"PropertyCompEnum\" : {"
+        + "\"PropertyCompMixedEnumTypeDefColl\" : {"
         + "\"PropertyEnumString\" : null"
         + "}}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     try {
-      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoKeyNav")));
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, e.getMessageKey());
       throw e;
     }
   }
-  
-  @Ignore
+
   @Test(expected = DeserializerException.class)
-  public void eTTwoKeyNavInvalidEnumValueArray() throws Exception {
+  public void eTMixEnumDefCollCompInvalidEnumValueArray() throws Exception {
     String entityString = "{"
         + "\"PropertyEnumString\" : [],"
         + "\"PropertyCompEnum\" : {"
@@ -1128,16 +1124,15 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     try {
-      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoKeyNav")));
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY, e.getMessageKey());
       throw e;
     }
   }
-  
-  @Ignore
+
   @Test(expected = DeserializerException.class)
-  public void eTTwoKeyNavInvalidEnumValueObject() throws Exception {
+  public void eTMixEnumDefCollCompInvalidEnumValueObject() throws Exception {
     String entityString = "{"
         + "\"PropertyEnumString\" : {},"
         + "\"PropertyCompEnum\" : {"
@@ -1147,16 +1142,15 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     try {
-      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoKeyNav")));
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY, e.getMessageKey());
       throw e;
     }
   }
-  
-  @Ignore
+
   @Test(expected = DeserializerException.class)
-  public void eTTwoKeyNavInvalidEnumValue() throws Exception {
+  public void eTMixEnumDefCollCompInvalidEnumValue() throws Exception {
     String entityString = "{"
         + "\"PropertyEnumString\" : \"invalid\","
         + "\"PropertyCompEnum\" : {"
@@ -1166,16 +1160,15 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     try {
-      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoKeyNav")));
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, e.getMessageKey());
       throw e;
     }
   }
 
-  @Ignore
   @Test(expected = DeserializerException.class)
-  public void eTTwoKeyNavInvalidEnumValueByPrimitiveTypeException() throws Exception {
+  public void eTMixEnumDefCollCompInvalidEnumValueByPrimitiveTypeException() throws Exception {
     String entityString = "{"
         + "\"PropertyEnumString\" : 18,"
         + "\"PropertyCompEnum\" : {"
@@ -1185,13 +1178,13 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     try {
-      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoKeyNav")));
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, e.getMessageKey());
       throw e;
     }
   }
-  
+
 //  @Test(expected = DeserializerException.class)
 //  public void invalidJsonValueForPrimCollectionTypeObject() throws Exception {
 //    final String entityString = "{"

@@ -39,7 +39,7 @@ public class EnumTypeProvider {
           .setMembers(Arrays.asList(
               new EnumMember().setName("String1").setValue("1"),
               new EnumMember().setName("String2").setValue("2"),
-              new EnumMember().setName("String3").setValue("3")));
+              new EnumMember().setName("String3").setValue("4")));
     }
 
     return null;
