@@ -110,8 +110,9 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
 
   @Override
   public ODataSerializer getSerializer(final ODataFormat format) {
-    return format == ODataFormat.ATOM || format == ODataFormat.XML
-            ? new AtomSerializer(getServiceVersion()) : new JsonSerializer(getServiceVersion(), false);
+    return format == ODataFormat.ATOM || format == ODataFormat.XML ?
+        new AtomSerializer(getServiceVersion()) :
+        new JsonSerializer(getServiceVersion(), false, format);
   }
 
   @Override
