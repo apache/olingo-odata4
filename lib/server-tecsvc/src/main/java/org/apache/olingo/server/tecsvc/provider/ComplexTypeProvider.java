@@ -89,7 +89,8 @@ public class ComplexTypeProvider {
     } else if (complexTypeName.equals(nameCTTwoPrim)) {
       return new ComplexType()
           .setName("CTTwoPrim")
-          .setProperties(Arrays.asList(PropertyProvider.propertyInt16, PropertyProvider.propertyString));
+          .setProperties(Arrays.asList(PropertyProvider.propertyInt16_NotNullable,
+                                        PropertyProvider.propertyString_NotNullable));
 
     } else if (complexTypeName.equals(nameCTCompNav)) {
       return new ComplexType()

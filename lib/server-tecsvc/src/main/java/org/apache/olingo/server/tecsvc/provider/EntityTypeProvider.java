@@ -103,15 +103,19 @@ public class EntityTypeProvider {
 
           .setProperties(
               Arrays.asList(
-                  PropertyProvider.propertyInt16_NotNullable, PropertyProvider.collPropertyString,
+                  PropertyProvider.propertyInt16_NotNullable,
+                  PropertyProvider.collPropertyString_NotNullable,
                   PropertyProvider.collPropertyBoolean, PropertyProvider.collPropertyByte,
-                  PropertyProvider.collPropertySByte, PropertyProvider.collPropertyInt16,
+                  PropertyProvider.collPropertySByte,
+                  PropertyProvider.collPropertyInt16_NotNullable,
                   PropertyProvider.collPropertyInt32, PropertyProvider.collPropertyInt64,
                   PropertyProvider.collPropertySingle, PropertyProvider.collPropertyDouble,
                   PropertyProvider.collPropertyDecimal, PropertyProvider.collPropertyBinary,
-                  PropertyProvider.collPropertyDate, PropertyProvider.collPropertyDateTimeOffset,
-                  PropertyProvider.collPropertyDuration, PropertyProvider.collPropertyGuid,
-                  PropertyProvider.collPropertyTimeOfDay /* TODO add propertyStream */));
+                  PropertyProvider.collPropertyDate_NotNullable,
+                  PropertyProvider.collPropertyDateTimeOffset_NotNullable,
+                  PropertyProvider.collPropertyDuration_NotNullable,
+                  PropertyProvider.collPropertyGuid, PropertyProvider.collPropertyTimeOfDay
+                  /* TODO add propertyStream */));
 
     } else if (entityTypeName.equals(nameETTwoPrim)) {
       return new EntityType()

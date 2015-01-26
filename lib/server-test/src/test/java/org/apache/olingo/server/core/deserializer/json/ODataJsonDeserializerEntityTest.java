@@ -574,15 +574,15 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test
   public void validJsonValueForPrimPropertyInComplexTypeNull() throws Exception {
     final String entityString = "{"
-            + "\"PropertyComp\":{\"PropertyInt16\":null,\"PropertyString\":\"TEST A\"}"
+            + "\"PropertyComp\":{\"PropertyString\":\"TEST A\",\"PropertyInt16\":null}"
             + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     Entity entity = deserializer.entity(stream, edm.getEntityType(
-            new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
+            new FullQualifiedName("Namespace1_Alias", "ETCompAllPrim")));
 
-    assertNull(entity.getProperty("PropertyComp").asComplex().get(0).getValue());
-    assertEquals("TEST A", entity.getProperty("PropertyComp").asComplex().get(1).getValue());
+    assertEquals("TEST A", entity.getProperty("PropertyComp").asComplex().get(0).getValue());
+    assertNull(entity.getProperty("PropertyComp").asComplex().get(1).getValue());
   }
 
   @Test
@@ -1143,6 +1143,85 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void invalidNullValueForComplexTypeNullableFalse() throws Exception {
+    final String entityString = "{"
+        + "\"PropertyComp\":null"
+        + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoKeyNav")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void invalidNullValueForPrimBeforeComplexTypeNullableFalse() throws Exception {
+    final String entityString = "{"
+            + "\"PropertyInt16\": null, \"PropertyString\": \"321\", "
+            + "\"PropertyComp\":{\"PropertyInt16\": null, "
+            + "\"PropertyComp\": {\"PropertyString\":\"StringValue\"}}"
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoKeyNav")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void invalidNullValueForComplexTypePropertyNullableFalse() throws Exception {
+    final String entityString = "{"
+            + "\"PropertyInt16\": 123, "
+            + "\"PropertyCompTwoPrim\":{\"PropertyInt16\": null, \"PropertyString\":\"StringValue\"}"
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETKeyNav")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void invalidNullValueForPrimCollectionNullableFalse() throws Exception {
+    final String entityString = "{"
+        + "\"CollPropertyString\":["
+        + "null,"
+        + "\"StringValue_1\",\"TEST 3\"]}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETCollAllPrim")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, e.getMessageKey());
+      throw e;
+    }
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void invalidNullValueForPrimIntCollectionNullableFalse() throws Exception {
+    final String entityString = "{"
+            + "\"CollPropertyInt16\":[123,\"null\",4711]"
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    try {
+      deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETCollAllPrim")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, e.getMessageKey());
       throw e;
     }
   }

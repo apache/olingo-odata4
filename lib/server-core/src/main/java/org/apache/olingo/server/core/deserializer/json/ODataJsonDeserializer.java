@@ -431,7 +431,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   }
 
   private Object readComplexValue(EdmProperty edmComplexProperty, JsonNode jsonNode) throws DeserializerException {
-    if(isNullable(edmComplexProperty) && jsonNode.isNull()) {
+    if(isValidNull(edmComplexProperty, jsonNode)) {
       return null;
     }
     if (jsonNode.isArray() || !jsonNode.isContainerNode()) {
@@ -465,7 +465,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   private Object readTypeDefinitionValue(EdmProperty edmProperty, JsonNode jsonNode) throws DeserializerException {
     checkForValueNode(edmProperty, jsonNode);
-    if(isNullable(edmProperty) && jsonNode.isNull()) {
+    if(isValidNull(edmProperty, jsonNode)) {
       return null;
     }
     try {
@@ -483,9 +483,22 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
   }
 
+  private boolean isValidNull(EdmProperty edmProperty, JsonNode jsonNode) throws DeserializerException {
+    if (jsonNode.isNull()) {
+      if (isNullable(edmProperty)) {
+        return true;
+      } else {
+        throw new DeserializerException("Property: " + edmProperty.getName() + " must not be null.",
+            DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, edmProperty.getName());
+      }
+
+    }
+    return false;
+  }
+
   private Object readEnumValue(EdmProperty edmProperty, JsonNode jsonNode) throws DeserializerException {
     checkForValueNode(edmProperty, jsonNode);
-    if(isNullable(edmProperty) && jsonNode.isNull()) {
+    if(isValidNull(edmProperty, jsonNode)) {
       return null;
     }
     try {
@@ -503,7 +516,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   private Object readPrimitiveValue(EdmProperty edmProperty, JsonNode jsonNode) throws DeserializerException {
     checkForValueNode(edmProperty, jsonNode);
-    if(isNullable(edmProperty) && jsonNode.isNull()) {
+    if(isValidNull(edmProperty, jsonNode)) {
       return null;
     }
     try {
