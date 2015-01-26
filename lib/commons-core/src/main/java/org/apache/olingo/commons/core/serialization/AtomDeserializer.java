@@ -398,15 +398,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
 
       if (event.isStartElement()) {
         if (inlineQName.equals(event.asStartElement().getName())) {
-          StartElement inline = null;
-          while (reader.hasNext() && inline == null) {
-            final XMLEvent innerEvent = reader.peek();
-            if (innerEvent.isCharacters() && innerEvent.asCharacters().isWhiteSpace()) {
-              reader.nextEvent();
-            } else if (innerEvent.isStartElement()) {
-              inline = innerEvent.asStartElement();
-            }
-          }
+          StartElement inline = getStartElement(reader);
           if (inline != null) {
             if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(inline.getName())) {
               link.setInlineEntity(entity(reader, inline));
@@ -424,6 +416,20 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
         foundEndElement = true;
       }
     }
+  }
+
+  private StartElement getStartElement(XMLEventReader reader) throws XMLStreamException {
+    while (reader.hasNext()) {
+      final XMLEvent innerEvent = reader.peek();
+      if (innerEvent.isCharacters() && innerEvent.asCharacters().isWhiteSpace()) {
+        reader.nextEvent();
+      } else if (innerEvent.isStartElement()) {
+        return innerEvent.asStartElement();
+      } else if (innerEvent.isEndElement() && inlineQName.equals(innerEvent.asEndElement().getName())) {
+        return null;
+      }
+    }
+    return null;
   }
 
   public ResWrap<Delta> delta(final InputStream input)
