@@ -104,13 +104,7 @@ public final class MediaITCase extends AbstractBaseTestITCase {
     assertNotNull(request);
 
     final ODataMediaEntityUpdateResponse<CommonODataEntity> response = request.payloadManager().getResponse();
-    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    final CommonODataEntity entity = response.getBody();
-    assertNotNull(entity);
-    final CommonODataProperty property = entity.getProperty("PropertyInt16");
-    assertNotNull(property);
-    assertNotNull(property.getPrimitiveValue());
-    assertEquals(4, property.getPrimitiveValue().toValue());
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
 
     // Check that the media stream has changed.
     // This check has to be in the same session in order to access the same data provider.
