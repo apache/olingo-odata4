@@ -112,7 +112,7 @@ public class MetadataDocumentTest {
     assertThat(metadata, containsString("<EntityContainer Name=\"Container\">"));
 
     assertThat(metadata,
-        containsString("<EntitySet Name=\"ESTwoPrim\" EntityType=\"Namespace1_Alias.ETTwoPrim\"/>"));
+        containsString("<EntitySet Name=\"ESTwoPrim\" EntityType=\"Namespace1_Alias.ETTwoPrim\">"));
 
     assertThat(metadata,
         containsString("<Singleton Name=\"SINav\" EntityType=\"Namespace1_Alias.ETTwoKeyNav\">"

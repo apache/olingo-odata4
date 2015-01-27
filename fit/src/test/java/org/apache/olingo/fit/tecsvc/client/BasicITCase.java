@@ -67,7 +67,6 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class BasicITCase extends AbstractBaseTestITCase {
@@ -327,13 +326,25 @@ public class BasicITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  @Ignore("Currently this test is not possible due to nullable=false in all available complex types")
   public void updateEntityWithComplex() throws Exception {
     final ODataClient client = getClient();
     final ODataObjectFactory factory = client.getObjectFactory();
-    ODataEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETCompComp"));
-    newEntity.getProperties().add(factory.newComplexProperty("PropertyComp", null));
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESCompComp").appendKeySegment(1).build();
+    ODataEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
+    newEntity.getProperties().add(factory.newComplexProperty("PropertyCompComp", null));
+    // The following properties must not be null
+    newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyString",
+         factory.newPrimitiveValueBuilder().buildString("Test")));  
+    newEntity.getProperties().add(
+        factory.newComplexProperty("PropertyCompTwoPrim",
+            factory.newComplexValue("CTTwoPrim")
+                .add(factory.newPrimitiveProperty(
+                      "PropertyInt16", 
+                      factory.newPrimitiveValueBuilder().buildInt16((short) 1)))
+                .add(factory.newPrimitiveProperty(
+                      "PropertyString", 
+                      factory.newPrimitiveValueBuilder().buildString("Test2")))));
+    
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESKeyNav").appendKeySegment(1).build();
     final ODataEntityUpdateRequest<ODataEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
         uri, UpdateType.REPLACE, newEntity);
     final ODataEntityUpdateResponse<ODataEntity> response = request.execute();
@@ -347,7 +358,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
     final ODataEntity entity = entityResponse.getBody();
     assertNotNull(entity);
-    final ODataLinkedComplexValue complex = entity.getProperty("PropertyComp").getLinkedComplexValue()
+    final ODataLinkedComplexValue complex = entity.getProperty("PropertyCompComp").getLinkedComplexValue()
         .get("PropertyComp").getLinkedComplexValue();
     assertNotNull(complex);
     final ODataProperty property = complex.get("PropertyInt16");

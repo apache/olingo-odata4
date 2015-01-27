@@ -204,7 +204,7 @@ public class DataProvider {
       if (newProperty != null && !newProperty.asLinkedComplex().getValue().isEmpty()) {
         throw new DataProviderException("Update of a complex-collection property not supported!");
       } else {
-        property.asLinkedComplex().getValue().clear();
+        property.asCollection().clear();
       }
     } else {
       final EdmComplexType type = (EdmComplexType) edmProperty.getType();

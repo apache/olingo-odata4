@@ -146,7 +146,15 @@ public class ContainerProvider {
       if (name.equals("ESAllPrim")) {
         return new EntitySet()
             .setName("ESAllPrim")
-            .setType(EntityTypeProvider.nameETAllPrim);
+            .setType(EntityTypeProvider.nameETAllPrim)
+            .setNavigationPropertyBindings(Arrays.asList(
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETTwoPrimOne")
+                  .setTarget(new Target().setTargetName("ESTwoPrim")),
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETTwoPrimMany")
+                  .setTarget(new Target().setTargetName("ESTwoPrim"))
+             ));
 
       } else if (name.equals("ESCollAllPrim")) {
         return new EntitySet()
@@ -156,7 +164,15 @@ public class ContainerProvider {
       } else if (name.equals("ESTwoPrim")) {
         return new EntitySet()
             .setName("ESTwoPrim")
-            .setType(EntityTypeProvider.nameETTwoPrim);
+            .setType(EntityTypeProvider.nameETTwoPrim)
+            .setNavigationPropertyBindings(Arrays.asList(
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETAllPrimOne")
+                  .setTarget(new Target().setTargetName("ESAllPrim")),
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETAllPrimMany")
+                  .setTarget(new Target().setTargetName("ESAllPrim"))
+             ));
 
       } else if (name.equals("ESMixPrimCollComp")) {
         return new EntitySet()
@@ -240,14 +256,115 @@ public class ContainerProvider {
             .setType(EntityTypeProvider.nameETAllNullable);
 
       } else if (name.equals("ESKeyNav")) {
+        
         return new EntitySet()
             .setName("ESKeyNav")
-            .setType(EntityTypeProvider.nameETKeyNav);
-
+            .setType(EntityTypeProvider.nameETKeyNav)
+            .setNavigationPropertyBindings(Arrays.asList(
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETKeyNavOne")
+                  .setTarget(new Target().setTargetName("ESKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETKeyNavMany")
+                  .setTarget(new Target().setTargetName("ESKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETTwoKeyNavOne")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETTwoKeyNavMany")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETMediaOne")
+                  .setTarget(new Target().setTargetName("ESMedia")),
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETMediaMany")
+                  .setTarget(new Target().setTargetName("ESMedia")),
+                new NavigationPropertyBinding()
+                  .setPath("PropertyCompNav/NavPropertyETTwoKeyNavOn")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("PropertyCompNav/NavPropertyETTwoKeyNavMany")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("PropertyCompNav/NavPropertyETMediaOne")
+                  .setTarget(new Target().setTargetName("ESMedia")),
+                new NavigationPropertyBinding()
+                  .setPath("PropertyCompNav/NavPropertyETMediaMany")
+                  .setTarget(new Target().setTargetName("ESMedia")),
+                new NavigationPropertyBinding()
+                  .setPath("PropertyCompCompNav/PropertyCompNav/NavPropertyETTwoKeyNavOne")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("PropertyCompCompNav/PropertyCompNav/NavPropertyETTwoKeyNavMany")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("PropertyCompCompNav/PropertyCompNav/NavPropertyETMediaOne")
+                  .setTarget(new Target().setTargetName("ESMedia")),
+                new NavigationPropertyBinding()
+                  .setPath("PropertyCompCompNav/PropertyCompNav/NavPropertyETMediaMany")
+                  .setTarget(new Target().setTargetName("ESMedia")),
+                new NavigationPropertyBinding()
+                  .setPath("ETKeyNav/PropertyCompNav/NavPropertyETTwoKeyNavMany")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("ETKeyNav/PropertyCompNav/NavPropertyETTwoKeyNavMany")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("PropertyCompNav/com.corp.odata.test1.CTNavFiveProp/NavPropertyETTwoKeyNavMany")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav"))
+                ));
+        
       } else if (name.equals("ESTwoKeyNav")) {
         return new EntitySet()
             .setName("ESTwoKeyNav")
-            .setType(EntityTypeProvider.nameETTwoKeyNav);
+            .setType(EntityTypeProvider.nameETTwoKeyNav)
+            .setNavigationPropertyBindings(Arrays.asList(
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETKeyNavOne")
+                  .setTarget(new Target().setTargetName("ESKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETKeyNavMany")
+                  .setTarget(new Target().setTargetName("ESKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETTwoKeyNavOne")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETTwoKeyNavMany")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("PropertyCompNav/NavPropertyETTwoKeyNavOne")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("PropertyCompNav/NavPropertyETTwoKeyNavMany")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("PropertyCompNav/NavPropertyETKeyNavOne")
+                  .setTarget(new Target().setTargetName("ESKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("PropertyCompNav/NavPropertyETKeyNavMany")
+                  .setTarget(new Target().setTargetName("ESKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("CollPropertyCompNav/NavPropertyETTwoKeyNavOne")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("CollPropertyCompNav/NavPropertyETTwoKeyNavMany")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("CollPropertyCompNav/NavPropertyETMediaOne")
+                  .setTarget(new Target().setTargetName("ESMedia")),
+                new NavigationPropertyBinding()
+                  .setPath("CollPropertyCompNav/NavPropertyETMediaMany")
+                  .setTarget(new Target().setTargetName("ESMedia")),
+                new NavigationPropertyBinding()
+                  .setPath("CollPropertyCompNav/NavPropertyETTwoKeyNavMany")
+                  .setTarget(new Target().setTargetName("ESTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertyETTwoBaseTwoKeyNavOne")
+                  .setTarget(new Target().setTargetName("ESBaseTwoKeyNav")),
+                new NavigationPropertyBinding()
+                  .setPath("NavPropertySINav")
+                  .setTarget(new Target().setTargetName("SINav"))
+            ));
 
       } else if (name.equals("ESBaseTwoKeyNav")) {
         return new EntitySet()
