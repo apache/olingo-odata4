@@ -40,7 +40,6 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionComplexProcessor;
@@ -126,9 +125,6 @@ public class ODataHandler {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
     } catch (SerializerException e) {
-      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
-    } catch (BatchDeserializerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
     } catch (DeserializerException e) {

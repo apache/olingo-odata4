@@ -28,20 +28,23 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
+import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
+import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.edm.xml.v4.Reference;
@@ -52,14 +55,19 @@ import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
+import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class BasicITCase extends AbstractBaseTestITCase {
@@ -169,7 +177,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void readEntity() throws IOException {
+  public void readEntity() throws Exception {
     final ODataEntityRequest<ODataEntity> request = getClient().getRetrieveRequestFactory()
         .getEntityRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESCollAllPrim").appendKeySegment(1).build());
@@ -191,15 +199,150 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertEquals(30112, iterator.next().asPrimitive().toValue());
   }
 
+  @Test
+  public void patchEntity() throws Exception {
+    final ODataClient client = getClient();
+    final ODataObjectFactory factory = client.getObjectFactory();
+    ODataEntity patchEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
+    patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyString",
+        factory.newPrimitiveValueBuilder().buildString("new")));
+    patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyDecimal",
+        factory.newPrimitiveValueBuilder().buildDouble(42.875)));
+    patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt64",
+        factory.newPrimitiveValueBuilder().buildInt64(null)));
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
+        .build();
+    final ODataEntityUpdateRequest<ODataEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
+        uri, UpdateType.PATCH, patchEntity);
+    final ODataEntityUpdateResponse<ODataEntity> response = request.execute();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+
+    // Check that the patched properties have changed and the other properties not.
+    // This check has to be in the same session in order to access the same data provider.
+    ODataEntityRequest<ODataEntity> entityRequest = client.getRetrieveRequestFactory().getEntityRequest(uri);
+    entityRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
+    final ODataRetrieveResponse<ODataEntity> entityResponse = entityRequest.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
+    final ODataEntity entity = entityResponse.getBody();
+    assertNotNull(entity);
+    final ODataProperty property1 = entity.getProperty("PropertyString");
+    assertNotNull(property1);
+    assertEquals("new", property1.getPrimitiveValue().toValue());
+    final ODataProperty property2 = entity.getProperty("PropertyDecimal");
+    assertNotNull(property2);
+    assertEquals(42.875, property2.getPrimitiveValue().toValue());
+    final ODataProperty property3 = entity.getProperty("PropertyInt64");
+    assertNotNull(property3);
+    assertNull(property3.getPrimitiveValue());
+    final ODataProperty property4 = entity.getProperty("PropertyDuration");
+    assertNotNull(property4);
+    assertEquals("PT6S", property4.getPrimitiveValue().toValue());
+  }
+
+  @Test
+  public void updateEntity() throws Exception {
+    final ODataClient client = getClient();
+    final ODataObjectFactory factory = client.getObjectFactory();
+    ODataEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
+    newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt64",
+        factory.newPrimitiveValueBuilder().buildInt32(42)));
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
+        .build();
+    final ODataEntityUpdateRequest<ODataEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
+        uri, UpdateType.REPLACE, newEntity);
+    final ODataEntityUpdateResponse<ODataEntity> response = request.execute();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+
+    // Check that the updated properties have changed and that other properties have their default values.
+    // This check has to be in the same session in order to access the same data provider.
+    ODataEntityRequest<ODataEntity> entityRequest = client.getRetrieveRequestFactory().getEntityRequest(uri);
+    entityRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
+    final ODataRetrieveResponse<ODataEntity> entityResponse = entityRequest.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
+    final ODataEntity entity = entityResponse.getBody();
+    assertNotNull(entity);
+    final ODataProperty property1 = entity.getProperty("PropertyInt64");
+    assertNotNull(property1);
+    assertEquals(42, property1.getPrimitiveValue().toValue());
+    final ODataProperty property2 = entity.getProperty("PropertyDecimal");
+    assertNotNull(property2);
+    assertNull(property2.getPrimitiveValue());
+  }
+
+  @Test
+  public void patchEntityWithComplex() throws Exception {
+    final ODataClient client = getClient();
+    final ODataObjectFactory factory = client.getObjectFactory();
+    ODataEntity patchEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETCompComp"));
+    patchEntity.getProperties().add(factory.newComplexProperty("PropertyComp",
+        factory.newLinkedComplexValue("olingo.odata.test1.CTCompComp").add(
+            factory.newComplexProperty("PropertyComp",
+                factory.newLinkedComplexValue("olingo.odata.test1.CTTwoPrim").add(
+                    factory.newPrimitiveProperty("PropertyInt16",
+                        factory.newPrimitiveValueBuilder().buildInt32(42)))))));
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESCompComp").appendKeySegment(1).build();
+    final ODataEntityUpdateRequest<ODataEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
+        uri, UpdateType.PATCH, patchEntity);
+    final ODataEntityUpdateResponse<ODataEntity> response = request.execute();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+
+    // Check that the patched properties have changed and the other properties not.
+    // This check has to be in the same session in order to access the same data provider.
+    ODataEntityRequest<ODataEntity> entityRequest = client.getRetrieveRequestFactory().getEntityRequest(uri);
+    entityRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
+    final ODataRetrieveResponse<ODataEntity> entityResponse = entityRequest.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
+    final ODataEntity entity = entityResponse.getBody();
+    assertNotNull(entity);
+    final ODataLinkedComplexValue complex = entity.getProperty("PropertyComp").getLinkedComplexValue()
+        .get("PropertyComp").getLinkedComplexValue();
+    assertNotNull(complex);
+    final ODataProperty property1 = complex.get("PropertyInt16");
+    assertNotNull(property1);
+    assertEquals(42, property1.getPrimitiveValue().toValue());
+    final ODataProperty property2 = complex.get("PropertyString");
+    assertNotNull(property2);
+    assertEquals("String 1", property2.getPrimitiveValue().toValue());
+  }
+
+  @Test
+  @Ignore("Actual leads to an unexpected exception")
+  public void updateEntityWithComplex() throws Exception {
+    final ODataClient client = getClient();
+    final ODataObjectFactory factory = client.getObjectFactory();
+    ODataEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETCompComp"));
+    newEntity.getProperties().add(factory.newComplexProperty("PropertyComp", null));
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESCompComp").appendKeySegment(1).build();
+    final ODataEntityUpdateRequest<ODataEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
+        uri, UpdateType.REPLACE, newEntity);
+    final ODataEntityUpdateResponse<ODataEntity> response = request.execute();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+
+    // Check that the complex-property hierarchy is still there and that all primitive values are now null.
+    // This check has to be in the same session in order to access the same data provider.
+    ODataEntityRequest<ODataEntity> entityRequest = client.getRetrieveRequestFactory().getEntityRequest(uri);
+    entityRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
+    final ODataRetrieveResponse<ODataEntity> entityResponse = entityRequest.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
+    final ODataEntity entity = entityResponse.getBody();
+    assertNotNull(entity);
+    final ODataLinkedComplexValue complex = entity.getProperty("PropertyComp").getLinkedComplexValue()
+        .get("PropertyComp").getLinkedComplexValue();
+    assertNotNull(complex);
+    final ODataProperty property = complex.get("PropertyInt16");
+    assertNotNull(property);
+    assertNull(property.getPrimitiveValue());
+  }
+
   /**
-   * Actual an create request for an entity will lead to an "501 - Not Implemented" response
-   * and hence to an ODataServerErrorException
+   * Currently a create request for an entity will lead to a "501 - Not Implemented" response
+   * and hence to an ODataServerErrorException.
    */
   @Test(expected = ODataServerErrorException.class)
   public void createEntity() throws IOException {
     final ODataEntityRequest<ODataEntity> request = getClient().getRetrieveRequestFactory()
-            .getEntityRequest(getClient().newURIBuilder(SERVICE_URI)
-                    .appendEntitySetSegment("ESCollAllPrim").appendKeySegment(1).build());
+        .getEntityRequest(getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment("ESCollAllPrim").appendKeySegment(1).build());
     assertNotNull(request);
 
     final ODataRetrieveResponse<ODataEntity> response = request.execute();
@@ -210,8 +353,8 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertNotNull(entity);
 
     final ODataEntityCreateRequest<ODataEntity> createRequest = getClient().getCUDRequestFactory()
-            .getEntityCreateRequest(getClient().newURIBuilder(SERVICE_URI)
-                    .appendEntitySetSegment("ESCollAllPrim").build(), entity);
+        .getEntityCreateRequest(getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment("ESCollAllPrim").build(), entity);
     assertNotNull(createRequest);
     ODataEntityCreateResponse<ODataEntity> createResponse = createRequest.execute();
 
@@ -228,7 +371,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   }
 
   @Override
-  protected CommonODataClient<?> getClient() {
+  protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getV4();
     odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
     return odata;

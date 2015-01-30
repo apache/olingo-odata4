@@ -25,7 +25,7 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.ODataTranslatedException.ODataErrorMessage;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
@@ -94,13 +94,12 @@ public class ODataExceptionHelper {
     serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
     return serverError;
   }
-  
-  public static ODataServerError createServerErrorObject(BatchDeserializerException e, Locale requestedLocale) {
-    ODataServerError serverError = basicTranslatedError(e, requestedLocale);
-    serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
-    return serverError;
+
+  public static ODataServerError createServerErrorObject(final DeserializerException e, final Locale requestedLocale) {
+    return basicTranslatedError(e, requestedLocale)
+        .setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
   }
-  
+
   public static ODataServerError createServerErrorObject(ODataTranslatedException e, Locale requestedLocale) {
     return basicTranslatedError(e, requestedLocale);
   }
