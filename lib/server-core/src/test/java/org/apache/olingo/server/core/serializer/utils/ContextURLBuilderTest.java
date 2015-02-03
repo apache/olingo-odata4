@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -82,6 +82,36 @@ public class ContextURLBuilderTest {
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
 
+  @Test
+  public void buildEntitySetWithEntitySuffix() {
+    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(entitySet.getName()).thenReturn("Customers");
+    final ContextURL contextURL = ContextURL.with().serviceRoot(URI.create("http://host/service/"))
+        .entitySet(entitySet)
+        .suffix(Suffix.ENTITY)
+        .build();
+    assertEquals("http://host/service/$metadata#Customers/$entity", ContextURLBuilder.create(contextURL)
+        .toASCIIString());
+  }
+
+  @Test
+  public void buildEntity() {
+    EdmEntityType entityType = mock(EdmEntityType.class);
+    when(entityType.getFullQualifiedName()).thenReturn(new FullQualifiedName("namespace.entityType"));
+    ContextURL contextURL = ContextURL.with().serviceRoot(URI.create("http://host/service/"))
+        .type(entityType)
+        .build();
+    assertEquals("http://host/service/$metadata#namespace.entityType", ContextURLBuilder.create(contextURL)
+        .toASCIIString());
+
+    contextURL = ContextURL.with().serviceRoot(URI.create("http://host/service/"))
+        .type(entityType)
+        .asCollection()
+        .build();
+    assertEquals("http://host/service/$metadata#Collection(namespace.entityType)", ContextURLBuilder.create(contextURL)
+        .toASCIIString());
+  }
+
   @Test(expected = IllegalArgumentException.class)
   public void buildDerivedEntitySetWithoutEntitySet() {
     EdmEntityType derivedType = Mockito.mock(EdmEntityType.class);
@@ -124,7 +154,7 @@ public class ContextURLBuilderTest {
         .build();
     assertEquals("http://host/service/$metadata#Customers(one=1,two='two')/ComplexName(Part1)",
         ContextURLBuilder.create(contextURL).toASCIIString());
-  }  
+  }
 
   @Test
   public void buildPrimitiveType() {
@@ -135,13 +165,13 @@ public class ContextURLBuilderTest {
         .build();
     assertEquals("http://host/service/$metadata#Edm.String",
         ContextURLBuilder.create(contextURL).toASCIIString());
-    
+
     contextURL = ContextURL.with().serviceRoot(URI.create("http://host/service/"))
         .type(EdmString.getInstance()).asCollection()
         .build();
     assertEquals("http://host/service/$metadata#Collection(Edm.String)",
         ContextURLBuilder.create(contextURL).toString());
-  }  
+  }
 
   @Test
   public void buildComplexType() throws Exception {
@@ -158,16 +188,23 @@ public class ContextURLBuilderTest {
         .setNavigationProperties(baseNavigationProperties);
     when(provider.getComplexType(baseName)).thenReturn(baseComplexType);
 
-    EdmComplexType baseType = EdmComplexTypeImpl.getInstance(edm, baseName, baseComplexType);    
-    
+    EdmComplexType baseType = EdmComplexTypeImpl.getInstance(edm, baseName, baseComplexType);
+
     EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
     Mockito.when(entitySet.getName()).thenReturn("Customers");
     ContextURL contextURL = ContextURL.with().serviceRoot(URI.create("http://host/service/"))
         .type(baseType)
         .build();
     assertEquals("http://host/service/$metadata#namespace.BaseTypeName",
-        ContextURLBuilder.create(contextURL).toASCIIString());    
-  }  
+        ContextURLBuilder.create(contextURL).toASCIIString());
+
+    contextURL = ContextURL.with().serviceRoot(URI.create("http://host/service/"))
+        .type(baseType)
+        .asCollection()
+        .build();
+    assertEquals("http://host/service/$metadata#Collection(namespace.BaseTypeName)",
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
 
   @Test(expected = IllegalArgumentException.class)
   public void buildSuffixWithoutEntitySet() {
