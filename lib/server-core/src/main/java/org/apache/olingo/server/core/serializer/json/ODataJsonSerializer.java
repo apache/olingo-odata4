@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -47,10 +47,10 @@ import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
+import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
@@ -323,6 +323,11 @@ public class ODataJsonSerializer implements ODataSerializer {
             selectedPaths, json);
       } else if (property.isComplex()) {
         writeComplexValue((EdmComplexType) edmProperty.getType(), property.asComplex(), selectedPaths, json);
+      } else if (property.isEnum()) {
+        writePrimitive((EdmPrimitiveType) edmProperty.getType(), property,
+            edmProperty.isNullable(), edmProperty.getMaxLength(),
+            edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(),
+            json);
       } else {
         throw new SerializerException("Property type not yet supported!",
             SerializerException.MessageKeys.UNSUPPORTED_PROPERTY_TYPE, edmProperty.getName());

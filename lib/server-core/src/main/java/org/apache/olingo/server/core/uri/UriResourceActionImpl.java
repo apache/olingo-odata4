@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -56,12 +56,18 @@ public class UriResourceActionImpl extends UriResourceTypedImpl implements UriRe
 
   @Override
   public boolean isCollection() {
-    return action.getReturnType().isCollection();
+    if (action.getReturnType() != null) {
+      return action.getReturnType().isCollection();
+    }
+    return false;
   }
 
   @Override
   public EdmType getType() {
-    return action.getReturnType().getType();
+    if (action.getReturnType() != null) {
+      return action.getReturnType().getType();
+    }
+    return null;
   }
 
   @Override

@@ -1,0 +1,179 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.apache.olingo.server.core;
+
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataRequest;
+import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
+import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.uri.UriInfoBatch;
+import org.apache.olingo.server.api.uri.UriInfoMetadata;
+import org.apache.olingo.server.api.uri.UriInfoService;
+import org.apache.olingo.server.api.uri.UriResourceAction;
+import org.apache.olingo.server.api.uri.UriResourceComplexProperty;
+import org.apache.olingo.server.api.uri.UriResourceCount;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
+import org.apache.olingo.server.api.uri.UriResourceNavigation;
+import org.apache.olingo.server.api.uri.UriResourcePrimitiveProperty;
+import org.apache.olingo.server.api.uri.UriResourceRef;
+import org.apache.olingo.server.api.uri.UriResourceSingleton;
+import org.apache.olingo.server.api.uri.UriResourceValue;
+import org.apache.olingo.server.core.uri.parser.Parser;
+import org.apache.olingo.server.core.uri.validator.UriValidator;
+
+public class ServiceDispatcher extends RequestURLHierarchyVisitor {
+  private final OData odata;
+  protected ServiceMetadata metadata;
+  protected ServiceHandler handler;
+  protected CustomContentTypeSupport customContentSupport;
+
+  private ServiceRequest request;
+
+  public ServiceDispatcher(OData odata, ServiceMetadata metadata, ServiceHandler handler,
+      CustomContentTypeSupport customContentSupport) {
+    this.odata = odata;
+    this.metadata = metadata;
+    this.handler = handler;
+    this.customContentSupport = customContentSupport;
+  }
+
+  public void execute(ODataRequest odRequest, ODataResponse odResponse)
+      throws ODataTranslatedException, ODataApplicationException {
+
+    UriInfo uriInfo = new Parser().parseUri(odRequest.getRawODataPath(), odRequest.getRawQueryPath(), null,
+        this.metadata.getEdm());
+
+    new UriValidator().validate(uriInfo, odRequest.getMethod());
+
+    visit(uriInfo);
+
+    // this should cover for any unsupported calls until they are implemented
+    if (this.request == null) {
+      this.request = new ServiceRequest(this.odata, this.metadata) {
+        @Override
+        public ContentType getResponseContentType() throws ContentNegotiatorException {
+          return ContentType.APPLICATION_JSON;
+        }
+
+        @Override
+        public void execute(ServiceHandler handler, ODataResponse response)
+            throws ODataTranslatedException, ODataApplicationException {
+          handler.anyUnsupported(getODataRequest(), response);
+        }
+      };
+    }
+
+    this.request.setODataRequest(odRequest);
+    this.request.setUriInfo(uriInfo);
+    this.request.setCustomContentTypeSupport(this.customContentSupport);
+    this.request.execute(this.handler, odResponse);
+  }
+
+  @Override
+  public void visit(UriInfoMetadata info) {
+    this.request = new MetadataRequest(this.odata, this.metadata);
+  }
+
+  @Override
+  public void visit(UriInfoService info) {
+    this.request = new ServiceDocumentRequest(this.odata, this.metadata);
+  }
+
+  @Override
+  public void visit(UriResourceEntitySet info) {
+    DataRequest dataRequest = new DataRequest(this.odata, this.metadata);
+    dataRequest.setUriResourceEntitySet(info);
+    this.request = dataRequest;
+  }
+
+  @Override
+  public void visit(UriResourceCount option) {
+    DataRequest dataRequest = (DataRequest) this.request;
+    dataRequest.setCountRequest(option != null);
+  }
+
+  @Override
+  public void visit(UriResourceComplexProperty info) {
+    DataRequest dataRequest = (DataRequest) this.request;
+    dataRequest.setUriResourceProperty(info);
+  }
+
+  @Override
+  public void visit(UriResourcePrimitiveProperty info) {
+    DataRequest dataRequest = (DataRequest) this.request;
+    dataRequest.setUriResourceProperty(info);
+  }
+
+  @Override
+  public void visit(UriResourceValue info) {
+    DataRequest dataRequest = (DataRequest) this.request;
+    if (dataRequest.isPropertyRequest()) {
+      dataRequest.setValueRequest(info != null);
+    } else {
+      MediaRequest mediaRequest = new MediaRequest(this.odata, this.metadata);
+      mediaRequest.setUriResourceEntitySet(dataRequest.getUriResourceEntitySet());
+      this.request = mediaRequest;
+    }
+  }
+
+  @Override
+  public void visit(UriResourceAction info) {
+    ActionRequest actionRequest = new ActionRequest(this.odata, this.metadata);
+    actionRequest.setUriResourceAction(info);
+    this.request = actionRequest;
+  }
+
+  @Override
+  public void visit(UriResourceFunction info) {
+    FunctionRequest functionRequest = new FunctionRequest(this.odata, this.metadata);
+    functionRequest.setUriResourceFunction(info);
+    this.request = functionRequest;
+  }
+
+  @Override
+  public void visit(UriResourceNavigation info) {
+    DataRequest dataRequest = (DataRequest) this.request;
+    dataRequest.setUriResourceNavigation(info);
+  }
+
+  @Override
+  public void visit(UriResourceRef info) {
+    // this is same as data, but return is just entity references.
+    DataRequest dataRequest = (DataRequest) this.request;
+    dataRequest.setReferenceRequest(info != null);
+  }
+
+  @Override
+  public void visit(UriInfoBatch info) {
+    this.request = new BatchRequest(this.odata, this.metadata);
+  }
+
+  @Override
+  public void visit(UriResourceSingleton info) {
+    DataRequest dataRequest = new DataRequest(this.odata, this.metadata);
+    dataRequest.setUriResourceSingleton(info);
+    this.request = dataRequest;
+  }
+}

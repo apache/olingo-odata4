@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -314,8 +314,8 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertEquals(3, asCollection.size());
 
     for (Object arrayElement : asCollection) {
-      assertTrue(arrayElement instanceof List);
-      List<Object> castedArrayElement = (List<Object>) arrayElement;
+      assertTrue(arrayElement instanceof Property);
+      List<?> castedArrayElement = ((Property) arrayElement).asComplex();
       assertEquals(2, castedArrayElement.size());
     }
   }
@@ -352,8 +352,8 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertEquals(3, asCollection.size());
 
     for (Object arrayElement : asCollection) {
-      assertTrue(arrayElement instanceof List);
-      List<Object> castedArrayElement = (List<Object>) arrayElement;
+      assertTrue(arrayElement instanceof Property);
+      List<?> castedArrayElement = ((Property) arrayElement).asComplex();
       assertEquals(1, castedArrayElement.size());
     }
   }
@@ -579,8 +579,9 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     Entity entity = deserializer.entity(stream, edm.getEntityType(
         new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     List<?> collPropertyComp = entity.getProperty("CollPropertyComp").asCollection();
-    assertNull(collPropertyComp.get(0));
-    List<Property> complexPropertyProperties = (List<Property>) collPropertyComp.get(1);
+    assertNull(((Property)collPropertyComp.get(0)).getValue());
+    Property complexProperty = (Property)collPropertyComp.get(1);
+    List<Property> complexPropertyProperties = complexProperty.asComplex();
     assertEquals(Short.valueOf((short) 789), complexPropertyProperties.get(0).getValue());
     assertEquals("TEST 3", complexPropertyProperties.get(1).getValue());
   }

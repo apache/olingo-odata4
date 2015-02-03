@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -52,7 +52,7 @@ public class UriValidator {
 
   //@formatter:off (Eclipse formatter)
   //CHECKSTYLE:OFF (Maven checkstyle)
-  private boolean[][] decisionMatrix =
+  private final boolean[][] decisionMatrix =
       {
           /*                                          0-FILTER 1-FORMAT 2-EXPAND 3-ID     4-COUNT  5-ORDERBY 6-SEARCH 7-SELECT 8-SKIP   9-SKIPTOKEN 10-LEVELS 11-TOP */
           /*                              all  0 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true ,    false },
@@ -74,10 +74,10 @@ public class UriValidator {
           /*                propertyPrimitive 16 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
           /*      propertyPrimitiveCollection 17 */ { true ,   true ,   false,   false,   false,   true ,    false,   false,   true ,   true ,      false,    true  },
           /* propertyPrimitiveCollectionCount 18 */ { true,    false,   false,   false,   false,   false,    true,    false,   false,   false,      false,    false },
-          /*           propertyPrimitiveValue 19 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },                    
+          /*           propertyPrimitiveValue 19 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
       };
 
-  private boolean[][] decisionMatrixForHttpMethod =
+  private final boolean[][] decisionMatrixForHttpMethod =
     {
         /*                                          0-FILTER 1-FORMAT 2-EXPAND 3-ID     4-COUNT  5-ORDERBY 6-SEARCH 7-SELECT 8-SKIP   9-SKIPTOKEN 10-LEVELS 11-TOP */
         /*                              GET  0 */ { true ,   true ,   true ,   true,    true ,   true ,    true ,   true ,   true ,   true ,      true ,    true },
@@ -492,6 +492,9 @@ public class UriValidator {
     RowIndexForUriType idx;
     UriResourceAction ura = (UriResourceAction) lastPathSegment;
     EdmReturnType rt = ura.getAction().getReturnType();
+    if (rt == null) {
+      return null;
+    }
     switch (rt.getType().getKind()) {
     case ENTITY:
       if (((EdmEntityType) rt.getType()).hasStream()) {
@@ -557,11 +560,10 @@ public class UriValidator {
 
   private void validateQueryOptions(final UriInfo uriInfo) throws UriValidationException {
     RowIndexForUriType row = rowIndexForUriType(uriInfo);
-
     for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
       ColumnIndex col = colIndex(option.getKind());
 
-      if (!decisionMatrix[row.getIndex()][col.getIndex()]) {
+      if (row == null || !decisionMatrix[row.getIndex()][col.getIndex()]) {
         throw new UriValidationException("System query option not allowed: " + option.getName(),
             UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED, option.getName());
       }

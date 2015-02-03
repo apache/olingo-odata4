@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.deserializer.json;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -180,7 +181,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   /**
    * Consume all remaining fields of Json ObjectNode and try to map found values
    * to according Entity fields and omit to be ignored OData fields (e.g. control information).
-   * 
+   *
    * @param edmEntityType edm entity type which for which the json node is consumed
    * @param node json node which is consumed
    * @param entity entity instance which is filled
@@ -341,7 +342,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       break;
     case ENUM:
       value = readEnumValue(edmProperty, jsonNode);
-      property.setValue(ValueType.PRIMITIVE, value);
+      property.setValue(ValueType.ENUM, value);
       break;
     case COMPLEX:
       value = readComplexNode(edmProperty, jsonNode);
@@ -420,7 +421,11 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       while (iterator.hasNext()) {
         // read and add all complex properties
         Object value = readComplexNode(edmProperty, iterator.next());
-        valueArray.add(value);
+        Property complex = new PropertyImpl();
+        complex.setName(edmProperty.getName());
+        complex.setType(edmProperty.getType().getFullQualifiedName().getFullQualifiedNameAsString());
+        complex.setValue(ValueType.COMPLEX, value);
+        valueArray.add(complex);
       }
       property.setValue(ValueType.COLLECTION_COMPLEX, valueArray);
       break;
@@ -556,7 +561,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   /**
    * Check if JsonNode is a value node (<code>jsonNode.isValueNode()</code>) and if not throw
    * an DeserializerException.
-   * 
+   *
    * @param edmProperty property which is checked
    * @param jsonNode node which is checked
    * @throws DeserializerException is thrown if json node is not a value node
@@ -573,7 +578,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   /**
    * Validate that node is empty (<code>node.size == 0</code>) and if not throw
    * an <code>DeserializerException</code>.
-   * 
+   *
    * @param node node to be checked
    * @throws DeserializerException if node is not empty
    */
@@ -632,6 +637,65 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     default:
       throw new DeserializerException("Unsupported Edm Primitive Type: " + primKind,
           DeserializerException.MessageKeys.NOT_IMPLEMENTED);
+    }
+  }
+
+  @Override
+  public Property property(InputStream stream, EdmProperty edmProperty)
+      throws DeserializerException {
+    try {
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
+      JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
+      final ObjectNode tree = parser.getCodec().readTree(parser);
+
+      Property property = null;
+      JsonNode jsonNode = tree.get(Constants.VALUE);
+      if (jsonNode != null) {
+        property = consumePropertyNode(edmProperty, jsonNode);
+        tree.remove(Constants.VALUE);
+      } else {
+        property = consumePropertyNode(edmProperty, tree);
+      }
+      return property;
+    } catch (JsonParseException e) {
+      throw new DeserializerException("An JsonParseException occurred", e,
+          DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
+    } catch (JsonMappingException e) {
+      throw new DeserializerException("Duplicate property detected", e,
+          DeserializerException.MessageKeys.DUPLICATE_PROPERTY);
+    } catch (IOException e) {
+      throw new DeserializerException("An IOException occurred", e, DeserializerException.MessageKeys.IO_EXCEPTION);
+    }
+  }
+
+  public Map<String, String> read(InputStream stream, String... keys) throws DeserializerException {
+    try {
+      HashMap<String, String> parsedValues = new HashMap<String, String>();
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
+      JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
+      final ObjectNode tree = parser.getCodec().readTree(parser);
+
+      for (String key:keys) {
+        JsonNode jsonNode = tree.get(Constants.VALUE);
+        if (jsonNode != null) {
+          parsedValues.put(key, jsonNode.asText());
+          tree.remove(Constants.VALUE);
+          // if this is value there can be only one property
+          return parsedValues;
+        }
+        parsedValues.put(key, tree.get(key).asText());
+      }
+      return parsedValues;
+    } catch (JsonParseException e) {
+      throw new DeserializerException("An JsonParseException occurred", e,
+          DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
+    } catch (JsonMappingException e) {
+      throw new DeserializerException("Duplicate property detected", e,
+          DeserializerException.MessageKeys.DUPLICATE_PROPERTY);
+    } catch (IOException e) {
+      throw new DeserializerException("An IOException occurred", e, DeserializerException.MessageKeys.IO_EXCEPTION);
     }
   }
 }
