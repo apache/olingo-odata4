@@ -251,7 +251,7 @@ public class MetadataTest extends AbstractTest {
             entity.getProperty("ProductId").getType());
 
     assertFalse(entity.getKeyPropertyRefs().isEmpty());
-    assertNotNull("ProductId", entity.getKeyPropertyRef("ProductId").getKeyPropertyName());
+    assertNotNull("ProductId", entity.getKeyPropertyRef("ProductId").getName());
   }
 
   @Test

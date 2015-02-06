@@ -35,28 +35,25 @@ public abstract class AbstractEdmKeyPropertyRef implements EdmKeyPropertyRef {
   }
 
   @Override
-  public abstract String getKeyPropertyName();
+  public abstract String getName();
 
   @Override
   public abstract String getAlias();
 
   @Override
-  public abstract String getPath();
-
-  @Override
   public EdmProperty getProperty() {
     if (property == null) {
       if (getAlias() == null) {
-        property = edmEntityType.getStructuralProperty(getKeyPropertyName());
+        property = edmEntityType.getStructuralProperty(getName());
         if (property == null) {
           throw new EdmException("Invalid key property ref specified. Can´t find property with name: "
-              + getKeyPropertyName());
+              + getName());
         }
       } else {
-        if (getPath() == null || getPath().isEmpty()) {
+        if (getName() == null || getName().isEmpty()) {
           throw new EdmException("Alias but no path specified for propertyRef");
         }
-        final String[] splitPath = getPath().split("/");
+        final String[] splitPath = getName().split("/");
         EdmStructuredType structType = edmEntityType;
         for (int i = 0; i < splitPath.length - 1; i++) {
           final EdmProperty _property = structType.getStructuralProperty(splitPath[i]);

@@ -32,17 +32,12 @@ public class EdmKeyPropertyRefImpl extends AbstractEdmKeyPropertyRef {
   }
 
   @Override
-  public String getKeyPropertyName() {
+  public String getName() {
     return ref.getPropertyName();
   }
 
   @Override
   public String getAlias() {
     return ref.getAlias();
-  }
-
-  @Override
-  public String getPath() {
-    return ref.getPath();
   }
 }

@@ -50,7 +50,7 @@ public class EdmSingletonImplTest {
     final FullQualifiedName typeName = new FullQualifiedName("ns", "entityType");
     final EntityType entityTypeProvider = new EntityType()
         .setName(typeName.getName())
-        .setKey(Arrays.asList(new PropertyRef().setPropertyName("Id")));
+        .setKey(Arrays.asList(new PropertyRef().setName("Id")));
     when(provider.getEntityType(typeName)).thenReturn(entityTypeProvider);
 
     final FullQualifiedName containerName = new FullQualifiedName("ns", "container");

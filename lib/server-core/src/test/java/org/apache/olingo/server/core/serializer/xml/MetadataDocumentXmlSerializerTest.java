@@ -318,7 +318,7 @@ public class MetadataDocumentXmlSerializerTest {
         return new EntityType()
             .setName("ETAbstractBase")
             .setBaseType(nameETAbstract)
-            .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
+            .setKey(Arrays.asList(new PropertyRef().setName("PropertyInt16")))
             .setProperties(Arrays.asList(
                 propertyInt16_NotNullable));
       }

@@ -67,7 +67,7 @@ public class EdmEntityTypeImplTest {
     properties.add(new Property().setName("Name").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
     baseType.setProperties(properties);
     List<PropertyRef> key = new ArrayList<PropertyRef>();
-    key.add(new PropertyRef().setPropertyName("Id"));
+    key.add(new PropertyRef().setName("Id"));
     baseType.setKey(key);
     List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
     navigationProperties.add(new NavigationProperty().setName("nav1"));
@@ -108,9 +108,8 @@ public class EdmEntityTypeImplTest {
     typeWithComplexKeyProperties.add(new Property().setName("Comp").setType(complexTypeName));
     typeWithComplexKeyProvider.setProperties(typeWithComplexKeyProperties);
     List<PropertyRef> keyForTypeWithComplexKey = new ArrayList<PropertyRef>();
-    keyForTypeWithComplexKey.add(new PropertyRef().setPropertyName("Id"));
-    keyForTypeWithComplexKey.add(new PropertyRef().setPropertyName("ComplexPropName").setAlias("alias").setPath(
-        "Comp/ComplexPropName"));
+    keyForTypeWithComplexKey.add(new PropertyRef().setName("Id"));
+    keyForTypeWithComplexKey.add(new PropertyRef().setName("Comp/ComplexPropName").setAlias("alias"));
     typeWithComplexKeyProvider.setKey(keyForTypeWithComplexKey);
     when(provider.getEntityType(typeWithComplexKeyName)).thenReturn(typeWithComplexKeyProvider);
 
@@ -149,7 +148,7 @@ public class EdmEntityTypeImplTest {
     typeProperties.add(new Property().setName("email").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
     type.setProperties(typeProperties);
     List<PropertyRef> key = new ArrayList<PropertyRef>();
-    key.add(new PropertyRef().setPropertyName("email"));
+    key.add(new PropertyRef().setName("email"));
     type.setKey(key);
     List<NavigationProperty> typeNavigationProperties = new ArrayList<NavigationProperty>();
     typeNavigationProperties.add(new NavigationProperty().setName("nav2"));
@@ -188,7 +187,7 @@ public class EdmEntityTypeImplTest {
     properties.add(new Property().setName("Name").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
     baseType.setProperties(properties);
     List<PropertyRef> key = new ArrayList<PropertyRef>();
-    key.add(new PropertyRef().setPropertyName("Id"));
+    key.add(new PropertyRef().setName("Id"));
     baseType.setKey(key);
     List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
     navigationProperties.add(new NavigationProperty().setName("nav1"));
@@ -242,7 +241,7 @@ public class EdmEntityTypeImplTest {
 
     EdmKeyPropertyRef keyPropertyRef = typeWithComplexKey.getKeyPropertyRef("Id");
     assertNotNull(keyPropertyRef);
-    assertEquals("Id", keyPropertyRef.getKeyPropertyName());
+    assertEquals("Id", keyPropertyRef.getName());
     assertNull(keyPropertyRef.getAlias());
     EdmProperty keyProperty = keyPropertyRef.getProperty();
     assertNotNull(keyProperty);
@@ -250,9 +249,8 @@ public class EdmEntityTypeImplTest {
 
     keyPropertyRef = typeWithComplexKey.getKeyPropertyRef("alias");
     assertNotNull(keyPropertyRef);
-    assertEquals("ComplexPropName", keyPropertyRef.getKeyPropertyName());
+    assertEquals("Comp/ComplexPropName", keyPropertyRef.getName());
     assertEquals("alias", keyPropertyRef.getAlias());
-    assertEquals("Comp/ComplexPropName", keyPropertyRef.getPath());
 
     keyProperty = keyPropertyRef.getProperty();
     assertNotNull(keyProperty);
@@ -270,7 +268,7 @@ public class EdmEntityTypeImplTest {
 
     EdmKeyPropertyRef keyPropertyRef = baseType.getKeyPropertyRef("Id");
     assertNotNull(keyPropertyRef);
-    assertEquals("Id", keyPropertyRef.getKeyPropertyName());
+    assertEquals("Id", keyPropertyRef.getName());
     assertNull(keyPropertyRef.getAlias());
 
     EdmProperty keyProperty = keyPropertyRef.getProperty();
@@ -280,7 +278,7 @@ public class EdmEntityTypeImplTest {
     List<EdmKeyPropertyRef> keyPropertyRefs = baseType.getKeyPropertyRefs();
     assertNotNull(keyPropertyRefs);
     assertEquals(1, keyPropertyRefs.size());
-    assertEquals("Id", keyPropertyRefs.get(0).getKeyPropertyName());
+    assertEquals("Id", keyPropertyRefs.get(0).getName());
   }
 
   @Test
@@ -291,13 +289,13 @@ public class EdmEntityTypeImplTest {
 
     EdmKeyPropertyRef keyPropertyRef = typeWithBaseType.getKeyPropertyRef("Id");
     assertNotNull(keyPropertyRef);
-    assertEquals("Id", keyPropertyRef.getKeyPropertyName());
+    assertEquals("Id", keyPropertyRef.getName());
     assertNull(keyPropertyRef.getAlias());
 
     List<EdmKeyPropertyRef> keyPropertyRefs = typeWithBaseType.getKeyPropertyRefs();
     assertNotNull(keyPropertyRefs);
     assertEquals(1, keyPropertyRefs.size());
-    assertEquals("Id", keyPropertyRefs.get(0).getKeyPropertyName());
+    assertEquals("Id", keyPropertyRefs.get(0).getName());
     assertTrue(keyPropertyRefs == typeWithBaseType.getKeyPropertyRefs());
   }
 

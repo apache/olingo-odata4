@@ -555,13 +555,8 @@ public class MetadataDocumentXmlSerializer {
       writer.writeStartElement(XML_KEY);
       for (EdmKeyPropertyRef keyRef : keyPropertyRefs) {
         writer.writeEmptyElement(XML_PROPERTY_REF);
-        final String keyName;
-        if (keyRef.getPath() != null) {
-          keyName = keyRef.getPath() + "/" + keyRef.getKeyPropertyName();
-        } else {
-          keyName = keyRef.getKeyPropertyName();
-        }
-        writer.writeAttribute(XML_NAME, keyName);
+
+        writer.writeAttribute(XML_NAME, keyRef.getName());
 
         if (keyRef.getAlias() != null) {
           writer.writeAttribute(XML_ALIAS, keyRef.getAlias());

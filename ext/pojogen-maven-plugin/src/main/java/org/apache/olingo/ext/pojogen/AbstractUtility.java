@@ -364,7 +364,7 @@ public abstract class AbstractUtility {
 
     final Map<String, String> res = new LinkedHashMap<String, String>();
     for (EdmKeyPropertyRef pref : baseType.getKeyPropertyRefs()) {
-      res.put(pref.getKeyPropertyName(),
+      res.put(pref.getName(),
               getJavaType(pref.getProperty().getType().getFullQualifiedName().toString()));
     }
 

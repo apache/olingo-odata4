@@ -54,8 +54,8 @@ public abstract class AbstractEdmEntityType extends AbstractEdmStructuredType im
   protected void setEdmKeyPropertyRef(final List<EdmKeyPropertyRef> edmKey) {
     for (EdmKeyPropertyRef ref : edmKey) {
       if (ref.getAlias() == null) {
-        keyPredicateNames.add(ref.getKeyPropertyName());
-        keyPropertyRefs.put(ref.getKeyPropertyName(), ref);
+        keyPredicateNames.add(ref.getName());
+        keyPropertyRefs.put(ref.getName(), ref);
       } else {
         keyPredicateNames.add(ref.getAlias());
         keyPropertyRefs.put(ref.getAlias(), ref);

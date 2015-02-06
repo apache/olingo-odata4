@@ -32,7 +32,7 @@ public class EdmKeyPropertyRefImpl extends AbstractEdmKeyPropertyRef {
   }
 
   @Override
-  public String getKeyPropertyName() {
+  public String getName() {
     return propertyRef.getName();
   }
 
@@ -40,10 +40,4 @@ public class EdmKeyPropertyRefImpl extends AbstractEdmKeyPropertyRef {
   public String getAlias() {
     return propertyRef.getAlias();
   }
-
-  @Override
-  public String getPath() {
-    throw new UnsupportedOperationException("Not supported in client code.");
-  }
-
 }

@@ -24,19 +24,14 @@ package org.apache.olingo.commons.api.edm;
 public interface EdmKeyPropertyRef {
 
   /**
-   * @return name of the key predicate
+   * @return name of the key predicate. Can be a path in case the alias is set.
    */
-  String getKeyPropertyName();
+  String getName();
 
   /**
    * @return alias of this reference or null if not set
    */
   String getAlias();
-
-  /**
-   * @return path to the property
-   */
-  String getPath();
 
   /**
    * @return the property this property ref points to

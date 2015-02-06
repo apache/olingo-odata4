@@ -621,7 +621,7 @@ public class UriValidator {
           final List<String> keyPredicateNames = pathEntitySet.getEntityType().getKeyPredicateNames();
           HashMap<String, EdmKeyPropertyRef> edmKeys = new HashMap<String, EdmKeyPropertyRef>();
           for (EdmKeyPropertyRef key : pathEntitySet.getEntityType().getKeyPropertyRefs()) {
-            edmKeys.put(key.getKeyPropertyName(), key);
+            edmKeys.put(key.getName(), key);
             final String alias = key.getAlias();
             if (alias != null) {
               edmKeys.put(alias, key);

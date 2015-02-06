@@ -83,7 +83,7 @@ public class EdmTechTestProvider extends EdmTechProvider {
 
   @Override
   public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
-    List<PropertyRef> oneKeyPropertyInt16 = Arrays.asList(new PropertyRef().setPropertyName("a"));
+    List<PropertyRef> oneKeyPropertyInt16 = Arrays.asList(new PropertyRef().setName("a"));
 
     if (entityTypeName.equals(nameETabc)) {
       return new EntityType()

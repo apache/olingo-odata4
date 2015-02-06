@@ -64,7 +64,7 @@ public class CarsEdmProvider extends EdmProvider {
       return new EntityType()
           .setName(ET_CAR.getName())
           .setKey(Arrays.asList(
-              new PropertyRef().setPropertyName("Id")))
+              new PropertyRef().setName("Id")))
           .setProperties(
               Arrays.asList(
                   new Property().setName("Id").setType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName()),
@@ -85,7 +85,7 @@ public class CarsEdmProvider extends EdmProvider {
       return new EntityType()
           .setName(ET_MANUFACTURER.getName())
           .setKey(Arrays.asList(
-              new PropertyRef().setPropertyName("Id")))
+              new PropertyRef().setName("Id")))
           .setProperties(Arrays.asList(
               new Property().setName("Id").setType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName()),
               new Property().setName("Name").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()),
