@@ -24,9 +24,9 @@ package org.apache.olingo.commons.api.edm;
 public interface EdmMappable {
 
   /**
-   * Get mapping information applied to an EDM element
+   * Get mapping information applied to an EDM element. May return null if no mapping is defined.
    * 
-   * @return {@link EdmMapping}
+   * @return {@link EdmMapping} or <b>null</b> if no mapping is defined
    */
   EdmMapping getMapping();
 }

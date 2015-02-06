@@ -24,10 +24,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
@@ -35,11 +40,19 @@ import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
+import org.apache.olingo.server.api.edm.provider.Mapping;
+import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
 
 public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTest {
@@ -106,26 +119,26 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test
   public void simpleEntityETAllPrimWithDefaultNullValue() throws Exception {
     String entityString =
-            "{\"PropertyInt16\":32767," +
-                    "\"PropertyString\":\"First Resource - positive values\"," +
-                    "\"PropertyBoolean\":null," +
-                    "\"PropertyByte\":255," +
-                    "\"PropertySByte\":127," +
-                    "\"PropertyInt32\":2147483647," +
-                    "\"PropertyInt64\":9223372036854775807," +
-                    "\"PropertySingle\":1.79E20," +
-                    "\"PropertyDouble\":-1.79E19," +
-                    "\"PropertyDecimal\":34," +
-                    "\"PropertyBinary\":\"ASNFZ4mrze8=\"," +
-                    "\"PropertyDate\":null," +
-                    "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\"," +
-                    "\"PropertyDuration\":\"PT6S\"," +
-                    "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," +
-                    "\"PropertyTimeOfDay\":\"03:26:05\"}";
+        "{\"PropertyInt16\":32767," +
+            "\"PropertyString\":\"First Resource - positive values\"," +
+            "\"PropertyBoolean\":null," +
+            "\"PropertyByte\":255," +
+            "\"PropertySByte\":127," +
+            "\"PropertyInt32\":2147483647," +
+            "\"PropertyInt64\":9223372036854775807," +
+            "\"PropertySingle\":1.79E20," +
+            "\"PropertyDouble\":-1.79E19," +
+            "\"PropertyDecimal\":34," +
+            "\"PropertyBinary\":\"ASNFZ4mrze8=\"," +
+            "\"PropertyDate\":null," +
+            "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\"," +
+            "\"PropertyDuration\":\"PT6S\"," +
+            "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," +
+            "\"PropertyTimeOfDay\":\"03:26:05\"}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     Entity entity =
-            deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+        deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
     assertNotNull(entity);
     List<Property> properties = entity.getProperties();
     assertNotNull(properties);
@@ -155,26 +168,26 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test
   public void simpleEntityETNoneNullable() throws Exception {
     String entityString =
-            "{\"PropertyInt16\":32767," +
-                    "\"PropertyString\":\"First Resource - positive values\"," +
-                    "\"PropertyBoolean\":null," +
-                    "\"PropertyByte\":255," +
-                    "\"PropertySByte\":127," +
-                    "\"PropertyInt32\":2147483647," +
-                    "\"PropertyInt64\":9223372036854775807," +
-                    "\"PropertySingle\":1.79E20," +
-                    "\"PropertyDouble\":-1.79E19," +
-                    "\"PropertyDecimal\":34," +
-                    "\"PropertyBinary\":\"ASNFZ4mrze8=\"," +
-                    "\"PropertyDate\":null," +
-                    "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\"," +
-                    "\"PropertyDuration\":\"PT6S\"," +
-                    "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," +
-                    "\"PropertyTimeOfDay\":\"03:26:05\"}";
+        "{\"PropertyInt16\":32767," +
+            "\"PropertyString\":\"First Resource - positive values\"," +
+            "\"PropertyBoolean\":null," +
+            "\"PropertyByte\":255," +
+            "\"PropertySByte\":127," +
+            "\"PropertyInt32\":2147483647," +
+            "\"PropertyInt64\":9223372036854775807," +
+            "\"PropertySingle\":1.79E20," +
+            "\"PropertyDouble\":-1.79E19," +
+            "\"PropertyDecimal\":34," +
+            "\"PropertyBinary\":\"ASNFZ4mrze8=\"," +
+            "\"PropertyDate\":null," +
+            "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\"," +
+            "\"PropertyDuration\":\"PT6S\"," +
+            "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," +
+            "\"PropertyTimeOfDay\":\"03:26:05\"}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     Entity entity =
-            deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+        deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
     assertNotNull(entity);
     List<Property> properties = entity.getProperties();
     assertNotNull(properties);
@@ -489,7 +502,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     Entity entity =
         deserializer.entity(stream, edm
-                .getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
+            .getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
 
     assertEquals(6, entity.getProperties().size());
 
@@ -509,31 +522,31 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test
   public void eTCollAllPrimWithNullValue() throws Exception {
     final String entityString = "{"
-            + "\"PropertyInt16\":1,"
-            + "\"CollPropertyString\":"
-            + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
-            + "\"CollPropertyBoolean\":[true,null,false],"
-            + "\"CollPropertyByte\":[50,200,249],"
-            + "\"CollPropertySByte\":[-120,120,126],"
-            + "\"CollPropertyInt16\":[1000,2000,30112],"
-            + "\"CollPropertyInt32\":[23232323,11223355,10000001],"
-            + "\"CollPropertyInt64\":[929292929292,333333333333,444444444444],"
-            + "\"CollPropertySingle\":[1790.0,26600.0,3210.0],"
-            + "\"CollPropertyDouble\":[-17900.0,-2.78E7,3210.0],"
-            + "\"CollPropertyDecimal\":[12,-2,1234],"
-            + "\"CollPropertyBinary\":[\"q83v\",\"ASNF\",\"VGeJ\"],"
-            + "\"CollPropertyDate\":[\"1958-12-03\",\"1999-08-05\",\"2013-06-25\"],"
-            + "\"CollPropertyDateTimeOffset\":[\"2015-08-12T03:08:34Z\",\"1970-03-28T12:11:10Z\","
-            + "\"1948-02-17T09:09:09Z\"],"
-            + "\"CollPropertyDuration\":[\"PT13S\",\"PT5H28M0S\",\"PT1H0S\"],"
-            + "\"CollPropertyGuid\":[\"ffffff67-89ab-cdef-0123-456789aaaaaa\",\"eeeeee67-89ab-cdef-0123-456789bbbbbb\","
-            + "\"cccccc67-89ab-cdef-0123-456789cccccc\"],"
-            + "\"CollPropertyTimeOfDay\":[\"04:14:13\",\"23:59:59\",\"01:12:33\"]"
-            + "}";
+        + "\"PropertyInt16\":1,"
+        + "\"CollPropertyString\":"
+        + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
+        + "\"CollPropertyBoolean\":[true,null,false],"
+        + "\"CollPropertyByte\":[50,200,249],"
+        + "\"CollPropertySByte\":[-120,120,126],"
+        + "\"CollPropertyInt16\":[1000,2000,30112],"
+        + "\"CollPropertyInt32\":[23232323,11223355,10000001],"
+        + "\"CollPropertyInt64\":[929292929292,333333333333,444444444444],"
+        + "\"CollPropertySingle\":[1790.0,26600.0,3210.0],"
+        + "\"CollPropertyDouble\":[-17900.0,-2.78E7,3210.0],"
+        + "\"CollPropertyDecimal\":[12,-2,1234],"
+        + "\"CollPropertyBinary\":[\"q83v\",\"ASNF\",\"VGeJ\"],"
+        + "\"CollPropertyDate\":[\"1958-12-03\",\"1999-08-05\",\"2013-06-25\"],"
+        + "\"CollPropertyDateTimeOffset\":[\"2015-08-12T03:08:34Z\",\"1970-03-28T12:11:10Z\","
+        + "\"1948-02-17T09:09:09Z\"],"
+        + "\"CollPropertyDuration\":[\"PT13S\",\"PT5H28M0S\",\"PT1H0S\"],"
+        + "\"CollPropertyGuid\":[\"ffffff67-89ab-cdef-0123-456789aaaaaa\",\"eeeeee67-89ab-cdef-0123-456789bbbbbb\","
+        + "\"cccccc67-89ab-cdef-0123-456789cccccc\"],"
+        + "\"CollPropertyTimeOfDay\":[\"04:14:13\",\"23:59:59\",\"01:12:33\"]"
+        + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     Entity e = deserializer.entity(stream, edm.getEntityType(
-            new FullQualifiedName("Namespace1_Alias", "ETCollAllPrim")));
+        new FullQualifiedName("Namespace1_Alias", "ETCollAllPrim")));
 
     assertTrue((Boolean) e.getProperty("CollPropertyBoolean").asCollection().get(0));
     assertNull(e.getProperty("CollPropertyBoolean").asCollection().get(1));
@@ -543,27 +556,28 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test
   public void validJsonValueForComplexTypeNull() throws Exception {
     final String entityString = "{"
-            + "\"PropertyComp\":null"
-            + "}";
+        + "\"PropertyComp\":null"
+        + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     Entity entity = deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias",
-            "ETMixPrimCollComp")));
+        "ETMixPrimCollComp")));
 
     assertNull(entity.getProperty("PropertyComp").getValue());
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void validJsonValueForComplexCollectionNullValue() throws Exception {
     final String entityString = "{"
-            + "\"CollPropertyComp\":["
-            + "null,"
-            + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
+        + "\"CollPropertyComp\":["
+        + "null,"
+        + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
 
     Entity entity = deserializer.entity(stream, edm.getEntityType(
-            new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
+        new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     List<?> collPropertyComp = entity.getProperty("CollPropertyComp").asCollection();
     assertNull(collPropertyComp.get(0));
     List<Property> complexPropertyProperties = (List<Property>) collPropertyComp.get(1);
@@ -574,12 +588,12 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test
   public void validJsonValueForPrimPropertyInComplexTypeNull() throws Exception {
     final String entityString = "{"
-            + "\"PropertyComp\":{\"PropertyString\":\"TEST A\",\"PropertyInt16\":null}"
-            + "}";
+        + "\"PropertyComp\":{\"PropertyString\":\"TEST A\",\"PropertyInt16\":null}"
+        + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     Entity entity = deserializer.entity(stream, edm.getEntityType(
-            new FullQualifiedName("Namespace1_Alias", "ETCompAllPrim")));
+        new FullQualifiedName("Namespace1_Alias", "ETCompAllPrim")));
 
     assertEquals("TEST A", entity.getProperty("PropertyComp").asComplex().get(0).getValue());
     assertNull(entity.getProperty("PropertyComp").asComplex().get(1).getValue());
@@ -588,21 +602,65 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test
   public void eTMixEnumDefCollCompNavValidComplexEnumValueNull() throws Exception {
     String entityString = "{"
-            + "\"PropertyEnumString\" : 2,"
-            + "\"PropertyCompMixedEnumDef\" : {"
-            + "\"PropertyEnumString\" : null"
-            + "}}";
+        + "\"PropertyEnumString\" : 2,"
+        + "\"PropertyCompMixedEnumDef\" : {"
+        + "\"PropertyEnumString\" : null"
+        + "}}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     Entity e = deserializer.entity(stream, edm.getEntityType(
-            new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
+        new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
 
     assertEquals(Short.valueOf("2"), e.getProperty("PropertyEnumString").getValue());
     Property propertyCompMixedEnumDef = e.getProperty("PropertyCompMixedEnumDef");
     assertNull(propertyCompMixedEnumDef.asComplex().get(0).getValue());
   }
 
+  @SuppressWarnings("unused")
+  @Test
+  public void mappingTest() throws Exception {
+    Edm localEdm =
+        OData.newInstance().createServiceMetadata(new EdmTechProvider(), Collections.<EdmxReference> emptyList())
+            .getEdm();
+
+    EdmEntityType entityType = mock(EdmEntityType.class);
+    when(entityType.getFullQualifiedName()).thenReturn(new FullQualifiedName("napespace", "name"));
+    List<String> propertyNames = new ArrayList<String>();
+    propertyNames.add("PropertyDate");
+    propertyNames.add("PropertyDateTimeOffset");
+    when(entityType.getPropertyNames()).thenReturn(propertyNames);
+    Mapping mapping = new Mapping().setMappedJavaClass(Date.class);
+
+    EdmProperty propertyDate = mock(EdmProperty.class);
+    when(propertyDate.getName()).thenReturn("PropertyDate");
+    when(propertyDate.getMapping()).thenReturn(mapping);
+    when(propertyDate.getType()).thenReturn(new EdmDate());
+    when(entityType.getProperty("PropertyDate")).thenReturn(propertyDate);
+
+    EdmProperty propertyDateTimeOffset = mock(EdmProperty.class);
+    when(propertyDateTimeOffset.getName()).thenReturn("PropertyDateTimeOffset");
+    when(propertyDateTimeOffset.getMapping()).thenReturn(mapping);
+    when(propertyDateTimeOffset.getType()).thenReturn(new EdmDateTimeOffset());
+    when(entityType.getProperty("PropertyDateTimeOffset")).thenReturn(propertyDateTimeOffset);
+
+    String entityString =
+        "{\"PropertyDate\":\"2012-12-03\","
+            + "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\"}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    Entity entity =
+        deserializer.entity(stream, entityType);
+    assertNotNull(entity);
+    List<Property> properties = entity.getProperties();
+    assertNotNull(properties);
+    assertEquals(2, properties.size());
+
+    assertNotNull(entity.getProperty("PropertyDate").getValue());
+    assertEquals(Date.class, entity.getProperty("PropertyDate").getValue().getClass());
+    assertNotNull(entity.getProperty("PropertyDateTimeOffset").getValue());
+    assertEquals(Date.class, entity.getProperty("PropertyDateTimeOffset").getValue().getClass());
+  }
 
 //  ---------------------------------- Negative Tests -----------------------------------------------------------
 
@@ -1165,10 +1223,10 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test(expected = DeserializerException.class)
   public void invalidNullValueForPrimBeforeComplexTypeNullableFalse() throws Exception {
     final String entityString = "{"
-            + "\"PropertyInt16\": null, \"PropertyString\": \"321\", "
-            + "\"PropertyComp\":{\"PropertyInt16\": null, "
-            + "\"PropertyComp\": {\"PropertyString\":\"StringValue\"}}"
-            + "}";
+        + "\"PropertyInt16\": null, \"PropertyString\": \"321\", "
+        + "\"PropertyComp\":{\"PropertyInt16\": null, "
+        + "\"PropertyComp\": {\"PropertyString\":\"StringValue\"}}"
+        + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     try {
@@ -1182,9 +1240,9 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test(expected = DeserializerException.class)
   public void invalidNullValueForComplexTypePropertyNullableFalse() throws Exception {
     final String entityString = "{"
-            + "\"PropertyInt16\": 123, "
-            + "\"PropertyCompTwoPrim\":{\"PropertyInt16\": null, \"PropertyString\":\"StringValue\"}"
-            + "}";
+        + "\"PropertyInt16\": 123, "
+        + "\"PropertyCompTwoPrim\":{\"PropertyInt16\": null, \"PropertyString\":\"StringValue\"}"
+        + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     try {
@@ -1214,8 +1272,8 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test(expected = DeserializerException.class)
   public void invalidNullValueForPrimIntCollectionNullableFalse() throws Exception {
     final String entityString = "{"
-            + "\"CollPropertyInt16\":[123,\"null\",4711]"
-            + "}";
+        + "\"CollPropertyInt16\":[123,\"null\",4711]"
+        + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     try {
@@ -1252,7 +1310,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     Entity e = deserializer.entity(stream, edm.getEntityType(
-            new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
+        new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
 
     assertNull(e.getProperty("PropertyEnumString").getValue());
     Property propertyCompMixedEnumDef = e.getProperty("PropertyCompMixedEnumDef");

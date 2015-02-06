@@ -24,30 +24,9 @@ package org.apache.olingo.commons.api.edm;
 public interface EdmMapping {
 
   /**
-   * Get the mapping value
-   * 
-   * @return mapping name as String
+   * The class which is returned here will be used to during deserialization to replace the default java class for a
+   * primitive type.
+   * @return class used during deserialization
    */
-  String getInternalName();
-
-  /**
-   * Get the set object for this mapping
-   * 
-   * @return {@link Object} object
-   */
-  Object getObject();
-
-  /**
-   * Gets the key under which the resource source value can be found in the data map.
-   * 
-   * @return the key of the media resource source
-   */
-  String getMediaResourceSourceKey();
-
-  /**
-   * Gets the key under which the resource mime type can be found in the data map.
-   * 
-   * @return the key of the media resource type
-   */
-  String getMediaResourceMimeTypeKey();
+  Class<?> getMappedJavaClass();
 }

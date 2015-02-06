@@ -19,78 +19,33 @@
 package org.apache.olingo.server.api.edm.provider;
 
 import org.apache.olingo.commons.api.edm.EdmMapping;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 
+/**
+ * Content of this class does not appear within the CSDL metadata document. This class is used to perform server
+ * internal mapping for edm primitive types to java types.
+ */
 public class Mapping implements EdmMapping {
 
-  private String value;
-
-  private Object object;
-
-  private String mediaResourceSourceKey;
-
-  private String mediaResourceMimeTypeKey;
-
-  @Override
-  public String getInternalName() {
-    return value;
-  }
-
-  @Override
-  public Object getObject() {
-    return object;
-  }
-
-  @Override
-  public String getMediaResourceSourceKey() {
-    return mediaResourceSourceKey;
-  }
-
-  @Override
-  public String getMediaResourceMimeTypeKey() {
-    return mediaResourceMimeTypeKey;
-  }
+  private Class<?> mappedJavaClass;
 
   /**
-   * Sets the value for this {@link Mapping}.
-   * 
-   * @param value
-   * @return {@link Mapping} for method chaining
+   * Sets the class to be used during deserialization to transofrm an EDM primitive type into this java class. To see
+   * which classes work for which primitive type refer to {@link EdmPrimitiveType}.
+   * @param mappedJavaClass
+   * @return this for method chaining
    */
-  public Mapping setInternalName(final String value) {
-    this.value = value;
+  public Mapping setMappedJavaClass(Class<?> mappedJavaClass) {
+    this.mappedJavaClass = mappedJavaClass;
     return this;
   }
 
-  /**
-   * Sets an object. This method can be used by a provider to set whatever it wants to associate with this.
-   * 
-   * @param object
-   * @return {@link Mapping} for method chaining
+  /* (non-Javadoc)
+   * @see org.apache.olingo.commons.api.edm.EdmMapping#getMappedJavaClass()
    */
-  public Mapping setObject(final Object object) {
-    this.object = object;
-    return this;
+  @Override
+  public Class<?> getMappedJavaClass() {
+    return mappedJavaClass;
   }
 
-  /**
-   * Sets the key for the resource source key which is used for the lookup in the data map
-   * 
-   * @param mediaResourceSourceKey under which the source can be found in the data map
-   * @return {@link Mapping} for method chaining
-   */
-  public Mapping setMediaResourceSourceKey(final String mediaResourceSourceKey) {
-    this.mediaResourceSourceKey = mediaResourceSourceKey;
-    return this;
-  }
-
-  /**
-   * Sets the key for the resource mime type key which is used for the lookup in the data map
-   * 
-   * @param mediaResourceMimeTypeKey under which the mime type can be found in the data map
-   * @return {@link Mapping} for method chaining
-   */
-  public Mapping setMediaResourceMimeTypeKey(final String mediaResourceMimeTypeKey) {
-    this.mediaResourceMimeTypeKey = mediaResourceMimeTypeKey;
-    return this;
-  }
 }
