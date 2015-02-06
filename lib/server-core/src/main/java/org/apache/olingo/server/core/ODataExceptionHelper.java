@@ -43,7 +43,6 @@ public class ODataExceptionHelper {
   public static ODataServerError createServerErrorObject(UriParserSemanticException e, Locale requestedLocale) {
     ODataServerError serverError = basicTranslatedError(e, requestedLocale);
     if (UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND.equals(e.getMessageKey())
-        || UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND.equals(e.getMessageKey())
         || UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE.equals(e.getMessageKey())) {
       serverError.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
     } else {

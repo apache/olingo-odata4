@@ -322,6 +322,11 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (edmFunctionImport != null) {
 
         // read the URI parameters
+        if (ctx.vlNVO.isEmpty()) {
+          throw wrap(new UriParserSyntaxException(
+              "Function imports must have a (possibly empty) parameter list written in parentheses",
+              UriParserSyntaxException.MessageKeys.SYNTAX));
+        }
         context.contextReadingFunctionParameters = true;
         @SuppressWarnings("unchecked")
         List<UriParameterImpl> parameters = (List<UriParameterImpl>) ctx.vlNVO.get(0).accept(this);

@@ -1825,6 +1825,8 @@ public class TestFullResourcePath {
 
   @Test
   public void runFunctionImpError() {
+    testUri.runEx("FICRTCollCTTwoPrimParam")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testUri.runEx("FICRTCollCTTwoPrimParam()")
         .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND);
     testUri.runEx("FICRTCollCTTwoPrimParam(invalidParam=2)")
