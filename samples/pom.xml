@@ -31,11 +31,7 @@
   <parent>
     <groupId>org.apache.olingo</groupId>
     <artifactId>odata-parent</artifactId>
-    <version>4.0.0-beta-02</version>
+    <version>3.0.0-beta-01-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
-
-  <modules>
-    <module>server</module>
-  </modules>
 </project>

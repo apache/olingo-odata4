@@ -30,7 +30,7 @@
   <parent>
     <groupId>org.apache.olingo</groupId>
     <artifactId>odata-parent</artifactId>
-    <version>4.0.0-beta-02</version>
+    <version>3.0.0-beta-01-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -125,7 +125,7 @@
     <dependency>
       <groupId>org.apache.olingo</groupId>
       <artifactId>odata-server-tecsvc</artifactId>
-      <version>${project.version}</version>
+      <version>4.0.0-beta-02</version>
       <scope>test</scope>
     </dependency>
     <dependency>
