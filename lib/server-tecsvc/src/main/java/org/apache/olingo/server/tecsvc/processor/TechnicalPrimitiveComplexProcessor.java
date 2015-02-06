@@ -84,6 +84,11 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   @Override
   public void readPrimitive(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
+    if(isFunctionImport(uriInfo)) {
+      throw new ODataApplicationException("Function imports are not supported yet in technical scenario.",
+              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+    }
+
     readProperty(response, uriInfo, contentType, RepresentationType.PRIMITIVE);
   }
 
@@ -113,6 +118,10 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   @Override
   public void readPrimitiveCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
+    if(isFunctionImport(uriInfo)) {
+      throw new ODataApplicationException("Function imports are not supported yet in technical scenario.",
+              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+    }
     readProperty(response, uriInfo, contentType, RepresentationType.COLLECTION_PRIMITIVE);
   }
 
@@ -143,6 +152,10 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   @Override
   public void readComplex(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
+    if(isFunctionImport(uriInfo)) {
+      throw new ODataApplicationException("Function imports are not supported yet in technical scenario.",
+              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+    }
     readProperty(response, uriInfo, contentType, RepresentationType.COMPLEX);
   }
 
@@ -171,6 +184,10 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   @Override
   public void readComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
+    if(isFunctionImport(uriInfo)) {
+      throw new ODataApplicationException("Function imports are not supported yet in technical scenario.",
+              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+    }
     readProperty(response, uriInfo, contentType, RepresentationType.COLLECTION_COMPLEX);
   }
 
@@ -195,6 +212,11 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   public void deleteComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
       throws ODataApplicationException {
     deleteProperty(response, uriInfo);
+  }
+
+  private boolean isFunctionImport(final UriInfo uriInfo) {
+    final List<UriResource> resourceParts = uriInfo.asUriInfoResource().getUriResourceParts();
+    return !resourceParts.isEmpty() && resourceParts.get(0).getKind() == UriResourceKind.function;
   }
 
   private void readProperty(final ODataResponse response, final UriInfo uriInfo, final ContentType contentType,
