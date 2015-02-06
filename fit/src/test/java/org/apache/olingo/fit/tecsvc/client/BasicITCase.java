@@ -27,14 +27,12 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
@@ -306,7 +304,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  @Ignore("Actual leads to an unexpected exception")
+  @Ignore("Currently this test is not possible due to nullable=false in all available complex types")
   public void updateEntityWithComplex() throws Exception {
     final ODataClient client = getClient();
     final ODataObjectFactory factory = client.getObjectFactory();
@@ -334,40 +332,29 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertNull(property.getPrimitiveValue());
   }
 
-  /**
-   * Currently a create request for an entity will lead to a "501 - Not Implemented" response
-   * and hence to an ODataServerErrorException.
-   */
-  @Test(expected = ODataServerErrorException.class)
-  public void createEntity() throws IOException {
-    final ODataEntityRequest<ODataEntity> request = getClient().getRetrieveRequestFactory()
-        .getEntityRequest(getClient().newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment("ESCollAllPrim").appendKeySegment(1).build());
-    assertNotNull(request);
-
-    final ODataRetrieveResponse<ODataEntity> response = request.execute();
-    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
-
-    final ODataEntity entity = response.getBody();
-    assertNotNull(entity);
-
-    final ODataEntityCreateRequest<ODataEntity> createRequest = getClient().getCUDRequestFactory()
-        .getEntityCreateRequest(getClient().newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment("ESCollAllPrim").build(), entity);
+  @Test
+  public void createEntity() throws Exception {
+    final ODataClient client = getClient();
+    final ODataObjectFactory factory = client.getObjectFactory();
+    ODataEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
+    newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt64",
+        factory.newPrimitiveValueBuilder().buildInt32(42)));
+    final ODataEntityCreateRequest<ODataEntity> createRequest = client.getCUDRequestFactory().getEntityCreateRequest(
+        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").build(),
+        newEntity);
     assertNotNull(createRequest);
-    ODataEntityCreateResponse<ODataEntity> createResponse = createRequest.execute();
+    final ODataEntityCreateResponse<ODataEntity> createResponse = createRequest.execute();
 
+    assertEquals(HttpStatusCode.CREATED.getStatusCode(), createResponse.getStatusCode());
+    assertEquals(SERVICE_URI + "/ESAllPrim(1)", createResponse.getHeader(HttpHeader.LOCATION).iterator().next());
     final ODataEntity createdEntity = createResponse.getBody();
     assertNotNull(createdEntity);
-    final ODataProperty property = createdEntity.getProperty("CollPropertyInt16");
-    assertNotNull(property);
-    assertNotNull(property.getCollectionValue());
-    assertEquals(3, property.getCollectionValue().size());
-    Iterator<ODataValue> iterator = property.getCollectionValue().iterator();
-    assertEquals(1000, iterator.next().asPrimitive().toValue());
-    assertEquals(2000, iterator.next().asPrimitive().toValue());
-    assertEquals(30112, iterator.next().asPrimitive().toValue());
+    final ODataProperty property1 = createdEntity.getProperty("PropertyInt64");
+    assertNotNull(property1);
+    assertEquals(42, property1.getPrimitiveValue().toValue());
+    final ODataProperty property2 = createdEntity.getProperty("PropertyDecimal");
+    assertNotNull(property2);
+    assertNull(property2.getPrimitiveValue());
   }
 
   @Override

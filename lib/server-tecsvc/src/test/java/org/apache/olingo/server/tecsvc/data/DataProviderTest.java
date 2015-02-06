@@ -162,7 +162,7 @@ public class DataProviderTest {
     dataProvider.delete(esMedia, entity);
     Assert.assertEquals(3, dataProvider.readAll(esMedia).getEntities().size());
     entity = dataProvider.create(esMedia);
-    Assert.assertEquals(5, entity.getProperty("PropertyInt16").getValue());
+    Assert.assertEquals(3, entity.getProperty("PropertyInt16").getValue());
     dataProvider.setMedia(entity, new byte[] { 1, 2, 3, 4 }, "x/y");
     Assert.assertArrayEquals(new byte[] { 1, 2, 3, 4 }, dataProvider.readMedia(entity));
     Assert.assertEquals("x/y", entity.getMediaContentType());

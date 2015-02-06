@@ -155,74 +155,68 @@ public class DataCreator {
 
     Entity entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE));
-    LinkedComplexValue complexValue = new LinkedComplexValueImpl();
-    complexValue.getValue().add(createPrimitive("PropertyString", "First Resource - first"));
-    complexValue.getValue().add(createPrimitive("PropertyBinary",
-        new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }));
-    complexValue.getValue().add(createPrimitive("PropertyBoolean", true));
-    complexValue.getValue().add(createPrimitive("PropertyByte", 255));
-    complexValue.getValue().add(createPrimitive("PropertyDate", getDateTime(2012, 10, 3, 0, 0, 0)));
-    complexValue.getValue().add(createPrimitive("PropertyDateTimeOffset",
-        getTimestamp(2012, 10, 3, 7, 16, 23, 123456700)));
-    complexValue.getValue().add(createPrimitive("PropertyDecimal", 34.27));
-    complexValue.getValue().add(createPrimitive("PropertySingle", 1.79000000E+20));
-    complexValue.getValue().add(createPrimitive("PropertyDouble", -1.7900000000000000E+19));
-    complexValue.getValue().add(createPrimitive("PropertyDuration", 6));
-    complexValue.getValue().add(createPrimitive("PropertyGuid", GUID));
-    complexValue.getValue().add(createPrimitive("PropertyInt16", Short.MAX_VALUE));
-    complexValue.getValue().add(createPrimitive("PropertyInt32", Integer.MAX_VALUE));
-    complexValue.getValue().add(createPrimitive("PropertyInt64", Long.MAX_VALUE));
-    complexValue.getValue().add(createPrimitive("PropertySByte", Byte.MAX_VALUE));
-    complexValue.getValue().add(createPrimitive("PropertyTimeOfDay", getTime(1, 0, 1)));
-    entity.addProperty(new PropertyImpl(null, "PropertyComp", ValueType.LINKED_COMPLEX, complexValue));
+    entity.addProperty(createComplex("PropertyComp",
+        createPrimitive("PropertyString", "First Resource - first"),
+        createPrimitive("PropertyBinary",
+            new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }),
+        createPrimitive("PropertyBoolean", true),
+        createPrimitive("PropertyByte", 255),
+        createPrimitive("PropertyDate", getDateTime(2012, 10, 3, 0, 0, 0)),
+        createPrimitive("PropertyDateTimeOffset", getTimestamp(2012, 10, 3, 7, 16, 23, 123456700)),
+        createPrimitive("PropertyDecimal", 34.27),
+        createPrimitive("PropertySingle", 1.79000000E+20),
+        createPrimitive("PropertyDouble", -1.7900000000000000E+19),
+        createPrimitive("PropertyDuration", 6),
+        createPrimitive("PropertyGuid", GUID),
+        createPrimitive("PropertyInt16", Short.MAX_VALUE),
+        createPrimitive("PropertyInt32", Integer.MAX_VALUE),
+        createPrimitive("PropertyInt64", Long.MAX_VALUE),
+        createPrimitive("PropertySByte", Byte.MAX_VALUE),
+        createPrimitive("PropertyTimeOfDay", getTime(1, 0, 1))));
     entitySet.getEntities().add(entity);
 
     entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 7));
-    complexValue = new LinkedComplexValueImpl();
-    complexValue.getValue().add(createPrimitive("PropertyString", "Second Resource - second"));
-    complexValue.getValue().add(createPrimitive("PropertyBinary",
-        new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }));
-    complexValue.getValue().add(createPrimitive("PropertyBoolean", true));
-    complexValue.getValue().add(createPrimitive("PropertyByte", 255));
-    complexValue.getValue().add(createPrimitive("PropertyDate", getDateTime(2013, 11, 4, 0, 0, 0)));
-    complexValue.getValue().add(createPrimitive("PropertyDateTimeOffset",
-        getDateTime(2013, 11, 4, 7, 16, 23)));
-    complexValue.getValue().add(createPrimitive("PropertyDecimal", 34.27));
-    complexValue.getValue().add(createPrimitive("PropertySingle", 1.79000000E+20));
-    complexValue.getValue().add(createPrimitive("PropertyDouble", -1.7900000000000000E+02));
-    complexValue.getValue().add(createPrimitive("PropertyDuration", 6));
-    complexValue.getValue().add(createPrimitive("PropertyGuid", GUID));
-    complexValue.getValue().add(createPrimitive("PropertyInt16", 25));
-    complexValue.getValue().add(createPrimitive("PropertyInt32", Integer.MAX_VALUE));
-    complexValue.getValue().add(createPrimitive("PropertyInt64", Long.MAX_VALUE));
-    complexValue.getValue().add(createPrimitive("PropertySByte", Byte.MAX_VALUE));
-    complexValue.getValue().add(createPrimitive("PropertyTimeOfDay", getTimestamp(1, 1, 1, 7, 45, 12, 765432100)));
-    entity.addProperty(new PropertyImpl(null, "PropertyComp", ValueType.LINKED_COMPLEX, complexValue));
+    entity.addProperty(createComplex("PropertyComp",
+        createPrimitive("PropertyString", "Second Resource - second"),
+        createPrimitive("PropertyBinary",
+            new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }),
+        createPrimitive("PropertyBoolean", true),
+        createPrimitive("PropertyByte", 255),
+        createPrimitive("PropertyDate", getDateTime(2013, 11, 4, 0, 0, 0)),
+        createPrimitive("PropertyDateTimeOffset", getDateTime(2013, 11, 4, 7, 16, 23)),
+        createPrimitive("PropertyDecimal", 34.27),
+        createPrimitive("PropertySingle", 1.79000000E+20),
+        createPrimitive("PropertyDouble", -1.7900000000000000E+02),
+        createPrimitive("PropertyDuration", 6),
+        createPrimitive("PropertyGuid", GUID),
+        createPrimitive("PropertyInt16", 25),
+        createPrimitive("PropertyInt32", Integer.MAX_VALUE),
+        createPrimitive("PropertyInt64", Long.MAX_VALUE),
+        createPrimitive("PropertySByte", Byte.MAX_VALUE),
+        createPrimitive("PropertyTimeOfDay", getTimestamp(1, 1, 1, 7, 45, 12, 765432100))));
     entitySet.getEntities().add(entity);
 
     entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 0));
-    complexValue = new LinkedComplexValueImpl();
-    complexValue.getValue().add(createPrimitive("PropertyString", "Third Resource - third"));
-    complexValue.getValue().add(createPrimitive("PropertyBinary",
-        new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }));
-    complexValue.getValue().add(createPrimitive("PropertyBoolean", true));
-    complexValue.getValue().add(createPrimitive("PropertyByte", 255));
-    complexValue.getValue().add(createPrimitive("PropertyDate", getDateTime(2014, 12, 5, 0, 0, 0)));
-    complexValue.getValue().add(createPrimitive("PropertyDateTimeOffset",
-        getTimestamp(2014, 12, 5, 8, 17, 45, 123456700)));
-    complexValue.getValue().add(createPrimitive("PropertyDecimal", 17.98));
-    complexValue.getValue().add(createPrimitive("PropertySingle", 1.79000000E+20));
-    complexValue.getValue().add(createPrimitive("PropertyDouble", -1.7900000000000000E+02));
-    complexValue.getValue().add(createPrimitive("PropertyDuration", 6));
-    complexValue.getValue().add(createPrimitive("PropertyGuid", GUID));
-    complexValue.getValue().add(createPrimitive("PropertyInt16", -25));
-    complexValue.getValue().add(createPrimitive("PropertyInt32", Integer.MAX_VALUE));
-    complexValue.getValue().add(createPrimitive("PropertyInt64", Long.MAX_VALUE));
-    complexValue.getValue().add(createPrimitive("PropertySByte", Byte.MAX_VALUE));
-    complexValue.getValue().add(createPrimitive("PropertyTimeOfDay", getTime(13, 27, 45)));
-    entity.addProperty(new PropertyImpl(null, "PropertyComp", ValueType.LINKED_COMPLEX, complexValue));
+    entity.addProperty(createComplex("PropertyComp",
+        createPrimitive("PropertyString", "Third Resource - third"),
+        createPrimitive("PropertyBinary",
+            new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }),
+        createPrimitive("PropertyBoolean", true),
+        createPrimitive("PropertyByte", 255),
+        createPrimitive("PropertyDate", getDateTime(2014, 12, 5, 0, 0, 0)),
+        createPrimitive("PropertyDateTimeOffset", getTimestamp(2014, 12, 5, 8, 17, 45, 123456700)),
+        createPrimitive("PropertyDecimal", 17.98),
+        createPrimitive("PropertySingle", 1.79000000E+20),
+        createPrimitive("PropertyDouble", -1.7900000000000000E+02),
+        createPrimitive("PropertyDuration", 6),
+        createPrimitive("PropertyGuid", GUID),
+        createPrimitive("PropertyInt16", -25),
+        createPrimitive("PropertyInt32", Integer.MAX_VALUE),
+        createPrimitive("PropertyInt64", Long.MAX_VALUE),
+        createPrimitive("PropertySByte", Byte.MAX_VALUE),
+        createPrimitive("PropertyTimeOfDay", getTime(13, 27, 45))));
     entitySet.getEntities().add(entity);
 
     return entitySet;
@@ -233,36 +227,36 @@ public class DataCreator {
 
     entitySet.getEntities().add(new EntityImpl()
         .addProperty(createPrimitive("PropertyInt16", 1))
-        .addProperty(createCollection("CollPropertyString",
+        .addProperty(createPrimitiveCollection("CollPropertyString",
             "Employee1@company.example", "Employee2@company.example", "Employee3@company.example"))
-        .addProperty(createCollection("CollPropertyBoolean", true, false, true))
-        .addProperty(createCollection("CollPropertyByte", 50, 200, 249))
-        .addProperty(createCollection("CollPropertySByte", -120, 120, 126))
-        .addProperty(createCollection("CollPropertyInt16", 1000, 2000, 30112))
-        .addProperty(createCollection("CollPropertyInt32", 23232323, 11223355, 10000001))
-        .addProperty(createCollection("CollPropertyInt64", 929292929292L, 333333333333L, 444444444444L))
-        .addProperty(createCollection("CollPropertySingle", 1.79000000E+03, 2.66000000E+04, 3.21000000E+03))
-        .addProperty(createCollection("CollPropertyDouble",
+        .addProperty(createPrimitiveCollection("CollPropertyBoolean", true, false, true))
+        .addProperty(createPrimitiveCollection("CollPropertyByte", 50, 200, 249))
+        .addProperty(createPrimitiveCollection("CollPropertySByte", -120, 120, 126))
+        .addProperty(createPrimitiveCollection("CollPropertyInt16", 1000, 2000, 30112))
+        .addProperty(createPrimitiveCollection("CollPropertyInt32", 23232323, 11223355, 10000001))
+        .addProperty(createPrimitiveCollection("CollPropertyInt64", 929292929292L, 333333333333L, 444444444444L))
+        .addProperty(createPrimitiveCollection("CollPropertySingle", 1.79000000E+03, 2.66000000E+04, 3.21000000E+03))
+        .addProperty(createPrimitiveCollection("CollPropertyDouble",
             -1.7900000000000000E+04, -2.7800000000000000E+07, 3.2100000000000000E+03))
-        .addProperty(createCollection("CollPropertyDecimal", 12, -2, 1234))
-        .addProperty(createCollection("CollPropertyBinary",
+        .addProperty(createPrimitiveCollection("CollPropertyDecimal", 12, -2, 1234))
+        .addProperty(createPrimitiveCollection("CollPropertyBinary",
             new byte[] { (byte) 0xAB, (byte) 0xCD, (byte) 0xEF },
             new byte[] { 0x01, 0x23, 0x45 },
             new byte[] { 0x54, 0x67, (byte) 0x89 }))
-        .addProperty(createCollection("CollPropertyDate",
+        .addProperty(createPrimitiveCollection("CollPropertyDate",
             getDateTime(1958, 12, 3, 0, 0, 0),
             getDateTime(1999, 8, 5, 0, 0, 0),
             getDateTime(2013, 6, 25, 0, 0, 0)))
-        .addProperty(createCollection("CollPropertyDateTimeOffset",
+        .addProperty(createPrimitiveCollection("CollPropertyDateTimeOffset",
             getDateTime(2015, 8, 12, 3, 8, 34),
             getDateTime(1970, 3, 28, 12, 11, 10),
             getDateTime(1948, 2, 17, 9, 9, 9)))
-        .addProperty(createCollection("CollPropertyDuration", 13, 19680, 3600))
-        .addProperty(createCollection("CollPropertyGuid",
+        .addProperty(createPrimitiveCollection("CollPropertyDuration", 13, 19680, 3600))
+        .addProperty(createPrimitiveCollection("CollPropertyGuid",
             UUID.fromString("ffffff67-89ab-cdef-0123-456789aaaaaa"),
             UUID.fromString("eeeeee67-89ab-cdef-0123-456789bbbbbb"),
             UUID.fromString("cccccc67-89ab-cdef-0123-456789cccccc")))
-        .addProperty(createCollection("CollPropertyTimeOfDay",
+        .addProperty(createPrimitiveCollection("CollPropertyTimeOfDay",
             getTime(4, 14, 13), getTime(23, 59, 59), getTime(1, 12, 33))));
 
     Entity entity = new EntityImpl();
@@ -283,51 +277,37 @@ public class DataCreator {
 
     Entity entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE));
-    entity.addProperty(createCollection("CollPropertyString",
+    entity.addProperty(createPrimitiveCollection("CollPropertyString",
         "Employee1@company.example", "Employee2@company.example", "Employee3@company.example"));
-    LinkedComplexValue complexValue = new LinkedComplexValueImpl();
-    complexValue.getValue().add(createPrimitive("PropertyInt16", 111));
-    complexValue.getValue().add(createPrimitive("PropertyString", "TEST A"));
-    entity.addProperty(new PropertyImpl(null, "PropertyComp", ValueType.LINKED_COMPLEX, complexValue));
-    List<LinkedComplexValue> complexCollection = new ArrayList<LinkedComplexValue>();
-    complexValue = new LinkedComplexValueImpl();
-    complexValue.getValue().add(createPrimitive("PropertyInt16", 123));
-    complexValue.getValue().add(createPrimitive("PropertyString", "TEST 1"));
-    complexCollection.add(complexValue);
-    complexValue = new LinkedComplexValueImpl();
-    complexValue.getValue().add(createPrimitive("PropertyInt16", 456));
-    complexValue.getValue().add(createPrimitive("PropertyString", "TEST 2"));
-    complexCollection.add(complexValue);
-    complexValue = new LinkedComplexValueImpl();
-    complexValue.getValue().add(createPrimitive("PropertyInt16", 789));
-    complexValue.getValue().add(createPrimitive("PropertyString", "TEST 3"));
-    complexCollection.add(complexValue);
-    entity.addProperty(new PropertyImpl(null, "CollPropertyComp", ValueType.COLLECTION_LINKED_COMPLEX,
-        complexCollection));
+    entity.addProperty(createComplex("PropertyComp",
+        createPrimitive("PropertyInt16", 111),
+        createPrimitive("PropertyString", "TEST A")));
+    @SuppressWarnings("unchecked")
+    final Property complexCollection = createComplexCollection("CollPropertyComp",
+        Arrays.asList(createPrimitive("PropertyInt16", 123), createPrimitive("PropertyString", "TEST 1")),
+        Arrays.asList(createPrimitive("PropertyInt16", 456), createPrimitive("PropertyString", "TEST 2")),
+        Arrays.asList(createPrimitive("PropertyInt16", 789), createPrimitive("PropertyString", "TEST 3")));
+    entity.addProperty(complexCollection);
     entitySet.getEntities().add(entity);
 
     entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 7));
-    entity.addProperty(createCollection("CollPropertyString",
+    entity.addProperty(createPrimitiveCollection("CollPropertyString",
         "Employee1@company.example", "Employee2@company.example", "Employee3@company.example"));
-    complexValue = new LinkedComplexValueImpl();
-    complexValue.getValue().add(createPrimitive("PropertyInt16", 222));
-    complexValue.getValue().add(createPrimitive("PropertyString", "TEST B"));
-    entity.addProperty(new PropertyImpl(null, "PropertyComp", ValueType.LINKED_COMPLEX, complexValue));
-    entity.addProperty(new PropertyImpl(null, "CollPropertyComp", ValueType.COLLECTION_LINKED_COMPLEX,
-        complexCollection));
+    entity.addProperty(createComplex("PropertyComp",
+        createPrimitive("PropertyInt16", 222),
+        createPrimitive("PropertyString", "TEST B")));
+    entity.addProperty(complexCollection);
     entitySet.getEntities().add(entity);
 
     entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 0));
-    entity.addProperty(createCollection("CollPropertyString",
+    entity.addProperty(createPrimitiveCollection("CollPropertyString",
         "Employee1@company.example", "Employee2@company.example", "Employee3@company.example"));
-    complexValue = new LinkedComplexValueImpl();
-    complexValue.getValue().add(createPrimitive("PropertyInt16", 333));
-    complexValue.getValue().add(createPrimitive("PropertyString", "TEST C"));
-    entity.addProperty(new PropertyImpl(null, "PropertyComp", ValueType.LINKED_COMPLEX, complexValue));
-    entity.addProperty(new PropertyImpl(null, "CollPropertyComp", ValueType.COLLECTION_LINKED_COMPLEX,
-        complexCollection));
+    entity.addProperty(createComplex("PropertyComp",
+        createPrimitive("PropertyInt16", 333),
+        createPrimitive("PropertyString", "TEST C")));
+    entity.addProperty(complexCollection);
     entitySet.getEntities().add(entity);
 
     return entitySet;
@@ -374,24 +354,18 @@ public class DataCreator {
 
     Entity entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 1));
-    LinkedComplexValue complexValueInner = new LinkedComplexValueImpl();
-    complexValueInner.getValue().add(createPrimitive("PropertyInt16", 123));
-    complexValueInner.getValue().add(createPrimitive("PropertyString", "String 1"));
-    LinkedComplexValue complexValueOuter = new LinkedComplexValueImpl();
-    complexValueOuter.getValue().add(
-        new PropertyImpl(null, "PropertyComp", ValueType.LINKED_COMPLEX, complexValueInner));
-    entity.addProperty(new PropertyImpl(null, "PropertyComp", ValueType.LINKED_COMPLEX, complexValueOuter));
+    entity.addProperty(createComplex("PropertyComp",
+        createComplex("PropertyComp",
+            createPrimitive("PropertyInt16", 123),
+            createPrimitive("PropertyString", "String 1"))));
     entitySet.getEntities().add(entity);
 
     entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 2));
-    complexValueInner = new LinkedComplexValueImpl();
-    complexValueInner.getValue().add(createPrimitive("PropertyInt16", 987));
-    complexValueInner.getValue().add(createPrimitive("PropertyString", "String 2"));
-    complexValueOuter = new LinkedComplexValueImpl();
-    complexValueOuter.getValue().add(
-        new PropertyImpl(null, "PropertyComp", ValueType.LINKED_COMPLEX, complexValueInner));
-    entity.addProperty(new PropertyImpl(null, "PropertyComp", ValueType.LINKED_COMPLEX, complexValueOuter));
+    entity.addProperty(createComplex("PropertyComp",
+        createComplex("PropertyComp",
+            createPrimitive("PropertyInt16", 987),
+            createPrimitive("PropertyString", "String 2"))));
     entitySet.getEntities().add(entity);
 
     return entitySet;
@@ -460,8 +434,26 @@ public class DataCreator {
     return new PropertyImpl(null, name, ValueType.PRIMITIVE, value);
   }
 
-  protected static Property createCollection(final String name, final Object... values) {
+  protected static Property createPrimitiveCollection(final String name, final Object... values) {
     return new PropertyImpl(null, name, ValueType.COLLECTION_PRIMITIVE, Arrays.asList(values));
+  }
+
+  protected static Property createComplex(final String name, final Property... properties) {
+    LinkedComplexValue complexValue = new LinkedComplexValueImpl();
+    for (final Property property : properties) {
+      complexValue.getValue().add(property);
+    }
+    return new PropertyImpl(null, name, ValueType.LINKED_COMPLEX, complexValue);
+  }
+
+  protected static Property createComplexCollection(final String name, final List<Property>... propertiesList) {
+    List<LinkedComplexValue> complexCollection = new ArrayList<LinkedComplexValue>();
+    for (final List<Property> properties : propertiesList) {
+      LinkedComplexValue complexValue = new LinkedComplexValueImpl();
+      complexValue.getValue().addAll(properties);
+      complexCollection.add(complexValue);
+    }
+    return new PropertyImpl(null, name, ValueType.COLLECTION_LINKED_COMPLEX, complexCollection);
   }
 
   private Calendar getDateTime(final int year, final int month, final int day,

@@ -19,6 +19,7 @@
 package org.apache.olingo.server.tecsvc.data;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +35,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -42,6 +44,7 @@ import org.apache.olingo.server.api.uri.UriParameter;
 public class DataProvider {
 
   protected static final String MEDIA_PROPERTY_NAME = "$value";
+  private static final String KEY_NAME = "PropertyInt16";
 
   private Map<String, EntitySet> data;
 
@@ -54,16 +57,16 @@ public class DataProvider {
   }
 
   public Entity read(final EdmEntitySet edmEntitySet, final List<UriParameter> keys) throws DataProviderException {
-    final EdmEntityType entityType = edmEntitySet.getEntityType();
-    final EntitySet entitySet = data.get(edmEntitySet.getName());
+    final EntitySet entitySet = readAll(edmEntitySet);
     if (entitySet == null) {
       return null;
     } else {
+      final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
       try {
         for (final Entity entity : entitySet.getEntities()) {
           boolean found = true;
           for (final UriParameter key : keys) {
-            final EdmProperty property = (EdmProperty) entityType.getProperty(key.getName());
+            final EdmProperty property = (EdmProperty) edmEntityType.getProperty(key.getName());
             final EdmPrimitiveType type = (EdmPrimitiveType) property.getType();
             final Object value = entity.getProperty(key.getName()).getValue();
             final Object keyValue = type.valueOfString(type.fromUriLiteral(key.getText()),
@@ -88,12 +91,12 @@ public class DataProvider {
 
   public void delete(final EdmEntitySet edmEntitySet, final Entity entity) throws DataProviderException {
     deleteLinksTo(entity);
-    data.get(edmEntitySet.getName()).getEntities().remove(entity);
+    readAll(edmEntitySet).getEntities().remove(entity);
   }
 
   public void deleteLinksTo(final Entity to) throws DataProviderException {
-    for (final String entitySet : data.keySet()) {
-      for (final Entity entity : data.get(entitySet).getEntities()) {
+    for (final String entitySetName : data.keySet()) {
+      for (final Entity entity : data.get(entitySetName).getEntities()) {
         for (Iterator<Link> linkIterator = entity.getNavigationLinks().iterator(); linkIterator.hasNext();) {
           final Link link = linkIterator.next();
           if (to.equals(link.getInlineEntity())) {
@@ -114,18 +117,60 @@ public class DataProvider {
   }
 
   public Entity create(final EdmEntitySet edmEntitySet) throws DataProviderException {
+    final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
     List<Entity> entities = readAll(edmEntitySet).getEntities();
     Entity entity = new EntityImpl();
-    final List<String> keyNames = edmEntitySet.getEntityType().getKeyPredicateNames();
-    if (keyNames.size() == 1 && keyNames.get(0).equals("PropertyInt16")) {
-      entity.addProperty(DataCreator.createPrimitive("PropertyInt16",
-          entities.isEmpty() ? 1 :
-              (Integer) entities.get(entities.size() - 1).getProperty("PropertyInt16").getValue() + 1));
+    final List<String> keyNames = edmEntityType.getKeyPredicateNames();
+    if (keyNames.size() == 1 && keyNames.get(0).equals(KEY_NAME)) {
+      entity.addProperty(DataCreator.createPrimitive(KEY_NAME, findFreeKeyValue(entities)));
     } else {
       throw new DataProviderException("Key construction not supported!");
     }
+    createProperties(edmEntityType, entity.getProperties());
     entities.add(entity);
     return entity;
+  }
+
+  private Integer findFreeKeyValue(final List<Entity> entities) {
+    Integer result = 0;
+    boolean free;
+    do {
+      ++result;
+      free = true;
+      for (final Entity entity : entities) {
+        if (result.equals(entity.getProperty(KEY_NAME).getValue())) {
+          free = false;
+          break;
+        }
+      }
+    } while (!free);
+    return result;
+  }
+
+  private void createProperties(final EdmStructuredType type, List<Property> properties) throws DataProviderException {
+    final List<String> keyNames = type instanceof EdmEntityType ?
+        ((EdmEntityType) type).getKeyPredicateNames() : Collections.<String> emptyList();
+    for (final String propertyName : type.getPropertyNames()) {
+      if (!keyNames.contains(propertyName)) {
+        final EdmProperty edmProperty = type.getStructuralProperty(propertyName);
+        Property newProperty;
+        if (edmProperty.isPrimitive()) {
+          newProperty = edmProperty.isCollection() ?
+              DataCreator.createPrimitiveCollection(propertyName) :
+              DataCreator.createPrimitive(propertyName, null);
+        } else {
+          if (edmProperty.isCollection()) {
+            @SuppressWarnings("unchecked")
+            Property newProperty2 = DataCreator.createComplexCollection(propertyName);
+            newProperty = newProperty2;
+          } else {
+            newProperty = DataCreator.createComplex(propertyName);
+            createProperties((EdmComplexType) edmProperty.getType(), newProperty.asLinkedComplex().getValue());
+          }
+        }
+        properties.add(newProperty);
+      }
+    }
   }
 
   public void update(final EdmEntitySet edmEntitySet, Entity entity, final Entity changedEntity, final boolean patch)
@@ -147,15 +192,19 @@ public class DataProvider {
 
   public void updateProperty(final EdmProperty edmProperty, Property property, final Property newProperty,
       final boolean patch) throws DataProviderException {
-    if (edmProperty.isCollection() && !edmProperty.isPrimitive()) {
-      throw new DataProviderException("Complex-collection properties are not yet supported.");
-    } else if (property.isPrimitive()) {
+    if (edmProperty.isPrimitive()) {
       if (newProperty != null || !patch) {
         final Object value = newProperty == null ? null : newProperty.getValue();
         if (value == null && edmProperty.isNullable() != null && !edmProperty.isNullable()) {
           throw new DataProviderException("Cannot null non-nullable property!");
         }
         property.setValue(property.getValueType(), value);
+      }
+    } else if (edmProperty.isCollection()) {
+      if (newProperty != null && !newProperty.asLinkedComplex().getValue().isEmpty()) {
+        throw new DataProviderException("Update of a complex-collection property not supported!");
+      } else {
+        property.asLinkedComplex().getValue().clear();
       }
     } else {
       final EdmComplexType type = (EdmComplexType) edmProperty.getType();

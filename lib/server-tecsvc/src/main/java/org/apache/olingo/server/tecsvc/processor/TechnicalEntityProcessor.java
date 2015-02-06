@@ -26,6 +26,7 @@ import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpContentType;
@@ -162,24 +163,33 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   public void createMediaEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
           throws ODataApplicationException, DeserializerException, SerializerException {
+    createEntity(request, response, uriInfo, requestFormat, responseFormat);
+  }
 
+  @Override
+  public void createEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+      final ContentType requestFormat, final ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
     blockNavigation(uriInfo);
+    checkRequestFormat(requestFormat);
     final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
     final EdmEntitySet edmEntitySet = resourceEntitySet.getEntitySet();
-    Entity entity = null;
-    if (edmEntitySet.getEntityType().hasStream()) {
-      checkRequestFormat(requestFormat);
-      entity = dataProvider.create(edmEntitySet);
+    final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
+
+    Entity entity = dataProvider.create(edmEntitySet);
+    if (edmEntityType.hasStream()) {  // called from createMediaEntity(...), not directly
       dataProvider.setMedia(entity, odata.createFixedFormatDeserializer().binary(request.getBody()),
               requestFormat.toContentTypeString());
     } else {
-      throw new ODataApplicationException("Requested Entity is not a media resource.",
-          HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
+      dataProvider.update(edmEntitySet, entity,
+          odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
+              .entity(request.getBody(), edmEntityType),
+          false);
     }
 
     final ODataFormat format = ODataFormat.fromContentType(responseFormat);
     ODataSerializer serializer = odata.createSerializer(format);
-    response.setContent(serializer.entity(edmEntitySet.getEntityType(), entity,
+    response.setContent(serializer.entity(edmEntityType, entity,
         EntitySerializerOptions.with()
             .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                 getContextUrl(edmEntitySet, true, null, null))
@@ -188,14 +198,6 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
     response.setHeader(HttpHeader.LOCATION,
         request.getRawBaseUri() + '/' + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entity));
-  }
-
-  @Override
-  public void createEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestFormat, final ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new ODataApplicationException("Entity creation is not supported yet.",
-        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
 
   @Override
