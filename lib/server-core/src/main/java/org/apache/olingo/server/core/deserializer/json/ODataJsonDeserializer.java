@@ -504,7 +504,13 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
     try {
       EdmEnumType edmEnumType = (EdmEnumType) edmProperty.getType();
-      checkJsonTypeBasedOnPrimitiveType(edmProperty.getName(), edmEnumType.getUnderlyingType().getName(), jsonNode);
+      // Enum values must be strings
+      if (!jsonNode.isTextual()) {
+        throw new DeserializerException("Invalid json type: " + jsonNode.getNodeType() + " for enum property: "
+            + edmProperty.getName(), DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, edmProperty
+            .getName());
+      }
+
       Class<?> javaClass = getJavaClassForPrimitiveType(edmProperty, edmEnumType.getUnderlyingType());
       return edmEnumType
           .valueOfString(jsonNode.asText(), edmProperty.isNullable(), edmProperty.getMaxLength(), edmProperty

@@ -497,7 +497,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
   @SuppressWarnings("unchecked")
   @Test
-  public void eTTwoKeyNavEnumTest() throws Exception {
+  public void eTMixEnumDefCollCompTest() throws Exception {
     InputStream stream = getFileAsStream("EntityETMixEnumDefCollComp.json");
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     Entity entity =
@@ -602,7 +602,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test
   public void eTMixEnumDefCollCompNavValidComplexEnumValueNull() throws Exception {
     String entityString = "{"
-        + "\"PropertyEnumString\" : 2,"
+        + "\"PropertyEnumString\" : \"String2\","
         + "\"PropertyCompMixedEnumDef\" : {"
         + "\"PropertyEnumString\" : null"
         + "}}";
@@ -612,9 +612,23 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     Entity e = deserializer.entity(stream, edm.getEntityType(
         new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
 
-    assertEquals(Short.valueOf("2"), e.getProperty("PropertyEnumString").getValue());
+    assertEquals((short) 2, e.getProperty("PropertyEnumString").getValue());
     Property propertyCompMixedEnumDef = e.getProperty("PropertyCompMixedEnumDef");
     assertNull(propertyCompMixedEnumDef.asComplex().get(0).getValue());
+  }
+
+  @Test
+  public void eTMixEnumDefCollCompMultipleValuesForEnum() throws Exception {
+    String entityString = "{"
+        + "\"PropertyEnumString\" : \"String1,String2\""
+        + "}";
+
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    Entity e = deserializer.entity(stream, edm.getEntityType(
+        new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
+
+    assertEquals((short) 3, e.getProperty("PropertyEnumString").getValue());
   }
 
   @SuppressWarnings("unused")
@@ -1303,18 +1317,19 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   public void eTMixEnumDefCollCompInvalidEnumValueNull() throws Exception {
     String entityString = "{"
         + "\"PropertyEnumString\" : null,"
-        + "\"PropertyCompEnum\" : {"
-        + "\"PropertyEnumString\" : 2"
+        + "\"PropertyCompMixedEnumDef\" : {"
+        + "\"PropertyEnumString\" : \"2\""
         + "}}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
-    Entity e = deserializer.entity(stream, edm.getEntityType(
-        new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
-
-    assertNull(e.getProperty("PropertyEnumString").getValue());
-    Property propertyCompMixedEnumDef = e.getProperty("PropertyCompMixedEnumDef");
-    assertEquals(Short.valueOf("2"), propertyCompMixedEnumDef.asComplex().get(0).getValue());
+    try {
+      deserializer.entity(stream, edm.getEntityType(
+          new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, e.getMessageKey());
+      throw e;
+    }
   }
 
   @Test(expected = DeserializerException.class)
@@ -1322,7 +1337,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     String entityString = "{"
         + "\"PropertyEnumString\" : [],"
         + "\"PropertyCompEnum\" : {"
-        + "\"PropertyEnumString\" : 2"
+        + "\"PropertyEnumString\" : \"2\""
         + "}}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
@@ -1340,7 +1355,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     String entityString = "{"
         + "\"PropertyEnumString\" : {},"
         + "\"PropertyCompEnum\" : {"
-        + "\"PropertyEnumString\" : 2"
+        + "\"PropertyEnumString\" : \"2\""
         + "}}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
@@ -1358,7 +1373,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     String entityString = "{"
         + "\"PropertyEnumString\" : \"invalid\","
         + "\"PropertyCompEnum\" : {"
-        + "\"PropertyEnumString\" : 2"
+        + "\"PropertyEnumString\" : \"2\""
         + "}}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
@@ -1374,9 +1389,9 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test(expected = DeserializerException.class)
   public void eTMixEnumDefCollCompInvalidEnumValueByPrimitiveTypeException() throws Exception {
     String entityString = "{"
-        + "\"PropertyEnumString\" : 18,"
+        + "\"PropertyEnumString\" : \"18\","
         + "\"PropertyCompEnum\" : {"
-        + "\"PropertyEnumString\" : 2"
+        + "\"PropertyEnumString\" : \"2\""
         + "}}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());

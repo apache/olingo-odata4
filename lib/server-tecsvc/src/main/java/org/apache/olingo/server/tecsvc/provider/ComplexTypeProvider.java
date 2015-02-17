@@ -168,7 +168,7 @@ public class ComplexTypeProvider {
       return new ComplexType()
           .setName(nameCTMixEnumDef.getName())
           .setProperties(Arrays.asList(
-              PropertyProvider.propertyEnumString_ENString,
+              PropertyProvider.propertyEnumString_ENString_Nullable,
               PropertyProvider.collPropertyEnumString_ENString,
               PropertyProvider.propertyTypeDefinition_TDString,
               PropertyProvider.collPropertyTypeDefinition_TDString));

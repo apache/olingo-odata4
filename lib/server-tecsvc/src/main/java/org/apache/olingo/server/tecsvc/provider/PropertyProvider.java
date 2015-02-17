@@ -686,7 +686,12 @@ public class PropertyProvider {
   // EnumProperties --------------------------------------------------------------------------------------------------
   public static final Property propertyEnumString_ENString = new Property()
           .setName("PropertyEnumString")
-          .setType(EnumTypeProvider.nameENString);
+          .setType(EnumTypeProvider.nameENString)
+          .setNullable(false);
+  
+  public static final Property propertyEnumString_ENString_Nullable = new Property()
+  .setName("PropertyEnumString")
+  .setType(EnumTypeProvider.nameENString);
 
   public static final Property collPropertyEnumString_ENString = new Property()
           .setName("CollPropertyEnumString")

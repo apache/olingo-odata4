@@ -54,7 +54,6 @@ public class EdmTechProvider extends EdmProvider {
   private final ActionProvider actionProvider;
   private final FunctionProvider functionProvider;
   private final TypeDefinitionProvider typeDefinitionProvider;
-  private final List<EdmxReference> references;
 
   public EdmTechProvider() {
     this(Collections.<EdmxReference>emptyList());
@@ -69,7 +68,6 @@ public class EdmTechProvider extends EdmProvider {
     functionProvider = new FunctionProvider();
     typeDefinitionProvider = new TypeDefinitionProvider();
     schemaProvider = new SchemaProvider(this);
-    this.references = references;
   }
 
   @Override
