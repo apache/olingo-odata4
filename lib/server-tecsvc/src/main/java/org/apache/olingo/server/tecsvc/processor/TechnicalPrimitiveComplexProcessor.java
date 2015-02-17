@@ -61,7 +61,6 @@ import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
-import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -73,9 +72,9 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
  */
 public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     implements PrimitiveProcessor, PrimitiveValueProcessor, ActionPrimitiveProcessor,
-        PrimitiveCollectionProcessor, ActionPrimitiveCollectionProcessor,
-        ComplexProcessor, ActionComplexProcessor,
-        ComplexCollectionProcessor, ActionComplexCollectionProcessor {
+    PrimitiveCollectionProcessor, ActionPrimitiveCollectionProcessor,
+    ComplexProcessor, ActionComplexProcessor,
+    ComplexCollectionProcessor, ActionComplexCollectionProcessor {
 
   public TechnicalPrimitiveComplexProcessor(final DataProvider dataProvider) {
     super(dataProvider);
@@ -84,11 +83,6 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   @Override
   public void readPrimitive(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
-    if(isFunctionImport(uriInfo)) {
-      throw new ODataApplicationException("Function imports are not supported yet in technical scenario.",
-              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-    }
-
     readProperty(response, uriInfo, contentType, RepresentationType.PRIMITIVE);
   }
 
@@ -108,8 +102,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
   @Override
   public void processActionPrimitive(final ODataRequest request, final ODataResponse response,
-                                      final UriInfo uriInfo,
-                                      final ContentType requestFormat, final ContentType responseFormat)
+      final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Not supported yet.",
         HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
@@ -118,10 +111,6 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   @Override
   public void readPrimitiveCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
-    if(isFunctionImport(uriInfo)) {
-      throw new ODataApplicationException("Function imports are not supported yet in technical scenario.",
-              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-    }
     readProperty(response, uriInfo, contentType, RepresentationType.COLLECTION_PRIMITIVE);
   }
 
@@ -141,10 +130,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
   @Override
   public void processActionPrimitiveCollection(final ODataRequest request, final ODataResponse response,
-                                               final UriInfo uriInfo,
-                                               final ContentType requestFormat, final ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException,
-      SerializerException {
+      final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
+      throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Not supported yet.",
         HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
@@ -152,10 +139,6 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   @Override
   public void readComplex(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
-    if(isFunctionImport(uriInfo)) {
-      throw new ODataApplicationException("Function imports are not supported yet in technical scenario.",
-              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-    }
     readProperty(response, uriInfo, contentType, RepresentationType.COMPLEX);
   }
 
@@ -168,9 +151,9 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void processActionComplex(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType
-      requestFormat, ContentType responseFormat) throws ODataApplicationException, DeserializerException,
-      SerializerException {
+  public void processActionComplex(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+      ContentType requestFormat, ContentType responseFormat)
+      throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Not supported yet.",
         HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
@@ -184,10 +167,6 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   @Override
   public void readComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
-    if(isFunctionImport(uriInfo)) {
-      throw new ODataApplicationException("Function imports are not supported yet in technical scenario.",
-              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-    }
     readProperty(response, uriInfo, contentType, RepresentationType.COLLECTION_COMPLEX);
   }
 
@@ -201,9 +180,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
   @Override
   public void processActionComplexCollection(ODataRequest request, ODataResponse response,
-                                             UriInfo uriInfo, ContentType requestFormat,
-                                             ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException {
+      UriInfo uriInfo, ContentType requestFormat, ContentType responseFormat)
+      throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Not supported yet.",
         HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
@@ -214,22 +192,18 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     deleteProperty(response, uriInfo);
   }
 
-  private boolean isFunctionImport(final UriInfo uriInfo) {
-    final List<UriResource> resourceParts = uriInfo.asUriInfoResource().getUriResourceParts();
-    return !resourceParts.isEmpty() && resourceParts.get(0).getKind() == UriResourceKind.function;
-  }
-
   private void readProperty(final ODataResponse response, final UriInfo uriInfo, final ContentType contentType,
       final RepresentationType representationType) throws ODataApplicationException, SerializerException {
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validateOptions(resource);
     validatePath(resource);
+    final EdmEntitySet edmEntitySet = getEdmEntitySet(resource);
 
     final List<UriResource> resourceParts = resource.getUriResourceParts();
-    final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) resourceParts.get(0);
-    final List<String> path = getPropertyPath(resourceParts);
+    final List<String> path = getPropertyPath(resourceParts, 0);
 
-    final Property property = getPropertyData(resourceEntitySet, path);
+    final Entity entity = readEntity(uriInfo);
+    final Property property = getPropertyData(entity, path);
 
     if (property == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
@@ -237,8 +211,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
       if (property.getValue() == null) {
         response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
       } else {
-        final EdmEntitySet edmEntitySet = getEdmEntitySet(resource);
-        final EdmProperty edmProperty = ((UriResourceProperty) resourceParts.get(path.size())).getProperty();
+        final EdmProperty edmProperty = ((UriResourceProperty) resourceParts.get(resourceParts.size() - 1))
+            .getProperty();
 
         final ODataFormat format = ODataFormat.fromContentType(contentType);
         ODataSerializer serializer = odata.createSerializer(format);
@@ -247,8 +221,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
         final UriHelper helper = odata.createUriHelper();
         final ContextURL contextURL = format == ODataFormat.JSON_NO_METADATA ? null :
             ContextURL.with().entitySet(edmEntitySet)
-                .keyPath(helper.buildContextURLKeyPredicate(
-                    ((UriResourceEntitySet) resourceParts.get(0)).getKeyPredicates()))
+                .keyPath(helper.buildKeyPredicate(edmEntitySet.getEntityType(), entity))
                 .navOrPropertyPath(buildPropertyPath(path))
                 .selectList(edmProperty.isPrimitive() ? null :
                     helper.buildContextURLSelectList((EdmStructuredType) edmProperty.getType(), expand, select))
@@ -286,13 +259,15 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   private void deleteProperty(final ODataResponse response, final UriInfo uriInfo) throws ODataApplicationException {
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validatePath(resource);
+    getEdmEntitySet(uriInfo);  // including checks
 
     final List<UriResource> resourceParts = resource.getUriResourceParts();
-    final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) resourceParts.get(0);
-    final List<String> path = getPropertyPath(resourceParts);
+    final List<String> path = getPropertyPath(resourceParts, 0);
 
-    final EdmProperty edmProperty = ((UriResourceProperty) resourceParts.get(path.size())).getProperty();
-    final Property property = getPropertyData(resourceEntitySet, path);
+    final Property property = getPropertyData(readEntity(uriInfo), path);
+
+    final EdmProperty edmProperty = ((UriResourceProperty) resourceParts.get(resourceParts.size() - 1))
+        .getProperty();
 
     if (edmProperty.isNullable() == null || edmProperty.isNullable()) {
       property.setValue(property.getValueType(), edmProperty.isCollection() ? Collections.emptyList() : null);
@@ -302,36 +277,31 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     }
   }
 
-  private Property getPropertyData(final UriResourceEntitySet resourceEntitySet, final List<String> path)
+  private Property getPropertyData(final Entity entity, final List<String> path)
       throws ODataApplicationException {
-    final Entity entity = dataProvider.read(resourceEntitySet.getEntitySet(), resourceEntitySet.getKeyPredicates());
-    if (entity == null) {
-      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
-    } else {
-      Property property = entity.getProperty(path.get(0));
-      for (final String name : path.subList(1, path.size())) {
-        if (property != null && (property.isLinkedComplex() || property.isComplex())) {
-          final List<Property> complex = property.isLinkedComplex() ?
-              property.asLinkedComplex().getValue() : property.asComplex();
-          property = null;
-          for (final Property innerProperty : complex) {
-            if (innerProperty.getName().equals(name)) {
-              property = innerProperty;
-              break;
-            }
+    Property property = entity.getProperty(path.get(0));
+    for (final String name : path.subList(1, path.size())) {
+      if (property != null && (property.isLinkedComplex() || property.isComplex())) {
+        final List<Property> complex = property.isLinkedComplex() ?
+            property.asLinkedComplex().getValue() : property.asComplex();
+        property = null;
+        for (final Property innerProperty : complex) {
+          if (innerProperty.getName().equals(name)) {
+            property = innerProperty;
+            break;
           }
         }
       }
-      return property;
     }
+    return property;
   }
 
-  private List<String> getPropertyPath(final List<UriResource> path) {
+  private List<String> getPropertyPath(final List<UriResource> path, final int trailing) {
     List<String> result = new LinkedList<String>();
-    int index = 1;
-    while (index < path.size() && path.get(index) instanceof UriResourceProperty) {
-      result.add(((UriResourceProperty) path.get(index)).getProperty().getName());
-      index++;
+    int index = path.size() - trailing - 1;
+    while (path.get(index) instanceof UriResourceProperty) {
+      result.add(0, ((UriResourceProperty) path.get(index)).getProperty().getName());
+      index--;
     }
     return result;
   }
@@ -350,17 +320,18 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validateOptions(resource);
     validatePath(resource);
+    getEdmEntitySet(uriInfo);  // including checks
 
     final List<UriResource> resourceParts = resource.getUriResourceParts();
-    final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) resourceParts.get(0);
-    final List<String> path = getPropertyPath(resourceParts);
+    final List<String> path = getPropertyPath(resourceParts, 1);
 
-    final Property property = getPropertyData(resourceEntitySet, path);
+    final Property property = getPropertyData(readEntity(uriInfo), path);
 
     if (property == null || property.getValue() == null) {
       response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
     } else {
-      final EdmProperty edmProperty = ((UriResourceProperty) resourceParts.get(path.size())).getProperty();
+      final EdmProperty edmProperty = ((UriResourceProperty) resourceParts.get(resourceParts.size() - 2))
+          .getProperty();
       final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
       final FixedFormatSerializer serializer = odata.createFixedFormatSerializer();
       response.setContent(type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary) ?
@@ -376,7 +347,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
     for (final UriResource segment : resourcePaths.subList(1, resourcePaths.size())) {
       final UriResourceKind kind = segment.getKind();
-      if (kind != UriResourceKind.primitiveProperty
+      if (kind != UriResourceKind.navigationProperty
+          && kind != UriResourceKind.primitiveProperty
           && kind != UriResourceKind.complexProperty
           && kind != UriResourceKind.count
           && kind != UriResourceKind.value) {

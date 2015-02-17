@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -56,4 +57,12 @@ public interface UriHelper {
    * @return the relative canonical URL
    */
   String buildCanonicalURL(EdmEntitySet edmEntitySet, Entity entity) throws SerializerException;
+
+  /**
+   * Builds the key predicate for the given entity.
+   * @param edmEntityType the entity type of the entity
+   * @param entity        the entity data
+   * @return the key predicate
+   */
+  String buildKeyPredicate(EdmEntityType edmEntityType, Entity entity) throws SerializerException;
 }

@@ -58,34 +58,34 @@ public class DataProvider {
 
   public Entity read(final EdmEntitySet edmEntitySet, final List<UriParameter> keys) throws DataProviderException {
     final EntitySet entitySet = readAll(edmEntitySet);
-    if (entitySet == null) {
-      return null;
-    } else {
-      final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
-      try {
-        for (final Entity entity : entitySet.getEntities()) {
-          boolean found = true;
-          for (final UriParameter key : keys) {
-            final EdmProperty property = (EdmProperty) edmEntityType.getProperty(key.getName());
-            final EdmPrimitiveType type = (EdmPrimitiveType) property.getType();
-            final Object value = entity.getProperty(key.getName()).getValue();
-            final Object keyValue = type.valueOfString(type.fromUriLiteral(key.getText()),
-                property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
-                property.isUnicode(),
-                Calendar.class.isAssignableFrom(value.getClass()) ? Calendar.class : value.getClass());
-            if (!value.equals(keyValue)) {
-              found = false;
-              break;
-            }
-          }
-          if (found) {
-            return entity;
+    return entitySet == null ? null : read(edmEntitySet.getEntityType(), entitySet, keys);
+  }
+
+  public Entity read(final EdmEntityType edmEntityType, final EntitySet entitySet, final List<UriParameter> keys)
+      throws DataProviderException {
+    try {
+      for (final Entity entity : entitySet.getEntities()) {
+        boolean found = true;
+        for (final UriParameter key : keys) {
+          final EdmProperty property = (EdmProperty) edmEntityType.getProperty(key.getName());
+          final EdmPrimitiveType type = (EdmPrimitiveType) property.getType();
+          final Object value = entity.getProperty(key.getName()).getValue();
+          final Object keyValue = type.valueOfString(type.fromUriLiteral(key.getText()),
+              property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
+              property.isUnicode(),
+              Calendar.class.isAssignableFrom(value.getClass()) ? Calendar.class : value.getClass());
+          if (!value.equals(keyValue)) {
+            found = false;
+            break;
           }
         }
-        return null;
-      } catch (final EdmPrimitiveTypeException e) {
-        throw new DataProviderException("Wrong key!", e);
+        if (found) {
+          return entity;
+        }
       }
+      return null;
+    } catch (final EdmPrimitiveTypeException e) {
+      throw new DataProviderException("Wrong key!", e);
     }
   }
 
@@ -201,7 +201,7 @@ public class DataProvider {
         property.setValue(property.getValueType(), value);
       }
     } else if (edmProperty.isCollection()) {
-      if (newProperty != null && !newProperty.asLinkedComplex().getValue().isEmpty()) {
+      if (newProperty != null && !newProperty.asCollection().isEmpty()) {
         throw new DataProviderException("Update of a complex-collection property not supported!");
       } else {
         property.asCollection().clear();

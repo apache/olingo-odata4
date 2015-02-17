@@ -50,10 +50,13 @@ public class UriHelperImpl implements UriHelper {
 
   @Override
   public String buildCanonicalURL(final EdmEntitySet edmEntitySet, final Entity entity) throws SerializerException {
-    StringBuilder result = new StringBuilder(edmEntitySet.getName());
-    result.append('(');
-    final EdmEntityType entityType = edmEntitySet.getEntityType();
-    final List<String> keyNames = entityType.getKeyPredicateNames();
+    return edmEntitySet.getName() + '(' + buildKeyPredicate(edmEntitySet.getEntityType(), entity) + ')';
+  }
+
+  @Override
+  public String buildKeyPredicate(final EdmEntityType edmEntityType, final Entity entity) throws SerializerException {
+    StringBuilder result = new StringBuilder();
+    final List<String> keyNames = edmEntityType.getKeyPredicateNames();
     boolean first = true;
     for (final String keyName : keyNames) {
       if (first) {
@@ -64,7 +67,7 @@ public class UriHelperImpl implements UriHelper {
       if (keyNames.size() > 1) {
         result.append(Encoder.encode(keyName)).append('=');
       }
-      final EdmProperty edmProperty = entityType.getStructuralProperty(keyName);
+      final EdmProperty edmProperty = edmEntityType.getStructuralProperty(keyName);
       final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
       final Object propertyValue = entity.getProperty(keyName).getValue();
       try {
@@ -78,7 +81,6 @@ public class UriHelperImpl implements UriHelper {
             SerializerException.MessageKeys.WRONG_PROPERTY_VALUE, edmProperty.getName(), propertyValue.toString());
       }
     }
-    result.append(')');
     return result.toString();
   }
 }
