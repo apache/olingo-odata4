@@ -18,41 +18,27 @@
  */
 package org.apache.olingo.client.core;
 
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import org.apache.olingo.client.api.v4.ODataClient;
+import org.apache.olingo.client.core.v4.EdmEnabledODataClientImpl;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 public final class ODataClientFactory {
 
-  public static org.apache.olingo.client.api.v3.ODataClient getV3() {
-    return new org.apache.olingo.client.core.v3.ODataClientImpl();
-  }
-
-  public static org.apache.olingo.client.api.v3.EdmEnabledODataClient getEdmEnabledV3(final String serviceRoot) {
-    return getEdmEnabledV3(serviceRoot, null);
-  }
-
-  public static org.apache.olingo.client.api.v3.EdmEnabledODataClient getEdmEnabledV3(
-          final String serviceRoot, final Edm edm) {
-
-    final org.apache.olingo.client.api.v3.EdmEnabledODataClient instance =
-            new org.apache.olingo.client.core.v3.EdmEnabledODataClientImpl(serviceRoot, edm);
-    instance.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
-    return instance;
-  }
-
-  public static org.apache.olingo.client.api.v4.ODataClient getV4() {
+  public static ODataClient getV4() {
     return new org.apache.olingo.client.core.v4.ODataClientImpl();
   }
 
-  public static org.apache.olingo.client.api.v4.EdmEnabledODataClient getEdmEnabledV4(final String serviceRoot) {
+  public static EdmEnabledODataClient getEdmEnabledV4(final String serviceRoot) {
     return getEdmEnabledV4(serviceRoot, null, null);
   }
 
-  public static org.apache.olingo.client.api.v4.EdmEnabledODataClient getEdmEnabledV4(
+  public static EdmEnabledODataClient getEdmEnabledV4(
           final String serviceRoot, final Edm edm, final String metadataETag) {
 
-    final org.apache.olingo.client.api.v4.EdmEnabledODataClient instance =
-            new org.apache.olingo.client.core.v4.EdmEnabledODataClientImpl(serviceRoot, edm, metadataETag);
+    final EdmEnabledODataClient instance =
+            new EdmEnabledODataClientImpl(serviceRoot, edm, metadataETag);
     instance.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
     return instance;
   }

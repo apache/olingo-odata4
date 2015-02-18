@@ -18,7 +18,22 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.aalto.stax.InputFactoryImpl;
+import java.io.InputStream;
+import java.net.URI;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
@@ -31,7 +46,6 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.domain.ODataPropertyType;
@@ -53,24 +67,10 @@ import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
-import org.apache.olingo.commons.core.data.v3.LinkCollectionImpl;
 import org.apache.olingo.commons.core.data.v4.DeltaImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
-import java.io.InputStream;
-import java.net.URI;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.aalto.stax.InputFactoryImpl;
 
 public class AtomDeserializer extends AbstractAtomDealer implements ODataDeserializer {
 
@@ -528,39 +528,6 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     }
 
     return delta;
-  }
-
-  public ResWrap<LinkCollection> linkCollection(final InputStream input) throws XMLStreamException {
-    final XMLEventReader reader = getReader(input);
-    final StartElement start = skipBeforeFirstStartElement(reader);
-    return getContainer(start, linkCollection(reader));
-  }
-
-  private LinkCollection linkCollection(final XMLEventReader reader) throws XMLStreamException {
-
-    final LinkCollectionImpl linkCollection = new LinkCollectionImpl();
-
-    boolean isURI = false;
-    boolean isNext = false;
-    while (reader.hasNext()) {
-      final XMLEvent event = reader.nextEvent();
-      if (event.isStartElement()) {
-        isURI = uriQName.equals(event.asStartElement().getName());
-        isNext = nextQName.equals(event.asStartElement().getName());
-      }
-
-      if (event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
-        if (isURI) {
-          linkCollection.getLinks().add(URI.create(event.asCharacters().getData()));
-          isURI = false;
-        } else if (isNext) {
-          linkCollection.setNext(URI.create(event.asCharacters().getData()));
-          isNext = false;
-        }
-      }
-    }
-
-    return linkCollection;
   }
 
   private void properties(final XMLEventReader reader, final StartElement start, final EntityImpl entity)

@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,9 +34,7 @@ public class EnumTypeDeserializer extends AbstractEdmDeserializer<AbstractEnumTy
   protected AbstractEnumType doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractEnumType enumType = ODataServiceVersion.V30 == version
-            ? new org.apache.olingo.client.core.edm.xml.v3.EnumTypeImpl()
-            : new org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl();
+    final AbstractEnumType enumType = new org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -50,15 +47,9 @@ public class EnumTypeDeserializer extends AbstractEdmDeserializer<AbstractEnumTy
           enumType.setFlags(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("Member".equals(jp.getCurrentName())) {
           jp.nextToken();
-          if (enumType instanceof org.apache.olingo.client.core.edm.xml.v3.EnumTypeImpl) {
-            ((org.apache.olingo.client.core.edm.xml.v3.EnumTypeImpl) enumType).
-                    getMembers().add(jp.readValueAs(
-                                    org.apache.olingo.client.core.edm.xml.v3.MemberImpl.class));
-          } else {
             ((org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl) enumType).
                     getMembers().add(jp.readValueAs(
                                     org.apache.olingo.client.core.edm.xml.v4.MemberImpl.class));
-          }
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
           ((org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl) enumType).getAnnotations().

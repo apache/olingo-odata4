@@ -27,7 +27,6 @@ import org.apache.olingo.client.api.edm.xml.CommonProperty;
 import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.Schema;
-import org.apache.olingo.client.core.edm.v3.EdmNavigationPropertyProxy;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -77,10 +76,6 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
           navigationProperties.put(navigationProperty.getName(), new EdmNavigationPropertyImpl(
                   edm, structuredTypeName,
                   (org.apache.olingo.client.api.edm.xml.v4.NavigationProperty) navigationProperty));
-        } else if (navigationProperty instanceof org.apache.olingo.client.api.edm.xml.v3.NavigationProperty) {
-          navigationProperties.put(navigationProperty.getName(), new EdmNavigationPropertyProxy(
-                  edm, xmlSchemas,
-                  (org.apache.olingo.client.api.edm.xml.v3.NavigationProperty) navigationProperty));
         }
       }
     }

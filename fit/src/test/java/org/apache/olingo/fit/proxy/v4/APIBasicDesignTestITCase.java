@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -20,9 +20,9 @@ package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.TimeZone;
-
+//CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
@@ -40,12 +40,6 @@ import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 import org.apache.olingo.ext.proxy.commons.AbstractCollectionInvocationHandler;
-import org.junit.Test;
-
-//CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.DefaultContainer;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetailsCollection;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PhoneCollection;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.DemoService;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.PersonDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
@@ -68,6 +62,7 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollectionComposableInvoker;
 //CHECKSTYLE:ON (Maven checkstyle)
+import org.junit.Test;
 
 public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
@@ -85,10 +80,10 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     assertFalse(orders.isEmpty());
 
     final CustomerCollection customers = container.getCustomers().
-            orderBy("PersonID").
-            select("FirstName", "LastName", "Orders").
-            expand("Orders").
-            execute();
+        orderBy("PersonID").
+        select("FirstName", "LastName", "Orders").
+        expand("Orders").
+        execute();
 
     assertEquals(2, customers.size());
     for (Customer customer : customers) {
@@ -101,29 +96,29 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
   public void readWithReferences() {
     final Person person = container.getOrders().getByKey(8).getCustomerForOrder().refs().load();
     assertEquals("http://localhost:9080/stub/StaticService/V40/Static.svc/Customers(PersonID=1)",
-            person.readEntityReferenceID());
+        person.readEntityReferenceID());
 
     final OrderCollection orders = container.getCustomers().getByKey(1).getOrders().refs().execute();
     assertEquals("http://localhost:9080/stub/StaticService/V40/Static.svc/Orders(7)",
-            orders.iterator().next().readEntityReferenceID());
+        orders.iterator().next().readEntityReferenceID());
   }
-  
+
   @Test
   public void changeSingleNavigationProperty() {
     /*
-     * See OData Spec 11.4.6.3 
-     * Alternatively, a relationship MAY be updated as part of an update to the source entity by including 
+     * See OData Spec 11.4.6.3
+     * Alternatively, a relationship MAY be updated as part of an update to the source entity by including
      * the required binding information for the new target entity.
      * 
      * => use PATCH instead of PUT
      */
     final Person person1 = container.getPeople().getByKey(1).load();
     final Person person5 = container.getPeople().getByKey(5).load();
-    
+
     person1.setParent(person5);
     container.flush();
   }
-  
+
   @Test
   public void addViaReference() {
     final Order order = container.getOrders().getByKey(8).load();
@@ -179,7 +174,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
       homeAddress.load();
       fail();
     } catch (Exception e) {
-      // Generated URL 
+      // Generated URL
       // "<serviceroot>/Orders(8)/CustomerForOrder/HomeAddress?$select=City,PostalCode&$expand=SomethingElse"
       // curently unsupported by test service server
       homeAddress.clearQueryOptions();
@@ -204,7 +199,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
   @Test
   public void loadWithSelect() {
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order order =
-            getContainer().getOrders().getByKey(8);
+        getContainer().getOrders().getByKey(8);
     assertNull(order.getOrderID());
     assertNull(order.getOrderDate());
 
@@ -299,8 +294,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     try {
       getContainer().getOrders().getByKey(1105).load();
       fail();
-    } catch (IllegalArgumentException e) {
-    }
+    } catch (IllegalArgumentException e) {}
     service.getContext().detachAll(); // avoid influences
   }
 
@@ -328,7 +322,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     // Instantiate Demo Service
     // ---------------------------------------
     final org.apache.olingo.fit.proxy.v4.demo.Service<EdmEnabledODataClient> dservice =
-            org.apache.olingo.fit.proxy.v4.demo.Service.getV4(testDemoServiceRootURL);
+        org.apache.olingo.fit.proxy.v4.demo.Service.getV4(testDemoServiceRootURL);
     dservice.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     final DemoService dcontainer = dservice.getEntityContainer(DemoService.class);
     assertNotNull(dcontainer);
@@ -358,7 +352,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     // Instantiate Demo Service
     // ---------------------------------------
     final org.apache.olingo.fit.proxy.v4.demo.Service<EdmEnabledODataClient> dservice =
-            org.apache.olingo.fit.proxy.v4.demo.Service.getV4(testDemoServiceRootURL);
+        org.apache.olingo.fit.proxy.v4.demo.Service.getV4(testDemoServiceRootURL);
     dservice.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     final DemoService dcontainer = dservice.getEntityContainer(DemoService.class);
     assertNotNull(dcontainer);
@@ -418,56 +412,59 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
     // The third HTTP Request to access a bound operation via entity URL
     final ProductDetailCollectionComposableInvoker result =
-            container.getProducts().getByKey(1012).operations().getProductDetails(1);
+        container.getProducts().getByKey(1012).operations().getProductDetails(1);
     assertEquals(1, result.execute().size());
   }
 
-  @Test
-  public void workingWithComplexCollections() throws IOException {
-    // ---------------------------------------
-    // Instantiate V3 Service (Currently, complex collections not provided by V4 service)
-    // ---------------------------------------
-    org.apache.olingo.fit.proxy.v3.staticservice.Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> v3serv =
-            org.apache.olingo.fit.proxy.v3.staticservice.Service.getV3(
-                    "http://localhost:9080/stub/StaticService/V30/Static.svc");
-    v3serv.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
-    final DefaultContainer v3cont = v3serv.getEntityContainer(DefaultContainer.class);
-    assertNotNull(v3cont);
-    v3serv.getContext().detachAll();
-    // ---------------------------------------
-
-    final ContactDetailsCollection bci = v3cont.getCustomer().getByKey(-10).getBackupContactInfo(); // 1 HTTP Request
-    assertNotNull(bci);
-    assertTrue(bci.isEmpty());
-
-    bci.execute();
-    assertFalse(bci.isEmpty());
-    assertEquals(9, bci.size());
-
-    final PhoneCollection phoneCollection = bci.iterator().next().getMobilePhoneBag(); // No new HTTP Request
-    assertFalse(phoneCollection.isEmpty());
-
-    assertEquals("jlessdhjbgglmofcyßucßqbrfßppgzvygdyssßpehkrdetitmßfddsplccvussrvidmkodchdfzjvfgossbciq",
-            bci.iterator().next().getHomePhone().getPhoneNumber()); // No new HTTP Request
-
-    // assertNotNull(v3cont.getOrder().getByKey(8).getCustomer().getBackupContactInfo().execute().iterator().next().
-    //        getHomePhone().getPhoneNumber());
-    // Not supported by the test service BTW generates a single request as expected: 
-    // <service root>/Order(8)/Customer/BackupContactInfo
-    v3serv.getContext().detachAll();
-
-    // Static test service doesn't support query options about complexes: the following provides just a client example
-    v3cont.getCustomer().getByKey(-10).getBackupContactInfo().
-            select("HomePhone").
-            filter("HomePhone eq 12345").
-            skip(1).
-            top(10).
-            orderBy("HomePhone").
-            execute(); // New HTTP Request
-
-    v3serv.getContext().detachAll();
-  }
-
+//CHECKSTYLE:OFF (Maven checkstyle)
+  // TODO: check replacement
+//  @Test
+//  public void workingWithComplexCollections() throws IOException {
+//    // ---------------------------------------
+//    // Instantiate V3 Service (Currently, complex collections not provided by V4 service)
+//    // ---------------------------------------
+//    org.apache.olingo.fit.proxy.v3.staticservice.Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> v3serv =
+//            org.apache.olingo.fit.proxy.v3.staticservice.Service.getV3(
+//                    "http://localhost:9080/stub/StaticService/V30/Static.svc");
+//    v3serv.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+//    final DefaultContainer v3cont = v3serv.getEntityContainer(DefaultContainer.class);
+//    assertNotNull(v3cont);
+//    v3serv.getContext().detachAll();
+//    // ---------------------------------------
+//
+//    final ContactDetailsCollection bci = v3cont.getCustomer().getByKey(-10).getBackupContactInfo(); // 1 HTTP Request
+//    assertNotNull(bci);
+//    assertTrue(bci.isEmpty());
+//
+//    bci.execute();
+//    assertFalse(bci.isEmpty());
+//    assertEquals(9, bci.size());
+//
+//    final PhoneCollection phoneCollection = bci.iterator().next().getMobilePhoneBag(); // No new HTTP Request
+//    assertFalse(phoneCollection.isEmpty());
+//
+//    assertEquals("jlessdhjbgglmofcyßucßqbrfßppgzvygdyssßpehkrdetitmßfddsplccvussrvidmkodchdfzjvfgossbciq",
+//            bci.iterator().next().getHomePhone().getPhoneNumber()); // No new HTTP Request
+//
+//    // assertNotNull(v3cont.getOrder().getByKey(8).getCustomer().getBackupContactInfo().execute().iterator().next().
+//    //        getHomePhone().getPhoneNumber());
+//    // Not supported by the test service BTW generates a single request as expected: 
+//    // <service root>/Order(8)/Customer/BackupContactInfo
+//    v3serv.getContext().detachAll();
+//
+//    // Static test service doesn't support query options about complexes: the following provides just a client example
+//    v3cont.getCustomer().getByKey(-10).getBackupContactInfo().
+//            select("HomePhone").
+//            filter("HomePhone eq 12345").
+//            skip(1).
+//            top(10).
+//            orderBy("HomePhone").
+//            execute(); // New HTTP Request
+//
+//    v3serv.getContext().detachAll();
+//  }
+//CHECKSTYLE:ON (Maven checkstyle)
+  
   @Test
   public void workingWithPrimitiveCollections() throws IOException {
     final PrimitiveCollection<String> emails = container.getPeople().getByKey(1).getEmails();
@@ -478,7 +475,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     getService().getContext().detachAll();
 
     // container.getOrders().getByKey(1).getCustomerForOrder().getEmails().execute().isEmpty());
-    // Not supported by the test service BTW generates a single request as expected: 
+    // Not supported by the test service BTW generates a single request as expected:
     // <service root>/Orders(1)/CustomerForOrder/Emails
     emails.add("fabio.martelli@tirasa.net");
     container.getPeople().getByKey(1).setEmails(emails);
@@ -520,30 +517,30 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
   public void workingWithOperations() {
     // Primitive collections (available only skip and top)
     final PrimitiveCollection<String> prods1 = container.operations().
-            getProductsByAccessLevel(AccessLevel.None).
-            skip(2).
-            top(3).execute();
+        getProductsByAccessLevel(AccessLevel.None).
+        skip(2).
+        top(3).execute();
     assertNotNull(prods1);
     assertFalse(prods1.isEmpty());
 
     // Complex/Entity collection
     final ProductCollection prods2 = container.operations().getAllProducts().
-            filter("name eq XXXX").
-            select("Name", "ProductDetail").
-            expand("ProductDetail").
-            orderBy("Name").skip(3).top(5).execute();
+        filter("name eq XXXX").
+        select("Name", "ProductDetail").
+        expand("ProductDetail").
+        orderBy("Name").skip(3).top(5).execute();
     assertNotNull(prods2);
     assertFalse(prods2.isEmpty());
 
     // Complex/Entity
     final Person person = container.operations().getPerson2("London").
-            select("Name").
-            expand("Order").execute();
+        select("Name").
+        expand("Order").execute();
     assertNotNull(person);
 
     // Primitive (no query option available)
     final Double amount = container.getAccounts().getByKey(101).getMyGiftCard().operations().
-            getActualAmount(1.1).execute();
+        getActualAmount(1.1).execute();
     assertNotNull(amount);
 
     // POST ...
@@ -554,7 +551,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
     final AddressCollection ac = container.newComplexCollection(AddressCollection.class);
     final Person updated = container.getCustomers().getByKey(2).operations().
-            resetAddress(ac, 0).select("Name").expand("Orders").execute();
+        resetAddress(ac, 0).select("Name").expand("Orders").execute();
     assertNotNull(updated);
   }
 
@@ -564,10 +561,10 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
     // Complex/Entity collection (available filter, select, expand, orderBy, skip and top)
     invoker1.operations().discount(10). // discount is an operation of ProductCollecton
-            filter("Name eq XXXX").
-            select("Name", "ProductDetail").
-            expand("ProductDetail").
-            orderBy("Name").skip(3).top(5).execute();
+        filter("Name eq XXXX").
+        select("Name", "ProductDetail").
+        expand("ProductDetail").
+        orderBy("Name").skip(3).top(5).execute();
 
     // Complex/Entity
     final PersonComposableInvoker invoker2 = container.operations().getPerson2("London");
@@ -623,8 +620,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     try {
       getContainer().getOrders().getByKey(1105).load();
       fail();
-    } catch (IllegalArgumentException e) {
-    }
+    } catch (IllegalArgumentException e) {}
     service.getContext().detachAll(); // avoid influences
 
     order = getContainer().newEntityInstance(Order.class);
@@ -637,33 +633,32 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     try {
       getContainer().getOrders().getByKey(1105).load();
       fail();
-    } catch (IllegalArgumentException e) {
-    }
+    } catch (IllegalArgumentException e) {}
     service.getContext().detachAll(); // avoid influences
   }
 
   @Test
   public void issueOLINGO398() {
     AbstractCollectionInvocationHandler<?, ?> handler = AbstractCollectionInvocationHandler.class.cast(
-            Proxy.getInvocationHandler(container.getCustomers().getByKey(1).getOrders().
-                    select("OrderID", "CustomerForOrder").
-                    expand("CustomerForOrder").
-                    top(1).
-                    skip(2)));
+        Proxy.getInvocationHandler(container.getCustomers().getByKey(1).getOrders().
+            select("OrderID", "CustomerForOrder").
+            expand("CustomerForOrder").
+            top(1).
+            skip(2)));
 
     assertEquals("http://localhost:9080/stub/StaticService/V40/Static.svc/Customers(1)/Orders?"
-            + "%24select=OrderID%2CCustomerForOrder&%24expand=CustomerForOrder&%24top=1&%24skip=2",
-            handler.getRequestURI().toASCIIString());
+        + "%24select=OrderID%2CCustomerForOrder&%24expand=CustomerForOrder&%24top=1&%24skip=2",
+        handler.getRequestURI().toASCIIString());
 
     handler = AbstractCollectionInvocationHandler.class.cast(
-            Proxy.getInvocationHandler(container.getCustomers().getByKey(1).getOrders().
-                    select("OrderID", "CustomerForOrder").
-                    expand("CustomerForOrder").
-                    top(1).
-                    skip(2)));
+        Proxy.getInvocationHandler(container.getCustomers().getByKey(1).getOrders().
+            select("OrderID", "CustomerForOrder").
+            expand("CustomerForOrder").
+            top(1).
+            skip(2)));
 
     assertEquals("http://localhost:9080/stub/StaticService/V40/Static.svc/Customers(1)/Orders?%24"
-            + "select=OrderID%2CCustomerForOrder&%24expand=CustomerForOrder&%24top=1&%24skip=2",
-            handler.getRequestURI().toASCIIString());
+        + "select=OrderID%2CCustomerForOrder&%24expand=CustomerForOrder&%24top=1&%24skip=2",
+        handler.getRequestURI().toASCIIString());
   }
 }

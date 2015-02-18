@@ -26,15 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
@@ -197,19 +196,12 @@ public class EntitySetInvocationHandler<
 
   @Override
   public Search<T, EC> createSearch() {
-    if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
-      throw new UnsupportedInV3Exception();
-    }
     return new SearchImpl<T, EC>((EdmEnabledODataClient) getClient(), this.collItemRef, this.baseURI, this);
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public <S extends T, SEC extends EntityCollection<S, ?, ?>> Search<S, SEC> createSearch(final Class<SEC> reference) {
-
-    if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
-      throw new UnsupportedInV3Exception();
-    }
     return new SearchImpl<S, SEC>(
             (EdmEnabledODataClient) getClient(),
             reference,

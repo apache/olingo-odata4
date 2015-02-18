@@ -24,12 +24,14 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.core.edm.EdmClientImpl;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -83,9 +85,12 @@ public abstract class AbstractService<C extends CommonEdmEnabledODataClient<?>> 
     }
 
     final Edm edm = metadata == null ? null : new EdmClientImpl(version, metadata.getSchemaByNsOrAlias());
-    this.client = version.compareTo(ODataServiceVersion.V40) < 0
-            ? ODataClientFactory.getEdmEnabledV3(serviceRoot, edm)
-            : ODataClientFactory.getEdmEnabledV4(serviceRoot, edm, metadataETag);
+    //TODO: check runtime exception or not
+    if(version.compareTo(ODataServiceVersion.V40) < 0){
+      throw new ODataRuntimeException("Only OData V4 or higher supported.");
+    }
+    
+    this.client =  ODataClientFactory.getEdmEnabledV4(serviceRoot, edm, metadataETag);
     this.client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON_FULL_METADATA);
     this.transactional = transactional;
     this.context = new Context();

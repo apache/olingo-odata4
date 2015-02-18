@@ -21,9 +21,7 @@ package org.apache.olingo.client.core.edm.xml;
 import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.client.api.edm.xml.v3.ParameterMode;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -37,9 +35,7 @@ public class ParameterDeserializer extends AbstractEdmDeserializer<AbstractParam
   protected AbstractParameter doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractParameter parameter = ODataServiceVersion.V30 == version
-            ? new org.apache.olingo.client.core.edm.xml.v3.ParameterImpl()
-            : new org.apache.olingo.client.core.edm.xml.v4.ParameterImpl();
+    final AbstractParameter parameter = new org.apache.olingo.client.core.edm.xml.v4.ParameterImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -58,9 +54,6 @@ public class ParameterDeserializer extends AbstractEdmDeserializer<AbstractParam
         } else if ("Scale".equals(jp.getCurrentName())) {
           final String scale = jp.nextTextValue();
           parameter.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
-        } else if ("Mode".equals(jp.getCurrentName())) {
-          ((org.apache.olingo.client.core.edm.xml.v3.ParameterImpl) parameter).
-                  setMode(ParameterMode.valueOf(jp.nextTextValue()));
         } else if ("SRID".equals(jp.getCurrentName())) {
           final String srid = jp.nextTextValue();
           if (srid != null) {

@@ -23,7 +23,6 @@ import java.io.IOException;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.client.core.edm.xml.v4.NavigationPropertyBindingImpl;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,9 +35,7 @@ public class EntitySetDeserializer extends AbstractEdmDeserializer<AbstractEntit
   protected AbstractEntitySet doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractEntitySet entitySet = ODataServiceVersion.V30 == version
-            ? new org.apache.olingo.client.core.edm.xml.v3.EntitySetImpl()
-            : new org.apache.olingo.client.core.edm.xml.v4.EntitySetImpl();
+    final AbstractEntitySet entitySet = new org.apache.olingo.client.core.edm.xml.v4.EntitySetImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();

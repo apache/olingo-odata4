@@ -47,32 +47,7 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
 
     return (Service<C>) SERVICES.get(serviceRoot);
   }
-
-  /**
-   * Gives an OData 3.0 instance for given service root, operating in transactions (with batch requests).
-   *
-   * @param serviceRoot OData service root
-   * @return OData 3.0 instance for given service root, operating in transactions (with batch requests)
-   */
-  public static Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> getV3(
-          final String serviceRoot) {
-
-    return getV3(serviceRoot, true);
-  }
-
-  /**
-   * Gives an OData 3.0 instance for given service root.
-   *
-   * @param serviceRoot OData service root
-   * @param transactional whether operating in transactions (with batch requests) or not
-   * @return OData 3.0 instance for given service root
-   */
-  public static Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> getV3(
-          final String serviceRoot, final boolean transactional) {
-
-    return getInstance(ODataServiceVersion.V30, serviceRoot, transactional);
-  }
-
+  
   /**
    * Gives an OData 4.0 instance for given service root, operating in transactions (with batch requests).
    *

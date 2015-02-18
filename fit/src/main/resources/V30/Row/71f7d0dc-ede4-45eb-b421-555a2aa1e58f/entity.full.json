@@ -1,9 +1,0 @@
-{
-  "odata.metadata": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/OpenType.svc/$metadata#Row/@Element",
-  "odata.type": "Microsoft.Test.OData.Services.OpenTypesService.Row",
-  "odata.id": "http://localhost:${tomcat.servlet.port}/stub/StaticService/V30/OpenType.svc/Row(guid'71f7d0dc-ede4-45eb-b421-555a2aa1e58f')",
-  "odata.editLink": "Row(guid'71f7d0dc-ede4-45eb-b421-555a2aa1e58f')",
-  "Id@odata.type": "Edm.Guid",
-  "Id": "71f7d0dc-ede4-45eb-b421-555a2aa1e58f",
-  "Double": 1.2626
-}

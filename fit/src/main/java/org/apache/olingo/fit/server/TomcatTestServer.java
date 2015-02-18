@@ -61,11 +61,6 @@ public class TomcatTestServer {
     try {
       LOG.trace("Start tomcat embedded server from main()");
       TestServerBuilder server = TomcatTestServer.init(9180)
-          .addStaticContent("/stub/StaticService/V30/Static.svc/$metadata", "V30/metadata.xml")
-          .addStaticContent("/stub/StaticService/V30/ActionOverloading.svc/$metadata",
-              "V30/actionOverloadingMetadata.xml")
-          .addStaticContent("/stub/StaticService/V30/OpenType.svc/$metadata", "V30/openTypeMetadata.xml")
-          .addStaticContent("/stub/StaticService/V30/PrimitiveKeys.svc/$metadata", "V30/primitiveKeysMetadata.xml")
           .addStaticContent("/stub/StaticService/V40/OpenType.svc/$metadata", "V40/openTypeMetadata.xml")
           .addStaticContent("/stub/StaticService/V40/Demo.svc/$metadata", "V40/demoMetadata.xml")
           .addStaticContent("/stub/StaticService/V40/Static.svc/$metadata", "V40/metadata.xml");

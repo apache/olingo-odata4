@@ -38,7 +38,6 @@ import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.EnumType;
 import org.apache.olingo.client.api.edm.xml.Schema;
-import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.client.api.edm.xml.v4.Action;
 import org.apache.olingo.client.api.edm.xml.v4.Annotatable;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
@@ -46,9 +45,6 @@ import org.apache.olingo.client.api.edm.xml.v4.Annotations;
 import org.apache.olingo.client.api.edm.xml.v4.Function;
 import org.apache.olingo.client.api.edm.xml.v4.Term;
 import org.apache.olingo.client.api.edm.xml.v4.TypeDefinition;
-import org.apache.olingo.client.core.edm.v3.EdmActionProxy;
-import org.apache.olingo.client.core.edm.v3.EdmFunctionProxy;
-import org.apache.olingo.client.core.edm.v3.FunctionImportUtils;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmAnnotations;
@@ -201,22 +197,7 @@ public class EdmClientImpl extends AbstractEdm {
           result = EdmActionImpl.getInstance(this, actionName, action);
         }
       }
-    } else {
-      for (EntityContainer entityContainer : schema.getEntityContainers()) {
-        @SuppressWarnings("unchecked")
-        final List<FunctionImport> functionImports = (List<FunctionImport>) entityContainer.
-                getFunctionImports(actionName.getName());
-        boolean found = false;
-        for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
-          final FunctionImport functionImport = itor.next();
-          if (!FunctionImportUtils.canProxyFunction(functionImport) && !functionImport.isBindable()) {
-            found = functionImport.getParameters().isEmpty();
-            result = EdmActionProxy.getInstance(this, actionName, functionImport);
-          }
-        }
-      }
-    }
-
+    } 
     return result;
   }
 
@@ -234,20 +215,7 @@ public class EdmClientImpl extends AbstractEdm {
           result.add(EdmFunctionImpl.getInstance(this, functionName, function));
         }
       }
-    } else {
-      for (EntityContainer entityContainer : schema.getEntityContainers()) {
-        @SuppressWarnings("unchecked")
-        final List<FunctionImport> functionImports =
-                (List<FunctionImport>) entityContainer.getFunctionImports(functionName.getName());
-        for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext();) {
-          final FunctionImport functionImport = itor.next();
-          if (FunctionImportUtils.canProxyFunction(functionImport) && !functionImport.isBindable()) {
-            result.add(EdmFunctionProxy.getInstance(this, functionName, functionImport));
-          }
-        }
-      }
-    }
-
+    } 
     return result;
   }
 
@@ -273,28 +241,7 @@ public class EdmClientImpl extends AbstractEdm {
           result = EdmFunctionImpl.getInstance(this, functionName, function);
         }
       }
-    } else {
-      for (EntityContainer entityContainer : schema.getEntityContainers()) {
-        @SuppressWarnings("unchecked")
-        final List<FunctionImport> functionImports =
-                (List<FunctionImport>) entityContainer.getFunctionImports(functionName.getName());
-        boolean found = false;
-        for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
-          final FunctionImport functionImport = itor.next();
-          if (FunctionImportUtils.canProxyFunction(functionImport) && !functionImport.isBindable()) {
-            final Set<String> functionParamNames = new HashSet<String>();
-            for (CommonParameter param : functionImport.getParameters()) {
-              functionParamNames.add(param.getName());
-            }
-            found = parameterNames == null
-                    ? functionParamNames.isEmpty()
-                    : functionParamNames.containsAll(parameterNames);
-            result = EdmFunctionProxy.getInstance(this, functionName, functionImport);
-          }
-        }
-      }
-    }
-
+    } 
     return result;
   }
 
@@ -323,29 +270,7 @@ public class EdmClientImpl extends AbstractEdm {
           }
         }
       }
-    } else {
-      for (EntityContainer entityContainer : schema.getEntityContainers()) {
-        @SuppressWarnings("unchecked")
-        final List<FunctionImport> functionImports =
-                (List<FunctionImport>) entityContainer.getFunctionImports(actionName.getName());
-        boolean found = false;
-        for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
-          final FunctionImport functionImport = itor.next();
-          if (!FunctionImportUtils.canProxyFunction(functionImport) && functionImport.isBindable()) {
-            final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
-                    setTypeExpression(functionImport.getParameters().get(0).getType()).build();
-            if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
-                    && (isBindingParameterCollection == null
-                    || isBindingParameterCollection.booleanValue() == boundParam.isCollection())) {
-
-              found = true;
-              result = EdmActionProxy.getInstance(this, actionName, functionImport);
-            }
-          }
-        }
-      }
-    }
-
+    } 
     return result;
   }
 
@@ -381,35 +306,7 @@ public class EdmClientImpl extends AbstractEdm {
           }
         }
       }
-    } else {
-      for (EntityContainer entityContainer : schema.getEntityContainers()) {
-        @SuppressWarnings("unchecked")
-        final List<FunctionImport> functionImports =
-                (List<FunctionImport>) entityContainer.getFunctionImports(functionName.getName());
-        boolean found = false;
-        for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
-          final FunctionImport functionImport = itor.next();
-          if (FunctionImportUtils.canProxyFunction(functionImport) && functionImport.isBindable()) {
-            final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
-                    setTypeExpression(functionImport.getParameters().get(0).getType()).build();
-            if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
-                    && (isBindingParameterCollection == null
-                    || isBindingParameterCollection.booleanValue() == boundParam.isCollection())) {
-
-              final Set<String> functionParamNames = new HashSet<String>();
-              for (CommonParameter param : functionImport.getParameters()) {
-                functionParamNames.add(param.getName());
-              }
-              found = parameterNames == null
-                      ? functionParamNames.isEmpty()
-                      : functionParamNames.containsAll(parameterNames);
-              result = EdmFunctionProxy.getInstance(this, functionName, functionImport);
-            }
-          }
-        }
-      }
-    }
-
+    } 
     return result;
   }
 

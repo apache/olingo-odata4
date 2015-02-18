@@ -25,8 +25,6 @@ import org.junit.BeforeClass;
 
 public abstract class AbstractTest {
 
-  protected static org.apache.olingo.client.api.v3.ODataClient v3Client;
-
   protected static org.apache.olingo.client.api.v4.ODataClient v4Client;
 
   protected abstract CommonODataClient<?> getClient();
@@ -42,7 +40,6 @@ public abstract class AbstractTest {
 
   @BeforeClass
   public static void setClientInstances() {
-    v3Client = ODataClientFactory.getV3();
     v4Client = ODataClientFactory.getV4();
   }
 
