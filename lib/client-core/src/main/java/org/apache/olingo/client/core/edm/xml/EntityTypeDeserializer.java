@@ -21,7 +21,6 @@ package org.apache.olingo.client.core.edm.xml;
 import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,7 +33,7 @@ public class EntityTypeDeserializer extends AbstractEdmDeserializer<AbstractEnti
   protected AbstractEntityType doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
       throws IOException, JsonProcessingException {
 
-    final AbstractEntityType entityType = new org.apache.olingo.client.core.edm.xml.v4.EntityTypeImpl();
+    final AbstractEntityType entityType = new org.apache.olingo.client.core.edm.xml.EntityTypeImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -54,16 +53,16 @@ public class EntityTypeDeserializer extends AbstractEdmDeserializer<AbstractEnti
           entityType.setKey(jp.readValueAs(EntityKeyImpl.class));
         } else if ("Property".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.EntityTypeImpl) entityType).
-              getProperties().add(jp.readValueAs(org.apache.olingo.client.core.edm.xml.v4.PropertyImpl.class));
+          ((org.apache.olingo.client.core.edm.xml.EntityTypeImpl) entityType).
+              getProperties().add(jp.readValueAs(org.apache.olingo.client.core.edm.xml.PropertyImpl.class));
         } else if ("NavigationProperty".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.EntityTypeImpl) entityType).
+          ((org.apache.olingo.client.core.edm.xml.EntityTypeImpl) entityType).
               getNavigationProperties().add(jp.readValueAs(
-                  org.apache.olingo.client.core.edm.xml.v4.NavigationPropertyImpl.class));
+                  org.apache.olingo.client.core.edm.xml.NavigationPropertyImpl.class));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.EntityTypeImpl) entityType).getAnnotations().
+          ((org.apache.olingo.client.core.edm.xml.EntityTypeImpl) entityType).getAnnotations().
               add(jp.readValueAs(AnnotationImpl.class));
         }
       }

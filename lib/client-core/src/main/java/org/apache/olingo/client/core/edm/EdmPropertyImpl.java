@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.CommonProperty;
-import org.apache.olingo.client.api.edm.xml.v4.Property;
+import org.apache.olingo.client.api.edm.xml.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMapping;

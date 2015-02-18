@@ -21,12 +21,12 @@ package org.apache.olingo.client.core.edm;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.olingo.client.api.edm.xml.ActionImport;
 import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntitySet;
 import org.apache.olingo.client.api.edm.xml.Schema;
-import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
-import org.apache.olingo.client.api.edm.xml.v4.Singleton;
+import org.apache.olingo.client.api.edm.xml.Singleton;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
@@ -55,22 +55,22 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
     this.xmlEntityContainer = xmlEntityContainer;
     this.xmlSchemas = xmlSchemas;
-    if (xmlEntityContainer instanceof org.apache.olingo.client.api.edm.xml.v4.EntityContainer) {
+    if (xmlEntityContainer instanceof EntityContainer) {
       this.helper = new EdmAnnotationHelperImpl(edm,
-              (org.apache.olingo.client.api.edm.xml.v4.EntityContainer) xmlEntityContainer);
+              (EntityContainer) xmlEntityContainer);
     }
   }
 
   @Override
   public boolean isDefault() {
-    return xmlEntityContainer instanceof org.apache.olingo.client.api.edm.xml.v4.EntityContainer
+    return xmlEntityContainer instanceof EntityContainer
             ? true
             : xmlEntityContainer.isDefaultEntityContainer();
   }
 
   @Override
   protected EdmSingleton createSingleton(final String singletonName) {
-    final Singleton singleton = ((org.apache.olingo.client.api.edm.xml.v4.EntityContainer) xmlEntityContainer).
+    final Singleton singleton = ((EntityContainer) xmlEntityContainer).
             getSingleton(singletonName);
     return singleton == null
             ? null
@@ -88,9 +88,9 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     if (entitySet != null) {
       final FullQualifiedName entityType = new EdmTypeInfo.Builder().setTypeExpression(entitySet.getEntityType()).
               setDefaultNamespace(entityContainerName.getNamespace()).build().getFullQualifiedName();
-      if (entitySet instanceof org.apache.olingo.client.api.edm.xml.v4.EntitySet) {
+      if (entitySet instanceof EntitySet) {
         result = new EdmEntitySetImpl(edm, this, entitySetName, entityType,
-                (org.apache.olingo.client.api.edm.xml.v4.EntitySet) entitySet);
+                (EntitySet) entitySet);
       } 
     }
 
@@ -101,8 +101,8 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
   protected EdmActionImport createActionImport(final String actionImportName) {
     EdmActionImport result = null;
 
-    if (xmlEntityContainer instanceof org.apache.olingo.client.api.edm.xml.v4.EntityContainer) {
-      final ActionImport actionImport = ((org.apache.olingo.client.api.edm.xml.v4.EntityContainer) xmlEntityContainer).
+    if (xmlEntityContainer instanceof EntityContainer) {
+      final ActionImport actionImport = ((EntityContainer) xmlEntityContainer).
               getActionImport(actionImportName);
       if (actionImport != null) {
         result = new EdmActionImportImpl(edm, this, actionImportName, actionImport);
@@ -117,9 +117,9 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
     final CommonFunctionImport functionImport = xmlEntityContainer.getFunctionImport(functionImportName);
     if (functionImport != null) {
-      if (functionImport instanceof org.apache.olingo.client.api.edm.xml.v4.FunctionImport) {
+      if (functionImport instanceof org.apache.olingo.client.api.edm.xml.FunctionImport) {
         result = new EdmFunctionImportImpl(edm, this, functionImportName,
-                (org.apache.olingo.client.api.edm.xml.v4.FunctionImport) functionImport);
+                (org.apache.olingo.client.api.edm.xml.FunctionImport) functionImport);
       } 
     }
 
@@ -134,9 +134,9 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
         EdmEntitySet edmSet;
         final FullQualifiedName entityType = new EdmTypeInfo.Builder().setTypeExpression(entitySet.getEntityType()).
                 setDefaultNamespace(entityContainerName.getNamespace()).build().getFullQualifiedName();
-        if (entitySet instanceof org.apache.olingo.client.api.edm.xml.v4.EntitySet) {
+        if (entitySet instanceof EntitySet) {
           edmSet = new EdmEntitySetImpl(edm, this, entitySet.getName(), entityType,
-                  (org.apache.olingo.client.api.edm.xml.v4.EntitySet) entitySet);
+                  (EntitySet) entitySet);
           entitySets.put(edmSet.getName(), edmSet);
         } 
       }
@@ -149,9 +149,9 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     final List<? extends CommonFunctionImport> localFunctionImports = xmlEntityContainer.getFunctionImports();
     for (CommonFunctionImport functionImport : localFunctionImports) {
       EdmFunctionImport edmFunctionImport;
-      if (functionImport instanceof org.apache.olingo.client.api.edm.xml.v4.FunctionImport) {
+      if (functionImport instanceof org.apache.olingo.client.api.edm.xml.FunctionImport) {
         edmFunctionImport = new EdmFunctionImportImpl(edm, this, functionImport.getName(),
-                (org.apache.olingo.client.api.edm.xml.v4.FunctionImport) functionImport);
+                (org.apache.olingo.client.api.edm.xml.FunctionImport) functionImport);
         functionImports.put(edmFunctionImport.getName(), edmFunctionImport);
       } 
     }
@@ -160,7 +160,7 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
   @Override
   protected void loadAllSingletons() {
     final List<Singleton> localSingletons =
-            ((org.apache.olingo.client.api.edm.xml.v4.EntityContainer) xmlEntityContainer).getSingletons();
+            ((EntityContainer) xmlEntityContainer).getSingletons();
     if (localSingletons != null) {
       for (Singleton singleton : localSingletons) {
         singletons.put(singleton.getName(), new EdmSingletonImpl(edm, this, singleton.getName(),
@@ -173,9 +173,9 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
   @Override
   protected void loadAllActionImports() {
-    if (xmlEntityContainer instanceof org.apache.olingo.client.api.edm.xml.v4.EntityContainer) {
+    if (xmlEntityContainer instanceof EntityContainer) {
       final List<ActionImport> localActionImports =
-              ((org.apache.olingo.client.api.edm.xml.v4.EntityContainer) xmlEntityContainer).getActionImports();
+              ((EntityContainer) xmlEntityContainer).getActionImports();
       if (actionImports != null) {
         for (ActionImport actionImport : localActionImports) {
           actionImports.put(actionImport.getName(),

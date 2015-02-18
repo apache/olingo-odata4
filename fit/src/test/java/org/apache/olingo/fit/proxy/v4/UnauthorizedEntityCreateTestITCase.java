@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.proxy.v4.staticservice.Service;

@@ -19,6 +19,7 @@
 package org.apache.olingo.client.api.edm.xml;
 
 import java.util.List;
+import java.util.Map;
 
 public interface Schema {
 
@@ -26,19 +27,9 @@ public interface Schema {
 
   String getAlias();
 
-  List<? extends EntityType> getEntityTypes();
-
   List<EnumType> getEnumTypes();
 
   EnumType getEnumType(String name);
-
-  List<? extends CommonAnnotations> getAnnotationGroups();
-
-  CommonAnnotations getAnnotationGroup(String target);
-
-  List<? extends ComplexType> getComplexTypes();
-
-  List<? extends EntityContainer> getEntityContainers();
 
   /**
    * Gets default entity container.
@@ -55,20 +46,44 @@ public interface Schema {
    */
   EntityContainer getEntityContainer(String name);
 
-  /**
-   * Gets entity type with the given name.
-   *
-   * @param name name.
-   * @return entity type.
-   */
-  EntityType getEntityType(String name);
+  List<EntityContainer> getEntityContainers();
 
-  /**
-   * Gets complex type with the given name.
-   *
-   * @param name name.
-   * @return complex type.
-   */
+  EntityContainer getEntityContainer();
+
   ComplexType getComplexType(String name);
 
+  List<ComplexType> getComplexTypes();
+
+  EntityType getEntityType(String name);
+
+  List<EntityType> getEntityTypes();
+
+  List<Action> getActions();
+
+  List<Action> getActions(String name);
+
+  Annotation getAnnotation(String term);
+
+  Map<String, Annotatable> getAnnotatables();
+
+  List<Function> getFunctions();
+
+  List<Function> getFunctions(String name);
+
+  Term getTerm(String name);
+
+  List<Term> getTerms();
+
+  TypeDefinition getTypeDefinition(String name);
+
+  List<TypeDefinition> getTypeDefinitions();
+
+  List<Annotations> getAnnotationGroups();
+
+  Annotations getAnnotationGroup(String target);
+
+  
+  //TODO: Check if there are annotations in V4
+  List<Annotation> getAnnotations();
+  
 }

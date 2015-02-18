@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.client.core.uri.v4;
 
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.uri.QueryOption;
-import org.apache.olingo.client.api.uri.v4.URIBuilder;
-import org.apache.olingo.client.api.v4.ODataClient;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.AbstractTest;
 import org.junit.Test;
 

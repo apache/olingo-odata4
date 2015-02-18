@@ -20,9 +20,6 @@ package org.apache.olingo.client.core.edm.xml;
 
 import java.io.IOException;
 
-import org.apache.olingo.client.core.edm.xml.v4.DataServicesImpl;
-import org.apache.olingo.client.core.edm.xml.v4.SchemaImpl;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;

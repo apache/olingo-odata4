@@ -18,8 +18,10 @@
  */
 package org.apache.olingo.client.api.edm.xml;
 
-public interface EntitySet extends Named {
+public interface EntitySet extends Named, BindingTarget {
 
   String getEntityType();
+  
+  boolean isIncludeInServiceDocument();
 
 }

@@ -20,8 +20,7 @@ package org.apache.olingo.client.core.edm.xml;
 
 import java.io.IOException;
 
-import org.apache.olingo.client.core.edm.xml.v4.ReturnTypeImpl;
-import org.apache.olingo.client.core.edm.xml.v4.annotation.ConstantAnnotationExpressionImpl;
+import org.apache.olingo.client.core.edm.xml.annotation.ConstantAnnotationExpressionImpl;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 import com.fasterxml.jackson.core.JsonParser;

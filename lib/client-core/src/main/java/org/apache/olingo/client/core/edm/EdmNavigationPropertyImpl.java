@@ -21,8 +21,8 @@ package org.apache.olingo.client.core.edm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.v4.NavigationProperty;
-import org.apache.olingo.client.api.edm.xml.v4.ReferentialConstraint;
+import org.apache.olingo.client.api.edm.xml.NavigationProperty;
+import org.apache.olingo.client.api.edm.xml.ReferentialConstraint;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;

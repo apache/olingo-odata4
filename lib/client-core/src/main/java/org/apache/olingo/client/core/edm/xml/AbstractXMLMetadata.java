@@ -41,10 +41,10 @@ public abstract class AbstractXMLMetadata extends AbstractEdmItem implements XML
   }
 
   @Override
-  public List<? extends Schema> getSchemas() {
+  public List<Schema> getSchemas() {
     return this.edmx.getDataServices().getSchemas();
   }
-
+  
   @Override
   public Schema getSchema(final int index) {
     return getSchemas().get(index);

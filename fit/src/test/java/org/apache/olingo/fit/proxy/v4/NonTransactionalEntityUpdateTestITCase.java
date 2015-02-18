@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.proxy.v4.staticservice.Service;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;

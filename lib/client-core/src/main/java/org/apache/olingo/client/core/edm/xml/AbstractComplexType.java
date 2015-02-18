@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import org.apache.olingo.client.api.edm.xml.CommonNavigationProperty;
-import org.apache.olingo.client.api.edm.xml.CommonProperty;
 import org.apache.olingo.client.api.edm.xml.ComplexType;
+import org.apache.olingo.client.api.edm.xml.NavigationProperty;
+import org.apache.olingo.client.api.edm.xml.Property;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -39,14 +39,14 @@ public abstract class AbstractComplexType extends AbstractEdmItem implements Com
   public void setName(final String name) {
     this.name = name;
   }
-
+  
   @Override
-  public CommonProperty getProperty(final String name) {
+  public Property getProperty(final String name) {
     return getOneByName(name, getProperties());
   }
 
   @Override
-  public CommonNavigationProperty getNavigationProperty(final String name) {
+  public NavigationProperty getNavigationProperty(final String name) {
     return getOneByName(name, getNavigationProperties());
   }
 }

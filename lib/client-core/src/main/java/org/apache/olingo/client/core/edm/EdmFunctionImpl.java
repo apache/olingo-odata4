@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import org.apache.olingo.client.api.edm.xml.v4.Function;
+import org.apache.olingo.client.api.edm.xml.Function;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;

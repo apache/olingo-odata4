@@ -72,10 +72,10 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
     if (navigationProperties == null) {
       navigationProperties = new LinkedHashMap<String, EdmNavigationProperty>();
       for (CommonNavigationProperty navigationProperty : complexType.getNavigationProperties()) {
-        if (navigationProperty instanceof org.apache.olingo.client.api.edm.xml.v4.NavigationProperty) {
+        if (navigationProperty instanceof org.apache.olingo.client.api.edm.xml.NavigationProperty) {
           navigationProperties.put(navigationProperty.getName(), new EdmNavigationPropertyImpl(
                   edm, structuredTypeName,
-                  (org.apache.olingo.client.api.edm.xml.v4.NavigationProperty) navigationProperty));
+                  (org.apache.olingo.client.api.edm.xml.NavigationProperty) navigationProperty));
         }
       }
     }
@@ -84,8 +84,8 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
 
   @Override
   public boolean isOpenType() {
-    return complexType instanceof org.apache.olingo.client.api.edm.xml.v4.ComplexType
-            ? ((org.apache.olingo.client.api.edm.xml.v4.ComplexType) complexType).isOpenType()
+    return complexType instanceof org.apache.olingo.client.api.edm.xml.ComplexType
+            ? ((org.apache.olingo.client.api.edm.xml.ComplexType) complexType).isOpenType()
             : complexType instanceof EntityType
             ? ((EntityType) complexType).isOpenType()
             : false;
@@ -93,8 +93,8 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
 
   @Override
   public boolean isAbstract() {
-    return complexType instanceof org.apache.olingo.client.api.edm.xml.v4.ComplexType
-            ? ((org.apache.olingo.client.api.edm.xml.v4.ComplexType) complexType).isAbstractEntityType()
+    return complexType instanceof org.apache.olingo.client.api.edm.xml.ComplexType
+            ? ((org.apache.olingo.client.api.edm.xml.ComplexType) complexType).isAbstractEntityType()
             : complexType instanceof EntityType
             ? ((EntityType) complexType).isAbstractEntityType()
             : false;

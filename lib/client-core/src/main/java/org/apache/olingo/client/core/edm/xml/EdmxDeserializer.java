@@ -20,8 +20,6 @@ package org.apache.olingo.client.core.edm.xml;
 
 import java.io.IOException;
 
-import org.apache.olingo.client.core.edm.xml.v4.ReferenceImpl;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
@@ -33,7 +31,7 @@ public class EdmxDeserializer extends AbstractEdmDeserializer<AbstractEdmx> {
   protected AbstractEdmx doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
       throws IOException, JsonProcessingException {
 
-    final AbstractEdmx edmx = new org.apache.olingo.client.core.edm.xml.v4.EdmxImpl();
+    final AbstractEdmx edmx = new org.apache.olingo.client.core.edm.xml.EdmxImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -43,13 +41,13 @@ public class EdmxDeserializer extends AbstractEdmDeserializer<AbstractEdmx> {
         } else if ("DataServices".equals(jp.getCurrentName())) {
           jp.nextToken();
 
-          ((org.apache.olingo.client.core.edm.xml.v4.EdmxImpl) edmx).
+          ((org.apache.olingo.client.core.edm.xml.EdmxImpl) edmx).
               setDataServices(jp.readValueAs(
-                  org.apache.olingo.client.core.edm.xml.v4.DataServicesImpl.class));
+                  org.apache.olingo.client.core.edm.xml.DataServicesImpl.class));
 
         } else if ("Reference".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.EdmxImpl) edmx).getReferences().
+          ((org.apache.olingo.client.core.edm.xml.EdmxImpl) edmx).getReferences().
               add(jp.readValueAs(ReferenceImpl.class));
         }
       }

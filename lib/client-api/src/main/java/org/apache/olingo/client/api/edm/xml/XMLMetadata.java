@@ -47,7 +47,9 @@ public interface XMLMetadata {
    *
    * @return all Schema objects defined in the EdM metadata document
    */
-  List<? extends Schema> getSchemas();
+  List<Schema> getSchemas();
 
   Map<String, Schema> getSchemaByNsOrAlias();
+  
+  List<Reference> getReferences();
 }

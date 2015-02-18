@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import org.apache.olingo.client.api.edm.xml.v4.ReturnType;
+import org.apache.olingo.client.api.edm.xml.ReturnType;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.AbstractEdmReturnType;

@@ -22,18 +22,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.api.EdmEnabledODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.v4.URIBuilder;
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.client.api.v4.ODataClient;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import java.net.URI;
+
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.apache.olingo.fit.CXFOAuth2HttpClientFactory;
 

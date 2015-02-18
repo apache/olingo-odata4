@@ -19,7 +19,7 @@
 package org.apache.olingo.client.core.uri;
 
 import org.apache.olingo.client.core.edm.EdmEnumTypeImpl;
-import org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl;
+import org.apache.olingo.client.core.edm.xml.EnumTypeImpl;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;

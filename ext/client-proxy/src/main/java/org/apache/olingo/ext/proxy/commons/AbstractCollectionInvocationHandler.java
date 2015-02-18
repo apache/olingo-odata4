@@ -19,6 +19,7 @@
 package org.apache.olingo.ext.proxy.commons;
 
 import java.io.Serializable;
+
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 
 import java.lang.reflect.Proxy;
@@ -31,11 +32,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.uri.QueryOption;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.uri.URIFilter;
-import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;

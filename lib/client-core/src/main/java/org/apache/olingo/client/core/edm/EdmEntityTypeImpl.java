@@ -80,9 +80,9 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
 
     super(edm, fqn, baseTypeName, entityType.isHasStream());
     this.typeHelper = new EdmStructuredTypeHelperImpl(edm, getFullQualifiedName(), xmlSchemas, entityType);
-    if (entityType instanceof org.apache.olingo.client.api.edm.xml.v4.EntityType) {
+    if (entityType instanceof EntityType) {
       this.annotationHelper = new EdmAnnotationHelperImpl(edm,
-          (org.apache.olingo.client.api.edm.xml.v4.EntityType) entityType);
+          (EntityType) entityType);
     }
   }
 

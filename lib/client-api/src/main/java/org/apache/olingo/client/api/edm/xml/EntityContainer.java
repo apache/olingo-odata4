@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.edm.xml;
 
 import java.util.List;
 
-public interface EntityContainer extends Named {
+public interface EntityContainer extends Named, Annotatable {
 
   String getExtends();
 
@@ -30,11 +30,21 @@ public interface EntityContainer extends Named {
 
   EntitySet getEntitySet(String name);
 
-  List<? extends EntitySet> getEntitySets();
+  List<EntitySet> getEntitySets();
 
-  CommonFunctionImport getFunctionImport(String name);
+  List<Singleton> getSingletons();
 
-  List<? extends CommonFunctionImport> getFunctionImports(String name);
+  Singleton getSingleton(String name);
 
-  List<? extends CommonFunctionImport> getFunctionImports();
+  ActionImport getActionImport(String name);
+
+  List<ActionImport> getActionImports(String name);
+
+  List<ActionImport> getActionImports();
+
+  FunctionImport getFunctionImport(String name);
+
+  List<FunctionImport> getFunctionImports(String name);
+
+  List<FunctionImport> getFunctionImports();
 }

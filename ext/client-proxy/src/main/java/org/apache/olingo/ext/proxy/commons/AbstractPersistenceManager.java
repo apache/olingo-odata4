@@ -32,13 +32,13 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
-import org.apache.olingo.client.api.communication.request.cud.v4.ODataReferenceAddingRequest;
+import org.apache.olingo.client.api.communication.request.cud.ODataReferenceAddingRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
@@ -465,7 +465,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     final ODataEntityUpdateRequest<CommonODataEntity> req =
         ((EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(handler.getEntityURI(),
-                org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+                org.apache.olingo.client.api.communication.request.cud.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(service.getClient().getServiceVersion()).returnContent());
 
@@ -487,7 +487,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
     if (service.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) >= 1) {
       final ODataReferenceAddingRequest req =
-          ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
+          ((org.apache.olingo.client.api.EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
               getReferenceAddingRequest(sericeRoot, source, targetRef);
 
       req.setPrefer(new ODataPreferences(service.getClient().getServiceVersion()).returnContent());
@@ -517,7 +517,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     final ODataEntityUpdateRequest<CommonODataEntity> req =
         ((EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(uri,
-                org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+                org.apache.olingo.client.api.communication.request.cud.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(service.getClient().getServiceVersion()).returnContent());
 

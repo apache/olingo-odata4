@@ -55,7 +55,7 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
    * @param serviceRoot OData service root
    * @return OData 4.0 instance for given service root, operating in transactions (with batch requests)
    */
-  public static Service<org.apache.olingo.client.api.v4.EdmEnabledODataClient> getV4(
+  public static Service<org.apache.olingo.client.api.EdmEnabledODataClient> getV4(
       final String serviceRoot) {
 
     return getV4(serviceRoot, true);
@@ -68,7 +68,7 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
    * @param transactional whether operating in transactions (with batch requests) or not
    * @return OData 4.0 instance for given service root
    */
-  public static Service<org.apache.olingo.client.api.v4.EdmEnabledODataClient> getV4(
+  public static Service<org.apache.olingo.client.api.EdmEnabledODataClient> getV4(
       final String serviceRoot, final boolean transactional) {
 
     return getInstance(ODataServiceVersion.V40, serviceRoot, transactional);

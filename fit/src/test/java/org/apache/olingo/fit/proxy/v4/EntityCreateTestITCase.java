@@ -20,7 +20,7 @@ package org.apache.olingo.fit.proxy.v4;
 
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.commons.lang3.RandomUtils;
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
@@ -44,6 +44,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.TimeZone;
+
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 
 import static org.junit.Assert.assertEquals;

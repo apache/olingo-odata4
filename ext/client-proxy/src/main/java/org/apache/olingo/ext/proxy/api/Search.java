@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-import org.apache.olingo.client.api.uri.v4.URISearch;
+import org.apache.olingo.client.api.uri.URISearch;
 
 import java.io.Serializable;
 import java.util.Collection;

@@ -19,21 +19,21 @@
 package org.apache.olingo.fit.v4;
 
 import org.apache.olingo.client.api.communication.header.HeaderName;
+import org.apache.olingo.client.api.communication.request.AsyncRequestWrapper;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
-import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
+import org.apache.olingo.client.api.communication.request.cud.UpdateType;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataDeltaRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.v4.ODataDeltaRequest;
-import org.apache.olingo.client.api.communication.request.v4.AsyncRequestWrapper;
+import org.apache.olingo.client.api.communication.response.AsyncResponseWrapper;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.communication.response.v4.AsyncResponseWrapper;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.client.api.uri.v4.URIBuilder;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.apache.olingo.client.core.uri.URIUtils;

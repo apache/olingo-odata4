@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.v4;
 
-import org.apache.olingo.client.api.v4.ODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ResWrap;

@@ -20,9 +20,9 @@ package org.apache.olingo.client.core.edm.xml;
 
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntitySet;
+import org.apache.olingo.client.api.edm.xml.FunctionImport;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -79,7 +79,7 @@ public abstract class AbstractEntityContainer extends AbstractEdmItem implements
   public EntitySet getEntitySet(final String name) {
     return getOneByName(name, getEntitySets());
   }
-
+  
   /**
    * Gets the first function import with given name.
    *
@@ -87,7 +87,7 @@ public abstract class AbstractEntityContainer extends AbstractEdmItem implements
    * @return function import.
    */
   @Override
-  public CommonFunctionImport getFunctionImport(final String name) {
+  public FunctionImport getFunctionImport(final String name) {
     return getOneByName(name, getFunctionImports());
   }
 
@@ -98,7 +98,7 @@ public abstract class AbstractEntityContainer extends AbstractEdmItem implements
    * @return function imports.
    */
   @Override
-  public List<? extends CommonFunctionImport> getFunctionImports(final String name) {
+  public List<FunctionImport> getFunctionImports(final String name) {
     return getAllByName(name, getFunctionImports());
   }
 }

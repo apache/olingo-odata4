@@ -26,9 +26,11 @@ import static org.junit.Assert.assertTrue;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Iterator;
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.client.api.v4.ODataClient;
+
+import org.apache.olingo.client.api.EdmEnabledODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.client.core.EdmEnabledODataClientImpl;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;

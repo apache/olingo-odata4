@@ -18,16 +18,15 @@
  */
 package org.apache.olingo.client.core;
 
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
-import org.apache.olingo.client.api.v4.ODataClient;
-import org.apache.olingo.client.core.v4.EdmEnabledODataClientImpl;
+import org.apache.olingo.client.api.EdmEnabledODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 public final class ODataClientFactory {
 
   public static ODataClient getV4() {
-    return new org.apache.olingo.client.core.v4.ODataClientImpl();
+    return new org.apache.olingo.client.core.ODataClientImpl();
   }
 
   public static EdmEnabledODataClient getEdmEnabledV4(final String serviceRoot) {

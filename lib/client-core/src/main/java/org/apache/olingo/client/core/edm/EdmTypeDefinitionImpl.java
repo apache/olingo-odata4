@@ -20,7 +20,7 @@ package org.apache.olingo.client.core.edm;
 
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.v4.TypeDefinition;
+import org.apache.olingo.client.api.edm.xml.TypeDefinition;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmException;

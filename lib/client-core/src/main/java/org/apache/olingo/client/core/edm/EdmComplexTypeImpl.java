@@ -44,8 +44,8 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
           final List<? extends Schema> xmlSchemas, final ComplexType complexType) {
 
     FullQualifiedName baseTypeName = null;
-    if (complexType instanceof org.apache.olingo.client.api.edm.xml.v4.ComplexType) {
-      final String baseType = ((org.apache.olingo.client.api.edm.xml.v4.ComplexType) complexType).getBaseType();
+    if (complexType instanceof org.apache.olingo.client.api.edm.xml.ComplexType) {
+      final String baseType = ((org.apache.olingo.client.api.edm.xml.ComplexType) complexType).getBaseType();
       baseTypeName = baseType == null
               ? null : new EdmTypeInfo.Builder().setTypeExpression(baseType).build().getFullQualifiedName();
     }
@@ -60,9 +60,9 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
 
     super(edm, fqn, baseTypeName);
     this.typeHelper = new EdmStructuredTypeHelperImpl(edm, getFullQualifiedName(), xmlSchemas, complexType);
-    if (complexType instanceof org.apache.olingo.client.api.edm.xml.v4.ComplexType) {
+    if (complexType instanceof org.apache.olingo.client.api.edm.xml.ComplexType) {
       this.annotationHelper = new EdmAnnotationHelperImpl(edm,
-              (org.apache.olingo.client.api.edm.xml.v4.ComplexType) complexType);
+              (org.apache.olingo.client.api.edm.xml.ComplexType) complexType);
     }
   }
 

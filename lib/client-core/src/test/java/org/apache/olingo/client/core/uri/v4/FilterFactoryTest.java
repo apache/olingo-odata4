@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.client.core.uri.v4;
 
+import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.uri.FilterArgFactory;
+import org.apache.olingo.client.api.uri.FilterFactory;
 import org.apache.olingo.client.api.uri.URIFilter;
-import org.apache.olingo.client.api.uri.v4.FilterArgFactory;
-import org.apache.olingo.client.api.uri.v4.FilterFactory;
-import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.client.core.edm.EdmEnumTypeImpl;
-import org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl;
+import org.apache.olingo.client.core.edm.xml.EnumTypeImpl;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;

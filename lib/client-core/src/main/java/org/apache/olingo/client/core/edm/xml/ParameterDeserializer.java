@@ -21,7 +21,6 @@ package org.apache.olingo.client.core.edm.xml;
 import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -35,7 +34,7 @@ public class ParameterDeserializer extends AbstractEdmDeserializer<AbstractParam
   protected AbstractParameter doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractParameter parameter = new org.apache.olingo.client.core.edm.xml.v4.ParameterImpl();
+    final AbstractParameter parameter = new org.apache.olingo.client.core.edm.xml.ParameterImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -57,11 +56,11 @@ public class ParameterDeserializer extends AbstractEdmDeserializer<AbstractParam
         } else if ("SRID".equals(jp.getCurrentName())) {
           final String srid = jp.nextTextValue();
           if (srid != null) {
-            ((org.apache.olingo.client.core.edm.xml.v4.ParameterImpl) parameter).setSrid(SRID.valueOf(srid));
+            ((org.apache.olingo.client.core.edm.xml.ParameterImpl) parameter).setSrid(SRID.valueOf(srid));
           }
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.ParameterImpl) parameter).getAnnotations().
+          ((org.apache.olingo.client.core.edm.xml.ParameterImpl) parameter).getAnnotations().
                   add(jp.readValueAs(AnnotationImpl.class));
         }
       }

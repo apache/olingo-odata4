@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import org.apache.olingo.client.api.edm.xml.v4.Singleton;
+import org.apache.olingo.client.api.edm.xml.Singleton;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmSingleton;

@@ -19,10 +19,11 @@
 package org.apache.olingo.ext.proxy.commons;
 
 import java.net.URI;
+
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.uri.v4.URIBuilder;
-import org.apache.olingo.client.api.uri.v4.URISearch;
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import org.apache.olingo.client.api.EdmEnabledODataClient;
+import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.URISearch;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.EntityType;

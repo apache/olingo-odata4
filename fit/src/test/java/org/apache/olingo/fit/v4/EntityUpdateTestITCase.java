@@ -28,10 +28,10 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
-import org.apache.olingo.client.api.communication.request.cud.v4.ODataReferenceAddingRequest;
-import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
+import org.apache.olingo.client.api.communication.request.cud.ODataReferenceAddingRequest;
+import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
-import org.apache.olingo.client.api.communication.response.v4.ODataReferenceAddingResponse;
+import org.apache.olingo.client.api.communication.response.ODataReferenceAddingResponse;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;

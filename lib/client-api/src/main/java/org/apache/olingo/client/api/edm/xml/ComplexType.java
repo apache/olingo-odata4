@@ -20,13 +20,19 @@ package org.apache.olingo.client.api.edm.xml;
 
 import java.util.List;
 
-public interface ComplexType extends Named {
+public interface ComplexType extends Named, Annotatable {
 
-  CommonProperty getProperty(String name);
+  boolean isAbstractEntityType();
 
-  List<? extends CommonProperty> getProperties();
+  String getBaseType();
 
-  CommonNavigationProperty getNavigationProperty(String name);
+  boolean isOpenType();
 
-  List<? extends CommonNavigationProperty> getNavigationProperties();
+  Property getProperty(String name);
+
+  List<Property> getProperties();
+
+  NavigationProperty getNavigationProperty(String name);
+
+  List<NavigationProperty> getNavigationProperties();
 }

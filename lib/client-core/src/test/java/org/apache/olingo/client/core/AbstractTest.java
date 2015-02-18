@@ -25,7 +25,7 @@ import org.junit.BeforeClass;
 
 public abstract class AbstractTest {
 
-  protected static org.apache.olingo.client.api.v4.ODataClient v4Client;
+  protected static org.apache.olingo.client.api.ODataClient v4Client;
 
   protected abstract CommonODataClient<?> getClient();
 

@@ -21,10 +21,6 @@ package org.apache.olingo.client.core.edm.xml;
 import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
-import org.apache.olingo.client.core.edm.xml.v4.ComplexTypeImpl;
-import org.apache.olingo.client.core.edm.xml.v4.NavigationPropertyImpl;
-import org.apache.olingo.client.core.edm.xml.v4.PropertyImpl;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;

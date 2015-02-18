@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.edm.xml.v4.Annotation;
-import org.apache.olingo.client.api.edm.xml.v4.Annotations;
+import org.apache.olingo.client.api.edm.xml.Annotation;
+import org.apache.olingo.client.api.edm.xml.Annotations;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmAnnotations;

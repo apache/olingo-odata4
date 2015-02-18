@@ -20,7 +20,7 @@ package org.apache.olingo.ext.pojogen;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.olingo.client.api.v4.ODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmSchema;

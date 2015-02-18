@@ -20,12 +20,6 @@ package org.apache.olingo.client.core.edm.xml;
 
 import java.io.IOException;
 
-import org.apache.olingo.client.core.edm.xml.v4.ActionImpl;
-import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
-import org.apache.olingo.client.core.edm.xml.v4.FunctionImpl;
-import org.apache.olingo.client.core.edm.xml.v4.TermImpl;
-import org.apache.olingo.client.core.edm.xml.v4.TypeDefinitionImpl;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
@@ -37,7 +31,7 @@ public class SchemaDeserializer extends AbstractEdmDeserializer<AbstractSchema> 
   protected AbstractSchema doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
       throws IOException, JsonProcessingException {
 
-    final AbstractSchema schema = new org.apache.olingo.client.core.edm.xml.v4.SchemaImpl();
+    final AbstractSchema schema = new org.apache.olingo.client.core.edm.xml.SchemaImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -49,60 +43,60 @@ public class SchemaDeserializer extends AbstractEdmDeserializer<AbstractSchema> 
         } else if ("ComplexType".equals(jp.getCurrentName())) {
           jp.nextToken();
 
-          ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).
+          ((org.apache.olingo.client.core.edm.xml.SchemaImpl) schema).
               getComplexTypes().add(jp.readValueAs(
-                  org.apache.olingo.client.core.edm.xml.v4.ComplexTypeImpl.class));
+                  org.apache.olingo.client.core.edm.xml.ComplexTypeImpl.class));
 
         } else if ("EntityType".equals(jp.getCurrentName())) {
           jp.nextToken();
 
-          ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).
+          ((org.apache.olingo.client.core.edm.xml.SchemaImpl) schema).
               getEntityTypes().add(jp.readValueAs(
-                  org.apache.olingo.client.core.edm.xml.v4.EntityTypeImpl.class));
+                  org.apache.olingo.client.core.edm.xml.EntityTypeImpl.class));
 
         } else if ("EnumType".equals(jp.getCurrentName())) {
           jp.nextToken();
 
-          ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).
+          ((org.apache.olingo.client.core.edm.xml.SchemaImpl) schema).
               getEnumTypes().add(jp.readValueAs(
-                  org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl.class));
+                  org.apache.olingo.client.core.edm.xml.EnumTypeImpl.class));
 
         } else if ("EntityContainer".equals(jp.getCurrentName())) {
           jp.nextToken();
 
-          org.apache.olingo.client.core.edm.xml.v4.EntityContainerImpl entityContainer =
+          org.apache.olingo.client.core.edm.xml.EntityContainerImpl entityContainer =
               jp.readValueAs(
-                  org.apache.olingo.client.core.edm.xml.v4.EntityContainerImpl.class);
+                  org.apache.olingo.client.core.edm.xml.EntityContainerImpl.class);
           entityContainer.setDefaultEntityContainer(true);
-          ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).
+          ((org.apache.olingo.client.core.edm.xml.SchemaImpl) schema).
               setEntityContainer(entityContainer);
 
         } else if ("Action".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getActions().
+          ((org.apache.olingo.client.core.edm.xml.SchemaImpl) schema).getActions().
               add(jp.readValueAs(ActionImpl.class));
         } else if ("Function".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getFunctions().
+          ((org.apache.olingo.client.core.edm.xml.SchemaImpl) schema).getFunctions().
               add(jp.readValueAs(FunctionImpl.class));
         } else if ("TypeDefinition".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).
+          ((org.apache.olingo.client.core.edm.xml.SchemaImpl) schema).
               getTypeDefinitions().add(jp.readValueAs(TypeDefinitionImpl.class));
         }
       } else if ("Annotations".equals(jp.getCurrentName())) {
         jp.nextToken();
 
-        ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getAnnotationGroups().
-            add(jp.readValueAs(org.apache.olingo.client.core.edm.xml.v4.AnnotationsImpl.class));
+        ((org.apache.olingo.client.core.edm.xml.SchemaImpl) schema).getAnnotationGroups().
+            add(jp.readValueAs(org.apache.olingo.client.core.edm.xml.AnnotationsImpl.class));
 
       } else if ("Annotation".equals(jp.getCurrentName())) {
         jp.nextToken();
-        ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getAnnotations().
+        ((org.apache.olingo.client.core.edm.xml.SchemaImpl) schema).getAnnotations().
             add(jp.readValueAs(AnnotationImpl.class));
       } else if ("Term".equals(jp.getCurrentName())) {
         jp.nextToken();
-        ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getTerms().
+        ((org.apache.olingo.client.core.edm.xml.SchemaImpl) schema).getTerms().
             add(jp.readValueAs(TermImpl.class));
       }
     }

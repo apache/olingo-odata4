@@ -21,7 +21,6 @@ package org.apache.olingo.client.core.edm.xml;
 import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -35,7 +34,7 @@ public class PropertyDeserializer extends AbstractEdmDeserializer<AbstractProper
   protected AbstractProperty doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
       throws IOException, JsonProcessingException {
 
-    final AbstractProperty property = new org.apache.olingo.client.core.edm.xml.v4.PropertyImpl();
+    final AbstractProperty property = new org.apache.olingo.client.core.edm.xml.PropertyImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -65,7 +64,7 @@ public class PropertyDeserializer extends AbstractEdmDeserializer<AbstractProper
           }
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.PropertyImpl) property).getAnnotations().
+          ((org.apache.olingo.client.core.edm.xml.PropertyImpl) property).getAnnotations().
               add(jp.readValueAs(AnnotationImpl.class));
         }
       }

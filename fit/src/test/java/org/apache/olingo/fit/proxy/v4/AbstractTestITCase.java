@@ -30,7 +30,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;

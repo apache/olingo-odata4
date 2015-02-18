@@ -18,30 +18,32 @@
  */
 package org.apache.olingo.client.core.v4;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.olingo.client.api.edm.xml.v4.Annotation;
-import org.apache.olingo.client.api.edm.xml.v4.Annotations;
-import org.apache.olingo.client.api.edm.xml.v4.ComplexType;
-import org.apache.olingo.client.api.edm.xml.v4.EntityContainer;
-import org.apache.olingo.client.api.edm.xml.v4.EntityType;
-import org.apache.olingo.client.api.edm.xml.v4.Function;
-import org.apache.olingo.client.api.edm.xml.v4.FunctionImport;
-import org.apache.olingo.client.api.edm.xml.v4.Schema;
-import org.apache.olingo.client.api.edm.xml.v4.Singleton;
-import org.apache.olingo.client.api.edm.xml.v4.XMLMetadata;
-import org.apache.olingo.client.api.edm.xml.v4.annotation.Apply;
-import org.apache.olingo.client.api.edm.xml.v4.annotation.Collection;
-import org.apache.olingo.client.api.edm.xml.v4.annotation.ConstantAnnotationExpression;
-import org.apache.olingo.client.api.edm.xml.v4.annotation.TwoParamsOpDynamicAnnotationExpression;
-import org.apache.olingo.client.api.edm.xml.v4.annotation.UrlRef;
-import org.apache.olingo.client.api.v4.ODataClient;
+import java.util.List;
+
+import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.edm.xml.Annotation;
+import org.apache.olingo.client.api.edm.xml.Annotations;
+import org.apache.olingo.client.api.edm.xml.ComplexType;
+import org.apache.olingo.client.api.edm.xml.EntityContainer;
+import org.apache.olingo.client.api.edm.xml.EntityType;
+import org.apache.olingo.client.api.edm.xml.Function;
+import org.apache.olingo.client.api.edm.xml.FunctionImport;
+import org.apache.olingo.client.api.edm.xml.Schema;
+import org.apache.olingo.client.api.edm.xml.Singleton;
+import org.apache.olingo.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.client.api.edm.xml.annotation.Apply;
+import org.apache.olingo.client.api.edm.xml.annotation.Collection;
+import org.apache.olingo.client.api.edm.xml.annotation.ConstantAnnotationExpression;
+import org.apache.olingo.client.api.edm.xml.annotation.TwoParamsOpDynamicAnnotationExpression;
+import org.apache.olingo.client.api.edm.xml.annotation.UrlRef;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.client.core.edm.xml.v4.annotation.ConstantAnnotationExpressionImpl;
-import org.apache.olingo.client.core.edm.xml.v4.annotation.PathImpl;
+import org.apache.olingo.client.core.edm.xml.annotation.ConstantAnnotationExpressionImpl;
+import org.apache.olingo.client.core.edm.xml.annotation.PathImpl;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
@@ -66,8 +68,6 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.junit.Test;
-
-import java.util.List;
 
 public class MetadataTest extends AbstractTest {
 

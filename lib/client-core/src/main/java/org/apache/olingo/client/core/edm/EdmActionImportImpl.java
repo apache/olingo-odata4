@@ -20,7 +20,7 @@ package org.apache.olingo.client.core.edm;
 
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
+import org.apache.olingo.client.api.edm.xml.ActionImport;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
