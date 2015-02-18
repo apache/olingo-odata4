@@ -26,7 +26,7 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateR
 import org.apache.olingo.client.api.communication.request.cud.ODataReferenceAddingRequest;
 import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
+import org.apache.olingo.commons.api.domain.ODataSingleton;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 public class CUDRequestFactoryImpl extends AbstractCUDRequestFactory<UpdateType> implements CUDRequestFactory {

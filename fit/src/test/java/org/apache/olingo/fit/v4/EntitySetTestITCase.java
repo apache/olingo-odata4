@@ -28,8 +28,8 @@ import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
-import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 

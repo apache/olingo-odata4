@@ -27,14 +27,14 @@ import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.ODataValue;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.core.domain.v4.ODataEntityImpl;
+import org.apache.olingo.commons.core.domain.ODataEntityImpl;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.junit.BeforeClass;
 

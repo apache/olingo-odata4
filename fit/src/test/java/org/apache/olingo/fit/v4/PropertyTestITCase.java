@@ -34,9 +34,9 @@ import org.apache.olingo.client.api.communication.response.ODataEntityCreateResp
 import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.ODataValuable;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataValuable;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.junit.Test;

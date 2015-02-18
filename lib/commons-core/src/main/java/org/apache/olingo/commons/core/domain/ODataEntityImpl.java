@@ -16,58 +16,50 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.domain.v4;
-
-import org.apache.olingo.commons.api.domain.ODataItem;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.v4.ODataDeltaLink;
+package org.apache.olingo.commons.core.domain;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ODataDeltaLinkImpl extends ODataItem implements ODataDeltaLink {
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataSingleton;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
-  private URI source;
+public class ODataEntityImpl extends AbstractODataEntity implements ODataSingleton {
 
-  private String relationship;
+  /**
+   * Entity id.
+   */
+  private URI id;
 
-  private URI target;
+  private final List<ODataProperty> properties = new ArrayList<ODataProperty>();
 
   private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
 
-  public ODataDeltaLinkImpl() {
-    super(null);
+  public ODataEntityImpl(final FullQualifiedName typeName) {
+    super(typeName);
   }
 
   @Override
-  public URI getSource() {
-    return source;
+  public URI getId() {
+    return id;
   }
 
   @Override
-  public void setSource(final URI source) {
-    this.source = source;
+  public void setId(final URI id) {
+    this.id = id;
   }
 
   @Override
-  public String getRelationship() {
-    return relationship;
+  public ODataProperty getProperty(final String name) {
+    return (ODataProperty) super.getProperty(name);
   }
 
   @Override
-  public void setRelationship(final String relationship) {
-    this.relationship = relationship;
-  }
-
-  @Override
-  public URI getTarget() {
-    return target;
-  }
-
-  @Override
-  public void setTarget(final URI target) {
-    this.target = target;
+  public List<ODataProperty> getProperties() {
+    return properties;
   }
 
   @Override

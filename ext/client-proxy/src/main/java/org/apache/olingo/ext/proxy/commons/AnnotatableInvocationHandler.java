@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
-import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.olingo.ext.proxy.AbstractService;
 
 public class AnnotatableInvocationHandler extends AbstractInvocationHandler implements Annotatable {
@@ -83,12 +84,12 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
     if (entityHandler.getEntity() instanceof ODataEntity) {
       if (targetHandler.getInternal() instanceof ODataEntity) {
         result = propName == null
-                ? ((org.apache.olingo.commons.api.domain.v4.ODataLink) ((ODataEntity) targetHandler.getInternal()).
+                ? ((org.apache.olingo.commons.api.domain.ODataLink) ((ODataEntity) targetHandler.getInternal()).
                 getNavigationLink(navPropName)).getAnnotations()
                 : ((ODataEntity) targetHandler.getInternal()).getProperty(propName).getAnnotations();
       } else if (targetHandler.getInternal() instanceof ODataLinkedComplexValue) {
         result = propName == null
-                ? ((org.apache.olingo.commons.api.domain.v4.ODataLink) ((ODataLinkedComplexValue) targetHandler.
+                ? ((org.apache.olingo.commons.api.domain.ODataLink) ((ODataLinkedComplexValue) targetHandler.
                 getInternal()).getNavigationLink(navPropName)).getAnnotations()
                 : ((ODataLinkedComplexValue) targetHandler.getInternal()).get(propName).getAnnotations();
       }

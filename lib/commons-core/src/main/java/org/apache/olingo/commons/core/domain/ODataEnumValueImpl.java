@@ -16,45 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.domain.v4;
+package org.apache.olingo.commons.core.domain;
 
-import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
-import org.apache.olingo.commons.api.domain.v4.ODataValue;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.domain.AbstractODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.AbstractODataValue;
+import org.apache.olingo.commons.api.domain.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
 
-public class ODataPrimitiveValueImpl extends AbstractODataPrimitiveValue implements ODataValue {
+public class ODataEnumValueImpl extends AbstractODataValue implements ODataEnumValue {
 
-  public static class BuilderImpl extends AbstractBuilder {
+  private final String value;
 
-    private final ODataPrimitiveValueImpl instance;
+  public ODataEnumValueImpl(final String typeName, final String value) {
+    super(typeName);
+    this.value = value;
+  }
 
-    public BuilderImpl(final ODataServiceVersion version) {
-      super(version);
-      instance = new ODataPrimitiveValueImpl();
-    }
-
-    @Override
-    protected AbstractODataPrimitiveValue getInstance() {
-      return instance;
-    }
-
-    @Override
-    public ODataPrimitiveValueImpl build() {
-      return (ODataPrimitiveValueImpl) super.build();
-    }
-
+  @Override
+  public String getValue() {
+    return value;
   }
 
   @Override
   public boolean isEnum() {
-    return false;
+    return true;
   }
 
   @Override
   public ODataEnumValue asEnum() {
-    return null;
+    return this;
   }
 
   @Override
@@ -65,6 +54,12 @@ public class ODataPrimitiveValueImpl extends AbstractODataPrimitiveValue impleme
   @Override
   public ODataLinkedComplexValue asLinkedComplex() {
     return null;
+  }
+
+  @Override
+  public String toString() {
+    return getTypeName() + "'" + getValue() + "'";
+
   }
 
 }

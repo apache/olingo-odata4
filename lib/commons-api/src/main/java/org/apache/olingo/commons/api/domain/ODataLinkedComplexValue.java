@@ -16,10 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain.v4;
+package org.apache.olingo.commons.api.domain;
 
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataLinked;
 
 public interface ODataLinkedComplexValue
     extends ODataValue, ODataLinked, ODataComplexValue<ODataProperty>, ODataAnnotatable {

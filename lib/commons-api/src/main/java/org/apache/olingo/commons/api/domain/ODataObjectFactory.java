@@ -16,13 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain.v4;
+package org.apache.olingo.commons.api.domain;
 
-import org.apache.olingo.commons.api.domain.CommonODataObjectFactory;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
-import org.apache.olingo.commons.api.domain.ODataCollectionValue;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 import java.net.URI;

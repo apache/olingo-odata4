@@ -16,15 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.domain.v4;
+package org.apache.olingo.commons.core.domain;
 
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.core.domain.AbstractODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

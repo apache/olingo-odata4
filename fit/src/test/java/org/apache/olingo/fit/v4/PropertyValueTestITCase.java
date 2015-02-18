@@ -24,8 +24,8 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataProperty
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.ODataValuable;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataValuable;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;

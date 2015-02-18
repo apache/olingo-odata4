@@ -42,9 +42,9 @@ import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUp
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
@@ -243,7 +243,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
         CoreUtils.addAnnotations(service.getClient(),
             entry.getValue().getAnnotations(),
-            (org.apache.olingo.commons.api.domain.v4.ODataLink) entity.getNavigationLink(entry.getKey()));
+            (org.apache.olingo.commons.api.domain.ODataLink) entity.getNavigationLink(entry.getKey()));
       }
     }
 

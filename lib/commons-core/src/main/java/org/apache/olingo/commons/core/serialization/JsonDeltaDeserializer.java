@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ContextURL;
@@ -31,8 +32,8 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.data.DeletedEntityImpl;
+import org.apache.olingo.commons.core.data.DeltaImpl;
 import org.apache.olingo.commons.core.data.DeltaLinkImpl;
-import org.apache.olingo.commons.core.data.v4.DeltaImpl;
 
 import java.io.IOException;
 import java.io.InputStream;

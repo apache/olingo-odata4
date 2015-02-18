@@ -16,45 +16,50 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.domain.v4;
+package org.apache.olingo.commons.core.domain;
 
-import org.apache.olingo.commons.api.domain.v4.ODataDeletedEntity;
-import org.apache.olingo.commons.api.domain.v4.ODataDelta;
-import org.apache.olingo.commons.api.domain.v4.ODataDeltaLink;
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ODataDeltaImpl extends ODataEntitySetImpl implements ODataDelta {
+public class ODataEntitySetImpl extends AbstractODataEntitySet implements ODataEntitySet {
 
-  private final List<ODataDeletedEntity> deletedEntities = new ArrayList<ODataDeletedEntity>();
+  private URI deltaLink;
 
-  private final List<ODataDeltaLink> addedLinks = new ArrayList<ODataDeltaLink>();
+  private final List<ODataEntity> entities = new ArrayList<ODataEntity>();
 
-  private final List<ODataDeltaLink> deletedLinks = new ArrayList<ODataDeltaLink>();
+  private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
 
-  public ODataDeltaImpl() {
+  public ODataEntitySetImpl() {
     super();
   }
 
-  public ODataDeltaImpl(final URI next) {
+  public ODataEntitySetImpl(final URI next) {
     super(next);
   }
 
   @Override
-  public List<ODataDeletedEntity> getDeletedEntities() {
-    return deletedEntities;
+  public List<ODataEntity> getEntities() {
+    return entities;
   }
 
   @Override
-  public List<ODataDeltaLink> getAddedLinks() {
-    return addedLinks;
+  public URI getDeltaLink() {
+    return deltaLink;
   }
 
   @Override
-  public List<ODataDeltaLink> getDeletedLinks() {
-    return deletedLinks;
+  public void setDeltaLink(final URI deltaLink) {
+    this.deltaLink = deltaLink;
+  }
+
+  @Override
+  public List<ODataAnnotation> getAnnotations() {
+    return annotations;
   }
 
 }

@@ -24,17 +24,17 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.edm.xml.annotation.ConstantAnnotationExpression;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.v4.ODataValue;
+import org.apache.olingo.commons.api.domain.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.annotation.EdmConstantAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.domain.v4.ODataCollectionValueImpl;
-import org.apache.olingo.commons.core.domain.v4.ODataEnumValueImpl;
-import org.apache.olingo.commons.core.domain.v4.ODataPrimitiveValueImpl;
+import org.apache.olingo.commons.core.domain.ODataCollectionValueImpl;
+import org.apache.olingo.commons.core.domain.ODataEnumValueImpl;
+import org.apache.olingo.commons.core.domain.ODataPrimitiveValueImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotationExpression {

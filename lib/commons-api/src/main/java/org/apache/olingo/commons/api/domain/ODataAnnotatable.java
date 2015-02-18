@@ -16,12 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.edm.annotation;
+package org.apache.olingo.commons.api.domain;
 
-import org.apache.olingo.commons.api.domain.ODataValue;
+import java.util.List;
 
-public interface EdmConstantAnnotationExpression extends EdmAnnotationExpression {
+public interface ODataAnnotatable {
 
-  ODataValue getValue();
-
+  List<ODataAnnotation> getAnnotations();
 }

@@ -20,9 +20,9 @@ package org.apache.olingo.fit.v4;
 
 import org.apache.olingo.client.api.communication.request.retrieve.ODataDeltaRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
-import org.apache.olingo.commons.api.domain.v4.ODataDelta;
-import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataDelta;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 

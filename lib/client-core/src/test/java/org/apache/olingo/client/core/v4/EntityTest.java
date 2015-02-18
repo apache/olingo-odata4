@@ -33,15 +33,15 @@ import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.client.core.EdmEnabledODataClientImpl;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.commons.api.domain.v4.ODataValue;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
-import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.ODataValuable;
+import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataValuable;
+import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -329,9 +329,9 @@ public class EntityTest extends AbstractTest {
     assertTrue(annotation.hasComplexValue());
 
     final ODataLink orders = entity.getNavigationLink("Orders");
-    assertFalse(((org.apache.olingo.commons.api.domain.v4.ODataLink) orders).getAnnotations().isEmpty());
+    assertFalse(((org.apache.olingo.commons.api.domain.ODataLink) orders).getAnnotations().isEmpty());
 
-    annotation = ((org.apache.olingo.commons.api.domain.v4.ODataLink) orders).getAnnotations().get(0);
+    annotation = ((org.apache.olingo.commons.api.domain.ODataLink) orders).getAnnotations().get(0);
     assertEquals("com.contoso.display.style", annotation.getTerm());
     assertEquals("com.contoso.display.styleType", annotation.getValue().getTypeName());
     assertTrue(annotation.hasComplexValue());

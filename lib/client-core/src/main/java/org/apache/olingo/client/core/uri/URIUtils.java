@@ -431,10 +431,10 @@ public final class URIUtils {
           value = param.getValue().asComplex().asJavaMap();
         } else if (param.getValue().isCollection()) {
           value = param.getValue().asCollection().asJavaCollection();
-        } else if (param.getValue() instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
-                && ((org.apache.olingo.commons.api.domain.v4.ODataValue) param.getValue()).isEnum()) {
+        } else if (param.getValue() instanceof org.apache.olingo.commons.api.domain.ODataValue
+                && ((org.apache.olingo.commons.api.domain.ODataValue) param.getValue()).isEnum()) {
 
-          value = ((org.apache.olingo.commons.api.domain.v4.ODataValue) param.getValue()).asEnum().toString();
+          value = ((org.apache.olingo.commons.api.domain.ODataValue) param.getValue()).asEnum().toString();
         }
 
         inlineParams.append(URIUtils.escape(serviceVersion, value)).append(',');

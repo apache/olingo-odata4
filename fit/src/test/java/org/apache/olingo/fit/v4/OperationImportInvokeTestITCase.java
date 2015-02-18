@@ -22,12 +22,12 @@ import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequ
 import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
-import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
@@ -253,7 +253,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   private void bossEmails(final ODataFormat format) {
     // ResetBossEmail
-    final ODataCollectionValue<org.apache.olingo.commons.api.domain.v4.ODataValue> emails =
+    final ODataCollectionValue<org.apache.olingo.commons.api.domain.ODataValue> emails =
         getClient().getObjectFactory().newCollectionValue("Collection(Edm.String)");
     emails.add(getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("first@olingo.apache.org"));
     emails.add(getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("second@olingo.apache.org"));

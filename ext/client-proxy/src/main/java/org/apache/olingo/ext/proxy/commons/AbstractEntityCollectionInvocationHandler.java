@@ -26,8 +26,8 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
@@ -103,7 +103,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<
     final List<ODataAnnotation> anns = new ArrayList<ODataAnnotation>();
 
     if (isSingleton) {
-      final ODataRetrieveResponse<org.apache.olingo.commons.api.domain.v4.ODataSingleton> res =
+      final ODataRetrieveResponse<org.apache.olingo.commons.api.domain.ODataSingleton> res =
               ((ODataClient) getClient()).getRetrieveRequestFactory().getSingletonRequest(uri).execute();
 
       entities.add(res.getBody());

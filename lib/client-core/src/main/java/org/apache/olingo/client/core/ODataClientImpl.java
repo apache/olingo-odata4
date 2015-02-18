@@ -44,11 +44,11 @@ import org.apache.olingo.client.core.serialization.ODataDeserializerImpl;
 import org.apache.olingo.client.core.serialization.ODataReaderImpl;
 import org.apache.olingo.client.core.uri.FilterFactoryImpl;
 import org.apache.olingo.client.core.uri.URIBuilderImpl;
-import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
+import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
-import org.apache.olingo.commons.core.domain.v4.ODataObjectFactoryImpl;
+import org.apache.olingo.commons.core.domain.ODataObjectFactoryImpl;
 import org.apache.olingo.commons.core.serialization.AtomSerializer;
 import org.apache.olingo.commons.core.serialization.JsonSerializer;
 

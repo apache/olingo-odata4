@@ -23,14 +23,14 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataSingleton;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
-import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -318,7 +318,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     boundOp = entity.getOperation("Microsoft.Test.OData.Services.ODataWCFService.ResetAddress");
     assertNotNull(boundOp);
 
-    final ODataCollectionValue<org.apache.olingo.commons.api.domain.v4.ODataValue> addresses =
+    final ODataCollectionValue<org.apache.olingo.commons.api.domain.ODataValue> addresses =
         client.getObjectFactory().
             newCollectionValue("Collection(Microsoft.Test.OData.Services.ODataWCFService.Address)");
     final ODataComplexValue<ODataProperty> address = client.getObjectFactory().
@@ -408,7 +408,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertTrue(getProductDetailsRes.hasEnumValue());
 
     // ResetAddress
-    final ODataCollectionValue<org.apache.olingo.commons.api.domain.v4.ODataValue> addresses =
+    final ODataCollectionValue<org.apache.olingo.commons.api.domain.ODataValue> addresses =
         edmClient.getObjectFactory().
             newCollectionValue("Collection(Microsoft.Test.OData.Services.ODataWCFService.Address)");
     final ODataComplexValue<ODataProperty> address = edmClient.getObjectFactory().

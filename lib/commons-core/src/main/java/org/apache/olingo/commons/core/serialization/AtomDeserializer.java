@@ -61,13 +61,13 @@ import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.data.AbstractODataObject;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
 import org.apache.olingo.commons.core.data.DeletedEntityImpl;
+import org.apache.olingo.commons.core.data.DeltaImpl;
 import org.apache.olingo.commons.core.data.DeltaLinkImpl;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
-import org.apache.olingo.commons.core.data.v4.DeltaImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 import com.fasterxml.aalto.stax.InputFactoryImpl;

@@ -29,7 +29,7 @@ import org.apache.olingo.client.api.serialization.ODataReader;
 import org.apache.olingo.client.api.uri.FilterFactory;
 import org.apache.olingo.client.api.uri.SearchFactory;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
+import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 public interface ODataClient extends CommonODataClient<UpdateType> {

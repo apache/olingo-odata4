@@ -16,94 +16,105 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.domain.v4;
+package org.apache.olingo.commons.core.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.ODataValuable;
-import org.apache.olingo.commons.api.domain.v4.ODataValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataValuable;
+import org.apache.olingo.commons.api.domain.ODataValue;
 
-public class ODataAnnotationImpl implements ODataAnnotation {
+public class ODataValuableImpl implements ODataValuable {
 
-  private final String term;
+  private final ODataValue value;
 
-  private final ODataValuable valuable;
-
-  public ODataAnnotationImpl(final String term, final ODataValue value) {
-    this.term = term;
-    valuable = new ODataValuableImpl(value);
-  }
-
-  @Override
-  public String getTerm() {
-    return term;
+  public ODataValuableImpl(final ODataValue value) {
+    this.value = value;
   }
 
   @Override
   public ODataValue getValue() {
-    return valuable.getValue();
+    return value;
   }
 
   @Override
   public boolean hasNullValue() {
-    return valuable.hasNullValue();
+    return value == null;
   }
 
   @Override
   public boolean hasPrimitiveValue() {
-    return valuable.hasPrimitiveValue();
+    return !hasNullValue() && value.isPrimitive();
   }
 
   @Override
   public ODataPrimitiveValue getPrimitiveValue() {
-    return valuable.getPrimitiveValue();
+    return hasPrimitiveValue() ? value.asPrimitive() : null;
   }
 
   @Override
   public boolean hasCollectionValue() {
-    return valuable.hasCollectionValue();
+    return !hasNullValue() && value.isCollection();
   }
 
   @Override
   public ODataCollectionValue<ODataValue> getCollectionValue() {
-    return valuable.getCollectionValue();
+    return hasCollectionValue()
+        ? getValue().<ODataValue> asCollection()
+        : null;
   }
 
   @Override
   public boolean hasComplexValue() {
-    return valuable.hasComplexValue();
+    return !hasNullValue() && value.isComplex();
   }
 
   @Override
   public ODataComplexValue<ODataProperty> getComplexValue() {
-    return valuable.getComplexValue();
+    return hasComplexValue()
+        ? getValue().<ODataProperty> asComplex()
+        : null;
   }
 
   @Override
   public ODataLinkedComplexValue getLinkedComplexValue() {
-    return valuable.getLinkedComplexValue();
+    return hasComplexValue()
+        ? getValue().asLinkedComplex()
+        : null;
   }
 
   @Override
   public boolean hasEnumValue() {
-    return valuable.hasEnumValue();
+    return !hasNullValue() && getValue().isEnum();
   }
 
   @Override
   public ODataEnumValue getEnumValue() {
-    return valuable.getEnumValue();
+    return hasEnumValue()
+        ? getValue().asEnum()
+        : null;
+  }
+
+  @Override
+  public boolean equals(final Object obj) {
+    return EqualsBuilder.reflectionEquals(this, obj);
+  }
+
+  @Override
+  public int hashCode() {
+    return HashCodeBuilder.reflectionHashCode(this);
   }
 
   @Override
   public String toString() {
-    return "ODataPropertyImpl{"
-        + "term=" + term
-        + ",valuable=" + valuable
-        + '}';
+    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
+
 }

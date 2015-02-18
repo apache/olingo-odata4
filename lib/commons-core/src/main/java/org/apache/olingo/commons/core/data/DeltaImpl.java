@@ -16,11 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain.v4;
+package org.apache.olingo.commons.core.data;
 
+import org.apache.olingo.commons.api.data.DeletedEntity;
+import org.apache.olingo.commons.api.data.Delta;
+import org.apache.olingo.commons.api.data.DeltaLink;
+
+import java.util.ArrayList;
 import java.util.List;
 
-public interface ODataAnnotatable {
+public class DeltaImpl extends EntitySetImpl implements Delta {
 
-  List<ODataAnnotation> getAnnotations();
+  private final List<DeletedEntity> deletedEntities = new ArrayList<DeletedEntity>();
+  private final List<DeltaLink> addedLinks = new ArrayList<DeltaLink>();
+  private final List<DeltaLink> deletedLinks = new ArrayList<DeltaLink>();
+
+  @Override
+  public List<DeletedEntity> getDeletedEntities() {
+    return deletedEntities;
+  }
+
+  @Override
+  public List<DeltaLink> getAddedLinks() {
+    return addedLinks;
+  }
+
+  @Override
+  public List<DeltaLink> getDeletedLinks() {
+    return deletedLinks;
+  }
 }

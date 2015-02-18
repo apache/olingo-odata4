@@ -16,35 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain.v4;
+package org.apache.olingo.commons.api.domain;
 
-public interface ODataValue extends org.apache.olingo.commons.api.domain.ODataValue {
+import java.net.URI;
 
-  /**
-   * Check is is a linked complex value.
-   * 
-   * @return 'TRUE' if linked complex; 'FALSE' otherwise.
-   */
-  boolean isLinkedComplex();
+public interface ODataDeletedEntity {
 
-  /**
-   * Casts to complex value with link information (if available).
-   * 
-   * @return complex value with link information.
-   */
-  ODataLinkedComplexValue asLinkedComplex();
+  enum Reason {
 
-  /**
-   * Check is is an enum value.
-   * 
-   * @return 'TRUE' if enum; 'FALSE' otherwise.
-   */
-  boolean isEnum();
+    deleted,
+    changed;
 
-  /**
-   * Casts to enum value.
-   * 
-   * @return enum value.
-   */
-  ODataEnumValue asEnum();
+  }
+
+  URI getId();
+
+  Reason getReason();
+
 }

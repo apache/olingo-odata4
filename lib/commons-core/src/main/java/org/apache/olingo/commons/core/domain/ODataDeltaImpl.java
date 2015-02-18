@@ -16,34 +16,45 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.data.v4;
+package org.apache.olingo.commons.core.domain;
 
-import org.apache.olingo.commons.api.data.DeletedEntity;
-import org.apache.olingo.commons.api.data.Delta;
-import org.apache.olingo.commons.api.data.DeltaLink;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
+import org.apache.olingo.commons.api.domain.ODataDeletedEntity;
+import org.apache.olingo.commons.api.domain.ODataDelta;
+import org.apache.olingo.commons.api.domain.ODataDeltaLink;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeltaImpl extends EntitySetImpl implements Delta {
+public class ODataDeltaImpl extends ODataEntitySetImpl implements ODataDelta {
 
-  private final List<DeletedEntity> deletedEntities = new ArrayList<DeletedEntity>();
-  private final List<DeltaLink> addedLinks = new ArrayList<DeltaLink>();
-  private final List<DeltaLink> deletedLinks = new ArrayList<DeltaLink>();
+  private final List<ODataDeletedEntity> deletedEntities = new ArrayList<ODataDeletedEntity>();
+
+  private final List<ODataDeltaLink> addedLinks = new ArrayList<ODataDeltaLink>();
+
+  private final List<ODataDeltaLink> deletedLinks = new ArrayList<ODataDeltaLink>();
+
+  public ODataDeltaImpl() {
+    super();
+  }
+
+  public ODataDeltaImpl(final URI next) {
+    super(next);
+  }
 
   @Override
-  public List<DeletedEntity> getDeletedEntities() {
+  public List<ODataDeletedEntity> getDeletedEntities() {
     return deletedEntities;
   }
 
   @Override
-  public List<DeltaLink> getAddedLinks() {
+  public List<ODataDeltaLink> getAddedLinks() {
     return addedLinks;
   }
 
   @Override
-  public List<DeltaLink> getDeletedLinks() {
+  public List<ODataDeltaLink> getDeletedLinks() {
     return deletedLinks;
   }
+
 }

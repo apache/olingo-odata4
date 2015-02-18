@@ -18,14 +18,16 @@
  */
 package org.apache.olingo.commons.api.domain;
 
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * OData link.
  */
-public class ODataLink extends ODataItem {
+public class ODataLink extends ODataItem implements ODataAnnotatable{
 
   public static class Builder {
 
@@ -105,6 +107,8 @@ public class ODataLink extends ODataItem {
    */
   protected String mediaETag;
 
+  private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
+  
   /**
    * Constructor.
    * 
@@ -113,7 +117,7 @@ public class ODataLink extends ODataItem {
    * @param type type.
    * @param title title.
    */
-  protected ODataLink(final ODataServiceVersion version, final URI uri, final ODataLinkType type, final String title) {
+  public ODataLink(final ODataServiceVersion version, final URI uri, final ODataLinkType type, final String title) {
     super(title);
 
     link = uri;
@@ -184,5 +188,9 @@ public class ODataLink extends ODataItem {
    */
   public String getMediaETag() {
     return mediaETag;
+  }
+  
+  public List<ODataAnnotation> getAnnotations() {
+    return annotations;
   }
 }

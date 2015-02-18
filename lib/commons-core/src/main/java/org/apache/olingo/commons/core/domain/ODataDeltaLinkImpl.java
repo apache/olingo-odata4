@@ -16,51 +16,58 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.domain.v4;
+package org.apache.olingo.commons.core.domain;
+
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataDeltaLink;
+import org.apache.olingo.commons.api.domain.ODataItem;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.domain.AbstractODataEntity;
+public class ODataDeltaLinkImpl extends ODataItem implements ODataDeltaLink {
 
-public class ODataEntityImpl extends AbstractODataEntity implements ODataSingleton {
+  private URI source;
 
-  /**
-   * Entity id.
-   */
-  private URI id;
+  private String relationship;
 
-  private final List<ODataProperty> properties = new ArrayList<ODataProperty>();
+  private URI target;
 
   private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
 
-  public ODataEntityImpl(final FullQualifiedName typeName) {
-    super(typeName);
+  public ODataDeltaLinkImpl() {
+    super(null);
   }
 
   @Override
-  public URI getId() {
-    return id;
+  public URI getSource() {
+    return source;
   }
 
   @Override
-  public void setId(final URI id) {
-    this.id = id;
+  public void setSource(final URI source) {
+    this.source = source;
   }
 
   @Override
-  public ODataProperty getProperty(final String name) {
-    return (ODataProperty) super.getProperty(name);
+  public String getRelationship() {
+    return relationship;
   }
 
   @Override
-  public List<ODataProperty> getProperties() {
-    return properties;
+  public void setRelationship(final String relationship) {
+    this.relationship = relationship;
+  }
+
+  @Override
+  public URI getTarget() {
+    return target;
+  }
+
+  @Override
+  public void setTarget(final URI target) {
+    this.target = target;
   }
 
   @Override

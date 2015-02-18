@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.api.domain;
 
+
 /**
  * Abstract representation of an OData entity property value.
  */
@@ -74,4 +75,32 @@ public interface ODataValue {
    */
   <OP extends CommonODataProperty> ODataComplexValue<OP> asComplex();
 
+  /**
+   * Check is is a linked complex value.
+   * 
+   * @return 'TRUE' if linked complex; 'FALSE' otherwise.
+   */
+  boolean isLinkedComplex();
+
+  /**
+   * Casts to complex value with link information (if available).
+   * 
+   * @return complex value with link information.
+   */
+  ODataLinkedComplexValue asLinkedComplex();
+
+  /**
+   * Check is is an enum value.
+   * 
+   * @return 'TRUE' if enum; 'FALSE' otherwise.
+   */
+  boolean isEnum();
+
+  /**
+   * Casts to enum value.
+   * 
+   * @return enum value.
+   */
+  ODataEnumValue asEnum();
+  
 }

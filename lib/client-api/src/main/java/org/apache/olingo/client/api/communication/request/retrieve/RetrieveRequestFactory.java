@@ -20,10 +20,10 @@ package org.apache.olingo.client.api.communication.request.retrieve;
 
 import java.net.URI;
 
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
-import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataSingleton;
 
 @SuppressWarnings("unchecked")
 public interface RetrieveRequestFactory extends CommonRetrieveRequestFactory {

@@ -16,21 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain.v4;
+package org.apache.olingo.commons.api.domain;
 
 import java.net.URI;
+import java.util.List;
 
-public interface ODataDeltaLink extends ODataAnnotatable {
+public interface ODataEntitySet extends CommonODataEntitySet, ODataAnnotatable {
 
-  URI getSource();
+  @Override
+  List<ODataEntity> getEntities();
 
-  void setSource(URI source);
+  /**
+   * Gets delta link if exists.
+   * 
+   * @return delta link if exists; null otherwise.
+   */
+  URI getDeltaLink();
 
-  String getRelationship();
-
-  void setRelationship(String relationship);
-
-  URI getTarget();
-
-  void setTarget(URI target);
+  /**
+   * Sets delta link.
+   * 
+   * @param deltaLink delta link.
+   */
+  void setDeltaLink(URI deltaLink);
 }

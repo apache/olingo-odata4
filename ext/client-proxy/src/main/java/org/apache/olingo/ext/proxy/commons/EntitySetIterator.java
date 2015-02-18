@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.EntityType;
 

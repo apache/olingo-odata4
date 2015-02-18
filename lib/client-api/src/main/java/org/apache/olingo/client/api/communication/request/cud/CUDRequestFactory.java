@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.communication.request.cud;
 
 import java.net.URI;
 
-import org.apache.olingo.commons.api.domain.v4.ODataSingleton;
+import org.apache.olingo.commons.api.domain.ODataSingleton;
 
 public interface CUDRequestFactory extends CommonCUDRequestFactory<UpdateType> {
 

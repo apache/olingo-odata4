@@ -16,105 +16,94 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.domain.v4;
+package org.apache.olingo.commons.core.domain;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.ODataValuable;
-import org.apache.olingo.commons.api.domain.v4.ODataValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataValuable;
+import org.apache.olingo.commons.api.domain.ODataValue;
 
-public class ODataValuableImpl implements ODataValuable {
+public class ODataAnnotationImpl implements ODataAnnotation {
 
-  private final ODataValue value;
+  private final String term;
 
-  public ODataValuableImpl(final ODataValue value) {
-    this.value = value;
+  private final ODataValuable valuable;
+
+  public ODataAnnotationImpl(final String term, final ODataValue value) {
+    this.term = term;
+    valuable = new ODataValuableImpl(value);
+  }
+
+  @Override
+  public String getTerm() {
+    return term;
   }
 
   @Override
   public ODataValue getValue() {
-    return value;
+    return valuable.getValue();
   }
 
   @Override
   public boolean hasNullValue() {
-    return value == null;
+    return valuable.hasNullValue();
   }
 
   @Override
   public boolean hasPrimitiveValue() {
-    return !hasNullValue() && value.isPrimitive();
+    return valuable.hasPrimitiveValue();
   }
 
   @Override
   public ODataPrimitiveValue getPrimitiveValue() {
-    return hasPrimitiveValue() ? value.asPrimitive() : null;
+    return valuable.getPrimitiveValue();
   }
 
   @Override
   public boolean hasCollectionValue() {
-    return !hasNullValue() && value.isCollection();
+    return valuable.hasCollectionValue();
   }
 
   @Override
   public ODataCollectionValue<ODataValue> getCollectionValue() {
-    return hasCollectionValue()
-        ? getValue().<ODataValue> asCollection()
-        : null;
+    return valuable.getCollectionValue();
   }
 
   @Override
   public boolean hasComplexValue() {
-    return !hasNullValue() && value.isComplex();
+    return valuable.hasComplexValue();
   }
 
   @Override
   public ODataComplexValue<ODataProperty> getComplexValue() {
-    return hasComplexValue()
-        ? getValue().<ODataProperty> asComplex()
-        : null;
+    return valuable.getComplexValue();
   }
 
   @Override
   public ODataLinkedComplexValue getLinkedComplexValue() {
-    return hasComplexValue()
-        ? getValue().asLinkedComplex()
-        : null;
+    return valuable.getLinkedComplexValue();
   }
 
   @Override
   public boolean hasEnumValue() {
-    return !hasNullValue() && getValue().isEnum();
+    return valuable.hasEnumValue();
   }
 
   @Override
   public ODataEnumValue getEnumValue() {
-    return hasEnumValue()
-        ? getValue().asEnum()
-        : null;
-  }
-
-  @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
-  }
-
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+    return valuable.getEnumValue();
   }
 
   @Override
   public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
+    return "ODataPropertyImpl{"
+        + "term=" + term
+        + ",valuable=" + valuable
+        + '}';
   }
-
 }

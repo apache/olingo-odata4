@@ -28,7 +28,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

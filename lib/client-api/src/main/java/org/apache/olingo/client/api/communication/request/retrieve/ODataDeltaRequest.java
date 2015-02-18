@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve;
 
-import org.apache.olingo.commons.api.domain.v4.ODataDelta;
+import org.apache.olingo.commons.api.domain.ODataDelta;
 
 /**
  * Describes an OData retrieve request returning a delta object.

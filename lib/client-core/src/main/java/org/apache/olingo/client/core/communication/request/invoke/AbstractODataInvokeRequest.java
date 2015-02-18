@@ -128,12 +128,12 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
         } else if (param.getValue().isCollection()) {
           property = odataClient.getObjectFactory().
                   newCollectionProperty(param.getKey(), param.getValue().asCollection());
-        } else if (param.getValue() instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
-                && ((org.apache.olingo.commons.api.domain.v4.ODataValue) param.getValue()).isEnum()) {
+        } else if (param.getValue() instanceof org.apache.olingo.commons.api.domain.ODataValue
+                && ((org.apache.olingo.commons.api.domain.ODataValue) param.getValue()).isEnum()) {
 
           property = ((ODataClient) odataClient).getObjectFactory().
                   newEnumProperty(param.getKey(),
-                  ((org.apache.olingo.commons.api.domain.v4.ODataValue) param.getValue()).asEnum());
+                  ((org.apache.olingo.commons.api.domain.ODataValue) param.getValue()).asEnum());
         }
 
         if (property != null) {

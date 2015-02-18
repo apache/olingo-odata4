@@ -44,23 +44,23 @@ import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataAnnotatable;
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
+import org.apache.olingo.commons.api.domain.ODataDelta;
+import org.apache.olingo.commons.api.domain.ODataDeltaLink;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
+import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinked;
+import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
+import org.apache.olingo.commons.api.domain.ODataValuable;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotatable;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.v4.ODataDeletedEntity.Reason;
-import org.apache.olingo.commons.api.domain.v4.ODataDelta;
-import org.apache.olingo.commons.api.domain.v4.ODataDeltaLink;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
-import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.v4.ODataLink;
-import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.ODataValuable;
+import org.apache.olingo.commons.api.domain.ODataDeletedEntity.Reason;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
@@ -71,10 +71,10 @@ import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
 import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
-import org.apache.olingo.commons.core.domain.v4.ODataAnnotationImpl;
-import org.apache.olingo.commons.core.domain.v4.ODataDeletedEntityImpl;
-import org.apache.olingo.commons.core.domain.v4.ODataDeltaLinkImpl;
-import org.apache.olingo.commons.core.domain.v4.ODataPropertyImpl;
+import org.apache.olingo.commons.core.domain.ODataAnnotationImpl;
+import org.apache.olingo.commons.core.domain.ODataDeletedEntityImpl;
+import org.apache.olingo.commons.core.domain.ODataDeltaLinkImpl;
+import org.apache.olingo.commons.core.domain.ODataPropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.serialization.ContextURLParser;
 
@@ -133,10 +133,10 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
               propertyValue instanceof LinkedComplexValue ? ValueType.LINKED_COMPLEX : ValueType.COMPLEX,
               propertyValue);
     } else if (odataValuable.hasCollectionValue()) {
-      final ODataCollectionValue<org.apache.olingo.commons.api.domain.v4.ODataValue> collectionValue =
+      final ODataCollectionValue<org.apache.olingo.commons.api.domain.ODataValue> collectionValue =
               odataValuable.getCollectionValue();
       propertyResource.setType(collectionValue.getTypeName());
-      final org.apache.olingo.commons.api.domain.v4.ODataValue value =
+      final org.apache.olingo.commons.api.domain.ODataValue value =
               collectionValue.iterator().hasNext() ? collectionValue.iterator().next() : null;
       ValueType valueType = ValueType.COLLECTION_PRIMITIVE;
       if (value == null) {
@@ -211,22 +211,22 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   @SuppressWarnings("unchecked")
   protected Object getValue(final ODataValue value) {
     Object valueResource;
-    if (value instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
-            && ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).isEnum()) {
+    if (value instanceof org.apache.olingo.commons.api.domain.ODataValue
+            && ((org.apache.olingo.commons.api.domain.ODataValue) value).isEnum()) {
 
       valueResource =
-              ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).asEnum().getValue();
+              ((org.apache.olingo.commons.api.domain.ODataValue) value).asEnum().getValue();
     } else {
       valueResource = super.getValue(value);
 
-      if (value instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
-              && ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).isLinkedComplex()) {
+      if (value instanceof org.apache.olingo.commons.api.domain.ODataValue
+              && ((org.apache.olingo.commons.api.domain.ODataValue) value).isLinkedComplex()) {
 
         final LinkedComplexValue lcValueResource = new LinkedComplexValueImpl();
         lcValueResource.getValue().addAll((List<Property>) valueResource);
 
         final ODataLinkedComplexValue linked =
-                ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).asLinkedComplex();
+                ((org.apache.olingo.commons.api.domain.ODataValue) value).asLinkedComplex();
         annotations(linked, lcValueResource);
         links(linked, lcValueResource);
 
@@ -255,7 +255,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
       }
 
       final ODataAnnotation odataAnnotation = new ODataAnnotationImpl(annotation.getTerm(),
-              (org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(fqn, annotation, null, null));
+              (org.apache.olingo.commons.api.domain.ODataValue) getODataValue(fqn, annotation, null, null));
       odataAnnotatable.getAnnotations().add(odataAnnotation);
     }
   }

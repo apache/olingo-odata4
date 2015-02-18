@@ -42,14 +42,14 @@ import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataAnnotatable;
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotatable;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -58,7 +58,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.domain.v4.ODataAnnotationImpl;
+import org.apache.olingo.commons.core.domain.ODataAnnotationImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.ext.proxy.AbstractService;
@@ -106,7 +106,7 @@ public final class CoreUtils {
         if (intType.isPrimitiveType()) {
           value.asCollection().add(getODataValue(client, intType, collectionItem).asPrimitive());
         } else if (intType.isEnumType()) {
-          value.asCollection().add(((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(
+          value.asCollection().add(((org.apache.olingo.commons.api.domain.ODataValue) getODataValue(
               client, intType, collectionItem)).asEnum());
         } else if (intType.isComplexType()) {
           value.asCollection().add(getODataValue(client, intType, collectionItem).asComplex());
@@ -139,7 +139,7 @@ public final class CoreUtils {
       }
 
     } else if (type.isEnumType()) {
-      value = ((org.apache.olingo.commons.api.domain.v4.ODataObjectFactory) client.getObjectFactory()).
+      value = ((org.apache.olingo.commons.api.domain.ODataObjectFactory) client.getObjectFactory()).
           newEnumValue(type.getFullQualifiedName().toString(), ((Enum<?>) obj).name());
     } else {
       value = client.getObjectFactory().newPrimitiveValueBuilder().setType(type.getPrimitiveTypeKind()).setValue(obj).
@@ -205,7 +205,7 @@ public final class CoreUtils {
               setTypeExpression(type.getFullQualifiedName().toString()).build();
 
       annotation = new ODataAnnotationImpl(term,
-          (org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, valueType, obj));
+          (org.apache.olingo.commons.api.domain.ODataValue) getODataValue(client, valueType, obj));
     }
 
     return annotation;
@@ -233,7 +233,7 @@ public final class CoreUtils {
           property = client.getObjectFactory().newComplexProperty(name, value.asComplex());
         } else if (valueType.isEnumType()) {
           property = ((ODataObjectFactory) client.getObjectFactory()).newEnumProperty(name,
-              ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).asEnum());
+              ((org.apache.olingo.commons.api.domain.ODataValue) value).asEnum());
         } else {
           throw new UnsupportedOperationException("Usupported object type " + valueType.getFullQualifiedName());
         }

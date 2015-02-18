@@ -16,15 +16,39 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain.v4;
+package org.apache.olingo.commons.core.domain;
 
-public interface ODataAnnotation extends ODataValuable {
+import org.apache.olingo.commons.api.domain.ODataDeletedEntity;
+import org.apache.olingo.commons.api.domain.ODataItem;
 
-  /**
-   * Returns annotation name.
-   * 
-   * @return annotation name.
-   */
-  String getTerm();
+import java.net.URI;
+
+public class ODataDeletedEntityImpl extends ODataItem implements ODataDeletedEntity {
+
+  private URI id;
+
+  private Reason reason;
+
+  public ODataDeletedEntityImpl() {
+    super(null);
+  }
+
+  @Override
+  public URI getId() {
+    return id;
+  }
+
+  public void setId(final URI id) {
+    this.id = id;
+  }
+
+  @Override
+  public Reason getReason() {
+    return reason;
+  }
+
+  public void setReason(final Reason reason) {
+    this.reason = reason;
+  }
 
 }

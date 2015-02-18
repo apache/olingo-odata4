@@ -16,34 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.domain.v4;
+package org.apache.olingo.commons.core.domain;
 
-import org.apache.olingo.commons.api.domain.AbstractODataValue;
-import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
+import org.apache.olingo.commons.api.domain.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
+import org.apache.olingo.commons.api.domain.ODataValue;
 
-public class ODataEnumValueImpl extends AbstractODataValue implements ODataEnumValue {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-  private final String value;
+public class ODataCollectionValueImpl extends AbstractODataCollectionValue<ODataValue> implements ODataValue {
 
-  public ODataEnumValueImpl(final String typeName, final String value) {
+  public ODataCollectionValueImpl(final String typeName) {
     super(typeName);
-    this.value = value;
   }
 
   @Override
-  public String getValue() {
-    return value;
+  protected ODataCollectionValueImpl getThis() {
+    return this;
   }
 
   @Override
   public boolean isEnum() {
-    return true;
+    return false;
   }
 
   @Override
   public ODataEnumValue asEnum() {
-    return this;
+    return null;
   }
 
   @Override
@@ -57,9 +58,20 @@ public class ODataEnumValueImpl extends AbstractODataValue implements ODataEnumV
   }
 
   @Override
-  public String toString() {
-    return getTypeName() + "'" + getValue() + "'";
+  public Collection<Object> asJavaCollection() {
+    final List<Object> result = new ArrayList<Object>();
+    for (ODataValue value : values) {
+      if (value.isPrimitive()) {
+        result.add(value.asPrimitive().toValue());
+      } else if (value.isComplex()) {
+        result.add(value.asComplex().asJavaMap());
+      } else if (value.isCollection()) {
+        result.add(value.asCollection().asJavaCollection());
+      } else if (value.isEnum()) {
+        result.add(value.asEnum().toString());
+      }
+    }
 
+    return result;
   }
-
 }

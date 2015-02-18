@@ -16,6 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain.v4;
+package org.apache.olingo.commons.api.domain;
 
-public interface ODataSingleton extends ODataEntity {}
+public interface ODataEnumValue extends ODataValue {
+
+  String getValue();
+
+  @Override
+  String toString();
+}

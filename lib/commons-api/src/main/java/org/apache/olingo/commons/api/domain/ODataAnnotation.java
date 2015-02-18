@@ -16,12 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain.v4;
+package org.apache.olingo.commons.api.domain;
 
-public interface ODataEnumValue extends ODataValue {
+public interface ODataAnnotation extends ODataValuable {
 
-  String getValue();
+  /**
+   * Returns annotation name.
+   * 
+   * @return annotation name.
+   */
+  String getTerm();
 
-  @Override
-  String toString();
 }
