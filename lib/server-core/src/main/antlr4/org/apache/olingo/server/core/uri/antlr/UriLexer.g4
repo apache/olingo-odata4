@@ -145,7 +145,7 @@ fragment DUTIMEFRAG         : 'T' (
                               ( DIGITS 'H' (DIGITS 'M')? DUSECONDFRAG?) 
                               | (DIGITS 'M' DUSECONDFRAG?) 
                               | DUSECONDFRAG
-                            );
+                            )?;
 fragment DUDAYTIMEFRAG      : DIGITS 'D' DUTIMEFRAG? | DUTIMEFRAG;
 DURATION                    : D U R A T I O N SQUOTE '-'? 'P' DUDAYTIMEFRAG SQUOTE;
 TIMEOFDAY                   : HOUR ':' MINUTE ( ':' SECOND ( '.' FRACTIONALSECONDS )? )?;
