@@ -32,6 +32,7 @@ import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -52,13 +53,14 @@ import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
+import org.apache.olingo.server.tecsvc.processor.expression.FilterSystemQueryHandler;
 
 /**
  * Technical Processor for entity-related functionality.
  */
 public class TechnicalEntityProcessor extends TechnicalProcessor
     implements EntityCollectionProcessor, ActionEntityCollectionProcessor, CountEntityCollectionProcessor,
-        EntityProcessor, ActionEntityProcessor, MediaEntityProcessor {
+    EntityProcessor, ActionEntityProcessor, MediaEntityProcessor {
 
   public TechnicalEntityProcessor(final DataProvider dataProvider) {
     super(dataProvider);
@@ -68,14 +70,21 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   public void readEntityCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
-    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
-    EntitySet entitySet = readEntityCollection(uriInfo);
-    if (entitySet == null) {
+
+    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
+    final EntitySet entitySetInitial = readEntityCollection(uriInfo);
+    if (entitySetInitial == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
     } else {
-      if (uriInfo.getCountOption() != null && uriInfo.getCountOption().getValue()) {
-        setCount(entitySet);
-      }
+      // Modifying the original entitySet means modifying the "database", so we have to make a shallow
+      // copy of the entity set (new EntitySet, but exactly the same data)
+      EntitySet entitySet = new EntitySetImpl();
+      entitySet.getEntities().addAll(entitySetInitial.getEntities());
+
+      // Apply system query options
+      FilterSystemQueryHandler.applyFilterSystemQuery(uriInfo.getFilterOption(), entitySet, edmEntitySet);
+      FilterSystemQueryHandler.applyOrderByOption(uriInfo.getOrderByOption(), entitySet, edmEntitySet);
+      
       final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
       ODataSerializer serializer = odata.createSerializer(format);
       final ExpandOption expand = uriInfo.getExpandOption();
@@ -95,7 +104,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   @Override
   public void processActionEntityCollection(final ODataRequest request, final ODataResponse response,
       final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Process entity collection is not supported yet.",
         HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
@@ -150,7 +159,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   @Override
   public void createMediaEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, DeserializerException, SerializerException {
     createEntity(request, response, uriInfo, requestFormat, responseFormat);
   }
 
@@ -168,9 +177,9 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
     Entity entity = dataProvider.create(edmEntitySet);
-    if (edmEntityType.hasStream()) {  // called from createMediaEntity(...), not directly
+    if (edmEntityType.hasStream()) { // called from createMediaEntity(...), not directly
       dataProvider.setMedia(entity, odata.createFixedFormatDeserializer().binary(request.getBody()),
-              requestFormat.toContentTypeString());
+          requestFormat.toContentTypeString());
     } else {
       dataProvider.update(edmEntitySet, entity,
           odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
@@ -228,7 +237,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   @Override
   public void processActionEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Process entity is not supported yet.",
         HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }

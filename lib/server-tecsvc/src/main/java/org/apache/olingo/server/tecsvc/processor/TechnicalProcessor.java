@@ -156,9 +156,7 @@ public abstract class TechnicalProcessor implements Processor {
   protected void validateOptions(final UriInfoResource uriInfo) throws ODataApplicationException {
     if (uriInfo.getCountOption() != null
         || !uriInfo.getCustomQueryOptions().isEmpty()
-        || uriInfo.getFilterOption() != null
         || uriInfo.getIdOption() != null
-        || uriInfo.getOrderByOption() != null
         || uriInfo.getSearchOption() != null
         || uriInfo.getSkipOption() != null
         || uriInfo.getSkipTokenOption() != null

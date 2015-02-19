@@ -311,7 +311,6 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
         // it will try to call URLEncodedUtils.format(Iterable<>,Charset) method,
         // which works in desktop java application, however, throws NoSuchMethodError in android OS,
         // so here manually construct the URL by its overload URLEncodedUtils.format(List<>,String).
-        //String queryStr = URLEncodedUtils.format(list1, "UTF-8");
         final String queryStr = encodeQueryParameter(list1);
         sb.append(queryStr);
       }

@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.fit;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import java.io.IOException;
 import java.net.URI;
+
 import javax.ws.rs.core.MediaType;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
@@ -49,6 +49,9 @@ import org.apache.http.util.EntityUtils;
 import org.apache.olingo.client.core.http.AbstractOAuth2HttpClientFactory;
 import org.apache.olingo.client.core.http.OAuth2Exception;
 import org.apache.olingo.fit.rest.OAuth2Provider;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class CXFOAuth2HttpClientFactory extends AbstractOAuth2HttpClientFactory {
 
