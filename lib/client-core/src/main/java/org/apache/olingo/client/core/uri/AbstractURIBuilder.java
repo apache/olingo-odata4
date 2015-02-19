@@ -29,7 +29,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.olingo.client.api.Configuration;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
@@ -38,6 +37,7 @@ import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -311,7 +311,8 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
         // it will try to call URLEncodedUtils.format(Iterable<>,Charset) method,
         // which works in desktop java application, however, throws NoSuchMethodError in android OS,
         // so here manually construct the URL by its overload URLEncodedUtils.format(List<>,String).
-        String queryStr = URLEncodedUtils.format(list1, "UTF-8");
+        //String queryStr = URLEncodedUtils.format(list1, "UTF-8");
+        final String queryStr = encodeQueryParameter(list1);
         sb.append(queryStr);
       }
 
@@ -319,6 +320,22 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("Could not build valid URI", e);
     }
+  }
+
+  private String encodeQueryParameter(List<NameValuePair> list) {
+    final StringBuilder builder = new StringBuilder();
+
+    for (NameValuePair pair : list) {
+      if (builder.length() > 0) {
+        builder.append("&");
+      }
+
+      builder.append(Encoder.encode(pair.getName()));
+      builder.append("=");
+      builder.append(Encoder.encode(pair.getValue()));
+    }
+
+    return builder.toString();
   }
 
   @Override

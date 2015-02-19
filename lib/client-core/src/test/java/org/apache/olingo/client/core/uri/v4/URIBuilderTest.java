@@ -156,7 +156,6 @@ public class URIBuilderTest extends AbstractTest {
     final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Products").search("blue OR green");
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(
-            SERVICE_ROOT + "/Products").addParameter("$search", "blue OR green").build(), uriBuilder.build());
+    assertEquals(new URI("http://host/service/Products?%24search=blue%20OR%20green"), uriBuilder.build());
   }
 }
