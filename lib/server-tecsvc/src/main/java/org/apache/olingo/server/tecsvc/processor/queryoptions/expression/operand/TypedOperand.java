@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.tecsvc.processor.expression.operand;
+package org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand;
 
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -35,7 +35,7 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmSByte;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmSingle;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.tecsvc.processor.expression.primitive.EdmNull;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.primitive.EdmNull;
 
 public class TypedOperand extends VisitorOperand {
 

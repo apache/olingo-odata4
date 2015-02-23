@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.tecsvc.processor.expression.operation;
+package org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operation;
 
 
 import java.math.BigDecimal;
@@ -27,8 +27,8 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmBoolean;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.tecsvc.processor.expression.operand.TypedOperand;
-import org.apache.olingo.server.tecsvc.processor.expression.operand.VisitorOperand;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.TypedOperand;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.VisitorOperand;
 
 public class UnaryOperator {
   final private TypedOperand operand;

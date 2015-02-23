@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.tecsvc.processor.expression.primitive;
+package org.apache.olingo.server.tecsvc.processor.queryoptions.expression.primitive;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.core.edm.primitivetype.SingletonPrimitiveType;

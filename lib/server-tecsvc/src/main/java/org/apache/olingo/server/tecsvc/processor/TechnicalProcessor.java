@@ -149,18 +149,13 @@ public abstract class TechnicalProcessor implements Processor {
         && resourcePaths.get(navigationCount) instanceof UriResourceNavigation) {
       navigationCount++;
     }
-    
+
     return (UriResourceNavigation) resourcePaths.get(--navigationCount);
   }
 
   protected void validateOptions(final UriInfoResource uriInfo) throws ODataApplicationException {
-    if (uriInfo.getCountOption() != null
-        || !uriInfo.getCustomQueryOptions().isEmpty()
-        || uriInfo.getIdOption() != null
-        || uriInfo.getSearchOption() != null
-        || uriInfo.getSkipOption() != null
-        || uriInfo.getSkipTokenOption() != null
-        || uriInfo.getTopOption() != null) {
+    if (uriInfo.getIdOption() != null
+        || uriInfo.getSearchOption() != null) {
       throw new ODataApplicationException("Not all of the specified options are supported.",
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }

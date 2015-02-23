@@ -61,7 +61,24 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     ODataEntity oDataEntity = result.getBody().getEntities().get(0);
     assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
   }
-
+  
+  @Test
+  public void testBooleanLiteral() {
+    ODataRetrieveResponse<ODataEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyBoolean eq false");
+    assertEquals(2, response.getBody().getEntities().size());
+    
+    ODataEntity oDataEntity = response.getBody().getEntities().get(0);
+    assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    oDataEntity = response.getBody().getEntities().get(1);
+    assertEquals("0", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    
+    response = sendRequest(ES_ALL_PRIM, "PropertyBoolean eq true");
+    assertEquals(1, response.getBody().getEntities().size());
+    
+    oDataEntity = response.getBody().getEntities().get(0);
+    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+  }
+  
   @Test
   public void testDateLiteral() {
     ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "PropertyDate eq 2012-12-03");

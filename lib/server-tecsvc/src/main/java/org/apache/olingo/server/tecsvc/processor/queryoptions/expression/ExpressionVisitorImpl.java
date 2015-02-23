@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.tecsvc.processor.expression;
+package org.apache.olingo.server.tecsvc.processor.queryoptions.expression;
 
 import java.util.List;
 import java.util.Locale;
@@ -39,12 +39,12 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
-import org.apache.olingo.server.tecsvc.processor.expression.operand.TypedOperand;
-import org.apache.olingo.server.tecsvc.processor.expression.operand.UntypedOperand;
-import org.apache.olingo.server.tecsvc.processor.expression.operand.VisitorOperand;
-import org.apache.olingo.server.tecsvc.processor.expression.operation.BinaryOperator;
-import org.apache.olingo.server.tecsvc.processor.expression.operation.MethodCallOperator;
-import org.apache.olingo.server.tecsvc.processor.expression.operation.UnaryOperator;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.TypedOperand;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.UntypedOperand;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.VisitorOperand;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operation.BinaryOperator;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operation.MethodCallOperator;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operation.UnaryOperator;
 
 public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> {
 

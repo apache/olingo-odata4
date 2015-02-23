@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.tecsvc.processor.expression.operand;
+package org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

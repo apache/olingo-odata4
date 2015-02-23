@@ -53,7 +53,8 @@ import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
-import org.apache.olingo.server.tecsvc.processor.expression.FilterSystemQueryHandler;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.SystemQueryOptions;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.options.ServerSidePagingHandler;
 
 /**
  * Technical Processor for entity-related functionality.
@@ -82,8 +83,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       entitySet.getEntities().addAll(entitySetInitial.getEntities());
 
       // Apply system query options
-      FilterSystemQueryHandler.applyFilterSystemQuery(uriInfo.getFilterOption(), entitySet, edmEntitySet);
-      FilterSystemQueryHandler.applyOrderByOption(uriInfo.getOrderByOption(), entitySet, edmEntitySet);
+      SystemQueryOptions.applySystemQueryOptions(entitySet, edmEntitySet, uriInfo);
+      ServerSidePagingHandler.applyServerSidePaging(entitySet, request.getRawRequestUri(), uriInfo);
       
       final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
       ODataSerializer serializer = odata.createSerializer(format);

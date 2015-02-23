@@ -16,13 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.tecsvc.processor.expression.operand;
+package org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand;
 
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmBoolean;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmByte;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
@@ -38,7 +39,7 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmTime;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmTimeOfDay;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.tecsvc.processor.expression.primitive.EdmNull;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.primitive.EdmNull;
 
 public class UntypedOperand extends VisitorOperand {
 
@@ -86,6 +87,11 @@ public class UntypedOperand extends VisitorOperand {
     // String
     if ((newValue = tryCast(literal, EdmString.getInstance())) != null) {
       return new TypedOperand(newValue, EdmString.getInstance());
+    }
+
+    // Boolean
+    if ((newValue = tryCast(literal, EdmBoolean.getInstance())) != null) {
+      return new TypedOperand(newValue, EdmBoolean.getInstance());
     }
 
     // Date
