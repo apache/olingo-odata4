@@ -27,7 +27,7 @@ import java.net.URI;
  */
 public class ODataInlineEntitySet extends ODataLink {
 
-  private CommonODataEntitySet entitySet;
+  private ODataEntitySet entitySet;
 
   /**
    * Constructor.
@@ -39,7 +39,7 @@ public class ODataInlineEntitySet extends ODataLink {
    * @param entitySet entity set.
    */
   public ODataInlineEntitySet(final ODataServiceVersion version, final URI uri, final ODataLinkType type,
-      final String title, final CommonODataEntitySet entitySet) {
+      final String title, final ODataEntitySet entitySet) {
 
     super(version, uri, type, title);
     this.entitySet = entitySet;
@@ -56,7 +56,7 @@ public class ODataInlineEntitySet extends ODataLink {
    * @param entitySet entity set.
    */
   public ODataInlineEntitySet(final ODataServiceVersion version, final URI baseURI, final String href,
-      final ODataLinkType type, final String title, final CommonODataEntitySet entitySet) {
+      final ODataLinkType type, final String title, final ODataEntitySet entitySet) {
 
     super(version, baseURI, href, type, title);
     this.entitySet = entitySet;
@@ -67,7 +67,7 @@ public class ODataInlineEntitySet extends ODataLink {
    * 
    * @return wrapped entity set.
    */
-  public CommonODataEntitySet getEntitySet() {
+  public ODataEntitySet getEntitySet() {
     return entitySet;
   }
 }

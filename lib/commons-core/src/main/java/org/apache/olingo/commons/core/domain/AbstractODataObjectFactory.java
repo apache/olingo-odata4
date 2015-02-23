@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.commons.core.domain;
 
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.domain.CommonODataObjectFactory;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-public abstract class AbstractODataObjectFactory implements CommonODataObjectFactory {
+public abstract class AbstractODataObjectFactory implements ODataObjectFactory {
 
   protected final ODataServiceVersion version;
 
@@ -35,12 +35,12 @@ public abstract class AbstractODataObjectFactory implements CommonODataObjectFac
   }
 
   @Override
-  public ODataInlineEntitySet newDeepInsertEntitySet(final String name, final CommonODataEntitySet entitySet) {
+  public ODataInlineEntitySet newDeepInsertEntitySet(final String name, final ODataEntitySet entitySet) {
     return new ODataInlineEntitySet(version, null, ODataLinkType.ENTITY_SET_NAVIGATION, name, entitySet);
   }
 
   @Override
-  public ODataInlineEntity newDeepInsertEntity(final String name, final CommonODataEntity entity) {
+  public ODataInlineEntity newDeepInsertEntity(final String name, final ODataEntity entity) {
     return new ODataInlineEntity(version, null, ODataLinkType.ENTITY_NAVIGATION, name, entity);
   }
 }

@@ -24,10 +24,9 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
@@ -98,7 +97,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<
   public Triple<List<T>, URI, List<ODataAnnotation>> fetchPartial(
           final URI uri, final Class<T> typeRef) {
 
-    final List<CommonODataEntity> entities = new ArrayList<CommonODataEntity>();
+    final List<ODataEntity> entities = new ArrayList<ODataEntity>();
     final URI next;
     final List<ODataAnnotation> anns = new ArrayList<ODataAnnotation>();
 
@@ -109,15 +108,15 @@ public abstract class AbstractEntityCollectionInvocationHandler<
       entities.add(res.getBody());
       next = null;
     } else {
-      final ODataEntitySetRequest<CommonODataEntitySet> req =
+      final ODataEntitySetRequest<ODataEntitySet> req =
               getClient().getRetrieveRequestFactory().getEntitySetRequest(uri);
       if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) > 0) {
         req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
       }
 
-      final ODataRetrieveResponse<CommonODataEntitySet> res = req.execute();
+      final ODataRetrieveResponse<ODataEntitySet> res = req.execute();
 
-      final CommonODataEntitySet entitySet = res.getBody();
+      final ODataEntitySet entitySet = res.getBody();
       entities.addAll(entitySet.getEntities());
       next = entitySet.getNext();
       if (entitySet instanceof ODataEntitySet) {
@@ -127,7 +126,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<
 
     final List<T> res = new ArrayList<T>(entities.size());
 
-    for (CommonODataEntity entity : entities) {
+    for (ODataEntity entity : entities) {
       Class<?> actualRef = null;
       if (entity.getTypeName() != null) {
         actualRef = service.getEntityTypeClass(entity.getTypeName().toString());

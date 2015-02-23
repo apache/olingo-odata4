@@ -34,9 +34,9 @@ import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmFunction;
@@ -143,13 +143,13 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
                   collItemType,
                   targetRef,
                   null,
-                  (CommonODataEntitySet) result,
+                  (ODataEntitySet) result,
                   this.baseURI,
                   false);
         } else {
           return (T) ProxyUtils.getEntityProxy(
                   service,
-                  (CommonODataEntity) result,
+                  (ODataEntity) result,
                   null,
                   targetRef,
                   null,
@@ -159,7 +159,7 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
         Object res;
 
         final Class<?> ref = ClassUtils.getTypeClass(targetRef);
-        final CommonODataProperty property = (CommonODataProperty) result;
+        final ODataProperty property = (ODataProperty) result;
 
         if (property == null || property.hasNullValue()) {
           res = null;
@@ -225,11 +225,11 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
       result = (Class<RES>) ODataNoContent.class;
     } else {
       if (returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY) {
-        result = (Class<RES>) CommonODataEntitySet.class;
+        result = (Class<RES>) ODataEntitySet.class;
       } else if (!returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY) {
-        result = (Class<RES>) CommonODataEntity.class;
+        result = (Class<RES>) ODataEntity.class;
       } else {
-        result = (Class<RES>) CommonODataProperty.class;
+        result = (Class<RES>) ODataProperty.class;
       }
     }
 

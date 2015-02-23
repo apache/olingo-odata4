@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.commons.ComplexInvocationHandler;
@@ -38,14 +38,14 @@ public class ProxyUtils {
           final Class<?> typeRef,
           final Class<?> typeCollectionRef,
           final URI targetEntitySetURI,
-          final CommonODataEntitySet entitySet,
+          final ODataEntitySet entitySet,
           final URI uri,
           final boolean checkInTheContext) {
 
     final List<Object> items = new ArrayList<Object>();
 
     if (entitySet != null) {
-      for (CommonODataEntity entityFromSet : entitySet.getEntities()) {
+      for (ODataEntity entityFromSet : entitySet.getEntities()) {
         items.add(getEntityProxy(service, entityFromSet, uri, typeRef, null, checkInTheContext));
       }
     }
@@ -70,7 +70,7 @@ public class ProxyUtils {
 
   public static Object getEntityProxy(
           final AbstractService<?> service,
-          final CommonODataEntity entity,
+          final ODataEntity entity,
           final URI entitySetURI,
           final Class<?> type,
           final String eTag,

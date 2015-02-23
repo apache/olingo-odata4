@@ -29,7 +29,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -238,7 +238,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler {
   }
 
   private Map.Entry<URI, EdmOperation> getBoundOperation(final Operation operation, final List<String> parameterNames) {
-    final CommonODataEntity entity = EntityInvocationHandler.class.cast(target).getEntity();
+    final ODataEntity entity = EntityInvocationHandler.class.cast(target).getEntity();
     final URI entityURI = EntityInvocationHandler.class.cast(target).getEntityURI();
 
     ODataOperation boundOp = entity.getOperation(operation.name());

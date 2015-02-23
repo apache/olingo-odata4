@@ -21,21 +21,50 @@ package org.apache.olingo.commons.api.domain;
 import java.net.URI;
 import java.util.List;
 
-public interface ODataEntitySet extends CommonODataEntitySet, ODataAnnotatable {
+/**
+ * OData entity collection. If pagination was used to get this instance, forward page navigation URI will be available.
+ */
+public interface ODataEntitySet extends ODataInvokeResult, ODataAnnotatable  {
 
-  @Override
+  /**
+   * Gets next page link.
+   * 
+   * @return next page link; null value if single page or last page reached.
+   */
+  URI getNext();
+
+  /**
+   * Gets contained entities.
+   * 
+   * @return entity set's entities.
+   */
   List<ODataEntity> getEntities();
 
   /**
+   * Gets in-line count.
+   *
+   * @return in-line count value.
+   */
+  Integer getCount();
+
+  /**
+   * Sets in-line count.
+   *
+   * @param count in-line count value.
+   */
+  void setCount(final int count);
+
+
+  /**
    * Gets delta link if exists.
-   * 
+   *
    * @return delta link if exists; null otherwise.
    */
   URI getDeltaLink();
 
   /**
    * Sets delta link.
-   * 
+   *
    * @param deltaLink delta link.
    */
   void setDeltaLink(URI deltaLink);

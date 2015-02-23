@@ -73,7 +73,7 @@ public interface ODataValue {
    * @param <OP> The actual ODataProperty interface.
    * @return complex value.
    */
-  <OP extends CommonODataProperty> ODataComplexValue<OP> asComplex();
+  <OP extends ODataProperty> ODataComplexValue<OP> asComplex();
 
   /**
    * Check is is a linked complex value.

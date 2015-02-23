@@ -40,8 +40,8 @@ import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreat
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -97,13 +97,13 @@ public final class MediaITCase extends AbstractBaseTestITCase {
     final CommonODataClient<?> client = getClient();
     final URI uri = client.newURIBuilder(TecSvcConst.BASE_URI)
         .appendEntitySetSegment("ESMedia").appendKeySegment(4).appendValueSegment().build();
-    ODataMediaEntityUpdateRequest<CommonODataEntity> request =
+    ODataMediaEntityUpdateRequest<ODataEntity> request =
         client.getCUDRequestFactory().getMediaEntityUpdateRequest(uri,
             IOUtils.toInputStream("just a test"));
     request.setContentType(ContentType.TEXT_PLAIN.toContentTypeString());
     assertNotNull(request);
 
-    final ODataMediaEntityUpdateResponse<CommonODataEntity> response = request.payloadManager().getResponse();
+    final ODataMediaEntityUpdateResponse<ODataEntity> response = request.payloadManager().getResponse();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
 
     // Check that the media stream has changed.
@@ -119,19 +119,19 @@ public final class MediaITCase extends AbstractBaseTestITCase {
   @Test
   public void create() throws Exception {
     final CommonODataClient<?> client = getClient();
-    ODataMediaEntityCreateRequest<CommonODataEntity> request =
+    ODataMediaEntityCreateRequest<ODataEntity> request =
         client.getCUDRequestFactory().getMediaEntityCreateRequest(
             client.newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESMedia").build(),
             IOUtils.toInputStream("just a test"));
     request.setContentType(ContentType.TEXT_PLAIN.toContentTypeString());
     assertNotNull(request);
 
-    final ODataMediaEntityCreateResponse<CommonODataEntity> response = request.payloadManager().getResponse();
+    final ODataMediaEntityCreateResponse<ODataEntity> response = request.payloadManager().getResponse();
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), response.getStatusCode());
     assertEquals(request.getURI() + "(5)", response.getHeader(HttpHeader.LOCATION).iterator().next());
-    final CommonODataEntity entity = response.getBody();
+    final ODataEntity entity = response.getBody();
     assertNotNull(entity);
-    final CommonODataProperty property = entity.getProperty("PropertyInt16");
+    final ODataProperty property = entity.getProperty("PropertyInt16");
     assertNotNull(property);
     assertNotNull(property.getPrimitiveValue());
     assertEquals(5, property.getPrimitiveValue().toValue());

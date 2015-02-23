@@ -33,7 +33,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -156,7 +156,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
     final String namespace = handler.getUUID().getType().getAnnotation(Namespace.class).value();
 
-    final CommonODataEntity template;
+    final ODataEntity template;
 
     final URI entityURI;
     if (handler.getEntityURI() == null || handler.getUUID().getKey() == null) {

@@ -42,8 +42,8 @@ import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
@@ -311,7 +311,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
         } else if (propertyCache.containsKey(name)) {
           res = propertyCache.get(name);
         } else {
-          final CommonODataProperty property = getInternalProperty(name);
+          final ODataProperty property = getInternalProperty(name);
 
           if (ref != null && ClassUtils.getTypeClass(type).isAnnotationPresent(ComplexType.class)) {
             res = getComplex(
@@ -496,7 +496,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
         EntityInvocationHandler handler = getContext().entityContext().getEntity(uuid);
 
         if (handler == null) {
-          final CommonODataEntity entity = getClient().getObjectFactory().newEntity(new FullQualifiedName(
+          final ODataEntity entity = getClient().getObjectFactory().newEntity(new FullQualifiedName(
                   collItemType.getAnnotation(Namespace.class).value(), ClassUtils.getEntityTypeName(collItemType)));
 
           handler = EntityInvocationHandler.getInstance(
@@ -545,7 +545,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       }
     }
 
-    for (CommonODataProperty property : getInternalProperties()) {
+    for (ODataProperty property : getInternalProperties()) {
       if (!propertyNames.contains(property.getName())) {
         res.add(property.getName());
       }
@@ -648,7 +648,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   public abstract boolean isChanged();
 
-  protected abstract <T extends CommonODataProperty> List<T> getInternalProperties();
+  protected abstract <T extends ODataProperty> List<T> getInternalProperties();
 
-  protected abstract CommonODataProperty getInternalProperty(final String name);
+  protected abstract ODataProperty getInternalProperty(final String name);
 }

@@ -41,22 +41,19 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataAnnotatable;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataDelta;
 import org.apache.olingo.commons.api.domain.ODataDeltaLink;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValuable;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -85,12 +82,12 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  public boolean add(final CommonODataEntity entity, final CommonODataProperty property) {
+  public boolean add(final ODataEntity entity, final ODataProperty property) {
     return ((ODataEntity) entity).getProperties().add((ODataProperty) property);
   }
 
   @Override
-  protected boolean add(final CommonODataEntitySet entitySet, final CommonODataEntity entity) {
+  protected boolean add(final ODataEntitySet entitySet, final ODataEntity entity) {
     return ((ODataEntitySet) entitySet).getEntities().add((ODataEntity) entity);
   }
 
@@ -168,7 +165,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  public EntitySet getEntitySet(final CommonODataEntitySet odataEntitySet) {
+  public EntitySet getEntitySet(final ODataEntitySet odataEntitySet) {
     final EntitySet entitySet = super.getEntitySet(odataEntitySet);
     entitySet.setDeltaLink(((ODataEntitySet) odataEntitySet).getDeltaLink());
     annotations((ODataEntitySet) odataEntitySet, entitySet);
@@ -188,7 +185,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  public Entity getEntity(final CommonODataEntity odataEntity) {
+  public Entity getEntity(final ODataEntity odataEntity) {
     final Entity entity = super.getEntity(odataEntity);
     entity.setId(((ODataEntity) odataEntity).getId());
     annotations((ODataEntity) odataEntity, entity);
@@ -196,7 +193,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  public Property getProperty(final CommonODataProperty property) {
+  public Property getProperty(final ODataProperty property) {
     final ODataProperty _property = (ODataProperty) property;
 
     final Property propertyResource = new PropertyImpl();

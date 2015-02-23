@@ -20,9 +20,9 @@ package org.apache.olingo.client.api.communication.request.retrieve;
 
 import java.net.URI;
 
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 
 /**
  * OData request factory class.
@@ -66,7 +66,7 @@ public interface CommonRetrieveRequestFactory {
    * @param uri request URI.
    * @return new {@link ODataEntitySetRequest} instance.
    */
-  <T extends CommonODataEntitySet> ODataEntitySetRequest<T> getEntitySetRequest(URI uri);
+  <T extends ODataEntitySet> ODataEntitySetRequest<T> getEntitySetRequest(URI uri);
 
   /**
    * Gets a uri request returning a set of one or more OData entities.
@@ -79,7 +79,7 @@ public interface CommonRetrieveRequestFactory {
    * @param uri request URI.
    * @return new {@link ODataEntitySetIteratorRequest} instance.
    */
-  <ES extends CommonODataEntitySet, E extends CommonODataEntity>
+  <ES extends ODataEntitySet, E extends ODataEntity>
           ODataEntitySetIteratorRequest<ES, E> getEntitySetIteratorRequest(URI uri);
 
   /**
@@ -89,7 +89,7 @@ public interface CommonRetrieveRequestFactory {
    * @param uri request URI.
    * @return new {@link ODataEntityRequest} instance.
    */
-  <T extends CommonODataEntity> ODataEntityRequest<T> getEntityRequest(URI uri);
+  <T extends ODataEntity> ODataEntityRequest<T> getEntityRequest(URI uri);
 
   /**
    * Gets a uri request returning a single OData entity property.
@@ -98,7 +98,7 @@ public interface CommonRetrieveRequestFactory {
    * @param uri request URI.
    * @return new {@link ODataPropertyRequest} instance.
    */
-  <T extends CommonODataProperty> ODataPropertyRequest<T> getPropertyRequest(URI uri);
+  <T extends ODataProperty> ODataPropertyRequest<T> getPropertyRequest(URI uri);
   
   /**
    * Gets a uri request returning a single OData entity property value.

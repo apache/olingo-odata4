@@ -19,7 +19,7 @@
 package org.apache.olingo.commons.core.domain;
 
 import org.apache.olingo.commons.api.domain.AbstractODataValue;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 
 import java.util.Iterator;
@@ -31,7 +31,7 @@ import java.util.Map;
  * 
  * @param <OP> The actual ODataProperty interface.
  */
-public abstract class AbstractODataComplexValue<OP extends CommonODataProperty>
+public abstract class AbstractODataComplexValue<OP extends ODataProperty>
     extends AbstractODataValue implements ODataComplexValue<OP> {
 
   /**
@@ -57,7 +57,7 @@ public abstract class AbstractODataComplexValue<OP extends CommonODataProperty>
    */
   @Override
   @SuppressWarnings("unchecked")
-  public ODataComplexValue<OP> add(final CommonODataProperty field) {
+  public ODataComplexValue<OP> add(final ODataProperty field) {
     fields.put(field.getName(), (OP) field);
     return getThis();
   }

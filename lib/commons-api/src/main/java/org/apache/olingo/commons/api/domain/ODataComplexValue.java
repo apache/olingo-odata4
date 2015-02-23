@@ -25,7 +25,7 @@ import java.util.Map;
  * 
  * @param <OP> The actual ODataProperty interface.
  */
-public interface ODataComplexValue<OP extends CommonODataProperty> extends ODataValue, Iterable<OP> {
+public interface ODataComplexValue<OP extends ODataProperty> extends ODataValue, Iterable<OP> {
 
   /**
    * Adds field to the complex type.

@@ -50,28 +50,28 @@ public abstract class ODataItem {
   /**
    * Constructor.
    * 
-   * @param name ODataItem name (it's entity type for {@link CommonODataEntity}).
+   * @param name ODataItem name (it's entity type for {@link ODataEntity}).
    */
   public ODataItem(final String name) {
     this.name = name;
   }
 
   /**
-   * @return ODataItem name (it's entity type for {@link CommonODataEntity}).
+   * @return ODataItem name (it's entity type for {@link ODataEntity}).
    */
   public String getName() {
     return name;
   }
 
   /**
-   * @return ODataItem link (it's edit link for {@link CommonODataEntity}).
+   * @return ODataItem link (it's edit link for {@link ODataEntity}).
    */
   public URI getLink() {
     return link;
   }
 
   /**
-   * Sets ODataItem link (it's edit link for {@link CommonODataEntity}).
+   * Sets ODataItem link (it's edit link for {@link ODataEntity}).
    * 
    * @param link link.
    */

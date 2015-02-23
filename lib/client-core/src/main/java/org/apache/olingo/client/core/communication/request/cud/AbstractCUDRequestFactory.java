@@ -36,8 +36,8 @@ import org.apache.olingo.client.core.communication.request.streamed.ODataMediaEn
 import org.apache.olingo.client.core.communication.request.streamed.ODataMediaEntityUpdateRequestImpl;
 import org.apache.olingo.client.core.communication.request.streamed.ODataStreamUpdateRequestImpl;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
@@ -50,14 +50,14 @@ public abstract class AbstractCUDRequestFactory<UT extends CommonUpdateType> imp
   }
 
   @Override
-  public <E extends CommonODataEntity> ODataEntityCreateRequest<E> getEntityCreateRequest(
+  public <E extends ODataEntity> ODataEntityCreateRequest<E> getEntityCreateRequest(
           final URI targetURI, final E entity) {
 
     return new ODataEntityCreateRequestImpl<E>(client, targetURI, entity);
   }
 
   @Override
-  public <E extends CommonODataEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(
+  public <E extends ODataEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(
           final URI targetURI, final UT type, final E changes) {
 
     final ODataEntityUpdateRequest<E> req;
@@ -73,7 +73,7 @@ public abstract class AbstractCUDRequestFactory<UT extends CommonUpdateType> imp
   }
 
   @Override
-  public <E extends CommonODataEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(
+  public <E extends ODataEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(
           final UT type, final E entity) {
 
     if (entity.getEditLink() == null) {
@@ -110,7 +110,7 @@ public abstract class AbstractCUDRequestFactory<UT extends CommonUpdateType> imp
 
   @Override
   public ODataPropertyUpdateRequest getPropertyPrimitiveValueUpdateRequest(
-          final URI targetURI, final CommonODataProperty property) {
+          final URI targetURI, final ODataProperty property) {
 
     if (!property.hasPrimitiveValue()) {
       throw new IllegalArgumentException("A primitive value is required");
@@ -130,7 +130,7 @@ public abstract class AbstractCUDRequestFactory<UT extends CommonUpdateType> imp
 
   @Override
   public ODataPropertyUpdateRequest getPropertyComplexValueUpdateRequest(
-          final URI targetURI, final UT type, final CommonODataProperty property) {
+          final URI targetURI, final UT type, final ODataProperty property) {
 
     if (!property.hasComplexValue()) {
       throw new IllegalArgumentException("A complex value is required");
@@ -150,7 +150,7 @@ public abstract class AbstractCUDRequestFactory<UT extends CommonUpdateType> imp
 
   @Override
   public ODataPropertyUpdateRequest getPropertyCollectionValueUpdateRequest(
-          final URI targetURI, final CommonODataProperty property) {
+          final URI targetURI, final ODataProperty property) {
 
     if (!property.hasCollectionValue()) {
       throw new IllegalArgumentException("A collection value is required");
@@ -183,7 +183,7 @@ public abstract class AbstractCUDRequestFactory<UT extends CommonUpdateType> imp
   }
 
   @Override
-  public <E extends CommonODataEntity> ODataMediaEntityCreateRequest<E> getMediaEntityCreateRequest(
+  public <E extends ODataEntity> ODataMediaEntityCreateRequest<E> getMediaEntityCreateRequest(
           final URI targetURI, final InputStream media) {
 
     return new ODataMediaEntityCreateRequestImpl<E>(client, targetURI, media);
@@ -204,7 +204,7 @@ public abstract class AbstractCUDRequestFactory<UT extends CommonUpdateType> imp
   }
 
   @Override
-  public <E extends CommonODataEntity> ODataMediaEntityUpdateRequest<E> getMediaEntityUpdateRequest(
+  public <E extends ODataEntity> ODataMediaEntityUpdateRequest<E> getMediaEntityUpdateRequest(
           final URI editURI, final InputStream media) {
 
     final ODataMediaEntityUpdateRequest<E> req;

@@ -21,8 +21,8 @@ package org.apache.olingo.commons.api.domain;
 /**
  * Marker interface for any OData domain object that can be returned by an operation invocation.
  * 
- * @see CommonODataEntitySet
- * @see CommonODataEntity
- * @see CommonODataProperty
+ * @see ODataEntitySet
+ * @see ODataEntity
+ * @see ODataProperty
  */
 public interface ODataInvokeResult {}

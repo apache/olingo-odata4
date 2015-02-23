@@ -34,9 +34,9 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -93,22 +93,22 @@ public abstract class AbstractODataReader implements CommonODataReader {
         res = new ResWrap<T>(
                 (URI) null,
                 null,
-                reference.cast(new ODataEntitySetIterator<CommonODataEntitySet, CommonODataEntity>(
+                reference.cast(new ODataEntitySetIterator<ODataEntitySet, ODataEntity>(
                                 client, src, ODataFormat.fromString(format))));
-      } else if (CommonODataEntitySet.class.isAssignableFrom(reference)) {
+      } else if (ODataEntitySet.class.isAssignableFrom(reference)) {
         final ResWrap<EntitySet> resource = client.getDeserializer(ODataFormat.fromString(format))
             .toEntitySet(src);
         res = new ResWrap<T>(
                 resource.getContextURL(),
                 resource.getMetadataETag(),
                 reference.cast(client.getBinder().getODataEntitySet(resource)));
-      } else if (CommonODataEntity.class.isAssignableFrom(reference)) {
+      } else if (ODataEntity.class.isAssignableFrom(reference)) {
         final ResWrap<Entity> container = client.getDeserializer(ODataFormat.fromString(format)).toEntity(src);
         res = new ResWrap<T>(
                 container.getContextURL(),
                 container.getMetadataETag(),
                 reference.cast(client.getBinder().getODataEntity(container)));
-      } else if (CommonODataProperty.class.isAssignableFrom(reference)) {
+      } else if (ODataProperty.class.isAssignableFrom(reference)) {
         final ResWrap<Property> container = client.getDeserializer(ODataFormat.fromString(format)).toProperty(src);
         res = new ResWrap<T>(
                 container.getContextURL(),

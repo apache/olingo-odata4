@@ -20,8 +20,8 @@ package org.apache.olingo.commons.core.domain;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.domain.AbstractODataPayload;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * OData entity.
  */
-public abstract class AbstractODataEntity extends AbstractODataPayload implements CommonODataEntity {
+public abstract class AbstractODataEntity extends AbstractODataPayload implements ODataEntity {
 
   private final FullQualifiedName typeName;
 
@@ -130,11 +130,11 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
   }
 
   @Override
-  public CommonODataProperty getProperty(final String name) {
-    CommonODataProperty result = null;
+  public ODataProperty getProperty(final String name) {
+    ODataProperty result = null;
 
     if (StringUtils.isNotBlank(name)) {
-      for (CommonODataProperty property : getProperties()) {
+      for (ODataProperty property : getProperties()) {
         if (name.equals(property.getName())) {
           result = property;
         }

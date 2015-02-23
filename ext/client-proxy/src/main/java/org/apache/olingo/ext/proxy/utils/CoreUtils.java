@@ -40,8 +40,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataAnnotatable;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
@@ -149,7 +149,7 @@ public final class CoreUtils {
     return value;
   }
 
-  private static CommonODataProperty getODataEntityProperty(
+  private static ODataProperty getODataEntityProperty(
       final CommonEdmEnabledODataClient<?> client,
       final FullQualifiedName entity,
       final String property,
@@ -159,7 +159,7 @@ public final class CoreUtils {
     return getODataProperty(client, edmProperty, property, obj);
   }
 
-  private static CommonODataProperty getODataComplexProperty(
+  private static ODataProperty getODataComplexProperty(
       final CommonEdmEnabledODataClient<?> client,
       final FullQualifiedName complex,
       final String property,
@@ -169,7 +169,7 @@ public final class CoreUtils {
     return getODataProperty(client, edmProperty, property, obj);
   }
 
-  private static CommonODataProperty getODataProperty(
+  private static ODataProperty getODataProperty(
       final CommonEdmEnabledODataClient<?> client,
       final EdmElement edmProperty,
       final String property,
@@ -211,10 +211,10 @@ public final class CoreUtils {
     return annotation;
   }
 
-  public static CommonODataProperty getODataProperty(
+  public static ODataProperty getODataProperty(
       final CommonEdmEnabledODataClient<?> client, final String name, final EdmTypeInfo type, final Object obj) {
 
-    CommonODataProperty property;
+    ODataProperty property;
 
     try {
       if (obj == null) {
@@ -298,10 +298,10 @@ public final class CoreUtils {
   public static void addProperties(
       final CommonEdmEnabledODataClient<?> client,
       final Map<String, Object> changes,
-      final CommonODataEntity entity) {
+      final ODataEntity entity) {
 
     for (Map.Entry<String, Object> entry : changes.entrySet()) {
-      ((List<CommonODataProperty>) entity.getProperties()).add(
+      ((List<ODataProperty>) entity.getProperties()).add(
           getODataEntityProperty(client, entity.getTypeName(), entry.getKey(), entry.getValue()));
     }
   }
@@ -309,7 +309,7 @@ public final class CoreUtils {
   public static void addProperties(
       final CommonEdmEnabledODataClient<?> client,
       final Map<String, Object> changes,
-      final ODataComplexValue<CommonODataProperty> entity) {
+      final ODataComplexValue<ODataProperty> entity) {
 
     for (Map.Entry<String, Object> entry : changes.entrySet()) {
       entity.add(getODataComplexProperty(
@@ -389,7 +389,7 @@ public final class CoreUtils {
   public static CommonURIBuilder<?> buildEditLink(
       final CommonEdmEnabledODataClient<?> client,
       final String entitySetURI,
-      final CommonODataEntity entity,
+      final ODataEntity entity,
       final Object key) {
 
     if (key == null) {
@@ -439,14 +439,14 @@ public final class CoreUtils {
       final CommonEdmEnabledODataClient<?> client,
       final EntityInvocationHandler typeHandler,
       final Class<?> entityTypeRef,
-      final CommonODataEntity entity) {
+      final ODataEntity entity) {
 
     Object res = null;
 
     if (!entity.getProperties().isEmpty()) {
       final Class<?> keyRef = ClassUtils.getCompoundKeyRef(entityTypeRef);
       if (keyRef == null) {
-        final CommonODataProperty property = entity.getProperty(firstValidEntityKey(entityTypeRef));
+        final ODataProperty property = entity.getProperty(firstValidEntityKey(entityTypeRef));
         if (property != null && property.hasPrimitiveValue()) {
           res = primitiveValueToObject(
               property.getPrimitiveValue(), getPropertyClass(entityTypeRef, property.getName()));
@@ -470,7 +470,7 @@ public final class CoreUtils {
       final EntityInvocationHandler typeHandler,
       final Object bean,
       final Class<? extends Annotation> getterAnn,
-      final Iterator<? extends CommonODataProperty> propItor) {
+      final Iterator<? extends ODataProperty> propItor) {
 
     if (bean != null) {
       final Class<?> typeRef;
@@ -495,11 +495,11 @@ public final class CoreUtils {
       final Object bean,
       final Class<?> typeRef,
       final Class<? extends Annotation> getterAnn,
-      final Iterator<? extends CommonODataProperty> propItor) {
+      final Iterator<? extends ODataProperty> propItor) {
 
     if (bean != null) {
       while (propItor.hasNext()) {
-        final CommonODataProperty property = propItor.next();
+        final ODataProperty property = propItor.next();
 
         final Method getter = ClassUtils.findGetterByAnnotatedName(typeRef, getterAnn, property.getName());
 
@@ -657,7 +657,7 @@ public final class CoreUtils {
     return null;
   }
 
-  public static URI getMediaEditLink(final String name, final CommonODataEntity entity) {
+  public static URI getMediaEditLink(final String name, final ODataEntity entity) {
     final ODataLink mediaEditLink = entity.getMediaEditLink(name);
     return mediaEditLink == null ? URIUtils.getURI(entity.getEditLink(), name) : mediaEditLink.getLink();
   }

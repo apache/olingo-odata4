@@ -27,14 +27,14 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 /**
  * This class implements an OData retrieve query request returning a single entity.
  */
-public class ODataEntityRequestImpl<E extends CommonODataEntity>
+public class ODataEntityRequestImpl<E extends ODataEntity>
         extends AbstractODataRetrieveRequest<E> implements ODataEntityRequest<E> {
 
   /**

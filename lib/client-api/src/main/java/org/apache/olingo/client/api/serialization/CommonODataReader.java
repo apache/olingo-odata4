@@ -23,9 +23,9 @@ import java.util.Map;
 
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -76,7 +76,7 @@ public interface CommonODataReader {
    * @return de-serialized entity set.
    * @throws ODataDeserializerException
    */
-  CommonODataEntitySet readEntitySet(InputStream input, ODataFormat format) throws ODataDeserializerException;
+  ODataEntitySet readEntitySet(InputStream input, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a stream taking care to de-serializes the first OData entity found.
@@ -86,7 +86,7 @@ public interface CommonODataReader {
    * @return entity de-serialized.
    * @throws ODataDeserializerException
    */
-  CommonODataEntity readEntity(InputStream input, ODataFormat format) throws ODataDeserializerException;
+  ODataEntity readEntity(InputStream input, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a stream taking care to de-serialize the first OData entity property found.
@@ -96,7 +96,7 @@ public interface CommonODataReader {
    * @return OData entity property de-serialized.
    * @throws ODataDeserializerException
    */
-  CommonODataProperty readProperty(InputStream input, ODataFormat format) throws ODataDeserializerException;
+  ODataProperty readProperty(InputStream input, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a stream into an OData error.

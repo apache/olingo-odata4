@@ -33,7 +33,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -98,17 +98,17 @@ public class ComplexCollectionInvocationHandler<T extends ComplexType<?>>
   @SuppressWarnings("unchecked")
   @Override
   public Triple<List<T>, URI, List<ODataAnnotation>> fetchPartial(final URI uri, final Class<T> typeRef) {
-    final ODataPropertyRequest<CommonODataProperty> req =
+    final ODataPropertyRequest<ODataProperty> req =
             getClient().getRetrieveRequestFactory().getPropertyRequest(uri);
     if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) > 0) {
       req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
     }
 
-    final ODataRetrieveResponse<CommonODataProperty> res = req.execute();
+    final ODataRetrieveResponse<ODataProperty> res = req.execute();
 
     final List<T> resItems = new ArrayList<T>();
 
-    final CommonODataProperty property = res.getBody();
+    final ODataProperty property = res.getBody();
     if (property != null && property.hasCollectionValue()) {
       for (ODataValue item : (ODataCollectionValue<ODataValue>) property.getValue()) {
         Class<?> actualRef = null;

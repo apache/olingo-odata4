@@ -32,7 +32,7 @@ import org.apache.olingo.client.core.communication.request.AbstractODataStreamMa
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
@@ -41,7 +41,7 @@ import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
  *
  * @param <E> concrete ODataEntity implementation
  */
-public class ODataMediaEntityUpdateRequestImpl<E extends CommonODataEntity>
+public class ODataMediaEntityUpdateRequestImpl<E extends ODataEntity>
         extends AbstractODataStreamedEntityRequest<ODataMediaEntityUpdateResponse<E>, MediaEntityUpdateStreamManager<E>>
         implements ODataMediaEntityUpdateRequest<E> {
 

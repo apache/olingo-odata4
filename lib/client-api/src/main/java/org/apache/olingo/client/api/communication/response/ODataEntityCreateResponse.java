@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 
 /**
  * This interface describes the response to an OData entity create request.
@@ -26,7 +26,7 @@ import org.apache.olingo.commons.api.domain.CommonODataEntity;
  * @param <E> concrete ODataEntity implementation
  * @see org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest
  */
-public interface ODataEntityCreateResponse<E extends CommonODataEntity> extends ODataResponse {
+public interface ODataEntityCreateResponse<E extends ODataEntity> extends ODataResponse {
 
   /**
    * Gets created object.

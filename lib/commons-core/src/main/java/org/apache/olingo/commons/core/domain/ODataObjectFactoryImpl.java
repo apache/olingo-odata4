@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.commons.core.domain;
 
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataDelta;
@@ -30,7 +30,6 @@ import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataSingleton;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -127,7 +126,7 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
 
   @Override
   public ODataProperty newComplexProperty(final String name,
-      final ODataComplexValue<? extends CommonODataProperty> value) {
+      final ODataComplexValue<? extends ODataProperty> value) {
 
     return new ODataPropertyImpl(name, value);
   }

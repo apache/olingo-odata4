@@ -31,7 +31,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -129,7 +129,7 @@ public class EntitySetInvocationHandler<
     EntityInvocationHandler handler = getContext().entityContext().getEntity(uuid);
 
     if (handler == null) {
-      final CommonODataEntity entity = getClient().getObjectFactory().newEntity(new FullQualifiedName(
+      final ODataEntity entity = getClient().getObjectFactory().newEntity(new FullQualifiedName(
               typeRef.getAnnotation(Namespace.class).value(), ClassUtils.getEntityTypeName(typeRef)));
 
       handler = EntityInvocationHandler.getInstance(key, entity, this.baseURI, typeRef, service);

@@ -28,7 +28,6 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
@@ -104,10 +103,10 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
     assertEquals(ODataLinkType.ENTITY_SET_NAVIGATION, link.getType());
     final ODataInlineEntitySet inlineEntitySet = link.asInlineEntitySet();
     assertNotNull(inlineEntitySet);
-    final List<? extends CommonODataEntity> entities = inlineEntitySet.getEntitySet().getEntities();
+    final List<? extends ODataEntity> entities = inlineEntitySet.getEntitySet().getEntities();
     assertNotNull(entities);
     assertEquals(2, entities.size());
-    final CommonODataEntity inlineEntity = entities.get(0);
+    final ODataEntity inlineEntity = entities.get(0);
     assertEquals(2, inlineEntity.getProperties().size());
     assertEquals(-128, inlineEntity.getProperty("PropertySByte").getPrimitiveValue().toValue());
     assertEquals(new java.sql.Timestamp(85754000),
@@ -143,7 +142,7 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
     final ODataLink innerLink = inlineEntity.getEntity().getNavigationLink("NavPropertyETTwoPrimOne");
     assertNotNull(innerLink);
     assertEquals(ODataLinkType.ENTITY_NAVIGATION, innerLink.getType());
-    final CommonODataEntity innerEntity = innerLink.asInlineEntity().getEntity();
+    final ODataEntity innerEntity = innerLink.asInlineEntity().getEntity();
     assertNotNull(innerEntity);
     assertEquals(2, innerEntity.getProperties().size());
     assertEquals(32767, innerEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());

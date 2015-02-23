@@ -32,8 +32,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
@@ -90,7 +90,7 @@ public abstract class AbstractBaseTestITCase {
     }
   }
 
-  protected void debugODataProperty(final CommonODataProperty property, final String message) {
+  protected void debugODataProperty(final ODataProperty property, final String message) {
     LOG.debug(message + "\n{}", property.toString());
   }
 
@@ -98,7 +98,7 @@ public abstract class AbstractBaseTestITCase {
     LOG.debug(message + "\n{}", value.toString());
   }
 
-  protected void debugODataEntity(final CommonODataEntity entity, final String message) {
+  protected void debugODataEntity(final ODataEntity entity, final String message) {
     if (LOG.isDebugEnabled()) {
       StringWriter writer = new StringWriter();
       try {

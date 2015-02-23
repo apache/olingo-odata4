@@ -35,10 +35,9 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaReq
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -66,7 +65,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   private EntityUUID uuid;
 
   static EntityInvocationHandler getInstance(
-      final CommonODataEntity entity,
+      final ODataEntity entity,
       final EntitySetInvocationHandler<?, ?, ?> entitySet,
       final Class<?> typeRef) {
 
@@ -80,7 +79,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   static EntityInvocationHandler getInstance(
       final Object key,
-      final CommonODataEntity entity,
+      final ODataEntity entity,
       final URI entitySetURI,
       final Class<?> typeRef,
       final AbstractService<?> service) {
@@ -89,7 +88,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   public static EntityInvocationHandler getInstance(
-      final CommonODataEntity entity,
+      final ODataEntity entity,
       final URI entitySetURI,
       final Class<?> typeRef,
       final AbstractService<?> service) {
@@ -98,7 +97,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   public static EntityInvocationHandler getInstance(
-      final CommonODataEntity entity,
+      final ODataEntity entity,
       final URI entitySetURI,
       final URI entityURI,
       final Class<?> typeRef,
@@ -132,7 +131,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     final String namespace = typeRef.getAnnotation(Namespace.class).value();
 
     this.internal = service.getClient().getObjectFactory().newEntity(new FullQualifiedName(namespace, name));
-    CommonODataEntity.class.cast(this.internal).setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
+    ODataEntity.class.cast(this.internal).setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
 
     this.uuid = new EntityUUID(null, typeRef, null);
   }
@@ -148,7 +147,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     final String namespace = typeRef.getAnnotation(Namespace.class).value();
 
     this.internal = service.getClient().getObjectFactory().newEntity(new FullQualifiedName(namespace, name));
-    CommonODataEntity.class.cast(this.internal).setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
+    ODataEntity.class.cast(this.internal).setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
 
     this.baseURI = entityURI;
     this.uri = entityURI == null ? null : getClient().newURIBuilder(baseURI.toASCIIString());
@@ -157,7 +156,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   private EntityInvocationHandler(
-      final CommonODataEntity entity,
+      final ODataEntity entity,
       final URI entitySetURI,
       final URI entityURI,
       final Class<?> typeRef,
@@ -180,7 +179,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   private EntityInvocationHandler(
       final Object entityKey,
-      final CommonODataEntity entity,
+      final ODataEntity entity,
       final URI entitySetURI,
       final Class<?> typeRef,
       final AbstractService<?> service) {
@@ -210,7 +209,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     this.uuid = new EntityUUID(entitySetURI, typeRef, key);
   }
 
-  public void setEntity(final CommonODataEntity entity) {
+  public void setEntity(final ODataEntity entity) {
     this.internal = entity;
     getEntity().setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
 
@@ -243,7 +242,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return uuid;
   }
 
-  public EntityUUID updateEntityUUID(final URI entitySetURI, final Class<?> type, final CommonODataEntity entity) {
+  public EntityUUID updateEntityUUID(final URI entitySetURI, final Class<?> type, final ODataEntity entity) {
     CoreUtils.addProperties(service.getClient(), this.getPropertyChanges(), entity);
     final Object key = CoreUtils.getKey(getClient(), this, this.getUUID().getType(), entity);
     return updateUUID(entitySetURI, type, key);
@@ -269,8 +268,8 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return uuid.getEntitySetURI();
   }
 
-  public final CommonODataEntity getEntity() {
-    return (CommonODataEntity) internal;
+  public final ODataEntity getEntity() {
+    return (ODataEntity) internal;
   }
 
   public URI getEntityURI() {
@@ -450,16 +449,16 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     final Object key = uuid.getKey();
 
     try {
-      final ODataEntityRequest<CommonODataEntity> req =
+      final ODataEntityRequest<ODataEntity> req =
           getClient().getRetrieveRequestFactory().getEntityRequest(uri.build());
 
       if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) > 0) {
         req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
       }
 
-      final ODataRetrieveResponse<CommonODataEntity> res = req.execute();
+      final ODataRetrieveResponse<ODataEntity> res = req.execute();
 
-      final CommonODataEntity entity = res.getBody();
+      final ODataEntity entity = res.getBody();
       if (entity == null) {
         throw new IllegalArgumentException("Invalid " + typeRef.getSimpleName() + "(" + key + ")");
       }
@@ -486,12 +485,12 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   @Override
   @SuppressWarnings("unchecked")
-  protected <T extends CommonODataProperty> List<T> getInternalProperties() {
+  protected <T extends ODataProperty> List<T> getInternalProperties() {
     return getEntity() == null ? Collections.<T> emptyList() : (List<T>) getEntity().getProperties();
   }
 
   @Override
-  protected CommonODataProperty getInternalProperty(final String name) {
+  protected ODataProperty getInternalProperty(final String name) {
     return getEntity() == null ? null : getEntity().getProperty(name);
   }
 

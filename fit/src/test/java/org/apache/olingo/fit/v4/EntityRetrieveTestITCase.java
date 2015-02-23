@@ -32,11 +32,9 @@ import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
@@ -85,10 +83,10 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
       for (ODataLink link : entity.getNavigationLinks()) {
         if (link instanceof ODataInlineEntity) {
-          final CommonODataEntity inline = ((ODataInlineEntity) link).getEntity();
+          final ODataEntity inline = ((ODataInlineEntity) link).getEntity();
           assertNotNull(inline);
 
-          final List<? extends CommonODataProperty> properties = inline.getProperties();
+          final List<? extends ODataProperty> properties = inline.getProperties();
           assertEquals(5, properties.size());
 
           assertTrue(properties.get(0).getName().equals("CompanyID")
@@ -143,7 +141,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
       boolean found = false;
       for (ODataLink link : entity.getNavigationLinks()) {
         if (link instanceof ODataInlineEntitySet) {
-          final CommonODataEntitySet inline = ((ODataInlineEntitySet) link).getEntitySet();
+          final ODataEntitySet inline = ((ODataInlineEntitySet) link).getEntitySet();
           assertNotNull(inline);
 
           found = true;

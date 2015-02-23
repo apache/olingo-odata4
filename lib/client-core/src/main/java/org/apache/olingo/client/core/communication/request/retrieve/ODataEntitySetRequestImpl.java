@@ -27,7 +27,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
@@ -36,7 +36,7 @@ import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
  *
  * @param <ES> concrete ODataEntitySet implementation
  */
-public class ODataEntitySetRequestImpl<ES extends CommonODataEntitySet>
+public class ODataEntitySetRequestImpl<ES extends ODataEntitySet>
         extends AbstractODataRetrieveRequest<ES> implements ODataEntitySetRequest<ES> {
 
   private ES entitySet = null;

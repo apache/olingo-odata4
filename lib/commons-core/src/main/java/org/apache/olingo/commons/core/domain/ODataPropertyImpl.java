@@ -18,19 +18,20 @@
  */
 package org.apache.olingo.commons.core.domain;
 
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataAnnotatable;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValuable;
 import org.apache.olingo.commons.api.domain.ODataValue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ODataPropertyImpl extends AbstractODataProperty implements ODataProperty {
+public class ODataPropertyImpl extends AbstractODataProperty implements ODataProperty, ODataAnnotatable, ODataValuable {
 
   private final ODataValuable valuable;
 

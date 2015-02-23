@@ -32,8 +32,8 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
@@ -47,7 +47,7 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeEntities(final Collection<CommonODataEntity> entities, final ODataFormat format)
+  public InputStream writeEntities(final Collection<ODataEntity> entities, final ODataFormat format)
       throws ODataSerializerException {
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     OutputStreamWriter writer;
@@ -57,7 +57,7 @@ public class ODataWriterImpl implements ODataWriter {
       writer = null;
     }
     try {
-      for (CommonODataEntity entity : entities) {
+      for (ODataEntity entity : entities) {
         client.getSerializer(format).write(writer, client.getBinder().getEntity(entity));
       }
 
@@ -68,13 +68,13 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeEntity(final CommonODataEntity entity, final ODataFormat format)
+  public InputStream writeEntity(final ODataEntity entity, final ODataFormat format)
       throws ODataSerializerException {
-    return writeEntities(Collections.<CommonODataEntity>singleton(entity), format);
+    return writeEntities(Collections.<ODataEntity>singleton(entity), format);
   }
 
   @Override
-  public InputStream writeProperty(final CommonODataProperty property, final ODataFormat format)
+  public InputStream writeProperty(final ODataProperty property, final ODataFormat format)
       throws ODataSerializerException {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     OutputStreamWriter writer;

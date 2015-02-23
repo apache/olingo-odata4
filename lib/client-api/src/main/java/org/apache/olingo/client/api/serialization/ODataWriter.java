@@ -23,8 +23,8 @@ import java.net.URI;
 import java.util.Collection;
 
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
@@ -46,7 +46,7 @@ public interface ODataWriter {
    * @return stream of serialized objects.
    * @throws ODataSerializerException
    */
-  InputStream writeEntities(Collection<CommonODataEntity> entities, ODataFormat format)
+  InputStream writeEntities(Collection<ODataEntity> entities, ODataFormat format)
       throws ODataSerializerException;
 
   /**
@@ -57,7 +57,7 @@ public interface ODataWriter {
    * @return stream of serialized object.
    * @throws ODataSerializerException
    */
-  InputStream writeEntity(CommonODataEntity entity, ODataFormat format)
+  InputStream writeEntity(ODataEntity entity, ODataFormat format)
       throws ODataSerializerException;
 
   /**
@@ -68,7 +68,7 @@ public interface ODataWriter {
    * @return stream of serialized object.
    * @throws ODataSerializerException
    */
-  InputStream writeProperty(CommonODataProperty property, ODataFormat format)
+  InputStream writeProperty(ODataProperty property, ODataFormat format)
       throws ODataSerializerException;
 
   /**

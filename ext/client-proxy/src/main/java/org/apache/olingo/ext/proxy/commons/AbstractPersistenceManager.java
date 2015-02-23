@@ -41,7 +41,6 @@ import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEnt
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
@@ -149,7 +148,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
     items.put(handler, null);
 
-    final CommonODataEntity entity = handler.getEntity();
+    final ODataEntity entity = handler.getEntity();
     entity.getNavigationLinks().clear();
 
     final AttachedEntityStatus currentStatus = service.getContext().entityContext().getStatus(handler);
@@ -319,7 +318,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
         pos++;
         items.put(delayedUpdate.getSource(), pos);
 
-        final CommonODataEntity changes =
+        final ODataEntity changes =
             service.getClient().getObjectFactory().newEntity(delayedUpdate.getSource().getEntity().getTypeName());
 
         AttachedEntityStatus status = service.getContext().entityContext().getStatus(delayedUpdate.getSource());
@@ -373,7 +372,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
   private AttachedEntityStatus queue(
       final EntityInvocationHandler handler,
-      final CommonODataEntity entity,
+      final ODataEntity entity,
       final PersistenceChanges changeset) {
 
     switch (service.getContext().entityContext().getStatus(handler)) {
@@ -397,7 +396,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
   private void queueCreate(
       final EntityInvocationHandler handler,
-      final CommonODataEntity entity,
+      final ODataEntity entity,
       final PersistenceChanges changeset) {
 
     LOG.debug("Create '{}'", handler);
@@ -452,7 +451,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
   private void queueUpdate(
       final EntityInvocationHandler handler,
-      final CommonODataEntity changes,
+      final ODataEntity changes,
       final PersistenceChanges changeset) {
 
     LOG.debug("Update '{}'", handler.getEntityURI());
@@ -462,7 +461,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
       throw new ODataRuntimeException("Only OData V4 or higher supported.");
     }
 
-    final ODataEntityUpdateRequest<CommonODataEntity> req =
+    final ODataEntityUpdateRequest<ODataEntity> req =
         ((EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(handler.getEntityURI(),
                 org.apache.olingo.client.api.communication.request.cud.UpdateType.PATCH, changes);
@@ -505,7 +504,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
   private void queueUpdate(
       final EntityInvocationHandler handler,
       final URI uri,
-      final CommonODataEntity changes,
+      final ODataEntity changes,
       final PersistenceChanges changeset) {
 
     LOG.debug("Update '{}'", uri);
@@ -514,7 +513,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     if (service.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
       throw new ODataRuntimeException("Only OData V4 or higher supported.");
     }
-    final ODataEntityUpdateRequest<CommonODataEntity> req =
+    final ODataEntityUpdateRequest<ODataEntity> req =
         ((EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(uri,
                 org.apache.olingo.client.api.communication.request.cud.UpdateType.PATCH, changes);
@@ -530,7 +529,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
   private void queueDelete(
       final EntityInvocationHandler handler,
-      final CommonODataEntity entity,
+      final ODataEntity entity,
       final PersistenceChanges changeset) {
     final URI deleteURI = entity.getEditLink() == null ? handler.getEntityURI() : entity.getEditLink();
     changeset.addChange(buildDeleteRequest(deleteURI, handler.getETag()), handler);

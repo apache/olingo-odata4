@@ -39,9 +39,9 @@ import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -97,7 +97,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
   }
 
   private String getActualFormat(final ODataFormat format) {
-    return ((CommonODataProperty.class.isAssignableFrom(reference) && format == ODataFormat.ATOM)
+    return ((ODataProperty.class.isAssignableFrom(reference) && format == ODataFormat.ATOM)
             ? ODataFormat.XML : format)
             .getContentType(odataClient.getServiceVersion()).toContentTypeString();
   }
@@ -115,9 +115,9 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
   protected InputStream getPayload() {
     if (!this.parameters.isEmpty() && this.method == HttpMethod.POST) {
       // Additional, non-binding parameters MUST be sent as JSON
-      final CommonODataEntity tmp = odataClient.getObjectFactory().newEntity(null);
+      final ODataEntity tmp = odataClient.getObjectFactory().newEntity(null);
       for (Map.Entry<String, ODataValue> param : parameters.entrySet()) {
-        CommonODataProperty property = null;
+        ODataProperty property = null;
 
         if (param.getValue().isPrimitive()) {
           property = odataClient.getObjectFactory().
@@ -201,13 +201,13 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
           } else {
             // avoid getContent() twice:IllegalStateException: Content has been consumed
             final InputStream responseStream = this.payload == null ? res.getEntity().getContent() : this.payload;
-            if (CommonODataEntitySet.class.isAssignableFrom(reference)) {
+            if (ODataEntitySet.class.isAssignableFrom(reference)) {
               invokeResult = reference.cast(odataClient.getReader().readEntitySet(responseStream,
                       ODataFormat.fromString(getContentType())));
-            } else if (CommonODataEntity.class.isAssignableFrom(reference)) {
+            } else if (ODataEntity.class.isAssignableFrom(reference)) {
               invokeResult = reference.cast(odataClient.getReader().readEntity(responseStream,
                       ODataFormat.fromString(getContentType())));
-            } else if (CommonODataProperty.class.isAssignableFrom(reference)) {
+            } else if (ODataProperty.class.isAssignableFrom(reference)) {
               invokeResult = reference.cast(odataClient.getReader().readProperty(responseStream,
                       ODataFormat.fromString(getContentType())));
             }
