@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.core.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataAnnotatable;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
@@ -31,20 +34,98 @@ import org.apache.olingo.commons.api.domain.ODataValue;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ODataPropertyImpl extends AbstractODataProperty implements ODataProperty, ODataAnnotatable, ODataValuable {
+public class ODataPropertyImpl implements ODataProperty, ODataAnnotatable, ODataValuable {
 
-  private final ODataValuable valuable;
 
   private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
+  private final String name;
+  private final ODataValue value;
+  private final ODataValuable valuable;
 
-  public ODataPropertyImpl(final String name, final org.apache.olingo.commons.api.domain.ODataValue value) {
-    super(name, value);
-    valuable = new ODataValuableImpl((ODataValue) value);
+  public ODataPropertyImpl(final String name, final ODataValue value) {
+    this.name = name;
+    this.value = value;
+    this.valuable = new ODataValuableImpl(value);
+  }
+
+  /**
+   * Returns property name.
+   *
+   * @return property name.
+   */
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * Returns property value.
+   *
+   * @return property value.
+   */
+  @Override
+  public ODataValue getValue() {
+    return value;
+  }
+
+  /**
+   * Checks if has null value.
+   *
+   * @return 'TRUE' if has null value; 'FALSE' otherwise.
+   */
+  @Override
+  public boolean hasNullValue() {
+    return value == null || value.isPrimitive() && value.asPrimitive().toValue() == null;
+  }
+
+  /**
+   * Checks if has primitive value.
+   *
+   * @return 'TRUE' if has primitive value; 'FALSE' otherwise.
+   */
+  @Override
+  public boolean hasPrimitiveValue() {
+    return !hasNullValue() && value.isPrimitive();
+  }
+
+  /**
+   * Gets primitive value.
+   *
+   * @return primitive value if exists; null otherwise.
+   */
+  @Override
+  public ODataPrimitiveValue getPrimitiveValue() {
+    return hasPrimitiveValue() ? value.asPrimitive() : null;
+  }
+
+  /**
+   * Checks if has complex value.
+   *
+   * @return 'TRUE' if has complex value; 'FALSE' otherwise.
+   */
+  @Override
+  public boolean hasComplexValue() {
+    return !hasNullValue() && value.isComplex();
+  }
+
+  /**
+   * Checks if has collection value.
+   *
+   * @return 'TRUE' if has collection value; 'FALSE' otherwise.
+   */
+  @Override
+  public boolean hasCollectionValue() {
+    return !hasNullValue() && value.isCollection();
   }
 
   @Override
-  public ODataValue getValue() {
-    return valuable.getValue();
+  public boolean equals(final Object obj) {
+    return EqualsBuilder.reflectionEquals(this, obj);
+  }
+
+  @Override
+  public int hashCode() {
+    return HashCodeBuilder.reflectionHashCode(this);
   }
 
   @Override
@@ -85,5 +166,4 @@ public class ODataPropertyImpl extends AbstractODataProperty implements ODataPro
         + ", annotations=" + annotations
         + '}';
   }
-
 }

@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.commons.core.domain;
 
+import org.apache.olingo.commons.api.domain.ODataInlineEntity;
+import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
@@ -37,10 +39,22 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 import java.net.URI;
 
-public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implements ODataObjectFactory {
+public class ODataObjectFactoryImpl implements ODataObjectFactory {
+
+  protected final ODataServiceVersion version;
 
   public ODataObjectFactoryImpl(final ODataServiceVersion version) {
-    super(version);
+    this.version = version;
+  }
+
+  @Override
+  public ODataInlineEntitySet newDeepInsertEntitySet(final String name, final ODataEntitySet entitySet) {
+    return new ODataInlineEntitySet(version, null, ODataLinkType.ENTITY_SET_NAVIGATION, name, entitySet);
+  }
+
+  @Override
+  public ODataInlineEntity newDeepInsertEntity(final String name, final ODataEntity entity) {
+    return new ODataInlineEntity(version, null, ODataLinkType.ENTITY_NAVIGATION, name, entity);
   }
 
   @Override

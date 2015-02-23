@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.core.domain;
 
+import org.apache.olingo.commons.api.domain.AbstractODataValue;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataEnumValue;
@@ -26,11 +27,13 @@ import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProperty> implements ODataLinkedComplexValue {
+public class ODataComplexValueImpl extends AbstractODataValue implements ODataComplexValue<ODataProperty>,
+        ODataLinkedComplexValue {
 
   /**
    * Navigation links (might contain in-line entities or entity sets).
@@ -44,11 +47,21 @@ public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProper
 
   private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
 
+  /**
+   * Complex type fields.
+   */
+  private final Map<String, ODataProperty> fields = new LinkedHashMap<String, ODataProperty>();
+
+  /**
+   * Constructor.
+   *
+   * @param typeName type name.
+   */
   public ODataComplexValueImpl(final String typeName) {
     super(typeName);
   }
 
-  @Override
+
   protected ODataComplexValue<ODataProperty> getThis() {
     return this;
   }
@@ -158,4 +171,48 @@ public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProper
     return annotations;
   }
 
+
+
+  /**
+   * Adds field to the complex type.
+   *
+   * @param field field to be added.
+   */
+  @Override
+  @SuppressWarnings("unchecked")
+  public ODataComplexValue<ODataProperty> add(final ODataProperty field) {
+    fields.put(field.getName(), field);
+    return getThis();
+  }
+
+  /**
+   * Gets field.
+   *
+   * @param name name of the field to be retrieved.
+   * @return requested field.
+   */
+  @Override
+  public ODataProperty get(final String name) {
+    return fields.get(name);
+  }
+
+  /**
+   * Complex property fields iterator.
+   *
+   * @return fields iterator.
+   */
+  @Override
+  public Iterator<ODataProperty> iterator() {
+    return fields.values().iterator();
+  }
+
+  /**
+   * Gets number of fields.
+   *
+   * @return number of fields.
+   */
+  @Override
+  public int size() {
+    return fields.size();
+  }
 }

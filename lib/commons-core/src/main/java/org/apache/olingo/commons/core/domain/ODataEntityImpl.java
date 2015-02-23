@@ -22,24 +22,255 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.domain.AbstractODataPayload;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataSingleton;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
-public class ODataEntityImpl extends AbstractODataEntity implements ODataSingleton {
+public class ODataEntityImpl  extends AbstractODataPayload implements ODataEntity, ODataSingleton {
 
   /**
    * Entity id.
    */
   private URI id;
+  /**
+   * ETag.
+   */
+  private String eTag;
+  /**
+   * Media entity flag.
+   */
+  private boolean mediaEntity = false;
+  /**
+   * In case of media entity, media content type.
+   */
+  private String mediaContentType;
+  /**
+   * In case of media entity, media content source.
+   */
+  private URI mediaContentSource;
+  /**
+   * Media ETag.
+   */
+  private String mediaETag;
+  /**
+   * Edit link.
+   */
+  private URI editLink;
 
   private final List<ODataProperty> properties = new ArrayList<ODataProperty>();
 
   private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
 
+  private final FullQualifiedName typeName;
+  /**
+   * Navigation links (might contain in-line entities or entity sets).
+   */
+  private final List<ODataLink> navigationLinks = new ArrayList<ODataLink>();
+  /**
+   * Association links.
+   */
+  private final List<ODataLink> associationLinks = new ArrayList<ODataLink>();
+  /**
+   * Media edit links.
+   */
+  private final List<ODataLink> mediaEditLinks = new ArrayList<ODataLink>();
+  /**
+   * Operations (legacy, functions, actions).
+   */
+  private final List<ODataOperation> operations = new ArrayList<ODataOperation>();
+
   public ODataEntityImpl(final FullQualifiedName typeName) {
-    super(typeName);
+    super(typeName == null ? null : typeName.toString());
+    this.typeName = typeName;
+  }
+
+  @Override
+  public FullQualifiedName getTypeName() {
+    return typeName;
+  }
+
+  @Override
+  public String getETag() {
+    return eTag;
+  }
+
+  @Override
+  public void setETag(final String eTag) {
+    this.eTag = eTag;
+  }
+
+  @Override
+  public ODataOperation getOperation(final String title) {
+    ODataOperation result = null;
+    for (ODataOperation operation : operations) {
+      if (title.equals(operation.getTitle())) {
+        result = operation;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Gets operations.
+   *
+   * @return operations.
+   */
+  @Override
+  public List<ODataOperation> getOperations() {
+    return operations;
+  }
+
+
+  @Override
+  public ODataProperty getProperty(final String name) {
+    ODataProperty result = null;
+
+    if (StringUtils.isNotBlank(name)) {
+      for (ODataProperty property : getProperties()) {
+        if (name.equals(property.getName())) {
+          result = property;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  @Override
+  public boolean addLink(final ODataLink link) {
+    boolean result = false;
+
+    switch (link.getType()) {
+      case ASSOCIATION:
+        result = associationLinks.contains(link) ? false : associationLinks.add(link);
+        break;
+
+      case ENTITY_NAVIGATION:
+      case ENTITY_SET_NAVIGATION:
+        result = navigationLinks.contains(link) ? false : navigationLinks.add(link);
+        break;
+
+      case MEDIA_EDIT:
+        result = mediaEditLinks.contains(link) ? false : mediaEditLinks.add(link);
+        break;
+
+      default:
+    }
+
+    return result;
+  }
+
+  @Override
+  public boolean removeLink(final ODataLink link) {
+    return associationLinks.remove(link) || navigationLinks.remove(link);
+  }
+
+  private ODataLink getLink(final List<ODataLink> links, final String name) {
+    ODataLink result = null;
+    for (ODataLink link : links) {
+      if (name.equals(link.getName())) {
+        result = link;
+      }
+    }
+
+    return result;
+  }
+
+  @Override
+  public ODataLink getNavigationLink(final String name) {
+    return getLink(navigationLinks, name);
+  }
+
+  @Override
+  public List<ODataLink> getNavigationLinks() {
+    return navigationLinks;
+  }
+
+  @Override
+  public ODataLink getAssociationLink(final String name) {
+    return getLink(associationLinks, name);
+  }
+
+  @Override
+  public List<ODataLink> getAssociationLinks() {
+    return associationLinks;
+  }
+
+  @Override
+  public ODataLink getMediaEditLink(final String name) {
+    return getLink(mediaEditLinks, name);
+  }
+
+  @Override
+  public List<ODataLink> getMediaEditLinks() {
+    return mediaEditLinks;
+  }
+
+  @Override
+  public URI getEditLink() {
+    return editLink;
+  }
+
+  @Override
+  public void setEditLink(final URI editLink) {
+    this.editLink = editLink;
+  }
+
+  @Override
+  public URI getLink() {
+    return super.getLink() == null ? getEditLink() : super.getLink();
+  }
+
+  @Override
+  public boolean isReadOnly() {
+    return super.getLink() != null;
+  }
+
+  @Override
+  public boolean isMediaEntity() {
+    return mediaEntity;
+  }
+
+  @Override
+  public void setMediaEntity(final boolean isMediaEntity) {
+    mediaEntity = isMediaEntity;
+  }
+
+  @Override
+  public String getMediaContentType() {
+    return mediaContentType;
+  }
+
+  @Override
+  public void setMediaContentType(final String mediaContentType) {
+    this.mediaContentType = mediaContentType;
+  }
+
+  @Override
+  public URI getMediaContentSource() {
+    return mediaContentSource;
+  }
+
+  @Override
+  public void setMediaContentSource(final URI mediaContentSource) {
+    this.mediaContentSource = mediaContentSource;
+  }
+
+  @Override
+  public String getMediaETag() {
+    return mediaETag;
+  }
+
+  @Override
+  public void setMediaETag(final String eTag) {
+    mediaETag = eTag;
   }
 
   @Override
@@ -53,11 +284,6 @@ public class ODataEntityImpl extends AbstractODataEntity implements ODataSinglet
   }
 
   @Override
-  public ODataProperty getProperty(final String name) {
-    return (ODataProperty) super.getProperty(name);
-  }
-
-  @Override
   public List<ODataProperty> getProperties() {
     return properties;
   }
@@ -66,5 +292,4 @@ public class ODataEntityImpl extends AbstractODataEntity implements ODataSinglet
   public List<ODataAnnotation> getAnnotations() {
     return annotations;
   }
-
 }

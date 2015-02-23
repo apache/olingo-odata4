@@ -18,21 +18,29 @@
  */
 package org.apache.olingo.commons.core.domain;
 
+import org.apache.olingo.commons.api.domain.AbstractODataValue;
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
-public class ODataCollectionValueImpl extends AbstractODataCollectionValue<ODataValue> implements ODataValue {
+public class ODataCollectionValueImpl<OV extends ODataValue> extends AbstractODataValue
+        implements ODataCollectionValue<OV>, ODataValue {
 
+  /**
+   * Constructor.
+   *
+   * @param typeName type name.
+   */
   public ODataCollectionValueImpl(final String typeName) {
-    super(typeName);
+    super(typeName == null || typeName.startsWith("Collection(") ? typeName : "Collection(" + typeName + ")");
   }
 
-  @Override
   protected ODataCollectionValueImpl getThis() {
     return this;
   }
@@ -74,4 +82,53 @@ public class ODataCollectionValueImpl extends AbstractODataCollectionValue<OData
 
     return result;
   }
+
+  /**
+   * Values.
+   */
+  protected final List<OV> values = new ArrayList<OV>();
+
+  /**
+   * Adds a value to the collection.
+   *
+   * @param value value to be added.
+   */
+  @Override
+  @SuppressWarnings("unchecked")
+  public ODataCollectionValue<OV> add(final ODataValue value) {
+    values.add((OV) value);
+    return getThis();
+  }
+
+  /**
+   * Value iterator.
+   *
+   * @return value iterator.
+   */
+  @Override
+  public Iterator<OV> iterator() {
+    return values.iterator();
+  }
+
+  /**
+   * Gets collection size.
+   *
+   * @return collection size.
+   */
+  @Override
+  public int size() {
+    return values.size();
+  }
+
+  /**
+   * Checks if collection is empty.
+   *
+   * @return 'TRUE' if empty; 'FALSE' otherwise.
+   */
+  @Override
+  public boolean isEmpty() {
+    return values.isEmpty();
+  }
+
+
 }
