@@ -27,5 +27,4 @@ public class CountHandler {
       entitySet.setCount(entitySet.getEntities().size());
     }
   }
-
 }

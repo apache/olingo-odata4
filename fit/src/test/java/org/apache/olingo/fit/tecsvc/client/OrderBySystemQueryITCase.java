@@ -137,12 +137,11 @@ public class OrderBySystemQueryITCase extends AbstractBaseTestITCase {
 
   private ODataRetrieveResponse<ODataEntitySet> sendRequest(String entitySet, String orderByString) {
     final ODataClient client = getClient();
-    String escapedFilterString = escapeFilterString(orderByString);
 
     final URI uri =
         client.newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(entitySet)
-            .orderBy(escapedFilterString)
+            .orderBy(orderByString)
             .build();
 
     ODataEntitySetRequest<ODataEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
@@ -158,11 +157,7 @@ public class OrderBySystemQueryITCase extends AbstractBaseTestITCase {
       assertEquals(errorCode.getStatusCode(), e.getStatusLine().getStatusCode());
     }
   }
-
-  private String escapeFilterString(String filterString) {
-    return filterString.replace(" ", "%20");
-  }
-
+  
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getV4();

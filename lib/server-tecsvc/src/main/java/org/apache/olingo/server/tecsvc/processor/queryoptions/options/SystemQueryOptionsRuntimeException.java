@@ -16,23 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.tecsvc.processor.queryoptions.expression;
+package org.apache.olingo.server.tecsvc.processor.queryoptions.options;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
 
-public class FilterRuntimeException extends ODataRuntimeException {
+public class SystemQueryOptionsRuntimeException extends ODataRuntimeException {
 
   private static final long serialVersionUID = 1L;
 
-  public FilterRuntimeException(Exception cause) {
+  public SystemQueryOptionsRuntimeException(Exception cause) {
     super(cause);
-  }
-
-  public FilterRuntimeException(String msg, Exception cause) {
-    super(msg, cause);
-  }
-
-  public FilterRuntimeException(String msg) {
-    super(msg);
   }
 }

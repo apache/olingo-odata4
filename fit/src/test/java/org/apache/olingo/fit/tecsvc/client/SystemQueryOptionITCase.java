@@ -29,15 +29,15 @@ import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
-public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
+public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
   private static final String PROPERTY_INT16 = "PropertyInt16";
   private static final String ES_SERVER_SIDE_PAGING = "ESServerSidePaging";
   private static final String ES_ALL_PRIM = "ESAllPrim";
@@ -51,7 +51,7 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.COUNT, "true")
         .build();
 
-    ODataRetrieveResponse<CommonODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
@@ -67,7 +67,7 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.COUNT, "true")
         .build();
 
-    ODataRetrieveResponse<CommonODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
@@ -83,14 +83,14 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.TOP, new Integer(5).toString())
         .build();
 
-    ODataRetrieveResponse<CommonODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
     assertEquals(5, response.getBody().getEntities().size());
 
     for (int i = 0; i < 5; i++) {
-      CommonODataEntity entity = response.getBody().getEntities().get(i);
+      ODataEntity entity = response.getBody().getEntities().get(i);
       assertEquals(new Integer(i + 1).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
     }
   }
@@ -103,14 +103,14 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.SKIP, new Integer(5).toString())
         .build();
 
-    ODataRetrieveResponse<CommonODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
     assertEquals(10, response.getBody().getEntities().size());
 
     for (int i = 0; i < 10; i++) {
-      CommonODataEntity entity = response.getBody().getEntities().get(i);
+      ODataEntity entity = response.getBody().getEntities().get(i);
       assertEquals(new Integer(i + 6).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
     }
   }
@@ -124,7 +124,7 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.SKIP, new Integer(503).toString())
         .build();
 
-    ODataRetrieveResponse<CommonODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
@@ -139,7 +139,7 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.SKIP, new Integer(10000).toString())
         .build();
 
-    ODataRetrieveResponse<CommonODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
@@ -158,7 +158,7 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.TOP, new Integer(43).toString()) // 102, 101, ...., 59
         .build();
 
-    ODataRetrieveResponse<CommonODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
@@ -169,7 +169,7 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
 
     // Check first 10 entities
     for (int i = 0; i < 10; i++) {
-      CommonODataEntity entity = response.getBody().getEntities().get(i);
+      ODataEntity entity = response.getBody().getEntities().get(i);
       assertEquals(new Integer(id).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
       id--;
     }
@@ -180,7 +180,7 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
       assertEquals(Integer.valueOf(105), response.getBody().getCount());
       assertEquals(10, response.getBody().getEntities().size());
       for (int i = 0; i < 10; i++) {
-        CommonODataEntity entity = response.getBody().getEntities().get(i);
+        ODataEntity entity = response.getBody().getEntities().get(i);
         assertEquals(new Integer(id).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
         id--;
       }
@@ -191,7 +191,7 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
     assertEquals(Integer.valueOf(105), response.getBody().getCount());
     assertEquals(3, response.getBody().getEntities().size());
     for (int i = 0; i < 3; i++) {
-      CommonODataEntity entity = response.getBody().getEntities().get(i);
+      ODataEntity entity = response.getBody().getEntities().get(i);
       assertEquals(new Integer(id).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
       id--;
     }
@@ -207,7 +207,7 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
         .build();
 
-    ODataRetrieveResponse<CommonODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
@@ -234,7 +234,7 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.COUNT, Boolean.TRUE.toString())
         .build();
 
-    ODataRetrieveResponse<CommonODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
@@ -273,7 +273,7 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
         .build();
 
     try {
-      ODataRetrieveResponse<CommonODataEntitySet> response = client.getRetrieveRequestFactory()
+      ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
           .getEntitySetRequest(uri)
           .execute();
       fail();
@@ -291,7 +291,7 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.TOP, new Integer(-5).toString())
         .build();
     try {
-      ODataRetrieveResponse<CommonODataEntitySet> response = client.getRetrieveRequestFactory()
+      ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
           .getEntitySetRequest(uri)
           .execute();
       fail();
@@ -301,7 +301,7 @@ public class SystemQueryOptionITCas extends AbstractBaseTestITCase {
   }
 
   @Override
-  protected CommonODataClient<?> getClient() {
+  protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getV4();
     odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
     return odata;

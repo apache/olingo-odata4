@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,8 +18,10 @@
  */
 package org.apache.olingo.server.tecsvc.data;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -29,24 +31,39 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.commons.core.data.EntityImpl;
+import org.apache.olingo.commons.core.data.EntitySetImpl;
+import org.apache.olingo.commons.core.data.LinkImpl;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmInt16;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.uri.UriParameter;
 
 public class DataProvider {
 
   protected static final String MEDIA_PROPERTY_NAME = "$value";
-  private static final String KEY_NAME = "PropertyInt16";
+//  private static final String KEY_NAME = "PropertyInt16";
 
-  private Map<String, EntitySet> data;
+  final private Map<String, EntitySet> data;
+  private Edm edm;
+  private OData odata;
 
   public DataProvider() {
     data = new DataCreator().getData();
@@ -116,35 +133,97 @@ public class DataProvider {
     }
   }
 
+//  public Entity create(final EdmEntitySet edmEntitySet) throws DataProviderException {
+//    final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
+//    List<Entity> entities = readAll(edmEntitySet).getEntities();
+//    Entity entity = new EntityImpl();
+//    final List<String> keyNames = edmEntityType.getKeyPredicateNames();
+//    if (keyNames.size() == 1 && keyNames.get(0).equals(KEY_NAME)) {
+//      entity.addProperty(DataCreator.createPrimitive(KEY_NAME, findFreeKeyValue(entities)));
+//    } else {
+//      throw new DataProviderException("Key construction not supported!");
+//    }
+//    createProperties(edmEntityType, entity.getProperties());
+//    entities.add(entity);
+//    return entity;
+//  }
+//
+//  private Integer findFreeKeyValue(final List<Entity> entities) {
+//    Integer result = 0;
+//    boolean free;
+//    do {
+//      ++result;
+//      free = true;
+//      for (final Entity entity : entities) {
+//        if (result.equals(entity.getProperty(KEY_NAME).getValue())) {
+//          free = false;
+//          break;
+//        }
+//      }
+//    } while (!free);
+//    return result;
+//  }
+
   public Entity create(final EdmEntitySet edmEntitySet) throws DataProviderException {
     final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
-    List<Entity> entities = readAll(edmEntitySet).getEntities();
-    Entity entity = new EntityImpl();
-    final List<String> keyNames = edmEntityType.getKeyPredicateNames();
-    if (keyNames.size() == 1 && keyNames.get(0).equals(KEY_NAME)) {
-      entity.addProperty(DataCreator.createPrimitive(KEY_NAME, findFreeKeyValue(entities)));
-    } else {
-      throw new DataProviderException("Key construction not supported!");
+    final EntitySet entitySet = readAll(edmEntitySet);
+    final List<Entity> entities = entitySet.getEntities();
+    final Map<String, Object> newKey = findFreeComposedKey(entities, edmEntitySet.getEntityType());
+    final Entity newEntity = new EntityImpl();
+
+    for (final String keyName : edmEntityType.getKeyPredicateNames()) {
+      newEntity.addProperty(DataCreator.createPrimitive(keyName, newKey.get(keyName)));
     }
-    createProperties(edmEntityType, entity.getProperties());
-    entities.add(entity);
-    return entity;
+
+    createProperties(edmEntityType, newEntity.getProperties());
+    entities.add(newEntity);
+
+    return newEntity;
   }
 
-  private Integer findFreeKeyValue(final List<Entity> entities) {
-    Integer result = 0;
-    boolean free;
-    do {
-      ++result;
-      free = true;
-      for (final Entity entity : entities) {
-        if (result.equals(entity.getProperty(KEY_NAME).getValue())) {
-          free = false;
-          break;
+  private Map<String, Object> findFreeComposedKey(final List<Entity> entities, final EdmEntityType entityType)
+      throws DataProviderException {
+    // Weak key construction
+    // 3e € entity: (V k € keys: k !€ e.ki) => e.(k1, k2, k3) !€ entitySet
+    final HashMap<String, Object> keys = new HashMap<String, Object>();
+    for (final String keyName : entityType.getKeyPredicateNames()) {
+      final EdmType type = entityType.getProperty(keyName).getType();
+      Object newValue = null;
+
+      if (type instanceof EdmInt16 || type instanceof EdmInt32 || type instanceof EdmInt64) {
+        // Integer keys
+        newValue = Integer.valueOf(1);
+
+        while (!isFree(newValue, keyName, entities)) {
+          newValue = ((Integer) newValue) + 1;
         }
+      } else if (type instanceof EdmString) {
+        // String keys
+        newValue = String.valueOf(1);
+        int i = 0;
+
+        while (!isFree(newValue, keyName, entities)) {
+          newValue = String.valueOf(i);
+          i++;
+        }
+      } else {
+        throw new DataProviderException("Key type not supported");
       }
-    } while (!free);
-    return result;
+
+      keys.put(keyName, newValue);
+    }
+
+    return keys;
+  }
+
+  private boolean isFree(final Object value, final String keyPropertyName, final List<Entity> entities) {
+    for (final Entity entity : entities) {
+      if (value != null && value.equals(entity.getProperty(keyPropertyName).getValue())) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   private void createProperties(final EdmStructuredType type, List<Property> properties) throws DataProviderException {
@@ -173,10 +252,14 @@ public class DataProvider {
     }
   }
 
-  public void update(final EdmEntitySet edmEntitySet, Entity entity, final Entity changedEntity, final boolean patch)
-      throws DataProviderException {
+  public void update(final String rawBaseUri, final EdmEntitySet edmEntitySet, Entity entity,
+      final Entity changedEntity, final boolean patch,
+      final boolean isInsert) throws DataProviderException {
+
     final EdmEntityType entityType = edmEntitySet.getEntityType();
     final List<String> keyNames = entityType.getKeyPredicateNames();
+
+    // Update Properties
     for (final String propertyName : entityType.getPropertyNames()) {
       if (!keyNames.contains(propertyName)) {
         updateProperty(entityType.getStructuralProperty(propertyName),
@@ -185,8 +268,140 @@ public class DataProvider {
             patch);
       }
     }
+
+    // Deep insert (only if not an update)
+    if (isInsert) {
+      handleDeepInsert(rawBaseUri, edmEntitySet, entity, changedEntity);
+    } else if (isInsert && changedEntity.getNavigationLinks().size() != 0) {
+      throw new DataProviderException("Deep inserts are not allowed in update operations using PUT or PATCH requests.");
+    }
+
     if (!changedEntity.getNavigationBindings().isEmpty()) {
-      throw new DataProviderException("Binding operations are not yet supported.");
+      applyNavigationBinding(rawBaseUri, edmEntitySet, entity, changedEntity.getNavigationBindings());
+    }
+  }
+
+  private void applyNavigationBinding(final String rawBaseUri, final EdmEntitySet edmEntitySet,
+      final Entity entity, final List<Link> navigationBindings) throws DataProviderException {
+    
+    for (final Link link : navigationBindings) {
+      final EdmNavigationProperty edmNavProperty = edmEntitySet.getEntityType().getNavigationProperty(link.getTitle());
+      final EdmEntitySet edmTargetEntitySet =
+          (EdmEntitySet) edmEntitySet.getRelatedBindingTarget(edmNavProperty.getName());
+
+      if (edmNavProperty.isCollection()) {
+        for (final String bindingLink : link.getBindingLinks()) {
+          final Entity destEntity = getEntityByURI(rawBaseUri, edmTargetEntitySet, bindingLink);
+          createLink(edmNavProperty, entity, destEntity);
+        }
+      } else {
+        final String bindingLink = link.getBindingLink();
+        final Entity destEntity = getEntityByURI(rawBaseUri, edmTargetEntitySet, bindingLink);
+        createLink(edmNavProperty, entity, destEntity);
+      }
+    }
+  }
+
+  private Entity getEntityByURI(final String rawBaseUri, final EdmEntitySet edmEntitySetTarget,
+      final String bindingLink) throws DataProviderException {
+
+    try {
+      final List<UriParameter> keys = odata.createUriHelper()
+          .getKeyPredicatesFromEntityLink(edm, bindingLink, rawBaseUri);
+      final Entity entity = read(edmEntitySetTarget, keys);
+      
+      if(entity == null) {
+        throw new DataProviderException("Entity " + bindingLink + " not found");
+      }
+      
+      return entity;
+    } catch (DeserializerException e) {
+      throw new DataProviderException("Invalid entity binding link", e);
+    }
+  }
+
+  private void handleDeepInsert(final String rawBaseUri, final EdmEntitySet edmEntitySet, Entity entity,
+      final Entity changedEntity)
+      throws DataProviderException {
+    final EdmEntityType entityType = edmEntitySet.getEntityType();
+
+    for (final String navPropertyName : entityType.getNavigationPropertyNames()) {
+      final Link navigationLink = changedEntity.getNavigationLink(navPropertyName);
+
+      if (navigationLink != null) {
+        // Deep inserts are not allowed in update operations, so we can be sure, that we do not override
+        // a navigation link!
+        final EdmNavigationProperty navigationProperty = entityType.getNavigationProperty(navPropertyName);
+        final EdmBindingTarget target = edmEntitySet.getRelatedBindingTarget(navPropertyName);
+        final EdmEntityType inlineEntityType = navigationProperty.getType();
+
+        if (navigationProperty.isCollection()) {
+          final List<Entity> entities =
+              createInlineEntities(rawBaseUri, target, inlineEntityType, navigationLink.getInlineEntitySet());
+
+          for (final Entity inlineEntity : entities) {
+            createLink(navigationProperty, entity, inlineEntity);
+          }
+        } else {
+          final Entity inlineEntity =
+              createInlineEntity(rawBaseUri, target, inlineEntityType, navigationLink.getInlineEntity());
+          createLink(navigationProperty, entity, inlineEntity);
+        }
+      }
+    }
+  }
+
+  private List<Entity> createInlineEntities(final String rawBaseUri, final EdmBindingTarget target,
+      final EdmEntityType type, final EntitySet changedEntitsSet) throws DataProviderException {
+    List<Entity> entities = new ArrayList<Entity>();
+
+    for (final Entity newEntity : changedEntitsSet.getEntities()) {
+      entities.add(createInlineEntity(rawBaseUri, target, type, newEntity));
+    }
+
+    return entities;
+  }
+
+  private Entity createInlineEntity(final String rawBaseUri, final EdmBindingTarget target,
+      final EdmEntityType type, final Entity changedEntity) throws DataProviderException {
+
+    final Entity inlineEntity = create((EdmEntitySet) target);
+    update(rawBaseUri, (EdmEntitySet) target, inlineEntity, changedEntity, false, true);
+
+    return inlineEntity;
+  }
+
+  private void createLink(final EdmNavigationProperty navigationProperty, final Entity srcEntity,
+      final Entity destEntity) {
+    setLink(navigationProperty, srcEntity, destEntity);
+
+    final EdmNavigationProperty partnerNavigationProperty = navigationProperty.getPartner();
+    if (partnerNavigationProperty != null) {
+      setLink(partnerNavigationProperty, destEntity, srcEntity);
+    }
+  }
+
+  // TODO Duplicated code in DataCreator
+  private void setLink(final EdmNavigationProperty navigationProperty, final Entity srcEntity,
+      final Entity destEntity) {
+    
+    Link link = srcEntity.getNavigationLink(navigationProperty.getName());
+    if (link == null) {
+      link = new LinkImpl();
+      link.setTitle(navigationProperty.getName());
+      srcEntity.getNavigationLinks().add(link);
+    }
+
+    if (navigationProperty.isCollection()) {
+      if (link.getInlineEntitySet() == null) {
+        link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
+        link.setInlineEntitySet(new EntitySetImpl());
+      }
+
+      link.getInlineEntitySet().getEntities().add(destEntity);
+    } else {
+      link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
+      link.setInlineEntity(destEntity);
     }
   }
 
@@ -238,6 +453,14 @@ public class DataProvider {
     entity.setMediaContentType(type);
   }
 
+  public void setEdm(final Edm edm) {
+    this.edm = edm;
+  }
+
+  public void setOData(final OData odata) {
+    this.odata = odata;
+  }
+  
   public static class DataProviderException extends ODataApplicationException {
     private static final long serialVersionUID = 5098059649321796156L;
 

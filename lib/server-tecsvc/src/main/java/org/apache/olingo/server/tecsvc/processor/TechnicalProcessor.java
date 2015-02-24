@@ -46,6 +46,7 @@ public abstract class TechnicalProcessor implements Processor {
 
   protected OData odata;
   protected DataProvider dataProvider;
+  protected ServiceMetadata serviceMetadata;
 
   protected TechnicalProcessor(final DataProvider dataProvider) {
     this.dataProvider = dataProvider;
@@ -54,6 +55,9 @@ public abstract class TechnicalProcessor implements Processor {
   @Override
   public void init(final OData odata, final ServiceMetadata serviceMetadata) {
     this.odata = odata;
+    this.serviceMetadata = serviceMetadata;
+    this.dataProvider.setOData(odata);
+    this.dataProvider.setEdm(serviceMetadata.getEdm());
   }
 
   protected EdmEntitySet getEdmEntitySet(final UriInfoResource uriInfo) throws ODataApplicationException {

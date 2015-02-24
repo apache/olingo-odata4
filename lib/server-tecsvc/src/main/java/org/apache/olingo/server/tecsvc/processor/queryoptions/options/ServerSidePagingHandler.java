@@ -23,22 +23,23 @@ import java.net.URISyntaxException;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.queryoption.SkipTokenOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class ServerSidePagingHandler {
   private static final int MAX_PAGE_SIZE = 10;
+  private static final String ES_SERVER_SIDE_PAGING = "ESServerSidePaging";
 
-  public static void
-      applyServerSidePaging(final EntitySet entitySet, final String rawRequestUri, final UriInfo uriInfo)
-          throws ODataApplicationException {
-    if (shouldApplyServerSidePaging(entitySet)) {
+  public static void applyServerSidePaging(final SkipTokenOption skipTokenOption, final EntitySet entitySet,
+      final EdmEntitySet edmEntitySet, final String rawRequestUri) throws ODataApplicationException {
+
+    if (shouldApplyServerSidePaging(edmEntitySet)) {
       final int maxPageSize = getMaxPageSize();
-      final int page = getPage(uriInfo.getSkipTokenOption());
+      final int page = getPage(skipTokenOption);
       final int itemsToSkip = maxPageSize * page;
 
       if (itemsToSkip <= entitySet.getEntities().size()) {
@@ -48,16 +49,15 @@ public class ServerSidePagingHandler {
 
         // Determine if a new next Link has to be provided
         if (remainingItems > maxPageSize) {
-          entitySet.setNext(createNextLink(uriInfo, rawRequestUri, page + 1));
+          entitySet.setNext(createNextLink(rawRequestUri, page + 1));
         }
       } else {
-        throw new ODataApplicationException("Invalid skiptoken", HttpStatusCode.BAD_REQUEST.getStatusCode(),
-            Locale.ROOT);
+        throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
       }
     }
   }
 
-  private static URI createNextLink(final UriInfo uriInfo, final String rawRequestUri, final Integer page)
+  private static URI createNextLink(final String rawRequestUri, final Integer page)
       throws ODataApplicationException {
 
     try {
@@ -99,8 +99,8 @@ public class ServerSidePagingHandler {
     }
   }
 
-  private static boolean shouldApplyServerSidePaging(final EntitySet entitySet) {
-    return true;
+  private static boolean shouldApplyServerSidePaging(final EdmEntitySet edmEntitySet) {
+    return ES_SERVER_SIDE_PAGING.equals(edmEntitySet.getName());
   }
 
   private static int getMaxPageSize() {

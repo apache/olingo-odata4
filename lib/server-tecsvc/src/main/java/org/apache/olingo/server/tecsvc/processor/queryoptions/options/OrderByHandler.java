@@ -31,7 +31,6 @@ import org.apache.olingo.server.api.uri.queryoption.OrderByItem;
 import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.ExpressionVisitorImpl;
-import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.FilterRuntimeException;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.TypedOperand;
 
 public class OrderByHandler {
@@ -44,7 +43,7 @@ public class OrderByHandler {
 
     try {
       applyOrderByOptionInternal(orderByOption, entitySet, edmEntitySet);
-    } catch (FilterRuntimeException e) {
+    } catch (SystemQueryOptionsRuntimeException e) {
       if (e.getCause() instanceof ODataApplicationException) {
         // Throw the nested exception, to send the correct HTTP status code in the HTTP response
         throw (ODataApplicationException) e.getCause();
@@ -93,9 +92,9 @@ public class OrderByHandler {
 
             result = item.isDescending() ? result * -1 : result;
           } catch (ODataApplicationException e) {
-            throw new FilterRuntimeException(e);
+            throw new SystemQueryOptionsRuntimeException(e);
           } catch (ExpressionVisitException e) {
-            throw new FilterRuntimeException(e);
+            throw new SystemQueryOptionsRuntimeException(e);
           }
         }
         return result;

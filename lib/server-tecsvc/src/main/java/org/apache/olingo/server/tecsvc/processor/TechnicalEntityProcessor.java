@@ -53,8 +53,12 @@ import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
-import org.apache.olingo.server.tecsvc.processor.queryoptions.SystemQueryOptions;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.options.CountHandler;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.options.FilterHandler;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.options.OrderByHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.ServerSidePagingHandler;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.options.SkipHandler;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.options.TopHandler;
 
 /**
  * Technical Processor for entity-related functionality.
@@ -83,9 +87,17 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       entitySet.getEntities().addAll(entitySetInitial.getEntities());
 
       // Apply system query options
-      SystemQueryOptions.applySystemQueryOptions(entitySet, edmEntitySet, uriInfo);
-      ServerSidePagingHandler.applyServerSidePaging(entitySet, request.getRawRequestUri(), uriInfo);
-      
+      FilterHandler.applyFilterSystemQuery(uriInfo.getFilterOption(), entitySet, edmEntitySet);
+      CountHandler.applyCountSystemQueryOption(uriInfo.getCountOption(), entitySet);
+      OrderByHandler.applyOrderByOption(uriInfo.getOrderByOption(), entitySet, edmEntitySet);
+      SkipHandler.applySkipSystemQueryHandler(uriInfo.getSkipOption(), entitySet);
+      TopHandler.applyTopSystemQueryOption(uriInfo.getTopOption(), entitySet);
+
+      ServerSidePagingHandler.applyServerSidePaging(uriInfo.getSkipTokenOption(),
+          entitySet,
+          edmEntitySet,
+          request.getRawRequestUri());
+
       final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
       ODataSerializer serializer = odata.createSerializer(format);
       final ExpandOption expand = uriInfo.getExpandOption();
@@ -114,7 +126,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   public void countEntityCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
       throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
-    getEdmEntitySet(uriInfo);  // including checks
+    getEdmEntitySet(uriInfo); // including checks
     EntitySet entitySet = readEntityCollection(uriInfo);
     if (entitySet == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
@@ -150,7 +162,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   @Override
   public void readMediaEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType responseFormat) throws ODataApplicationException, SerializerException {
-    getEdmEntitySet(uriInfo);  // including checks
+    getEdmEntitySet(uriInfo); // including checks
     final Entity entity = readEntity(uriInfo);
     response.setContent(odata.createFixedFormatSerializer().binary(dataProvider.readMedia(entity)));
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -167,7 +179,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   @Override
   public void createEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, DeserializerException, SerializerException {
     if (uriInfo.asUriInfoResource().getUriResourceParts().size() > 1) {
       throw new ODataApplicationException("Invalid resource type.",
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
@@ -182,10 +194,10 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       dataProvider.setMedia(entity, odata.createFixedFormatDeserializer().binary(request.getBody()),
           requestFormat.toContentTypeString());
     } else {
-      dataProvider.update(edmEntitySet, entity,
+      dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity,
           odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
               .entity(request.getBody(), edmEntityType),
-          false);
+          false, true);
     }
 
     final ODataFormat format = ODataFormat.fromContentType(responseFormat);
@@ -204,21 +216,22 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   @Override
   public void updateEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, DeserializerException, SerializerException {
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
     Entity entity = readEntity(uriInfo);
     checkRequestFormat(requestFormat);
     ODataDeserializer deserializer = odata.createDeserializer(ODataFormat.fromContentType(requestFormat));
     final Entity changedEntity = deserializer.entity(request.getBody(), edmEntitySet.getEntityType());
-    dataProvider.update(edmEntitySet, entity, changedEntity, request.getMethod() == HttpMethod.PATCH);
+    dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity, changedEntity,
+        request.getMethod() == HttpMethod.PATCH, false);
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
   }
 
   @Override
   public void updateMediaEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException {
-    getEdmEntitySet(uriInfo);  // including checks
+      throws ODataApplicationException, DeserializerException, SerializerException {
+    getEdmEntitySet(uriInfo); // including checks
     Entity entity = readEntity(uriInfo);
     checkRequestFormat(requestFormat);
     dataProvider.setMedia(entity, odata.createFixedFormatDeserializer().binary(request.getBody()),
@@ -244,7 +257,6 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   private void setCount(EntitySet entitySet) {
-    // TODO: set count (correctly) and next link
     if (entitySet.getCount() == null) {
       entitySet.setCount(entitySet.getEntities().size());
     }
