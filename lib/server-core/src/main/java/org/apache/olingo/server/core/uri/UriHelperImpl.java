@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.uri;
 import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -28,12 +29,19 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.core.Encoder;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.UriParameter;
+import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.serializer.utils.ContextURLHelper;
+import org.apache.olingo.server.core.uri.parser.Parser;
+import org.apache.olingo.server.core.uri.parser.UriParserException;
 
 public class UriHelperImpl implements UriHelper {
 
@@ -82,5 +90,32 @@ public class UriHelperImpl implements UriHelper {
       }
     }
     return result.toString();
+  }
+
+  @Override
+  public List<UriParameter> getKeyPredicatesFromEntityLink(Edm edm, String entityLink, String rawServiceRoot)
+      throws DeserializerException {
+    
+    String oDataPath = entityLink;
+    if(rawServiceRoot != null && entityLink.startsWith(rawServiceRoot)) {
+      oDataPath = entityLink.substring(rawServiceRoot.length());
+    }
+    oDataPath = oDataPath.startsWith("/") ? oDataPath : "/" + oDataPath;
+
+    try {
+      final List<UriResource> uriResourceParts = new Parser().parseUri(oDataPath, null, null, edm)
+          .getUriResourceParts();
+      if (uriResourceParts.size() == 1 && uriResourceParts.get(0).getKind() == UriResourceKind.entitySet) {
+        final UriResourceEntitySet entityUriResource = (UriResourceEntitySet) uriResourceParts.get(0);
+        
+        return entityUriResource.getKeyPredicates();
+      }
+
+      throw new DeserializerException("Invalid entity binding link", MessageKeys.INVALID_ENTITY_BINDING_LINK,
+          entityLink);
+    } catch (UriParserException e) {
+      throw new DeserializerException("Invalid entity binding link", MessageKeys.INVALID_ENTITY_BINDING_LINK,
+          entityLink);
+    }
   }
 }

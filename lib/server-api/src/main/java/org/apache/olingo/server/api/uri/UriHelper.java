@@ -21,9 +21,11 @@ package org.apache.olingo.server.api.uri;
 import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
@@ -65,4 +67,21 @@ public interface UriHelper {
    * @return the key predicate
    */
   String buildKeyPredicate(EdmEntityType edmEntityType, Entity entity) throws SerializerException;
+  
+  /**
+   * Retrieves the key predicates from a canonical link to an entity.
+   * A canonical link to an entity must follow the pattern
+   * <code>[&lt;service root&gt;][&lt;entityContainer&gt;.]&lt;entitySet&gt;(&lt;key&gt;)</code>, i.e.,
+   * it must be a relative or absolute URI consisting of an entity set (qualified
+   * with an entity-container name if not in the default entity container) and a
+   * syntactically valid key that identifies a single entity; example:
+   * <code>http://example.server.com/service.svc/Employees('42')</code>.
+   * @param edm the edm the entity belongs to
+   * @param entityLink the link as String
+   * @param rawServiceRoot the root URI of the service
+   * @return a list of key predicates
+   * @throws DeserializationException in case the link is malformed
+   */
+  List<UriParameter> getKeyPredicatesFromEntityLink(Edm edm, String entityLink, String rawServiceRoot) 
+      throws DeserializerException;
 }
