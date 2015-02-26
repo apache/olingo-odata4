@@ -80,7 +80,7 @@ public interface UriHelper {
    * @param entityLink the link as String
    * @param rawServiceRoot the root URI of the service
    * @return a list of key predicates
-   * @throws DeserializationException in case the link is malformed
+   * @throws DeserializerException in case the link is malformed
    */
   List<UriParameter> getKeyPredicatesFromEntityLink(Edm edm, String entityLink, String rawServiceRoot) 
       throws DeserializerException;

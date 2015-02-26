@@ -45,11 +45,11 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
   }
 
   @Override
-  public void processBatch(BatchFacade fascade, ODataRequest request, ODataResponse response)
+  public void processBatch(BatchFacade facade, ODataRequest request, ODataResponse response)
       throws BatchSerializerException, BatchDeserializerException {
     boolean continueOnError = isContinueOnError(request);
 
-    final String boundary = fascade.extractBoundaryFromContentType(request.getHeader(HttpHeader.CONTENT_TYPE));
+    final String boundary = facade.extractBoundaryFromContentType(request.getHeader(HttpHeader.CONTENT_TYPE));
     final BatchOptions options = BatchOptions.with()
                                          .rawBaseUri(request.getRawBaseUri())
                                          .rawServiceResolutionUri(request.getRawServiceResolutionUri()).build();
@@ -58,7 +58,7 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
     final List<ODataResponsePart> responseParts = new ArrayList<ODataResponsePart>();
 
     for (BatchRequestPart part : parts) {
-      final ODataResponsePart responsePart = fascade.handleBatchRequest(part);
+      final ODataResponsePart responsePart = facade.handleBatchRequest(part);
       responseParts.add(responsePart); // Also add failed responses
       final int statusCode = responsePart.getResponses().get(0).getStatusCode();
 
@@ -71,7 +71,7 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
       }
     }
 
-    final String responseBoundary = "batch_" + UUID.randomUUID().toString();;
+    final String responseBoundary = "batch_" + UUID.randomUUID().toString();
     final InputStream responseContent =
         odata.createFixedFormatSerializer().batchResponse(responseParts, responseBoundary);
     response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED + ";boundary=" + responseBoundary);
@@ -93,12 +93,12 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
   }
 
   @Override
-  public ODataResponsePart processChangeSet(BatchFacade fascade, List<ODataRequest> requests)
+  public ODataResponsePart processChangeSet(BatchFacade facade, List<ODataRequest> requests)
           throws BatchDeserializerException {
     List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
     for (ODataRequest request : requests) {
-      final ODataResponse oDataResponse = fascade.handleODataRequest(request);
+      final ODataResponse oDataResponse = facade.handleODataRequest(request);
       final int statusCode = oDataResponse.getStatusCode();
 
       if (statusCode < 400) {

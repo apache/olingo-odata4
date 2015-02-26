@@ -168,7 +168,7 @@ public class DataCreator {
               createPrimitive("PropertyInt32", Integer.MAX_VALUE),
               createPrimitive("PropertyInt64", Long.MAX_VALUE),
               createPrimitive("PropertySByte", Byte.MAX_VALUE),
-              createPrimitive("PropertyTimeOfDay", getTime(21, 05, 59))
+              createPrimitive("PropertyTimeOfDay", getTime(21, 5, 59))
           )
        ))
       .addProperty(new PropertyImpl(null, "PropertyCompNav", ValueType.LINKED_COMPLEX, createCTPrimCompValue(1)))
@@ -201,7 +201,7 @@ public class DataCreator {
     cvAllPrim.getValue().add(createPrimitive("PropertyInt32", Integer.MAX_VALUE));
     cvAllPrim.getValue().add(createPrimitive("PropertyInt64", Long.MAX_VALUE));
     cvAllPrim.getValue().add(createPrimitive("PropertySByte", Byte.MAX_VALUE));
-    cvAllPrim.getValue().add(createPrimitive("PropertyTimeOfDay", getTime(21, 05, 59)));
+    cvAllPrim.getValue().add(createPrimitive("PropertyTimeOfDay", getTime(21, 5, 59)));
     
     return cvAllPrim;
   }
@@ -640,7 +640,7 @@ public class DataCreator {
   }
   
 
-  private void linkESTwoKeyNav(Map<String, EntitySet> data2) {
+  private void linkESTwoKeyNav(Map<String, EntitySet> data) {
     final EntitySet entitySet = data.get("ESTwoKeyNav");
     final List<Entity> esKeyNavTargets = data.get("ESKeyNav").getEntities();
     final List<Entity> esTwoKeyNavTargets = data.get("ESTwoKeyNav").getEntities();

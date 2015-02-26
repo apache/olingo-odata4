@@ -272,11 +272,10 @@ public class DataProvider {
     // Deep insert (only if not an update)
     if (isInsert) {
       handleDeepInsert(rawBaseUri, edmEntitySet, entity, changedEntity);
-    } else if (isInsert && changedEntity.getNavigationLinks().size() != 0) {
-      throw new DataProviderException("Deep inserts are not allowed in update operations using PUT or PATCH requests.");
     }
 
-    if (!changedEntity.getNavigationBindings().isEmpty()) {
+    final boolean navigationBindingsAvailable = !changedEntity.getNavigationBindings().isEmpty();
+    if (navigationBindingsAvailable) {
       applyNavigationBinding(rawBaseUri, edmEntitySet, entity, changedEntity.getNavigationBindings());
     }
   }
@@ -320,7 +319,7 @@ public class DataProvider {
     }
   }
 
-  private void handleDeepInsert(final String rawBaseUri, final EdmEntitySet edmEntitySet, Entity entity,
+  private void handleDeepInsert(final String rawBaseUri, final EdmEntitySet edmEntitySet, final Entity entity,
       final Entity changedEntity)
       throws DataProviderException {
     final EdmEntityType entityType = edmEntitySet.getEntityType();
@@ -352,10 +351,10 @@ public class DataProvider {
   }
 
   private List<Entity> createInlineEntities(final String rawBaseUri, final EdmBindingTarget target,
-      final EdmEntityType type, final EntitySet changedEntitsSet) throws DataProviderException {
+      final EdmEntityType type, final EntitySet changedEntitySet) throws DataProviderException {
     List<Entity> entities = new ArrayList<Entity>();
 
-    for (final Entity newEntity : changedEntitsSet.getEntities()) {
+    for (final Entity newEntity : changedEntitySet.getEntities()) {
       entities.add(createInlineEntity(rawBaseUri, target, type, newEntity));
     }
 
