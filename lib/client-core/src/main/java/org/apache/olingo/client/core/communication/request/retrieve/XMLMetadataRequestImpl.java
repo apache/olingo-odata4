@@ -35,7 +35,6 @@ import org.apache.olingo.client.api.edm.xml.IncludeAnnotations;
 import org.apache.olingo.client.api.edm.xml.Reference;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
-import org.apache.olingo.client.core.edm.xml.AbstractSchema;
 import org.apache.olingo.client.core.edm.xml.AnnotationsImpl;
 import org.apache.olingo.client.core.edm.xml.SchemaImpl;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -70,7 +69,7 @@ public class XMLMetadataRequestImpl
         if (includedSchema != null) {
           response.getBody().getSchemas().add(includedSchema);
           if (StringUtils.isNotBlank(include.getAlias())) {
-            ((AbstractSchema) includedSchema).setAlias(include.getAlias());
+            ((SchemaImpl) includedSchema).setAlias(include.getAlias());
           }
         }
       }

@@ -22,9 +22,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.ActionImport;
-import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntitySet;
+import org.apache.olingo.client.api.edm.xml.FunctionImport;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.Singleton;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -115,7 +115,7 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
   protected EdmFunctionImport createFunctionImport(final String functionImportName) {
     EdmFunctionImport result = null;
 
-    final CommonFunctionImport functionImport = xmlEntityContainer.getFunctionImport(functionImportName);
+    final FunctionImport functionImport = xmlEntityContainer.getFunctionImport(functionImportName);
     if (functionImport != null) {
       if (functionImport instanceof org.apache.olingo.client.api.edm.xml.FunctionImport) {
         result = new EdmFunctionImportImpl(edm, this, functionImportName,
@@ -146,8 +146,8 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
   @Override
   protected void loadAllFunctionImports() {
-    final List<? extends CommonFunctionImport> localFunctionImports = xmlEntityContainer.getFunctionImports();
-    for (CommonFunctionImport functionImport : localFunctionImports) {
+    final List<? extends FunctionImport> localFunctionImports = xmlEntityContainer.getFunctionImports();
+    for (FunctionImport functionImport : localFunctionImports) {
       EdmFunctionImport edmFunctionImport;
       if (functionImport instanceof org.apache.olingo.client.api.edm.xml.FunctionImport) {
         edmFunctionImport = new EdmFunctionImportImpl(edm, this, functionImport.getName(),

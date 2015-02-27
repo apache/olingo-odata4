@@ -27,10 +27,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 
-public class ComplexTypeDeserializer extends AbstractEdmDeserializer<AbstractComplexType> {
+public class ComplexTypeDeserializer extends AbstractEdmDeserializer<AbstractStructuralType> {
 
   @Override
-  protected AbstractComplexType doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected AbstractStructuralType doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
       throws IOException, JsonProcessingException {
 
     final ComplexTypeImpl complexType = new ComplexTypeImpl();

@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.edm.xml;
 
 import java.util.List;
 
-public interface NavigationProperty extends CommonNavigationProperty, Annotatable {
+public interface NavigationProperty extends Named, Annotatable {
 
   String getType();
 
@@ -31,5 +31,6 @@ public interface NavigationProperty extends CommonNavigationProperty, Annotatabl
   List<ReferentialConstraint> getReferentialConstraints();
 
   OnDelete getOnDelete();
-
+  
+  boolean isContainsTarget();
 }

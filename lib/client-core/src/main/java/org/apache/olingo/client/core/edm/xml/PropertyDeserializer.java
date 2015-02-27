@@ -28,13 +28,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 
-public class PropertyDeserializer extends AbstractEdmDeserializer<AbstractProperty> {
+public class PropertyDeserializer extends AbstractEdmDeserializer<PropertyImpl> {
 
   @Override
-  protected AbstractProperty doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected PropertyImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
       throws IOException, JsonProcessingException {
 
-    final AbstractProperty property = new org.apache.olingo.client.core.edm.xml.PropertyImpl();
+    final PropertyImpl property = new org.apache.olingo.client.core.edm.xml.PropertyImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -64,8 +64,7 @@ public class PropertyDeserializer extends AbstractEdmDeserializer<AbstractProper
           }
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.PropertyImpl) property).getAnnotations().
-              add(jp.readValueAs(AnnotationImpl.class));
+          property.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

@@ -19,7 +19,11 @@
 package org.apache.olingo.client.api.edm.xml;
 
 
-public interface Annotations extends CommonAnnotations, Annotatable {
+public interface Annotations extends Annotatable {
 
+  String getTarget();
+
+  String getQualifier();
+  
   Annotation getAnnotation(String term);
 }

@@ -81,7 +81,6 @@ public interface Schema {
   List<Annotations> getAnnotationGroups();
 
   Annotations getAnnotationGroup(String target);
-
   
   //TODO: Check if there are annotations in V4
   List<Annotation> getAnnotations();

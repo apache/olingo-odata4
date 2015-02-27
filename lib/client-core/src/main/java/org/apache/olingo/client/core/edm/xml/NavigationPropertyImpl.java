@@ -26,13 +26,20 @@ import org.apache.olingo.client.api.edm.xml.NavigationProperty;
 import org.apache.olingo.client.api.edm.xml.OnDelete;
 import org.apache.olingo.client.api.edm.xml.ReferentialConstraint;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = NavigationPropertyDeserializer.class)
-public class NavigationPropertyImpl extends AbstractNavigationProperty implements NavigationProperty {
+public class NavigationPropertyImpl extends AbstractEdmItem implements NavigationProperty {
 
-  private static final long serialVersionUID = 4503112988794432940L;
+  private static final long serialVersionUID = 6240231735592427582L;
 
+  @JsonProperty(value = "Name", required = true)
+  private String name;
+  
+  @JsonProperty(value = "ContainsTarget")
+  private boolean containsTarget = false;
+  
   private String type;
 
   private boolean nullable = true;
@@ -89,6 +96,24 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
   @Override
   public List<Annotation> getAnnotations() {
     return annotations;
+  }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  public void setName(final String name) {
+    this.name = name;
+  }
+
+  @Override
+  public boolean isContainsTarget() {
+    return containsTarget;
+  }
+
+  public void setContainsTarget(final boolean containsTarget) {
+    this.containsTarget = containsTarget;
   }
 
 }

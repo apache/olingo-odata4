@@ -24,15 +24,40 @@ import java.util.List;
 import org.apache.olingo.client.api.edm.xml.Annotation;
 import org.apache.olingo.client.api.edm.xml.Annotations;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = AnnotationsDeserializer.class)
-public class AnnotationsImpl extends AbstractAnnotations implements Annotations {
+public class AnnotationsImpl extends AbstractEdmItem implements Annotations {
 
   private static final long serialVersionUID = -5961207981571644200L;
 
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
+  @JsonProperty(value = "Target", required = true)
+  private String target;
+
+  @JsonProperty("Qualifier")
+  private String qualifier;
+
+  @Override
+  public String getTarget() {
+    return target;
+  }
+
+  public void setTarget(final String target) {
+    this.target = target;
+  }
+
+  @Override
+  public String getQualifier() {
+    return qualifier;
+  }
+
+  public void setQualifier(final String qualifier) {
+    this.qualifier = qualifier;
+  }
+  
   @Override
   public List<Annotation> getAnnotations() {
     return annotations;

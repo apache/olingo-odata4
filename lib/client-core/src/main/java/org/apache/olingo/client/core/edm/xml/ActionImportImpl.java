@@ -18,11 +18,15 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.ActionImport;
+import org.apache.olingo.client.api.edm.xml.Annotation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ActionImportImpl extends AbstractAnnotatable implements ActionImport {
+public class ActionImportImpl extends AbstractEdmItem implements ActionImport {
 
   private static final long serialVersionUID = 2971468441177647068L;
 
@@ -35,6 +39,13 @@ public class ActionImportImpl extends AbstractAnnotatable implements ActionImpor
   @JsonProperty(value = "EntitySet")
   private String entitySet;
 
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
+
+  @Override
+  public List<Annotation> getAnnotations() {
+    return annotations;
+  }
+  
   @Override
   public String getName() {
     return name;

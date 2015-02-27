@@ -18,13 +18,16 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.client.api.edm.xml.Annotation;
 import org.apache.olingo.client.api.edm.xml.annotation.AnnotationExpression;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = AnnotationDeserializer.class)
-public class AnnotationImpl extends AbstractAnnotatable implements Annotation {
+public class AnnotationImpl extends AbstractEdmItem implements Annotation {
 
   private static final long serialVersionUID = 5464714417411058033L;
 
@@ -34,6 +37,13 @@ public class AnnotationImpl extends AbstractAnnotatable implements Annotation {
 
   private AnnotationExpression annotationExpression;
 
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
+
+  @Override
+  public List<Annotation> getAnnotations() {
+    return annotations;
+  }
+  
   @Override
   public String getTerm() {
     return term;

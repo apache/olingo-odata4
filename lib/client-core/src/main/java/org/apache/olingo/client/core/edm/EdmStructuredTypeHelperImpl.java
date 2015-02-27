@@ -22,11 +22,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.client.api.edm.xml.CommonNavigationProperty;
-import org.apache.olingo.client.api.edm.xml.CommonProperty;
-import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.EntityType;
+import org.apache.olingo.client.api.edm.xml.NavigationProperty;
+import org.apache.olingo.client.api.edm.xml.Property;
 import org.apache.olingo.client.api.edm.xml.Schema;
+import org.apache.olingo.client.api.edm.xml.StructuralType;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -39,7 +39,7 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
 
   private final FullQualifiedName structuredTypeName;
 
-  private final ComplexType complexType;
+  private final StructuralType complexType;
 
   private final List<? extends Schema> xmlSchemas;
 
@@ -48,11 +48,11 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
   private Map<String, EdmNavigationProperty> navigationProperties;
 
   public EdmStructuredTypeHelperImpl(final Edm edm, final FullQualifiedName structuredTypeName,
-          final List<? extends Schema> xmlSchemas, final ComplexType complexType) {
+          final List<? extends Schema> xmlSchemas, final StructuralType structuralType) {
 
     this.edm = edm;
     this.structuredTypeName = structuredTypeName;
-    this.complexType = complexType;
+    this.complexType = structuralType;
     this.xmlSchemas = xmlSchemas;
   }
 
@@ -60,7 +60,7 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
   public Map<String, EdmProperty> getProperties() {
     if (properties == null) {
       properties = new LinkedHashMap<String, EdmProperty>();
-      for (CommonProperty property : complexType.getProperties()) {
+      for (Property property : complexType.getProperties()) {
         properties.put(property.getName(), new EdmPropertyImpl(edm, structuredTypeName, property));
       }
     }
@@ -71,7 +71,7 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
   public Map<String, EdmNavigationProperty> getNavigationProperties() {
     if (navigationProperties == null) {
       navigationProperties = new LinkedHashMap<String, EdmNavigationProperty>();
-      for (CommonNavigationProperty navigationProperty : complexType.getNavigationProperties()) {
+      for (NavigationProperty navigationProperty : complexType.getNavigationProperties()) {
         if (navigationProperty instanceof org.apache.olingo.client.api.edm.xml.NavigationProperty) {
           navigationProperties.put(navigationProperty.getName(), new EdmNavigationPropertyImpl(
                   edm, structuredTypeName,
@@ -94,9 +94,9 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
   @Override
   public boolean isAbstract() {
     return complexType instanceof org.apache.olingo.client.api.edm.xml.ComplexType
-            ? ((org.apache.olingo.client.api.edm.xml.ComplexType) complexType).isAbstractEntityType()
+            ? ((org.apache.olingo.client.api.edm.xml.ComplexType) complexType).isAbstractType()
             : complexType instanceof EntityType
-            ? ((EntityType) complexType).isAbstractEntityType()
+            ? ((EntityType) complexType).isAbstractType()
             : false;
   }
 }

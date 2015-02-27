@@ -25,10 +25,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 
-public class DataServicesDeserializer extends AbstractEdmDeserializer<AbstractDataServices> {
+public class DataServicesDeserializer extends AbstractEdmDeserializer<DataServicesImpl> {
 
   @Override
-  protected AbstractDataServices doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected DataServicesImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
       throws IOException, JsonProcessingException {
 
     final DataServicesImpl dataServices = new DataServicesImpl();

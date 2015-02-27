@@ -19,7 +19,7 @@
 package org.apache.olingo.client.api.edm.xml;
 
 
-public interface FunctionImport extends OperationImport, CommonFunctionImport {
+public interface FunctionImport extends OperationImport, Named {
 
   String getFunction();
 

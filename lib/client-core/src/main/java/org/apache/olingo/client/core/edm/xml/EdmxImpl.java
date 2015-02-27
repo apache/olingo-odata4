@@ -21,20 +21,41 @@ package org.apache.olingo.client.core.edm.xml;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.olingo.client.api.edm.xml.DataServices;
 import org.apache.olingo.client.api.edm.xml.Edmx;
 import org.apache.olingo.client.api.edm.xml.Reference;
 
-public class EdmxImpl extends AbstractEdmx implements Edmx {
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(using = EdmxDeserializer.class)
+public class EdmxImpl extends AbstractEdmItem implements Edmx {
 
   private static final long serialVersionUID = -6293476719276092572L;
 
   private final List<Reference> references = new ArrayList<Reference>();
 
+  private String version;
+
+  private DataServices dataServices;
+
   @Override
-  public DataServicesImpl getDataServices() {
-    return (DataServicesImpl) super.getDataServices();
+  public String getVersion() {
+    return version;
   }
 
+  public void setVersion(final String version) {
+    this.version = version;
+  }
+
+  @Override
+  public DataServices getDataServices() {
+    return dataServices;
+  }
+
+  public void setDataServices(final DataServices dataServices) {
+    this.dataServices = dataServices;
+  }
+  
   @Override
   public List<Reference> getReferences() {
     return references;

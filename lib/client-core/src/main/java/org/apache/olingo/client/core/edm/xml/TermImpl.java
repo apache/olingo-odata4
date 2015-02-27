@@ -21,13 +21,14 @@ package org.apache.olingo.client.core.edm.xml;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.olingo.client.api.edm.xml.Annotation;
 import org.apache.olingo.client.api.edm.xml.Term;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = TermDeserializer.class)
-public class TermImpl extends AbstractAnnotatable implements Term {
+public class TermImpl extends AbstractEdmItem implements Term {
 
   private static final long serialVersionUID = -8350072064720586186L;
 
@@ -51,6 +52,13 @@ public class TermImpl extends AbstractAnnotatable implements Term {
 
   private final List<String> appliesTo = new ArrayList<String>();
 
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
+
+  @Override
+  public List<Annotation> getAnnotations() {
+    return annotations;
+  }
+  
   @Override
   public String getName() {
     return name;

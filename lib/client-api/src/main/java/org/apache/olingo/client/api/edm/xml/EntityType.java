@@ -18,13 +18,7 @@
  */
 package org.apache.olingo.client.api.edm.xml;
 
-public interface EntityType extends ComplexType {
-
-  boolean isAbstractEntityType();
-
-  String getBaseType();
-
-  boolean isOpenType();
+public interface EntityType extends StructuralType {
 
   EntityKey getKey();
 

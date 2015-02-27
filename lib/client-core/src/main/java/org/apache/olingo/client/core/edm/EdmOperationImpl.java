@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.edm.xml.Action;
-import org.apache.olingo.client.api.edm.xml.CommonParameter;
+import org.apache.olingo.client.api.edm.xml.Parameter;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmParameter;
@@ -40,9 +40,9 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
   protected final EdmAnnotationHelper helper;
 
   protected static <T extends EdmOperationImpl> T getInstance(final T instance) {
-    final List<? extends CommonParameter> parameters = instance.operation.getParameters();
+    final List<? extends Parameter> parameters = instance.operation.getParameters();
     final List<EdmParameter> _parameters = new ArrayList<EdmParameter>(parameters.size());
-    for (CommonParameter parameter : parameters) {
+    for (Parameter parameter : parameters) {
       _parameters.add(new EdmParameterImpl(instance.edm, parameter));
     }
     instance.setParameters(_parameters);

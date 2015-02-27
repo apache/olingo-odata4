@@ -20,7 +20,17 @@ package org.apache.olingo.client.api.edm.xml;
 
 import org.apache.olingo.commons.api.edm.geo.SRID;
 
-public interface Parameter extends CommonParameter, Annotatable {
+public interface Parameter extends Named, Annotatable {
 
+  String getType();
+
+  boolean isNullable();
+
+  Integer getMaxLength();
+
+  Integer getPrecision();
+
+  Integer getScale();
+  
   SRID getSrid();
 }

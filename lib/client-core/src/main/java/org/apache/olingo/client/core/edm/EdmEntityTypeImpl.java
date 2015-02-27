@@ -58,7 +58,7 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
 
       final List<EdmKeyPropertyRef> edmKey;
       //Abstract EntityTypes do not necessarily have keys
-      if (entityType.isAbstractEntityType() && entityType.getKey() == null) {
+      if (entityType.isAbstractType() && entityType.getKey() == null) {
         edmKey = new ArrayList<EdmKeyPropertyRef>();
       } else {
         edmKey = new ArrayList<EdmKeyPropertyRef>(

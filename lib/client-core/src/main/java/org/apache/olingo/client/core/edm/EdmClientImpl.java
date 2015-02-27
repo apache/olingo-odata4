@@ -36,12 +36,12 @@ import org.apache.olingo.client.api.edm.xml.Action;
 import org.apache.olingo.client.api.edm.xml.Annotatable;
 import org.apache.olingo.client.api.edm.xml.Annotation;
 import org.apache.olingo.client.api.edm.xml.Annotations;
-import org.apache.olingo.client.api.edm.xml.CommonParameter;
 import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.EnumType;
 import org.apache.olingo.client.api.edm.xml.Function;
+import org.apache.olingo.client.api.edm.xml.Parameter;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.Term;
 import org.apache.olingo.client.api.edm.xml.TypeDefinition;
@@ -232,7 +232,7 @@ public class EdmClientImpl extends AbstractEdm {
         final Function function = itor.next();
         if (!function.isBound()) {
           final Set<String> functionParamNames = new HashSet<String>();
-          for (CommonParameter param : function.getParameters()) {
+          for (Parameter param : function.getParameters()) {
             functionParamNames.add(param.getName());
           }
           found = parameterNames == null
@@ -296,7 +296,7 @@ public class EdmClientImpl extends AbstractEdm {
                   || isBindingParameterCollection.booleanValue() == boundParam.isCollection())) {
 
             final Set<String> functionParamNames = new HashSet<String>();
-            for (CommonParameter param : function.getParameters()) {
+            for (Parameter param : function.getParameters()) {
               functionParamNames.add(param.getName());
             }
             found = parameterNames == null

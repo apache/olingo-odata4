@@ -18,11 +18,15 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.olingo.client.api.edm.xml.Annotation;
 import org.apache.olingo.client.api.edm.xml.ReferentialConstraint;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ReferentialConstraintImpl extends AbstractAnnotatable implements ReferentialConstraint {
+public class ReferentialConstraintImpl extends AbstractEdmItem implements ReferentialConstraint {
 
   private static final long serialVersionUID = -5822115908069878139L;
 
@@ -32,6 +36,13 @@ public class ReferentialConstraintImpl extends AbstractAnnotatable implements Re
   @JsonProperty(value = "ReferencedProperty", required = true)
   private String referencedProperty;
 
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
+
+  @Override
+  public List<Annotation> getAnnotations() {
+    return annotations;
+  }
+  
   @Override
   public String getProperty() {
     return property;

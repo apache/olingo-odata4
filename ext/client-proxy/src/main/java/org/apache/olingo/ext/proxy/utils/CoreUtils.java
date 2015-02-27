@@ -294,7 +294,6 @@ public final class CoreUtils {
     }
   }
 
-  @SuppressWarnings("unchecked")
   public static void addProperties(
       final CommonEdmEnabledODataClient<?> client,
       final Map<String, Object> changes,

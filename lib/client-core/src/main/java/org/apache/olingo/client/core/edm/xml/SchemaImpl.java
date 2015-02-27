@@ -41,7 +41,10 @@ import org.apache.olingo.client.api.edm.xml.Singleton;
 import org.apache.olingo.client.api.edm.xml.Term;
 import org.apache.olingo.client.api.edm.xml.TypeDefinition;
 
-public class SchemaImpl extends AbstractSchema implements Schema {
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(using = SchemaDeserializer.class)
+public class SchemaImpl extends AbstractEdmItem implements Schema {
 
   private static final long serialVersionUID = 1911087363912024939L;
 
@@ -67,6 +70,43 @@ public class SchemaImpl extends AbstractSchema implements Schema {
 
   private Map<String, Annotatable> annotatables;
 
+  private String namespace;
+
+  private String alias;
+
+  @Override
+  public String getNamespace() {
+    return namespace;
+  }
+
+  public void setNamespace(final String namespace) {
+    this.namespace = namespace;
+  }
+
+  @Override
+  public String getAlias() {
+    return alias;
+  }
+
+  public void setAlias(final String alias) {
+    this.alias = alias;
+  }
+
+  @Override
+  public EnumType getEnumType(final String name) {
+    return getOneByName(name, getEnumTypes());
+  }
+
+  @Override
+  public ComplexType getComplexType(final String name) {
+    return getOneByName(name, getComplexTypes());
+  }
+
+  @Override
+  public EntityType getEntityType(final String name) {
+    return getOneByName(name, getEntityTypes());
+  }
+  
   @Override
   public List<Action> getActions() {
     return actions;
@@ -173,18 +213,8 @@ public class SchemaImpl extends AbstractSchema implements Schema {
   }
 
   @Override
-  public ComplexType getComplexType(final String name) {
-    return (ComplexType) super.getComplexType(name);
-  }
-
-  @Override
   public List<ComplexType> getComplexTypes() {
     return complexTypes;
-  }
-
-  @Override
-  public EntityType getEntityType(final String name) {
-    return (EntityType) super.getEntityType(name);
   }
 
   @Override

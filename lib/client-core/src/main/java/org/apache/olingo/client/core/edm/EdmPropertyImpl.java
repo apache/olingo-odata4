@@ -21,7 +21,6 @@ package org.apache.olingo.client.core.edm;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.CommonProperty;
 import org.apache.olingo.client.api.edm.xml.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
@@ -37,13 +36,13 @@ public class EdmPropertyImpl extends AbstractEdmProperty {
 
   private final FullQualifiedName structuredTypeName;
 
-  private final CommonProperty property;
+  private final Property property;
 
   private final EdmTypeInfo typeInfo;
 
   private EdmAnnotationHelper helper;
 
-  public EdmPropertyImpl(final Edm edm, final FullQualifiedName structuredTypeName, final CommonProperty property) {
+  public EdmPropertyImpl(final Edm edm, final FullQualifiedName structuredTypeName, final Property property) {
     super(edm, property.getName());
 
     this.structuredTypeName = structuredTypeName;

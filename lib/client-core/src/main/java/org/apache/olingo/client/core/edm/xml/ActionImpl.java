@@ -22,13 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.Action;
+import org.apache.olingo.client.api.edm.xml.Annotation;
 import org.apache.olingo.client.api.edm.xml.Parameter;
 import org.apache.olingo.client.api.edm.xml.ReturnType;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ActionDeserializer.class)
-public class ActionImpl extends AbstractAnnotatable implements Action {
+public class ActionImpl extends AbstractEdmItem implements Action {
 
   private static final long serialVersionUID = 5321541275349234088L;
 
@@ -42,6 +43,13 @@ public class ActionImpl extends AbstractAnnotatable implements Action {
 
   private ReturnType returnType;
 
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
+
+  @Override
+  public List<Annotation> getAnnotations() {
+    return annotations;
+  }
+  
   @Override
   public String getName() {
     return name;

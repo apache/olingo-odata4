@@ -26,7 +26,10 @@ import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.NavigationProperty;
 import org.apache.olingo.client.api.edm.xml.Property;
 
-public class ComplexTypeImpl extends AbstractComplexType implements ComplexType {
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(using = ComplexTypeDeserializer.class)
+public class ComplexTypeImpl extends AbstractStructuralType implements ComplexType {
 
   private static final long serialVersionUID = 4076944306925840115L;
 
@@ -43,7 +46,7 @@ public class ComplexTypeImpl extends AbstractComplexType implements ComplexType 
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
-  public boolean isAbstractEntityType() {
+  public boolean isAbstractType() {
     return abstractEntityType;
   }
 

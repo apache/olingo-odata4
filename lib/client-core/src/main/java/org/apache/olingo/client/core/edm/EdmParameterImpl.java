@@ -21,7 +21,6 @@ package org.apache.olingo.client.core.edm;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.CommonParameter;
 import org.apache.olingo.client.api.edm.xml.Parameter;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
@@ -35,13 +34,13 @@ import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class EdmParameterImpl extends AbstractEdmParameter {
 
-  private final CommonParameter parameter;
+  private final Parameter parameter;
 
   private final EdmTypeInfo typeInfo;
 
   private EdmAnnotationHelper helper;
 
-  public EdmParameterImpl(final Edm edm, final CommonParameter parameter) {
+  public EdmParameterImpl(final Edm edm, final Parameter parameter) {
     super(edm, parameter.getName(), new FullQualifiedName(parameter.getType()));
     this.parameter = parameter;
     this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(parameter.getType()).build();

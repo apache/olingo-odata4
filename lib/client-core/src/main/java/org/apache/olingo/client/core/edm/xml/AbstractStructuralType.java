@@ -18,34 +18,32 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import org.apache.olingo.client.api.edm.xml.DataServices;
+import org.apache.olingo.client.api.edm.xml.NavigationProperty;
+import org.apache.olingo.client.api.edm.xml.Property;
+import org.apache.olingo.client.api.edm.xml.StructuralType;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+public abstract class AbstractStructuralType extends AbstractEdmItem implements StructuralType {
 
-@JsonDeserialize(using = DataServicesDeserializer.class)
-public abstract class AbstractDataServices extends AbstractEdmItem implements DataServices {
+  private static final long serialVersionUID = 1137297128124390440L;
 
-  private static final long serialVersionUID = -4400718085220384367L;
-
-  private String dataServiceVersion;
-
-  private String maxDataServiceVersion;
+  private String name;
 
   @Override
-  public String getDataServiceVersion() {
-    return dataServiceVersion;
+  public String getName() {
+    return name;
   }
 
-  public void setDataServiceVersion(final String version) {
-    this.dataServiceVersion = version;
+  public void setName(final String name) {
+    this.name = name;
+  }
+  
+  @Override
+  public Property getProperty(final String name) {
+    return getOneByName(name, getProperties());
   }
 
   @Override
-  public String getMaxDataServiceVersion() {
-    return maxDataServiceVersion;
-  }
-
-  public void setMaxDataServiceVersion(final String version) {
-    this.maxDataServiceVersion = version;
+  public NavigationProperty getNavigationProperty(final String name) {
+    return getOneByName(name, getNavigationProperties());
   }
 }

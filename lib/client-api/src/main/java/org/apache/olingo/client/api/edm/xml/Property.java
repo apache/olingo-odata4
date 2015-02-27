@@ -18,7 +18,25 @@
  */
 package org.apache.olingo.client.api.edm.xml;
 
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
-public interface Property extends CommonProperty, Annotatable {
 
+public interface Property extends Named, Annotatable {
+
+  String getType();
+
+  boolean isNullable();
+
+  String getDefaultValue();
+
+  Integer getMaxLength();
+
+  Integer getPrecision();
+
+  Integer getScale();
+
+  boolean isUnicode();
+
+  SRID getSrid();
+  
 }

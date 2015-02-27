@@ -18,24 +18,22 @@
  */
 package org.apache.olingo.client.api.edm.xml;
 
-import org.apache.olingo.commons.api.edm.geo.SRID;
+import java.util.List;
 
-public interface CommonProperty extends Named {
+public interface StructuralType extends Named, Annotatable{
 
-  String getType();
+  boolean isAbstractType();
 
-  boolean isNullable();
+  String getBaseType();
 
-  String getDefaultValue();
+  boolean isOpenType();
 
-  Integer getMaxLength();
+  Property getProperty(String name);
 
-  Integer getPrecision();
+  List<Property> getProperties();
 
-  Integer getScale();
+  NavigationProperty getNavigationProperty(String name);
 
-  boolean isUnicode();
-
-  SRID getSrid();
-
+  List<NavigationProperty> getNavigationProperties();
+  
 }

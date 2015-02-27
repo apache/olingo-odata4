@@ -21,13 +21,14 @@ package org.apache.olingo.client.core.edm.xml;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.olingo.client.api.edm.xml.Annotation;
 import org.apache.olingo.client.api.edm.xml.NavigationPropertyBinding;
 import org.apache.olingo.client.api.edm.xml.Singleton;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = SingletonDeserializer.class)
-public class SingletonImpl extends AbstractAnnotatable implements Singleton {
+public class SingletonImpl extends AbstractEdmItem implements Singleton {
 
   private static final long serialVersionUID = 1656749615107151921L;
 
@@ -37,6 +38,13 @@ public class SingletonImpl extends AbstractAnnotatable implements Singleton {
 
   private final List<NavigationPropertyBinding> navigationPropertyBindings = new ArrayList<NavigationPropertyBinding>();
 
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
+
+  @Override
+  public List<Annotation> getAnnotations() {
+    return annotations;
+  }
+  
   @Override
   public String getName() {
     return name;

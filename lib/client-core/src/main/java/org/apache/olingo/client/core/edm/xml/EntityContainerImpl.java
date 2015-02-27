@@ -28,7 +28,10 @@ import org.apache.olingo.client.api.edm.xml.EntitySet;
 import org.apache.olingo.client.api.edm.xml.FunctionImport;
 import org.apache.olingo.client.api.edm.xml.Singleton;
 
-public class EntityContainerImpl extends AbstractEntityContainer implements EntityContainer {
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(using = EntityContainerDeserializer.class)
+public class EntityContainerImpl extends AbstractEdmItem implements EntityContainer {
 
   private static final long serialVersionUID = 5631432527646955795L;
 
@@ -42,19 +45,70 @@ public class EntityContainerImpl extends AbstractEntityContainer implements Enti
 
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
+  private String name;
+
+  private String _extends;
+
+  private boolean lazyLoadingEnabled;
+
   @Override
-  public void setDefaultEntityContainer(final boolean defaultEntityContainer) {
-    // no action: a single entity container MUST be available as per OData 4.0
+  public String getName() {
+    return name;
+  }
+
+  public void setName(final String name) {
+    this.name = name;
   }
 
   @Override
-  public boolean isDefaultEntityContainer() {
-    return true;
+  public String getExtends() {
+    return _extends;
+  }
+
+  public void setExtends(final String _extends) {
+    this._extends = _extends;
+  }
+
+  @Override
+  public boolean isLazyLoadingEnabled() {
+    return lazyLoadingEnabled;
+  }
+
+  public void setLazyLoadingEnabled(final boolean lazyLoadingEnabled) {
+    this.lazyLoadingEnabled = lazyLoadingEnabled;
   }
 
   @Override
   public EntitySet getEntitySet(final String name) {
-    return (EntitySet) super.getEntitySet(name);
+    return getOneByName(name, getEntitySets());
+  }
+  
+  /**
+   * Gets the first function import with given name.
+   *
+   * @param name name.
+   * @return function import.
+   */
+  @Override
+  public FunctionImport getFunctionImport(final String name) {
+    return getOneByName(name, getFunctionImports());
+  }
+
+  /**
+   * Gets all function imports with given name.
+   *
+   * @param name name.
+   * @return function imports.
+   */
+  @Override
+  public List<FunctionImport> getFunctionImports(final String name) {
+    return getAllByName(name, getFunctionImports());
+  }
+  
+  //TODO: No default container in V4 so we should delete this.
+  @Override
+  public boolean isDefaultEntityContainer() {
+    return true;
   }
 
   @Override
@@ -70,17 +124,6 @@ public class EntityContainerImpl extends AbstractEntityContainer implements Enti
   @Override
   public Singleton getSingleton(final String name) {
     return getOneByName(name, getSingletons());
-  }
-
-  @Override
-  public FunctionImport getFunctionImport(final String name) {
-    return (FunctionImport) super.getFunctionImport(name);
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
-  public List<FunctionImport> getFunctionImports(final String name) {
-    return (List<FunctionImport>) super.getFunctionImports(name);
   }
 
   /**

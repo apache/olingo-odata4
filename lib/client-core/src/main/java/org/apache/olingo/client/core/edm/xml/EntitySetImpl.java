@@ -25,7 +25,10 @@ import org.apache.olingo.client.api.edm.xml.Annotation;
 import org.apache.olingo.client.api.edm.xml.EntitySet;
 import org.apache.olingo.client.api.edm.xml.NavigationPropertyBinding;
 
-public class EntitySetImpl extends AbstractEntitySet implements EntitySet {
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(using = EntitySetDeserializer.class)
+public class EntitySetImpl extends AbstractEdmItem implements EntitySet {
 
   private static final long serialVersionUID = -5553885465204370676L;
 
@@ -35,6 +38,28 @@ public class EntitySetImpl extends AbstractEntitySet implements EntitySet {
 
   private final List<NavigationPropertyBinding> navigationPropertyBindings = new ArrayList<NavigationPropertyBinding>();
 
+  private String name;
+
+  private String entityType;
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  public void setName(final String name) {
+    this.name = name;
+  }
+
+  @Override
+  public String getEntityType() {
+    return entityType;
+  }
+
+  public void setEntityType(final String entityType) {
+    this.entityType = entityType;
+  }
+  
   @Override
   public boolean isIncludeInServiceDocument() {
     return includeInServiceDocument;

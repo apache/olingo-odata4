@@ -27,13 +27,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 
-public class EntityContainerDeserializer extends AbstractEdmDeserializer<AbstractEntityContainer> {
+public class EntityContainerDeserializer extends AbstractEdmDeserializer<EntityContainerImpl> {
 
   @Override
-  protected AbstractEntityContainer doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected EntityContainerImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
       throws IOException, JsonProcessingException {
 
-    final AbstractEntityContainer entityContainer = new org.apache.olingo.client.core.edm.xml.EntityContainerImpl();
+    final EntityContainerImpl entityContainer = new EntityContainerImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -44,34 +44,21 @@ public class EntityContainerDeserializer extends AbstractEdmDeserializer<Abstrac
           entityContainer.setExtends(jp.nextTextValue());
         } else if ("LazyLoadingEnabled".equals(jp.getCurrentName())) {
           entityContainer.setLazyLoadingEnabled(BooleanUtils.toBoolean(jp.nextTextValue()));
-        } else if ("IsDefaultEntityContainer".equals(jp.getCurrentName())) {
-          entityContainer.setDefaultEntityContainer(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("EntitySet".equals(jp.getCurrentName())) {
           jp.nextToken();
-
-          ((org.apache.olingo.client.core.edm.xml.EntityContainerImpl) entityContainer).
-              getEntitySets().add(jp.readValueAs(
-                  org.apache.olingo.client.core.edm.xml.EntitySetImpl.class));
-
+          entityContainer.getEntitySets().add(jp.readValueAs(EntitySetImpl.class));
         } else if ("Singleton".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.EntityContainerImpl) entityContainer).
-              getSingletons().add(jp.readValueAs(SingletonImpl.class));
+          entityContainer.getSingletons().add(jp.readValueAs(SingletonImpl.class));
         } else if ("ActionImport".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.EntityContainerImpl) entityContainer).
-              getActionImports().add(jp.readValueAs(ActionImportImpl.class));
+          entityContainer.getActionImports().add(jp.readValueAs(ActionImportImpl.class));
         } else if ("FunctionImport".equals(jp.getCurrentName())) {
           jp.nextToken();
-
-          ((org.apache.olingo.client.core.edm.xml.EntityContainerImpl) entityContainer).
-              getFunctionImports().add(jp.readValueAs(
-                  org.apache.olingo.client.core.edm.xml.FunctionImportImpl.class));
-
+          entityContainer.getFunctionImports().add(jp.readValueAs(FunctionImportImpl.class));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.EntityContainerImpl) entityContainer).getAnnotations().
-              add(jp.readValueAs(AnnotationImpl.class));
+          entityContainer.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

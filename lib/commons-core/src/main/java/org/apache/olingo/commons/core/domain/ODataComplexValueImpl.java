@@ -179,7 +179,6 @@ public class ODataComplexValueImpl extends AbstractODataValue implements ODataCo
    * @param field field to be added.
    */
   @Override
-  @SuppressWarnings("unchecked")
   public ODataComplexValue<ODataProperty> add(final ODataProperty field) {
     fields.put(field.getName(), field);
     return getThis();
