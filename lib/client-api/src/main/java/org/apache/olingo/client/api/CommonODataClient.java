@@ -26,8 +26,8 @@ import org.apache.olingo.client.api.communication.request.cud.CommonUpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.CommonRetrieveRequestFactory;
 import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
-import org.apache.olingo.client.api.serialization.CommonODataBinder;
-import org.apache.olingo.client.api.serialization.CommonODataReader;
+import org.apache.olingo.client.api.serialization.ODataBinder;
+import org.apache.olingo.client.api.serialization.ODataReader;
 import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.client.api.uri.CommonFilterFactory;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
@@ -59,11 +59,11 @@ public interface CommonODataClient<UT extends CommonUpdateType> {
 
   ClientODataDeserializer getDeserializer(ODataFormat format);
 
-  CommonODataReader getReader();
+  ODataReader getReader();
 
   ODataWriter getWriter();
 
-  CommonODataBinder getBinder();
+  ODataBinder getBinder();
 
   ODataObjectFactory getObjectFactory();
 

@@ -40,7 +40,7 @@ import org.apache.olingo.client.core.edm.xml.SchemaImpl;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 public class XMLMetadataRequestImpl
-        extends AbstractMetadataRequestImpl<org.apache.olingo.client.api.edm.xml.XMLMetadata>
+        extends AbstractMetadataRequestImpl<XMLMetadata>
         implements XMLMetadataRequest {
 
   XMLMetadataRequestImpl(final ODataClient odataClient, final URI uri) {
@@ -48,7 +48,7 @@ public class XMLMetadataRequestImpl
   }
 
   @Override
-  public ODataRetrieveResponse<org.apache.olingo.client.api.edm.xml.XMLMetadata> execute() {
+  public ODataRetrieveResponse<XMLMetadata> execute() {
     final SingleXMLMetadatRequestImpl rootReq = new SingleXMLMetadatRequestImpl((ODataClient) odataClient, uri, null);
     final ODataRetrieveResponse<XMLMetadata> rootRes = rootReq.execute();
 
