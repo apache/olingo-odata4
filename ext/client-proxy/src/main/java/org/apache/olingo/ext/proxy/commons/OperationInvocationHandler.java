@@ -18,22 +18,6 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import org.apache.olingo.commons.api.domain.ODataOperation;
-import org.apache.olingo.commons.api.edm.EdmAction;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.EdmFunction;
-import org.apache.olingo.commons.api.edm.EdmOperation;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.ext.proxy.api.OperationType;
-import org.apache.olingo.ext.proxy.api.annotations.Operation;
-import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.ext.proxy.utils.ClassUtils;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-import org.apache.olingo.ext.proxy.utils.CoreUtils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -44,6 +28,23 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataOperation;
+import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmOperation;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.utils.ClassUtils;
+import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
 final class OperationInvocationHandler extends AbstractInvocationHandler {
 
@@ -231,7 +232,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler {
       edmOperation = container.getActionImport(operation.name()).getUnboundAction();
     }
 
-    final CommonURIBuilder<?> uriBuilder = getClient().newURIBuilder().
+    final URIBuilder uriBuilder = getClient().newURIBuilder().
             appendOperationCallSegment(edmOperation.getName());
 
     return new AbstractMap.SimpleEntry<URI, EdmOperation>(uriBuilder.build(), edmOperation);

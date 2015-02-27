@@ -30,9 +30,9 @@ import java.util.concurrent.Future;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.ext.proxy.AbstractService;
@@ -69,7 +69,7 @@ public class EntitySetInvocationHandler<
   protected EntitySetInvocationHandler(
           final Class<?> ref,
           final AbstractService<?> service,
-          final CommonURIBuilder<?> uri) {
+          final URIBuilder uri) {
 
     super(ref, service, uri);
   }
@@ -170,7 +170,7 @@ public class EntitySetInvocationHandler<
     final Class<S> oref = (Class<S>) ClassUtils.extractTypeArg(this.collItemRef,
             AbstractEntitySet.class, AbstractSingleton.class, EntityCollection.class);
 
-    final CommonURIBuilder<?> uriBuilder = getClient().newURIBuilder(this.uri.build().toASCIIString());
+    final URIBuilder uriBuilder = getClient().newURIBuilder(this.uri.build().toASCIIString());
 
     if (!oref.equals(ref)) {
       uriBuilder.appendDerivedEntityTypeSegment(new FullQualifiedName(
@@ -211,7 +211,7 @@ public class EntitySetInvocationHandler<
 
   @SuppressWarnings("unchecked")
   public <S extends T, SEC extends EntityCollection<S, ?, ?>> SEC fetchWholeEntitySet(
-          final CommonURIBuilder<?> uriBuilder, final Class<S> typeRef, final Class<SEC> collTypeRef) {
+          final URIBuilder uriBuilder, final Class<S> typeRef, final Class<SEC> collTypeRef) {
 
     final List<S> res = new ArrayList<S>();
     final List<ODataAnnotation> anns = new ArrayList<ODataAnnotation>();

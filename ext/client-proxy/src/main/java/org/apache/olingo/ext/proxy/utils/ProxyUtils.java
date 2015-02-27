@@ -19,8 +19,9 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -103,7 +104,7 @@ public class ProxyUtils {
           final URI baseURI,
           final boolean collectionItem) {
 
-    final CommonURIBuilder<?> targetURI;
+    final URIBuilder targetURI;
     if (collectionItem) {
       targetURI = null;
     } else {

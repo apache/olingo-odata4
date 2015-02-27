@@ -31,13 +31,13 @@ import java.util.concurrent.Future;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmOperation;
@@ -61,7 +61,7 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
 
   private final URI baseURI;
 
-  private CommonURIBuilder<?> uri;
+  private URIBuilder uri;
 
   private final Map<String, ODataValue> parameters;
 

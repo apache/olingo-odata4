@@ -23,8 +23,8 @@ import org.apache.olingo.client.api.communication.request.batch.BatchRequestFact
 import org.apache.olingo.client.api.communication.request.cud.CUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.RetrieveRequestFactory;
+import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataBinder;
-import org.apache.olingo.client.api.serialization.ODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataReader;
 import org.apache.olingo.client.api.uri.FilterFactory;
 import org.apache.olingo.client.api.uri.SearchFactory;
@@ -35,7 +35,7 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 public interface ODataClient extends CommonODataClient<UpdateType> {
 
   @Override
-  ODataDeserializer getDeserializer(ODataFormat format);
+  ClientODataDeserializer getDeserializer(ODataFormat format);
 
   @Override
   ODataReader getReader();

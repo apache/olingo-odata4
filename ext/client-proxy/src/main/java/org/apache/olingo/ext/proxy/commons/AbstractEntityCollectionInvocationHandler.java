@@ -18,27 +18,26 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
-import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
-import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.ext.proxy.api.EntityCollection;
-import org.apache.olingo.ext.proxy.api.AbstractSingleton;
-
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
+import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
+import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+import org.apache.olingo.ext.proxy.api.AbstractSingleton;
+import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
@@ -56,7 +55,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<
   public AbstractEntityCollectionInvocationHandler(
           final Class<?> ref,
           final AbstractService<?> service,
-          final CommonURIBuilder<?> uri) {
+          final URIBuilder uri) {
 
     super(service,
             new ArrayList<T>(),
@@ -81,7 +80,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<
           final Class<? extends EntityCollection<T, ?, ?>> ref,
           final AbstractService<?> service,
           final URI targetEntitySetURI,
-          final CommonURIBuilder<?> uri) {
+          final URIBuilder uri) {
     super(service,
             new ArrayList<T>(),
             (Class<T>) ClassUtils.extractTypeArg(ref, EntityCollection.class),

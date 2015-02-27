@@ -18,23 +18,24 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataLinked;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
-import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
-import org.apache.olingo.ext.proxy.utils.ClassUtils;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
-import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.ext.proxy.AbstractService;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
+import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataLinked;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.ext.proxy.AbstractService;
+import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
 public class ComplexInvocationHandler extends AbstractStructuredInvocationHandler {
 
@@ -90,7 +91,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   public static ComplexInvocationHandler getInstance(
           final Class<?> typeRef,
           final AbstractService<?> service,
-          final CommonURIBuilder<?> uri) {
+          final URIBuilder uri) {
       
     final Pair<ODataComplexValue<? extends ODataProperty>, Class<?>> init = init(typeRef, service);
     return new ComplexInvocationHandler(init.getLeft(), init.getRight(), service, uri);
@@ -100,7 +101,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
           final ODataComplexValue<? extends ODataProperty> complex,
           final Class<?> typeRef,
           final AbstractService<?> service,
-          final CommonURIBuilder<?> uri) {
+          final URIBuilder uri) {
       
     return new ComplexInvocationHandler(complex, typeRef, service, uri);
   }
@@ -109,7 +110,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
           final ODataComplexValue<? extends ODataProperty> complex,
           final Class<?> typeRef,
           final AbstractService<?> service,
-          final CommonURIBuilder<?> uri) {
+          final URIBuilder uri) {
 
     super(typeRef, complex, service);
     this.uri = uri;

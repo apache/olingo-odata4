@@ -27,8 +27,8 @@ import org.apache.olingo.client.api.communication.request.cud.CUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.RetrieveRequestFactory;
+import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataBinder;
-import org.apache.olingo.client.api.serialization.ODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataReader;
 import org.apache.olingo.client.api.uri.FilterFactory;
 import org.apache.olingo.client.api.uri.SearchFactory;
@@ -39,8 +39,8 @@ import org.apache.olingo.client.core.communication.request.batch.BatchRequestFac
 import org.apache.olingo.client.core.communication.request.cud.CUDRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.invoke.InvokeRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.RetrieveRequestFactoryImpl;
+import org.apache.olingo.client.core.serialization.ClientODataDeserializerImpl;
 import org.apache.olingo.client.core.serialization.ODataBinderImpl;
-import org.apache.olingo.client.core.serialization.ODataDeserializerImpl;
 import org.apache.olingo.client.core.serialization.ODataReaderImpl;
 import org.apache.olingo.client.core.uri.FilterFactoryImpl;
 import org.apache.olingo.client.core.uri.URIBuilderImpl;
@@ -103,8 +103,8 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   }
 
   @Override
-  public ODataDeserializer getDeserializer(final ODataFormat format) {
-    return new ODataDeserializerImpl(getServiceVersion(), false, format);
+  public ClientODataDeserializer getDeserializer(final ODataFormat format) {
+    return new ClientODataDeserializerImpl(getServiceVersion(), false, format);
   }
 
   @Override

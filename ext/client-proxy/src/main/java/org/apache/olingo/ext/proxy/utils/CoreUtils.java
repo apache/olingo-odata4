@@ -38,17 +38,17 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataAnnotatable;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmElement;
@@ -385,7 +385,7 @@ public final class CoreUtils {
     return propertyClass;
   }
 
-  public static CommonURIBuilder<?> buildEditLink(
+  public static URIBuilder buildEditLink(
       final CommonEdmEnabledODataClient<?> client,
       final String entitySetURI,
       final ODataEntity entity,
@@ -395,7 +395,7 @@ public final class CoreUtils {
       return null;
     }
 
-    final CommonURIBuilder<?> uriBuilder = StringUtils.isNotBlank(entitySetURI)
+    final URIBuilder uriBuilder = StringUtils.isNotBlank(entitySetURI)
         ? client.newURIBuilder(entitySetURI)
         : client.newURIBuilder();
 
@@ -669,7 +669,7 @@ public final class CoreUtils {
         new FullQualifiedName(property.targetSchema(), property.targetContainer());
 
     final EdmEntityContainer container = edm.getEntityContainer(containerName);
-    final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(client.getServiceRoot());
+    final URIBuilder uriBuilder = client.newURIBuilder(client.getServiceRoot());
 
     if (!container.isDefault()) {
       final StringBuilder entitySetSegment = new StringBuilder();

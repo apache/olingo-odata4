@@ -18,6 +18,16 @@
  */
 package org.apache.olingo.fit.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
+import java.net.URI;
+import java.util.Calendar;
+import java.util.TimeZone;
+
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.AsyncRequestWrapper;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
@@ -32,7 +42,6 @@ import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
@@ -49,16 +58,6 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.domain.ODataEntityImpl;
 import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.Calendar;
-import java.util.TimeZone;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * 13.2 Interoperable OData Clients
@@ -286,7 +285,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
   public void item8() {
     client.getConfiguration().setHttpClientFactory(new BasicAuthHttpClientFactory("odatajclient", "odatajclient"));
 
-    final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testAuthServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testAuthServiceRootURL).
         appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());

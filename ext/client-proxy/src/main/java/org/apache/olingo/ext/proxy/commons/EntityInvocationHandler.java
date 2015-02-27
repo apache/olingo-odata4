@@ -33,11 +33,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -192,7 +192,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
       this.baseURI = entity.getEditLink();
       this.uri = getClient().newURIBuilder(baseURI.toASCIIString());
     } else if (key != null) {
-      final CommonURIBuilder<?> uriBuilder =
+      final URIBuilder uriBuilder =
           CoreUtils.buildEditLink(getClient(), entitySetURI.toASCIIString(), entity, key);
 
       this.uri = uriBuilder;
@@ -219,7 +219,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
     // fix for OLINGO-353
     if (this.uri == null) {
-      final CommonURIBuilder<?> uriBuilder =
+      final URIBuilder uriBuilder =
           entity.getEditLink() == null
               ? CoreUtils.buildEditLink(getClient(), getUUID().getEntitySetURI().toASCIIString(), entity, key)
               : getClient().newURIBuilder(entity.getEditLink().toASCIIString());
@@ -252,7 +252,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     this.uuid = new EntityUUID(entitySetURI, type, key);
 
     if (this.uri == null) {
-      final CommonURIBuilder<?> uriBuilder =
+      final URIBuilder uriBuilder =
           getEntity().getEditLink() == null
               ? CoreUtils.buildEditLink(getClient(), entitySetURI.toASCIIString(), getEntity(), key)
               : getClient().newURIBuilder(getEntity().getEditLink().toASCIIString());

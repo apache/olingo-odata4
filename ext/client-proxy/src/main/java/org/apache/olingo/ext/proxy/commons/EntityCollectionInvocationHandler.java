@@ -23,8 +23,9 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.EntityType;
@@ -42,7 +43,7 @@ public class EntityCollectionInvocationHandler<T extends EntityType<?>>
           final Collection<T> items,
           final Class<? extends EntityCollection<T, ?, ?>> collItemRef,
           final URI targetEntitySetURI,
-          final CommonURIBuilder<?> uri) {
+          final URIBuilder uri) {
 
     super(collItemRef, service, targetEntitySetURI, uri);
     this.items = items;

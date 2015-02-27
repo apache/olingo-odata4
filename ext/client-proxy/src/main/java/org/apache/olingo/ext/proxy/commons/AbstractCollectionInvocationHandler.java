@@ -19,9 +19,6 @@
 package org.apache.olingo.ext.proxy.commons;
 
 import java.io.Serializable;
-
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.ArrayList;
@@ -60,7 +57,7 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
 
   protected final URI baseURI;
 
-  protected CommonURIBuilder<?> uri;
+  protected URIBuilder uri;
 
   protected final Class<T> itemRef;
 
@@ -75,7 +72,7 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
           final AbstractService<?> service,
           final Collection<T> items,
           final Class<T> itemRef,
-          final CommonURIBuilder<?> uri) {
+          final URIBuilder uri) {
 
     super(service);
 

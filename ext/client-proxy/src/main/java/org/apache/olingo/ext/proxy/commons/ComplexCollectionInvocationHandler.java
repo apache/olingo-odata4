@@ -32,10 +32,10 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
@@ -54,7 +54,7 @@ public class ComplexCollectionInvocationHandler<T extends ComplexType<?>>
   public ComplexCollectionInvocationHandler(
           final Class<T> itemRef,
           final AbstractService<?> service,
-          final CommonURIBuilder<?> uri) {
+          final URIBuilder uri) {
       
     this(service, new ArrayList<T>(), itemRef, uri);
   }
@@ -63,7 +63,7 @@ public class ComplexCollectionInvocationHandler<T extends ComplexType<?>>
           final AbstractService<?> service,
           final Collection<T> items,
           final Class<T> itemRef,
-          final CommonURIBuilder<?> uri) {
+          final URIBuilder uri) {
 
     super(service, items, itemRef, uri);
   }

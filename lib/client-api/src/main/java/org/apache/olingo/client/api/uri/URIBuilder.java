@@ -18,13 +18,228 @@
  */
 package org.apache.olingo.client.api.uri;
 
+import java.net.URI;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 
-public interface URIBuilder extends CommonURIBuilder<URIBuilder> {
+public interface URIBuilder {
 
+  /**
+   * Adds the specified query option to the URI.
+   * <br />
+   * Concatenates value if the specified query option already exists.
+   *
+   * @param option query option.
+   * @param value query option value.
+   * @return current URIBuilder instance
+   */
+  URIBuilder addQueryOption(QueryOption option, String value);
+  
+  /**
+   * Adds/replaces the specified query option to the URI.
+   *
+   * @param option query option.
+   * @param value query option value.
+   * @return current URIBuilder instance
+   */
+  URIBuilder replaceQueryOption(QueryOption option, String value);
+
+  /**
+   * Adds/Replaces the specified (custom) query option to the URI.
+   *
+   * @param option query option.
+   * @param value query option value.
+   * @param replace if <tt>true</tt> then replace existing one.
+   * @return current URIBuilder instance.
+   */
+  URIBuilder addQueryOption(String option, String value, boolean replace);
+
+  /**
+   * Adds the specified (custom) parameter alias to the URI.
+   *
+   * @param alias parameter alias.
+   * @param exp expression value.
+   * @return current URIBuilder instance.
+   */
+  URIBuilder addParameterAlias(final String alias, final String exp);
+
+  /**
+   * Appends EntitySet segment to the URI.
+   *
+   * @param segmentValue segment value.
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendEntitySetSegment(String segmentValue);
+
+  /**
+   * Appends key segment to the URI.
+   *
+   * @param val segment value.
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendKeySegment(Object val);
+
+  /**
+   * Appends key segment to the URI, for multiple keys.
+   *
+   * @param segmentValues segment values.
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendKeySegment(Map<String, Object> segmentValues);
+
+  /**
+   * Appends property segment to the URI.
+   *
+   * @param segmentValue segment value.
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendPropertySegment(String segmentValue);
+
+  /**
+   * Appends navigation segment to the URI.
+   *
+   * @param segmentValue segment value.
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendNavigationSegment(String segmentValue);
+
+  /**
+   * Appends derived entity type segment to the URI.
+   *
+   * @param segmentValue segment value.
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendDerivedEntityTypeSegment(String segmentValue);
+
+  /**
+   * Appends value segment to the URI.
+   *
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendValueSegment();
+
+  /**
+   * Appends operation (action or function) segment to the URI.
+   *
+   * @param operation Operation (action or function) name
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendOperationCallSegment(String operation);
+
+  /**
+   * Appends metadata segment to the URI.
+   *
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendMetadataSegment();
+
+  /**
+   * Appends batch segment to the URI.
+   *
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendBatchSegment();
+
+  /**
+   * Adds count query option.
+   *
+   * @return current URIBuilder instance
+   */
+  URIBuilder count();
+
+  /**
+   * Adds expand query option.
+   *
+   * @param expandItems items to be expanded in-line
+   * @return current URIBuilder instance
+   * @see QueryOption#EXPAND
+   */
+  URIBuilder expand(String... expandItems);
+
+  /**
+   * Adds format query option.
+   *
+   * @param format media type acceptable in a response.
+   * @return current URIBuilder instance
+   * @see QueryOption#FORMAT
+   */
+  URIBuilder format(String format);
+
+  /**
+   * Adds filter for filter query option.
+   *
+   * @param filter filter instance (to be obtained via <tt>FilterFactory</tt>);
+   *               note that <tt>build()</tt> method will be immediately invoked.
+   * @return current URIBuilder instance
+   * @see QueryOption#FILTER
+   * @see URIFilter
+   * @see org.apache.olingo.client.api.uri.CommonFilterFactory
+   */
+  URIBuilder filter(URIFilter filter);
+
+  /**
+   * Adds filter query option.
+   *
+   * @param filter filter string.
+   * @return current URIBuilder instance
+   * @see QueryOption#FILTER
+   */
+  URIBuilder filter(String filter);
+
+  /**
+   * Adds select query option.
+   *
+   * @param selectItems select items
+   * @return current URIBuilder instance
+   * @see QueryOption#SELECT
+   */
+  URIBuilder select(String... selectItems);
+
+  /**
+   * Adds orderby query option.
+   *
+   * @param order order string.
+   * @return current URIBuilder instance
+   * @see QueryOption#ORDERBY
+   */
+  URIBuilder orderBy(String order);
+
+  /**
+   * Adds top query option.
+   *
+   * @param top maximum number of entities to be returned.
+   * @return current URIBuilder instance
+   * @see QueryOption#TOP
+   */
+  URIBuilder top(int top);
+
+  /**
+   * Adds skip query option.
+   *
+   * @param skip number of entities to be skipped into the response.
+   * @return current URIBuilder instance
+   * @see QueryOption#SKIP
+   */
+  URIBuilder skip(int skip);
+
+  /**
+   * Adds skiptoken query option.
+   *
+   * @param skipToken opaque token.
+   * @return current URIBuilder instance
+   * @see QueryOption#SKIPTOKEN
+   */
+  URIBuilder skipToken(String skipToken);
+
+  /**
+   * Build OData URI.
+   *
+   * @return OData URI.
+   */
+  URI build();
+  
   /**
    * Appends enum key segment to the URI.
    *

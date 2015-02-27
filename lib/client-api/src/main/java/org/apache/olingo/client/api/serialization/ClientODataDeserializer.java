@@ -22,6 +22,7 @@ import java.io.InputStream;
 
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
@@ -38,4 +39,13 @@ public interface ClientODataDeserializer extends ODataDeserializer {
    * @throws ODataDeserializerException
    */
   ResWrap<ServiceDocument> toServiceDocument(InputStream input) throws ODataDeserializerException;
+  
+  /**
+   * Gets a delta object from the given InputStream.
+   *
+   * @param input stream to be de-serialized.
+   * @return {@link Delta} instance.
+   * @throws ODataDeserializerException
+   */
+  ResWrap<Delta> toDelta(InputStream input) throws ODataDeserializerException;
 }

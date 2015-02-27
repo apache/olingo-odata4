@@ -30,7 +30,7 @@ import org.apache.olingo.client.api.serialization.ODataBinder;
 import org.apache.olingo.client.api.serialization.ODataReader;
 import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.client.api.uri.CommonFilterFactory;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -51,7 +51,7 @@ public interface CommonODataClient<UT extends CommonUpdateType> {
 
   ODataPreferences newPreferences();
 
-  CommonURIBuilder<?> newURIBuilder(String serviceRoot);
+  URIBuilder newURIBuilder(String serviceRoot);
   
   CommonFilterFactory getFilterFactory();
 

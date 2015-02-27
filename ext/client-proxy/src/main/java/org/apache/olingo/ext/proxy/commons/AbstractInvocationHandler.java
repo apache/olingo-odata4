@@ -32,7 +32,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -103,7 +103,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
       final URI baseURI,
       final boolean collectionItem) {
 
-    final CommonURIBuilder<?> targetURI;
+    final URIBuilder targetURI;
     if (collectionItem) {
       targetURI = null;
     } else {
@@ -185,7 +185,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     }
   }
 
-  protected static CommonURIBuilder<?> buildEntitySetURI(
+  protected static URIBuilder buildEntitySetURI(
       final Class<?> ref,
       final AbstractService<?> service) {
 
@@ -209,10 +209,10 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     return buildEntitySetURI(containerNS, entitySetName, service);
   }
 
-  protected static CommonURIBuilder<?> buildEntitySetURI(
+  protected static URIBuilder buildEntitySetURI(
       final String containerNS, final String entitySetName, final AbstractService<?> service) {
 
-    final CommonURIBuilder<?> uriBuilder = service.getClient().newURIBuilder();
+    final URIBuilder uriBuilder = service.getClient().newURIBuilder();
     final Edm edm = service.getClient().getCachedEdm();
 
     final StringBuilder entitySetSegment = new StringBuilder();

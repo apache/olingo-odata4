@@ -33,7 +33,7 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -52,7 +52,7 @@ public class PrimitiveCollectionInvocationHandler<T extends Serializable>
   public PrimitiveCollectionInvocationHandler(
           final AbstractService<?> service,
           final Class<T> itemRef,
-          final CommonURIBuilder<?> uri) {
+          final URIBuilder uri) {
     this(service, new ArrayList<T>(), itemRef, uri);
   }
 
@@ -60,7 +60,7 @@ public class PrimitiveCollectionInvocationHandler<T extends Serializable>
           final AbstractService<?> service,
           final Collection<T> items,
           final Class<T> itemRef,
-          final CommonURIBuilder<?> uri) {
+          final URIBuilder uri) {
 
     super(service, items, itemRef, uri);
   }

@@ -38,16 +38,15 @@ import java.util.concurrent.Callable;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinked;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -71,7 +70,7 @@ import org.apache.olingo.ext.proxy.utils.ProxyUtils;
 
 public abstract class AbstractStructuredInvocationHandler extends AbstractInvocationHandler {
 
-  protected CommonURIBuilder<?> uri;
+  protected URIBuilder uri;
 
   protected URI baseURI;
 
