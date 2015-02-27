@@ -24,12 +24,12 @@ import org.apache.olingo.client.api.communication.request.batch.CommonBatchReque
 import org.apache.olingo.client.api.communication.request.cud.CommonCUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.CommonUpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
-import org.apache.olingo.client.api.communication.request.retrieve.CommonRetrieveRequestFactory;
+import org.apache.olingo.client.api.communication.request.retrieve.RetrieveRequestFactory;
 import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataBinder;
 import org.apache.olingo.client.api.serialization.ODataReader;
 import org.apache.olingo.client.api.serialization.ODataWriter;
-import org.apache.olingo.client.api.uri.CommonFilterFactory;
+import org.apache.olingo.client.api.uri.FilterFactory;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -53,7 +53,7 @@ public interface CommonODataClient<UT extends CommonUpdateType> {
 
   URIBuilder newURIBuilder(String serviceRoot);
   
-  CommonFilterFactory getFilterFactory();
+  FilterFactory getFilterFactory();
 
   ODataSerializer getSerializer(ODataFormat format);
 
@@ -67,7 +67,7 @@ public interface CommonODataClient<UT extends CommonUpdateType> {
 
   ODataObjectFactory getObjectFactory();
 
-  CommonRetrieveRequestFactory getRetrieveRequestFactory();
+  RetrieveRequestFactory getRetrieveRequestFactory();
 
   CommonCUDRequestFactory<UT> getCUDRequestFactory();
 

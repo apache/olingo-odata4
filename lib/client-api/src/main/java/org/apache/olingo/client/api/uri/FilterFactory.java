@@ -20,11 +20,42 @@ package org.apache.olingo.client.api.uri;
 
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 
-public interface FilterFactory extends CommonFilterFactory {
+public interface FilterFactory {
 
-  @Override
   FilterArgFactory getArgFactory();
 
+  URIFilter match(FilterArg arg);
+
+  URIFilter eq(String key, Object value);
+
+  URIFilter eq(FilterArg left, FilterArg right);
+
+  URIFilter ne(String key, Object value);
+
+  URIFilter ne(FilterArg left, FilterArg right);
+
+  URIFilter gt(String key, Object value);
+
+  URIFilter gt(FilterArg left, FilterArg right);
+
+  URIFilter ge(String key, Object value);
+
+  URIFilter ge(FilterArg left, FilterArg right);
+
+  URIFilter lt(String key, Object value);
+
+  URIFilter lt(FilterArg left, FilterArg right);
+
+  URIFilter le(String key, Object value);
+
+  URIFilter le(FilterArg left, FilterArg right);
+
+  URIFilter and(URIFilter left, URIFilter right);
+
+  URIFilter or(URIFilter left, URIFilter right);
+
+  URIFilter not(URIFilter filter);
+  
   URIFilter has(String key, EdmEnumType enumType, String memberName);
 
   URIFilter has(FilterArg left, EdmEnumType enumType, String memberName);

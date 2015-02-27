@@ -25,12 +25,94 @@ import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-public class FilterFactoryImpl extends AbstractFilterFactory implements FilterFactory {
+public class FilterFactoryImpl implements FilterFactory {
 
+  private final ODataServiceVersion version;
+  
   public FilterFactoryImpl(ODataServiceVersion version) {
-    super(version);
+    this.version = version;
   }
 
+  @Override
+  public URIFilter match(final FilterArg arg) {
+    return new MatchFilter(arg);
+  }
+
+  @Override
+  public URIFilter eq(final String key, final Object value) {
+    return new EqFilter(getArgFactory().property(key), getArgFactory().literal(value));
+  }
+
+  @Override
+  public URIFilter eq(final FilterArg left, final FilterArg right) {
+    return new EqFilter(left, right);
+  }
+
+  @Override
+  public URIFilter ne(final String key, final Object value) {
+    return new NeFilter(getArgFactory().property(key), getArgFactory().literal(value));
+  }
+
+  @Override
+  public URIFilter ne(final FilterArg left, final FilterArg right) {
+    return new NeFilter(left, right);
+  }
+
+  @Override
+  public URIFilter gt(final String key, final Object value) {
+    return new GtFilter(getArgFactory().property(key), getArgFactory().literal(value));
+  }
+
+  @Override
+  public URIFilter gt(final FilterArg left, final FilterArg right) {
+    return new GtFilter(left, right);
+  }
+
+  @Override
+  public URIFilter ge(final String key, final Object value) {
+    return new GeFilter(getArgFactory().property(key), getArgFactory().literal(value));
+  }
+
+  @Override
+  public URIFilter ge(final FilterArg left, final FilterArg right) {
+    return new GeFilter(left, right);
+  }
+
+  @Override
+  public URIFilter lt(final String key, final Object value) {
+    return new LtFilter(getArgFactory().property(key), getArgFactory().literal(value));
+  }
+
+  @Override
+  public URIFilter lt(final FilterArg left, final FilterArg right) {
+    return new LtFilter(left, right);
+  }
+
+  @Override
+  public URIFilter le(final String key, final Object value) {
+    return new LeFilter(getArgFactory().property(key), getArgFactory().literal(value));
+  }
+
+  @Override
+  public URIFilter le(final FilterArg left, final FilterArg right) {
+    return new LeFilter(left, right);
+  }
+
+  @Override
+  public URIFilter and(final URIFilter left, final URIFilter right) {
+    return new AndFilter(left, right);
+  }
+
+  @Override
+  public URIFilter or(final URIFilter left, final URIFilter right) {
+    return new OrFilter(left, right);
+  }
+
+  @Override
+  public URIFilter not(final URIFilter filter) {
+    return new NotFilter(filter);
+  }
+  
   @Override
   public FilterArgFactory getArgFactory() {
     return new FilterArgFactoryImpl(version);

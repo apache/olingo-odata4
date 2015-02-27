@@ -19,8 +19,68 @@
 package org.apache.olingo.client.api.uri;
 
 
-public interface FilterArgFactory extends CommonFilterArgFactory {
+public interface FilterArgFactory {
 
+  FilterArg _null();
+
+  FilterArg add(FilterArg first, FilterArg second);
+
+  FilterArg ceiling(FilterArg param);
+
+  FilterArg concat(FilterArg first, FilterArg second);
+
+  FilterArg day(FilterArg param);
+
+  FilterArg div(FilterArg first, FilterArg second);
+
+  FilterArg endswith(FilterArg first, FilterArg second);
+
+  FilterArg floor(FilterArg param);
+
+  FilterArg hour(FilterArg param);
+
+  FilterArg indexof(FilterArg first, FilterArg second);
+
+  FilterArg isof(FilterArg type);
+
+  FilterArg isof(FilterArg expression, FilterArg type);
+
+  FilterArg length(FilterArg param);
+
+  FilterArg literal(Object value);
+
+  FilterArg minute(FilterArg param);
+
+  FilterArg mod(FilterArg first, FilterArg second);
+
+  FilterArg month(FilterArg param);
+
+  FilterArg mul(FilterArg first, FilterArg second);
+
+  FilterArg property(String propertyPath);
+
+  FilterArg replace(FilterArg first, FilterArg second, FilterArg third);
+
+  FilterArg round(FilterArg param);
+
+  FilterArg second(FilterArg param);
+
+  FilterArg startswith(FilterArg first, FilterArg second);
+
+  FilterArg sub(FilterArg first, FilterArg second);
+
+  FilterArg substring(FilterArg arg, FilterArg pos);
+
+  FilterArg substring(FilterArg arg, FilterArg pos, FilterArg length);
+
+  FilterArg tolower(FilterArg param);
+
+  FilterArg toupper(FilterArg param);
+
+  FilterArg trim(FilterArg param);
+
+  FilterArg year(FilterArg param);
+  
   FilterArg contains(FilterArg first, FilterArg second);
 
   FilterArg fractionalseconds(FilterArg param);

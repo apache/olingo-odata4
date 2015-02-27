@@ -25,21 +25,114 @@ import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataSingleton;
 
-public interface RetrieveRequestFactory extends CommonRetrieveRequestFactory {
+public interface RetrieveRequestFactory {
 
-  @Override
+  /**
+   * Gets a metadata request instance.
+   * <br/>
+   * Compared to {@link #getMetadataRequest(java.lang.String)}, this method returns a request instance for fetching
+   * low-level metadata representation.
+   *
+   * @param serviceRoot absolute URL (schema, host and port included) representing the location of the root of the data
+   * service.
+   * @return new {@link XMLMetadataRequest} instance.
+   */
+  XMLMetadataRequest getXMLMetadataRequest(String serviceRoot);
+
+  /**
+   * Gets a metadata request instance.
+   *
+   * @param serviceRoot absolute URL (schema, host and port included) representing the location of the root of the data
+   * service.
+   * @return new {@link EdmMetadataRequest} instance.
+   */
+  EdmMetadataRequest getMetadataRequest(String serviceRoot);
+
+  /**
+   * Gets a service document request instance.
+   *
+   * @param serviceRoot absolute URL (schema, host and port included) representing the location of the root of the data
+   * service.
+   * @return new {@link ODataServiceDocumentRequest} instance.
+   */
+  ODataServiceDocumentRequest getServiceDocumentRequest(String serviceRoot);
+
+  /**
+   * Gets a uri request returning a set of one or more OData entities.
+   *
+   * @param uri request URI.
+   * @return new {@link ODataEntitySetRequest} instance.
+   */
   ODataEntitySetRequest<ODataEntitySet> getEntitySetRequest(URI uri);
 
-  @Override
+  /**
+   * Gets a uri request returning a set of one or more OData entities.
+   * <br/>
+   * Returned request gives the possibility to consume entities iterating on them without parsing and loading in memory
+   * the entire entity set.
+   *
+   * @param uri request URI.
+   * @return new {@link ODataEntitySetIteratorRequest} instance.
+   */
   ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> getEntitySetIteratorRequest(URI uri);
 
-  ODataEntityRequest<ODataSingleton> getSingletonRequest(URI uri);
-
-  @Override
+  /**
+   * Gets a uri request returning a single OData entity.
+   *
+   * @param uri request URI.
+   * @return new {@link ODataEntityRequest} instance.
+   */
   ODataEntityRequest<ODataEntity> getEntityRequest(URI uri);
 
-  @Override
+  /**
+   * Gets a uri request returning a single OData entity property.
+   *
+   * @param uri request URI.
+   * @return new {@link ODataPropertyRequest} instance.
+   */
   ODataPropertyRequest<ODataProperty> getPropertyRequest(URI uri);
+  
+  /**
+   * Gets a uri request returning a single OData entity property value.
+   *
+   * @param uri request URI.
+   * @return new {@link ODataValueRequest} instance.
+   */
+  ODataValueRequest getPropertyValueRequest(URI uri);
+
+  /**
+   * Gets a uri request returning a single OData entity property value.
+   *
+   * @param uri request URI.
+   * @return new {@link ODataValueRequest} instance.
+   */
+  ODataValueRequest getValueRequest(URI uri);
+
+  /**
+   * Gets a uri request returning a media stream.
+   *
+   * @param uri request URI.
+   * @return new {@link ODataMediaRequest} instance.
+   */
+  ODataMediaRequest getMediaRequest(URI uri);
+  
+  /**
+   * Gets a uri request returning a media entity.
+   *
+   * @param uri request URI.
+   * @return new {@link ODataMediaRequest} instance.
+   */
+  ODataMediaRequest getMediaEntityRequest(URI uri);
+
+  /**
+   * Implements a raw request request without specifying any return type.
+   *
+   * @param uri request URI.
+   * @return new {@link ODataRawRequest} instance.
+   */
+  ODataRawRequest getRawRequest(URI uri);
+
+  ODataEntityRequest<ODataSingleton> getSingletonRequest(URI uri);
 
   ODataDeltaRequest getDeltaRequest(URI uri);
 }
