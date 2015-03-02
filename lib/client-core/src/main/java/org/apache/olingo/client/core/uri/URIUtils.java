@@ -44,7 +44,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.WrappingHttpClientFactory;
 import org.apache.olingo.client.api.uri.SegmentType;
@@ -351,7 +351,7 @@ public final class URIUtils {
     return value;
   }
 
-  public static boolean shouldUseRepeatableHttpBodyEntry(final CommonODataClient<?> client) {
+  public static boolean shouldUseRepeatableHttpBodyEntry(final ODataClient client) {
     // returns true for authentication request in case of http401 which needs retry so requires being repeatable.
     HttpClientFactory httpclientFactory = client.getConfiguration().getHttpClientFactory();
     if (httpclientFactory instanceof BasicAuthHttpClientFactory) {
@@ -366,7 +366,7 @@ public final class URIUtils {
     return false;
   }
 
-  public static HttpEntity buildInputStreamEntity(final CommonODataClient<?> client, final InputStream input) {
+  public static HttpEntity buildInputStreamEntity(final ODataClient client, final InputStream input) {
     AbstractHttpEntity entity;
     boolean useChunked = client.getConfiguration().isUseChuncked();
 

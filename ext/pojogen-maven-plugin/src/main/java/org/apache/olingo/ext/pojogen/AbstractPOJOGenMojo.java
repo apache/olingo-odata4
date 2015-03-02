@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -42,7 +43,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
@@ -195,7 +196,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
 
   protected abstract AbstractUtility getUtility();
 
-  protected abstract CommonODataClient<?> getClient();
+  protected abstract ODataClient getClient();
 
   private Triple<XMLMetadata, String, Edm> getMetadata() throws FileNotFoundException {
     if (StringUtils.isEmpty(serviceRootURL) && StringUtils.isEmpty(localEdm)) {

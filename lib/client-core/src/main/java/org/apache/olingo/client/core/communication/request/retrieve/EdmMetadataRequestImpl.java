@@ -21,7 +21,7 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 import java.net.URI;
 
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
@@ -36,7 +36,7 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
 
   private EdmMetadataResponseImpl privateResponse;
 
-  EdmMetadataRequestImpl(final CommonODataClient<?> odataClient, final String serviceRoot, final URI uri) {
+  EdmMetadataRequestImpl(final ODataClient odataClient, final String serviceRoot, final URI uri) {
     super(odataClient, uri);
     this.serviceRoot = serviceRoot;
   }
@@ -67,7 +67,7 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
 
     private XMLMetadata metadata = null;
 
-    private EdmMetadataResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+    private EdmMetadataResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final ODataRetrieveResponse<XMLMetadata> xmlMetadataResponse) {
 
       super(odataClient, httpClient, null);

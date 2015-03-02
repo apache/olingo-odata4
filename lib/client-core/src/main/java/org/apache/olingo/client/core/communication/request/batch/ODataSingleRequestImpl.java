@@ -19,7 +19,7 @@
 package org.apache.olingo.client.core.communication.request.batch;
 
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
-import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
+import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataSingleRequest;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -37,7 +37,7 @@ public class ODataSingleRequestImpl extends AbstractODataBatchRequestItem implem
    * @param req batch request.
    * @param expectedResItem expected batch response item.
    */
-  ODataSingleRequestImpl(final CommonODataBatchRequest req, final ODataSingleResponseItem expectedResItem) {
+  ODataSingleRequestImpl(final ODataBatchRequest req, final ODataSingleResponseItem expectedResItem) {
     super(req);
     this.expectedResItem = expectedResItem;
   }

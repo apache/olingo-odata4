@@ -21,7 +21,6 @@ package org.apache.olingo.fit.tecsvc.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
@@ -36,7 +35,7 @@ import org.junit.Test;
 
 public final class NavigationITCase extends AbstractBaseTestITCase {
 
-  private final CommonODataClient<?> client = getClient();
+  private final ODataClient client = getClient();
 
   @Test
   public void oneLevelToEntity() throws Exception {
@@ -134,7 +133,7 @@ public final class NavigationITCase extends AbstractBaseTestITCase {
   }
 
   @Override
-  protected CommonODataClient<?> getClient() {
+  protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getV4();
     odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
     return odata;

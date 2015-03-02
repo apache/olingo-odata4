@@ -26,7 +26,7 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 public final class ODataClientFactory {
 
   public static ODataClient getV4() {
-    return new org.apache.olingo.client.core.ODataClientImpl();
+    return new ODataClientImpl();
   }
 
   public static EdmEnabledODataClient getEdmEnabledV4(final String serviceRoot) {

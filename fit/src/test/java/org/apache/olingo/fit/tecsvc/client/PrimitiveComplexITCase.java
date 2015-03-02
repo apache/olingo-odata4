@@ -28,7 +28,6 @@ import static org.junit.Assert.fail;
 import java.net.URI;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
@@ -226,7 +225,7 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
   }   
 
   @Override
-  protected CommonODataClient<?> getClient() {
+  protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getV4();
     odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
     return odata;

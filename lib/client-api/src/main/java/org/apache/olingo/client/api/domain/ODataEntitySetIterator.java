@@ -29,7 +29,7 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
@@ -56,7 +56,7 @@ public class ODataEntitySetIterator<ES extends ODataEntitySet, E extends ODataEn
    */
   private static final Logger LOG = LoggerFactory.getLogger(ODataEntitySetIterator.class);
 
-  protected final CommonODataClient<?> odataClient;
+  protected final ODataClient odataClient;
 
   protected ResWrap<Entity> cached;
 
@@ -79,7 +79,7 @@ public class ODataEntitySetIterator<ES extends ODataEntitySet, E extends ODataEn
    * @param stream source stream.
    * @param format OData format.
    */
-  public ODataEntitySetIterator(final CommonODataClient<?> odataClient, final InputStream stream,
+  public ODataEntitySetIterator(final ODataClient odataClient, final InputStream stream,
           final ODataFormat format) {
 
     this.odataClient = odataClient;

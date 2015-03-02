@@ -21,12 +21,13 @@ package org.apache.olingo.fit.proxy.v4.staticservice;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.ext.proxy.api.AbstractTerm;
-import org.apache.olingo.ext.proxy.AbstractService;
 
-public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractService<C> {
+import org.apache.olingo.client.api.EdmEnabledODataClient;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.ext.proxy.AbstractService;
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
+
+public class Service<C extends EdmEnabledODataClient> extends AbstractService<C> {
 
   // CHECKSTYLE:OFF (Maven checkstyle)
   private static final String COMPRESSED_METADATA =
@@ -37,7 +38,7 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
   private static final Map<String, Service<?>> SERVICES = new ConcurrentHashMap<String, Service<?>>();
 
   @SuppressWarnings("unchecked")
-  private static <C extends CommonEdmEnabledODataClient<?>> Service<C> getInstance(
+  private static <C extends EdmEnabledODataClient> Service<C> getInstance(
       final ODataServiceVersion version, final String serviceRoot, final boolean transactional) {
 
     if (!SERVICES.containsKey(serviceRoot)) {
@@ -55,7 +56,7 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
    * @param serviceRoot OData service root
    * @return OData 4.0 instance for given service root, operating in transactions (with batch requests)
    */
-  public static Service<org.apache.olingo.client.api.EdmEnabledODataClient> getV4(
+  public static Service<EdmEnabledODataClient> getV4(
       final String serviceRoot) {
 
     return getV4(serviceRoot, true);
@@ -68,7 +69,7 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
    * @param transactional whether operating in transactions (with batch requests) or not
    * @return OData 4.0 instance for given service root
    */
-  public static Service<org.apache.olingo.client.api.EdmEnabledODataClient> getV4(
+  public static Service<EdmEnabledODataClient> getV4(
       final String serviceRoot, final boolean transactional) {
 
     return getInstance(ODataServiceVersion.V40, serviceRoot, transactional);

@@ -28,21 +28,21 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
 public class ODataWriterImpl implements ODataWriter {
 
-  protected final CommonODataClient<?> client;
+  protected final ODataClient client;
 
-  public ODataWriterImpl(final CommonODataClient<?> client) {
+  public ODataWriterImpl(final ODataClient client) {
     this.client = client;
   }
 

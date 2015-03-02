@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.ODataBatchConstants;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
-import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
+import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.core.communication.request.streamed.AbstractODataStreamedRequest;
@@ -56,7 +56,7 @@ public abstract class AbstractODataBatchRequest<V extends ODataResponse, T exten
    * @param odataClient client instance getting this request
    * @param uri batch request URI (http://serviceRoot/$batch)
    */
-  protected AbstractODataBatchRequest(final CommonODataClient<?> odataClient, final URI uri) {
+  protected AbstractODataBatchRequest(final ODataClient odataClient, final URI uri) {
     super(odataClient, HttpMethod.POST, uri);
 
     // create a random UUID value for boundary
@@ -80,7 +80,7 @@ public abstract class AbstractODataBatchRequest<V extends ODataResponse, T exten
    * This operation is unsupported by a batch request.
    */
   @Override
-  public void batch(final CommonODataBatchRequest req) {
+  public void batch(final ODataBatchRequest req) {
     throw new UnsupportedOperationException("A batch request is not batchable");
   }
 }

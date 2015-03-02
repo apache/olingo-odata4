@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
@@ -43,7 +43,7 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readSelect() {
-    final CommonODataClient<?> client = getClient();
+    final ODataClient client = getClient();
     final ODataEntityRequest<ODataEntity> request = client.getRetrieveRequestFactory()
         .getEntityRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESAllPrim").appendKeySegment(Short.MAX_VALUE)
@@ -74,7 +74,7 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readExpandSelect() {
-    final CommonODataClient<?> client = getClient();
+    final ODataClient client = getClient();
     final ODataEntityRequest<ODataEntity> request = client.getRetrieveRequestFactory()
         .getEntityRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESTwoPrim").appendKeySegment(-365)
@@ -115,7 +115,7 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readExpandTwoLevels() {
-    final CommonODataClient<?> client = getClient();
+    final ODataClient client = getClient();
     final ODataEntityRequest<ODataEntity> request = client.getRetrieveRequestFactory()
         .getEntityRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
@@ -150,7 +150,7 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
   }
 
   @Override
-  protected CommonODataClient<?> getClient() {
+  protected ODataClient getClient() {
     return ODataClientFactory.getEdmEnabledV4(TecSvcConst.BASE_URI);
   }
 }

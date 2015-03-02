@@ -27,7 +27,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.core.edm.EdmClientImpl;
@@ -49,13 +49,13 @@ import org.slf4j.LoggerFactory;
  *
  * @param <C> actual client class
  */
-public abstract class AbstractService<C extends CommonEdmEnabledODataClient<?>> {
+public abstract class AbstractService<C extends EdmEnabledODataClient> {
 
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractService.class);
 
   private final Map<Class<?>, Object> ENTITY_CONTAINERS = new ConcurrentHashMap<Class<?>, Object>();
 
-  private final CommonEdmEnabledODataClient<?> client;
+  private final EdmEnabledODataClient client;
 
   private final Context context;
 

@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
@@ -49,7 +49,7 @@ public class BasicHttpExceptionHandling extends AbstractBaseTestITCase {
   }
 
   @Override
-  protected CommonODataClient<?> getClient() {
+  protected ODataClient getClient() {
     return null;
   }
 

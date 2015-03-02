@@ -26,11 +26,11 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.ODataBatchConstants;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
-import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
+import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -50,7 +50,7 @@ public abstract class AbstractODataBasicRequest<T extends ODataResponse>
    * @param method request method.
    * @param uri OData request URI.
    */
-  public AbstractODataBasicRequest(final CommonODataClient<?> odataClient, final HttpMethod method, final URI uri) {
+  public AbstractODataBasicRequest(final ODataClient odataClient, final HttpMethod method, final URI uri) {
     super(odataClient, method, uri);
   }
 
@@ -85,7 +85,7 @@ public abstract class AbstractODataBasicRequest<T extends ODataResponse>
    *
    * @param req destination batch request.
    */
-  public void batch(final CommonODataBatchRequest req) {
+  public void batch(final ODataBatchRequest req) {
     batch(req, null);
   }
 
@@ -97,7 +97,7 @@ public abstract class AbstractODataBasicRequest<T extends ODataResponse>
    * @param req destination batch request.
    * @param contentId contentId of the changeset item.
    */
-  public void batch(final CommonODataBatchRequest req, final String contentId) {
+  public void batch(final ODataBatchRequest req, final String contentId) {
     try {
       req.rawAppend(toByteArray());
       if (StringUtils.isNotBlank(contentId)) {

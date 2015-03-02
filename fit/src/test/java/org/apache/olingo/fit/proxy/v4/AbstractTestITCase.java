@@ -29,8 +29,8 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
@@ -142,7 +142,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
   }
 
   @Override
-  protected CommonODataClient<?> getClient() {
+  protected ODataClient getClient() {
     throw new RuntimeException("This method should not be used from proxy tests.");
   }
 }

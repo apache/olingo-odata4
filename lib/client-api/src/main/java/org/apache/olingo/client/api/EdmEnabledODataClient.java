@@ -18,15 +18,31 @@
  */
 package org.apache.olingo.client.api;
 
-import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.EdmEnabledInvokeRequestFactory;
 import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.commons.api.edm.Edm;
 
-public interface EdmEnabledODataClient extends CommonEdmEnabledODataClient<UpdateType>, ODataClient {
+public interface EdmEnabledODataClient extends ODataClient {
 
-  @Override
+  String getServiceRoot();
+
+  /**
+   * Checks if the cached Edm matadata information matches the argument and, if not, updates the cache against the
+   * configured service root.
+   *
+   * @param metadataETag metadata ETag to be compared against the cache
+   * @return Edm
+   */
+  Edm getEdm(String metadataETag);
+
+  /**
+   * Return the cached Edm matadata information.
+   *
+   * @return Edm
+   */
+  Edm getCachedEdm();
+  
   URIBuilder newURIBuilder();
 
-  @Override
   EdmEnabledInvokeRequestFactory getInvokeRequestFactory();
 }

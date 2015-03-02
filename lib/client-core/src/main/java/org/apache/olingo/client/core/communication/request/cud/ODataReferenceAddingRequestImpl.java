@@ -25,7 +25,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataReferenceAddingRequest;
 import org.apache.olingo.client.api.communication.response.ODataReferenceAddingResponse;
 import org.apache.olingo.client.api.serialization.ODataWriter;
@@ -48,7 +48,7 @@ public class ODataReferenceAddingRequestImpl extends AbstractODataBasicRequest<O
   final ResWrap<URI> reference;
 
   ODataReferenceAddingRequestImpl(
-      final CommonODataClient<?> odataClient, final HttpMethod method, final URI uri, final ResWrap<URI> reference) {
+      final ODataClient odataClient, final HttpMethod method, final URI uri, final ResWrap<URI> reference) {
     super(odataClient, method, uri);
     this.reference = reference;
   }
@@ -94,7 +94,7 @@ public class ODataReferenceAddingRequestImpl extends AbstractODataBasicRequest<O
   private class ODataReferenceAddingResponseImpl extends AbstractODataResponse implements ODataReferenceAddingResponse {
 
     private ODataReferenceAddingResponseImpl(
-        final CommonODataClient<?> odataClient, final HttpClient httpClient, final HttpResponse res) {
+        final ODataClient odataClient, final HttpClient httpClient, final HttpResponse res) {
 
       super(odataClient, httpClient, res);
       this.close();

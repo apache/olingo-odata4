@@ -18,16 +18,16 @@
  */
 package org.apache.olingo.client.core;
 
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.BeforeClass;
 
 public abstract class AbstractTest {
 
-  protected static org.apache.olingo.client.api.ODataClient v4Client;
+  protected static ODataClient v4Client;
 
-  protected abstract CommonODataClient<?> getClient();
+  protected abstract ODataClient getClient();
 
   @BeforeClass
   public static void setUp() {

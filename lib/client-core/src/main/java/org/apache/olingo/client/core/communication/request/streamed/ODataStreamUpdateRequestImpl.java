@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.StreamUpdateStreamManager;
 import org.apache.olingo.client.api.communication.response.ODataStreamUpdateResponse;
@@ -49,7 +49,7 @@ public class ODataStreamUpdateRequestImpl
    * @param targetURI target URI.
    * @param stream stream to be updated.
    */
-  public ODataStreamUpdateRequestImpl(final CommonODataClient<?> odataClient,
+  public ODataStreamUpdateRequestImpl(final ODataClient odataClient,
           final HttpMethod method, final URI targetURI, final InputStream stream) {
 
     super(odataClient, method, targetURI);
@@ -97,7 +97,7 @@ public class ODataStreamUpdateRequestImpl
 
     private InputStream input = null;
 
-    private ODataStreamUpdateResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+    private ODataStreamUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
 
       super(odataClient, httpClient, res);

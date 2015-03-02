@@ -20,14 +20,14 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 
 import java.net.URI;
 
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 public abstract class AbstractMetadataRequestImpl<V> extends AbstractODataRetrieveRequest<V> {
 
-  public AbstractMetadataRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
+  public AbstractMetadataRequestImpl(final ODataClient odataClient, final URI query) {
     super(odataClient, query);
     super.setAccept(ContentType.APPLICATION_XML.toContentTypeString());
     super.setContentType(ContentType.APPLICATION_XML.toContentTypeString());

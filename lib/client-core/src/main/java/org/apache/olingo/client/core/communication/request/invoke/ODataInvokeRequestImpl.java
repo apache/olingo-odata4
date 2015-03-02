@@ -20,7 +20,7 @@ package org.apache.olingo.client.core.communication.request.invoke;
 
 import java.net.URI;
 
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -29,7 +29,7 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends Abstrac
 
   private ODataFormat format;
 
-  public ODataInvokeRequestImpl(final CommonODataClient<?> odataClient, final Class<T> reference,
+  public ODataInvokeRequestImpl(final ODataClient odataClient, final Class<T> reference,
           final HttpMethod method, final URI uri) {
 
     super(odataClient, reference, method, uri);

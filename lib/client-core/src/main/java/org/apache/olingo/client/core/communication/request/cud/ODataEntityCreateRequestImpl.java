@@ -25,7 +25,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
@@ -60,7 +60,7 @@ public class ODataEntityCreateRequestImpl<E extends ODataEntity>
    * @param targetURI entity set URI.
    * @param entity entity to be created.
    */
-  ODataEntityCreateRequestImpl(final CommonODataClient<?> odataClient, final URI targetURI, final E entity) {
+  ODataEntityCreateRequestImpl(final ODataClient odataClient, final URI targetURI, final E entity) {
     super(odataClient, HttpMethod.POST, targetURI);
     this.entity = entity;
   }
@@ -98,7 +98,7 @@ public class ODataEntityCreateRequestImpl<E extends ODataEntity>
 
     private E entity = null;
 
-    private ODataEntityCreateResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+    private ODataEntityCreateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
 
       super(odataClient, httpClient, res);

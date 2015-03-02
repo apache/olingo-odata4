@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.client.api.communication.response.AsyncResponse;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchController;
@@ -33,7 +33,7 @@ import org.apache.olingo.client.core.communication.request.batch.ODataBatchContr
  */
 public class AsyncResponseImpl extends AbstractODataResponse implements AsyncResponse {
 
-  public AsyncResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+  public AsyncResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
           final HttpResponse res) {
 
     super(odataClient, httpClient, res);

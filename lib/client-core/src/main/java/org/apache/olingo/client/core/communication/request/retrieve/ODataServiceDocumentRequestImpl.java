@@ -22,7 +22,7 @@ import java.net.URI;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.data.ServiceDocument;
@@ -43,7 +43,7 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
    * @param odataClient client instance getting this request
    * @param uri request URI.
    */
-  ODataServiceDocumentRequestImpl(final CommonODataClient<?> odataClient, final URI uri) {
+  ODataServiceDocumentRequestImpl(final ODataClient odataClient, final URI uri) {
     super(odataClient, uri);
   }
 
@@ -65,7 +65,7 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
 
     private ODataServiceDocument serviceDocument = null;
 
-    private ODataServiceResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+    private ODataServiceResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
 
       super(odataClient, httpClient, res);

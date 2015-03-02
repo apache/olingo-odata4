@@ -21,7 +21,7 @@ package org.apache.olingo.client.core.communication.header;
 import java.io.InputStream;
 
 import org.apache.http.StatusLine;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.commons.api.ODataRuntimeException;
@@ -43,7 +43,7 @@ public final class ODataErrorResponseChecker {
   }
 
   public static ODataRuntimeException checkResponse(
-          final CommonODataClient<?> odataClient, final StatusLine statusLine, final InputStream entity,
+          final ODataClient odataClient, final StatusLine statusLine, final InputStream entity,
           final String accept) {
 
     ODataRuntimeException result = null;

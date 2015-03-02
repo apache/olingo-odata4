@@ -23,7 +23,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 /**
  * Update type.
  */
-public enum UpdateType implements CommonUpdateType {
+public enum UpdateType {
 
   /**
    * Replace all and remove missing attributes.
@@ -39,13 +39,12 @@ public enum UpdateType implements CommonUpdateType {
   private UpdateType(final HttpMethod method) {
     this.method = method;
   }
-
+  
   /**
    * Gets HTTP request method.
    *
    * @return HTTP request method.
    */
-  @Override
   public HttpMethod getMethod() {
     return method;
   }

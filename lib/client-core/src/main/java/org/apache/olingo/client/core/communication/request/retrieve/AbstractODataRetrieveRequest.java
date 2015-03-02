@@ -23,7 +23,7 @@ import java.net.URI;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRetrieveRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
@@ -43,7 +43,7 @@ public abstract class AbstractODataRetrieveRequest<T>
    * @param odataClient client instance getting this request
    * @param query query to be executed.
    */
-  public AbstractODataRetrieveRequest(final CommonODataClient<?> odataClient, final URI query) {
+  public AbstractODataRetrieveRequest(final ODataClient odataClient, final URI query) {
     super(odataClient, HttpMethod.GET, query);
   }
 
@@ -64,7 +64,7 @@ public abstract class AbstractODataRetrieveRequest<T>
   protected abstract class AbstractODataRetrieveResponse
           extends AbstractODataResponse implements ODataRetrieveResponse<T> {
 
-    protected AbstractODataRetrieveResponse(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+    protected AbstractODataRetrieveResponse(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
 
       super(odataClient, httpClient, res);

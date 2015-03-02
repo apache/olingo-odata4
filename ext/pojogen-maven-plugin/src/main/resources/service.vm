@@ -23,12 +23,12 @@ package ${package};
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.AbstractService;
 
-public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractService<C> {
+public class Service<C extends EdmEnabledODataClient> extends AbstractService<C> {
 
   //CHECKSTYLE:OFF (Maven checkstyle)
   private static final String COMPRESSED_METADATA = "$metadata";
@@ -38,7 +38,7 @@ public class Service<C extends CommonEdmEnabledODataClient<?>> extends AbstractS
   private static final Map<String, Service<?>> SERVICES = new ConcurrentHashMap<String, Service<?>>();
 
   @SuppressWarnings("unchecked")
-  private static <C extends CommonEdmEnabledODataClient<?>> Service<C> getInstance(
+  private static <C extends EdmEnabledODataClient> Service<C> getInstance(
           final ODataServiceVersion version, final String serviceRoot, final boolean transactional) {
 
     if (!SERVICES.containsKey(serviceRoot)) {

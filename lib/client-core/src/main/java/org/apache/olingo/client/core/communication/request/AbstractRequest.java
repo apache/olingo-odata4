@@ -19,8 +19,8 @@ import java.io.IOException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.EdmEnabledODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.core.communication.header.ODataErrorResponseChecker;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.slf4j.Logger;
@@ -33,21 +33,21 @@ public abstract class AbstractRequest {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractRequest.class);
 
-  protected void checkRequest(final CommonODataClient<?> odataClient, final HttpUriRequest request) {
+  protected void checkRequest(final ODataClient odataClient, final HttpUriRequest request) {
     // If using and Edm enabled client, checks that the cached service root matches the request URI
-    if (odataClient instanceof CommonEdmEnabledODataClient
+    if (odataClient instanceof EdmEnabledODataClient
             && !request.getURI().toASCIIString().startsWith(
-                    ((CommonEdmEnabledODataClient<?>) odataClient).getServiceRoot())) {
+                    ((EdmEnabledODataClient) odataClient).getServiceRoot())) {
 
       throw new IllegalArgumentException(
               String.format("The current request URI %s does not match the configured service root %s",
                       request.getURI().toASCIIString(),
-                      ((CommonEdmEnabledODataClient<?>) odataClient).getServiceRoot()));
+                      ((EdmEnabledODataClient) odataClient).getServiceRoot()));
     }
   }
 
   protected void checkResponse(
-          final CommonODataClient<?> odataClient, final HttpResponse response, final String accept) {
+          final ODataClient odataClient, final HttpResponse response, final String accept) {
 
     if (response.getStatusLine().getStatusCode() >= 400) {
       try {

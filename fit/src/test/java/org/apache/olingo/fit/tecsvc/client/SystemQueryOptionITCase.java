@@ -23,7 +23,6 @@ import static org.junit.Assert.fail;
 
 import java.net.URI;
 
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -45,7 +44,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testCountSimple() {
-    CommonODataClient<?> client = getClient();
+    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
         .addQueryOption(QueryOption.COUNT, "true")
@@ -61,7 +60,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testServerSidePagingCount() {
-    CommonODataClient<?> client = getClient();
+    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
         .addQueryOption(QueryOption.COUNT, "true")
@@ -77,7 +76,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testTopSimple() {
-    CommonODataClient<?> client = getClient();
+    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
         .addQueryOption(QueryOption.TOP, new Integer(5).toString())
@@ -97,7 +96,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testSkipSimple() {
-    CommonODataClient<?> client = getClient();
+    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
         .addQueryOption(QueryOption.SKIP, new Integer(5).toString())
@@ -117,7 +116,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testTopNothing() {
-    CommonODataClient<?> client = getClient();
+    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
         .addQueryOption(QueryOption.TOP, new Integer(20).toString())
@@ -133,7 +132,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testSkipNothing() {
-    CommonODataClient<?> client = getClient();
+    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
         .addQueryOption(QueryOption.SKIP, new Integer(10000).toString())
@@ -148,7 +147,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testFilterWithTopSkipOrderByAndServerSidePaging() {
-    CommonODataClient<?> client = getClient();
+    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
         .filter("PropertyInt16 le 105") // 1, 2, ... , 105
@@ -202,7 +201,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testNextLinkFormat() {
-    CommonODataClient<?> client = getClient();
+    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
         .build();
@@ -228,7 +227,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testNextLinkFormatWithQueryOptions() {
-    CommonODataClient<?> client = getClient();
+    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
         .addQueryOption(QueryOption.COUNT, Boolean.TRUE.toString())
@@ -266,7 +265,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
   @Test
   @SuppressWarnings("unused")
   public void testNegativeSkip() {
-    CommonODataClient<?> client = getClient();
+    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
         .addQueryOption(QueryOption.SKIP, new Integer(-5).toString())
@@ -285,7 +284,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
   @Test
   @SuppressWarnings("unused")
   public void testNegativeTop() {
-    CommonODataClient<?> client = getClient();
+    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
         .addQueryOption(QueryOption.TOP, new Integer(-5).toString())

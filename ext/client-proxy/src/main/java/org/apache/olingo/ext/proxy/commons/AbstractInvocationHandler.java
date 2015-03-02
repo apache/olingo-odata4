@@ -31,7 +31,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -64,7 +64,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     this.service = service;
   }
 
-  protected CommonEdmEnabledODataClient<?> getClient() {
+  protected EdmEnabledODataClient getClient() {
     return service.getClient();
   }
 

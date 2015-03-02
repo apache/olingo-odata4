@@ -37,7 +37,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.ODataAnnotatable;
@@ -92,7 +92,7 @@ public final class CoreUtils {
   }
 
   public static ODataValue getODataValue(
-      final CommonEdmEnabledODataClient<?> client, final EdmTypeInfo type, final Object obj) {
+      final EdmEnabledODataClient client, final EdmTypeInfo type, final Object obj) {
 
     final ODataValue value;
 
@@ -150,7 +150,7 @@ public final class CoreUtils {
   }
 
   private static ODataProperty getODataEntityProperty(
-      final CommonEdmEnabledODataClient<?> client,
+      final EdmEnabledODataClient client,
       final FullQualifiedName entity,
       final String property,
       final Object obj) {
@@ -160,7 +160,7 @@ public final class CoreUtils {
   }
 
   private static ODataProperty getODataComplexProperty(
-      final CommonEdmEnabledODataClient<?> client,
+      final EdmEnabledODataClient client,
       final FullQualifiedName complex,
       final String property,
       final Object obj) {
@@ -170,7 +170,7 @@ public final class CoreUtils {
   }
 
   private static ODataProperty getODataProperty(
-      final CommonEdmEnabledODataClient<?> client,
+      final EdmEnabledODataClient client,
       final EdmElement edmProperty,
       final String property,
       final Object obj) {
@@ -192,7 +192,7 @@ public final class CoreUtils {
   }
 
   public static ODataAnnotation getODataAnnotation(
-      final CommonEdmEnabledODataClient<?> client, final String term, final EdmType type, final Object obj) {
+      final EdmEnabledODataClient client, final String term, final EdmType type, final Object obj) {
 
     ODataAnnotation annotation;
 
@@ -212,7 +212,7 @@ public final class CoreUtils {
   }
 
   public static ODataProperty getODataProperty(
-      final CommonEdmEnabledODataClient<?> client, final String name, final EdmTypeInfo type, final Object obj) {
+      final EdmEnabledODataClient client, final String name, final EdmTypeInfo type, final Object obj) {
 
     ODataProperty property;
 
@@ -246,7 +246,7 @@ public final class CoreUtils {
   }
 
   private static EdmTypeInfo guessTypeFromObject(
-      final CommonEdmEnabledODataClient<?> client, final Object obj) {
+      final EdmEnabledODataClient client, final Object obj) {
 
     final EdmTypeInfo.Builder edmTypeInfo = new EdmTypeInfo.Builder().setEdm(client.getCachedEdm());
 
@@ -269,7 +269,7 @@ public final class CoreUtils {
     }
   }
 
-  private static EdmTypeInfo guessPrimitiveType(final CommonEdmEnabledODataClient<?> client, final Class<?> clazz) {
+  private static EdmTypeInfo guessPrimitiveType(final EdmEnabledODataClient client, final Class<?> clazz) {
     EdmPrimitiveTypeKind bckCandidate = null;
 
     for (EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
@@ -295,7 +295,7 @@ public final class CoreUtils {
   }
 
   public static void addProperties(
-      final CommonEdmEnabledODataClient<?> client,
+      final EdmEnabledODataClient client,
       final Map<String, Object> changes,
       final ODataEntity entity) {
 
@@ -306,7 +306,7 @@ public final class CoreUtils {
   }
 
   public static void addProperties(
-      final CommonEdmEnabledODataClient<?> client,
+      final EdmEnabledODataClient client,
       final Map<String, Object> changes,
       final ODataComplexValue<ODataProperty> entity) {
 
@@ -320,7 +320,7 @@ public final class CoreUtils {
   }
 
   public static void addAnnotations(
-      final CommonEdmEnabledODataClient<?> client,
+      final EdmEnabledODataClient client,
       final Map<Class<? extends AbstractTerm>, Object> annotations,
       final ODataAnnotatable annotatable) {
 
@@ -386,7 +386,7 @@ public final class CoreUtils {
   }
 
   public static URIBuilder buildEditLink(
-      final CommonEdmEnabledODataClient<?> client,
+      final EdmEnabledODataClient client,
       final String entitySetURI,
       final ODataEntity entity,
       final Object key) {
@@ -435,7 +435,7 @@ public final class CoreUtils {
   }
 
   public static Object getKey(
-      final CommonEdmEnabledODataClient<?> client,
+      final EdmEnabledODataClient client,
       final EntityInvocationHandler typeHandler,
       final Class<?> entityTypeRef,
       final ODataEntity entity) {
@@ -465,7 +465,7 @@ public final class CoreUtils {
   }
 
   private static void populate(
-      final CommonEdmEnabledODataClient<?> client,
+      final EdmEnabledODataClient client,
       final EntityInvocationHandler typeHandler,
       final Object bean,
       final Class<? extends Annotation> getterAnn,
@@ -489,7 +489,7 @@ public final class CoreUtils {
 
   @SuppressWarnings({ "unchecked" })
   private static void populate(
-      final CommonEdmEnabledODataClient<?> client,
+      final EdmEnabledODataClient client,
       final EntityInvocationHandler typeHandler,
       final Object bean,
       final Class<?> typeRef,
@@ -662,7 +662,7 @@ public final class CoreUtils {
   }
 
   public static URI getTargetEntitySetURI(
-      final CommonEdmEnabledODataClient<?> client, final NavigationProperty property) {
+      final EdmEnabledODataClient client, final NavigationProperty property) {
     final Edm edm = client.getCachedEdm();
 
     final FullQualifiedName containerName =

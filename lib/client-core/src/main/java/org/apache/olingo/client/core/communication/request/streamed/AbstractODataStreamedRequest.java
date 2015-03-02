@@ -28,12 +28,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.ODataBatchConstants;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
-import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
+import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.request.Wrapper;
@@ -69,7 +69,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
    * @param method OData request HTTP method.
    * @param uri OData request URI.
    */
-  public AbstractODataStreamedRequest(final CommonODataClient<?> odataClient,
+  public AbstractODataStreamedRequest(final ODataClient odataClient,
           final HttpMethod method, final URI uri) {
 
     super(odataClient, method, uri);
@@ -130,7 +130,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
    *
    * @param req destination batch request.
    */
-  public void batch(final CommonODataBatchRequest req) {
+  public void batch(final ODataBatchRequest req) {
     batch(req, null);
   }
 
@@ -142,7 +142,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
    * @param req destination batch request.
    * @param contentId ContentId header value to be added to the serialization. Use this in case of changeset items.
    */
-  public void batch(final CommonODataBatchRequest req, final String contentId) {
+  public void batch(final ODataBatchRequest req, final String contentId) {
     final InputStream input = getPayloadManager().getBody();
 
     try {

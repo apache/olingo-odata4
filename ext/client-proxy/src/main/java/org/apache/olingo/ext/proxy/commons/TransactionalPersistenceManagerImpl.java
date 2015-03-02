@@ -22,12 +22,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.client.api.communication.request.batch.BatchManager;
-import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
+import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
@@ -58,7 +59,7 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
    */
   @Override
   protected void doFlush(final PersistenceChanges changes, final TransactionItems items) {
-    final CommonODataBatchRequest request =
+    final ODataBatchRequest request =
             service.getClient().getBatchRequestFactory().getBatchRequest(service.getClient().getServiceRoot());
     ((ODataRequest) request).setAccept(
             service.getClient().getConfiguration().getDefaultBatchAcceptFormat().toContentTypeString());

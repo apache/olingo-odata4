@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
@@ -54,7 +53,7 @@ public final class MediaITCase extends AbstractBaseTestITCase {
 
   @Test
   public void read() throws Exception {
-    final CommonODataClient<?> client = getClient();
+    final ODataClient client = getClient();
     final ODataMediaRequest request = client.getRetrieveRequestFactory().getMediaRequest(
         client.newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESMedia").appendKeySegment(1).appendValueSegment().build());
@@ -71,7 +70,7 @@ public final class MediaITCase extends AbstractBaseTestITCase {
 
   @Test
   public void delete() {
-    final CommonODataClient<?> client = getClient();
+    final ODataClient client = getClient();
     final URI uri = client.newURIBuilder(TecSvcConst.BASE_URI)
         .appendEntitySetSegment("ESMedia").appendKeySegment(4).appendValueSegment().build();
     final ODataDeleteRequest request = client.getCUDRequestFactory().getDeleteRequest(uri);
@@ -94,7 +93,7 @@ public final class MediaITCase extends AbstractBaseTestITCase {
 
   @Test
   public void update() throws Exception {
-    final CommonODataClient<?> client = getClient();
+    final ODataClient client = getClient();
     final URI uri = client.newURIBuilder(TecSvcConst.BASE_URI)
         .appendEntitySetSegment("ESMedia").appendKeySegment(4).appendValueSegment().build();
     ODataMediaEntityUpdateRequest<ODataEntity> request =
@@ -118,7 +117,7 @@ public final class MediaITCase extends AbstractBaseTestITCase {
 
   @Test
   public void create() throws Exception {
-    final CommonODataClient<?> client = getClient();
+    final ODataClient client = getClient();
     ODataMediaEntityCreateRequest<ODataEntity> request =
         client.getCUDRequestFactory().getMediaEntityCreateRequest(
             client.newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESMedia").build(),
@@ -149,7 +148,7 @@ public final class MediaITCase extends AbstractBaseTestITCase {
   }
 
   @Override
-  protected CommonODataClient<?> getClient() {
+  protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getV4();
     odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
     return odata;

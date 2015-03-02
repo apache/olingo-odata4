@@ -34,7 +34,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
@@ -58,7 +58,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(ODataResponse.class);
 
-  protected final CommonODataClient<?> odataClient;
+  protected final ODataClient odataClient;
 
   /**
    * HTTP client.
@@ -102,7 +102,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
   protected ODataBatchController batchInfo = null;
 
   public AbstractODataResponse(
-          final CommonODataClient<?> odataClient, final HttpClient httpclient, final HttpResponse res) {
+          final ODataClient odataClient, final HttpClient httpclient, final HttpResponse res) {
 
     this.odataClient = odataClient;
     this.httpClient = httpclient;

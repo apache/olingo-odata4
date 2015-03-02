@@ -29,7 +29,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
@@ -41,8 +40,8 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -72,7 +71,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
    * @param uri URI that identifies the operation.
    */
   public AbstractODataInvokeRequest(
-          final CommonODataClient<?> odataClient,
+          final ODataClient odataClient,
           final Class<T> reference,
           final HttpMethod method,
           final URI uri) {
@@ -183,7 +182,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
 
     private T invokeResult = null;
 
-    private ODataInvokeResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+    private ODataInvokeResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
 
       super(odataClient, httpClient, res);

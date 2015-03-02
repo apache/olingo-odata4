@@ -25,7 +25,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataValueUpdateResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
@@ -56,7 +56,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
    * @param targetURI entity set or entity or entity property URI.
    * @param value value to be created.
    */
-  ODataValueUpdateRequestImpl(final CommonODataClient<?> odataClient,
+  ODataValueUpdateRequestImpl(final ODataClient odataClient,
           final HttpMethod method, final URI targetURI, final ODataPrimitiveValue value) {
 
     super(odataClient, method, targetURI);
@@ -96,7 +96,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
 
     private ODataPrimitiveValue value = null;
 
-    private ODataValueUpdateResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+    private ODataValueUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
 
       super(odataClient, httpClient, res);

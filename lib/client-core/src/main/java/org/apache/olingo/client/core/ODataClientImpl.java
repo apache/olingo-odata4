@@ -18,18 +18,20 @@
  */
 package org.apache.olingo.client.core;
 
+import org.apache.olingo.client.api.Configuration;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
+import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.AsyncRequestFactory;
 import org.apache.olingo.client.api.communication.request.batch.BatchRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.CUDRequestFactory;
-import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.RetrieveRequestFactory;
 import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataBinder;
 import org.apache.olingo.client.api.serialization.ODataReader;
+import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.client.api.uri.FilterFactory;
 import org.apache.olingo.client.api.uri.SearchFactory;
 import org.apache.olingo.client.api.uri.URIBuilder;
@@ -42,6 +44,7 @@ import org.apache.olingo.client.core.communication.request.retrieve.RetrieveRequ
 import org.apache.olingo.client.core.serialization.ClientODataDeserializerImpl;
 import org.apache.olingo.client.core.serialization.ODataBinderImpl;
 import org.apache.olingo.client.core.serialization.ODataReaderImpl;
+import org.apache.olingo.client.core.serialization.ODataWriterImpl;
 import org.apache.olingo.client.core.uri.FilterFactoryImpl;
 import org.apache.olingo.client.core.uri.URIBuilderImpl;
 import org.apache.olingo.commons.api.domain.ODataObjectFactory;
@@ -52,7 +55,7 @@ import org.apache.olingo.commons.core.domain.ODataObjectFactoryImpl;
 import org.apache.olingo.commons.core.serialization.AtomSerializer;
 import org.apache.olingo.commons.core.serialization.JsonSerializer;
 
-public class ODataClientImpl extends AbstractODataClient<UpdateType> implements ODataClient {
+public class ODataClientImpl implements ODataClient {
 
   private final FilterFactory filterFactory = new FilterFactoryImpl(getServiceVersion());
 
@@ -74,6 +77,25 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
 
   private final BatchRequestFactory batchReqFact = new BatchRequestFactoryImpl(this);
 
+  protected final Configuration configuration = new ConfigurationImpl();
+
+  private final ODataWriter writer = new ODataWriterImpl(this);
+
+  @Override
+  public Configuration getConfiguration() {
+    return configuration;
+  }
+
+  @Override
+  public ODataPreferences newPreferences() {
+    return new ODataPreferences(getServiceVersion());
+  }
+
+  @Override
+  public ODataWriter getWriter() {
+    return writer;
+  }
+  
   @Override
   public ODataServiceVersion getServiceVersion() {
     return ODataServiceVersion.V40;

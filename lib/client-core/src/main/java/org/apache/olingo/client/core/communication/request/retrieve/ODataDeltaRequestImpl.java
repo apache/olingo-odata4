@@ -23,7 +23,6 @@ import java.net.URI;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataDeltaRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -37,7 +36,7 @@ import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ODataDelta>
         implements ODataDeltaRequest {
 
-  public ODataDeltaRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
+  public ODataDeltaRequestImpl(final ODataClient odataClient, final URI query) {
     super(odataClient, query);
   }
 
@@ -56,7 +55,7 @@ public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ODataDel
 
     private ODataDelta delta = null;
 
-    private ODataDeltaResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+    private ODataDeltaResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
 
       super(odataClient, httpClient, res);

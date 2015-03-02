@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.request;
 
-import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
+import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 
 /**
  * Object request that can be sent embedded into a batch request.
@@ -32,7 +32,7 @@ public interface ODataBatchableRequest extends ODataRequest {
    *
    * @param req destination batch request.
    */
-  void batch(final CommonODataBatchRequest req);
+  void batch(final ODataBatchRequest req);
 
   /**
    * Writes (and consume) the request onto the given batch stream.
@@ -42,5 +42,5 @@ public interface ODataBatchableRequest extends ODataRequest {
    * @param req destination batch request.
    * @param contentId ContentId header value to be added to the serialization. Use this in case of changeset items.
    */
-  void batch(final CommonODataBatchRequest req, final String contentId);
+  void batch(final ODataBatchRequest req, final String contentId);
 }

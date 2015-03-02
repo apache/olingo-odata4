@@ -33,7 +33,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DecompressingHttpClient;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
@@ -55,7 +55,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
  */
 public abstract class AbstractODataRequest extends AbstractRequest implements ODataRequest {
 
-  protected final CommonODataClient<?> odataClient;
+  protected final ODataClient odataClient;
 
   /**
    * OData request method.
@@ -89,7 +89,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
    * @param method HTTP request method. If configured X-HTTP-METHOD header will be used.
    * @param uri OData request URI.
    */
-  protected AbstractODataRequest(final CommonODataClient<?> odataClient, final HttpMethod method, final URI uri) {
+  protected AbstractODataRequest(final ODataClient odataClient, final HttpMethod method, final URI uri) {
     super();
 
     this.odataClient = odataClient;
@@ -344,7 +344,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
       if (ODataResponse.class.isAssignableFrom(clazz)) {
         try {
           final Constructor<?> constructor = clazz.getDeclaredConstructor(
-                  this.getClass(), CommonODataClient.class, HttpClient.class, HttpResponse.class);
+                  this.getClass(), ODataClient.class, HttpClient.class, HttpResponse.class);
           constructor.setAccessible(true);
           return (V) constructor.newInstance(this, odataClient, httpClient, null);
         } catch (Exception e) {

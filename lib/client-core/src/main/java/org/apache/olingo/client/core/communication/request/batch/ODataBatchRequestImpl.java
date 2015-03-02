@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
@@ -98,7 +97,7 @@ public class ODataBatchRequestImpl
   protected class ODataBatchResponseImpl extends AbstractODataResponse implements ODataBatchResponse {
 
     protected ODataBatchResponseImpl(
-            final CommonODataClient<?> odataClient, final HttpClient httpClient, final HttpResponse res) {
+            final ODataClient odataClient, final HttpClient httpClient, final HttpResponse res) {
 
       super(odataClient, httpClient, res);
     }

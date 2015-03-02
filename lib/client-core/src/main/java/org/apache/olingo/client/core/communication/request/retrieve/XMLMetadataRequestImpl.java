@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -133,7 +132,7 @@ public class XMLMetadataRequestImpl
      *  main metadata document's URI but don't have to start with the service root
      *  as all other OData request URIs. */
     @Override
-    protected void checkRequest(final CommonODataClient<?> odataClient, final HttpUriRequest request) {
+    protected void checkRequest(final ODataClient odataClient, final HttpUriRequest request) {
       if (parentURI == null) {
         super.checkRequest(odataClient, request);
       } else {
@@ -173,7 +172,7 @@ public class XMLMetadataRequestImpl
 
     private final XMLMetadata metadata;
 
-    private XMLMetadataResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+    private XMLMetadataResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res, final XMLMetadata metadata) {
 
       super(odataClient, httpClient, null);

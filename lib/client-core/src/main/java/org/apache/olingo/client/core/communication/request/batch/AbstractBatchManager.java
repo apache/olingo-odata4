@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
-import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
+import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequestItem;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
 import org.apache.olingo.client.api.communication.request.batch.ODataSingleRequest;
@@ -46,9 +46,9 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
   /**
    * batch request reference.
    */
-  protected final CommonODataBatchRequest req;
+  protected final ODataBatchRequest req;
 
-  protected AbstractBatchManager(final CommonODataBatchRequest req,
+  protected AbstractBatchManager(final ODataBatchRequest req,
           final Wrapper<Future<HttpResponse>> futureWrap, final boolean continueOnError) {
 
     super(futureWrap);

@@ -25,7 +25,7 @@ import java.net.URI;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
@@ -46,7 +46,7 @@ public class ODataRawRequestImpl extends AbstractODataRequest implements ODataRa
    * @param odataClient client instance getting this request
    * @param uri request URI.
    */
-  ODataRawRequestImpl(final CommonODataClient<?> odataClient, final URI uri) {
+  ODataRawRequestImpl(final ODataClient odataClient, final URI uri) {
     super(odataClient, HttpMethod.GET, uri);
   }
 
@@ -70,7 +70,7 @@ public class ODataRawRequestImpl extends AbstractODataRequest implements ODataRa
 
     private byte[] obj = null;
 
-    private ODataRawResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+    private ODataRawResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
 
       super(odataClient, httpClient, res);

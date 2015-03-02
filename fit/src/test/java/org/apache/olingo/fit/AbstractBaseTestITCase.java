@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.LifecycleException;
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.domain.ODataEntity;
@@ -50,7 +50,7 @@ public abstract class AbstractBaseTestITCase {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractBaseTestITCase.class);
 
-  protected abstract CommonODataClient<?> getClient();
+  protected abstract ODataClient getClient();
 
   @BeforeClass
   public static void init()

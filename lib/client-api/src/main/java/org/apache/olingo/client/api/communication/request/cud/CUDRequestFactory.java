@@ -18,11 +18,145 @@
  */
 package org.apache.olingo.client.api.communication.request.cud;
 
+import java.io.InputStream;
 import java.net.URI;
 
+import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
+import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
+import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataSingleton;
 
-public interface CUDRequestFactory extends CommonCUDRequestFactory<UpdateType> {
+public interface CUDRequestFactory {
+
+  /**
+   * Gets a create request object instance.
+   * <br/>
+   * Use this kind of request to create a new entity.
+   *
+   * @param <E> concrete ODataEntity implementation
+   * @param targetURI entity set URI.
+   * @param entity entity to be created.
+   * @return new ODataEntityCreateRequest instance.
+   */
+  <E extends ODataEntity> ODataEntityCreateRequest<E> getEntityCreateRequest(URI targetURI, E entity);
+
+  /**
+   * Gets an update request object instance.
+   *
+   * @param <E> concrete ODataEntity implementation
+   * @param targetURI edit link of the object to be updated.
+   * @param type type of update to be performed.
+   * @param changes changes to be applied.
+   * @return new ODataEntityUpdateRequest instance.
+   */
+  <E extends ODataEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(URI targetURI, UpdateType type, E changes);
+
+  /**
+   * Gets an update request object instance; uses entity's edit link as endpoint.
+   *
+   * @param <E> concrete ODataEntity implementation
+   * @param type type of update to be performed.
+   * @param entity changes to be applied.
+   * @return new ODataEntityUpdateRequest instance.
+   */
+  <E extends ODataEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(UpdateType type, E entity);
+
+  /**
+   * Gets a create request object instance.
+   * <br/>
+   * Use this kind of request to create a new value (e.g. http://Northwind.svc/Customer(1)/Picture/$value).
+   *
+   * @param targetURI entity set or entity or entity property URI.
+   * @param type type of update to be performed.
+   * @param value value to be created.
+   * @return new ODataValueUpdateRequest instance.
+   */
+  ODataValueUpdateRequest getValueUpdateRequest(URI targetURI, UpdateType type, ODataPrimitiveValue value);
+
+  /**
+   * Gets an update request object instance.
+   * <br/>
+   * Use this kind of request to update a primitive property value.
+   *
+   * @param targetURI entity set or entity or entity property URI.
+   * @param property value to be update.
+   * @return new ODataPropertyUpdateRequest instance.
+   */
+  ODataPropertyUpdateRequest getPropertyPrimitiveValueUpdateRequest(URI targetURI, ODataProperty property);
+
+  /**
+   * Gets an update request object instance.
+   * <br/>
+   * Use this kind of request to update a complex property value.
+   *
+   * @param targetURI entity set or entity or entity property URI.
+   * @param type type of update to be performed.
+   * @param property value to be update.
+   * @return new ODataPropertyUpdateRequest instance.
+   */
+  ODataPropertyUpdateRequest
+      getPropertyComplexValueUpdateRequest(URI targetURI, UpdateType type, ODataProperty property);
+
+  /**
+   * Gets an update request object instance.
+   * <br/>
+   * Use this kind of request to update a collection property value.
+   *
+   * @param targetURI entity set or entity or entity property URI.
+   * @param property value to be update.
+   * @return new ODataPropertyUpdateRequest instance.
+   */
+  ODataPropertyUpdateRequest getPropertyCollectionValueUpdateRequest(URI targetURI, ODataProperty property);
+
+  /**
+   * Gets a delete request object instance.
+   * <br/>
+   * Use this kind of request to delete an entity and media entity as well.
+   *
+   * @param targetURI edit link of the object to be removed.
+   * @return new ODataDeleteRequest instance.
+   */
+  ODataDeleteRequest getDeleteRequest(URI targetURI);
+
+  /**
+   * Gets a media entity create request object instance.
+   * <br/>
+   * Use this kind of request to create a new media entity.
+   *
+   * @param <E> concrete ODataEntity implementation
+   * @param targetURI entity set URI.
+   * @param media entity blob to be created.
+   * @return new ODataMediaEntityCreateRequest instance.
+   */
+  <E extends ODataEntity> ODataMediaEntityCreateRequest<E> getMediaEntityCreateRequest(
+      URI targetURI, InputStream media);
+
+  /**
+   * Gets a stream update request object instance.
+   * <br/>
+   * Use this kind of request to update a named stream property.
+   *
+   * @param targetURI target URI.
+   * @param stream stream to be updated.
+   * @return new ODataStreamUpdateRequest instance.
+   */
+  ODataStreamUpdateRequest getStreamUpdateRequest(URI targetURI, InputStream stream);
+
+  /**
+   * Gets a media entity update request object instance.
+   * <br/>
+   * Use this kind of request to update a media entity.
+   *
+   * @param <E> concrete ODataEntity implementation
+   * @param editURI media entity edit link URI.
+   * @param media entity blob to be updated.
+   * @return new ODataMediaEntityUpdateRequest instance.
+   */
+  <E extends ODataEntity> ODataMediaEntityUpdateRequest<E> getMediaEntityUpdateRequest(
+      URI editURI, InputStream media);
 
   ODataEntityUpdateRequest<ODataSingleton> getSingletonUpdateRequest(
       URI targetURI, UpdateType type, ODataSingleton changes);

@@ -22,7 +22,7 @@ import java.util.UUID;
 
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
-import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
+import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -55,7 +55,7 @@ public class ODataChangesetImpl extends AbstractODataBatchRequestItem
    * @param req batch request.
    * @param expectedResItem expected OData response items.
    */
-  ODataChangesetImpl(final CommonODataBatchRequest req, final ODataChangesetResponseItem expectedResItem) {
+  ODataChangesetImpl(final ODataBatchRequest req, final ODataChangesetResponseItem expectedResItem) {
     super(req);
     this.expectedResItem = expectedResItem;
 

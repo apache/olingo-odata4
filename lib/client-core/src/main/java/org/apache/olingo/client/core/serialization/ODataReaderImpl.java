@@ -23,7 +23,6 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
@@ -55,9 +54,9 @@ public class ODataReaderImpl implements ODataReader {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(ODataReaderImpl.class);
 
-  protected final CommonODataClient<?> client;
+  protected final ODataClient client;
 
-  public ODataReaderImpl(final CommonODataClient<?> client) {
+  public ODataReaderImpl(final ODataClient client) {
     this.client = client;
   }
 

@@ -22,7 +22,7 @@ import java.net.URI;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
@@ -45,7 +45,7 @@ public class ODataEntitySetIteratorRequestImpl<ES extends ODataEntitySet, E exte
    * @param odataClient client instance getting this request
    * @param query query to be executed.
    */
-  public ODataEntitySetIteratorRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
+  public ODataEntitySetIteratorRequestImpl(final ODataClient odataClient, final URI query) {
     super(odataClient, query);
   }
 
@@ -65,7 +65,7 @@ public class ODataEntitySetIteratorRequestImpl<ES extends ODataEntitySet, E exte
    */
   protected class ODataEntitySetIteratorResponseImpl extends AbstractODataRetrieveResponse {
 
-    private ODataEntitySetIteratorResponseImpl(final CommonODataClient<?> odataClient, final HttpClient httpClient,
+    private ODataEntitySetIteratorResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
 
       super(odataClient, httpClient, res);
