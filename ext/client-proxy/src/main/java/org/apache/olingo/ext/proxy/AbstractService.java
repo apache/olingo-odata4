@@ -90,7 +90,7 @@ public abstract class AbstractService<C extends EdmEnabledODataClient> {
       throw new ODataRuntimeException("Only OData V4 or higher supported.");
     }
     
-    this.client =  ODataClientFactory.getEdmEnabledV4(serviceRoot, edm, metadataETag);
+    this.client =  ODataClientFactory.getEdmEnabledClient(serviceRoot, edm, metadataETag);
     this.client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON_FULL_METADATA);
     this.transactional = transactional;
     this.context = new Context();

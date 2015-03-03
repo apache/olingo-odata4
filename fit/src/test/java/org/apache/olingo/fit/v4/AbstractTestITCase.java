@@ -53,7 +53,7 @@ import static org.junit.Assert.assertThat;
 
 public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
-  protected static final ODataClient client = ODataClientFactory.getV4();
+  protected static final ODataClient client = ODataClientFactory.getClient();
 
   protected static EdmEnabledODataClient edmClient;
 
@@ -87,7 +87,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc/V40/Static.svc";
     testOAuth2ServiceRootURL = "http://localhost:9080/stub/StaticService/V40/OAuth2.svc";
 
-    edmClient = ODataClientFactory.getEdmEnabledV4(testStaticServiceRootURL);
+    edmClient = ODataClientFactory.getEdmEnabledClient(testStaticServiceRootURL);
 
     edmClient.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     client.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);

@@ -301,7 +301,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
   @Override
   protected ODataClient getClient() {
-    ODataClient odata = ODataClientFactory.getV4();
+    ODataClient odata = ODataClientFactory.getClient();
     odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
     return odata;
   }

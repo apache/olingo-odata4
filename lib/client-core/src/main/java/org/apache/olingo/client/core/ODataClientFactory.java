@@ -25,15 +25,15 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 
 public final class ODataClientFactory {
 
-  public static ODataClient getV4() {
+  public static ODataClient getClient() {
     return new ODataClientImpl();
   }
 
-  public static EdmEnabledODataClient getEdmEnabledV4(final String serviceRoot) {
-    return getEdmEnabledV4(serviceRoot, null, null);
+  public static EdmEnabledODataClient getEdmEnabledClient(final String serviceRoot) {
+    return getEdmEnabledClient(serviceRoot, null, null);
   }
 
-  public static EdmEnabledODataClient getEdmEnabledV4(
+  public static EdmEnabledODataClient getEdmEnabledClient(
           final String serviceRoot, final Edm edm, final String metadataETag) {
 
     final EdmEnabledODataClient instance =

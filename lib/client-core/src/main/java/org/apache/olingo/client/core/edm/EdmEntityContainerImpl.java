@@ -43,8 +43,6 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
   private final EntityContainer xmlEntityContainer;
 
-  private final List<? extends Schema> xmlSchemas;
-
   private EdmAnnotationHelper helper;
 
   public EdmEntityContainerImpl(final Edm edm, final FullQualifiedName entityContainerName,
@@ -54,7 +52,6 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
             ? null : new FullQualifiedName(xmlEntityContainer.getExtends()));
 
     this.xmlEntityContainer = xmlEntityContainer;
-    this.xmlSchemas = xmlSchemas;
     if (xmlEntityContainer instanceof EntityContainer) {
       this.helper = new EdmAnnotationHelperImpl(edm,
               (EntityContainer) xmlEntityContainer);

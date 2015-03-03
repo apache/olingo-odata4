@@ -40,7 +40,7 @@ public abstract class AbstractTest {
 
   @BeforeClass
   public static void setClientInstances() {
-    v4Client = ODataClientFactory.getV4();
+    v4Client = ODataClientFactory.getClient();
   }
 
   protected String getSuffix(final ODataFormat format) {

@@ -88,7 +88,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void readAsJSON() throws IOException {
-    read(ODataClientFactory.getEdmEnabledV4(testDemoServiceRootURL), ODataFormat.JSON);
+    read(ODataClientFactory.getEdmEnabledClient(testDemoServiceRootURL), ODataFormat.JSON);
   }
 
   @Test

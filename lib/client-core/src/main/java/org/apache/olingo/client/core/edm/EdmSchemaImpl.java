@@ -55,7 +55,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
 
   private final Edm edm;
 
-  private final List<? extends Schema> xmlSchemas;
+  private final List<Schema> xmlSchemas;
 
   private final Schema schema;
 
@@ -64,7 +64,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
   private List<EdmEntityContainer> entityContainers;
 
   public EdmSchemaImpl(final ODataServiceVersion version, final Edm edm,
-      final List<? extends Schema> xmlSchemas, final Schema schema) {
+      final List<Schema> xmlSchemas, final Schema schema) {
 
     super(schema.getNamespace(), schema.getAlias());
 

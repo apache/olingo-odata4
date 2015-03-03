@@ -49,6 +49,6 @@ public class V4POJOGenMojo extends AbstractPOJOGenMojo {
 
   @Override
   protected ODataClient getClient() {
-    return ODataClientFactory.getV4();
+    return ODataClientFactory.getClient();
   }
 }

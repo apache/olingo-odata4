@@ -151,6 +151,6 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
 
   @Override
   protected ODataClient getClient() {
-    return ODataClientFactory.getEdmEnabledV4(TecSvcConst.BASE_URI);
+    return ODataClientFactory.getEdmEnabledClient(TecSvcConst.BASE_URI);
   }
 }

@@ -48,20 +48,20 @@ public class AuthBatchTestITCase extends AbstractTestITCase {
 
   @Test
   public void clean() throws EdmPrimitiveTypeException {
-    final ODataClient authclient = ODataClientFactory.getV4();
+    final ODataClient authclient = ODataClientFactory.getClient();
     batchRequest(authclient, testStaticServiceRootURL);
   }
 
   @Test
   public void authorized() throws EdmPrimitiveTypeException {
-    final ODataClient authclient = ODataClientFactory.getV4();
+    final ODataClient authclient = ODataClientFactory.getClient();
     authclient.getConfiguration().setHttpClientFactory(new BasicAuthHttpClientFactory("odatajclient", "odatajclient"));
     batchRequest(authclient, testAuthServiceRootURL);
   }
 
   @Test(expected = HttpClientException.class)
   public void unauthorized() throws EdmPrimitiveTypeException {
-    final ODataClient unauthclient = ODataClientFactory.getV4();
+    final ODataClient unauthclient = ODataClientFactory.getClient();
     unauthclient.getConfiguration().setHttpClientFactory(new BasicAuthHttpClientFactory("not_auth", "not_auth"));
     batchRequest(unauthclient, testAuthServiceRootURL);
   }
