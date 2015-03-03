@@ -62,7 +62,8 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     ODataRequest odRequest = null;
     ODataResponse odResponse;
     try {
-      odRequest = createODataRequest(request, split);
+      odRequest = new ODataRequest();
+          fillODataRequest(odRequest, request, split);
       odResponse = handler.process(odRequest);
       // ALL future methods after process must not throw exceptions!
     } catch (Exception e) {
@@ -128,15 +129,13 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  private ODataRequest createODataRequest(final HttpServletRequest httpRequest, final int split)
+  private ODataRequest fillODataRequest(ODataRequest odRequest, final HttpServletRequest httpRequest, final int split)
       throws ODataTranslatedException {
     try {
-      ODataRequest odRequest = new ODataRequest();
-
       odRequest.setBody(httpRequest.getInputStream());
       extractHeaders(odRequest, httpRequest);
-      extractMethod(odRequest, httpRequest);
       extractUri(odRequest, httpRequest, split);
+      extractMethod(odRequest, httpRequest);
 
       return odRequest;
     } catch (final IOException e) {

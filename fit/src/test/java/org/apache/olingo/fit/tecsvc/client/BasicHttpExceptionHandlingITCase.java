@@ -29,7 +29,7 @@ import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
-public class BasicHttpExceptionHandling extends AbstractBaseTestITCase {
+public class BasicHttpExceptionHandlingITCase extends AbstractBaseTestITCase {
 
   private static final String SERVICE_URI = TecSvcConst.BASE_URI + "/";
 
