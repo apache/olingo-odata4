@@ -18,26 +18,25 @@
  */
 package org.apache.olingo.commons.core.domain;
 
-import org.apache.olingo.commons.api.domain.ODataInlineEntity;
-import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import java.net.URI;
+
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataDelta;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.ODataInlineEntity;
+import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataSingleton;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-
-import java.net.URI;
 
 public class ODataObjectFactoryImpl implements ODataObjectFactory {
 
@@ -119,12 +118,7 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
   }
 
   @Override
-  public ODataComplexValue<ODataProperty> newComplexValue(final String typeName) {
-    return new ODataComplexValueImpl(typeName);
-  }
-
-  @Override
-  public ODataLinkedComplexValue newLinkedComplexValue(final String typeName) {
+  public ODataComplexValue newComplexValue(final String typeName) {
     return new ODataComplexValueImpl(typeName);
   }
 
@@ -139,8 +133,7 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
   }
 
   @Override
-  public ODataProperty newComplexProperty(final String name,
-      final ODataComplexValue<? extends ODataProperty> value) {
+  public ODataProperty newComplexProperty(final String name, final ODataComplexValue value) {
 
     return new ODataPropertyImpl(name, value);
   }

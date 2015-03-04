@@ -61,33 +61,18 @@ public interface ODataValue {
   <OV extends ODataValue> ODataCollectionValue<OV> asCollection();
 
   /**
-   * Check is is a complex value.
-   * 
-   * @return 'TRUE' if complex; 'FALSE' otherwise.
-   */
-  boolean isComplex();
-
-  /**
    * Casts to complex value.
    * 
-   * @param <OP> The actual ODataProperty interface.
    * @return complex value.
    */
-  <OP extends ODataProperty> ODataComplexValue<OP> asComplex();
+  ODataComplexValue asComplex();
 
   /**
    * Check is is a linked complex value.
    * 
    * @return 'TRUE' if linked complex; 'FALSE' otherwise.
    */
-  boolean isLinkedComplex();
-
-  /**
-   * Casts to complex value with link information (if available).
-   * 
-   * @return complex value with link information.
-   */
-  ODataLinkedComplexValue asLinkedComplex();
+  boolean isComplex();
 
   /**
    * Check is is an enum value.

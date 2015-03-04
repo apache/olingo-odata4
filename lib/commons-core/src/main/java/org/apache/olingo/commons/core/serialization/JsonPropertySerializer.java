@@ -80,12 +80,12 @@ public class JsonPropertySerializer extends JsonSerializer {
       jgen.writeStringField(Constants.VALUE, property.asEnum().toString());
     } else if (property.isGeospatial() || property.isCollection()) {
       valuable(jgen, property, Constants.VALUE);
-    } else if (property.isLinkedComplex()) {
-      for (Property cproperty : property.asLinkedComplex().getValue()) {
+    } else if (property.isComplex()) {
+      for (Property cproperty : property.asComplex().getValue()) {
         valuable(jgen, cproperty, cproperty.getName());
       }
     } else if (property.isComplex()) {
-      for (Property cproperty : property.asComplex()) {
+      for (Property cproperty : property.asComplex().getValue()) {
         valuable(jgen, cproperty, cproperty.getName());
       }
     }

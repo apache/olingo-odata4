@@ -32,13 +32,13 @@ import java.util.UUID;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
-import org.apache.olingo.commons.api.data.LinkedComplexValue;
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
+import org.apache.olingo.commons.core.data.ComplexValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 
 public class DataCreator {
@@ -97,10 +97,10 @@ public class DataCreator {
   
   private Entity createETKeyNavEntity(int propertyInt16, String propertyString) {
     // PropertyCompAllPrim
-    LinkedComplexValue cvCompAllPrim = createKeyNavAllPrimComplexValue();
+    ComplexValue cvCompAllPrim = createKeyNavAllPrimComplexValue();
     
     // CollPropertyComp
-    List<LinkedComplexValue> ccComp = new ArrayList<LinkedComplexValue>();
+    List<ComplexValue> ccComp = new ArrayList<ComplexValue>();
     ccComp.add(createCTPrimCompValue(1));
     ccComp.add(createCTPrimCompValue(2));
     ccComp.add(createCTPrimCompValue(3));
@@ -110,7 +110,7 @@ public class DataCreator {
       .addProperty(createPrimitive("PropertyString", propertyString))
       .addProperty(createComplex("PropertyComp", 
           createPrimitive("PropertyInt16", 1)))
-      .addProperty(new PropertyImpl(null, "PropertyCompAllPrim", ValueType.LINKED_COMPLEX,  cvCompAllPrim))
+      .addProperty(new PropertyImpl(null, "PropertyCompAllPrim", ValueType.COMPLEX,  cvCompAllPrim))
       .addProperty(createComplex("PropertyCompTwoPrim", 
           createPrimitive("PropertyInt16", 16), 
           createPrimitive("PropertyString", "Test123")))
@@ -119,18 +119,18 @@ public class DataCreator {
           "Employee2@company.example", 
           "Employee3@company.example"))
       .addProperty(createPrimitiveCollection("CollPropertyInt16", 1000, 2000, 30112))
-      .addProperty(new PropertyImpl(null, "CollPropertyComp", ValueType.COLLECTION_LINKED_COMPLEX, ccComp))
+      .addProperty(new PropertyImpl(null, "CollPropertyComp", ValueType.COLLECTION_COMPLEX, ccComp))
       .addProperty(createComplex("PropertyCompComp", 
           createPrimitive("PropertyString", "1"),
           createComplex("PropertyComp", createPrimitive("PropertyInt16", 1))));
   }
   
-  private LinkedComplexValue createCTPrimCompValue(int properyInt16) {
-    final LinkedComplexValue cvBasePrimCompNav = new LinkedComplexValueImpl();
-    final LinkedComplexValue cvAllPrim =  createKeyNavAllPrimComplexValue();
+  private ComplexValue createCTPrimCompValue(int properyInt16) {
+    final ComplexValue cvBasePrimCompNav = new ComplexValueImpl();
+    final ComplexValue cvAllPrim =  createKeyNavAllPrimComplexValue();
     
     cvBasePrimCompNav.getValue().add(createPrimitive("PropertyInt16", properyInt16));
-    cvBasePrimCompNav.getValue().add(new PropertyImpl(null, "PropertyComp", ValueType.LINKED_COMPLEX, cvAllPrim));
+    cvBasePrimCompNav.getValue().add(new PropertyImpl(null, "PropertyComp", ValueType.COMPLEX, cvAllPrim));
     
     return cvBasePrimCompNav;
   }
@@ -171,9 +171,9 @@ public class DataCreator {
               createPrimitive("PropertyTimeOfDay", getTime(21, 5, 59))
           )
        ))
-      .addProperty(new PropertyImpl(null, "PropertyCompNav", ValueType.LINKED_COMPLEX, createCTPrimCompValue(1)))
-      .addProperty(new PropertyImpl(null, "CollPropertyComp", ValueType.COLLECTION_LINKED_COMPLEX, 
-          new ArrayList<LinkedComplexValue>()))
+      .addProperty(new PropertyImpl(null, "PropertyCompNav", ValueType.COMPLEX, createCTPrimCompValue(1)))
+      .addProperty(new PropertyImpl(null, "CollPropertyComp", ValueType.COLLECTION_COMPLEX, 
+          new ArrayList<ComplexValue>()))
       .addProperty(createComplexCollection("CollPropertyCompNav", 
           Arrays.asList(createPrimitive("PropertyInt16", 1))))
       .addProperty(createPrimitiveCollection("CollPropertyString", 1, 2))
@@ -183,9 +183,9 @@ public class DataCreator {
       ));
   }
 
-  private LinkedComplexValue createKeyNavAllPrimComplexValue() {
-    LinkedComplexValue cvAllPrim;
-    cvAllPrim = new LinkedComplexValueImpl();
+  private ComplexValue createKeyNavAllPrimComplexValue() {
+    ComplexValue cvAllPrim;
+    cvAllPrim = new ComplexValueImpl();
     cvAllPrim.getValue().add(createPrimitive("PropertyString", "First Resource - positive values"));
     cvAllPrim.getValue().add(createPrimitive("PropertyBinary", new byte[] { 1, 35, 69, 103, -119, -85, -51, -17 } ));
     cvAllPrim.getValue().add(createPrimitive("PropertyBoolean", true));
@@ -677,21 +677,21 @@ public class DataCreator {
   }
 
   protected static Property createComplex(final String name, final Property... properties) {
-    LinkedComplexValue complexValue = new LinkedComplexValueImpl();
+    ComplexValue complexValue = new ComplexValueImpl();
     for (final Property property : properties) {
       complexValue.getValue().add(property);
     }
-    return new PropertyImpl(null, name, ValueType.LINKED_COMPLEX, complexValue);
+    return new PropertyImpl(null, name, ValueType.COMPLEX, complexValue);
   }
 
   protected static Property createComplexCollection(final String name, final List<Property>... propertiesList) {
-    List<LinkedComplexValue> complexCollection = new ArrayList<LinkedComplexValue>();
+    List<ComplexValue> complexCollection = new ArrayList<ComplexValue>();
     for (final List<Property> properties : propertiesList) {
-      LinkedComplexValue complexValue = new LinkedComplexValueImpl();
+      ComplexValue complexValue = new ComplexValueImpl();
       complexValue.getValue().addAll(properties);
       complexCollection.add(complexValue);
     }
-    return new PropertyImpl(null, name, ValueType.COLLECTION_LINKED_COMPLEX, complexCollection);
+    return new PropertyImpl(null, name, ValueType.COLLECTION_COMPLEX, complexCollection);
   }
 
   private Calendar getDateTime(final int year, final int month, final int day,

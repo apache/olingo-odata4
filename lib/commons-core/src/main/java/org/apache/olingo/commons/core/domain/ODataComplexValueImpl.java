@@ -18,22 +18,20 @@
  */
 package org.apache.olingo.commons.core.domain;
 
-import org.apache.olingo.commons.api.domain.AbstractODataValue;
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ODataComplexValueImpl extends AbstractODataValue implements ODataComplexValue<ODataProperty>,
-        ODataLinkedComplexValue {
+import org.apache.olingo.commons.api.domain.AbstractODataValue;
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+
+public class ODataComplexValueImpl extends AbstractODataValue implements ODataComplexValue {
 
   /**
    * Navigation links (might contain in-line entities or entity sets).
@@ -61,8 +59,7 @@ public class ODataComplexValueImpl extends AbstractODataValue implements ODataCo
     super(typeName);
   }
 
-
-  protected ODataComplexValue<ODataProperty> getThis() {
+  protected ODataComplexValue getThis() {
     return this;
   }
 
@@ -77,13 +74,8 @@ public class ODataComplexValueImpl extends AbstractODataValue implements ODataCo
   }
 
   @Override
-  public boolean isLinkedComplex() {
+  public boolean isComplex() {
     return true;
-  }
-
-  @Override
-  public ODataLinkedComplexValue asLinkedComplex() {
-    return this;
   }
 
   @Override
@@ -171,15 +163,13 @@ public class ODataComplexValueImpl extends AbstractODataValue implements ODataCo
     return annotations;
   }
 
-
-
   /**
    * Adds field to the complex type.
    *
    * @param field field to be added.
    */
   @Override
-  public ODataComplexValue<ODataProperty> add(final ODataProperty field) {
+  public ODataComplexValue add(final ODataProperty field) {
     fields.put(field.getName(), field);
     return getThis();
   }

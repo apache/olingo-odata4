@@ -259,7 +259,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   private void deleteProperty(final ODataResponse response, final UriInfo uriInfo) throws ODataApplicationException {
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validatePath(resource);
-    getEdmEntitySet(uriInfo);  // including checks
+    getEdmEntitySet(uriInfo); // including checks
 
     final List<UriResource> resourceParts = resource.getUriResourceParts();
     final List<String> path = getPropertyPath(resourceParts, 0);
@@ -281,9 +281,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
       throws ODataApplicationException {
     Property property = entity.getProperty(path.get(0));
     for (final String name : path.subList(1, path.size())) {
-      if (property != null && (property.isLinkedComplex() || property.isComplex())) {
-        final List<Property> complex = property.isLinkedComplex() ?
-            property.asLinkedComplex().getValue() : property.asComplex();
+      if (property != null && (property.isComplex() || property.isComplex())) {
+        final List<Property> complex = property.asComplex().getValue();
         property = null;
         for (final Property innerProperty : complex) {
           if (innerProperty.getName().equals(name)) {
@@ -320,7 +319,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validateOptions(resource);
     validatePath(resource);
-    getEdmEntitySet(uriInfo);  // including checks
+    getEdmEntitySet(uriInfo); // including checks
 
     final List<UriResource> resourceParts = resource.getUriResourceParts();
     final List<String> path = getPropertyPath(resourceParts, 1);

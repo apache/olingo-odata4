@@ -33,7 +33,7 @@ import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Linked;
-import org.apache.olingo.commons.api.data.LinkedComplexValue;
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
@@ -51,7 +51,7 @@ import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
+import org.apache.olingo.commons.core.data.ComplexValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
@@ -146,7 +146,7 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   protected String setInline(final String name, final String suffix, final JsonNode tree,
-          final ObjectCodec codec, final LinkImpl link) throws IOException {
+      final ObjectCodec codec, final LinkImpl link) throws IOException {
 
     final String entityNamePrefix = name.substring(0, name.indexOf(suffix));
     if (tree.has(entityNamePrefix)) {
@@ -172,7 +172,7 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   protected void links(final Map.Entry<String, JsonNode> field, final Linked linked, final Set<String> toRemove,
-          final JsonNode tree, final ObjectCodec codec) throws IOException {
+      final JsonNode tree, final ObjectCodec codec) throws IOException {
     if (serverMode) {
       serverLinks(field, linked, toRemove, tree, codec);
     } else {
@@ -181,7 +181,7 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   private void clientLinks(final Map.Entry<String, JsonNode> field, final Linked linked, final Set<String> toRemove,
-          final JsonNode tree, final ObjectCodec codec) throws IOException {
+      final JsonNode tree, final ObjectCodec codec) throws IOException {
 
     if (field.getKey().endsWith(jsonNavigationLink)) {
       final LinkImpl link = new LinkImpl();
@@ -210,10 +210,10 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   private void serverLinks(final Map.Entry<String, JsonNode> field, final Linked linked, final Set<String> toRemove,
-          final JsonNode tree, final ObjectCodec codec) throws IOException {
+      final JsonNode tree, final ObjectCodec codec) throws IOException {
 
     if (field.getKey().endsWith(Constants.JSON_BIND_LINK_SUFFIX)
-            || field.getKey().endsWith(jsonNavigationLink)) {
+        || field.getKey().endsWith(jsonNavigationLink)) {
 
       if (field.getValue().isValueNode()) {
         final String suffix = field.getKey().replaceAll("^.*@", "@");
@@ -272,19 +272,19 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   private EdmPrimitiveTypeKind guessPrimitiveTypeKind(final JsonNode node) {
-    return node.isShort()      ? EdmPrimitiveTypeKind.Int16   :
-           node.isInt()        ? EdmPrimitiveTypeKind.Int32   :
-           node.isLong()       ? EdmPrimitiveTypeKind.Int64   :
-           node.isBoolean()    ? EdmPrimitiveTypeKind.Boolean :
-           node.isFloat()      ? EdmPrimitiveTypeKind.Single  :
-           node.isDouble()     ? EdmPrimitiveTypeKind.Double  :
-           node.isBigDecimal() ? EdmPrimitiveTypeKind.Decimal :
-                                 EdmPrimitiveTypeKind.String;
+    return node.isShort() ? EdmPrimitiveTypeKind.Int16 :
+        node.isInt() ? EdmPrimitiveTypeKind.Int32 :
+            node.isLong() ? EdmPrimitiveTypeKind.Int64 :
+                node.isBoolean() ? EdmPrimitiveTypeKind.Boolean :
+                    node.isFloat() ? EdmPrimitiveTypeKind.Single :
+                        node.isDouble() ? EdmPrimitiveTypeKind.Double :
+                            node.isBigDecimal() ? EdmPrimitiveTypeKind.Decimal :
+                                EdmPrimitiveTypeKind.String;
   }
 
   protected void populate(final Annotatable annotatable, final List<Property> properties,
-          final ObjectNode tree, final ObjectCodec codec)
-          throws IOException, EdmPrimitiveTypeException {
+      final ObjectNode tree, final ObjectCodec codec)
+      throws IOException, EdmPrimitiveTypeException {
 
     String type = null;
     Annotation annotation = null;
@@ -310,8 +310,8 @@ public class JsonDeserializer implements ODataDeserializer {
         final PropertyImpl property = new PropertyImpl();
         property.setName(field.getKey());
         property.setType(type == null
-                ? null
-                : new EdmTypeInfo.Builder().setTypeExpression(type).build().internal());
+            ? null
+            : new EdmTypeInfo.Builder().setTypeExpression(type).build().internal());
         type = null;
 
         value(property, field.getValue(), codec);
@@ -327,45 +327,39 @@ public class JsonDeserializer implements ODataDeserializer {
 
   private Object fromPrimitive(final JsonNode node, final EdmTypeInfo typeInfo) throws EdmPrimitiveTypeException {
     return node.isNull() ? null
-            : typeInfo == null ? node.asText()
+        : typeInfo == null ? node.asText()
             : typeInfo.getPrimitiveTypeKind().isGeospatial()
-            ? getGeoDeserializer().deserialize(node, typeInfo)
-            : ((EdmPrimitiveType) typeInfo.getType())
-            .valueOfString(node.asText(), true, null,
-                    Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, true,
-                    ((EdmPrimitiveType) typeInfo.getType()).getDefaultType());
+                ? getGeoDeserializer().deserialize(node, typeInfo)
+                : ((EdmPrimitiveType) typeInfo.getType())
+                    .valueOfString(node.asText(), true, null,
+                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, true,
+                        ((EdmPrimitiveType) typeInfo.getType()).getDefaultType());
   }
 
   private Object fromComplex(final ObjectNode node, final ObjectCodec codec)
-          throws IOException, EdmPrimitiveTypeException {
+      throws IOException, EdmPrimitiveTypeException {
 
-    if (version.compareTo(ODataServiceVersion.V40) < 0) {
-      final List<Property> properties = new ArrayList<Property>();
-      populate(null, properties, node, codec);
-      return properties;
-    } else {
-      final LinkedComplexValue linkComplexValue = new LinkedComplexValueImpl();
-      final Set<String> toRemove = new HashSet<String>();
-      for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
-        final Map.Entry<String, JsonNode> field = itor.next();
+    final ComplexValue complexValue = new ComplexValueImpl();
+    final Set<String> toRemove = new HashSet<String>();
+    for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
+      final Map.Entry<String, JsonNode> field = itor.next();
 
-        links(field, linkComplexValue, toRemove, node, codec);
-      }
-      node.remove(toRemove);
-
-      populate(linkComplexValue, linkComplexValue.getValue(), node, codec);
-      return linkComplexValue;
+      links(field, complexValue, toRemove, node, codec);
     }
+    node.remove(toRemove);
+
+    populate(complexValue, complexValue.getValue(), node, codec);
+    return complexValue;
   }
 
   private void fromCollection(final Valuable valuable, final Iterator<JsonNode> nodeItor, final EdmTypeInfo typeInfo,
-          final ObjectCodec codec) throws IOException, EdmPrimitiveTypeException {
+      final ObjectCodec codec) throws IOException, EdmPrimitiveTypeException {
 
     final List<Object> values = new ArrayList<Object>();
     ValueType valueType = ValueType.COLLECTION_PRIMITIVE;
 
     final EdmTypeInfo type = typeInfo == null ? null
-            : new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
+        : new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
 
     while (nodeItor.hasNext()) {
       final JsonNode child = nodeItor.next();
@@ -384,8 +378,7 @@ public class JsonDeserializer implements ODataDeserializer {
           ((ObjectNode) child).remove(jsonType);
         }
         final Object value = fromComplex((ObjectNode) child, codec);
-        valueType = value instanceof LinkedComplexValue ? ValueType.COLLECTION_LINKED_COMPLEX
-                : ValueType.COLLECTION_COMPLEX;
+        valueType = ValueType.COLLECTION_COMPLEX;
         values.add(value);
       }
     }
@@ -393,10 +386,10 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   protected void value(final Valuable valuable, final JsonNode node, final ObjectCodec codec)
-          throws IOException, EdmPrimitiveTypeException {
-    
+      throws IOException, EdmPrimitiveTypeException {
+
     EdmTypeInfo typeInfo = StringUtils.isBlank(valuable.getType()) ? null
-            : new EdmTypeInfo.Builder().setTypeExpression(valuable.getType()).build();
+        : new EdmTypeInfo.Builder().setTypeExpression(valuable.getType()).build();
 
     final Map.Entry<ODataPropertyType, EdmTypeInfo> guessed = guessPropertyType(node);
     if (typeInfo == null) {
@@ -404,40 +397,40 @@ public class JsonDeserializer implements ODataDeserializer {
     }
 
     final ODataPropertyType propType = typeInfo == null ? guessed.getKey()
-            : typeInfo.isCollection() ? ODataPropertyType.COLLECTION
+        : typeInfo.isCollection() ? ODataPropertyType.COLLECTION
             : typeInfo.isPrimitiveType() ? ODataPropertyType.PRIMITIVE
-            : node.isValueNode() ? ODataPropertyType.ENUM : ODataPropertyType.COMPLEX;
+                : node.isValueNode() ? ODataPropertyType.ENUM : ODataPropertyType.COMPLEX;
 
     switch (propType) {
-      case COLLECTION:
-        fromCollection(valuable, node.elements(), typeInfo, codec);
-        break;
+    case COLLECTION:
+      fromCollection(valuable, node.elements(), typeInfo, codec);
+      break;
 
-      case COMPLEX:
-        if (node.has(jsonType)) {
-          valuable.setType(node.get(jsonType).asText());
-          ((ObjectNode) node).remove(jsonType);
-        }
-        final Object value = fromComplex((ObjectNode) node, codec);
-        valuable.setValue(value instanceof LinkedComplexValue ? ValueType.LINKED_COMPLEX : ValueType.COMPLEX, value);
-        break;
+    case COMPLEX:
+      if (node.has(jsonType)) {
+        valuable.setType(node.get(jsonType).asText());
+        ((ObjectNode) node).remove(jsonType);
+      }
+      final Object value = fromComplex((ObjectNode) node, codec);
+      valuable.setValue(ValueType.COMPLEX, value);
+      break;
 
-      case ENUM:
-        valuable.setValue(ValueType.ENUM, node.asText());
-        break;
+    case ENUM:
+      valuable.setValue(ValueType.ENUM, node.asText());
+      break;
 
-      case PRIMITIVE:
-        if (valuable.getType() == null && typeInfo != null) {
-          valuable.setType(typeInfo.getFullQualifiedName().toString());
-        }
-        final Object primitiveValue = fromPrimitive(node, typeInfo);
-        valuable.setValue(primitiveValue instanceof Geospatial ? ValueType.GEOSPATIAL : ValueType.PRIMITIVE,
-                primitiveValue);
-        break;
+    case PRIMITIVE:
+      if (valuable.getType() == null && typeInfo != null) {
+        valuable.setType(typeInfo.getFullQualifiedName().toString());
+      }
+      final Object primitiveValue = fromPrimitive(node, typeInfo);
+      valuable.setValue(primitiveValue instanceof Geospatial ? ValueType.GEOSPATIAL : ValueType.PRIMITIVE,
+          primitiveValue);
+      break;
 
-      case EMPTY:
-      default:
-        valuable.setValue(ValueType.PRIMITIVE, StringUtils.EMPTY);
+    case EMPTY:
+    default:
+      valuable.setValue(ValueType.PRIMITIVE, StringUtils.EMPTY);
     }
   }
 

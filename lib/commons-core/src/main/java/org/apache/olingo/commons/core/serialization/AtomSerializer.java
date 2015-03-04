@@ -18,16 +18,24 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.aalto.stax.OutputFactoryImpl;
+import java.io.Writer;
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+
+import javax.xml.XMLConstants;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
-import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.ValueType;
@@ -47,15 +55,7 @@ import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
-import javax.xml.XMLConstants;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import java.io.Writer;
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
+import com.fasterxml.aalto.stax.OutputFactoryImpl;
 
 public class AtomSerializer extends AbstractAtomDealer implements ODataSerializer {
 
@@ -89,7 +89,6 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     }
   }
 
-  @SuppressWarnings("unchecked")
   private void value(final XMLStreamWriter writer,
       final ValueType valueType, final EdmPrimitiveTypeKind kind, final Object value)
       throws XMLStreamException, EdmPrimitiveTypeException {
@@ -114,16 +113,10 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     case COLLECTION_GEOSPATIAL:
     case COLLECTION_ENUM:
     case COLLECTION_COMPLEX:
-    case COLLECTION_LINKED_COMPLEX:
       collection(writer, valueType.getBaseType(), kind, (List<?>) value);
       break;
-    case LINKED_COMPLEX:
-      for (Property property : ((LinkedComplexValue) value).getValue()) {
-        property(writer, property, false);
-      }
-      break;
     case COMPLEX:
-      for (Property property : (List<Property>) value) {
+      for (Property property : ((ComplexValue) value).getValue()) {
         property(writer, property, false);
       }
       break;
@@ -154,9 +147,9 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
 
     value(writer, property.getValueType(), typeInfo == null ? null : typeInfo.getPrimitiveTypeKind(),
         property.getValue());
-    if (!property.isNull() && property.isLinkedComplex()) {
-      links(writer, property.asLinkedComplex().getAssociationLinks());
-      links(writer, property.asLinkedComplex().getNavigationLinks());
+    if (!property.isNull() && property.isComplex()) {
+      links(writer, property.asComplex().getAssociationLinks());
+      links(writer, property.asComplex().getNavigationLinks());
     }
 
     writer.writeEndElement();
@@ -529,15 +522,15 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
 
   private void reference(final Writer outWriter, final ResWrap<URI> container) throws XMLStreamException {
     final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(outWriter);
-    
+
     writer.writeStartDocument();
-    
+
     writer.writeStartElement(Constants.ATTR_METADATA, Constants.ATTR_REF);
     writer.writeNamespace(Constants.ATTR_METADATA, version.getNamespace(NamespaceKey.METADATA));
     writer.writeAttribute(Constants.ATTR_METADATA, Constants.CONTEXT, container.getContextURL().toASCIIString());
     writer.writeAttribute(Constants.ATOM_ATTR_ID, container.getPayload().toASCIIString());
     writer.writeEndElement();
-    
+
     writer.writeEndDocument();
   }
 
@@ -555,8 +548,8 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
         property(writer, (Property) obj);
       } else if (obj instanceof Link) {
         link(writer, (Link) obj);
-      } else if(obj instanceof URI) {
-        reference(writer,(ResWrap<URI>) container);
+      } else if (obj instanceof URI) {
+        reference(writer, (ResWrap<URI>) container);
       }
     } catch (final XMLStreamException e) {
       throw new ODataSerializerException(e);

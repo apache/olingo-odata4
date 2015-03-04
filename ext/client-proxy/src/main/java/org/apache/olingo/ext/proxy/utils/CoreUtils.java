@@ -308,7 +308,7 @@ public final class CoreUtils {
   public static void addProperties(
       final EdmEnabledODataClient client,
       final Map<String, Object> changes,
-      final ODataComplexValue<ODataProperty> entity) {
+      final ODataComplexValue entity) {
 
     for (Map.Entry<String, Object> entry : changes.entrySet()) {
       entity.add(getODataComplexProperty(

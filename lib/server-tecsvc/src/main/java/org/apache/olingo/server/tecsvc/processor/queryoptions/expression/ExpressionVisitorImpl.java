@@ -189,9 +189,8 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
     for (int i = 1; i < uriResourceParts.size(); i++) {
       currentType = ((UriResourcePartTyped) uriResourceParts.get(i)).getType();
 
-      if (currentProperty.isComplex() || currentProperty.isLinkedComplex()) {
-        final List<Property> complex = currentProperty.isLinkedComplex() ?
-            currentProperty.asLinkedComplex().getValue() : currentProperty.asComplex();
+      if (currentProperty.isComplex()) {
+        final List<Property> complex = currentProperty.asComplex().getValue();
 
         for (final Property innerProperty : complex) {
           if (innerProperty.getName().equals(uriResourceParts.get(i).toString())) {

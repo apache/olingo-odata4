@@ -25,9 +25,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValuable;
 import org.apache.olingo.commons.api.domain.ODataValue;
 
@@ -77,16 +75,9 @@ public class ODataValuableImpl implements ODataValuable {
   }
 
   @Override
-  public ODataComplexValue<ODataProperty> getComplexValue() {
+  public ODataComplexValue getComplexValue() {
     return hasComplexValue()
-        ? getValue().<ODataProperty> asComplex()
-        : null;
-  }
-
-  @Override
-  public ODataLinkedComplexValue getLinkedComplexValue() {
-    return hasComplexValue()
-        ? getValue().asLinkedComplex()
+        ? getValue().asComplex()
         : null;
   }
 

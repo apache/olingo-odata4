@@ -18,20 +18,19 @@
  */
 package org.apache.olingo.commons.core.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.commons.api.data.Annotatable;
 import org.apache.olingo.commons.api.data.Annotation;
-import org.apache.olingo.commons.api.data.LinkedComplexValue;
-import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class AbstractValuable implements Valuable, Annotatable {
 
@@ -65,11 +64,6 @@ public abstract class AbstractValuable implements Valuable, Annotatable {
   }
 
   @Override
-  public boolean isLinkedComplex() {
-    return valueType == ValueType.LINKED_COMPLEX;
-  }
-
-  @Override
   public boolean isCollection() {
     return valueType != null && valueType != valueType.getBaseType();
   }
@@ -89,15 +83,9 @@ public abstract class AbstractValuable implements Valuable, Annotatable {
     return isEnum() ? value : null;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public List<Property> asComplex() {
-    return isComplex() ? (List<Property>) value : null;
-  }
-
-  @Override
-  public LinkedComplexValue asLinkedComplex() {
-    return isLinkedComplex() ? (LinkedComplexValue) value : null;
+  public ComplexValue asComplex() {
+    return isComplex() ? (ComplexValue) value : null;
   }
 
   @Override

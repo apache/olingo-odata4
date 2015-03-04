@@ -244,7 +244,7 @@ public class DataProvider {
             newProperty = newProperty2;
           } else {
             newProperty = DataCreator.createComplex(propertyName);
-            createProperties((EdmComplexType) edmProperty.getType(), newProperty.asLinkedComplex().getValue());
+            createProperties((EdmComplexType) edmProperty.getType(), newProperty.asComplex().getValue());
           }
         }
         properties.add(newProperty);
@@ -282,7 +282,7 @@ public class DataProvider {
 
   private void applyNavigationBinding(final String rawBaseUri, final EdmEntitySet edmEntitySet,
       final Entity entity, final List<Link> navigationBindings) throws DataProviderException {
-    
+
     for (final Link link : navigationBindings) {
       final EdmNavigationProperty edmNavProperty = edmEntitySet.getEntityType().getNavigationProperty(link.getTitle());
       final EdmEntitySet edmTargetEntitySet =
@@ -308,11 +308,11 @@ public class DataProvider {
       final List<UriParameter> keys = odata.createUriHelper()
           .getKeyPredicatesFromEntityLink(edm, bindingLink, rawBaseUri);
       final Entity entity = read(edmEntitySetTarget, keys);
-      
-      if(entity == null) {
+
+      if (entity == null) {
         throw new DataProviderException("Entity " + bindingLink + " not found");
       }
-      
+
       return entity;
     } catch (DeserializerException e) {
       throw new DataProviderException("Invalid entity binding link", e);
@@ -383,7 +383,7 @@ public class DataProvider {
   // TODO Duplicated code in DataCreator
   private void setLink(final EdmNavigationProperty navigationProperty, final Entity srcEntity,
       final Entity destEntity) {
-    
+
     Link link = srcEntity.getNavigationLink(navigationProperty.getName());
     if (link == null) {
       link = new LinkImpl();
@@ -423,10 +423,12 @@ public class DataProvider {
     } else {
       final EdmComplexType type = (EdmComplexType) edmProperty.getType();
       for (final String propertyName : type.getPropertyNames()) {
-        final List<Property> newProperties = newProperty == null ? null :
-            newProperty.isComplex() ? newProperty.asComplex() : newProperty.asLinkedComplex().getValue();
+        List<Property> newProperties = null;
+        if(newProperty != null && newProperty.asComplex() != null){
+          newProperties = newProperty.asComplex().getValue();
+        }
         updateProperty(type.getStructuralProperty(propertyName),
-            findProperty(propertyName, property.asLinkedComplex().getValue()),
+            findProperty(propertyName, property.asComplex().getValue()),
             newProperties == null ? null : findProperty(propertyName, newProperties),
             patch);
       }
@@ -459,7 +461,7 @@ public class DataProvider {
   public void setOData(final OData odata) {
     this.odata = odata;
   }
-  
+
   public static class DataProviderException extends ODataApplicationException {
     private static final long serialVersionUID = 5098059649321796156L;
 

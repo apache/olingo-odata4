@@ -75,14 +75,7 @@ public interface ODataValuable {
    * 
    * @return complex value if exists; null otherwise.
    */
-  ODataComplexValue<ODataProperty> getComplexValue();
-
-  /**
-   * Gets complex value with link information (if available).
-   * 
-   * @return complex value if exists; null otherwise.
-   */
-  ODataLinkedComplexValue getLinkedComplexValue();
+  ODataComplexValue getComplexValue();
 
   /**
    * Checks if has enum value.

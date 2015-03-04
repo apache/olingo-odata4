@@ -81,7 +81,7 @@ public class PropertyTest extends AbstractTest {
     final ODataProperty written = getClient().getReader().readProperty(
             getClient().getWriter().writeProperty(property, format), format);
     // This is needed because type information gets lost with JSON serialization
-    final ODataComplexValue<ODataProperty> typedValue = getClient().getObjectFactory().
+    final ODataComplexValue typedValue = getClient().getObjectFactory().
             newComplexValue(property.getComplexValue().getTypeName());
     for (final Iterator<ODataProperty> itor = written.getComplexValue().iterator(); itor.hasNext();) {
       final ODataProperty prop = itor.next();

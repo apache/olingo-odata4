@@ -22,9 +22,7 @@ import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValuable;
 import org.apache.olingo.commons.api.domain.ODataValue;
 
@@ -80,13 +78,8 @@ public class ODataAnnotationImpl implements ODataAnnotation {
   }
 
   @Override
-  public ODataComplexValue<ODataProperty> getComplexValue() {
+  public ODataComplexValue getComplexValue() {
     return valuable.getComplexValue();
-  }
-
-  @Override
-  public ODataLinkedComplexValue getLinkedComplexValue() {
-    return valuable.getLinkedComplexValue();
   }
 
   @Override

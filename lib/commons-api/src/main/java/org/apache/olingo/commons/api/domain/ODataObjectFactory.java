@@ -111,9 +111,7 @@ public interface ODataObjectFactory {
 
   ODataEnumValue newEnumValue(String typeName, String value);
 
-  ODataComplexValue<ODataProperty> newComplexValue(String typeName);
-
-  ODataLinkedComplexValue newLinkedComplexValue(String typeName);
+  ODataComplexValue newComplexValue(String typeName);
 
   ODataCollectionValue<ODataValue> newCollectionValue(String typeName);
 
@@ -133,7 +131,7 @@ public interface ODataObjectFactory {
    * @param value value.
    * @return complex property.
    */
-  ODataProperty newComplexProperty(String name, ODataComplexValue<? extends ODataProperty> value);
+  ODataProperty newComplexProperty(String name, ODataComplexValue value);
 
   /**
    * Instantiates a new collection property.

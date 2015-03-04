@@ -34,11 +34,11 @@ import org.apache.olingo.client.core.EdmEnabledODataClientImpl;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValuable;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -287,7 +287,7 @@ public class EntityTest extends AbstractTest {
             getClient().getDeserializer(format).toEntity(input));
     assertNotNull(entity);
 
-    final ODataLinkedComplexValue addressValue = entity.getProperty("Address").getLinkedComplexValue();
+    final ODataComplexValue addressValue = entity.getProperty("Address").getComplexValue();
     assertNotNull(addressValue);
     assertNotNull(addressValue.getNavigationLink("Country"));
 
@@ -336,7 +336,7 @@ public class EntityTest extends AbstractTest {
     assertEquals("com.contoso.display.styleType", annotation.getValue().getTypeName());
     assertTrue(annotation.hasComplexValue());
     assertEquals(2,
-            annotation.getValue().asLinkedComplex().get("order").getPrimitiveValue().toCastValue(Integer.class), 0);
+            annotation.getValue().asComplex().get("order").getPrimitiveValue().toCastValue(Integer.class), 0);
 
     final ODataEntity written = getClient().getBinder().getODataEntity(
             new ResWrap<Entity>((URI) null, null, getClient().getBinder().getEntity(entity)));

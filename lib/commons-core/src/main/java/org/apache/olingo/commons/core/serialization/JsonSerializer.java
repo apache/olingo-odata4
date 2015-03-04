@@ -30,7 +30,7 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
-import org.apache.olingo.commons.api.data.LinkedComplexValue;
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
@@ -280,13 +280,7 @@ public class JsonSerializer implements ODataSerializer {
           break;
 
         case COLLECTION_COMPLEX:
-          @SuppressWarnings("unchecked")
-          final List<Property> complexItem = (List<Property>) item;
-          complexValue(jgen, itemTypeInfo, complexItem, null);
-          break;
-
-        case COLLECTION_LINKED_COMPLEX:
-          final LinkedComplexValue complexItem2 = (LinkedComplexValue) item;
+          final ComplexValue complexItem2 = (ComplexValue) item;
           complexValue(jgen, itemTypeInfo, complexItem2.getValue(), complexItem2);
           break;
 
@@ -357,10 +351,8 @@ public class JsonSerializer implements ODataSerializer {
       jgen.writeEndObject();
     } else if (value.isCollection()) {
       collection(jgen, typeInfo, value.getValueType(), value.asCollection());
-    } else if (value.isLinkedComplex()) {
-      complexValue(jgen, typeInfo, value.asLinkedComplex().getValue(), value.asLinkedComplex());
     } else if (value.isComplex()) {
-      complexValue(jgen, typeInfo, value.asComplex(), null);
+      complexValue(jgen, typeInfo, value.asComplex().getValue(), value.asComplex());
     }
   }
 
@@ -368,7 +360,7 @@ public class JsonSerializer implements ODataSerializer {
           throws IOException, EdmPrimitiveTypeException {
 
     if (!Constants.VALUE.equals(name) && !(valuable instanceof Annotation)
-            && !valuable.isComplex() && !valuable.isLinkedComplex()) {
+            && !valuable.isComplex() && !valuable.isComplex()) {
 
       String type = valuable.getType();
       if (StringUtils.isBlank(type) && valuable.isPrimitive() || valuable.isNull()) {

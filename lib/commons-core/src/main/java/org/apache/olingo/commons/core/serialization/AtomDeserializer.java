@@ -37,11 +37,11 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.DeletedEntity.Reason;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
@@ -60,13 +60,13 @@ import org.apache.olingo.commons.api.serialization.ODataDeserializer;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.data.AbstractODataObject;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
+import org.apache.olingo.commons.core.data.ComplexValueImpl;
 import org.apache.olingo.commons.core.data.DeletedEntityImpl;
 import org.apache.olingo.commons.core.data.DeltaImpl;
 import org.apache.olingo.commons.core.data.DeltaLinkImpl;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
@@ -120,7 +120,6 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     return value;
   }
 
-  @SuppressWarnings("unchecked")
   private Object fromComplexOrEnum(final XMLEventReader reader, final StartElement start)
       throws XMLStreamException, EdmPrimitiveTypeException {
 
@@ -132,8 +131,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
 
       if (event.isStartElement()) {
         if (value == null) {
-          value = version.compareTo(ODataServiceVersion.V40) < 0 ?
-              new ArrayList<Property>() : new LinkedComplexValueImpl();
+          value = new ComplexValueImpl();
         }
 
         if (Constants.QNAME_ATOM_ELEM_LINK.equals(event.asStartElement().getName())) {
@@ -158,16 +156,15 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
           if (link.getRel().startsWith(
               version.getNamespace(ODataServiceVersion.NamespaceKey.NAVIGATION_LINK_REL))) {
 
-            ((LinkedComplexValue) value).getNavigationLinks().add(link);
+            ((ComplexValue) value).getNavigationLinks().add(link);
             inline(reader, event.asStartElement(), link);
           } else if (link.getRel().startsWith(
               version.getNamespace(ODataServiceVersion.NamespaceKey.ASSOCIATION_LINK_REL))) {
 
-            ((Valuable) value).asLinkedComplex().getAssociationLinks().add(link);
+            ((Valuable) value).asComplex().getAssociationLinks().add(link);
           }
         } else {
-          (value instanceof LinkedComplexValue ? ((LinkedComplexValue) value).getValue() : (List<Property>) value)
-              .add(property(reader, event.asStartElement()));
+          ((ComplexValue) value).getValue().add(property(reader, event.asStartElement()));
         }
       }
 
@@ -200,8 +197,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
         switch (guessPropertyType(reader, typeInfo)) {
         case COMPLEX:
           final Object complexValue = fromComplexOrEnum(reader, event.asStartElement());
-          valueType = complexValue instanceof LinkedComplexValue ?
-              ValueType.COLLECTION_LINKED_COMPLEX : ValueType.COLLECTION_COMPLEX;
+          valueType = ValueType.COLLECTION_COMPLEX;
           values.add(complexValue);
           break;
 
@@ -313,8 +309,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
 
       case COMPLEX:
         final Object complexValue = fromComplexOrEnum(reader, start);
-        valuable.setValue(complexValue instanceof LinkedComplexValue ? ValueType.LINKED_COMPLEX :
-            complexValue instanceof List<?> ? ValueType.COMPLEX : ValueType.ENUM,
+        valuable.setValue(complexValue instanceof ComplexValue ? ValueType.COMPLEX : ValueType.ENUM,
             complexValue);
         break;
 

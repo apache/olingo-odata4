@@ -1310,10 +1310,10 @@ public class V4Services extends AbstractServices {
       }
 
       assert property.isComplex();
-      assert 1 == property.asComplex().size();
-      assert "Edm.Int32".equals(property.asComplex().get(0).getType());
-      assert property.asComplex().get(0).isPrimitive();
-      assert "percentage".equals(property.asComplex().get(0).getName());
+      assert 1 == property.asComplex().getValue().size();
+      assert "Edm.Int32".equals(property.asComplex().getValue().get(0).getType());
+      assert property.asComplex().getValue().get(0).isPrimitive();
+      assert "percentage".equals(property.asComplex().getValue().get(0).getName());
 
       return xml.createResponse(null, null, null, acceptType, Response.Status.NO_CONTENT);
     } catch (Exception e) {

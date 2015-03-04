@@ -16,10 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain;
+package org.apache.olingo.commons.api.data;
 
+import java.util.List;
 
-public interface ODataLinkedComplexValue
-    extends ODataValue, ODataLinked, ODataComplexValue<ODataProperty>, ODataAnnotatable {
+public interface ComplexValue extends Linked, Annotatable {
 
+  List<Property> getValue();
 }

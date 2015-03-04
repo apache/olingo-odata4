@@ -38,8 +38,6 @@ public interface Valuable {
 
   boolean isComplex();
 
-  boolean isLinkedComplex();
-
   boolean isCollection();
 
   Object getValue();
@@ -50,9 +48,7 @@ public interface Valuable {
 
   Geospatial asGeospatial();
 
-  List<Property> asComplex();
-
-  LinkedComplexValue asLinkedComplex();
+  ComplexValue asComplex();
 
   List<?> asCollection();
 

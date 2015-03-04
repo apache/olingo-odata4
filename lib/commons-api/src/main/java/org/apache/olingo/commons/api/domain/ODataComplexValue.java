@@ -25,7 +25,7 @@ import java.util.Map;
  * 
  * @param <OP> The actual ODataProperty interface.
  */
-public interface ODataComplexValue<OP extends ODataProperty> extends ODataValue, Iterable<OP> {
+public interface ODataComplexValue extends ODataValue, ODataLinked, ODataAnnotatable, Iterable<ODataProperty> {
 
   /**
    * Adds field to the complex type.
@@ -33,7 +33,7 @@ public interface ODataComplexValue<OP extends ODataProperty> extends ODataValue,
    * @param field field to be added.
    * @return this (for fluent-style calls)
    */
-  ODataComplexValue<OP> add(OP field);
+  ODataComplexValue add(ODataProperty field);
 
   /**
    * Gets field.
@@ -41,7 +41,7 @@ public interface ODataComplexValue<OP extends ODataProperty> extends ODataValue,
    * @param name name of the field to be retrieved.
    * @return requested field.
    */
-  OP get(String name);
+  ODataProperty get(String name);
 
   /**
    * Gets number of fields.

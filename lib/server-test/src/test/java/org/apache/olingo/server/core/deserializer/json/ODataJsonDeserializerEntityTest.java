@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
@@ -231,7 +232,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     assertNotNull(entity.getProperty("PropertyComp"));
     assertNotNull(entity.getProperty("PropertyComp") instanceof List);
-    List<Property> complexProperties = entity.getProperty("PropertyComp").asComplex();
+    List<Property> complexProperties = entity.getProperty("PropertyComp").asComplex().getValue();
     assertEquals(16, complexProperties.size());
   }
 
@@ -284,7 +285,6 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertEquals(true, asCollection.get(2));
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void simpleEntityETMixPrimCollComp() throws Exception {
     final String entityString = "{"
@@ -314,13 +314,12 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertEquals(3, asCollection.size());
 
     for (Object arrayElement : asCollection) {
-      assertTrue(arrayElement instanceof List);
-      List<Object> castedArrayElement = (List<Object>) arrayElement;
+      assertTrue(arrayElement instanceof ComplexValue);
+      List<Property> castedArrayElement = (List<Property>) ((ComplexValue) arrayElement).getValue();
       assertEquals(2, castedArrayElement.size());
     }
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void eTMixPrimCollCompMIssingPropertyInComplexType() throws Exception {
     final String entityString = "{"
@@ -341,7 +340,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     Property complexProperty = entity.getProperty("PropertyComp");
     assertEquals(ValueType.COMPLEX, complexProperty.getValueType());
-    List<Property> complexPropertyValues = (List<Property>) complexProperty.getValue();
+    List<Property> complexPropertyValues = (List<Property>) complexProperty.asComplex().getValue();
     assertEquals(1, complexPropertyValues.size());
 
     Property property = entity.getProperty("CollPropertyComp");
@@ -352,8 +351,8 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertEquals(3, asCollection.size());
 
     for (Object arrayElement : asCollection) {
-      assertTrue(arrayElement instanceof List);
-      List<Object> castedArrayElement = (List<Object>) arrayElement;
+      assertTrue(arrayElement instanceof ComplexValue);
+      List<Property> castedArrayElement = (List<Property>) ((ComplexValue) arrayElement).getValue();
       assertEquals(1, castedArrayElement.size());
     }
   }
@@ -495,7 +494,6 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertTrue(bindingToMany.getBindingLinks().isEmpty());
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void eTMixEnumDefCollCompTest() throws Exception {
     InputStream stream = getFileAsStream("EntityETMixEnumDefCollComp.json");
@@ -515,7 +513,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertEquals("string", defProperty.getValue());
 
     Property complexProperty = entity.getProperty("PropertyCompMixedEnumDef");
-    List<Property> value = (List<Property>) complexProperty.getValue();
+    List<Property> value = (List<Property>) complexProperty.asComplex().getValue();
     assertEquals((short) 2, value.get(0).getValue());
   }
 
@@ -566,7 +564,6 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertNull(entity.getProperty("PropertyComp").getValue());
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void validJsonValueForComplexCollectionNullValue() throws Exception {
     final String entityString = "{"
@@ -580,7 +577,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     List<?> collPropertyComp = entity.getProperty("CollPropertyComp").asCollection();
     assertNull(collPropertyComp.get(0));
-    List<Property> complexPropertyProperties = (List<Property>) collPropertyComp.get(1);
+    List<Property> complexPropertyProperties = (List<Property>) ((ComplexValue) collPropertyComp.get(1)).getValue();
     assertEquals(Short.valueOf((short) 789), complexPropertyProperties.get(0).getValue());
     assertEquals("TEST 3", complexPropertyProperties.get(1).getValue());
   }
@@ -595,8 +592,8 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     Entity entity = deserializer.entity(stream, edm.getEntityType(
         new FullQualifiedName("Namespace1_Alias", "ETCompAllPrim")));
 
-    assertEquals("TEST A", entity.getProperty("PropertyComp").asComplex().get(0).getValue());
-    assertNull(entity.getProperty("PropertyComp").asComplex().get(1).getValue());
+    assertEquals("TEST A", entity.getProperty("PropertyComp").asComplex().getValue().get(0).getValue());
+    assertNull(entity.getProperty("PropertyComp").asComplex().getValue().get(1).getValue());
   }
 
   @Test
@@ -614,7 +611,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     assertEquals((short) 2, e.getProperty("PropertyEnumString").getValue());
     Property propertyCompMixedEnumDef = e.getProperty("PropertyCompMixedEnumDef");
-    assertNull(propertyCompMixedEnumDef.asComplex().get(0).getValue());
+    assertNull(propertyCompMixedEnumDef.asComplex().getValue().get(0).getValue());
   }
 
   @Test

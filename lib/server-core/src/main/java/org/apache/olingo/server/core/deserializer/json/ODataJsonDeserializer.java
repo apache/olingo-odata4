@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
@@ -43,6 +44,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.data.ComplexValueImpl;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
@@ -357,7 +359,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   private Object readComplexNode(final EdmProperty edmProperty, final JsonNode jsonNode)
       throws DeserializerException {
     // read and add all complex properties
-    Object value = readComplexValue(edmProperty, jsonNode);
+    ComplexValue value = readComplexValue(edmProperty, jsonNode);
 
     final List<String> toRemove = new ArrayList<String>();
     Iterator<Entry<String, JsonNode>> fieldsIterator = jsonNode.fields();
@@ -430,7 +432,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
   }
 
-  private Object readComplexValue(EdmProperty edmComplexProperty, JsonNode jsonNode) throws DeserializerException {
+  private ComplexValue readComplexValue(EdmProperty edmComplexProperty, JsonNode jsonNode)
+      throws DeserializerException {
     if (isValidNull(edmComplexProperty, jsonNode)) {
       return null;
     }
@@ -440,7 +443,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY, edmComplexProperty.getName());
     }
     // Even if there are no properties defined we have to give back an empty list
-    List<Property> propertyList = new ArrayList<Property>();
+    ComplexValueImpl complexValue = new ComplexValueImpl();
     EdmComplexType edmType = (EdmComplexType) edmComplexProperty.getType();
     // Check and consume all Properties
     for (String propertyName : edmType.getPropertyNames()) {
@@ -452,11 +455,11 @@ public class ODataJsonDeserializer implements ODataDeserializer {
               DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, propertyName);
         }
         Property property = consumePropertyNode(edmProperty, subNode);
-        propertyList.add(property);
+        complexValue.getValue().add(property);
         ((ObjectNode) jsonNode).remove(propertyName);
       }
     }
-    return propertyList;
+    return complexValue;
   }
 
   private boolean isNullable(EdmProperty edmProperty) {

@@ -18,10 +18,11 @@
  */
 package org.apache.olingo.commons.core.domain;
 
+import java.util.UUID;
+
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.AbstractODataValue;
 import org.apache.olingo.commons.api.domain.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -31,8 +32,6 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-
-import java.util.UUID;
 
 public class ODataPrimitiveValueImpl extends AbstractODataValue implements ODataValue, ODataPrimitiveValue {
 
@@ -224,13 +223,8 @@ public class ODataPrimitiveValueImpl extends AbstractODataValue implements OData
   }
 
   @Override
-  public boolean isLinkedComplex() {
+  public boolean isComplex() {
     return false;
-  }
-
-  @Override
-  public ODataLinkedComplexValue asLinkedComplex() {
-    return null;
   }
 
 }

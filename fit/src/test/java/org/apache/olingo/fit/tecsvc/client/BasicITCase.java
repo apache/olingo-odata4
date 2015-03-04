@@ -51,10 +51,10 @@ import org.apache.olingo.client.api.edm.xml.Reference;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
@@ -295,9 +295,9 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ODataObjectFactory factory = client.getObjectFactory();
     ODataEntity patchEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETCompComp"));
     patchEntity.getProperties().add(factory.newComplexProperty("PropertyComp",
-        factory.newLinkedComplexValue("olingo.odata.test1.CTCompComp").add(
+        factory.newComplexValue("olingo.odata.test1.CTCompComp").add(
             factory.newComplexProperty("PropertyComp",
-                factory.newLinkedComplexValue("olingo.odata.test1.CTTwoPrim").add(
+                factory.newComplexValue("olingo.odata.test1.CTTwoPrim").add(
                     factory.newPrimitiveProperty("PropertyInt16",
                         factory.newPrimitiveValueBuilder().buildInt32(42)))))));
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESCompComp").appendKeySegment(1).build();
@@ -314,8 +314,8 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
     final ODataEntity entity = entityResponse.getBody();
     assertNotNull(entity);
-    final ODataLinkedComplexValue complex = entity.getProperty("PropertyComp").getLinkedComplexValue()
-        .get("PropertyComp").getLinkedComplexValue();
+    final ODataComplexValue complex = entity.getProperty("PropertyComp").getComplexValue()
+        .get("PropertyComp").getComplexValue();
     assertNotNull(complex);
     final ODataProperty property1 = complex.get("PropertyInt16");
     assertNotNull(property1);
@@ -358,8 +358,8 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
     final ODataEntity entity = entityResponse.getBody();
     assertNotNull(entity);
-    final ODataLinkedComplexValue complex = entity.getProperty("PropertyCompComp").getLinkedComplexValue()
-        .get("PropertyComp").getLinkedComplexValue();
+    final ODataComplexValue complex = entity.getProperty("PropertyCompComp").getComplexValue()
+        .get("PropertyComp").getComplexValue();
     assertNotNull(complex);
     final ODataProperty property = complex.get("PropertyInt16");
     assertNotNull(property);

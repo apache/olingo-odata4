@@ -39,7 +39,7 @@ import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
 public class ComplexInvocationHandler extends AbstractStructuredInvocationHandler {
 
-  private static Pair<ODataComplexValue<? extends ODataProperty>, Class<?>> init(
+  private static Pair<ODataComplexValue, Class<?>> init(
           final Class<?> typeRef,
           final AbstractService<?> service) {
 
@@ -57,10 +57,10 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
 
     final FullQualifiedName typeName =
             new FullQualifiedName(ClassUtils.getNamespace(complexTypeRef), annotation.name());
-    final ODataComplexValue<? extends ODataProperty> complex =
+    final ODataComplexValue complex =
             service.getClient().getObjectFactory().newComplexValue(typeName.toString());
 
-    return new ImmutablePair<ODataComplexValue<? extends ODataProperty>, Class<?>>(complex, complexTypeRef);
+    return new ImmutablePair<ODataComplexValue, Class<?>>(complex, complexTypeRef);
   }
 
   public static ComplexInvocationHandler getInstance(
@@ -68,12 +68,12 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
           final EntityInvocationHandler handler,
           final Class<?> typeRef) {
 
-    final Pair<ODataComplexValue<? extends ODataProperty>, Class<?>> init = init(typeRef, handler.service);
+    final Pair<ODataComplexValue, Class<?>> init = init(typeRef, handler.service);
     return new ComplexInvocationHandler(init.getLeft(), init.getRight(), handler);
   }
 
   public static ComplexInvocationHandler getInstance(
-          final ODataComplexValue<?> complex,
+          final ODataComplexValue complex,
           final Class<?> typeRef,
           final AbstractService<?> service) {
 
@@ -84,7 +84,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
           final Class<?> typeRef,
           final AbstractService<?> service) {
       
-    final Pair<ODataComplexValue<? extends ODataProperty>, Class<?>> init = init(typeRef, service);
+    final Pair<ODataComplexValue, Class<?>> init = init(typeRef, service);
     return new ComplexInvocationHandler(init.getLeft(), init.getRight(), service);
   }
 
@@ -93,12 +93,12 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
           final AbstractService<?> service,
           final URIBuilder uri) {
       
-    final Pair<ODataComplexValue<? extends ODataProperty>, Class<?>> init = init(typeRef, service);
+    final Pair<ODataComplexValue, Class<?>> init = init(typeRef, service);
     return new ComplexInvocationHandler(init.getLeft(), init.getRight(), service, uri);
   }
 
   public static ComplexInvocationHandler getInstance(
-          final ODataComplexValue<? extends ODataProperty> complex,
+          final ODataComplexValue complex,
           final Class<?> typeRef,
           final AbstractService<?> service,
           final URIBuilder uri) {
@@ -107,7 +107,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   }
 
   private ComplexInvocationHandler(
-          final ODataComplexValue<? extends ODataProperty> complex,
+          final ODataComplexValue complex,
           final Class<?> typeRef,
           final AbstractService<?> service,
           final URIBuilder uri) {
@@ -118,7 +118,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   }
 
   private ComplexInvocationHandler(
-          final ODataComplexValue<? extends ODataProperty> complex,
+          final ODataComplexValue complex,
           final Class<?> typeRef,
           final EntityInvocationHandler handler) {
 
@@ -127,7 +127,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   }
 
   private ComplexInvocationHandler(
-          final ODataComplexValue<? extends ODataProperty> complex,
+          final ODataComplexValue complex,
           final Class<?> typeRef,
           final AbstractService<?> service) {
 
@@ -135,9 +135,8 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
     this.uri = null;
   }
 
-  @SuppressWarnings("unchecked")
-  public ODataComplexValue<ODataProperty> getComplex() {
-    return (ODataComplexValue<ODataProperty>) this.internal;
+  public ODataComplexValue getComplex() {
+    return (ODataComplexValue) this.internal;
   }
 
   @Override
@@ -174,12 +173,11 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   }
 
   @Override
-  @SuppressWarnings("unchecked")
-  protected <T extends ODataProperty> List<T> getInternalProperties() {
-    final List<T> res = new ArrayList<T>();
+  protected List<ODataProperty> getInternalProperties() {
+    final List<ODataProperty> res = new ArrayList<ODataProperty>();
     if (getComplex() != null) {
       for (ODataProperty property : getComplex()) {
-        res.add((T) property);
+        res.add(property);
       }
     }
     return res;

@@ -18,27 +18,26 @@
  */
 package org.apache.olingo.fit.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Calendar;
+import java.util.TimeZone;
+import java.util.UUID;
+
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
-
-import java.util.Calendar;
-import java.util.TimeZone;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class OpenTypeTestITCase extends AbstractTestITCase {
 
@@ -115,7 +114,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
         getClient().getObjectFactory().newEnumProperty("aColor", getClient().getObjectFactory().
             newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.Color", "Blue")));
 
-    final ODataComplexValue<ODataProperty> contactDetails = getClient().getObjectFactory().newComplexValue(
+    final ODataComplexValue contactDetails = getClient().getObjectFactory().newComplexValue(
         "Microsoft.Test.OData.Services.OpenTypesServiceV4.ContactDetails");
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("FirstContacted",
         getClient().getObjectFactory().newPrimitiveValueBuilder().buildBinary("text".getBytes())));

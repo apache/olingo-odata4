@@ -25,12 +25,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
-import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
@@ -47,10 +47,10 @@ import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
+import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
@@ -318,11 +318,9 @@ public class ODataJsonSerializer implements ODataSerializer {
         }
       } else if (edmProperty.isCollection()) {
         writeComplexCollection((EdmComplexType) edmProperty.getType(), property, selectedPaths, json);
-      } else if (property.isLinkedComplex()) {
-        writeComplexValue((EdmComplexType) edmProperty.getType(), property.asLinkedComplex().getValue(),
-            selectedPaths, json);
       } else if (property.isComplex()) {
-        writeComplexValue((EdmComplexType) edmProperty.getType(), property.asComplex(), selectedPaths, json);
+        writeComplexValue((EdmComplexType) edmProperty.getType(), property.asComplex().getValue(),
+            selectedPaths, json);
       } else {
         throw new SerializerException("Property type not yet supported!",
             SerializerException.MessageKeys.UNSUPPORTED_PROPERTY_TYPE, edmProperty.getName());
@@ -364,11 +362,8 @@ public class ODataJsonSerializer implements ODataSerializer {
     json.writeStartArray();
     for (Object value : property.asCollection()) {
       switch (property.getValueType()) {
-      case COLLECTION_LINKED_COMPLEX:
-        writeComplexValue(type, ((LinkedComplexValue) value).getValue(), selectedPaths, json);
-        break;
       case COLLECTION_COMPLEX:
-        writeComplexValue(type, ((Property) value).asComplex(), selectedPaths, json);
+        writeComplexValue(type, ((ComplexValue) value).getValue(), selectedPaths, json);
         break;
       default:
         throw new SerializerException("Property type not yet supported!",
@@ -487,11 +482,11 @@ public class ODataJsonSerializer implements ODataSerializer {
       if (contextURL != null) {
         json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
       }
-      final List<Property> values = property.isNull() ? Collections.<Property> emptyList() :
-          property.isComplex() ? property.asComplex() : property.asLinkedComplex().getValue();
+      final List<Property> values =
+          property.isNull() ? Collections.<Property> emptyList() : property.asComplex().getValue();
       writeProperties(type, values, options == null ? null : options.getSelect(), json);
-      if (!property.isNull() && property.isLinkedComplex()) {
-        writeNavigationProperties(type, property.asLinkedComplex(),
+      if (!property.isNull() && property.isComplex()) {
+        writeNavigationProperties(type, property.asComplex(),
             options == null ? null : options.getExpand(), json);
       }
       json.writeEndObject();

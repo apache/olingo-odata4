@@ -22,10 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -42,12 +38,15 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JSONTest extends AbstractTest {
 
@@ -219,7 +218,7 @@ public class JSONTest extends AbstractTest {
     assertTrue(property.isPrimitive());
     property = delta.getEntities().get(1).getProperty("ShippingAddress");
     assertNotNull(property);
-    assertTrue(property.isLinkedComplex());
+    assertTrue(property.isComplex());
   }
 
   @Test
@@ -232,7 +231,7 @@ public class JSONTest extends AbstractTest {
     final ODataEntity message = getClient().getObjectFactory().
             newEntity(new FullQualifiedName("Microsoft.Exchange.Services.OData.Model.Message"));
 
-    final ODataComplexValue<ODataProperty> toRecipient = getClient().getObjectFactory().
+    final ODataComplexValue toRecipient = getClient().getObjectFactory().
             newComplexValue("Microsoft.Exchange.Services.OData.Model.Recipient");
     toRecipient.add(getClient().getObjectFactory().newPrimitiveProperty("Name",
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("challen_olingo_client")));
@@ -243,7 +242,7 @@ public class JSONTest extends AbstractTest {
     toRecipients.add(toRecipient);
     message.getProperties().add(getClient().getObjectFactory().newCollectionProperty("ToRecipients", toRecipients));
 
-    final ODataComplexValue<ODataProperty> body =
+    final ODataComplexValue body =
             getClient().getObjectFactory().newComplexValue("Microsoft.Exchange.Services.OData.Model.ItemBody");
     body.add(getClient().getObjectFactory().newPrimitiveProperty("Content",
             getClient().getObjectFactory().newPrimitiveValueBuilder().

@@ -18,16 +18,15 @@
  */
 package org.apache.olingo.commons.core.domain;
 
-import org.apache.olingo.commons.api.domain.AbstractODataValue;
-import org.apache.olingo.commons.api.domain.ODataCollectionValue;
-import org.apache.olingo.commons.api.domain.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
-import org.apache.olingo.commons.api.domain.ODataValue;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.olingo.commons.api.domain.AbstractODataValue;
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
+import org.apache.olingo.commons.api.domain.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.ODataValue;
 
 public class ODataCollectionValueImpl<OV extends ODataValue> extends AbstractODataValue
         implements ODataCollectionValue<OV>, ODataValue {
@@ -56,13 +55,8 @@ public class ODataCollectionValueImpl<OV extends ODataValue> extends AbstractODa
   }
 
   @Override
-  public boolean isLinkedComplex() {
+  public boolean isComplex() {
     return false;
-  }
-
-  @Override
-  public ODataLinkedComplexValue asLinkedComplex() {
-    return null;
   }
 
   @Override

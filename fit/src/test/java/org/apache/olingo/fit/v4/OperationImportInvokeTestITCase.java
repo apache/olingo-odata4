@@ -18,6 +18,14 @@
  */
 package org.apache.olingo.fit.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
@@ -31,14 +39,6 @@ import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
@@ -68,8 +68,8 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     assertEquals(1, person2.getProperty("PersonID").getPrimitiveValue().toCastValue(Integer.class), 0);
 
     // GetPerson
-    final ODataComplexValue<ODataProperty> address = getClient().getObjectFactory().
-        newLinkedComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
+    final ODataComplexValue address = getClient().getObjectFactory().
+        newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(client.getObjectFactory().newPrimitiveProperty("Street",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("1 Microsoft Way")));
     address.add(client.getObjectFactory().newPrimitiveProperty("City",
@@ -144,8 +144,8 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     assertEquals(1, person2.getProperty("PersonID").getPrimitiveValue().toCastValue(Integer.class), 0);
 
     // GetPerson
-    final ODataComplexValue<ODataProperty> address = getClient().getObjectFactory().
-        newLinkedComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
+    final ODataComplexValue address = getClient().getObjectFactory().
+        newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(client.getObjectFactory().newPrimitiveProperty("Street",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("1 Microsoft Way")));
     address.add(client.getObjectFactory().newPrimitiveProperty("City",
@@ -194,8 +194,8 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(discount);
 
     // ResetBossAddress
-    final ODataComplexValue<ODataProperty> address = getClient().getObjectFactory().
-        newLinkedComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
+    final ODataComplexValue address = getClient().getObjectFactory().
+        newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(client.getObjectFactory().newPrimitiveProperty("Street",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("Via Le Mani Dal Naso, 123")));
     address.add(client.getObjectFactory().newPrimitiveProperty("City",
@@ -234,8 +234,8 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(discount);
 
     // ResetBossAddress
-    final ODataComplexValue<ODataProperty> address = getClient().getObjectFactory().
-        newLinkedComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
+    final ODataComplexValue address = getClient().getObjectFactory().
+        newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(client.getObjectFactory().newPrimitiveProperty("Street",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("Via Le Mani Dal Naso, 123")));
     address.add(client.getObjectFactory().newPrimitiveProperty("City",

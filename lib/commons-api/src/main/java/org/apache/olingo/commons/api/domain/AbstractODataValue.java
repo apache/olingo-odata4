@@ -77,10 +77,9 @@ public abstract class AbstractODataValue implements ODataValue {
    * 
    * @return complex value.
    */
-  @SuppressWarnings("unchecked")
   @Override
-  public <OP extends ODataProperty> ODataComplexValue<OP> asComplex() {
-    return isComplex() ? (ODataComplexValue<OP>) this : null;
+  public ODataComplexValue asComplex() {
+    return isComplex() ? (ODataComplexValue) this : null;
   }
 
   /**

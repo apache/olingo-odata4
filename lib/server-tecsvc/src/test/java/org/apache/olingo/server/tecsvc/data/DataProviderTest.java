@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.data.LinkedComplexValue;
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -125,8 +125,8 @@ public class DataProviderTest {
     Assert.assertEquals(3, outSet.getEntities().size());
     Assert.assertEquals(2, outSet.getEntities().get(0).getProperties().size());
     Property complex = outSet.getEntities().get(0).getProperties().get(1);
-    Assert.assertTrue(complex.isLinkedComplex());
-    Assert.assertEquals(16, complex.asLinkedComplex().getValue().size());
+    Assert.assertTrue(complex.isComplex());
+    Assert.assertEquals(16, complex.asComplex().getValue().size());
     Assert.assertEquals(2, outSet.getEntities().get(1).getProperties().size());
     Assert.assertEquals(2, outSet.getEntities().get(2).getProperties().size());
   }
@@ -138,13 +138,13 @@ public class DataProviderTest {
     Assert.assertEquals(3, outSet.getEntities().size());
     Assert.assertEquals(4, outSet.getEntities().get(0).getProperties().size());
     Property complex = outSet.getEntities().get(0).getProperties().get(2);
-    Assert.assertTrue(complex.isLinkedComplex());
-    Assert.assertEquals(2, complex.asLinkedComplex().getValue().size());
+    Assert.assertTrue(complex.isComplex());
+    Assert.assertEquals(2, complex.asComplex().getValue().size());
     Property complexCollection = outSet.getEntities().get(0).getProperties().get(3);
     Assert.assertTrue(complexCollection.isCollection());
     List<?> linkedComplexValues = complexCollection.asCollection();
     Assert.assertEquals(3, linkedComplexValues.size());
-    LinkedComplexValue linkedComplexValue = (LinkedComplexValue) linkedComplexValues.get(0);
+    ComplexValue linkedComplexValue = (ComplexValue) linkedComplexValues.get(0);
     Assert.assertEquals(2, linkedComplexValue.getValue().size());
     Property lcProp = linkedComplexValue.getValue().get(0);
     Assert.assertFalse(lcProp.isCollection());

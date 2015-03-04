@@ -18,6 +18,12 @@
  */
 package org.apache.olingo.fit.v4;
 
+import static org.junit.Assert.assertEquals;
+
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.TimeZone;
+
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
@@ -27,18 +33,11 @@ import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValuable;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.TimeZone;
-
-import static org.junit.Assert.assertEquals;
 
 public class DerivedTypeTestITCase extends AbstractTestITCase {
 
@@ -89,7 +88,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
     customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("LastName",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("Test")));
 
-    final ODataComplexValue<ODataProperty> homeAddress =
+    final ODataComplexValue homeAddress =
         client.getObjectFactory().newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress");
     homeAddress.add(client.getObjectFactory().newPrimitiveProperty("Street",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("V.le Gabriele D'Annunzio")));

@@ -20,13 +20,13 @@ package org.apache.olingo.commons.core.data;
 
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Link;
-import org.apache.olingo.commons.api.data.LinkedComplexValue;
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LinkedComplexValueImpl implements LinkedComplexValue {
+public class ComplexValueImpl implements ComplexValue {
 
   private final List<Property> value = new ArrayList<Property>();
   private final List<Link> associationLinks = new ArrayList<Link>();

@@ -18,16 +18,6 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataLinkedComplexValue;
-import org.apache.olingo.ext.proxy.api.AbstractTerm;
-import org.apache.olingo.ext.proxy.api.Annotatable;
-import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.Term;
-import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
-import org.apache.olingo.ext.proxy.utils.CoreUtils;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -37,7 +27,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.ext.proxy.AbstractService;
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
+import org.apache.olingo.ext.proxy.api.Annotatable;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.Term;
+import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
+import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
 public class AnnotatableInvocationHandler extends AbstractInvocationHandler implements Annotatable {
 
@@ -87,11 +86,11 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
                 ? ((org.apache.olingo.commons.api.domain.ODataLink) ((ODataEntity) targetHandler.getInternal()).
                 getNavigationLink(navPropName)).getAnnotations()
                 : ((ODataEntity) targetHandler.getInternal()).getProperty(propName).getAnnotations();
-      } else if (targetHandler.getInternal() instanceof ODataLinkedComplexValue) {
+      } else if (targetHandler.getInternal() instanceof ODataComplexValue) {
         result = propName == null
-                ? ((org.apache.olingo.commons.api.domain.ODataLink) ((ODataLinkedComplexValue) targetHandler.
+                ? ((org.apache.olingo.commons.api.domain.ODataLink) ((ODataComplexValue) targetHandler.
                 getInternal()).getNavigationLink(navPropName)).getAnnotations()
-                : ((ODataLinkedComplexValue) targetHandler.getInternal()).get(propName).getAnnotations();
+                : ((ODataComplexValue) targetHandler.getInternal()).get(propName).getAnnotations();
       }
     }
 

@@ -321,8 +321,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     final ODataCollectionValue<org.apache.olingo.commons.api.domain.ODataValue> addresses =
         client.getObjectFactory().
             newCollectionValue("Collection(Microsoft.Test.OData.Services.ODataWCFService.Address)");
-    final ODataComplexValue<ODataProperty> address = client.getObjectFactory().
-        newLinkedComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
+    final ODataComplexValue address = client.getObjectFactory().
+        newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(client.getObjectFactory().newPrimitiveProperty("Street",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("Piazza La Bomba E Scappa")));
     address.add(client.getObjectFactory().newPrimitiveProperty("City",
@@ -411,8 +411,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     final ODataCollectionValue<org.apache.olingo.commons.api.domain.ODataValue> addresses =
         edmClient.getObjectFactory().
             newCollectionValue("Collection(Microsoft.Test.OData.Services.ODataWCFService.Address)");
-    final ODataComplexValue<ODataProperty> address = edmClient.getObjectFactory().
-        newLinkedComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
+    final ODataComplexValue address = edmClient.getObjectFactory().
+        newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(edmClient.getObjectFactory().newPrimitiveProperty("Street",
         edmClient.getObjectFactory().newPrimitiveValueBuilder().buildString("Piazza La Bomba E Scappa")));
     address.add(edmClient.getObjectFactory().newPrimitiveProperty("City",
