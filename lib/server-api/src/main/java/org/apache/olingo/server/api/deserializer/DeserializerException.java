@@ -29,7 +29,6 @@ public class DeserializerException extends ODataTranslatedException {
   public static enum MessageKeys implements MessageKey {
     NOT_IMPLEMENTED,
     IO_EXCEPTION,
-    //TODO: create texts for the following message keys:
     /** parameter: format */ UNSUPPORTED_FORMAT, 
     JSON_SYNTAX_EXCEPTION, 
     /** parameter: propertyName */ INVALID_NULL_PROPERTY, 

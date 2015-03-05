@@ -37,12 +37,12 @@ public class EdmMappingTest {
 
   @Test
   public void initialMappingMustBeNull() {
-    Property property = new Property().setType(EdmPrimitiveTypeKind.DateTime.getFullQualifiedName());
+    Property property = new Property().setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
     EdmProperty edmProperty = new EdmPropertyImpl(null, new FullQualifiedName("namespace.name"), property);
 
     assertNull(edmProperty.getMapping());
 
-    Parameter parameter = new Parameter().setType(EdmPrimitiveTypeKind.DateTime.getFullQualifiedName());
+    Parameter parameter = new Parameter().setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
     EdmParameter edmParameter = new EdmParameterImpl(null, parameter);
 
     assertNull(edmParameter.getMapping());
@@ -52,7 +52,7 @@ public class EdmMappingTest {
   public void getDataClassForPrimTypeViaMapping() {
     Mapping mapping = new Mapping().setMappedJavaClass(Date.class);
     Property property = new Property()
-        .setType(EdmPrimitiveTypeKind.DateTime.getFullQualifiedName())
+        .setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName())
         .setMapping(mapping);
     EdmProperty edmProperty = new EdmPropertyImpl(null, new FullQualifiedName("namespace.name"), property);
 
@@ -60,7 +60,7 @@ public class EdmMappingTest {
     assertEquals(Date.class, edmProperty.getMapping().getMappedJavaClass());
 
     Parameter parameter = new Parameter()
-        .setType(EdmPrimitiveTypeKind.DateTime.getFullQualifiedName())
+        .setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName())
         .setMapping(mapping);
     EdmParameter edmParameter = new EdmParameterImpl(null, parameter);
 

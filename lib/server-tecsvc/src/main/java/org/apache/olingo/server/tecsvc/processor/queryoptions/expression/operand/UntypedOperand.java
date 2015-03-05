@@ -36,7 +36,6 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmSByte;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmSingle;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmTime;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmTimeOfDay;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.primitive.EdmNull;
@@ -105,10 +104,6 @@ public class UntypedOperand extends VisitorOperand {
 
     if ((newValue = tryCast(literal, EdmTimeOfDay.getInstance())) != null) {
       return new TypedOperand(newValue, EdmTimeOfDay.getInstance());
-    }
-
-    if ((newValue = tryCast(literal, EdmTime.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmTime.getInstance());
     }
 
     if ((newValue = tryCast(literal, EdmDuration.getInstance())) != null) {

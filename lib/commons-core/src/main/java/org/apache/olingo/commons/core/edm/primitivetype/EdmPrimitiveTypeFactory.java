@@ -41,12 +41,8 @@ public final class EdmPrimitiveTypeFactory {
       return EdmSByte.getInstance();
     case Date:
       return EdmDate.getInstance();
-    case DateTime:
-      return EdmDateTime.getInstance();
     case DateTimeOffset:
       return EdmDateTimeOffset.getInstance();
-    case Time:
-      return EdmTime.getInstance();
     case TimeOfDay:
       return EdmTimeOfDay.getInstance();
     case Duration:

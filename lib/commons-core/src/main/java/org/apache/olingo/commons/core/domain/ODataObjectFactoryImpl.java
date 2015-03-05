@@ -109,7 +109,7 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
 
   @Override
   public ODataPrimitiveValue.Builder newPrimitiveValueBuilder() {
-    return new ODataPrimitiveValueImpl.BuilderImpl(version);
+    return new ODataPrimitiveValueImpl.BuilderImpl();
   }
 
   @Override

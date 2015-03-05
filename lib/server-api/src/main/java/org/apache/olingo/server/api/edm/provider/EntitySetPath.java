@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.api.edm.provider;
 
-//TODO: Do we really need this class?
 public class EntitySetPath {
 
   private String bindingParameter;

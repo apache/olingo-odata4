@@ -43,7 +43,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.ComplexValueImpl;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
@@ -598,7 +597,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       throws DeserializerException {
     EdmPrimitiveTypeKind primKind;
     try {
-      primKind = EdmPrimitiveTypeKind.valueOf(ODataServiceVersion.V40, edmPrimitiveTypeName);
+      primKind = EdmPrimitiveTypeKind.valueOf(edmPrimitiveTypeName);
     } catch (IllegalArgumentException e) {
       throw new DeserializerException("Unknown Primitive Type: " + edmPrimitiveTypeName, e,
           DeserializerException.MessageKeys.UNKNOWN_PRIMITIVE_TYPE, edmPrimitiveTypeName, propertyName);

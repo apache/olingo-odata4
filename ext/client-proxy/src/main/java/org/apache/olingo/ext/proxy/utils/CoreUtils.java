@@ -273,18 +273,15 @@ public final class CoreUtils {
     EdmPrimitiveTypeKind bckCandidate = null;
 
     for (EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
-      if (kind.getSupportedVersions().contains(client.getServiceVersion())) {
         final Class<?> target = EdmPrimitiveTypeFactory.getInstance(kind).getDefaultType();
 
         if (clazz.equals(target)) {
           return new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(kind.toString()).build();
         } else if (target.isAssignableFrom(clazz)) {
           bckCandidate = kind;
-        } else if (target == Timestamp.class
-            && (kind == EdmPrimitiveTypeKind.DateTime || kind == EdmPrimitiveTypeKind.DateTimeOffset)) {
+        } else if (target == Timestamp.class && kind == EdmPrimitiveTypeKind.DateTimeOffset) {
           bckCandidate = kind;
         }
-      }
     }
 
     if (bckCandidate == null) {

@@ -30,7 +30,6 @@ public class Term {
 
   private FullQualifiedName baseTerm;
 
-  // TODO: AppliesTo is a list of csdl elements => should we put this list inside an enum?
   private String appliesTo;
 
   private boolean isCollection;

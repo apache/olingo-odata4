@@ -334,23 +334,6 @@ public class ResourceValidator implements TestValidator {
     return this;
   }
 
-  // TODO remove
-  /*
-   * public ResourceValidator isCollection(final boolean isCollection) {
-   * if (!(uriPathInfo instanceof UriResourcePartTyped)) {
-   * fail("invalid resource kind: " + uriPathInfo.getKind().toString());
-   * }
-   * UriResourcePartTyped uriPathInfoTyped = (UriResourcePartTyped) uriPathInfo;
-   * 
-   * EdmType type = uriPathInfoTyped.getType();
-   * if (type == null) {
-   * fail("isCollection: type == null");
-   * }
-   * assertEquals(isCollection, uriPathInfoTyped.isCollection());
-   * return this;
-   * }
-   */
-
   public ResourceValidator isFilterString(final String expectedFilterTreeAsString) {
 
     ExpressionImpl filterTree = (ExpressionImpl) uriInfo.getFilterOption().getExpression();

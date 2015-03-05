@@ -49,7 +49,13 @@ public interface FixedFormatSerializer {
   InputStream primitiveValue(EdmPrimitiveType type, Object value, PrimitiveValueSerializerOptions options)
       throws SerializerException;
 
-  // TODO: Document
   // TODO: Return type
+  /**
+   * Serializes a batch response
+   * @param batchResponses
+   * @param boundary
+   * @return
+   * @throws BatchSerializerException
+   */
   InputStream batchResponse(List<ODataResponsePart> batchResponses, String boundary) throws BatchSerializerException;
 }

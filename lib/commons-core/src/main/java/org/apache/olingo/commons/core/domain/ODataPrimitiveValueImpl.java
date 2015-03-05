@@ -30,7 +30,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class ODataPrimitiveValueImpl extends AbstractODataValue implements ODataValue, ODataPrimitiveValue {
@@ -39,12 +38,9 @@ public class ODataPrimitiveValueImpl extends AbstractODataValue implements OData
 
     private final ODataPrimitiveValueImpl instance;
 
-    public BuilderImpl(final ODataServiceVersion version) {
-      this.version = version;
+    public BuilderImpl() {
       instance = new ODataPrimitiveValueImpl();
     }
-
-    private final ODataServiceVersion version;
 
     @Override
     public BuilderImpl setType(final EdmType type) {
@@ -60,10 +56,6 @@ public class ODataPrimitiveValueImpl extends AbstractODataValue implements OData
 
     @Override
     public BuilderImpl setType(final EdmPrimitiveTypeKind type) {
-      if (type != null && !type.getSupportedVersions().contains(version)) {
-        throw new IllegalArgumentException(String.format(
-                "Type %s not supported by OData version %s", type.toString(), version));
-      }
       if (type == EdmPrimitiveTypeKind.Stream) {
         throw new IllegalArgumentException(String.format(
                 "Cannot build a primitive value for %s", EdmPrimitiveTypeKind.Stream.toString()));

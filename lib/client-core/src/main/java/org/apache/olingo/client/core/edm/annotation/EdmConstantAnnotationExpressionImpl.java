@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -31,7 +31,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.annotation.EdmConstantAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.domain.ODataCollectionValueImpl;
 import org.apache.olingo.commons.core.domain.ODataEnumValueImpl;
 import org.apache.olingo.commons.core.domain.ODataPrimitiveValueImpl;
@@ -62,42 +61,41 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
     } else {
       EdmPrimitiveTypeKind kind;
       switch (constExprConstruct.getType()) {
-        case Binary:
-          kind = EdmPrimitiveTypeKind.Binary;
-          break;
-        case Bool:
-          kind = EdmPrimitiveTypeKind.Boolean;
-          break;
-        case Date:
-          kind = EdmPrimitiveTypeKind.Date;
-          break;
-        case DateTimeOffset:
-          kind = EdmPrimitiveTypeKind.DateTimeOffset;
-          break;
-        case Decimal:
-          kind = EdmPrimitiveTypeKind.Decimal;
-          break;
-        case Duration:
-          kind = EdmPrimitiveTypeKind.Duration;
-          break;
-        case Float:
-          kind = EdmPrimitiveTypeKind.Single;
-          break;
-        case Guid:
-          kind = EdmPrimitiveTypeKind.Guid;
-          break;
-        case Int:
-          kind = EdmPrimitiveTypeKind.Int32;
-          break;
-        case TimeOfDay:
-          kind = EdmPrimitiveTypeKind.TimeOfDay;
-          break;
-        case String:
-        default:
-          kind = EdmPrimitiveTypeKind.String;
+      case Binary:
+        kind = EdmPrimitiveTypeKind.Binary;
+        break;
+      case Bool:
+        kind = EdmPrimitiveTypeKind.Boolean;
+        break;
+      case Date:
+        kind = EdmPrimitiveTypeKind.Date;
+        break;
+      case DateTimeOffset:
+        kind = EdmPrimitiveTypeKind.DateTimeOffset;
+        break;
+      case Decimal:
+        kind = EdmPrimitiveTypeKind.Decimal;
+        break;
+      case Duration:
+        kind = EdmPrimitiveTypeKind.Duration;
+        break;
+      case Float:
+        kind = EdmPrimitiveTypeKind.Single;
+        break;
+      case Guid:
+        kind = EdmPrimitiveTypeKind.Guid;
+        break;
+      case Int:
+        kind = EdmPrimitiveTypeKind.Int32;
+        break;
+      case TimeOfDay:
+        kind = EdmPrimitiveTypeKind.TimeOfDay;
+        break;
+      case String:
+      default:
+        kind = EdmPrimitiveTypeKind.String;
       }
-      final ODataPrimitiveValueImpl.BuilderImpl primitiveValueBuilder =
-          new ODataPrimitiveValueImpl.BuilderImpl(ODataServiceVersion.V40);
+      final ODataPrimitiveValueImpl.BuilderImpl primitiveValueBuilder = new ODataPrimitiveValueImpl.BuilderImpl();
       primitiveValueBuilder.setType(kind);
       try {
         final EdmPrimitiveType primitiveType = EdmPrimitiveTypeFactory.getInstance(kind);

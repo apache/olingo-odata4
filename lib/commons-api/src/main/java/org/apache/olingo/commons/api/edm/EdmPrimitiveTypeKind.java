@@ -20,22 +20,16 @@ package org.apache.olingo.commons.api.edm;
 
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 public enum EdmPrimitiveTypeKind {
 
   Binary,
   Boolean,
   Byte,
   SByte,
-  Date(new ODataServiceVersion[] { ODataServiceVersion.V40 }),
-  DateTime(new ODataServiceVersion[] { ODataServiceVersion.V30 }),
+  Date,
   DateTimeOffset,
-  Time(new ODataServiceVersion[] { ODataServiceVersion.V30 }),
-  TimeOfDay(new ODataServiceVersion[] { ODataServiceVersion.V40 }),
-  Duration(new ODataServiceVersion[] { ODataServiceVersion.V40 }),
+  TimeOfDay,
+  Duration,
   Decimal,
   Single,
   Double,
@@ -62,20 +56,6 @@ public enum EdmPrimitiveTypeKind {
   GeometryMultiPolygon,
   GeometryCollection;
 
-  private final List<ODataServiceVersion> versions;
-
-  EdmPrimitiveTypeKind() {
-    versions = Collections.unmodifiableList(
-        Arrays.asList(new ODataServiceVersion[] { ODataServiceVersion.V30, ODataServiceVersion.V40 }));
-  }
-
-  EdmPrimitiveTypeKind(final ODataServiceVersion[] versions) {
-    this.versions = Collections.unmodifiableList(Arrays.asList(versions.clone()));
-  }
-
-  public List<ODataServiceVersion> getSupportedVersions() {
-    return versions;
-  }
 
   /**
    * Checks if is a geospatial type.
@@ -95,13 +75,9 @@ public enum EdmPrimitiveTypeKind {
     return new FullQualifiedName(EdmPrimitiveType.EDM_NAMESPACE, toString());
   }
 
-  public static EdmPrimitiveTypeKind valueOf(final ODataServiceVersion version, final String name) {
-    final EdmPrimitiveTypeKind kind = valueOf(name);
-    if (!kind.versions.contains(version)) {
-      throw new IllegalArgumentException(kind + " not allowed in " + version);
-    }
-    return kind;
-  }
+//  public static EdmPrimitiveTypeKind valueOf(final ODataServiceVersion version, final String name) {
+//    return valueOf(name);
+//  }
 
   /**
    * Gets <tt>EdmPrimitiveTypeKind</tt> from a full-qualified type name, for the given OData protocol version.
@@ -131,9 +107,9 @@ public enum EdmPrimitiveTypeKind {
     }
 
     final EdmPrimitiveTypeKind kind = valueOf(fqn.substring(4));
-    if (!kind.versions.contains(version)) {
-      throw new IllegalArgumentException(kind + " not allowed in " + version);
-    }
+//    if (!kind.versions.contains(version)) {
+//      throw new IllegalArgumentException(kind + " not allowed in " + version);
+//    }
     return kind;
   }
 
