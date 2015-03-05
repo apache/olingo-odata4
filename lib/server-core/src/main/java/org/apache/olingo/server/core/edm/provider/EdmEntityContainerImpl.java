@@ -139,13 +139,13 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
   @Override
   protected void loadAllFunctionImports() {
     loadContainer();
-    List<FunctionImport> providerFuctionImports = container.getFunctionImports();
-    if (providerFuctionImports != null) {
-      for (FunctionImport functionImport : providerFuctionImports) {
+    List<FunctionImport> providerFunctionImports = container.getFunctionImports();
+    if (providerFunctionImports != null) {
+      for (FunctionImport functionImport : providerFunctionImports) {
         String functionName = functionImport.getName();
         if (!functionImports.containsKey(functionName)) {
-          EdmFunctionImportImpl impl = new EdmFunctionImportImpl(edm, this, functionImport);
-          functionImports.put(functionName, impl);
+          functionImports.put(functionName,
+              new EdmFunctionImportImpl(edm, this, functionImport));
         }
       }
     }

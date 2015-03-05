@@ -130,7 +130,7 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETTwoKeyNavParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETTwoKeyNavParamCTTwoPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTStringTwoParam));
-    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTESTwoKeyNavParam));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollETTwoKeyNavParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTString));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollStringTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollString));
@@ -140,7 +140,7 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCTTwoPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollCTTwoPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETMedia));
-    functions.addAll(prov.getFunctions(FunctionProvider.nameUFNRTESMixPrimCollCompTwoParam));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollETMixPrimCollCompTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETAllPrimTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTESMixPrimCollCompTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFNRTCollCTNavFiveProp));

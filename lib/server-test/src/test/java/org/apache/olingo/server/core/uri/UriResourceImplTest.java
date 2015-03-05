@@ -219,11 +219,11 @@ public class UriResourceImplTest {
 
     // function collection
     impl = new UriResourceFunctionImpl();
-    functionImport = edm.getEntityContainer(null).getFunctionImport("FICRTESTwoKeyNavParam");
+    functionImport = edm.getEntityContainer(null).getFunctionImport("FICRTCollESTwoKeyNavParam");
     assertNotNull(function);
     UriParameterImpl parameter = new UriParameterImpl().setName("ParameterInt16");
     impl.setFunctionImport(functionImport, Arrays.asList(parameter));
-    assertEquals("FICRTESTwoKeyNavParam", impl.toString());
+    assertEquals("FICRTCollESTwoKeyNavParam", impl.toString());
 
     impl.setFunction(functionImport.getUnboundFunction(Arrays.asList("ParameterInt16")));
     assertEquals(true, impl.isCollection());

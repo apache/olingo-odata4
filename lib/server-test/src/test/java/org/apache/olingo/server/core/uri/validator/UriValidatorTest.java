@@ -145,11 +145,11 @@ public class UriValidatorTest {
 
       { "FINRTInt16()" },
       { "FICRTETKeyNav()" },
-      { "FICRTESTwoKeyNavParam(ParameterInt16=1)" },
+      { "FICRTETTwoKeyNavParam(ParameterInt16=1)" },
       { "FICRTCollString()" },
       { "FICRTCTTwoPrim()" },
       { "FICRTCollCTTwoPrim()" },
-      { "FICRTETMedia()" },
+      { "FICRTESMedia()" },
 
       { "ESTwoKeyNav/olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav" },
       { "ESAllPrim/olingo.odata.test1.BAESAllPrimRTETAllPrim" },

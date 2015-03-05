@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
@@ -119,11 +118,9 @@ public class BasicITCase extends AbstractBaseTestITCase {
     XMLMetadata xmlMetadata = response.getBody();
 
     assertNotNull(xmlMetadata);
-    assertTrue(xmlMetadata instanceof XMLMetadata);
     assertEquals(2, xmlMetadata.getSchemas().size());
     assertEquals("olingo.odata.test1", xmlMetadata.getSchema("olingo.odata.test1").getNamespace());
-    final List<Reference> references =
-        ((XMLMetadata) xmlMetadata).getReferences();
+    final List<Reference> references = xmlMetadata.getReferences();
     assertEquals(1, references.size());
     assertThat(references.get(0).getUri().toASCIIString(), containsString("vocabularies/Org.OData.Core.V1"));
   }

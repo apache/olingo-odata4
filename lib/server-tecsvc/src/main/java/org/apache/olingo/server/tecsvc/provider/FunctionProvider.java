@@ -26,6 +26,7 @@ import org.apache.olingo.server.api.edm.provider.ReturnType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class FunctionProvider {
@@ -112,6 +113,12 @@ public class FunctionProvider {
   public static final FullQualifiedName nameBFESTwoKeyNavRTESTwoKeyNav =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BFESTwoKeyNavRTESTwoKeyNav");
 
+  public static final FullQualifiedName nameBFCESTwoKeyNavRTCTNavFiveProp = new FullQualifiedName(
+      SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCTNavFiveProp");
+
+  public static final FullQualifiedName nameBFCESTwoKeyNavRTCollCTNavFiveProp = new FullQualifiedName(
+      SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCollCTNavFiveProp");
+
   // Unbound Functions
   public static final FullQualifiedName nameUFCRTCollCTTwoPrim =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCollCTTwoPrim");
@@ -129,15 +136,19 @@ public class FunctionProvider {
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCTTwoPrimParam");
   public static final FullQualifiedName nameUFCRTESMixPrimCollCompTwoParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTESMixPrimCollCompTwoParam");
-  public static final FullQualifiedName nameUFCRTESTwoKeyNavParam =
-      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTESTwoKeyNavParam");
+  public static final FullQualifiedName nameUFCRTCollETTwoKeyNavParam =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCollETTwoKeyNavParam");
   public static final FullQualifiedName nameUFCRTETAllPrimTwoParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTETAllPrimTwoParam");
   public static final FullQualifiedName nameUFCRTETKeyNav = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UFCRTETKeyNav");
   public static final FullQualifiedName nameUFCRTETMedia = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UFCRTETMedia");
+  public static final FullQualifiedName nameUFCRTCollETMedia = new FullQualifiedName(SchemaProvider.NAMESPACE,
+      "UFCRTCollETMedia");
 
+  public static final FullQualifiedName nameUFCRTETTwoKeyNav =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTETTwoKeyNav");
   public static final FullQualifiedName nameUFCRTETTwoKeyNavParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTETTwoKeyNavParam");
 
@@ -150,30 +161,23 @@ public class FunctionProvider {
   public static final FullQualifiedName nameUFCRTStringTwoParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTStringTwoParam");
 
-  public static final FullQualifiedName nameUFNRTESMixPrimCollCompTwoParam =
-      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFNRTESMixPrimCollCompTwoParam");
+  public static final FullQualifiedName nameUFCRTCollETMixPrimCollCompTwoParam =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCollETMixPrimCollCompTwoParam");
+
   public static final FullQualifiedName nameUFNRTInt16 =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UFNRTInt16");
 
   public static final FullQualifiedName nameUFNRTCollCTNavFiveProp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UFNRTCollCTNavFiveProp");
 
-  public static final FullQualifiedName nameBFCESTwoKeyNavRTCTNavFiveProp = new FullQualifiedName(
-      SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCTNavFiveProp");
-
-  public static final FullQualifiedName nameBFCESTwoKeyNavRTCollCTNavFiveProp = new FullQualifiedName(
-      SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCollCTNavFiveProp");
-
   public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
 
     if (functionName.equals(nameUFNRTInt16)) {
       return Arrays.asList(
           new Function()
-              .setName("UFNRTInt16")
-              .setParameters(new ArrayList<Parameter>())
-              .setReturnType(
-                  new ReturnType().setType(PropertyProvider.nameInt16))
-          );
+              .setName(functionName.getName())
+              .setParameters(Collections.<Parameter> emptyList())
+              .setReturnType(new ReturnType().setType(PropertyProvider.nameInt16)));
 
     } else if (functionName.equals(nameUFCRTETKeyNav)) {
       return Arrays.asList(
@@ -185,6 +189,14 @@ public class FunctionProvider {
                   new ReturnType().setType(EntityTypeProvider.nameETKeyNav).setNullable(false))
           );
 
+    } else if (functionName.equals(nameUFCRTETTwoKeyNav)) {
+      return Collections.singletonList(
+          new Function()
+              .setName(functionName.getName())
+              .setParameters(Collections.<Parameter> emptyList())
+              .setComposable(true)
+              .setReturnType(
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setNullable(false)));
     } else if (functionName.equals(nameUFCRTETTwoKeyNavParam)) {
       return Arrays.asList(
           new Function()
@@ -238,11 +250,11 @@ public class FunctionProvider {
 
           );
 
-    } else if (functionName.equals(nameUFCRTESTwoKeyNavParam)) {
+    } else if (functionName.equals(nameUFCRTCollETTwoKeyNavParam)) {
       return Arrays.asList(
           new Function()
               .setName("UFCRTESTwoKeyNavParam")
-              .setParameters(Arrays.asList(
+              .setParameters(Collections.singletonList(
                   new Parameter()
                       .setName("ParameterInt16")
                       .setType(PropertyProvider.nameInt16)
@@ -351,8 +363,16 @@ public class FunctionProvider {
               .setReturnType(
                   new ReturnType().setType(EntityTypeProvider.nameETMedia).setNullable(false))
           );
+    } else if (functionName.equals(nameUFCRTCollETMedia)) {
+      return Arrays.asList(
+          new Function()
+              .setName(functionName.getName())
+              .setParameters(Collections.<Parameter> emptyList())
+              .setComposable(true)
+              .setReturnType(
+                  new ReturnType().setType(EntityTypeProvider.nameETMedia).setCollection(true).setNullable(false)));
 
-    } else if (functionName.equals(nameUFNRTESMixPrimCollCompTwoParam)) {
+    } else if (functionName.equals(nameUFCRTCollETMixPrimCollCompTwoParam)) {
       return Arrays.asList(
           new Function()
               .setName("UFNRTESMixPrimCollCompTwoParam")

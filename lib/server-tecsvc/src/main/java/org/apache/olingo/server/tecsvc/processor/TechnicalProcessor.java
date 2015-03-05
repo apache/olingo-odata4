@@ -26,6 +26,8 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
@@ -36,6 +38,7 @@ import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
@@ -61,34 +64,31 @@ public abstract class TechnicalProcessor implements Processor {
   }
 
   protected EdmEntitySet getEdmEntitySet(final UriInfoResource uriInfo) throws ODataApplicationException {
+    EdmEntitySet entitySet = null;
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
-    // first must be entity set
-    if (!(resourcePaths.get(0) instanceof UriResourceEntitySet)) {
+
+    // First must be entity set or function import.
+    blockTypeFilters(resourcePaths.get(0));
+    if (resourcePaths.get(0) instanceof UriResourceEntitySet) {
+      entitySet = ((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet();
+    } else if (resourcePaths.get(0) instanceof UriResourceFunction) {
+      entitySet = ((UriResourceFunction) resourcePaths.get(0)).getFunctionImport().getReturnedEntitySet();
+    } else {
       throw new ODataApplicationException("Invalid resource type.",
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
 
-    final UriResourceEntitySet uriResource = (UriResourceEntitySet) resourcePaths.get(0);
-    if (uriResource.getTypeFilterOnCollection() != null || uriResource.getTypeFilterOnEntry() != null) {
-      throw new ODataApplicationException("Type filters are not supported.",
-          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-    }
-    EdmEntitySet entitySet = uriResource.getEntitySet();
-
     int navigationCount = 0;
-    while (++navigationCount < resourcePaths.size()
+    while (entitySet != null
+        && ++navigationCount < resourcePaths.size()
         && resourcePaths.get(navigationCount) instanceof UriResourceNavigation) {
-      final UriResourceNavigation uriNavigationResource = (UriResourceNavigation) resourcePaths.get(navigationCount);
-      if (uriNavigationResource.getTypeFilterOnCollection() != null
-          || uriNavigationResource.getTypeFilterOnEntry() != null) {
-        throw new ODataApplicationException("Type filters are not supported.",
-            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-      }
-      if (uriNavigationResource.getProperty().containsTarget()) {
+      final UriResourceNavigation uriResourceNavigation = (UriResourceNavigation) resourcePaths.get(navigationCount);
+      blockTypeFilters(uriResourceNavigation);
+      if (uriResourceNavigation.getProperty().containsTarget()) {
         throw new ODataApplicationException("Containment navigation is not supported.",
             HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
       }
-      final EdmBindingTarget target = entitySet.getRelatedBindingTarget(uriNavigationResource.getProperty().getName());
+      final EdmBindingTarget target = entitySet.getRelatedBindingTarget(uriResourceNavigation.getProperty().getName());
       if (target instanceof EdmEntitySet) {
         entitySet = (EdmEntitySet) target;
       } else {
@@ -107,8 +107,31 @@ public abstract class TechnicalProcessor implements Processor {
    */
   protected Entity readEntity(final UriInfoResource uriInfo) throws ODataApplicationException {
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
-    final UriResourceEntitySet uriResource = (UriResourceEntitySet) resourcePaths.get(0);
-    Entity entity = dataProvider.read(uriResource.getEntitySet(), uriResource.getKeyPredicates());
+
+    Entity entity = null;
+    if (resourcePaths.get(0) instanceof UriResourceEntitySet) {
+      final UriResourceEntitySet uriResource = (UriResourceEntitySet) resourcePaths.get(0);
+      entity = dataProvider.read(uriResource.getEntitySet(), uriResource.getKeyPredicates());
+    } else if (resourcePaths.get(0) instanceof UriResourceFunction) {
+      final UriResourceFunction uriResource = (UriResourceFunction) resourcePaths.get(0);
+      final EdmFunction function = uriResource.getFunction();
+      if (function.getReturnType().getType() instanceof EdmEntityType) {
+        final List<UriParameter> key = uriResource.getKeyPredicates();
+        if (key.isEmpty()) {
+          if (uriResource.isCollection()) { // handled in readEntityCollection()
+            return null;
+          } else {
+            entity = dataProvider.readFunctionEntity(function, uriResource.getParameters());
+          }
+        } else {
+          entity = dataProvider.read((EdmEntityType) function.getReturnType().getType(),
+              dataProvider.readFunctionEntitySet(function, uriResource.getParameters()),
+              key);
+        }
+      } else {
+        return null;
+      }
+    }
     if (entity == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
     }
@@ -119,7 +142,7 @@ public abstract class TechnicalProcessor implements Processor {
       final UriResourceNavigation uriNavigationResource = (UriResourceNavigation) resourcePaths.get(navigationCount);
       final EdmNavigationProperty navigationProperty = uriNavigationResource.getProperty();
       final List<UriParameter> key = uriNavigationResource.getKeyPredicates();
-      if (navigationProperty.isCollection() && key.isEmpty()) {
+      if (navigationProperty.isCollection() && key.isEmpty()) { // handled in readEntityCollection()
         return entity;
       }
       final Link link = entity.getNavigationLink(navigationProperty.getName());
@@ -142,7 +165,12 @@ public abstract class TechnicalProcessor implements Processor {
       final Link link = entity.getNavigationLink(getLastNavigation(uriInfo).getProperty().getName());
       return link == null ? null : link.getInlineEntitySet();
     } else {
-      return dataProvider.readAll(((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet());
+      if (resourcePaths.get(0) instanceof UriResourceFunction) {
+        final UriResourceFunction uriResource = (UriResourceFunction) resourcePaths.get(0);
+        return dataProvider.readFunctionEntitySet(uriResource.getFunction(), uriResource.getParameters());
+      } else {
+        return dataProvider.readAll(((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet());
+      }
     }
   }
 
@@ -155,6 +183,21 @@ public abstract class TechnicalProcessor implements Processor {
     }
 
     return (UriResourceNavigation) resourcePaths.get(--navigationCount);
+  }
+
+  private void blockTypeFilters(final UriResource uriResource) throws ODataApplicationException {
+    if (uriResource instanceof UriResourceEntitySet
+        && (((UriResourceEntitySet) uriResource).getTypeFilterOnCollection() != null
+        || ((UriResourceEntitySet) uriResource).getTypeFilterOnEntry() != null)
+        || uriResource instanceof UriResourceFunction
+        && (((UriResourceFunction) uriResource).getTypeFilterOnCollection() != null
+        || ((UriResourceFunction) uriResource).getTypeFilterOnEntry() != null)
+        || uriResource instanceof UriResourceNavigation
+        && (((UriResourceNavigation) uriResource).getTypeFilterOnCollection() != null
+        || ((UriResourceNavigation) uriResource).getTypeFilterOnEntry() != null)) {
+      throw new ODataApplicationException("Type filters are not supported.",
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+    }
   }
 
   protected void validateOptions(final UriInfoResource uriInfo) throws ODataApplicationException {

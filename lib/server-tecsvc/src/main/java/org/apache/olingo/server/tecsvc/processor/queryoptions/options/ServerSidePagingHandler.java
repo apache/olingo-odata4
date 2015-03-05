@@ -37,7 +37,7 @@ public class ServerSidePagingHandler {
   public static void applyServerSidePaging(final SkipTokenOption skipTokenOption, final EntitySet entitySet,
       final EdmEntitySet edmEntitySet, final String rawRequestUri) throws ODataApplicationException {
 
-    if (shouldApplyServerSidePaging(edmEntitySet)) {
+    if (edmEntitySet != null && shouldApplyServerSidePaging(edmEntitySet)) {
       final int maxPageSize = getMaxPageSize();
       final int page = getPage(skipTokenOption);
       final int itemsToSkip = maxPageSize * page;

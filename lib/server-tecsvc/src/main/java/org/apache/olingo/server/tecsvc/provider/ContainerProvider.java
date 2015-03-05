@@ -123,19 +123,21 @@ public class ContainerProvider {
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINInvisibleRTInt16"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINInvisible2RTInt16"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTETKeyNav"));
+    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTESTwoKeyNav"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTETTwoKeyNavParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTStringTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollStringTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCTAllPrimTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTESMixPrimCollCompTwoParam"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINRTESMixPrimCollCompTwoParam"));
+    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollETMixPrimCollCompTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollCTTwoPrim"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTETMedia"));
+    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTESMedia"));
+    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollESMedia"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCTTwoPrimParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCTTwoPrim"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollString"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTString"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTESTwoKeyNavParam"));
+    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollESTwoKeyNavParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollCTTwoPrimParam"));
 
     return container;
@@ -444,106 +446,120 @@ public class ContainerProvider {
     if (entityContainer.equals(nameContainer)) {
       if (name.equals("FINRTInt16")) {
         return new FunctionImport()
-            .setName("FINRTInt16")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFNRTInt16)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FINInvisibleRTInt16")) {
         return new FunctionImport()
-            .setName("FINInvisibleRTInt16")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFNRTInt16);
 
       } else if (name.equals("FINInvisible2RTInt16")) {
         return new FunctionImport()
-            .setName("FINInvisible2RTInt16")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFNRTInt16);
 
       } else if (name.equals("FICRTETKeyNav")) {
         return new FunctionImport()
-            .setName("FICRTETKeyNav")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFCRTETKeyNav);
 
+      } else if (name.equals("FICRTESTwoKeyNav")) {
+        return new FunctionImport()
+            .setName(name)
+            .setFunction(FunctionProvider.nameUFCRTETTwoKeyNav)
+            .setEntitySet(new Target().setEntityContainer(entityContainer).setTargetName("ESTwoKeyNav"))
+            .setIncludeInServiceDocument(true);
       } else if (name.equals("FICRTETTwoKeyNavParam")) {
         return new FunctionImport()
-            .setName("FICRTETTwoKeyNavParam")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFCRTETTwoKeyNavParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTStringTwoParam")) {
         return new FunctionImport()
-            .setName("FICRTStringTwoParam")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFCRTStringTwoParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCollStringTwoParam")) {
         return new FunctionImport()
-            .setName("FICRTCollStringTwoParam")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCollStringTwoParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCTAllPrimTwoParam")) {
         return new FunctionImport()
-            .setName("FICRTCTAllPrimTwoParam")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCTAllPrimTwoParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTESMixPrimCollCompTwoParam")) {
         return new FunctionImport()
-            .setName("FICRTESMixPrimCollCompTwoParam")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFCRTESMixPrimCollCompTwoParam)
             .setIncludeInServiceDocument(true);
 
-      } else if (name.equals("FINRTESMixPrimCollCompTwoParam")) {
+      } else if (name.equals("FICRTCollETMixPrimCollCompTwoParam")) {
         return new FunctionImport()
-            .setName("FINRTESMixPrimCollCompTwoParam")
-            .setFunction(FunctionProvider.nameUFNRTESMixPrimCollCompTwoParam)
+            .setName(name)
+            .setFunction(FunctionProvider.nameUFCRTCollETMixPrimCollCompTwoParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCollCTTwoPrim")) {
         return new FunctionImport()
-            .setName("FICRTCollCTTwoPrim")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCollCTTwoPrim)
             .setIncludeInServiceDocument(true);
 
-      } else if (name.equals("FICRTETMedia")) {
+      } else if (name.equals("FICRTESMedia")) {
         return new FunctionImport()
-            .setName("FICRTETMedia")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFCRTETMedia)
+            .setEntitySet(new Target().setEntityContainer(entityContainer).setTargetName("ESMedia"))
+            .setIncludeInServiceDocument(true);
+      } else if (name.equals("FICRTCollESMedia")) {
+        return new FunctionImport()
+            .setName(name)
+            .setFunction(FunctionProvider.nameUFCRTCollETMedia)
+            .setEntitySet(new Target().setEntityContainer(entityContainer).setTargetName("ESMedia"))
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCTTwoPrimParam")) {
         return new FunctionImport()
-            .setName("FICRTCTTwoPrimParam")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCTTwoPrimParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCTTwoPrim")) {
         return new FunctionImport()
-            .setName("FICRTCTTwoPrim")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCTTwoPrim)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCollString")) {
         return new FunctionImport()
-            .setName("FICRTCollString")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCollString)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTString")) {
         return new FunctionImport()
-            .setName("FICRTString")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFCRTString)
             .setIncludeInServiceDocument(true);
 
-      } else if (name.equals("FICRTESTwoKeyNavParam")) {
+      } else if (name.equals("FICRTCollESTwoKeyNavParam")) {
         return new FunctionImport()
-            .setName("FICRTESTwoKeyNavParam")
-            .setFunction(FunctionProvider.nameUFCRTESTwoKeyNavParam)
+            .setName(name)
+            .setFunction(FunctionProvider.nameUFCRTCollETTwoKeyNavParam)
+            .setEntitySet(new Target().setEntityContainer(entityContainer).setTargetName("ESTwoKeyNav"))
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCollCTTwoPrimParam")) {
         return new FunctionImport()
-            .setName("FICRTCollCTTwoPrimParam")
+            .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCollCTTwoPrimParam)
             .setIncludeInServiceDocument(true);
 

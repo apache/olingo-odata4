@@ -299,7 +299,7 @@ public class ODataHandlerTest {
             any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
     EntityCollectionProcessor entityCollectionProcessor = mock(EntityCollectionProcessor.class);
-    dispatch(HttpMethod.GET, "FICRTESTwoKeyNavParam(ParameterInt16=123)", entityCollectionProcessor);
+    dispatch(HttpMethod.GET, "FICRTCollESTwoKeyNavParam(ParameterInt16=123)", entityCollectionProcessor);
     verify(entityCollectionProcessor).readEntityCollection(
             any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 

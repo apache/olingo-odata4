@@ -655,9 +655,9 @@ public class TestUriParserImpl {
         .isType(EntityTypeProvider.nameETTwoKeyNav, false);
 
     // returning collection of entity (aka entitySet)
-    testRes.run("FICRTESTwoKeyNavParam(ParameterInt16=1)")
-        .isFunctionImport("FICRTESTwoKeyNavParam")
-        .isFunction("UFCRTESTwoKeyNavParam")
+    testRes.run("FICRTCollESTwoKeyNavParam(ParameterInt16=1)")
+        .isFunctionImport("FICRTCollESTwoKeyNavParam")
+        .isFunction("UFCRTCollETTwoKeyNavParam")
         .isType(EntityTypeProvider.nameETTwoKeyNav, true);
   }
 
@@ -686,20 +686,20 @@ public class TestUriParserImpl {
         .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     // test chains; returning collection of entity (aka entitySet)
-    testRes.run("FICRTESTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=1,PropertyString='ABC')")
+    testRes.run("FICRTCollESTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=1,PropertyString='ABC')")
         .at(0)
-        .isFunctionImport("FICRTESTwoKeyNavParam")
-        .isFunction("UFCRTESTwoKeyNavParam")
+        .isFunctionImport("FICRTCollESTwoKeyNavParam")
+        .isFunction("UFCRTCollETTwoKeyNavParam")
         .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .isParameter(0, "ParameterInt16", "1")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'ABC'");
 
     // test chains; returning collection of entity (aka entitySet)
-    testRes.run("FICRTESTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=1,PropertyString='ABC')/PropertyInt16")
+    testRes.run("FICRTCollESTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=1,PropertyString='ABC')/PropertyInt16")
         .at(0)
-        .isFunctionImport("FICRTESTwoKeyNavParam")
-        .isFunction("UFCRTESTwoKeyNavParam")
+        .isFunctionImport("FICRTCollESTwoKeyNavParam")
+        .isFunction("UFCRTCollETTwoKeyNavParam")
         .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .isParameter(0, "ParameterInt16", "1")
         .isKeyPredicate(0, "PropertyInt16", "1")

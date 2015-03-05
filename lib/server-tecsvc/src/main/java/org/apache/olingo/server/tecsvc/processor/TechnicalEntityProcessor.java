@@ -21,6 +21,7 @@ package org.apache.olingo.server.tecsvc.processor;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.ContextURL.Builder;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
@@ -50,6 +51,7 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
@@ -77,6 +79,11 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     validateOptions(uriInfo.asUriInfoResource());
 
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
+    final EdmEntityType edmEntityType = edmEntitySet == null ?
+        (EdmEntityType) ((UriResourceFunction) uriInfo.getUriResourceParts()
+            .get(uriInfo.getUriResourceParts().size() - 1)).getType() :
+        edmEntitySet.getEntityType();
+
     final EntitySet entitySetInitial = readEntityCollection(uriInfo);
     if (entitySetInitial == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
@@ -102,10 +109,10 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       ODataSerializer serializer = odata.createSerializer(format);
       final ExpandOption expand = uriInfo.getExpandOption();
       final SelectOption select = uriInfo.getSelectOption();
-      response.setContent(serializer.entityCollection(edmEntitySet.getEntityType(), entitySet,
+      response.setContent(serializer.entityCollection(edmEntityType, entitySet,
           EntityCollectionSerializerOptions.with()
               .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                  getContextUrl(edmEntitySet, false, expand, select))
+                  getContextUrl(edmEntitySet, edmEntityType, false, expand, select))
               .count(uriInfo.getCountOption())
               .expand(expand).select(select)
               .build()));
@@ -143,6 +150,11 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
+    final EdmEntityType edmEntityType = edmEntitySet == null ?
+        (EdmEntityType) ((UriResourceFunction) uriInfo.getUriResourceParts()
+            .get(uriInfo.getUriResourceParts().size() - 1)).getType() :
+        edmEntitySet.getEntityType();
+
     final Entity entity = readEntity(uriInfo);
 
     final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
@@ -152,7 +164,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     response.setContent(serializer.entity(edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
             .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                getContextUrl(edmEntitySet, true, expand, select))
+                getContextUrl(edmEntitySet, edmEntityType, true, expand, select))
             .expand(expand).select(select)
             .build()));
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -205,7 +217,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     response.setContent(serializer.entity(edmEntityType, entity,
         EntitySerializerOptions.with()
             .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
-                getContextUrl(edmEntitySet, true, null, null))
+                getContextUrl(edmEntitySet, edmEntityType, true, null, null))
             .build()));
     response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
@@ -269,12 +281,15 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     }
   }
 
-  private ContextURL getContextUrl(final EdmEntitySet entitySet, final boolean isSingleEntity,
-      final ExpandOption expand, final SelectOption select) throws SerializerException {
-    return ContextURL.with().entitySet(entitySet)
-        .selectList(odata.createUriHelper()
-            .buildContextURLSelectList(entitySet.getEntityType(), expand, select))
-        .suffix(isSingleEntity ? Suffix.ENTITY : null)
-        .build();
+  private ContextURL getContextUrl(final EdmEntitySet entitySet, final EdmEntityType entityType,
+      final boolean isSingleEntity, final ExpandOption expand, final SelectOption select) throws SerializerException {
+    Builder builder = ContextURL.with();
+    builder = entitySet == null ?
+        isSingleEntity ? builder.type(entityType) : builder.asCollection().type(entityType) :
+        builder.entitySet(entitySet);
+    builder = builder.selectList(odata.createUriHelper()
+        .buildContextURLSelectList(entityType, expand, select))
+        .suffix(isSingleEntity ? Suffix.ENTITY : null);
+    return builder.build();
   }
 }

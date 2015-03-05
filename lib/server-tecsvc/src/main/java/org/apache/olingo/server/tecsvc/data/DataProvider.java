@@ -31,12 +31,11 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
@@ -45,8 +44,6 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.commons.core.data.EntityImpl;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt16;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
@@ -59,7 +56,6 @@ import org.apache.olingo.server.api.uri.UriParameter;
 public class DataProvider {
 
   protected static final String MEDIA_PROPERTY_NAME = "$value";
-//  private static final String KEY_NAME = "PropertyInt16";
 
   final private Map<String, EntitySet> data;
   private Edm edm;
@@ -132,37 +128,6 @@ public class DataProvider {
       }
     }
   }
-
-//  public Entity create(final EdmEntitySet edmEntitySet) throws DataProviderException {
-//    final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
-//    List<Entity> entities = readAll(edmEntitySet).getEntities();
-//    Entity entity = new EntityImpl();
-//    final List<String> keyNames = edmEntityType.getKeyPredicateNames();
-//    if (keyNames.size() == 1 && keyNames.get(0).equals(KEY_NAME)) {
-//      entity.addProperty(DataCreator.createPrimitive(KEY_NAME, findFreeKeyValue(entities)));
-//    } else {
-//      throw new DataProviderException("Key construction not supported!");
-//    }
-//    createProperties(edmEntityType, entity.getProperties());
-//    entities.add(entity);
-//    return entity;
-//  }
-//
-//  private Integer findFreeKeyValue(final List<Entity> entities) {
-//    Integer result = 0;
-//    boolean free;
-//    do {
-//      ++result;
-//      free = true;
-//      for (final Entity entity : entities) {
-//        if (result.equals(entity.getProperty(KEY_NAME).getValue())) {
-//          free = false;
-//          break;
-//        }
-//      }
-//    } while (!free);
-//    return result;
-//  }
 
   public Entity create(final EdmEntitySet edmEntitySet) throws DataProviderException {
     final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
@@ -253,8 +218,7 @@ public class DataProvider {
   }
 
   public void update(final String rawBaseUri, final EdmEntitySet edmEntitySet, Entity entity,
-      final Entity changedEntity, final boolean patch,
-      final boolean isInsert) throws DataProviderException {
+      final Entity changedEntity, final boolean patch, final boolean isInsert) throws DataProviderException {
 
     final EdmEntityType entityType = edmEntitySet.getEntityType();
     final List<String> keyNames = entityType.getKeyPredicateNames();
@@ -320,8 +284,7 @@ public class DataProvider {
   }
 
   private void handleDeepInsert(final String rawBaseUri, final EdmEntitySet edmEntitySet, final Entity entity,
-      final Entity changedEntity)
-      throws DataProviderException {
+      final Entity changedEntity) throws DataProviderException {
     final EdmEntityType entityType = edmEntitySet.getEntityType();
 
     for (final String navPropertyName : entityType.getNavigationPropertyNames()) {
@@ -331,41 +294,40 @@ public class DataProvider {
         // Deep inserts are not allowed in update operations, so we can be sure, that we do not override
         // a navigation link!
         final EdmNavigationProperty navigationProperty = entityType.getNavigationProperty(navPropertyName);
-        final EdmBindingTarget target = edmEntitySet.getRelatedBindingTarget(navPropertyName);
-        final EdmEntityType inlineEntityType = navigationProperty.getType();
+        final EdmEntitySet target = (EdmEntitySet) edmEntitySet.getRelatedBindingTarget(navPropertyName);
 
         if (navigationProperty.isCollection()) {
           final List<Entity> entities =
-              createInlineEntities(rawBaseUri, target, inlineEntityType, navigationLink.getInlineEntitySet());
+              createInlineEntities(rawBaseUri, target, navigationLink.getInlineEntitySet());
 
           for (final Entity inlineEntity : entities) {
             createLink(navigationProperty, entity, inlineEntity);
           }
         } else {
           final Entity inlineEntity =
-              createInlineEntity(rawBaseUri, target, inlineEntityType, navigationLink.getInlineEntity());
+              createInlineEntity(rawBaseUri, target, navigationLink.getInlineEntity());
           createLink(navigationProperty, entity, inlineEntity);
         }
       }
     }
   }
 
-  private List<Entity> createInlineEntities(final String rawBaseUri, final EdmBindingTarget target,
-      final EdmEntityType type, final EntitySet changedEntitySet) throws DataProviderException {
+  private List<Entity> createInlineEntities(final String rawBaseUri, final EdmEntitySet targetEntitySet,
+      final EntitySet changedEntitySet) throws DataProviderException {
     List<Entity> entities = new ArrayList<Entity>();
 
     for (final Entity newEntity : changedEntitySet.getEntities()) {
-      entities.add(createInlineEntity(rawBaseUri, target, type, newEntity));
+      entities.add(createInlineEntity(rawBaseUri, targetEntitySet, newEntity));
     }
 
     return entities;
   }
 
-  private Entity createInlineEntity(final String rawBaseUri, final EdmBindingTarget target,
-      final EdmEntityType type, final Entity changedEntity) throws DataProviderException {
+  private Entity createInlineEntity(final String rawBaseUri, final EdmEntitySet targetEntitySet,
+      final Entity changedEntity) throws DataProviderException {
 
-    final Entity inlineEntity = create((EdmEntitySet) target);
-    update(rawBaseUri, (EdmEntitySet) target, inlineEntity, changedEntity, false, true);
+    final Entity inlineEntity = create(targetEntitySet);
+    update(rawBaseUri, targetEntitySet, inlineEntity, changedEntity, false, true);
 
     return inlineEntity;
   }
@@ -380,27 +342,11 @@ public class DataProvider {
     }
   }
 
-  // TODO Duplicated code in DataCreator
-  private void setLink(final EdmNavigationProperty navigationProperty, final Entity srcEntity,
-      final Entity destEntity) {
-
-    Link link = srcEntity.getNavigationLink(navigationProperty.getName());
-    if (link == null) {
-      link = new LinkImpl();
-      link.setTitle(navigationProperty.getName());
-      srcEntity.getNavigationLinks().add(link);
-    }
-
+  private void setLink(final EdmNavigationProperty navigationProperty, Entity srcEntity, final Entity targetEntity) {
     if (navigationProperty.isCollection()) {
-      if (link.getInlineEntitySet() == null) {
-        link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
-        link.setInlineEntitySet(new EntitySetImpl());
-      }
-
-      link.getInlineEntitySet().getEntities().add(destEntity);
+      DataCreator.setLinks(srcEntity, navigationProperty.getName(), targetEntity);
     } else {
-      link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
-      link.setInlineEntity(destEntity);
+      DataCreator.setLink(srcEntity, navigationProperty.getName(), targetEntity);
     }
   }
 
@@ -423,10 +369,8 @@ public class DataProvider {
     } else {
       final EdmComplexType type = (EdmComplexType) edmProperty.getType();
       for (final String propertyName : type.getPropertyNames()) {
-        List<Property> newProperties = null;
-        if(newProperty != null && newProperty.asComplex() != null){
-          newProperties = newProperty.asComplex().getValue();
-        }
+        final List<Property> newProperties = newProperty == null || newProperty.asComplex() == null ? null :
+            newProperty.asComplex().getValue();
         updateProperty(type.getStructuralProperty(propertyName),
             findProperty(propertyName, property.asComplex().getValue()),
             newProperties == null ? null : findProperty(propertyName, newProperties),
@@ -452,6 +396,16 @@ public class DataProvider {
     entity.getProperties().remove(entity.getProperty(MEDIA_PROPERTY_NAME));
     entity.addProperty(DataCreator.createPrimitive(MEDIA_PROPERTY_NAME, media));
     entity.setMediaContentType(type);
+  }
+
+  public EntitySet readFunctionEntitySet(final EdmFunction function, final List<UriParameter> parameters)
+      throws DataProviderException {
+    return FunctionData.entityCollectionFunction(function.getName(), parameters, data);
+  }
+
+  public Entity readFunctionEntity(final EdmFunction function, final List<UriParameter> parameters)
+      throws DataProviderException {
+    return FunctionData.entityFunction(function.getName(), parameters, data);
   }
 
   public void setEdm(final Edm edm) {
