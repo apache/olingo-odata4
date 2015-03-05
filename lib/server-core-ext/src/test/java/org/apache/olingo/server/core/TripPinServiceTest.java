@@ -68,6 +68,22 @@ public class TripPinServiceTest {
   }
 
   @Test
+  public void testMetadata() throws Exception {
+    ContentResponse response = http.newRequest(baseURL + "/$metadata")
+        .method(HttpMethod.GET)
+        .send();
+    System.out.println(response.getContentAsString());
+  }
+
+  @Test
+  public void testServiceDocument() throws Exception {
+    ContentResponse response = http.newRequest(baseURL + "/")
+        .method(HttpMethod.GET)
+        .send();
+    System.out.println(response.getContentAsString());
+  }
+
+  @Test
   public void testEntitySet() throws Exception {
     ContentResponse response = http.newRequest(baseURL + "/People")
     .header("Content-Type", "application/json;odata.metadata=minimal")
@@ -75,6 +91,25 @@ public class TripPinServiceTest {
     .send();
     System.out.println(response.getContentAsString());
   }
+
+  @Test
+  public void testEntitySetNav() throws Exception {
+    ContentResponse response = http.newRequest(baseURL + "/People('russellwhyte')/Photo")
+        .header("Content-Type", "application/json;odata.metadata=minimal")
+        .method(HttpMethod.GET)
+        .send();
+    System.out.println(response.getContentAsString());
+  }
+
+  @Test
+  public void testEntitySetNavProperty() throws Exception {
+    ContentResponse response = http.newRequest(baseURL + "/People('russellwhyte')/Photo/Name")
+        .header("Content-Type", "application/json;odata.metadata=minimal")
+        .method(HttpMethod.GET)
+        .send();
+    System.out.println(response.getContentAsString());
+  }
+
 
   @Test
   public void testReadEntitySetWithPaging() throws Exception {

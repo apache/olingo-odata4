@@ -19,7 +19,11 @@
             }
          ],
          "Gender":0,
-         "Concurrency":635585295719432047
+         "Concurrency":635585295719432047,
+        "Photo": {
+          "Id": 2,
+          "Name": "My Photo 2"
+        }
       },
       {
          "UserName":"scottketchum",

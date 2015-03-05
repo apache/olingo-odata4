@@ -34,11 +34,13 @@ import java.util.UUID;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -142,9 +144,15 @@ public class TripPinHandler implements ServiceHandler {
       @Override
       void visit(PropertyResponse response) throws ODataTranslatedException,
           ODataApplicationException {
+        Property property;
         EdmProperty edmProperty = request.getUriResourceProperty().getProperty();
-        Property property = dataEntity.getProperty(edmProperty.getName());
-        response.writeProperty(edmProperty.getType(), property);
+        Entity propEntity = dataEntity;
+        if(request.getUriResourceNavigation() != null) {
+          EdmNavigationProperty navProperty = request.getUriResourceNavigation().getProperty();
+          Link link = dataEntity.getNavigationLink(navProperty.getName());
+          propEntity = link.getInlineEntity();
+        }
+        response.writeProperty(edmProperty.getType(), propEntity.getProperty(edmProperty.getName()));
       }
 
       @Override
@@ -162,7 +170,13 @@ public class TripPinHandler implements ServiceHandler {
       @Override
       public void visit(EntityResponse response) throws ODataTranslatedException,
           ODataApplicationException {
-        response.writeReadEntity(edmEntityType, dataEntity);
+        if(request.getUriResourceNavigation() != null) {
+          EdmNavigationProperty navProperty = request.getUriResourceNavigation().getProperty();
+          Link link = dataEntity.getNavigationLink(navProperty.getName());
+          response.writeReadEntity(navProperty.getType(), link.getInlineEntity());
+        } else {
+          response.writeReadEntity(edmEntityType, dataEntity);
+        }
       }
     });
   }
