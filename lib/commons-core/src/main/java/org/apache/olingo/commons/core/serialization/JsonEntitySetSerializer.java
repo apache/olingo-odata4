@@ -18,7 +18,9 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import java.io.IOException;
+import java.net.URI;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
@@ -26,15 +28,13 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-import java.io.IOException;
-import java.net.URI;
+import com.fasterxml.jackson.core.JsonGenerator;
 
 public class JsonEntitySetSerializer extends JsonSerializer {
 
-  public JsonEntitySetSerializer(final ODataServiceVersion version, final boolean serverMode) {
-    super(version, serverMode);
+  public JsonEntitySetSerializer(final boolean serverMode) {
+    super(serverMode);
   }
 
   protected void doSerialize(final EntitySet entitySet, final JsonGenerator jgen)
@@ -51,12 +51,10 @@ public class JsonEntitySetSerializer extends JsonSerializer {
 
     if (serverMode) {
       if (container.getContextURL() != null) {
-        jgen.writeStringField(version.compareTo(ODataServiceVersion.V40) >= 0
-            ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
-            container.getContextURL().toASCIIString());
+        jgen.writeStringField(Constants.JSON_CONTEXT, container.getContextURL().toASCIIString());
       }
 
-      if (version.compareTo(ODataServiceVersion.V40) >= 0 && StringUtils.isNotBlank(container.getMetadataETag())) {
+      if (StringUtils.isNotBlank(container.getMetadataETag())) {
         jgen.writeStringField(
             Constants.JSON_METADATA_ETAG,
             container.getMetadataETag());
@@ -64,17 +62,17 @@ public class JsonEntitySetSerializer extends JsonSerializer {
     }
 
     if (entitySet.getId() != null) {
-      jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.ID), entitySet.getId().toASCIIString());
+      jgen.writeStringField(Constants.JSON_ID, entitySet.getId().toASCIIString());
     }
-    jgen.writeNumberField(version.getJsonName(ODataServiceVersion.JsonKey.COUNT),
+    jgen.writeNumberField(Constants.JSON_COUNT,
         entitySet.getCount() == null ? entitySet.getEntities().size() : entitySet.getCount());
     if (serverMode) {
       if (entitySet.getNext() != null) {
-        jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.NEXT_LINK),
+        jgen.writeStringField(Constants.JSON_NEXT_LINK,
             entitySet.getNext().toASCIIString());
       }
       if (entitySet.getDeltaLink() != null) {
-        jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.DELTA_LINK),
+        jgen.writeStringField(Constants.JSON_DELTA_LINK,
             entitySet.getDeltaLink().toASCIIString());
       }
     }
@@ -84,7 +82,7 @@ public class JsonEntitySetSerializer extends JsonSerializer {
     }
 
     jgen.writeArrayFieldStart(Constants.VALUE);
-    final JsonEntitySerializer entitySerializer = new JsonEntitySerializer(version, serverMode);
+    final JsonEntitySerializer entitySerializer = new JsonEntitySerializer(serverMode);
     for (Entity entity : entitySet.getEntities()) {
       entitySerializer.doSerialize(entity, jgen);
     }

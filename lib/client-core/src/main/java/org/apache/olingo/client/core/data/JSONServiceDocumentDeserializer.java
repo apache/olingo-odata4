@@ -27,7 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.serialization.JsonDeserializer;
 
@@ -39,8 +38,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JSONServiceDocumentDeserializer extends JsonDeserializer {
 
-  public JSONServiceDocumentDeserializer(final ODataServiceVersion version, final boolean serverMode) {
-    super(version, serverMode);
+  public JSONServiceDocumentDeserializer(final boolean serverMode) {
+    super(serverMode);
   }
 
   protected ResWrap<ServiceDocument> doDeserialize(final JsonParser parser) throws IOException {

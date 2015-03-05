@@ -48,12 +48,12 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
 
   @Override
   public ODataInlineEntitySet newDeepInsertEntitySet(final String name, final ODataEntitySet entitySet) {
-    return new ODataInlineEntitySet(version, null, ODataLinkType.ENTITY_SET_NAVIGATION, name, entitySet);
+    return new ODataInlineEntitySet(null, ODataLinkType.ENTITY_SET_NAVIGATION, name, entitySet);
   }
 
   @Override
   public ODataInlineEntity newDeepInsertEntity(final String name, final ODataEntity entity) {
-    return new ODataInlineEntity(version, null, ODataLinkType.ENTITY_NAVIGATION, name, entity);
+    return new ODataInlineEntity(null, ODataLinkType.ENTITY_NAVIGATION, name, entity);
   }
 
   @Override
@@ -85,25 +85,25 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
 
   @Override
   public ODataLink newEntityNavigationLink(final String name, final URI link) {
-    return new ODataLink.Builder().setVersion(version).setURI(link).
+    return new ODataLink.Builder().setURI(link).
         setType(ODataLinkType.ENTITY_NAVIGATION).setTitle(name).build();
   }
 
   @Override
   public ODataLink newEntitySetNavigationLink(final String name, final URI link) {
-    return new ODataLink.Builder().setVersion(version).setURI(link).
+    return new ODataLink.Builder().setURI(link).
         setType(ODataLinkType.ENTITY_SET_NAVIGATION).setTitle(name).build();
   }
 
   @Override
   public ODataLink newAssociationLink(final String name, final URI link) {
-    return new ODataLink.Builder().setVersion(version).setURI(link).
+    return new ODataLink.Builder().setURI(link).
         setType(ODataLinkType.ASSOCIATION).setTitle(name).build();
   }
 
   @Override
   public ODataLink newMediaEditLink(final String name, final URI link) {
-    return new ODataLink.Builder().setVersion(version).setURI(link).
+    return new ODataLink.Builder().setURI(link).
         setType(ODataLinkType.MEDIA_EDIT).setTitle(name).build();
   }
 

@@ -18,24 +18,24 @@
  */
 package org.apache.olingo.fit.serializer;
 
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.serialization.AtomDeserializer;
-
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.core.serialization.AtomDeserializer;
+
 public class FITAtomDeserializer extends AtomDeserializer {
 
   private static final Charset ENCODING = Charset.forName(Constants.UTF8);
 
-  public FITAtomDeserializer(final ODataServiceVersion version) {
-    super(version);
+  public FITAtomDeserializer() {
+    super();
   }
 
   @Override

@@ -22,27 +22,20 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.Constants;
 
 /**
  * OData link.
  */
-public class ODataLink extends ODataItem implements ODataAnnotatable{
+public class ODataLink extends ODataItem implements ODataAnnotatable {
 
   public static class Builder {
-
-    protected ODataServiceVersion version;
 
     protected URI uri;
 
     protected ODataLinkType type;
 
     protected String title;
-
-    public Builder setVersion(final ODataServiceVersion version) {
-      this.version = version;
-      return this;
-    }
 
     public Builder setURI(final URI uri) {
       this.uri = uri;
@@ -65,7 +58,7 @@ public class ODataLink extends ODataItem implements ODataAnnotatable{
     }
 
     public ODataLink build() {
-      return new ODataLink(version, uri, type, title);
+      return new ODataLink(uri, type, title);
     }
   }
 
@@ -108,7 +101,7 @@ public class ODataLink extends ODataItem implements ODataAnnotatable{
   protected String mediaETag;
 
   private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
-  
+
   /**
    * Constructor.
    * 
@@ -117,7 +110,7 @@ public class ODataLink extends ODataItem implements ODataAnnotatable{
    * @param type type.
    * @param title title.
    */
-  public ODataLink(final ODataServiceVersion version, final URI uri, final ODataLinkType type, final String title) {
+  public ODataLink(final URI uri, final ODataLinkType type, final String title) {
     super(title);
 
     link = uri;
@@ -125,17 +118,17 @@ public class ODataLink extends ODataItem implements ODataAnnotatable{
 
     switch (this.type) {
     case ASSOCIATION:
-      rel = version.getNamespace(ODataServiceVersion.NamespaceKey.ASSOCIATION_LINK_REL) + title;
+      rel = Constants.NS_ASSOCIATION_LINK_REL + title;
       break;
 
     case ENTITY_NAVIGATION:
     case ENTITY_SET_NAVIGATION:
-      rel = version.getNamespace(ODataServiceVersion.NamespaceKey.NAVIGATION_LINK_REL) + title;
+      rel = Constants.NS_NAVIGATION_LINK_REL + title;
       break;
 
     case MEDIA_EDIT:
     default:
-      rel = version.getNamespace(ODataServiceVersion.NamespaceKey.MEDIA_EDIT_LINK_REL) + title;
+      rel = Constants.NS_MEDIA_EDIT_LINK_REL + title;
       break;
     }
   }
@@ -149,10 +142,9 @@ public class ODataLink extends ODataItem implements ODataAnnotatable{
    * @param type type.
    * @param title title.
    */
-  protected ODataLink(final ODataServiceVersion version,
-      final URI baseURI, final String href, final ODataLinkType type, final String title) {
+  protected ODataLink(final URI baseURI, final String href, final ODataLinkType type, final String title) {
 
-    this(version, getURI(baseURI, href), type, title);
+    this(getURI(baseURI, href), type, title);
   }
 
   /**
@@ -189,7 +181,7 @@ public class ODataLink extends ODataItem implements ODataAnnotatable{
   public String getMediaETag() {
     return mediaETag;
   }
-  
+
   public List<ODataAnnotation> getAnnotations() {
     return annotations;
   }

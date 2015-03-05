@@ -46,12 +46,10 @@ import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.AbstractEdmSchema;
 
 public class EdmSchemaImpl extends AbstractEdmSchema {
 
-  private final ODataServiceVersion version;
 
   private final Edm edm;
 
@@ -63,12 +61,10 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
 
   private List<EdmEntityContainer> entityContainers;
 
-  public EdmSchemaImpl(final ODataServiceVersion version, final Edm edm,
-      final List<Schema> xmlSchemas, final Schema schema) {
+  public EdmSchemaImpl(final Edm edm, final List<Schema> xmlSchemas, final Schema schema) {
 
     super(schema.getNamespace(), schema.getAlias());
 
-    this.version = version;
     this.edm = edm;
     this.xmlSchemas = xmlSchemas;
     this.schema = schema;
@@ -133,7 +129,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
       if (providerTypeDefinitions != null) {
         for (TypeDefinition def : providerTypeDefinitions) {
           typeDefinitions.add(
-              new EdmTypeDefinitionImpl(version, edm, new FullQualifiedName(namespace, def.getName()), def));
+              new EdmTypeDefinitionImpl(edm, new FullQualifiedName(namespace, def.getName()), def));
         }
       }
     }
@@ -147,7 +143,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
     if (providerEnumTypes != null) {
       for (EnumType enumType : providerEnumTypes) {
         enumTypes.add(
-            new EdmEnumTypeImpl(version, edm, new FullQualifiedName(namespace, enumType.getName()), enumType));
+            new EdmEnumTypeImpl(edm, new FullQualifiedName(namespace, enumType.getName()), enumType));
       }
     }
     return enumTypes;

@@ -42,8 +42,6 @@ import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion.NamespaceKey;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
@@ -65,12 +63,11 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
 
   private final boolean serverMode;
 
-  public AtomSerializer(final ODataServiceVersion version) {
-    this(version, false);
+  public AtomSerializer() {
+    this(false);
   }
 
-  public AtomSerializer(final ODataServiceVersion version, final boolean serverMode) {
-    super(version);
+  public AtomSerializer(final boolean serverMode) {
     geoSerializer = new AtomGeoValueSerializer();
     this.serverMode = serverMode;
   }
@@ -79,11 +76,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
       final ValueType valueType, final EdmPrimitiveTypeKind kind, final List<?> value)
       throws XMLStreamException, EdmPrimitiveTypeException {
     for (Object item : value) {
-      if (version.compareTo(ODataServiceVersion.V40) < 0) {
-        writer.writeStartElement(Constants.PREFIX_DATASERVICES, Constants.ELEM_ELEMENT, namespaceData);
-      } else {
-        writer.writeStartElement(Constants.PREFIX_METADATA, Constants.ELEM_ELEMENT, namespaceMetadata);
-      }
+      writer.writeStartElement(Constants.PREFIX_METADATA, Constants.ELEM_ELEMENT, namespaceMetadata);
       value(writer, valueType, kind, item);
       writer.writeEndElement();
     }
@@ -126,14 +119,11 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
   public void property(final XMLStreamWriter writer, final Property property, final boolean standalone)
       throws XMLStreamException, EdmPrimitiveTypeException {
 
-    if (version.compareTo(ODataServiceVersion.V40) >= 0 && standalone) {
+    if (standalone) {
       writer.writeStartElement(Constants.PREFIX_METADATA, Constants.VALUE, namespaceData);
+      namespaces(writer);
     } else {
       writer.writeStartElement(Constants.PREFIX_DATASERVICES, property.getName(), namespaceData);
-    }
-
-    if (standalone) {
-      namespaces(writer);
     }
 
     EdmTypeInfo typeInfo = null;
@@ -141,7 +131,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
       typeInfo = new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
       if (!EdmPrimitiveTypeKind.String.getFullQualifiedName().toString().equals(typeInfo.internal())) {
         writer.writeAttribute(Constants.PREFIX_METADATA, namespaceMetadata,
-            Constants.ATTR_TYPE, typeInfo.external(version));
+            Constants.ATTR_TYPE, typeInfo.external());
       }
     }
 
@@ -260,7 +250,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
       typeInfo = new EdmTypeInfo.Builder().setTypeExpression(annotation.getType()).build();
       if (!EdmPrimitiveTypeKind.String.getFullQualifiedName().toString().equals(typeInfo.internal())) {
         writer.writeAttribute(Constants.PREFIX_METADATA, namespaceMetadata,
-            Constants.ATTR_TYPE, typeInfo.external(version));
+            Constants.ATTR_TYPE, typeInfo.external());
       }
     }
 
@@ -287,10 +277,10 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     }
 
     writer.writeStartElement(Constants.ATOM_ELEM_CATEGORY);
-    writer.writeAttribute(Constants.ATOM_ATTR_SCHEME, version.getNamespace(ODataServiceVersion.NamespaceKey.SCHEME));
+    writer.writeAttribute(Constants.ATOM_ATTR_SCHEME, Constants.NS_SCHEME);
     if (StringUtils.isNotBlank(entity.getType())) {
       writer.writeAttribute(Constants.ATOM_ATTR_TERM,
-          new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external(version));
+          new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external());
     }
     writer.writeEndElement();
 
@@ -447,7 +437,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
       }
       if (entitySet.getDeltaLink() != null) {
         final LinkImpl next = new LinkImpl();
-        next.setRel(ODataServiceVersion.V40.getNamespace(NamespaceKey.DELTA_LINK_REL));
+        next.setRel(Constants.NS_DELTA_LINK_REL);
         next.setHref(entitySet.getDeltaLink().toASCIIString());
 
         links(writer, Collections.<Link> singletonList(next));
@@ -526,7 +516,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     writer.writeStartDocument();
 
     writer.writeStartElement(Constants.ATTR_METADATA, Constants.ATTR_REF);
-    writer.writeNamespace(Constants.ATTR_METADATA, version.getNamespace(NamespaceKey.METADATA));
+    writer.writeNamespace(Constants.ATTR_METADATA, Constants.NS_METADATA);
     writer.writeAttribute(Constants.ATTR_METADATA, Constants.CONTEXT, container.getContextURL().toASCIIString());
     writer.writeAttribute(Constants.ATOM_ATTR_ID, container.getPayload().toASCIIString());
     writer.writeEndElement();

@@ -126,14 +126,14 @@ public class ODataClientImpl implements ODataClient {
 
   @Override
   public ClientODataDeserializer getDeserializer(final ODataFormat format) {
-    return new ClientODataDeserializerImpl(getServiceVersion(), false, format);
+    return new ClientODataDeserializerImpl(false, format);
   }
 
   @Override
   public ODataSerializer getSerializer(final ODataFormat format) {
     return format == ODataFormat.ATOM || format == ODataFormat.XML ?
-        new AtomSerializer(getServiceVersion()) :
-        new JsonSerializer(getServiceVersion(), false, format);
+        new AtomSerializer() :
+        new JsonSerializer(false, format);
   }
 
   @Override

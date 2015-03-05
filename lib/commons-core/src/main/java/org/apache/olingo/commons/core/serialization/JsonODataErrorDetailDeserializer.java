@@ -18,20 +18,20 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataErrorDetail;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-
 import java.io.IOException;
 import java.net.URI;
 
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.domain.ODataErrorDetail;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class JsonODataErrorDetailDeserializer extends JsonDeserializer {
 
-  public JsonODataErrorDetailDeserializer(final ODataServiceVersion version, final boolean serverMode) {
-    super(version, serverMode);
+  public JsonODataErrorDetailDeserializer(final boolean serverMode) {
+    super(serverMode);
   }
 
   protected ResWrap<ODataErrorDetail> doDeserialize(final JsonParser parser) throws IOException {

@@ -34,7 +34,6 @@ import org.apache.olingo.commons.api.edm.EdmMember;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.AbstractEdmEnumType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
@@ -54,7 +53,7 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType {
 
   private final Map<String, EdmMember> members;
 
-  public EdmEnumTypeImpl(final ODataServiceVersion version, final Edm edm, final FullQualifiedName fqn,
+  public EdmEnumTypeImpl(final Edm edm, final FullQualifiedName fqn,
           final EnumType xmlEnumType) {
 
     super(edm, fqn, xmlEnumType.isFlags());
@@ -63,7 +62,7 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType {
       this.underlyingType = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32);
     } else {
       final EdmPrimitiveTypeKind underlyingTipeKind =
-              EdmPrimitiveTypeKind.valueOfFQN(version, xmlEnumType.getUnderlyingType());
+              EdmPrimitiveTypeKind.valueOfFQN(xmlEnumType.getUnderlyingType());
       if (!ArrayUtils.contains(VALID_UNDERLYING_TYPES, underlyingTipeKind)) {
         throw new EdmException("Not allowed as underlying type: " + underlyingTipeKind);
       }

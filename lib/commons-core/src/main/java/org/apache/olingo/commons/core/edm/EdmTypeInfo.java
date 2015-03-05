@@ -28,7 +28,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class EdmTypeInfo {
@@ -156,19 +155,17 @@ public class EdmTypeInfo {
     return deserialize.toString();
   }
 
-  public String external(final ODataServiceVersion version) {
+  public String external() {
     final StringBuilder serialize = new StringBuilder();
 
     if (isCollection()) {
-      if (version.compareTo(ODataServiceVersion.V40) >= 0) {
-        serialize.append('#');
-      }
+      serialize.append('#');
       serialize.append("Collection(");
     }
 
-    if (isPrimitiveType() && version.compareTo(ODataServiceVersion.V40) >= 0) {
+    if (isPrimitiveType()) {
       serialize.append(getFullQualifiedName().getName());
-    } else {
+    }else{
       serialize.append(getFullQualifiedName().toString());
     }
 
@@ -176,7 +173,7 @@ public class EdmTypeInfo {
       serialize.append(")");
     }
 
-    if (version.compareTo(ODataServiceVersion.V40) >= 0 && !isPrimitiveType() && !isCollection()) {
+    if (!isPrimitiveType() && !isCollection()) {
       serialize.insert(0, '#');
     }
 

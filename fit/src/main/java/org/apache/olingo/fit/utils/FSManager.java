@@ -118,13 +118,13 @@ public class FSManager {
     ByteArrayOutputStream content = new ByteArrayOutputStream();
     OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
 
-    new AtomSerializer(version, true).write(writer, container);
+    new AtomSerializer(true).write(writer, container);
     writer.flush();
 
     putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.ATOM));
     content.reset();
 
-    new JsonSerializer(version, true).write(writer, container);
+    new JsonSerializer(true).write(writer, container);
     writer.flush();
 
     putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.JSON_FULLMETA));

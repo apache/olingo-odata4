@@ -34,6 +34,23 @@ public interface Constants {
   public final static Integer DEFAULT_PRECISION = 40;
 
   public final static Integer DEFAULT_SCALE = 25;
+  
+  // Common Namespaces
+  public final static String NS_BASE = "http://docs.oasis-open.org/odata/ns/";
+  
+  public final static String NS_DATASERVICES = "http://docs.oasis-open.org/odata/ns/data";
+  
+  public final static String NS_METADATA = "http://docs.oasis-open.org/odata/ns/metadata";
+  
+  public final static String NS_SCHEME = "http://docs.oasis-open.org/odata/ns/scheme";
+  
+  public final static String NS_NAVIGATION_LINK_REL = "http://docs.oasis-open.org/odata/ns/related/";
+  
+  public final static String NS_ASSOCIATION_LINK_REL = "http://docs.oasis-open.org/odata/ns/relatedlinks/";
+  
+  public final static String NS_MEDIA_EDIT_LINK_REL = "http://docs.oasis-open.org/odata/ns/edit-media/";
+  
+  public final static String NS_DELTA_LINK_REL = "http://docs.oasis-open.org/odata/ns/delta";
 
   // XML namespaces and prefixes
   public final static String NS_ATOM = "http://www.w3.org/2005/Atom";
@@ -53,6 +70,7 @@ public interface Constants {
   public static final String PREFIX_GML = "gml";
 
   public final static String SRS_URLPREFIX = "http://www.opengis.net/def/crs/EPSG/0/";
+
 
   // Link rel(s)
   public static final String EDIT_LINK_REL = "edit";

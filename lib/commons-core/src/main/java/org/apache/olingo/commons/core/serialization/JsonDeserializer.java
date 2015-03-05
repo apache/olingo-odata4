@@ -18,43 +18,6 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Annotatable;
-import org.apache.olingo.commons.api.data.Annotation;
-import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.data.Linked;
-import org.apache.olingo.commons.api.data.ComplexValue;
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.data.Valuable;
-import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.commons.api.domain.ODataPropertyType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.edm.geo.Geospatial;
-import org.apache.olingo.commons.api.serialization.ODataDeserializer;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-import org.apache.olingo.commons.core.data.AnnotationImpl;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.data.ComplexValueImpl;
-import org.apache.olingo.commons.core.data.PropertyImpl;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.AbstractMap.SimpleEntry;
@@ -67,72 +30,89 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotatable;
+import org.apache.olingo.commons.api.data.Annotation;
+import org.apache.olingo.commons.api.data.ComplexValue;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Linked;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.Valuable;
+import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.ODataPropertyType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.serialization.ODataDeserializer;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.core.data.AnnotationImpl;
+import org.apache.olingo.commons.core.data.ComplexValueImpl;
+import org.apache.olingo.commons.core.data.EntitySetImpl;
+import org.apache.olingo.commons.core.data.LinkImpl;
+import org.apache.olingo.commons.core.data.PropertyImpl;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public class JsonDeserializer implements ODataDeserializer {
 
   protected final Pattern CUSTOM_ANNOTATION = Pattern.compile("(.+)@(.+)\\.(.+)");
 
-  protected final ODataServiceVersion version;
-
   protected final boolean serverMode;
 
-  protected String jsonType;
+  protected String jsonType = Constants.JSON_TYPE;
 
-  protected String jsonId;
+  protected String jsonId = Constants.JSON_ID;
 
-  protected String jsonETag;
+  protected String jsonETag = Constants.JSON_ETAG;
 
-  protected String jsonReadLink;
+  protected String jsonReadLink = Constants.JSON_READ_LINK;
 
-  protected String jsonEditLink;
+  protected String jsonEditLink = Constants.JSON_EDIT_LINK;
 
-  protected String jsonMediaEditLink;
+  protected String jsonMediaEditLink = Constants.JSON_MEDIA_EDIT_LINK;
 
-  protected String jsonMediaReadLink;
+  protected String jsonMediaReadLink = Constants.JSON_MEDIA_READ_LINK;
 
-  protected String jsonMediaContentType;
+  protected String jsonMediaContentType = Constants.JSON_MEDIA_CONTENT_TYPE;
 
-  protected String jsonMediaETag;
+  protected String jsonMediaETag = Constants.JSON_MEDIA_ETAG;
 
-  protected String jsonAssociationLink;
+  protected String jsonAssociationLink = Constants.JSON_ASSOCIATION_LINK;
 
-  protected String jsonNavigationLink;
+  protected String jsonNavigationLink = Constants.JSON_NAVIGATION_LINK;
 
-  protected String jsonCount;
+  protected String jsonCount = Constants.JSON_COUNT;
 
-  protected String jsonNextLink;
+  protected String jsonNextLink = Constants.JSON_NEXT_LINK;
 
-  protected String jsonDeltaLink;
+  protected String jsonDeltaLink = Constants.JSON_DELTA_LINK;
 
-  protected String jsonError;
+  protected String jsonError = Constants.JSON_ERROR;
 
   private JsonGeoValueDeserializer geoDeserializer;
 
   private JsonParser parser;
 
-  public JsonDeserializer(final ODataServiceVersion version, final boolean serverMode) {
-    this.version = version;
+  public JsonDeserializer(final boolean serverMode) {
     this.serverMode = serverMode;
-
-    jsonType = version.getJsonName(ODataServiceVersion.JsonKey.TYPE);
-    jsonId = version.getJsonName(ODataServiceVersion.JsonKey.ID);
-    jsonETag = version.getJsonName(ODataServiceVersion.JsonKey.ETAG);
-    jsonReadLink = version.getJsonName(ODataServiceVersion.JsonKey.READ_LINK);
-    jsonEditLink = version.getJsonName(ODataServiceVersion.JsonKey.EDIT_LINK);
-    jsonMediaReadLink = version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_READ_LINK);
-    jsonMediaEditLink = version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_EDIT_LINK);
-    jsonMediaContentType = version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_CONTENT_TYPE);
-    jsonMediaETag = version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_ETAG);
-    jsonAssociationLink = version.getJsonName(ODataServiceVersion.JsonKey.ASSOCIATION_LINK);
-    jsonNavigationLink = version.getJsonName(ODataServiceVersion.JsonKey.NAVIGATION_LINK);
-    jsonCount = version.getJsonName(ODataServiceVersion.JsonKey.COUNT);
-    jsonNextLink = version.getJsonName(ODataServiceVersion.JsonKey.NEXT_LINK);
-    jsonDeltaLink = version.getJsonName(ODataServiceVersion.JsonKey.DELTA_LINK);
-    jsonError = version.getJsonName(ODataServiceVersion.JsonKey.ERROR);
   }
 
   private JsonGeoValueDeserializer getGeoDeserializer() {
     if (geoDeserializer == null) {
-      geoDeserializer = new JsonGeoValueDeserializer(version);
+      geoDeserializer = new JsonGeoValueDeserializer();
     }
     return geoDeserializer;
   }
@@ -151,7 +131,7 @@ public class JsonDeserializer implements ODataDeserializer {
     final String entityNamePrefix = name.substring(0, name.indexOf(suffix));
     if (tree.has(entityNamePrefix)) {
       final JsonNode inline = tree.path(entityNamePrefix);
-      JsonEntityDeserializer entityDeserializer = new JsonEntityDeserializer(version, serverMode);
+      JsonEntityDeserializer entityDeserializer = new JsonEntityDeserializer(serverMode);
 
       if (inline instanceof ObjectNode) {
         link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
@@ -186,7 +166,7 @@ public class JsonDeserializer implements ODataDeserializer {
     if (field.getKey().endsWith(jsonNavigationLink)) {
       final LinkImpl link = new LinkImpl();
       link.setTitle(getTitle(field));
-      link.setRel(version.getNamespace(ODataServiceVersion.NamespaceKey.NAVIGATION_LINK_REL) + getTitle(field));
+      link.setRel(Constants.NS_NAVIGATION_LINK_REL + getTitle(field));
 
       if (field.getValue().isValueNode()) {
         link.setHref(field.getValue().textValue());
@@ -200,7 +180,7 @@ public class JsonDeserializer implements ODataDeserializer {
     } else if (field.getKey().endsWith(jsonAssociationLink)) {
       final LinkImpl link = new LinkImpl();
       link.setTitle(getTitle(field));
-      link.setRel(version.getNamespace(ODataServiceVersion.NamespaceKey.ASSOCIATION_LINK_REL) + getTitle(field));
+      link.setRel(Constants.NS_ASSOCIATION_LINK_REL + getTitle(field));
       link.setHref(field.getValue().textValue());
       link.setType(ODataLinkType.ASSOCIATION.toString());
       linked.getAssociationLinks().add(link);
@@ -220,7 +200,7 @@ public class JsonDeserializer implements ODataDeserializer {
 
         final LinkImpl link = new LinkImpl();
         link.setTitle(getTitle(field));
-        link.setRel(version.getNamespace(ODataServiceVersion.NamespaceKey.NAVIGATION_LINK_REL) + getTitle(field));
+        link.setRel(Constants.NS_NAVIGATION_LINK_REL + getTitle(field));
         link.setHref(field.getValue().textValue());
         link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
         linked.getNavigationLinks().add(link);
@@ -232,7 +212,7 @@ public class JsonDeserializer implements ODataDeserializer {
 
           final LinkImpl link = new LinkImpl();
           link.setTitle(getTitle(field));
-          link.setRel(version.getNamespace(ODataServiceVersion.NamespaceKey.NAVIGATION_LINK_REL) + getTitle(field));
+          link.setRel(Constants.NS_NAVIGATION_LINK_REL + getTitle(field));
           link.setHref(node.asText());
           link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
           linked.getNavigationLinks().add(link);
@@ -438,7 +418,7 @@ public class JsonDeserializer implements ODataDeserializer {
   public ResWrap<EntitySet> toEntitySet(final InputStream input) throws ODataDeserializerException {
     try {
       parser = new JsonFactory(new ObjectMapper()).createParser(input);
-      return new JsonEntitySetDeserializer(version, serverMode).doDeserialize(parser);
+      return new JsonEntitySetDeserializer(serverMode).doDeserialize(parser);
     } catch (final IOException e) {
       throw new ODataDeserializerException(e);
     }
@@ -448,7 +428,7 @@ public class JsonDeserializer implements ODataDeserializer {
   public ResWrap<Entity> toEntity(final InputStream input) throws ODataDeserializerException {
     try {
       parser = new JsonFactory(new ObjectMapper()).createParser(input);
-      return new JsonEntityDeserializer(version, serverMode).doDeserialize(parser);
+      return new JsonEntityDeserializer(serverMode).doDeserialize(parser);
     } catch (final IOException e) {
       throw new ODataDeserializerException(e);
     }
@@ -458,7 +438,7 @@ public class JsonDeserializer implements ODataDeserializer {
   public ResWrap<Property> toProperty(final InputStream input) throws ODataDeserializerException {
     try {
       parser = new JsonFactory(new ObjectMapper()).createParser(input);
-      return new JsonPropertyDeserializer(version, serverMode).doDeserialize(parser);
+      return new JsonPropertyDeserializer(serverMode).doDeserialize(parser);
     } catch (final IOException e) {
       throw new ODataDeserializerException(e);
     }
@@ -468,7 +448,7 @@ public class JsonDeserializer implements ODataDeserializer {
   public ODataError toError(final InputStream input) throws ODataDeserializerException {
     try {
       parser = new JsonFactory(new ObjectMapper()).createParser(input);
-      return new JsonODataErrorDeserializer(version, serverMode).doDeserialize(parser);
+      return new JsonODataErrorDeserializer(serverMode).doDeserialize(parser);
     } catch (final IOException e) {
       throw new ODataDeserializerException(e);
     }

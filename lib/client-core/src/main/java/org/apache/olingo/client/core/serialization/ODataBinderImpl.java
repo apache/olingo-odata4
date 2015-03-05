@@ -355,7 +355,7 @@ public class ODataBinderImpl implements ODataBinder {
       annotations(value.asComplex(), lcValueResource);
       links(value.asComplex(), lcValueResource);
       valueResource = lcValueResource;
-      
+
     } else if (value.isCollection()) {
       final ODataCollectionValue<? extends ODataValue> _value = value.asCollection();
       ArrayList<Object> lcValueResource = new ArrayList<Object>();
@@ -450,7 +450,7 @@ public class ODataBinderImpl implements ODataBinder {
         if (linkType == null) {
           linkType = link.getType() == null ?
               ODataLinkType.ENTITY_NAVIGATION :
-              ODataLinkType.fromString(client.getServiceVersion(), link.getRel(), link.getType());
+              ODataLinkType.fromString(link.getRel(), link.getType());
         }
 
         odataLinked.addLink(linkType == ODataLinkType.ENTITY_NAVIGATION ?
@@ -474,7 +474,7 @@ public class ODataBinderImpl implements ODataBinder {
 
   private ODataInlineEntity createODataInlineEntity(final Entity inlineEntity,
       final URI uri, final String title, final String metadataETag) {
-    return new ODataInlineEntity(client.getServiceVersion(), uri, ODataLinkType.ENTITY_NAVIGATION, title,
+    return new ODataInlineEntity(uri, ODataLinkType.ENTITY_NAVIGATION, title,
         getODataEntity(new ResWrap<Entity>(
             inlineEntity.getBaseURI() == null ? null : inlineEntity.getBaseURI(), metadataETag,
             inlineEntity)));
@@ -482,7 +482,7 @@ public class ODataBinderImpl implements ODataBinder {
 
   private ODataInlineEntitySet createODataInlineEntitySet(final EntitySet inlineEntitySet,
       final URI uri, final String title, final String metadataETag) {
-    return new ODataInlineEntitySet(client.getServiceVersion(), uri, ODataLinkType.ENTITY_SET_NAVIGATION, title,
+    return new ODataInlineEntitySet(uri, ODataLinkType.ENTITY_SET_NAVIGATION, title,
         getODataEntitySet(new ResWrap<EntitySet>(
             inlineEntitySet.getBaseURI() == null ? null : inlineEntitySet.getBaseURI(), metadataETag,
             inlineEntitySet)));
@@ -777,7 +777,7 @@ public class ODataBinderImpl implements ODataBinder {
                 || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(type)
                 || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(type)
                 ? valuable.asGeospatial().getEdmPrimitiveTypeKind()
-                : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).
+                : EdmPrimitiveTypeKind.valueOfFQN(type.toString())).
             build();
       } else if (valuable.isPrimitive() || valuable.getValueType() == null) {
         // fixes non-string values treated as string when no type information is available at de-serialization level
@@ -803,7 +803,7 @@ public class ODataBinderImpl implements ODataBinder {
             setValue(valuable.asPrimitive()).
             setType(type == null || !EdmPrimitiveType.EDM_NAMESPACE.equals(type.getNamespace())
                 ? null
-                : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).
+                : EdmPrimitiveTypeKind.valueOfFQN(type.toString())).
             build();
       } else if (valuable.isComplex()) {
         final ODataComplexValue cValue = (ODataComplexValue) client.getObjectFactory().

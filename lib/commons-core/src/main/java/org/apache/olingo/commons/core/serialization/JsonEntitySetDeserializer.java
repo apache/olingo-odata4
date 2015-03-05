@@ -18,23 +18,23 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Iterator;
-import java.util.Map;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Reads JSON string into an entity set.
@@ -43,8 +43,8 @@ import java.util.Map;
  */
 public class JsonEntitySetDeserializer extends JsonDeserializer {
 
-  public JsonEntitySetDeserializer(final ODataServiceVersion version, final boolean serverMode) {
-    super(version, serverMode);
+  public JsonEntitySetDeserializer(final boolean serverMode) {
+    super(serverMode);
   }
 
   protected ResWrap<EntitySet> doDeserialize(final JsonParser parser) throws IOException {
@@ -93,7 +93,7 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
     }
 
     if (tree.hasNonNull(Constants.VALUE)) {
-      final JsonEntityDeserializer entityDeserializer = new JsonEntityDeserializer(version, serverMode);
+      final JsonEntityDeserializer entityDeserializer = new JsonEntityDeserializer(serverMode);
       for (JsonNode jsonNode : tree.get(Constants.VALUE)) {
         entitySet.getEntities().add(
             entityDeserializer.doDeserialize(jsonNode.traverse(parser.getCodec())).getPayload());

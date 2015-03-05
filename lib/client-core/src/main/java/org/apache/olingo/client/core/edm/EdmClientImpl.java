@@ -57,21 +57,16 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.AbstractEdm;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class EdmClientImpl extends AbstractEdm {
 
-  private final ODataServiceVersion version;
-
   private final List<Schema> xmlSchemas;
 
   private final Map<String, Schema> xmlSchemaByNamespace;
 
-  public EdmClientImpl(final ODataServiceVersion version, final Map<String, Schema> xmlSchemas) {
-    this.version = version;
-
+  public EdmClientImpl(final Map<String, Schema> xmlSchemas) {
     this.xmlSchemaByNamespace = xmlSchemas;
 
     this.xmlSchemas = new ArrayList<Schema>();
@@ -100,7 +95,7 @@ public class EdmClientImpl extends AbstractEdm {
   protected Map<String, EdmSchema> createSchemas() {
     final Map<String, EdmSchema> _schemas = new LinkedHashMap<String, EdmSchema>(xmlSchemas.size());
     for (Schema schema : xmlSchemas) {
-      _schemas.put(schema.getNamespace(), new EdmSchemaImpl(version, this, xmlSchemas, schema));
+      _schemas.put(schema.getNamespace(), new EdmSchemaImpl(this, xmlSchemas, schema));
     }
     return _schemas;
   }
@@ -128,7 +123,7 @@ public class EdmClientImpl extends AbstractEdm {
     if (schema != null) {
       final EnumType xmlEnumType = schema.getEnumType(enumName.getName());
       if (xmlEnumType != null) {
-        result = new EdmEnumTypeImpl(version, this, enumName, xmlEnumType);
+        result = new EdmEnumTypeImpl(this, enumName, xmlEnumType);
       }
     }
 
@@ -144,7 +139,7 @@ public class EdmClientImpl extends AbstractEdm {
       final TypeDefinition xmlTypeDefinition = ((Schema) schema).
               getTypeDefinition(typeDefinitionName.getName());
       if (xmlTypeDefinition != null) {
-        result = new EdmTypeDefinitionImpl(version, this, typeDefinitionName, xmlTypeDefinition);
+        result = new EdmTypeDefinitionImpl(this, typeDefinitionName, xmlTypeDefinition);
       }
     }
 

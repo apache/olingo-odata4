@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.commons.api.domain;
 
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-
 import java.net.URI;
 
 /**
@@ -38,10 +36,9 @@ public class ODataInlineEntity extends ODataLink {
    * @param title title.
    * @param entity entity.
    */
-  public ODataInlineEntity(final ODataServiceVersion version,
-      final URI uri, final ODataLinkType type, final String title, final ODataEntity entity) {
+  public ODataInlineEntity(final URI uri, final ODataLinkType type, final String title, final ODataEntity entity) {
 
-    super(version, uri, type, title);
+    super(uri, type, title);
     this.entity = entity;
   }
 
@@ -55,10 +52,10 @@ public class ODataInlineEntity extends ODataLink {
    * @param title title.
    * @param entity entity.
    */
-  public ODataInlineEntity(final ODataServiceVersion version, final URI baseURI, final String href,
-      final ODataLinkType type, final String title, final ODataEntity entity) {
+  public ODataInlineEntity(final URI baseURI, final String href, final ODataLinkType type, final String title,
+      final ODataEntity entity) {
 
-    super(version, baseURI, href, type, title);
+    super(baseURI, href, type, title);
     this.entity = entity;
   }
 

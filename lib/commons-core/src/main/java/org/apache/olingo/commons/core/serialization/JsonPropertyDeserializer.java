@@ -18,9 +18,11 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
@@ -28,23 +30,21 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Iterator;
-import java.util.Map;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Parse JSON string into <tt>Property</tt>.
  */
 public class JsonPropertyDeserializer extends JsonDeserializer {
 
-  public JsonPropertyDeserializer(final ODataServiceVersion version, final boolean serverMode) {
-    super(version, serverMode);
+  public JsonPropertyDeserializer(final boolean serverMode) {
+    super(serverMode);
   }
 
   protected ResWrap<Property> doDeserialize(final JsonParser parser) throws IOException {

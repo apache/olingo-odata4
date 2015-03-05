@@ -52,8 +52,6 @@ import org.apache.olingo.commons.api.domain.ODataPropertyType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion.NamespaceKey;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
@@ -82,8 +80,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     return FACTORY.createXMLEventReader(input);
   }
 
-  public AtomDeserializer(final ODataServiceVersion version) {
-    super(version);
+  public AtomDeserializer() {
     geoDeserializer = new AtomGeoValueDeserializer();
   }
 
@@ -97,8 +94,8 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       final XMLEvent event = reader.nextEvent();
 
       if (event.isStartElement() && typeInfo != null && typeInfo.getPrimitiveTypeKind().isGeospatial()) {
-        final EdmPrimitiveTypeKind geoType = EdmPrimitiveTypeKind.valueOfFQN(
-            version, typeInfo.getFullQualifiedName().toString());
+        final EdmPrimitiveTypeKind geoType =
+            EdmPrimitiveTypeKind.valueOfFQN(typeInfo.getFullQualifiedName().toString());
         value = geoDeserializer.deserialize(reader, event.asStartElement(), geoType);
       }
 
@@ -153,13 +150,11 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
             link.setType(type.getValue());
           }
 
-          if (link.getRel().startsWith(
-              version.getNamespace(ODataServiceVersion.NamespaceKey.NAVIGATION_LINK_REL))) {
+          if (link.getRel().startsWith(Constants.NS_NAVIGATION_LINK_REL)) {
 
             ((ComplexValue) value).getNavigationLinks().add(link);
             inline(reader, event.asStartElement(), link);
-          } else if (link.getRel().startsWith(
-              version.getNamespace(ODataServiceVersion.NamespaceKey.ASSOCIATION_LINK_REL))) {
+          } else if (link.getRel().startsWith(Constants.NS_ASSOCIATION_LINK_REL)) {
 
             ((Valuable) value).asComplex().getAssociationLinks().add(link);
           }
@@ -267,7 +262,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
 
     final PropertyImpl property = new PropertyImpl();
 
-    if (ODataServiceVersion.V40 == version && propertyValueQName.equals(start.getName())) {
+    if (propertyValueQName.equals(start.getName())) {
       // retrieve name from context
       final Attribute context = start.getAttributeByName(contextQName);
       if (context != null) {
@@ -468,7 +463,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
                 delta.setNext(URI.create(href.getValue()));
               }
             }
-            if (ODataServiceVersion.V40.getNamespace(NamespaceKey.DELTA_LINK_REL).equals(rel.getValue())) {
+            if (Constants.NS_DELTA_LINK_REL.equals(rel.getValue())) {
               final Attribute href = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_HREF));
               if (href != null) {
                 delta.setDeltaLink(URI.create(href.getValue()));
@@ -644,17 +639,14 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
               if (mediaETag != null) {
                 entity.setMediaETag(mediaETag.getValue());
               }
-            } else if (link.getRel().startsWith(
-                version.getNamespace(ODataServiceVersion.NamespaceKey.NAVIGATION_LINK_REL))) {
+            } else if (link.getRel().startsWith(Constants.NS_NAVIGATION_LINK_REL)) {
 
               entity.getNavigationLinks().add(link);
               inline(reader, event.asStartElement(), link);
-            } else if (link.getRel().startsWith(
-                version.getNamespace(ODataServiceVersion.NamespaceKey.ASSOCIATION_LINK_REL))) {
+            } else if (link.getRel().startsWith(Constants.NS_ASSOCIATION_LINK_REL)) {
 
               entity.getAssociationLinks().add(link);
-            } else if (link.getRel().startsWith(
-                version.getNamespace(ODataServiceVersion.NamespaceKey.MEDIA_EDIT_LINK_REL))) {
+            } else if (link.getRel().startsWith(Constants.NS_MEDIA_EDIT_LINK_REL)) {
 
               final Attribute metag = event.asStartElement().getAttributeByName(etagQName);
               if (metag != null) {
@@ -777,7 +769,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
                 entitySet.setNext(URI.create(href.getValue()));
               }
             }
-            if (ODataServiceVersion.V40.getNamespace(NamespaceKey.DELTA_LINK_REL).equals(rel.getValue())) {
+            if (Constants.NS_DELTA_LINK_REL.equals(rel.getValue())) {
               final Attribute href = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_HREF));
               if (href != null) {
                 entitySet.setDeltaLink(URI.create(href.getValue()));

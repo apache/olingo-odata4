@@ -1,24 +1,25 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import java.io.IOException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
@@ -28,22 +29,22 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonGenerator;
 
 /**
  * Writes out JSON string from an entity.
  */
 public class JsonEntitySerializer extends JsonSerializer {
 
-  public JsonEntitySerializer(final ODataServiceVersion version, final boolean serverMode) {
-    super(version, serverMode);
+  public JsonEntitySerializer(final boolean serverMode) {
+    super(serverMode);
   }
 
-  public JsonEntitySerializer(ODataServiceVersion version, boolean serverMode, ODataFormat format) {
-    super(version, serverMode, format);
+  public JsonEntitySerializer(boolean serverMode, ODataFormat format) {
+    super(serverMode, format);
   }
 
   protected void doSerialize(final Entity entity, final JsonGenerator jgen)
@@ -61,26 +62,24 @@ public class JsonEntitySerializer extends JsonSerializer {
 
     if (serverMode) {
       if (container.getContextURL() != null) {
-        jgen.writeStringField(version.compareTo(ODataServiceVersion.V40) >= 0
-                ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
-                container.getContextURL().toASCIIString());
+        jgen.writeStringField(Constants.JSON_CONTEXT, container.getContextURL().toASCIIString());
       }
-      if (version.compareTo(ODataServiceVersion.V40) >= 0 && StringUtils.isNotBlank(container.getMetadataETag())) {
+      if (StringUtils.isNotBlank(container.getMetadataETag())) {
         jgen.writeStringField(Constants.JSON_METADATA_ETAG, container.getMetadataETag());
       }
 
       if (StringUtils.isNotBlank(entity.getETag())) {
-        jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.ETAG), entity.getETag());
+        jgen.writeStringField(Constants.JSON_ETAG, entity.getETag());
       }
     }
 
     if (StringUtils.isNotBlank(entity.getType()) && format != ODataFormat.JSON_NO_METADATA) {
-      jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.TYPE),
-              new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external(version));
+      jgen.writeStringField(Constants.JSON_TYPE,
+          new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external());
     }
 
     if (entity.getId() != null && format != ODataFormat.JSON_NO_METADATA) {
-      jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.ID), entity.getId().toASCIIString());
+      jgen.writeStringField(Constants.JSON_ID, entity.getId().toASCIIString());
     }
 
     for (Annotation annotation : entity.getAnnotations()) {
@@ -92,12 +91,12 @@ public class JsonEntitySerializer extends JsonSerializer {
     }
 
     if (serverMode && entity.getEditLink() != null && StringUtils.isNotBlank(entity.getEditLink().getHref())) {
-      jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.EDIT_LINK),
-              entity.getEditLink().getHref());
+      jgen.writeStringField(Constants.JSON_EDIT_LINK,
+          entity.getEditLink().getHref());
 
       if (entity.isMediaEntity()) {
-        jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_READ_LINK),
-                entity.getEditLink().getHref() + "/$value");
+        jgen.writeStringField(Constants.JSON_MEDIA_READ_LINK,
+            entity.getEditLink().getHref() + "/$value");
       }
     }
 
@@ -107,7 +106,7 @@ public class JsonEntitySerializer extends JsonSerializer {
 
     for (Link link : entity.getMediaEditLinks()) {
       if (link.getTitle() == null) {
-        jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_EDIT_LINK), link.getHref());
+        jgen.writeStringField(Constants.JSON_MEDIA_EDIT_LINK, link.getHref());
       }
 
       if (link.getInlineEntity() != null) {

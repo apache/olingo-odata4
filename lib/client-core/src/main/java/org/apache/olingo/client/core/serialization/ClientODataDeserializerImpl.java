@@ -58,20 +58,16 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class ClientODataDeserializerImpl implements ClientODataDeserializer {
 
-  private final ODataServiceVersion version;
-
   private final ODataDeserializer deserializer;
 
   private final ODataFormat format;
 
-  public ClientODataDeserializerImpl(final ODataServiceVersion version, final boolean serverMode,
-      final ODataFormat format) {
-    this.version = version;
+  public ClientODataDeserializerImpl(final boolean serverMode, final ODataFormat format) {
     this.format = format;
     if (format == ODataFormat.XML || format == ODataFormat.ATOM) {
-      deserializer = new AtomDeserializer(version);
+      deserializer = new AtomDeserializer();
     } else {
-      deserializer = new JsonDeserializer(version, serverMode);
+      deserializer = new JsonDeserializer(serverMode);
     }
   }
 
@@ -96,7 +92,7 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
         new XmlFactory(new InputFactoryImpl(), new OutputFactoryImpl()), new JacksonXmlModule());
 
     xmlMapper.setInjectableValues(new InjectableValues.Std().
-        addValue(ODataServiceVersion.class, version).
+        addValue(ODataServiceVersion.class, ODataServiceVersion.V40).
         addValue(Boolean.class, Boolean.FALSE));
 
     xmlMapper.addHandler(new DeserializationProblemHandler() {
@@ -126,16 +122,16 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
   @Override
   public ResWrap<ServiceDocument> toServiceDocument(final InputStream input) throws ODataDeserializerException {
     return format == ODataFormat.XML ?
-        new XMLServiceDocumentDeserializer(version, false).toServiceDocument(input) :
-        new JSONServiceDocumentDeserializer(version, false).toServiceDocument(input);
+        new XMLServiceDocumentDeserializer(false).toServiceDocument(input) :
+        new JSONServiceDocumentDeserializer(false).toServiceDocument(input);
   }
 
   @Override
   public ResWrap<Delta> toDelta(final InputStream input) throws ODataDeserializerException {
     try {
       return format == ODataFormat.ATOM ?
-          new AtomDeserializer(version).delta(input) :
-          new JsonDeltaDeserializer(version, false).toDelta(input);
+          new AtomDeserializer().delta(input) :
+          new JsonDeltaDeserializer(false).toDelta(input);
     } catch (XMLStreamException e) {
       throw new ODataDeserializerException(e);
     } catch (final EdmPrimitiveTypeException e) {

@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.commons.api.edm;
 
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public enum EdmPrimitiveTypeKind {
 
@@ -86,8 +85,8 @@ public enum EdmPrimitiveTypeKind {
    * @param fqn full-qualified type name.
    * @return <tt>EdmPrimitiveTypeKind</tt> object.
    */
-  public static EdmPrimitiveTypeKind valueOfFQN(final ODataServiceVersion version, final FullQualifiedName fqn) {
-    return valueOfFQN(version, fqn.toString());
+  public static EdmPrimitiveTypeKind valueOfFQN(final FullQualifiedName fqn) {
+    return valueOfFQN(fqn.toString());
   }
 
   /**
@@ -98,18 +97,12 @@ public enum EdmPrimitiveTypeKind {
    * @param fqn string value type.
    * @return <tt>EdmPrimitiveTypeKind</tt> object.
    */
-  public static EdmPrimitiveTypeKind valueOfFQN(final ODataServiceVersion version, final String fqn) {
-    if (version == null) {
-      throw new IllegalArgumentException("No OData protocol version provided");
-    }
+  public static EdmPrimitiveTypeKind valueOfFQN(final String fqn) {
     if (!fqn.startsWith(EdmPrimitiveType.EDM_NAMESPACE + ".")) {
       throw new IllegalArgumentException(fqn + " does not look like an Edm primitive type");
     }
 
     final EdmPrimitiveTypeKind kind = valueOf(fqn.substring(4));
-//    if (!kind.versions.contains(version)) {
-//      throw new IllegalArgumentException(kind + " not allowed in " + version);
-//    }
     return kind;
   }
 

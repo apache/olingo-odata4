@@ -18,12 +18,15 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.GeoUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -36,18 +39,9 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import com.fasterxml.jackson.databind.JsonNode;
 
 class JsonGeoValueDeserializer {
-
-  private final ODataServiceVersion version;
-
-  public JsonGeoValueDeserializer(final ODataServiceVersion version) {
-    this.version = version;
-  }
 
   private Point point(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final SRID srid) {
     Point point = null;
@@ -208,7 +202,7 @@ class JsonGeoValueDeserializer {
         final int yIdx = nodeType.indexOf('y');
         nodeType = nodeType.substring(yIdx + 1);
       }
-      actualType = EdmPrimitiveTypeKind.valueOfFQN(version, typeInfo.getFullQualifiedName().toString() + nodeType);
+      actualType = EdmPrimitiveTypeKind.valueOfFQN(typeInfo.getFullQualifiedName().toString() + nodeType);
     } else {
       actualType = typeInfo.getPrimitiveTypeKind();
     }

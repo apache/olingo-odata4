@@ -18,20 +18,17 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.Constants;
+
 abstract class AbstractAtomDealer {
 
   protected static final String TYPE_TEXT = "text";
-
-  protected final ODataServiceVersion version;
 
   protected final String namespaceMetadata;
   protected final String namespaceData;
@@ -59,11 +56,9 @@ abstract class AbstractAtomDealer {
   protected final QName errorMessageQName;
   protected final QName errorTargetQName;
 
-  public AbstractAtomDealer(final ODataServiceVersion version) {
-    this.version = version;
-
-    namespaceMetadata = version.getNamespace(ODataServiceVersion.NamespaceKey.METADATA);
-    namespaceData = version.getNamespace(ODataServiceVersion.NamespaceKey.DATASERVICES);
+  public AbstractAtomDealer() {
+    namespaceMetadata = Constants.NS_METADATA;
+    namespaceData = Constants.NS_DATASERVICES;
 
     etagQName = new QName(namespaceMetadata, Constants.ATOM_ATTR_ETAG);
     metadataEtagQName = new QName(namespaceMetadata, Constants.ATOM_ATTR_METADATAETAG);
@@ -72,8 +67,7 @@ abstract class AbstractAtomDealer {
     propertiesQName = new QName(namespaceMetadata, Constants.PROPERTIES);
     typeQName = new QName(namespaceMetadata, Constants.ATTR_TYPE);
     nullQName = new QName(namespaceMetadata, Constants.ATTR_NULL);
-    elementQName = new QName(version.compareTo(ODataServiceVersion.V40) < 0 ? namespaceData : namespaceMetadata,
-        Constants.ELEM_ELEMENT);
+    elementQName = new QName(namespaceMetadata, Constants.ELEM_ELEMENT);
     countQName = new QName(namespaceMetadata, Constants.ATOM_ELEM_COUNT);
     uriQName = new QName(namespaceData, Constants.ELEM_URI);
     nextQName = new QName(namespaceData, Constants.NEXT_LINK_REL);
@@ -95,9 +89,8 @@ abstract class AbstractAtomDealer {
   protected void namespaces(final XMLStreamWriter writer) throws XMLStreamException {
     writer.writeNamespace(StringUtils.EMPTY, Constants.NS_ATOM);
     writer.writeNamespace(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
-    writer.writeNamespace(Constants.PREFIX_METADATA, version.getNamespace(ODataServiceVersion.NamespaceKey.METADATA));
-    writer.writeNamespace(Constants.PREFIX_DATASERVICES,
-        version.getNamespace(ODataServiceVersion.NamespaceKey.DATASERVICES));
+    writer.writeNamespace(Constants.PREFIX_METADATA, Constants.NS_METADATA);
+    writer.writeNamespace(Constants.PREFIX_DATASERVICES,        Constants.NS_DATASERVICES);
     writer.writeNamespace(Constants.PREFIX_GML, Constants.NS_GML);
     writer.writeNamespace(Constants.PREFIX_GEORSS, Constants.NS_GEORSS);
   }

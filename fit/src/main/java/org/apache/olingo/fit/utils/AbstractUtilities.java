@@ -103,10 +103,10 @@ public abstract class AbstractUtilities {
     this.version = version;
     this.metadata = metadata;
     fsManager = FSManager.instance(version);
-    atomDeserializer = new FITAtomDeserializer(version);
-    jsonDeserializer = new JsonDeserializer(version, true);
-    atomSerializer = new AtomSerializer(version, true);
-    jsonSerializer = new JsonSerializer(version, true);
+    atomDeserializer = new FITAtomDeserializer();
+    jsonDeserializer = new JsonDeserializer(true);
+    atomSerializer = new AtomSerializer(true);
+    jsonSerializer = new JsonSerializer(true);
   }
 
   public boolean isMediaContent(final String entityName) {
@@ -123,8 +123,8 @@ public abstract class AbstractUtilities {
    * @return
    */
   protected abstract InputStream addLinks(
-          final String entitySetName, final String entitykey, final InputStream is, final Set<String> links)
-          throws Exception;
+      final String entitySetName, final String entitykey, final InputStream is, final Set<String> links)
+      throws Exception;
 
   /**
    * Retrieve all entity link names.
@@ -144,7 +144,7 @@ public abstract class AbstractUtilities {
    * @return
    */
   protected abstract NavigationLinks retrieveNavigationInfo(final String entitySetName, final InputStream is)
-          throws Exception;
+      throws Exception;
 
   /**
    * Normalize navigation info and add edit link if missing.
@@ -156,20 +156,20 @@ public abstract class AbstractUtilities {
    * @return
    */
   protected abstract InputStream normalizeLinks(
-          final String entitySetName, final String entityKey, final InputStream is, final NavigationLinks links)
-          throws Exception;
+      final String entitySetName, final String entityKey, final InputStream is, final NavigationLinks links)
+      throws Exception;
 
   public InputStream saveSingleEntity(
-          final String key,
-          final String entitySetName,
-          final InputStream is,
-          final NavigationLinks links) throws Exception {
+      final String key,
+      final String entitySetName,
+      final InputStream is,
+      final NavigationLinks links) throws Exception {
 
     // -----------------------------------------
     // 0. Get the path
     // -----------------------------------------
     final String path =
-            entitySetName + File.separatorChar + Commons.getEntityKey(key) + File.separatorChar
+        entitySetName + File.separatorChar + Commons.getEntityKey(key) + File.separatorChar
             + Constants.get(version, ConstantKey.ENTITY);
     // -----------------------------------------
 
@@ -196,10 +196,10 @@ public abstract class AbstractUtilities {
   }
 
   public InputStream addOrReplaceEntity(
-          final String key,
-          final String entitySetName,
-          final InputStream is,
-          final Entity entry) throws Exception {
+      final String key,
+      final String entitySetName,
+      final InputStream is,
+      final Entity entry) throws Exception {
 
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     IOUtils.copy(is, bos);
@@ -214,7 +214,7 @@ public abstract class AbstractUtilities {
     try {
       linksToBeKept = new HashSet<String>(navigationProperties.keySet());
     } catch (NullPointerException e) {
-      linksToBeKept = Collections.<String>emptySet();
+      linksToBeKept = Collections.<String> emptySet();
     }
 
     for (String availableLink : new HashSet<String>(linksToBeKept)) {
@@ -248,7 +248,7 @@ public abstract class AbstractUtilities {
     // 3. Normalize navigation info; add edit link; ... and save entity ....
     // -----------------------------------------
     final InputStream createdEntity = saveSingleEntity(
-            entityKey, entitySetName, new ByteArrayInputStream(bos.toByteArray()), links);
+        entityKey, entitySetName, new ByteArrayInputStream(bos.toByteArray()), links);
     // -----------------------------------------
 
     bos.reset();
@@ -258,7 +258,7 @@ public abstract class AbstractUtilities {
     // 4. Add navigation links to be kept
     // -----------------------------------------
     final InputStream normalizedEntity =
-            addLinks(entitySetName, entityKey, new ByteArrayInputStream(bos.toByteArray()), linksToBeKept);
+        addLinks(entitySetName, entityKey, new ByteArrayInputStream(bos.toByteArray()), linksToBeKept);
     // -----------------------------------------
 
     IOUtils.closeQuietly(bos);
@@ -267,8 +267,8 @@ public abstract class AbstractUtilities {
     // 5. save the entity
     // -----------------------------------------
     final FileObject fo = fsManager.putInMemory(
-            normalizedEntity,
-            fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY), getDefaultFormat()));
+        normalizedEntity,
+        fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY), getDefaultFormat()));
     // -----------------------------------------
 
     // -----------------------------------------
@@ -282,17 +282,17 @@ public abstract class AbstractUtilities {
 
     for (final Link link : entry.getNavigationLinks()) {
       final NavigationProperty navProp =
-              navigationProperties == null ? null : navigationProperties.get(link.getTitle());
+          navigationProperties == null ? null : navigationProperties.get(link.getTitle());
       if (navProp != null) {
         final String inlineEntitySetName = navProp.getTarget();
         if (link.getInlineEntity() != null) {
           final String inlineEntryKey = getDefaultEntryKey(inlineEntitySetName, link.getInlineEntity());
 
           addOrReplaceEntity(
-                  inlineEntryKey,
-                  inlineEntitySetName,
-                  toInputStream(link.getInlineEntity()),
-                  link.getInlineEntity());
+              inlineEntryKey,
+              inlineEntitySetName,
+              toInputStream(link.getInlineEntity()),
+              link.getInlineEntity());
 
           hrefs.add(inlineEntitySetName + "(" + inlineEntryKey + ")");
         } else if (link.getInlineEntitySet() != null) {
@@ -300,10 +300,10 @@ public abstract class AbstractUtilities {
             final String inlineEntryKey = getDefaultEntryKey(inlineEntitySetName, subentry);
 
             addOrReplaceEntity(
-                    inlineEntryKey,
-                    inlineEntitySetName,
-                    toInputStream(subentry),
-                    subentry);
+                inlineEntryKey,
+                inlineEntitySetName,
+                toInputStream(subentry),
+                subentry);
 
             hrefs.add(inlineEntitySetName + "(" + inlineEntryKey + ")");
           }
@@ -320,9 +320,9 @@ public abstract class AbstractUtilities {
   }
 
   public void addMediaEntityValue(
-          final String entitySetName,
-          final String entityKey,
-          final InputStream is) throws Exception {
+      final String entitySetName,
+      final String entityKey,
+      final InputStream is) throws Exception {
 
     // -----------------------------------------
     // 0. Get default entry key and path (N.B. operation will consume/close the stream; use a copy instead)
@@ -334,17 +334,17 @@ public abstract class AbstractUtilities {
     // 1. save the media entity value
     // -----------------------------------------
     fsManager.putInMemory(is, fsManager.getAbsolutePath(path
-            + Constants.get(version, ConstantKey.MEDIA_CONTENT_FILENAME), null));
+        + Constants.get(version, ConstantKey.MEDIA_CONTENT_FILENAME), null));
     IOUtils.closeQuietly(is);
     // -----------------------------------------
   }
 
   public void putLinksInMemory(
-          final String basePath,
-          final String entitySetName,
-          final String entityKey,
-          final String linkName,
-          final Collection<String> links) throws Exception {
+      final String basePath,
+      final String entitySetName,
+      final String entityKey,
+      final String linkName,
+      final Collection<String> links) throws Exception {
 
     final HashSet<String> uris = new HashSet<String>();
 
@@ -355,8 +355,7 @@ public abstract class AbstractUtilities {
       try {
         final Map.Entry<String, List<String>> currents = extractLinkURIs(entitySetName, entityKey, linkName);
         uris.addAll(currents.getValue());
-      } catch (Exception ignore) {
-      }
+      } catch (Exception ignore) {}
     }
 
     uris.addAll(links);
@@ -365,20 +364,20 @@ public abstract class AbstractUtilities {
   }
 
   public void putLinksInMemory(
-          final String basePath, final String entitySetName, final String linkName, final Collection<String> uris)
-          throws Exception {
+      final String basePath, final String entitySetName, final String linkName, final Collection<String> uris)
+      throws Exception {
 
     fsManager.putInMemory(
-            Commons.getLinksAsJSON(version, entitySetName, new SimpleEntry<String, Collection<String>>(linkName, uris)),
-            Commons.getLinksPath(version, basePath, linkName, Accept.JSON_FULLMETA));
+        Commons.getLinksAsJSON(version, entitySetName, new SimpleEntry<String, Collection<String>>(linkName, uris)),
+        Commons.getLinksPath(version, basePath, linkName, Accept.JSON_FULLMETA));
 
     fsManager.putInMemory(
-            Commons.getLinksAsATOM(version, new SimpleEntry<String, Collection<String>>(linkName, uris)),
-            Commons.getLinksPath(version, basePath, linkName, Accept.XML));
+        Commons.getLinksAsATOM(version, new SimpleEntry<String, Collection<String>>(linkName, uris)),
+        Commons.getLinksPath(version, basePath, linkName, Accept.XML));
   }
 
   public Response createResponse(
-          final String location, final InputStream entity, final String etag, final Accept accept) {
+      final String location, final InputStream entity, final String etag, final Accept accept) {
     return createResponse(location, entity, etag, accept, null);
   }
 
@@ -413,26 +412,26 @@ public abstract class AbstractUtilities {
 
   public Response createBatchResponse(final InputStream stream) {
     final Response.ResponseBuilder builder = version.compareTo(ODataServiceVersion.V30) <= 0
-            ? Response.accepted(stream)
-            : Response.ok(stream);
+        ? Response.accepted(stream)
+        : Response.ok(stream);
     builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.toString() + ";");
     return builder.build();
   }
 
   public Response createResponse(
-          final InputStream entity,
-          final String etag,
-          final Accept accept,
-          final Response.Status status) {
+      final InputStream entity,
+      final String etag,
+      final Accept accept,
+      final Response.Status status) {
     return createResponse(null, entity, etag, accept, status);
   }
 
   public Response createResponse(
-          final String location,
-          final InputStream entity,
-          final String etag,
-          final Accept accept,
-          final Response.Status status) {
+      final String location,
+      final InputStream entity,
+      final String etag,
+      final Accept accept,
+      final Response.Status status) {
 
     final Response.ResponseBuilder builder = Response.ok();
     if (version.compareTo(ODataServiceVersion.V30) <= 0) {
@@ -527,14 +526,14 @@ public abstract class AbstractUtilities {
   }
 
   public EntitySet readEntitySet(final Accept accept, final InputStream entitySet)
-          throws ODataDeserializerException {
+      throws ODataDeserializerException {
     return (accept == Accept.ATOM || accept == Accept.XML ? atomDeserializer.toEntitySet(entitySet) : jsonDeserializer.
-            toEntitySet(entitySet))
-            .getPayload();
+        toEntitySet(entitySet))
+        .getPayload();
   }
 
   public InputStream writeEntitySet(final Accept accept, final ResWrap<EntitySet> container)
-          throws ODataSerializerException, IOException {
+      throws ODataSerializerException, IOException {
 
     final StringWriter writer = new StringWriter();
     if (accept == Accept.ATOM || accept == Accept.XML) {
@@ -549,19 +548,19 @@ public abstract class AbstractUtilities {
   }
 
   public ResWrap<Entity> readContainerEntity(final Accept accept, final InputStream entity)
-          throws ODataDeserializerException {
+      throws ODataDeserializerException {
     return accept == Accept.ATOM || accept == Accept.XML
-            ? atomDeserializer.toEntity(entity)
-            : jsonDeserializer.toEntity(entity);
+        ? atomDeserializer.toEntity(entity)
+        : jsonDeserializer.toEntity(entity);
   }
 
   public Entity readEntity(final Accept accept, final InputStream entity)
-          throws IOException, ODataDeserializerException {
+      throws IOException, ODataDeserializerException {
     return readContainerEntity(accept, entity).getPayload();
   }
 
   public InputStream writeEntity(final Accept accept, final ResWrap<Entity> container)
-          throws ODataSerializerException {
+      throws ODataSerializerException {
     StringWriter writer = new StringWriter();
 
     if (accept == Accept.ATOM || accept == Accept.XML) {
@@ -574,7 +573,7 @@ public abstract class AbstractUtilities {
   }
 
   public InputStream writeProperty(final Accept accept, final Property property)
-          throws ODataSerializerException {
+      throws ODataSerializerException {
 
     final StringWriter writer = new StringWriter();
     if (accept == Accept.XML || accept == Accept.ATOM) {
@@ -588,12 +587,12 @@ public abstract class AbstractUtilities {
 
   public Property readProperty(final Accept accept, final InputStream property) throws ODataDeserializerException {
     return (Accept.ATOM == accept || Accept.XML == accept ? atomDeserializer.toProperty(property) : jsonDeserializer.
-            toProperty(property))
-            .getPayload();
+        toProperty(property))
+        .getPayload();
   }
 
   public InputStream writeProperty(final Accept accept, final ResWrap<Property> container)
-          throws ODataSerializerException {
+      throws ODataSerializerException {
 
     final StringWriter writer = new StringWriter();
     if (accept == Accept.XML || accept == Accept.ATOM) {
@@ -606,7 +605,7 @@ public abstract class AbstractUtilities {
   }
 
   private String getDefaultEntryKey(final String entitySetName, final Entity entry, final String propertyName)
-          throws IOException {
+      throws IOException {
 
     String res;
     if (entry.getProperty(propertyName) == null) {
@@ -639,7 +638,7 @@ public abstract class AbstractUtilities {
         } else {
           productID = (Integer) entity.getProperty("OrderID").asPrimitive();
           res = "OrderID=" + entity.getProperty("OrderID").asPrimitive()
-                  + ",ProductID=" + entity.getProperty("ProductID").asPrimitive();
+              + ",ProductID=" + entity.getProperty("ProductID").asPrimitive();
         }
         Commons.SEQUENCE.put(entitySetName, productID);
       } else if ("Message".equals(entitySetName)) {
@@ -654,7 +653,7 @@ public abstract class AbstractUtilities {
         } else {
           messageId = (Integer) entity.getProperty("MessageId").asPrimitive();
           res = "FromUsername=" + entity.getProperty("FromUsername").asPrimitive()
-                  + ",MessageId=" + entity.getProperty("MessageId").asPrimitive();
+              + ",MessageId=" + entity.getProperty("MessageId").asPrimitive();
         }
         Commons.SEQUENCE.put(entitySetName, messageId);
       } else if ("PersonDetails".equals(entitySetName)) {
@@ -701,7 +700,7 @@ public abstract class AbstractUtilities {
           productId = (Integer) entity.getProperty("ProductID").asPrimitive();
           productDetailId = (Integer) entity.getProperty("ProductDetailID").asPrimitive();
           res = "ProductID=" + entity.getProperty("ProductID").asPrimitive()
-                  + ",ProductDetailID=" + entity.getProperty("ProductDetailID").asPrimitive();
+              + ",ProductDetailID=" + entity.getProperty("ProductDetailID").asPrimitive();
         }
         Commons.SEQUENCE.put(entitySetName, productDetailId);
         Commons.SEQUENCE.put("Products", productId);
@@ -723,7 +722,7 @@ public abstract class AbstractUtilities {
 
   public String getLinksBasePath(final String entitySetName, final String entityId) {
     return entitySetName + File.separatorChar + Commons.getEntityKey(entityId) + File.separatorChar
-            + Constants.get(version, ConstantKey.LINKS_FILE_PATH) + File.separatorChar;
+        + Constants.get(version, ConstantKey.LINKS_FILE_PATH) + File.separatorChar;
   }
 
   /**
@@ -736,8 +735,8 @@ public abstract class AbstractUtilities {
    * @return a pair of ETag/links stream
    */
   public LinkInfo readLinks(
-          final String entitySetName, final String entityId, final String linkName, final Accept accept)
-          throws Exception {
+      final String entitySetName, final String entityId, final String linkName, final Accept accept)
+      throws Exception {
 
     final String basePath = getLinksBasePath(entitySetName, entityId);
 
@@ -751,16 +750,16 @@ public abstract class AbstractUtilities {
   }
 
   public InputStream putMediaInMemory(
-          final String entitySetName, final String entityId, final InputStream value)
-          throws IOException {
+      final String entitySetName, final String entityId, final InputStream value)
+      throws IOException {
     return putMediaInMemory(entitySetName, entityId, null, value);
   }
 
   public InputStream putMediaInMemory(
-          final String entitySetName, final String entityId, final String name, final InputStream value)
-          throws IOException {
+      final String entitySetName, final String entityId, final String name, final InputStream value)
+      throws IOException {
     final FileObject fo = fsManager.putInMemory(value, fsManager.getAbsolutePath(
-            Commons.getEntityBasePath(entitySetName, entityId)
+        Commons.getEntityBasePath(entitySetName, entityId)
             + (name == null ? Constants.get(version, ConstantKey.MEDIA_CONTENT_FILENAME) : name), null));
 
     return fo.getContent().getInputStream();
@@ -771,14 +770,14 @@ public abstract class AbstractUtilities {
   }
 
   public Map.Entry<String, InputStream> readMediaEntity(
-          final String entitySetName, final String entityId, final String name) {
+      final String entitySetName, final String entityId, final String name) {
     final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
     return new SimpleEntry<String, InputStream>(basePath, fsManager.readFile(basePath
-            + (name == null ? Constants.get(version, ConstantKey.MEDIA_CONTENT_FILENAME) : name)));
+        + (name == null ? Constants.get(version, ConstantKey.MEDIA_CONTENT_FILENAME) : name)));
   }
 
   public Map.Entry<String, InputStream> readEntity(
-          final String entitySetName, final String entityId, final Accept accept) {
+      final String entitySetName, final String entityId, final Accept accept) {
 
     if (accept == Accept.XML || accept == Accept.TEXT) {
       throw new UnsupportedMediaTypeException("Unsupported media type");
@@ -786,14 +785,14 @@ public abstract class AbstractUtilities {
 
     final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
     return new SimpleEntry<String, InputStream>(basePath,
-            fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), accept));
+        fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), accept));
   }
 
   public InputStream expandEntity(
-          final String entitySetName,
-          final String entityId,
-          final String linkName)
-          throws Exception {
+      final String entitySetName,
+      final String entityId,
+      final String linkName)
+      throws Exception {
 
     // --------------------------------
     // 0. Retrieve all 'linkName' navigation link uris (NotFoundException if missing)
@@ -807,18 +806,18 @@ public abstract class AbstractUtilities {
     final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
 
     return readEntities(
-            links.getValue(),
-            linkName,
-            links.getKey(),
-            navigationProperties.get(linkName).isEntitySet());
+        links.getValue(),
+        linkName,
+        links.getKey(),
+        navigationProperties.get(linkName).isEntitySet());
   }
 
   public InputStream expandEntity(
-          final String entitySetName,
-          final String entityId,
-          final InputStream entity,
-          final String linkName)
-          throws Exception {
+      final String entitySetName,
+      final String entityId,
+      final InputStream entity,
+      final String linkName)
+      throws Exception {
     // --------------------------------
     // 2. Retrieve expanded object (entry or feed)
     // --------------------------------
@@ -827,14 +826,14 @@ public abstract class AbstractUtilities {
   }
 
   public InputStream deleteProperty(
-          final String entitySetName,
-          final String entityId,
-          final List<String> path,
-          final Accept accept) throws Exception {
+      final String entitySetName,
+      final String entityId,
+      final List<String> path,
+      final Accept accept) throws Exception {
     final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
 
     final Accept acceptType = accept == null || Accept.TEXT == accept
-            ? Accept.XML : accept.getExtension().equals(Accept.JSON.getExtension()) ? Accept.JSON_FULLMETA : accept;
+        ? Accept.XML : accept.getExtension().equals(Accept.JSON.getExtension()) ? Accept.JSON_FULLMETA : accept;
 
     // read atom
     InputStream stream = fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType);
@@ -844,44 +843,44 @@ public abstract class AbstractUtilities {
 
     // save atom
     fsManager.putInMemory(stream,
-            fsManager.getAbsolutePath(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType));
+        fsManager.getAbsolutePath(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType));
 
     return fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType);
   }
 
   public abstract InputStream readEntities(
-          final List<String> links, final String linkName, final String next, final boolean forceFeed)
-          throws Exception;
+      final List<String> links, final String linkName, final String next, final boolean forceFeed)
+      throws Exception;
 
   protected abstract InputStream replaceLink(
-          final InputStream toBeChanged, final String linkName, final InputStream replacement)
-          throws Exception;
+      final InputStream toBeChanged, final String linkName, final InputStream replacement)
+      throws Exception;
 
   public abstract InputStream selectEntity(final InputStream entity, final String[] propertyNames)
-          throws Exception;
+      throws Exception;
 
   protected abstract Accept getDefaultFormat();
 
   protected abstract Map<String, InputStream> getChanges(final InputStream src) throws Exception;
 
   public abstract InputStream addEditLink(
-          final InputStream content, final String title, final String href) throws Exception;
+      final InputStream content, final String title, final String href) throws Exception;
 
   public abstract InputStream addOperation(
-          final InputStream content, final String name, final String metaAnchor, final String href)
-          throws Exception;
+      final InputStream content, final String name, final String metaAnchor, final String href)
+      throws Exception;
 
   protected abstract InputStream replaceProperty(
-          final InputStream src, final InputStream replacement, final List<String> path, final boolean justValue)
-          throws Exception;
+      final InputStream src, final InputStream replacement, final List<String> path, final boolean justValue)
+      throws Exception;
 
   protected abstract InputStream deleteProperty(final InputStream src, final List<String> path)
-          throws Exception;
+      throws Exception;
 
   public abstract Map.Entry<String, List<String>> extractLinkURIs(final InputStream is)
-          throws Exception;
+      throws Exception;
 
   public abstract Map.Entry<String, List<String>> extractLinkURIs(
-          final String entitySetName, final String entityId, final String linkName)
-          throws Exception;
+      final String entitySetName, final String entityId, final String linkName)
+      throws Exception;
 }

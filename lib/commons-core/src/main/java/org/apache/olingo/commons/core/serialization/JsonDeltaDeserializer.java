@@ -18,31 +18,30 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.data.DeletedEntityImpl;
 import org.apache.olingo.commons.core.data.DeltaImpl;
 import org.apache.olingo.commons.core.data.DeltaLinkImpl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonDeltaDeserializer extends JsonDeserializer {
 
-  public JsonDeltaDeserializer(final ODataServiceVersion version, final boolean serverMode) {
-    super(version, serverMode);
+  public JsonDeltaDeserializer(final boolean serverMode) {
+    super(serverMode);
   }
 
   protected ResWrap<Delta> doDeserialize(final JsonParser parser) throws IOException {
@@ -68,7 +67,7 @@ public class JsonDeltaDeserializer extends JsonDeserializer {
     }
 
     if (tree.hasNonNull(Constants.VALUE)) {
-      JsonEntityDeserializer entityDeserializer = new JsonEntityDeserializer(version, serverMode);
+      JsonEntityDeserializer entityDeserializer = new JsonEntityDeserializer(serverMode);
       for (JsonNode jsonNode : tree.get(Constants.VALUE)) {
         final ObjectNode item = (ObjectNode) jsonNode;
         final ContextURL itemContextURL = item.hasNonNull(Constants.JSON_CONTEXT) ?

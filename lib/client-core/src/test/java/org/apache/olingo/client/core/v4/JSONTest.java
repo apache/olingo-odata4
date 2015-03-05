@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -40,7 +40,6 @@ import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
@@ -66,33 +65,32 @@ public class JSONTest extends AbstractTest {
   }
 
   private void cleanup(final ObjectNode node) {
-    final ODataServiceVersion version = getClient().getServiceVersion();
     if (node.has(Constants.JSON_CONTEXT)) {
       node.remove(Constants.JSON_CONTEXT);
     }
-    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.ETAG))) {
-      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.ETAG));
+    if (node.has(Constants.JSON_ETAG)) {
+      node.remove(Constants.JSON_ETAG);
     }
-    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.TYPE))) {
-      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.TYPE));
+    if (node.has(Constants.JSON_TYPE)) {
+      node.remove(Constants.JSON_TYPE);
     }
-    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.EDIT_LINK))) {
-      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.EDIT_LINK));
+    if (node.has(Constants.JSON_EDIT_LINK)) {
+      node.remove(Constants.JSON_EDIT_LINK);
     }
-    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.READ_LINK))) {
-      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.READ_LINK));
+    if (node.has(Constants.JSON_READ_LINK)) {
+      node.remove(Constants.JSON_READ_LINK);
     }
-    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_EDIT_LINK))) {
-      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_EDIT_LINK));
+    if (node.has(Constants.JSON_MEDIA_EDIT_LINK)) {
+      node.remove(Constants.JSON_MEDIA_EDIT_LINK);
     }
-    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_READ_LINK))) {
-      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_READ_LINK));
+    if (node.has(Constants.JSON_MEDIA_READ_LINK)) {
+      node.remove(Constants.JSON_MEDIA_READ_LINK);
     }
-    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_CONTENT_TYPE))) {
-      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_CONTENT_TYPE));
+    if (node.has(Constants.JSON_MEDIA_CONTENT_TYPE)) {
+      node.remove(Constants.JSON_MEDIA_CONTENT_TYPE);
     }
-    if (node.has(version.getJsonName(ODataServiceVersion.JsonKey.COUNT))) {
-      node.remove(version.getJsonName(ODataServiceVersion.JsonKey.COUNT));
+    if (node.has(Constants.JSON_COUNT)) {
+      node.remove(Constants.JSON_COUNT);
     }
     final List<String> toRemove = new ArrayList<String>();
     for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
@@ -100,11 +98,11 @@ public class JSONTest extends AbstractTest {
 
       final String key = field.getKey();
       if (key.charAt(0) == '#'
-              || key.endsWith(version.getJsonName(ODataServiceVersion.JsonKey.TYPE))
-              || key.endsWith(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_EDIT_LINK))
-              || key.endsWith(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_CONTENT_TYPE))
-              || key.endsWith(version.getJsonName(ODataServiceVersion.JsonKey.ASSOCIATION_LINK))
-              || key.endsWith(version.getJsonName(ODataServiceVersion.JsonKey.MEDIA_ETAG))) {
+          || key.endsWith(Constants.JSON_TYPE)
+          || key.endsWith(Constants.JSON_MEDIA_EDIT_LINK)
+          || key.endsWith(Constants.JSON_MEDIA_CONTENT_TYPE)
+          || key.endsWith(Constants.JSON_ASSOCIATION_LINK)
+          || key.endsWith(Constants.JSON_MEDIA_ETAG)) {
 
         toRemove.add(key);
       } else if (field.getValue().isObject()) {
@@ -123,8 +121,7 @@ public class JSONTest extends AbstractTest {
 
   protected void assertSimilar(final String filename, final String actual) throws Exception {
     final JsonNode expected = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream(filename)).
-            replace(getClient().getServiceVersion().getJsonName(ODataServiceVersion.JsonKey.NAVIGATION_LINK),
-                    Constants.JSON_BIND_LINK_SUFFIX));
+        replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));
     cleanup((ObjectNode) expected);
     final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
     cleanup(actualNode);
@@ -134,7 +131,7 @@ public class JSONTest extends AbstractTest {
   protected void entitySet(final String filename, final ODataFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer(format).write(writer, getClient().getDeserializer(format).toEntitySet(
-            getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
+        getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
 
     assertSimilar(filename + "." + getSuffix(format), writer.toString());
   }
@@ -148,7 +145,7 @@ public class JSONTest extends AbstractTest {
   protected void entity(final String filename, final ODataFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer(format).write(writer, getClient().getDeserializer(format).toEntity(
-            getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
+        getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
 
     assertSimilar(filename + "." + getSuffix(format), writer.toString());
   }
@@ -175,7 +172,7 @@ public class JSONTest extends AbstractTest {
   protected void property(final String filename, final ODataFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer(format).write(writer, getClient().getDeserializer(format).
-            toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
+        toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
 
     assertSimilar(filename + "." + getSuffix(format), writer.toString());
   }
@@ -191,12 +188,12 @@ public class JSONTest extends AbstractTest {
   @Test
   public void crossjoin() throws Exception {
     assertNotNull(getClient().getDeserializer(ODataFormat.JSON_FULL_METADATA).toEntitySet(
-            getClass().getResourceAsStream("crossjoin.json")));
+        getClass().getResourceAsStream("crossjoin.json")));
   }
 
   protected void delta(final String filename, final ODataFormat format) throws Exception {
     final Delta delta = getClient().getDeserializer(format).toDelta(
-            getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload();
+        getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload();
     assertNotNull(delta);
     assertNotNull(delta.getDeltaLink());
     assertEquals(5, delta.getCount(), 0);
@@ -229,32 +226,32 @@ public class JSONTest extends AbstractTest {
   @Test
   public void issueOLINGO390() throws Exception {
     final ODataEntity message = getClient().getObjectFactory().
-            newEntity(new FullQualifiedName("Microsoft.Exchange.Services.OData.Model.Message"));
+        newEntity(new FullQualifiedName("Microsoft.Exchange.Services.OData.Model.Message"));
 
     final ODataComplexValue toRecipient = getClient().getObjectFactory().
-            newComplexValue("Microsoft.Exchange.Services.OData.Model.Recipient");
+        newComplexValue("Microsoft.Exchange.Services.OData.Model.Recipient");
     toRecipient.add(getClient().getObjectFactory().newPrimitiveProperty("Name",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("challen_olingo_client")));
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("challen_olingo_client")));
     toRecipient.add(getClient().getObjectFactory().newPrimitiveProperty("Address",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("challenh@microsoft.com")));
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("challenh@microsoft.com")));
     final ODataCollectionValue<ODataValue> toRecipients = getClient().getObjectFactory().
-            newCollectionValue("Microsoft.Exchange.Services.OData.Model.Recipient");
+        newCollectionValue("Microsoft.Exchange.Services.OData.Model.Recipient");
     toRecipients.add(toRecipient);
     message.getProperties().add(getClient().getObjectFactory().newCollectionProperty("ToRecipients", toRecipients));
 
     final ODataComplexValue body =
-            getClient().getObjectFactory().newComplexValue("Microsoft.Exchange.Services.OData.Model.ItemBody");
+        getClient().getObjectFactory().newComplexValue("Microsoft.Exchange.Services.OData.Model.ItemBody");
     body.add(getClient().getObjectFactory().newPrimitiveProperty("Content",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().
+        getClient().getObjectFactory().newPrimitiveValueBuilder().
             buildString("this is a simple email body content")));
     body.add(getClient().getObjectFactory().newEnumProperty("ContentType",
-            getClient().getObjectFactory().newEnumValue("Microsoft.Exchange.Services.OData.Model.BodyType", "text")));
+        getClient().getObjectFactory().newEnumValue("Microsoft.Exchange.Services.OData.Model.BodyType", "text")));
     message.getProperties().add(getClient().getObjectFactory().newComplexProperty("Body", body));
 
     final String actual = IOUtils.toString(getClient().getWriter().writeEntity(message, ODataFormat.JSON));
-    final JsonNode expected = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream("olingo390.json")).
-            replace(getClient().getServiceVersion().getJsonName(ODataServiceVersion.JsonKey.NAVIGATION_LINK),
-                    Constants.JSON_BIND_LINK_SUFFIX));
+    final JsonNode expected =
+        OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream("olingo390.json")).
+            replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));
     final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
     assertEquals(expected, actualNode);
   }

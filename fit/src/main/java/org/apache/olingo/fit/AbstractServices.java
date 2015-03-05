@@ -149,10 +149,10 @@ public abstract class AbstractServices {
     this.version = version;
     this.metadata = metadata;
 
-    atomDeserializer = new FITAtomDeserializer(version);
-    jsonDeserializer = new JsonDeserializer(version, true);
-    atomSerializer = new AtomSerializer(version, true);
-    jsonSerializer = new JsonSerializer(version, true);
+    atomDeserializer = new FITAtomDeserializer();
+    jsonDeserializer = new JsonDeserializer(true);
+    atomSerializer = new AtomSerializer(true);
+    jsonSerializer = new JsonSerializer(true);
 
     xml = new XMLUtilities(version, metadata);
     json = new JSONUtilities(version, metadata);
@@ -1827,7 +1827,7 @@ public abstract class AbstractServices {
   }
 
   private String stringValue(final Property property) {
-    EdmPrimitiveTypeKind kind = EdmPrimitiveTypeKind.valueOfFQN(version, property.getType());
+    EdmPrimitiveTypeKind kind = EdmPrimitiveTypeKind.valueOfFQN(property.getType());
     try {
       return EdmPrimitiveTypeFactory.getInstance(kind)
           .valueToString(property.asPrimitive(), null, null,

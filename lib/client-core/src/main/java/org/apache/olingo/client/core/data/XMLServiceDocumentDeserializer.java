@@ -25,7 +25,6 @@ import java.net.URI;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.serialization.JsonDeserializer;
 
@@ -36,8 +35,8 @@ import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 
 public class XMLServiceDocumentDeserializer extends JsonDeserializer {
 
-  public XMLServiceDocumentDeserializer(final ODataServiceVersion version, final boolean serverMode) {
-    super(version, serverMode);
+  public XMLServiceDocumentDeserializer(final boolean serverMode) {
+    super(serverMode);
   }
 
   private String getName(final JsonParser jp) throws IOException {

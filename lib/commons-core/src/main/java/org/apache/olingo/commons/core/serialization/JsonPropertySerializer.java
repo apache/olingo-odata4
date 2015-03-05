@@ -18,26 +18,26 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import java.io.IOException;
+import java.net.URI;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
-import java.io.IOException;
-import java.net.URI;
+import com.fasterxml.jackson.core.JsonGenerator;
 
 /**
  * Writes out JSON string from <tt>PropertyImpl</tt>.
  */
 public class JsonPropertySerializer extends JsonSerializer {
 
-  public JsonPropertySerializer(final ODataServiceVersion version, final boolean serverMode) {
-    super(version, serverMode);
+  public JsonPropertySerializer(final boolean serverMode) {
+    super(serverMode);
   }
 
   protected void doSerialize(final Property property, final JsonGenerator jgen)
@@ -53,14 +53,12 @@ public class JsonPropertySerializer extends JsonSerializer {
     jgen.writeStartObject();
 
     if (serverMode && container.getContextURL() != null) {
-      jgen.writeStringField(version.compareTo(ODataServiceVersion.V40) >= 0
-          ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
-          container.getContextURL().toASCIIString());
+      jgen.writeStringField(Constants.JSON_CONTEXT, container.getContextURL().toASCIIString());
     }
 
     if (StringUtils.isNotBlank(property.getType())) {
-      jgen.writeStringField(version.getJsonName(ODataServiceVersion.JsonKey.TYPE),
-          new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build().external(version));
+      jgen.writeStringField(Constants.JSON_TYPE,
+          new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build().external());
     }
 
     for (Annotation annotation : property.getAnnotations()) {

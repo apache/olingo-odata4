@@ -84,7 +84,7 @@ public abstract class AbstractService<C extends EdmEnabledODataClient> {
       IOUtils.closeQuietly(bais);
     }
 
-    final Edm edm = metadata == null ? null : new EdmClientImpl(version, metadata.getSchemaByNsOrAlias());
+    final Edm edm = metadata == null ? null : new EdmClientImpl(metadata.getSchemaByNsOrAlias());
     //TODO: check runtime exception or not
     if(version.compareTo(ODataServiceVersion.V40) < 0){
       throw new ODataRuntimeException("Only OData V4 or higher supported.");

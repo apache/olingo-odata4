@@ -18,24 +18,24 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.domain.ODataErrorDetail;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.domain.ODataErrorDetail;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public class JsonODataErrorDeserializer extends JsonDeserializer {
 
-  public JsonODataErrorDeserializer(final ODataServiceVersion version, final boolean serverMode) {
-    super(version, serverMode);
+  public JsonODataErrorDeserializer(final boolean serverMode) {
+    super(serverMode);
   }
 
   protected ODataError doDeserialize(final JsonParser parser) throws IOException {
@@ -62,8 +62,7 @@ public class JsonODataErrorDeserializer extends JsonDeserializer {
       }
       if (errorNode.hasNonNull(Constants.ERROR_DETAILS)) {
         List<ODataErrorDetail> details = new ArrayList<ODataErrorDetail>();
-        JsonODataErrorDetailDeserializer detailDeserializer =
-            new JsonODataErrorDetailDeserializer(version, serverMode);
+        JsonODataErrorDetailDeserializer detailDeserializer = new JsonODataErrorDetailDeserializer(serverMode);
         for (JsonNode jsonNode : errorNode.get(Constants.ERROR_DETAILS)) {
           details.add(detailDeserializer.doDeserialize(jsonNode.traverse(parser.getCodec()))
               .getPayload());

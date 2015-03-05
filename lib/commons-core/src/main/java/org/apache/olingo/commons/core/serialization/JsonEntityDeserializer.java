@@ -18,25 +18,6 @@
  */
 package org.apache.olingo.commons.core.serialization;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Annotation;
-import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.Link;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.commons.api.domain.ODataOperation;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.data.AnnotationImpl;
-import org.apache.olingo.commons.core.data.EntityImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -48,6 +29,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotation;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.ODataOperation;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.core.data.AnnotationImpl;
+import org.apache.olingo.commons.core.data.EntityImpl;
+import org.apache.olingo.commons.core.data.LinkImpl;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 /**
  * Reads JSON string into an entity.
  * <br/>
@@ -55,8 +55,8 @@ import java.util.regex.Matcher;
  */
 public class JsonEntityDeserializer extends JsonDeserializer {
 
-  public JsonEntityDeserializer(final ODataServiceVersion version, final boolean serverMode) {
-    super(version, serverMode);
+  public JsonEntityDeserializer(final boolean serverMode) {
+    super(serverMode);
   }
 
   protected ResWrap<Entity> doDeserialize(final JsonParser parser) throws IOException {
@@ -154,7 +154,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
       if (field.getKey().endsWith(getJSONAnnotation(jsonMediaEditLink))) {
         final LinkImpl link = new LinkImpl();
         link.setTitle(getTitle(field));
-        link.setRel(version.getNamespace(ODataServiceVersion.NamespaceKey.MEDIA_EDIT_LINK_REL) + getTitle(field));
+        link.setRel(Constants.NS_MEDIA_EDIT_LINK_REL + getTitle(field));
         link.setHref(field.getValue().textValue());
         link.setType(ODataLinkType.MEDIA_EDIT.toString());
         entity.getMediaEditLinks().add(link);
