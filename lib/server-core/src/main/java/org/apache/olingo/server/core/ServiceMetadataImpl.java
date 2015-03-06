@@ -34,12 +34,10 @@ import java.util.List;
 public class ServiceMetadataImpl implements ServiceMetadata {
 
   private final EdmProviderImpl edm;
-  private final ODataServiceVersion version;
   private final List<EdmxReference> references = new ArrayList<EdmxReference>();
 
-  public ServiceMetadataImpl(ODataServiceVersion version, EdmProvider edmProvider, List<EdmxReference> references) {
+  public ServiceMetadataImpl(EdmProvider edmProvider, List<EdmxReference> references) {
     this.edm = new EdmProviderImpl(edmProvider);
-    this.version = version;
     this.references.addAll(references);
   }
 
@@ -50,7 +48,7 @@ public class ServiceMetadataImpl implements ServiceMetadata {
 
   @Override
   public ODataServiceVersion getDataServiceVersion() {
-    return version;
+    return ODataServiceVersion.V40;
   }
 
   @Override

@@ -18,6 +18,28 @@
  */
 package org.apache.olingo.fit.utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.ConcurrentModificationException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
+
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.vfs2.FileObject;
@@ -40,26 +62,6 @@ import org.apache.olingo.fit.metadata.NavigationProperty;
 import org.apache.olingo.fit.serializer.FITAtomDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 public abstract class AbstractUtilities {
 
@@ -85,8 +87,6 @@ public abstract class AbstractUtilities {
    */
   public static final String BOUNDARY = "boundary";
 
-  protected final ODataServiceVersion version;
-
   protected final Metadata metadata;
 
   protected final FSManager fsManager;
@@ -99,10 +99,9 @@ public abstract class AbstractUtilities {
 
   protected final ODataSerializer jsonSerializer;
 
-  public AbstractUtilities(final ODataServiceVersion version, final Metadata metadata) throws IOException {
-    this.version = version;
+  public AbstractUtilities(final Metadata metadata) throws IOException {
     this.metadata = metadata;
-    fsManager = FSManager.instance(version);
+    fsManager = FSManager.instance(ODataServiceVersion.V40);
     atomDeserializer = new FITAtomDeserializer();
     jsonDeserializer = new JsonDeserializer(true);
     atomSerializer = new AtomSerializer(true);
@@ -170,7 +169,7 @@ public abstract class AbstractUtilities {
     // -----------------------------------------
     final String path =
         entitySetName + File.separatorChar + Commons.getEntityKey(key) + File.separatorChar
-            + Constants.get(version, ConstantKey.ENTITY);
+            + Constants.get(ConstantKey.ENTITY);
     // -----------------------------------------
 
     // -----------------------------------------
@@ -268,7 +267,7 @@ public abstract class AbstractUtilities {
     // -----------------------------------------
     final FileObject fo = fsManager.putInMemory(
         normalizedEntity,
-        fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY), getDefaultFormat()));
+        fsManager.getAbsolutePath(path + Constants.get(ConstantKey.ENTITY), getDefaultFormat()));
     // -----------------------------------------
 
     // -----------------------------------------
@@ -334,7 +333,7 @@ public abstract class AbstractUtilities {
     // 1. save the media entity value
     // -----------------------------------------
     fsManager.putInMemory(is, fsManager.getAbsolutePath(path
-        + Constants.get(version, ConstantKey.MEDIA_CONTENT_FILENAME), null));
+        + Constants.get(ConstantKey.MEDIA_CONTENT_FILENAME), null));
     IOUtils.closeQuietly(is);
     // -----------------------------------------
   }
@@ -368,12 +367,12 @@ public abstract class AbstractUtilities {
       throws Exception {
 
     fsManager.putInMemory(
-        Commons.getLinksAsJSON(version, entitySetName, new SimpleEntry<String, Collection<String>>(linkName, uris)),
-        Commons.getLinksPath(version, basePath, linkName, Accept.JSON_FULLMETA));
+        Commons.getLinksAsJSON(entitySetName, new SimpleEntry<String, Collection<String>>(linkName, uris)),
+        Commons.getLinksPath(basePath, linkName, Accept.JSON_FULLMETA));
 
     fsManager.putInMemory(
-        Commons.getLinksAsATOM(version, new SimpleEntry<String, Collection<String>>(linkName, uris)),
-        Commons.getLinksPath(version, basePath, linkName, Accept.XML));
+        Commons.getLinksAsATOM(new SimpleEntry<String, Collection<String>>(linkName, uris)),
+        Commons.getLinksPath(basePath, linkName, Accept.XML));
   }
 
   public Response createResponse(
@@ -383,10 +382,6 @@ public abstract class AbstractUtilities {
 
   public Response createAsyncResponse(final String location) {
     final Response.ResponseBuilder builder = Response.accepted();
-    if (version.compareTo(ODataServiceVersion.V30) <= 0) {
-      builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.toString() + ";");
-    }
-
     builder.header("Location", location);
     builder.header("Preference-Applied", "Respond-Async");
     builder.header("Retry-After", "10");
@@ -396,10 +391,6 @@ public abstract class AbstractUtilities {
 
   public Response createMonitorResponse(final InputStream res) {
     final Response.ResponseBuilder builder = Response.ok();
-    if (version.compareTo(ODataServiceVersion.V30) <= 0) {
-      builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.toString() + ";");
-    }
-
     builder.header("Content-Type", "application/http");
     builder.header("Content-Transfer-Encoding", "binary");
 
@@ -411,10 +402,8 @@ public abstract class AbstractUtilities {
   }
 
   public Response createBatchResponse(final InputStream stream) {
-    final Response.ResponseBuilder builder = version.compareTo(ODataServiceVersion.V30) <= 0
-        ? Response.accepted(stream)
-        : Response.ok(stream);
-    builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.toString() + ";");
+    final Response.ResponseBuilder builder = Response.ok(stream);
+    builder.header(Constants.get(ConstantKey.ODATA_SERVICE_VERSION), ODataServiceVersion.V40.toString() + ";");
     return builder.build();
   }
 
@@ -434,10 +423,6 @@ public abstract class AbstractUtilities {
       final Response.Status status) {
 
     final Response.ResponseBuilder builder = Response.ok();
-    if (version.compareTo(ODataServiceVersion.V30) <= 0) {
-      builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.toString() + ";");
-    }
-
     if (StringUtils.isNotBlank(etag)) {
       builder.header("ETag", etag);
     }
@@ -455,7 +440,7 @@ public abstract class AbstractUtilities {
         final InputStream toBeStreamedBack;
 
         if (Accept.JSON == accept || Accept.JSON_NOMETA == accept) {
-          toBeStreamedBack = Commons.changeFormat(entity, version, accept);
+          toBeStreamedBack = Commons.changeFormat(entity, accept);
         } else {
           toBeStreamedBack = entity;
         }
@@ -474,7 +459,7 @@ public abstract class AbstractUtilities {
     }
 
     builder.header("Content-Length", contentLength);
-    builder.header("Content-Type", (accept == null ? "*/*" : accept.toString(version)) + contentTypeEncoding);
+    builder.header("Content-Type", (accept == null ? "*/*" : accept.toString()) + contentTypeEncoding);
 
     if (StringUtils.isNotBlank(location)) {
       builder.header("Location", location);
@@ -487,16 +472,12 @@ public abstract class AbstractUtilities {
     LOG.debug("Create fault response about .... ", e);
 
     final Response.ResponseBuilder builder = Response.serverError();
-    if (version.compareTo(ODataServiceVersion.V30) <= 0) {
-      builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version + ";");
-    }
-
     final String ext;
     final Accept contentType;
     if (accept.startsWith("application/json")) {
       ext = ".json";
       contentType = Accept.JSON;
-    } else if (accept.startsWith("application/xml") || version.compareTo(ODataServiceVersion.V30) <= 0) {
+    } else if (accept.startsWith("application/xml")) {
       ext = ".xml";
       contentType = Accept.XML;
     } else {
@@ -722,7 +703,7 @@ public abstract class AbstractUtilities {
 
   public String getLinksBasePath(final String entitySetName, final String entityId) {
     return entitySetName + File.separatorChar + Commons.getEntityKey(entityId) + File.separatorChar
-        + Constants.get(version, ConstantKey.LINKS_FILE_PATH) + File.separatorChar;
+        + Constants.get(ConstantKey.LINKS_FILE_PATH) + File.separatorChar;
   }
 
   /**
@@ -741,7 +722,7 @@ public abstract class AbstractUtilities {
     final String basePath = getLinksBasePath(entitySetName, entityId);
 
     final LinkInfo linkInfo = new LinkInfo(fsManager.readFile(basePath + linkName, accept));
-    linkInfo.setEtag(Commons.getETag(basePath, version));
+    linkInfo.setEtag(Commons.getETag(basePath));
     final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
 
     linkInfo.setFeed(navigationProperties.get(linkName.replaceAll("\\(.*\\)", "")).isEntitySet());
@@ -760,7 +741,7 @@ public abstract class AbstractUtilities {
       throws IOException {
     final FileObject fo = fsManager.putInMemory(value, fsManager.getAbsolutePath(
         Commons.getEntityBasePath(entitySetName, entityId)
-            + (name == null ? Constants.get(version, ConstantKey.MEDIA_CONTENT_FILENAME) : name), null));
+            + (name == null ? Constants.get(ConstantKey.MEDIA_CONTENT_FILENAME) : name), null));
 
     return fo.getContent().getInputStream();
   }
@@ -773,7 +754,7 @@ public abstract class AbstractUtilities {
       final String entitySetName, final String entityId, final String name) {
     final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
     return new SimpleEntry<String, InputStream>(basePath, fsManager.readFile(basePath
-        + (name == null ? Constants.get(version, ConstantKey.MEDIA_CONTENT_FILENAME) : name)));
+        + (name == null ? Constants.get(ConstantKey.MEDIA_CONTENT_FILENAME) : name)));
   }
 
   public Map.Entry<String, InputStream> readEntity(
@@ -785,7 +766,7 @@ public abstract class AbstractUtilities {
 
     final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
     return new SimpleEntry<String, InputStream>(basePath,
-        fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), accept));
+        fsManager.readFile(basePath + Constants.get(ConstantKey.ENTITY), accept));
   }
 
   public InputStream expandEntity(
@@ -836,16 +817,16 @@ public abstract class AbstractUtilities {
         ? Accept.XML : accept.getExtension().equals(Accept.JSON.getExtension()) ? Accept.JSON_FULLMETA : accept;
 
     // read atom
-    InputStream stream = fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType);
+    InputStream stream = fsManager.readFile(basePath + Constants.get(ConstantKey.ENTITY), acceptType);
 
     // change atom
     stream = deleteProperty(stream, path);
 
     // save atom
     fsManager.putInMemory(stream,
-        fsManager.getAbsolutePath(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType));
+        fsManager.getAbsolutePath(basePath + Constants.get(ConstantKey.ENTITY), acceptType));
 
-    return fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType);
+    return fsManager.readFile(basePath + Constants.get(ConstantKey.ENTITY), acceptType);
   }
 
   public abstract InputStream readEntities(

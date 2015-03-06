@@ -154,8 +154,8 @@ public abstract class AbstractServices {
     atomSerializer = new AtomSerializer(true);
     jsonSerializer = new JsonSerializer(true);
 
-    xml = new XMLUtilities(version, metadata);
-    json = new JSONUtilities(version, metadata);
+    xml = new XMLUtilities(metadata);
+    json = new JSONUtilities(metadata);
   }
 
   /**
@@ -167,7 +167,7 @@ public abstract class AbstractServices {
   @GET
   public Response getSevices(@HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept) {
     try {
-      final Accept acceptType = Accept.parse(accept, version);
+      final Accept acceptType = Accept.parse(accept);
 
       if (acceptType == Accept.ATOM) {
         throw new UnsupportedMediaTypeException("Unsupported media type");
@@ -175,7 +175,7 @@ public abstract class AbstractServices {
 
       return xml.createResponse(
           null,
-          FSManager.instance(version).readFile(Constants.get(version, ConstantKey.SERVICES), acceptType),
+          FSManager.instance(version).readFile(Constants.get(ConstantKey.SERVICES), acceptType),
           null, acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
@@ -191,14 +191,14 @@ public abstract class AbstractServices {
   @Path("/$metadata")
   @Produces(MediaType.APPLICATION_XML)
   public Response getMetadata() {
-    return getMetadata(Constants.get(version, ConstantKey.METADATA));
+    return getMetadata(Constants.get(ConstantKey.METADATA));
   }
 
   protected Response getMetadata(final String filename) {
     try {
       return xml.createResponse(null, FSManager.instance(version).readRes(filename, Accept.XML), null, Accept.XML);
     } catch (Exception e) {
-      return xml.createFaultResponse(Accept.XML.toString(version), e);
+      return xml.createFaultResponse(Accept.XML.toString(), e);
     }
   }
 
@@ -215,7 +215,7 @@ public abstract class AbstractServices {
       return xml.createBatchResponse(
           exploreMultipart(attachment.getAllAttachments(), BOUNDARY, continueOnError));
     } catch (IOException e) {
-      return xml.createFaultResponse(Accept.XML.toString(version), e);
+      return xml.createFaultResponse(Accept.XML.toString(), e);
     }
   }
 
@@ -225,7 +225,7 @@ public abstract class AbstractServices {
   @PATCH
   @Path("/Driver('2')")
   public Response patchDriver() {
-    return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(version), new Exception("Non nullable properties"));
+    return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(), new Exception("Non nullable properties"));
   }
 
   @GET
@@ -251,7 +251,7 @@ public abstract class AbstractServices {
       return xml.createResponse(new ByteArrayInputStream(content.toByteArray()), null, Accept.JSON_FULLMETA);
     } catch (Exception e) {
       LOG.error("While creating StoredPI", e);
-      return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(version), e);
+      return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(), e);
     }
   }
 
@@ -259,7 +259,7 @@ public abstract class AbstractServices {
   @Path("/StoredPIs(1000)")
   public Response patchStoredPI() {
     // just for non nullable property test into PropertyTestITCase
-    return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(version), new Exception("Non nullable properties"));
+    return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(), new Exception("Non nullable properties"));
   }
 
   // ----------------------------------------------
@@ -415,7 +415,7 @@ public abstract class AbstractServices {
 
   protected void addErrorBatchResponse(final Exception e, final String contentId, final ByteArrayOutputStream bos)
       throws IOException {
-    addSingleBatchResponse(xml.createFaultResponse(Accept.XML.toString(version), e), contentId, bos);
+    addSingleBatchResponse(xml.createFaultResponse(Accept.XML.toString(), e), contentId, bos);
   }
 
   @MERGE
@@ -450,7 +450,7 @@ public abstract class AbstractServices {
       final String changes) {
 
     try {
-      final Accept acceptType = Accept.parse(accept, version);
+      final Accept acceptType = Accept.parse(accept);
 
       if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
         throw new UnsupportedMediaTypeException("Unsupported media type");
@@ -458,12 +458,12 @@ public abstract class AbstractServices {
 
       final Map.Entry<String, InputStream> entityInfo = xml.readEntity(entitySetName, entityId, Accept.ATOM);
 
-      final String etag = Commons.getETag(entityInfo.getKey(), version);
+      final String etag = Commons.getETag(entityInfo.getKey());
       if (StringUtils.isNotBlank(ifMatch) && !ifMatch.equals(etag)) {
         throw new ConcurrentModificationException("Concurrent modification");
       }
 
-      final Accept contentTypeValue = Accept.parse(contentType, version);
+      final Accept contentTypeValue = Accept.parse(contentType);
 
       final Entity entryChanges;
 
@@ -507,7 +507,7 @@ public abstract class AbstractServices {
 
       final String path = Commons.getEntityBasePath(entitySetName, entityId);
       FSManager.instance(version).putInMemory(
-          cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY));
+          cres, path + File.separatorChar + Constants.get(ConstantKey.ENTITY));
 
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
@@ -548,7 +548,7 @@ public abstract class AbstractServices {
       final String entity) {
 
     try {
-      final Accept acceptType = Accept.parse(accept, version);
+      final Accept acceptType = Accept.parse(accept);
 
       if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
         throw new UnsupportedMediaTypeException("Unsupported media type");
@@ -567,7 +567,7 @@ public abstract class AbstractServices {
 
       final String path = Commons.getEntityBasePath(entitySetName, entityId);
       FSManager.instance(version).putInMemory(
-          cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY));
+          cres, path + File.separatorChar + Constants.get(ConstantKey.ENTITY));
 
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
@@ -610,7 +610,7 @@ public abstract class AbstractServices {
       final String entity) {
 
     try {
-      final Accept acceptType = Accept.parse(accept, version);
+      final Accept acceptType = Accept.parse(accept);
       if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
         throw new UnsupportedMediaTypeException("Unsupported media type");
       }
@@ -654,7 +654,7 @@ public abstract class AbstractServices {
 
         container = new ResWrap<Entity>((URI) null, null, entry);
       } else {
-        final Accept contentTypeValue = Accept.parse(contentType, version);
+        final Accept contentTypeValue = Accept.parse(contentType);
         if (Accept.ATOM == contentTypeValue) {
           container = atomDeserializer.toEntity(IOUtils.toInputStream(entity, Constants.ENCODING));
         } else {
@@ -679,12 +679,12 @@ public abstract class AbstractServices {
 
       ResWrap<Entity> result = atomDeserializer.toEntity(serialization);
       result = new ResWrap<Entity>(
-          URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-              + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
+          URI.create(Constants.get(ConstantKey.ODATA_METADATA_PREFIX)
+              + entitySetName + Constants.get(ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
           null, result.getPayload());
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
-      FSManager.instance(version).putInMemory(result, path + Constants.get(version, ConstantKey.ENTITY));
+      FSManager.instance(version).putInMemory(result, path + Constants.get(ConstantKey.ENTITY));
 
       final String location;
 
@@ -754,7 +754,7 @@ public abstract class AbstractServices {
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
-          fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
+          fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(
               ConstantKey.ENTITY), Accept.ATOM));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
@@ -773,7 +773,7 @@ public abstract class AbstractServices {
 
     final String name = "Person";
     try {
-      final Accept acceptType = Accept.parse(accept, version);
+      final Accept acceptType = Accept.parse(accept);
       if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
         throw new UnsupportedMediaTypeException("Unsupported media type");
       }
@@ -789,8 +789,8 @@ public abstract class AbstractServices {
           append(File.separatorChar);
 
       path.append(metadata.getEntitySet(name).isSingleton()
-          ? Constants.get(version, ConstantKey.ENTITY)
-          : Constants.get(version, ConstantKey.FEED));
+          ? Constants.get(ConstantKey.ENTITY)
+          : Constants.get(ConstantKey.FEED));
 
       final InputStream feed = FSManager.instance(version).readFile(path.toString(), acceptType);
 
@@ -848,7 +848,7 @@ public abstract class AbstractServices {
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
-          fsManager.getAbsolutePath(Commons.getEntityBasePath("Product", entityId) + Constants.get(version,
+          fsManager.getAbsolutePath(Commons.getEntityBasePath("Product", entityId) + Constants.get(
               ConstantKey.ENTITY), Accept.ATOM));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
@@ -886,7 +886,7 @@ public abstract class AbstractServices {
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
-          fsManager.getAbsolutePath(Commons.getEntityBasePath("ComputerDetail", entityId) + Constants.get(version,
+          fsManager.getAbsolutePath(Commons.getEntityBasePath("ComputerDetail", entityId) + Constants.get(
               ConstantKey.ENTITY), Accept.ATOM));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
@@ -911,7 +911,7 @@ public abstract class AbstractServices {
       @PathParam("type") final String type) {
 
     try {
-      final Accept acceptType = Accept.parse(accept, version);
+      final Accept acceptType = Accept.parse(accept);
       if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
         throw new UnsupportedMediaTypeException("Unsupported media type");
       }
@@ -922,11 +922,11 @@ public abstract class AbstractServices {
           append(File.separatorChar);
 
       path.append(metadata.getEntitySet(name).isSingleton()
-          ? Constants.get(version, ConstantKey.ENTITY)
-          : Constants.get(version, ConstantKey.FEED));
+          ? Constants.get(ConstantKey.ENTITY)
+          : Constants.get(ConstantKey.FEED));
 
       final InputStream feed = FSManager.instance(version).readFile(path.toString(), acceptType);
-      return xml.createResponse(null, feed, Commons.getETag(basePath, version), acceptType);
+      return xml.createResponse(null, feed, Commons.getETag(basePath), acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -963,7 +963,7 @@ public abstract class AbstractServices {
       if (StringUtils.isNotBlank(format)) {
         acceptType = Accept.valueOf(format.toUpperCase());
       } else {
-        acceptType = Accept.parse(accept, version);
+        acceptType = Accept.parse(accept);
       }
 
       final String location = uriInfo.getRequestUri().toASCIIString();
@@ -983,20 +983,20 @@ public abstract class AbstractServices {
         builder.append(basePath);
 
         if (StringUtils.isNotBlank(orderby)) {
-          builder.append(Constants.get(version, ConstantKey.ORDERBY)).append(File.separatorChar).
+          builder.append(Constants.get(ConstantKey.ORDERBY)).append(File.separatorChar).
               append(orderby).append(File.separatorChar);
         }
 
         if (StringUtils.isNotBlank(filter)) {
-          builder.append(Constants.get(version, ConstantKey.FILTER)).append(File.separatorChar).
+          builder.append(Constants.get(ConstantKey.FILTER)).append(File.separatorChar).
               append(filter.replaceAll("/", "."));
         } else if (StringUtils.isNotBlank(skiptoken)) {
-          builder.append(Constants.get(version, ConstantKey.SKIP_TOKEN)).append(File.separatorChar).
+          builder.append(Constants.get(ConstantKey.SKIP_TOKEN)).append(File.separatorChar).
               append(skiptoken);
         } else {
           builder.append(metadata.getEntitySet(name).isSingleton()
-              ? Constants.get(version, ConstantKey.ENTITY)
-              : Constants.get(version, ConstantKey.FEED));
+              ? Constants.get(ConstantKey.ENTITY)
+              : Constants.get(ConstantKey.FEED));
         }
 
         final InputStream feed = FSManager.instance(version).readFile(builder.toString(), Accept.ATOM);
@@ -1036,7 +1036,7 @@ public abstract class AbstractServices {
         return xml.createResponse(
             location,
             new ByteArrayInputStream(content.toByteArray()),
-            Commons.getETag(basePath, version),
+            Commons.getETag(basePath),
             acceptType);
       }
     } catch (Exception e) {
@@ -1200,8 +1200,8 @@ public abstract class AbstractServices {
 
       ResWrap<Entity> container = atomDeserializer.toEntity(entity);
       if (container.getContextURL() == null) {
-        container = new ResWrap<Entity>(URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-            + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
+        container = new ResWrap<Entity>(URI.create(Constants.get(ConstantKey.ODATA_METADATA_PREFIX)
+            + entitySetName + Constants.get(ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
             container.getMetadataETag(), container.getPayload());
       }
       final Entity entry = container.getPayload();
@@ -1210,7 +1210,7 @@ public abstract class AbstractServices {
         final Link editLink = new LinkImpl();
         editLink.setRel("edit");
         editLink.setTitle(entitySetName);
-        editLink.setHref(Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "/" + entityId);
+        editLink.setHref(Constants.get(ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "/" + entityId);
 
         entry.setEditLink(editLink);
       }
@@ -1252,12 +1252,12 @@ public abstract class AbstractServices {
             rep.setRel(link.getRel());
             rep.setTitle(link.getTitle());
             rep.setType(link.getType());
-            if (link.getType().equals(Constants.get(version, ConstantKey.ATOM_LINK_ENTRY))) {
+            if (link.getType().equals(Constants.get(ConstantKey.ATOM_LINK_ENTRY))) {
               // inline entry
               final Entity inline = atomDeserializer.toEntity(
                   xml.expandEntity(entitySetName, entityId, link.getTitle())).getPayload();
               rep.setInlineEntity(inline);
-            } else if (link.getType().equals(Constants.get(version, ConstantKey.ATOM_LINK_FEED))) {
+            } else if (link.getType().equals(Constants.get(ConstantKey.ATOM_LINK_FEED))) {
               // inline feed
               final EntitySet inline = atomDeserializer.toEntitySet(
                   xml.expandEntity(entitySetName, entityId, link.getTitle())).getPayload();
@@ -1276,7 +1276,7 @@ public abstract class AbstractServices {
       return xml.createResponse(
           location,
           xml.writeEntity(utils.getKey(), container),
-          Commons.getETag(entityInfo.getKey(), version),
+          Commons.getETag(entityInfo.getKey()),
           utils.getKey());
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
@@ -1302,7 +1302,7 @@ public abstract class AbstractServices {
       return utils.createResponse(
           uriInfo.getRequestUri().toASCIIString(),
           entityInfo.getValue(),
-          Commons.getETag(entityInfo.getKey(), version),
+          Commons.getETag(entityInfo.getKey()),
           null);
 
     } catch (Exception e) {
@@ -1324,7 +1324,7 @@ public abstract class AbstractServices {
 
       return xml.createResponse(null, null, null, null, Response.Status.NO_CONTENT);
     } catch (Exception e) {
-      return xml.createFaultResponse(Accept.XML.toString(version), e);
+      return xml.createFaultResponse(Accept.XML.toString(), e);
     }
   }
 
@@ -1348,7 +1348,7 @@ public abstract class AbstractServices {
       final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
 
       final ResWrap<Entity> container = xml.readContainerEntity(Accept.ATOM,
-          fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), Accept.ATOM));
+          fsManager.readFile(basePath + Constants.get(ConstantKey.ENTITY), Accept.ATOM));
 
       final Entity entry = container.getPayload();
 
@@ -1375,14 +1375,14 @@ public abstract class AbstractServices {
         toBeReplaced.setValue(ValueType.PRIMITIVE, changes);
       } else {
         final Property pchanges = xml.readProperty(
-            Accept.parse(contentType, version),
+            Accept.parse(contentType),
             IOUtils.toInputStream(changes, Constants.ENCODING));
 
         toBeReplaced.setValue(pchanges.getValueType(), pchanges.getValue());
       }
 
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
-          fsManager.getAbsolutePath(basePath + Constants.get(version, ConstantKey.ENTITY), Accept.ATOM));
+          fsManager.getAbsolutePath(basePath + Constants.get(ConstantKey.ENTITY), Accept.ATOM));
 
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
@@ -1392,7 +1392,7 @@ public abstract class AbstractServices {
         if (StringUtils.isNotBlank(format)) {
           acceptType = Accept.valueOf(format.toUpperCase());
         } else if (StringUtils.isNotBlank(accept)) {
-          acceptType = Accept.parse(accept, version, null);
+          acceptType = Accept.parse(accept, null);
         }
 
         response = xml.createResponse(null, null, null, acceptType, Response.Status.NO_CONTENT);
@@ -1420,7 +1420,7 @@ public abstract class AbstractServices {
       if (StringUtils.isNotBlank(format)) {
         acceptType = Accept.valueOf(format.toUpperCase());
       } else if (StringUtils.isNotBlank(accept)) {
-        acceptType = Accept.parse(accept, version, null);
+        acceptType = Accept.parse(accept, null);
       }
 
       // if the given path is not about any link then search for property
@@ -1573,7 +1573,7 @@ public abstract class AbstractServices {
 
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
-      return xml.createFaultResponse(Accept.JSON.toString(version), e);
+      return xml.createFaultResponse(Accept.JSON.toString(), e);
     }
   }
 
@@ -1637,7 +1637,7 @@ public abstract class AbstractServices {
       return response;
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
-      return xml.createFaultResponse(Accept.JSON.toString(version), e);
+      return xml.createFaultResponse(Accept.JSON.toString(), e);
     }
   }
 
@@ -1687,7 +1687,7 @@ public abstract class AbstractServices {
       if (StringUtils.isNotBlank(format)) {
         acceptType = Accept.valueOf(format.toUpperCase());
       } else if (StringUtils.isNotBlank(accept)) {
-        acceptType = Accept.parse(accept, version, null);
+        acceptType = Accept.parse(accept, null);
       }
 
       return navigateProperty(acceptType, entitySetName, entityId, path, true);
@@ -1726,7 +1726,7 @@ public abstract class AbstractServices {
         if (StringUtils.isNotBlank(format)) {
           acceptType = Accept.valueOf(format.toUpperCase());
         } else if (StringUtils.isNotBlank(accept)) {
-          acceptType = Accept.parse(accept, version, null);
+          acceptType = Accept.parse(accept, null);
         }
 
         try {
@@ -1752,7 +1752,7 @@ public abstract class AbstractServices {
           return xml.createResponse(
               null,
               new ByteArrayInputStream(content.toByteArray()),
-              Commons.getETag(basePath, version),
+              Commons.getETag(basePath),
               acceptType);
 
         } catch (NotFoundException e) {
@@ -1772,7 +1772,7 @@ public abstract class AbstractServices {
 
     final AbstractUtilities utils = getUtilities(null);
     final Map.Entry<String, InputStream> entityInfo = utils.readMediaEntity(entitySetName, entityId, path);
-    return utils.createResponse(null, entityInfo.getValue(), Commons.getETag(entityInfo.getKey(), version), null);
+    return utils.createResponse(null, entityInfo.getValue(), Commons.getETag(entityInfo.getKey()), null);
   }
 
   private Response navigateProperty(
@@ -1812,9 +1812,7 @@ public abstract class AbstractServices {
     }
 
     final ResWrap<Property> container = new ResWrap<Property>(
-        URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-            + (version.compareTo(ODataServiceVersion.V40) >= 0 ? entitySetName + "(" + entityId + ")/" + path
-                : property.getType())),
+        URI.create(Constants.get(ConstantKey.ODATA_METADATA_PREFIX) + entitySetName + "(" + entityId + ")/" + path),
         entryContainer.getMetadataETag(),
         property);
 
@@ -1822,7 +1820,7 @@ public abstract class AbstractServices {
         searchForValue ? IOUtils.toInputStream(
             container.getPayload().isNull() ? StringUtils.EMPTY : stringValue(container.getPayload()),
             Constants.ENCODING) : utils.writeProperty(acceptType, container),
-        Commons.getETag(Commons.getEntityBasePath(entitySetName, entityId), version),
+        Commons.getETag(Commons.getEntityBasePath(entitySetName, entityId)),
         acceptType);
   }
 
@@ -1851,7 +1849,7 @@ public abstract class AbstractServices {
       @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
       @PathParam("entitySetName") final String entitySetName) {
     try {
-      final Accept acceptType = Accept.parse(accept, version, Accept.TEXT);
+      final Accept acceptType = Accept.parse(accept, Accept.TEXT);
 
       if (acceptType != Accept.TEXT) {
         throw new UnsupportedMediaTypeException("Unsupported type " + accept);
@@ -1874,10 +1872,10 @@ public abstract class AbstractServices {
       try {
         acceptType = Accept.valueOf(format.toUpperCase());
       } catch (Exception e) {
-        acceptType = Accept.parse(format, version);
+        acceptType = Accept.parse(format);
       }
     } else {
-      acceptType = Accept.parse(accept, version);
+      acceptType = Accept.parse(accept);
     }
 
     return new AbstractMap.SimpleEntry<Accept, AbstractUtilities>(acceptType, getUtilities(acceptType));
@@ -1910,10 +1908,10 @@ public abstract class AbstractServices {
         alink.getAnnotations().addAll(property.getAnnotations());
 
         alink.setType(navProperties.get(property.getName()).isEntitySet()
-            ? Constants.get(version, ConstantKey.ATOM_LINK_FEED)
-            : Constants.get(version, ConstantKey.ATOM_LINK_ENTRY));
+            ? Constants.get(ConstantKey.ATOM_LINK_FEED)
+            : Constants.get(ConstantKey.ATOM_LINK_ENTRY));
 
-        alink.setRel(Constants.get(version, ConstantKey.ATOM_LINK_REL) + property.getName());
+        alink.setRel(Constants.get(ConstantKey.ATOM_LINK_REL) + property.getName());
 
         if (property.isComplex()) {
           Entity inline = new EntityImpl();
@@ -1966,9 +1964,9 @@ public abstract class AbstractServices {
         final LinkImpl link = new LinkImpl();
         link.setTitle(property.getKey());
         link.setType(property.getValue().isEntitySet()
-            ? Constants.get(version, ConstantKey.ATOM_LINK_FEED)
-            : Constants.get(version, ConstantKey.ATOM_LINK_ENTRY));
-        link.setRel(Constants.get(version, ConstantKey.ATOM_LINK_REL) + property.getKey());
+            ? Constants.get(ConstantKey.ATOM_LINK_FEED)
+            : Constants.get(ConstantKey.ATOM_LINK_ENTRY));
+        link.setRel(Constants.get(ConstantKey.ATOM_LINK_REL) + property.getKey());
         link.setHref(entitySetName + "(" + entityKey + ")/" + property.getKey());
         entry.getNavigationLinks().add(link);
       }

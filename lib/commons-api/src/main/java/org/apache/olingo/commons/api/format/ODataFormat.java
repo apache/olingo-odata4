@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.commons.api.format;
 
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Available formats to be used in various contexts.
@@ -29,11 +25,11 @@ import java.util.Map;
 public enum ODataFormat {
 
   /** JSON format with no metadata. */
-  JSON_NO_METADATA,
+  JSON_NO_METADATA(ContentType.create(ContentType.APPLICATION_JSON, "odata.metadata=none")),
   /** JSON format with minimal metadata (default). */
-  JSON,
+  JSON(ContentType.create(ContentType.APPLICATION_JSON, "odata.metadata=minimal")),
   /** JSON format with full metadata. */
-  JSON_FULL_METADATA,
+  JSON_FULL_METADATA(ContentType.create(ContentType.APPLICATION_JSON, "odata.metadata=full")),
 
   /** XML format. */
   XML(ContentType.APPLICATION_XML),
@@ -53,40 +49,10 @@ public enum ODataFormat {
   TEXT_XML(ContentType.TEXT_XML),
   TEXT_HTML(ContentType.TEXT_HTML);
 
-  private static final String JSON_METADATA_PARAMETER_V3 = "odata";
-  private static final String JSON_METADATA_PARAMETER_V4 = "odata.metadata";
-
-  private static final Map<ODataServiceVersion, Map<ODataFormat, ContentType>> FORMAT_PER_VERSION = new
-      HashMap<ODataServiceVersion, Map<ODataFormat, ContentType>>();
-
-  static {
-    final Map<ODataFormat, ContentType> v3 = new HashMap<ODataFormat, ContentType>();
-    v3.put(ODataFormat.JSON_NO_METADATA, ContentType.create(
-        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V3 + "=nometadata"));
-    v3.put(ODataFormat.JSON, ContentType.create(
-        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V3 + "=minimalmetadata"));
-    v3.put(ODataFormat.JSON_FULL_METADATA, ContentType.create(
-        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V3 + "=fullmetadata"));
-    FORMAT_PER_VERSION.put(ODataServiceVersion.V30, v3);
-
-    final Map<ODataFormat, ContentType> v4 = new HashMap<ODataFormat, ContentType>();
-    v4.put(ODataFormat.JSON_NO_METADATA, ContentType.create(
-        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V4 + "=none"));
-    v4.put(ODataFormat.JSON, ContentType.create(
-        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V4 + "=minimal"));
-    v4.put(ODataFormat.JSON_FULL_METADATA, ContentType.create(
-        ContentType.APPLICATION_JSON, JSON_METADATA_PARAMETER_V4 + "=full"));
-    FORMAT_PER_VERSION.put(ODataServiceVersion.V40, v4);
-  }
-
   private final ContentType contentType;
 
   ODataFormat(final ContentType contentType) {
     this.contentType = contentType;
-  }
-
-  ODataFormat() {
-    contentType = null;
   }
 
   /**
@@ -94,12 +60,8 @@ public enum ODataFormat {
    * @param version OData service version.
    * @return format as ContentType.
    */
-  public ContentType getContentType(final ODataServiceVersion version) {
-    if (version.ordinal() < ODataServiceVersion.V30.ordinal()) {
-      throw new IllegalArgumentException("Unsupported version " + version);
-    }
-
-    return contentType == null ? FORMAT_PER_VERSION.get(version).get(this) : contentType;
+  public ContentType getContentType() {
+    return contentType;
   }
 
   @Override
@@ -128,24 +90,14 @@ public enum ODataFormat {
     } else if (contentType.isCompatible(ContentType.APPLICATION_XML)) {
       return XML;
     } else if (contentType.isCompatible(ContentType.APPLICATION_JSON)) {
-      String jsonVariant = contentType.getParameters().get(JSON_METADATA_PARAMETER_V3);
+      String jsonVariant = contentType.getParameters().get("odata.metadata");
       if (jsonVariant != null) {
-        for (ODataFormat candidate : FORMAT_PER_VERSION.get(ODataServiceVersion.V30).keySet()) {
-          if (FORMAT_PER_VERSION.get(ODataServiceVersion.V30).get(candidate).getParameters()
-              .get(JSON_METADATA_PARAMETER_V3)
-              .equals(jsonVariant)) {
-            return candidate;
-          }
-        }
-      }
-      jsonVariant = contentType.getParameters().get(JSON_METADATA_PARAMETER_V4);
-      if (jsonVariant != null) {
-        for (ODataFormat candidate : FORMAT_PER_VERSION.get(ODataServiceVersion.V40).keySet()) {
-          if (FORMAT_PER_VERSION.get(ODataServiceVersion.V40).get(candidate).getParameters()
-              .get(JSON_METADATA_PARAMETER_V4)
-              .equals(jsonVariant)) {
-            return candidate;
-          }
+        if("none".equals(jsonVariant)){
+          return JSON_NO_METADATA;
+        }else if("minimal".equals(jsonVariant)){
+          return ODataFormat.JSON;
+        }else if("full".equals(jsonVariant)){
+          return ODataFormat.JSON_FULL_METADATA;
         }
       }
       return JSON;

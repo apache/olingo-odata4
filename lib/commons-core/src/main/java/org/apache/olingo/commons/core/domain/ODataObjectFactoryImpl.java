@@ -36,15 +36,8 @@ import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataSingleton;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class ODataObjectFactoryImpl implements ODataObjectFactory {
-
-  protected final ODataServiceVersion version;
-
-  public ODataObjectFactoryImpl(final ODataServiceVersion version) {
-    this.version = version;
-  }
 
   @Override
   public ODataInlineEntitySet newDeepInsertEntitySet(final String name, final ODataEntitySet entitySet) {

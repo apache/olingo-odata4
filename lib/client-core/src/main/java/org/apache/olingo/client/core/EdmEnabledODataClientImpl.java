@@ -73,7 +73,7 @@ public class EdmEnabledODataClientImpl extends ODataClientImpl implements EdmEna
 
   @Override
   public URIBuilder newURIBuilder() {
-    return new URIBuilderImpl(getServiceVersion(), configuration, serviceRoot);
+    return new URIBuilderImpl(configuration, serviceRoot);
   }
 
   @Override

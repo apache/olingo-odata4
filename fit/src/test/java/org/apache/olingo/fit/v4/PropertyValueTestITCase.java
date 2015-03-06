@@ -101,7 +101,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setAccept(ODataFormat.ATOM.getContentType(ODataServiceVersion.V40).toContentTypeString());
+    req.setAccept(ODataFormat.ATOM.getContentType().toContentTypeString());
     req.execute().getBody();
   }
 
@@ -110,7 +110,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
-    req.setAccept(ODataFormat.XML.getContentType(client.getServiceVersion()).toContentTypeString());
+    req.setAccept(ODataFormat.XML.getContentType().toContentTypeString());
     req.execute().getBody();
   }
 

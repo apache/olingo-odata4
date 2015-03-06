@@ -23,15 +23,8 @@ import org.apache.olingo.client.api.uri.FilterArgFactory;
 import org.apache.olingo.client.api.uri.FilterFactory;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class FilterFactoryImpl implements FilterFactory {
-
-  private final ODataServiceVersion version;
-  
-  public FilterFactoryImpl(ODataServiceVersion version) {
-    this.version = version;
-  }
 
   @Override
   public URIFilter match(final FilterArg arg) {
@@ -115,7 +108,7 @@ public class FilterFactoryImpl implements FilterFactory {
   
   @Override
   public FilterArgFactory getArgFactory() {
-    return new FilterArgFactoryImpl(version);
+    return new FilterArgFactoryImpl();
   }
 
   @Override

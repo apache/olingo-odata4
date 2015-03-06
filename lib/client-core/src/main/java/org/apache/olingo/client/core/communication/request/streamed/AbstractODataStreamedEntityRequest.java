@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -34,8 +34,8 @@ import org.apache.olingo.commons.api.http.HttpMethod;
  * @param <T> OData request payload type corresponding to the request implementation.
  */
 public abstract class AbstractODataStreamedEntityRequest<V extends ODataResponse, T extends ODataPayloadManager<V>>
-        extends AbstractODataStreamedRequest<V, T>
-        implements ODataStreamedEntityRequest<V, T> {
+    extends AbstractODataStreamedRequest<V, T>
+    implements ODataStreamedEntityRequest<V, T> {
 
   private ODataFormat format;
 
@@ -47,10 +47,10 @@ public abstract class AbstractODataStreamedEntityRequest<V extends ODataResponse
    * @param uri request URI.
    */
   public AbstractODataStreamedEntityRequest(final ODataClient odataClient, final HttpMethod method,
-          final URI uri) {
+      final URI uri) {
 
     super(odataClient, method, uri);
-    setAccept(getFormat().getContentType(odataClient.getServiceVersion()).toContentTypeString());
+    setAccept(getFormat().getContentType().toContentTypeString());
   }
 
   @Override
@@ -61,6 +61,6 @@ public abstract class AbstractODataStreamedEntityRequest<V extends ODataResponse
   @Override
   public final void setFormat(final ODataFormat format) {
     this.format = format;
-    setAccept(format.getContentType(odataClient.getServiceVersion()).toContentTypeString());
+    setAccept(format.getContentType().toContentTypeString());
   }
 }

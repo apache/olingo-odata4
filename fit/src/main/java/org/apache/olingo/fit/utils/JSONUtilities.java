@@ -18,20 +18,6 @@
  */
 package org.apache.olingo.fit.utils;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.InjectableValues;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.fit.metadata.Metadata;
-import org.apache.olingo.fit.metadata.NavigationProperty;
-
-import javax.ws.rs.NotFoundException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -45,22 +31,38 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ws.rs.NotFoundException;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.fit.metadata.Metadata;
+import org.apache.olingo.fit.metadata.NavigationProperty;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+
 public class JSONUtilities extends AbstractUtilities {
 
   private final ObjectMapper mapper;
 
-  public JSONUtilities(final ODataServiceVersion version, final Metadata metadata) throws IOException {
-    super(version, metadata);
+  public JSONUtilities(final Metadata metadata) throws IOException {
+    super(metadata);
 
     mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
     mapper.setInjectableValues(new InjectableValues.Std().
-            addValue(Boolean.class, Boolean.TRUE).
-            addValue(ODataServiceVersion.class, version));
+        addValue(Boolean.class, Boolean.TRUE));
+    // addValue(ODataServiceVersion.class, version))
+
     mapper.setSerializerProvider(new InjectableSerializerProvider(mapper.getSerializerProvider(),
-            mapper.getSerializationConfig().
-            withAttribute(ODataServiceVersion.class, version).
+        mapper.getSerializationConfig().
+            // withAttribute(ODataServiceVersion.class, version).
             withAttribute(Boolean.class, Boolean.TRUE),
-            mapper.getSerializerFactory()));
+        mapper.getSerializerFactory()));
   }
 
   @Override
@@ -70,15 +72,15 @@ public class JSONUtilities extends AbstractUtilities {
 
   @Override
   protected InputStream addLinks(
-          final String entitySetName, final String entitykey, final InputStream is, final Set<String> links)
-          throws IOException {
+      final String entitySetName, final String entitykey, final InputStream is, final Set<String> links)
+      throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
 
     for (String link : links) {
-      srcNode.set(link + Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX),
-              new TextNode(Commons.getLinksURI(entitySetName, entitykey, link)));
+      srcNode.set(link + Constants.get(ConstantKey.JSON_NAVIGATION_SUFFIX),
+          new TextNode(Commons.getLinksURI(entitySetName, entitykey, link)));
     }
 
     return IOUtils.toInputStream(srcNode.toString(), Constants.ENCODING);
@@ -96,10 +98,10 @@ public class JSONUtilities extends AbstractUtilities {
     while (fieldIter.hasNext()) {
       final String field = fieldIter.next();
 
-      if (field.endsWith(Constants.get(version, ConstantKey.JSON_NAVIGATION_BIND_SUFFIX))
-              || field.endsWith(Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX))
-              || field.endsWith(Constants.get(version, ConstantKey.JSON_MEDIA_SUFFIX))
-              || field.endsWith(Constants.get(version, ConstantKey.JSON_EDITLINK_NAME))) {
+      if (field.endsWith(Constants.get(ConstantKey.JSON_NAVIGATION_BIND_SUFFIX))
+          || field.endsWith(Constants.get(ConstantKey.JSON_NAVIGATION_SUFFIX))
+          || field.endsWith(Constants.get(ConstantKey.JSON_MEDIA_SUFFIX))
+          || field.endsWith(Constants.get(ConstantKey.JSON_EDITLINK_NAME))) {
         if (field.indexOf('@') > 0) {
           links.add(field.substring(0, field.indexOf('@')));
         } else {
@@ -113,7 +115,7 @@ public class JSONUtilities extends AbstractUtilities {
 
   @Override
   protected NavigationLinks retrieveNavigationInfo(final String entitySetName, final InputStream is)
-          throws IOException {
+      throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
@@ -126,7 +128,7 @@ public class JSONUtilities extends AbstractUtilities {
 
     while (fieldIter.hasNext()) {
       final Map.Entry<String, JsonNode> field = fieldIter.next();
-      if (field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_NAVIGATION_BIND_SUFFIX))) {
+      if (field.getKey().endsWith(Constants.get(ConstantKey.JSON_NAVIGATION_BIND_SUFFIX))) {
         final String title = field.getKey().substring(0, field.getKey().indexOf('@'));
         final List<String> hrefs = new ArrayList<String>();
         if (field.getValue().isArray()) {
@@ -150,26 +152,26 @@ public class JSONUtilities extends AbstractUtilities {
 
   @Override
   protected InputStream normalizeLinks(
-          final String entitySetName, final String entityKey, final InputStream is, final NavigationLinks links)
-          throws IOException {
+      final String entitySetName, final String entityKey, final InputStream is, final NavigationLinks links)
+      throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
 
     if (links != null) {
       for (String linkTitle : links.getLinkNames()) {
         // normalize link
-        srcNode.remove(linkTitle + Constants.get(version, ConstantKey.JSON_NAVIGATION_BIND_SUFFIX));
+        srcNode.remove(linkTitle + Constants.get(ConstantKey.JSON_NAVIGATION_BIND_SUFFIX));
         srcNode.set(
-                linkTitle + Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX),
-                new TextNode(String.format("%s(%s)/%s", entitySetName, entityKey, linkTitle)));
+            linkTitle + Constants.get(ConstantKey.JSON_NAVIGATION_SUFFIX),
+            new TextNode(String.format("%s(%s)/%s", entitySetName, entityKey, linkTitle)));
       }
 
       for (String linkTitle : links.getInlineNames()) {
         // normalize link if exist; declare a new one if missing
-        srcNode.remove(linkTitle + Constants.get(version, ConstantKey.JSON_NAVIGATION_BIND_SUFFIX));
+        srcNode.remove(linkTitle + Constants.get(ConstantKey.JSON_NAVIGATION_BIND_SUFFIX));
         srcNode.set(
-                linkTitle + Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX),
-                new TextNode(String.format("%s(%s)/%s", entitySetName, entityKey, linkTitle)));
+            linkTitle + Constants.get(ConstantKey.JSON_NAVIGATION_SUFFIX),
+            new TextNode(String.format("%s(%s)/%s", entitySetName, entityKey, linkTitle)));
 
         // remove inline
         srcNode.remove(linkTitle);
@@ -180,8 +182,8 @@ public class JSONUtilities extends AbstractUtilities {
     }
 
     srcNode.set(
-            Constants.get(version, ConstantKey.JSON_EDITLINK_NAME), new TextNode(
-                    Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "(" + entityKey + ")"));
+        Constants.get(ConstantKey.JSON_EDITLINK_NAME), new TextNode(
+            Constants.get(ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "(" + entityKey + ")"));
 
     return IOUtils.toInputStream(srcNode.toString(), Constants.ENCODING);
   }
@@ -190,7 +192,7 @@ public class JSONUtilities extends AbstractUtilities {
 
     final JsonNode srcNode = mapper.readTree(src);
 
-    ((ObjectNode) srcNode).put(Constants.get(version, ConstantKey.ODATA_COUNT_NAME), count);
+    ((ObjectNode) srcNode).put(Constants.get(ConstantKey.ODATA_COUNT_NAME), count);
 
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     mapper.writeValue(bos, srcNode);
@@ -207,14 +209,14 @@ public class JSONUtilities extends AbstractUtilities {
 
     final ObjectNode res;
 
-    final JsonNode value = node.get(Constants.get(version, ConstantKey.JSON_VALUE_NAME));
+    final JsonNode value = node.get(Constants.get(ConstantKey.JSON_VALUE_NAME));
 
     if (value.isArray()) {
       res = mapper.createObjectNode();
       res.set("value", value);
-      final JsonNode next = node.get(Constants.get(version, ConstantKey.JSON_NEXTLINK_NAME));
+      final JsonNode next = node.get(Constants.get(ConstantKey.JSON_NEXTLINK_NAME));
       if (next != null) {
-        res.set(Constants.get(version, ConstantKey.JSON_NEXTLINK_NAME), next);
+        res.set(Constants.get(ConstantKey.JSON_NEXTLINK_NAME), next);
       }
     } else {
       res = (ObjectNode) value;
@@ -235,18 +237,18 @@ public class JSONUtilities extends AbstractUtilities {
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
 
     final Set<String> retain = new HashSet<String>();
-    retain.add(Constants.get(version, ConstantKey.JSON_ID_NAME));
-    retain.add(Constants.get(version, ConstantKey.JSON_TYPE_NAME));
-    retain.add(Constants.get(version, ConstantKey.JSON_EDITLINK_NAME));
-    retain.add(Constants.get(version, ConstantKey.JSON_NEXTLINK_NAME));
-    retain.add(Constants.get(version, ConstantKey.JSON_ODATAMETADATA_NAME));
-    retain.add(Constants.get(version, ConstantKey.JSON_VALUE_NAME));
+    retain.add(Constants.get(ConstantKey.JSON_ID_NAME));
+    retain.add(Constants.get(ConstantKey.JSON_TYPE_NAME));
+    retain.add(Constants.get(ConstantKey.JSON_EDITLINK_NAME));
+    retain.add(Constants.get(ConstantKey.JSON_NEXTLINK_NAME));
+    retain.add(Constants.get(ConstantKey.JSON_ODATAMETADATA_NAME));
+    retain.add(Constants.get(ConstantKey.JSON_VALUE_NAME));
 
     for (String name : propertyNames) {
       retain.add(name);
-      retain.add(name + Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX));
-      retain.add(name + Constants.get(version, ConstantKey.JSON_MEDIA_SUFFIX));
-      retain.add(name + Constants.get(version, ConstantKey.JSON_TYPE_SUFFIX));
+      retain.add(name + Constants.get(ConstantKey.JSON_NAVIGATION_SUFFIX));
+      retain.add(name + Constants.get(ConstantKey.JSON_MEDIA_SUFFIX));
+      retain.add(name + Constants.get(ConstantKey.JSON_TYPE_SUFFIX));
     }
 
     srcNode.retain(retain);
@@ -256,8 +258,8 @@ public class JSONUtilities extends AbstractUtilities {
 
   @Override
   public InputStream readEntities(
-          final List<String> links, final String linkName, final String next, final boolean forceFeed)
-          throws IOException {
+      final List<String> links, final String linkName, final String next, final boolean forceFeed)
+      throws IOException {
 
     if (links.isEmpty()) {
       throw new NotFoundException();
@@ -275,7 +277,7 @@ public class JSONUtilities extends AbstractUtilities {
       try {
         final Map.Entry<String, String> uriMap = Commons.parseEntityURI(link);
         final Map.Entry<String, InputStream> entity =
-                readEntity(uriMap.getKey(), uriMap.getValue(), Accept.JSON_FULLMETA);
+            readEntity(uriMap.getKey(), uriMap.getValue(), Accept.JSON_FULLMETA);
 
         if (bos.size() > 1) {
           bos.write(",".getBytes());
@@ -292,11 +294,11 @@ public class JSONUtilities extends AbstractUtilities {
       bos.write("]".getBytes());
     }
 
-    node.set(Constants.get(version, ConstantKey.JSON_VALUE_NAME),
-            mapper.readTree(new ByteArrayInputStream(bos.toByteArray())));
+    node.set(Constants.get(ConstantKey.JSON_VALUE_NAME),
+        mapper.readTree(new ByteArrayInputStream(bos.toByteArray())));
 
     if (StringUtils.isNotBlank(next)) {
-      node.set(Constants.get(version, ConstantKey.JSON_NEXTLINK_NAME), new TextNode(next));
+      node.set(Constants.get(ConstantKey.JSON_NEXTLINK_NAME), new TextNode(next));
     }
 
     return IOUtils.toInputStream(node.toString(), Constants.ENCODING);
@@ -304,21 +306,21 @@ public class JSONUtilities extends AbstractUtilities {
 
   @Override
   protected InputStream replaceLink(
-          final InputStream toBeChanged, final String linkName, final InputStream replacement)
-          throws IOException {
+      final InputStream toBeChanged, final String linkName, final InputStream replacement)
+      throws IOException {
 
     final ObjectNode toBeChangedNode = (ObjectNode) mapper.readTree(toBeChanged);
     final ObjectNode replacementNode = (ObjectNode) mapper.readTree(replacement);
 
-    if (toBeChangedNode.get(linkName + Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX)) == null) {
+    if (toBeChangedNode.get(linkName + Constants.get(ConstantKey.JSON_NAVIGATION_SUFFIX)) == null) {
       throw new NotFoundException();
     }
 
-    toBeChangedNode.set(linkName, replacementNode.get(Constants.get(version, ConstantKey.JSON_VALUE_NAME)));
+    toBeChangedNode.set(linkName, replacementNode.get(Constants.get(ConstantKey.JSON_VALUE_NAME)));
 
-    final JsonNode next = replacementNode.get(linkName + Constants.get(version, ConstantKey.JSON_NEXTLINK_NAME));
+    final JsonNode next = replacementNode.get(linkName + Constants.get(ConstantKey.JSON_NEXTLINK_NAME));
     if (next != null) {
-      toBeChangedNode.set(linkName + Constants.get(version, ConstantKey.JSON_NEXTLINK_SUFFIX), next);
+      toBeChangedNode.set(linkName + Constants.get(ConstantKey.JSON_NEXTLINK_SUFFIX), next);
     }
 
     return IOUtils.toInputStream(toBeChangedNode.toString(), Constants.ENCODING);
@@ -341,7 +343,7 @@ public class JSONUtilities extends AbstractUtilities {
 
   @Override
   public Map.Entry<String, List<String>> extractLinkURIs(
-          final String entitySetName, final String entityId, final String linkName) throws Exception {
+      final String entitySetName, final String entityId, final String linkName) throws Exception {
     final LinkInfo links = readLinks(entitySetName, entityId, linkName, Accept.JSON_FULLMETA);
     return extractLinkURIs(links.getLinks());
   }
@@ -367,25 +369,25 @@ public class JSONUtilities extends AbstractUtilities {
       }
     }
 
-    final JsonNode next = srcNode.get(Constants.get(version, ConstantKey.JSON_NEXTLINK_NAME));
+    final JsonNode next = srcNode.get(Constants.get(ConstantKey.JSON_NEXTLINK_NAME));
 
     return new SimpleEntry<String, List<String>>(next == null ? null : next.asText(), links);
   }
 
   @Override
   public InputStream addEditLink(
-          final InputStream content, final String title, final String href) throws IOException {
+      final InputStream content, final String title, final String href) throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(content);
     IOUtils.closeQuietly(content);
 
-    srcNode.set(Constants.get(version, ConstantKey.JSON_EDITLINK_NAME), new TextNode(href));
+    srcNode.set(Constants.get(ConstantKey.JSON_EDITLINK_NAME), new TextNode(href));
     return IOUtils.toInputStream(srcNode.toString(), Constants.ENCODING);
   }
 
   @Override
   public InputStream addOperation(final InputStream content, final String name, final String metaAnchor,
-          final String href) throws IOException {
+      final String href) throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(content);
     IOUtils.closeQuietly(content);
@@ -400,8 +402,8 @@ public class JSONUtilities extends AbstractUtilities {
 
   @Override
   public InputStream replaceProperty(
-          final InputStream src, final InputStream replacement, final List<String> path, final boolean justValue)
-          throws IOException {
+      final InputStream src, final InputStream replacement, final List<String> path, final boolean justValue)
+      throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
     IOUtils.closeQuietly(src);

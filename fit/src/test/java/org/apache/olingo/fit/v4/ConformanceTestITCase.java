@@ -54,7 +54,6 @@ import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.domain.ODataEntityImpl;
 import org.junit.Test;
@@ -128,13 +127,13 @@ public class ConformanceTestITCase extends AbstractTestITCase {
 
     // check for Content-Type
     assertEquals(
-        ODataFormat.JSON_FULL_METADATA.getContentType(ODataServiceVersion.V40).toContentTypeString(),
+        ODataFormat.JSON_FULL_METADATA.getContentType().toContentTypeString(),
         req.getHeader("Content-Type"));
     assertEquals(
-        ODataFormat.JSON_FULL_METADATA.getContentType(ODataServiceVersion.V40).toContentTypeString(),
+        ODataFormat.JSON_FULL_METADATA.getContentType().toContentTypeString(),
         req.getHeader(HeaderName.contentType.toString()));
     assertEquals(
-        ODataFormat.JSON_FULL_METADATA.getContentType(ODataServiceVersion.V40).toContentTypeString(),
+        ODataFormat.JSON_FULL_METADATA.getContentType().toContentTypeString(),
         req.getContentType());
 
     final ODataEntity created = req.execute().getBody();

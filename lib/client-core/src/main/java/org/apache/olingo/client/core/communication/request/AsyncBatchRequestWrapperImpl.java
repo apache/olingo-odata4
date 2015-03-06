@@ -32,7 +32,6 @@ import org.apache.olingo.client.api.communication.request.batch.ODataBatchReques
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
 import org.apache.olingo.client.api.communication.response.AsyncResponseWrapper;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class AsyncBatchRequestWrapperImpl extends AsyncRequestWrapperImpl<ODataBatchResponse>
         implements AsyncBatchRequestWrapper {
@@ -107,7 +106,7 @@ public class AsyncBatchRequestWrapperImpl extends AsyncRequestWrapperImpl<ODataB
       headers = res.getHeader(HeaderName.preferenceApplied.toString());
       if (headers != null && !headers.isEmpty()) {
         for (String header : headers) {
-          if (header.equalsIgnoreCase(new ODataPreferences(ODataServiceVersion.V40).respondAsync())) {
+          if (header.equalsIgnoreCase(new ODataPreferences().respondAsync())) {
             preferenceApplied = true;
           }
         }

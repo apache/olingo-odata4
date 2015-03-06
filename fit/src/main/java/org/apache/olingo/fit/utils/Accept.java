@@ -18,26 +18,20 @@
  */
 package org.apache.olingo.fit.utils;
 
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.UnsupportedMediaTypeException;
-
-import java.util.regex.Pattern;
 
 public enum Accept {
 
   TEXT(ContentType.TEXT_PLAIN.getMimeType(), ".txt"),
   XML(ContentType.APPLICATION_XML.getMimeType(), ".xml"),
   ATOM(ContentType.APPLICATION_ATOM_XML.getMimeType(), ".xml"),
-  JSON(ContentType.APPLICATION_JSON.getMimeType() + ";odata=minimalmetadata",
-      ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=minimal", ".full.json"),
-  JSON_NOMETA(ContentType.APPLICATION_JSON.getMimeType() + ";odata=nometadata",
-      ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=none", ".full.json"),
-  JSON_FULLMETA(ContentType.APPLICATION_JSON.getMimeType() + ";odata=fullmetadata",
-      ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=full", ".full.json");
-
-  private final String contentTypeV3;
+  JSON(ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=minimal", ".full.json"),
+  JSON_NOMETA(ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=none", ".full.json"),
+  JSON_FULLMETA(ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=full", ".full.json");
 
   private final String contentTypeV4;
 
@@ -45,53 +39,40 @@ public enum Accept {
 
   private static Pattern allTypesPattern = Pattern.compile("(.*,)?\\*/\\*([,;].*)?");
 
-  Accept(final String contentTypeV3, final String fileExtension) {
-    this.contentTypeV3 = contentTypeV3;
-    contentTypeV4 = contentTypeV3;
-    this.fileExtension = fileExtension;
-  }
-
-  Accept(final String contentTypeV3, final String contentTypeV4, final String fileExtension) {
-    this.contentTypeV3 = contentTypeV3;
+  Accept(final String contentTypeV4, final String fileExtension) {
     this.contentTypeV4 = contentTypeV4;
     this.fileExtension = fileExtension;
   }
 
-  public String toString(final ODataServiceVersion version) {
-    return version.compareTo(ODataServiceVersion.V40) >= 0 ? contentTypeV4 : contentTypeV3;
+  @Override
+  public String toString() {
+    return contentTypeV4;
   }
 
   public String getExtension() {
     return fileExtension;
   }
 
-  public static Accept parse(final String contentType, final ODataServiceVersion version) {
-    final Accept def;
-    if (version.compareTo(ODataServiceVersion.V30) <= 0) {
-      def = ATOM;
-    } else {
-      def = JSON_NOMETA;
-    }
-
-    return parse(contentType, version, def);
+  public static Accept parse(final String contentType) {
+    return parse(contentType, JSON_NOMETA);
   }
 
-  public static Accept parse(final String contentType, final ODataServiceVersion version, final Accept def) {
+  public static Accept parse(final String contentType, final Accept def) {
     if (StringUtils.isBlank(contentType) || allTypesPattern.matcher(contentType).matches()) {
       return def;
-    } else if (contentType.startsWith(JSON_NOMETA.toString(version))) {
+    } else if (contentType.startsWith(JSON_NOMETA.toString())) {
       return JSON_NOMETA;
-    } else if (contentType.startsWith(JSON_FULLMETA.toString(version))) {
+    } else if (contentType.startsWith(JSON_FULLMETA.toString())) {
       return JSON_FULLMETA;
-    } else if (contentType.startsWith(JSON.toString(version))
+    } else if (contentType.startsWith(JSON.toString())
         || contentType.startsWith(ContentType.APPLICATION_JSON.getMimeType())) {
 
       return JSON;
-    } else if (contentType.startsWith(XML.toString(version))) {
+    } else if (contentType.startsWith(XML.toString())) {
       return XML;
-    } else if (contentType.startsWith(ATOM.toString(version))) {
+    } else if (contentType.startsWith(ATOM.toString())) {
       return ATOM;
-    } else if (contentType.startsWith(TEXT.toString(version))) {
+    } else if (contentType.startsWith(TEXT.toString())) {
       return TEXT;
     } else {
       throw new UnsupportedMediaTypeException(contentType);

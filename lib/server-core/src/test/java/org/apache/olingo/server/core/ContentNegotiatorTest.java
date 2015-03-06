@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpContentType;
@@ -146,7 +145,7 @@ public class ContentNegotiatorTest {
 
   @Test
   public void checkSupport() throws Exception {
-    ContentNegotiator.checkSupport(ODataFormat.JSON.getContentType(ODataServiceVersion.V40), null,
+    ContentNegotiator.checkSupport(ODataFormat.JSON.getContentType(), null,
         RepresentationType.ENTITY);
     ContentNegotiator.checkSupport(ContentType.TEXT_PLAIN, null, RepresentationType.VALUE);
     try {

@@ -68,7 +68,7 @@ public class ODataBatchRequestImpl
   @Override
   protected HttpResponse doExecute() {
     if (odataClient.getConfiguration().isContinueOnError()) {
-      addCustomHeader(HeaderName.prefer, new ODataPreferences(odataClient.getServiceVersion()).continueOnError());
+      addCustomHeader(HeaderName.prefer, new ODataPreferences().continueOnError());
     }
 
     return super.doExecute();

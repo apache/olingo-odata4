@@ -18,22 +18,11 @@
  */
 package org.apache.olingo.client.api.communication.header;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * Values of the Prefer header.
  */
 public class ODataPreferences {
-
-  final ODataServiceVersion serviceVersion;
-
-  public ODataPreferences(final ODataServiceVersion serviceVersion) {
-    this.serviceVersion = serviceVersion;
-  }
 
   /**
    * <code>Prefer</code> header, return content.
@@ -41,7 +30,7 @@ public class ODataPreferences {
    * @see HeaderName#prefer
    */
   public String returnContent() {
-    return PreferenceNames.returnContent.isSupportedBy(serviceVersion).toString();
+    return PreferenceNames.returnContent.toString();
   }
 
   /**
@@ -50,14 +39,14 @@ public class ODataPreferences {
    * @see HeaderName#prefer
    */
   public String returnNoContent() {
-    return PreferenceNames.returnNoContent.isSupportedBy(serviceVersion).toString();
+    return PreferenceNames.returnNoContent.toString();
   }
 
   /**
    * @see HeaderName#dataServiceUrlConventions
    */
   public String keyAsSegment() {
-    return PreferenceNames.keyAsSegment.isSupportedBy(serviceVersion).toString();
+    return PreferenceNames.keyAsSegment.toString();
   }
 
   /**
@@ -78,7 +67,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String allowEntityReferences() {
-    return PreferenceNames.allowEntityReferences.isSupportedBy(serviceVersion).toString();
+    return PreferenceNames.allowEntityReferences.toString();
   }
 
   /**
@@ -141,7 +130,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String callback(final String url) {
-    return PreferenceNames.callback.isSupportedBy(serviceVersion).toString() + ";url=\"" + url + "\"";
+    return PreferenceNames.callback.toString() + ";url=\"" + url + "\"";
   }
 
   /**
@@ -162,7 +151,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String continueOnError() {
-    return PreferenceNames.continueOnError.isSupportedBy(serviceVersion).toString();
+    return PreferenceNames.continueOnError.toString();
   }
 
   /**
@@ -209,7 +198,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String includeAnnotations(final String value) {
-    return PreferenceNames.includeAnnotations.isSupportedBy(serviceVersion).toString() + "=" + value;
+    return PreferenceNames.includeAnnotations.toString() + "=" + value;
   }
 
   /**
@@ -242,7 +231,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String maxPageSize(final int size) {
-    return PreferenceNames.maxPageSize.isSupportedBy(serviceVersion).toString() + "=" + size;
+    return PreferenceNames.maxPageSize.toString() + "=" + size;
   }
 
   /**
@@ -267,7 +256,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String trackChanges() {
-    return PreferenceNames.trackChanges.isSupportedBy(serviceVersion).toString();
+    return PreferenceNames.trackChanges.toString();
   }
 
   /**
@@ -302,7 +291,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String respondAsync() {
-    return PreferenceNames.respondAsync.isSupportedBy(serviceVersion).toString();
+    return PreferenceNames.respondAsync.toString();
   }
 
   /**
@@ -322,7 +311,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String wait(final int value) {
-    return PreferenceNames.wait.isSupportedBy(serviceVersion).toString() + "=" + value;
+    return PreferenceNames.wait.toString() + "=" + value;
   }
 
   /**
@@ -352,7 +341,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String returnMinimal() {
-    return PreferenceNames.odataReturn.isSupportedBy(serviceVersion).toString() + "=minimal";
+    return PreferenceNames.odataReturn.toString() + "=minimal";
   }
 
   /**
@@ -382,39 +371,28 @@ public class ODataPreferences {
    * @return preference.
    */
   public String returnRepresentation() {
-    return PreferenceNames.odataReturn.isSupportedBy(serviceVersion).toString() + "=representation";
+    return PreferenceNames.odataReturn.toString() + "=representation";
   }
 
   private static enum PreferenceNames {
 
-    returnContent("return-content", Arrays.asList(ODataServiceVersion.V30, ODataServiceVersion.V40)),
-    returnNoContent("return-no-content", Arrays.asList(ODataServiceVersion.V30, ODataServiceVersion.V40)),
-    keyAsSegment("KeyAsSegment", Arrays.asList(ODataServiceVersion.V30, ODataServiceVersion.V40)),
-    allowEntityReferences("odata.allow-entityreferences", Arrays.asList(ODataServiceVersion.V40)),
-    callback("odata.callback", Arrays.asList(ODataServiceVersion.V40)),
-    continueOnError("odata.continue-on-error", Arrays.asList(ODataServiceVersion.V40)),
-    includeAnnotations("odata.include-annotations", Arrays.asList(ODataServiceVersion.V40)),
-    maxPageSize("odata.maxpagesize", Arrays.asList(ODataServiceVersion.V40)),
-    trackChanges("odata.track-changes", Arrays.asList(ODataServiceVersion.V40)),
-    respondAsync("respond-async", Arrays.asList(ODataServiceVersion.V40)),
-    wait("wait", Arrays.asList(ODataServiceVersion.V40)),
-    odataReturn("return", Arrays.asList(ODataServiceVersion.V40));
+    returnContent("return-content"),
+    returnNoContent("return-no-content"),
+    keyAsSegment("KeyAsSegment"),
+    allowEntityReferences("odata.allow-entityreferences"),
+    callback("odata.callback"),
+    continueOnError("odata.continue-on-error"),
+    includeAnnotations("odata.include-annotations"),
+    maxPageSize("odata.maxpagesize"),
+    trackChanges("odata.track-changes"),
+    respondAsync("respond-async"),
+    wait("wait"),
+    odataReturn("return");
 
     private final String preferenceName;
 
-    private final List<ODataServiceVersion> supportedVersions;
-
-    private PreferenceNames(final String preferenceName, final List<ODataServiceVersion> supportedVersions) {
+    private PreferenceNames(final String preferenceName) {
       this.preferenceName = preferenceName;
-      this.supportedVersions = supportedVersions;
-    }
-
-    final PreferenceNames isSupportedBy(final ODataServiceVersion serviceVersion) {
-      if (!supportedVersions.contains(serviceVersion)) {
-        throw new ODataRuntimeException("Unsupported header " + this.toString());
-      }
-
-      return this;
     }
 
     @Override

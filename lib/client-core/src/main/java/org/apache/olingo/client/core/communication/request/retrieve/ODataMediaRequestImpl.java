@@ -25,7 +25,6 @@ import java.net.URI;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
@@ -47,10 +46,6 @@ public class ODataMediaRequestImpl extends AbstractODataRetrieveRequest<InputStr
 
     setAccept(ODataFormat.APPLICATION_OCTET_STREAM.toString());
     setContentType(ODataFormat.APPLICATION_OCTET_STREAM.toString());
-
-    this.odataHeaders.removeHeader(HeaderName.minDataServiceVersion);
-    this.odataHeaders.removeHeader(HeaderName.maxDataServiceVersion);
-    this.odataHeaders.removeHeader(HeaderName.dataServiceVersion);
   }
 
   @Override

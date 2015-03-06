@@ -37,7 +37,6 @@ import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.EntityType;
@@ -181,10 +180,6 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
   }
 
   public <ET extends EntityType<?>> boolean addRef(final ET element) {
-    if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
-      return false;
-    }
-
     if (element instanceof Proxy && Proxy.getInvocationHandler(element) instanceof EntityInvocationHandler) {
       final EntityInvocationHandler handler = EntityInvocationHandler.class.cast(Proxy.getInvocationHandler(element));
       final URI id = ((ODataEntity) handler.getEntity()).getId();
@@ -200,9 +195,7 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
   }
 
   public void refs() {
-    if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V40) >= 0) {
       ((URIBuilder) this.uri).appendRefSegment();
-    }
   }
 
   @Override

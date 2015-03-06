@@ -40,11 +40,9 @@ import org.apache.olingo.client.api.communication.request.cud.ODataReferenceAddi
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
@@ -456,17 +454,12 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
     LOG.debug("Update '{}'", handler.getEntityURI());
 
-    // TODO: Check
-    if (service.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
-      throw new ODataRuntimeException("Only OData V4 or higher supported.");
-    }
-
     final ODataEntityUpdateRequest<ODataEntity> req =
         ((EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(handler.getEntityURI(),
                 org.apache.olingo.client.api.communication.request.cud.UpdateType.PATCH, changes);
 
-    req.setPrefer(new ODataPreferences(service.getClient().getServiceVersion()).returnContent());
+    req.setPrefer(new ODataPreferences().returnContent());
 
     if (StringUtils.isNotBlank(handler.getETag())) {
       req.setIfMatch(handler.getETag());
@@ -484,21 +477,18 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     LOG.debug("Update '{}'", targetRef);
     URI sericeRoot = handler.getClient().newURIBuilder(handler.getClient().getServiceRoot()).build();
 
-    if (service.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) >= 1) {
-      final ODataReferenceAddingRequest req =
-          ((org.apache.olingo.client.api.EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
-              getReferenceAddingRequest(sericeRoot, source, targetRef);
+    final ODataReferenceAddingRequest req =
+        ((org.apache.olingo.client.api.EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
+            getReferenceAddingRequest(sericeRoot, source, targetRef);
 
-      req.setPrefer(new ODataPreferences(service.getClient().getServiceVersion()).returnContent());
+    req.setPrefer(new ODataPreferences().returnContent());
 
-      if (StringUtils.isNotBlank(handler.getETag())) {
-        req.setIfMatch(handler.getETag());
-      }
-
-      changeset.addChange(req, handler);
-      return true;
+    if (StringUtils.isNotBlank(handler.getETag())) {
+      req.setIfMatch(handler.getETag());
     }
-    return false;
+
+    changeset.addChange(req, handler);
+    return true;
   }
 
   private void queueUpdate(
@@ -509,16 +499,12 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
     LOG.debug("Update '{}'", uri);
 
-    // TODO: Check
-    if (service.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
-      throw new ODataRuntimeException("Only OData V4 or higher supported.");
-    }
     final ODataEntityUpdateRequest<ODataEntity> req =
         ((EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(uri,
                 org.apache.olingo.client.api.communication.request.cud.UpdateType.PATCH, changes);
 
-    req.setPrefer(new ODataPreferences(service.getClient().getServiceVersion()).returnContent());
+    req.setPrefer(new ODataPreferences().returnContent());
 
     if (StringUtils.isNotBlank(handler.getETag())) {
       req.setIfMatch(handler.getETag());

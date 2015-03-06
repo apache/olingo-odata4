@@ -18,18 +18,18 @@
  */
 package org.apache.olingo.fit.utils;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.XMLEvent;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.XMLEvent;
+
+import org.apache.commons.io.IOUtils;
 
 public class XMLEventReaderWrapper implements XMLEventReader {
 
@@ -45,14 +45,14 @@ public class XMLEventReaderWrapper implements XMLEventReader {
 
   private XMLEvent nextGivenEvent = null;
 
-  public XMLEventReaderWrapper(final InputStream stream, final ODataServiceVersion version)
+  public XMLEventReaderWrapper(final InputStream stream)
       throws IOException, XMLStreamException {
     final StringBuilder startBuilder = new StringBuilder();
     startBuilder.append("<").append(CONTENT).
-        append(" xmlns:m").append("=\"").append(Constants.get(version, ConstantKey.METADATA_NS)).append("\"").
-        append(" xmlns:d").append("=\"").append(Constants.get(version, ConstantKey.DATASERVICES_NS)).append("\"").
-        append(" xmlns:georss").append("=\"").append(Constants.get(version, ConstantKey.GEORSS_NS)).append("\"").
-        append(" xmlns:gml").append("=\"").append(Constants.get(version, ConstantKey.GML_NS)).append("\"").
+        append(" xmlns:m").append("=\"").append(Constants.get(ConstantKey.METADATA_NS)).append("\"").
+        append(" xmlns:d").append("=\"").append(Constants.get(ConstantKey.DATASERVICES_NS)).append("\"").
+        append(" xmlns:georss").append("=\"").append(Constants.get(ConstantKey.GEORSS_NS)).append("\"").
+        append(" xmlns:gml").append("=\"").append(Constants.get(ConstantKey.GML_NS)).append("\"").
         append(">");
 
     CONTENT_STAG = startBuilder.toString();

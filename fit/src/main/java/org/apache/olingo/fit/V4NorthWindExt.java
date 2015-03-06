@@ -40,6 +40,6 @@ public class V4NorthWindExt extends V4Services {
 
   @Override
   public Response getMetadata() {
-    return getMetadata("northwindExt-" + Constants.get(version, ConstantKey.METADATA));
+    return getMetadata("northwindExt-" + Constants.get(ConstantKey.METADATA));
   }
 }

@@ -41,7 +41,6 @@ import org.apache.olingo.client.api.communication.response.AsyncResponseWrapper;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRequest
@@ -76,7 +75,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     this.odataRequest.setAccept(this.odataRequest.getAccept());
     this.odataRequest.setContentType(this.odataRequest.getContentType());
 
-    extendHeader(HeaderName.prefer.toString(), new ODataPreferences(ODataServiceVersion.V40).respondAsync());
+    extendHeader(HeaderName.prefer.toString(), new ODataPreferences().respondAsync());
 
     this.odataClient = odataClient;
     final HttpMethod method = odataRequest.getMethod();
@@ -95,14 +94,14 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
 
   @Override
   public final AsyncRequestWrapper<R> wait(final int waitInSeconds) {
-    extendHeader(HeaderName.prefer.toString(), new ODataPreferences(ODataServiceVersion.V40).wait(waitInSeconds));
+    extendHeader(HeaderName.prefer.toString(), new ODataPreferences().wait(waitInSeconds));
     return this;
   }
 
   @Override
   public final AsyncRequestWrapper<R> callback(URI url) {
     extendHeader(HeaderName.prefer.toString(),
-            new ODataPreferences(ODataServiceVersion.V40).callback(url.toASCIIString()));
+            new ODataPreferences().callback(url.toASCIIString()));
     return this;
   }
 
@@ -272,7 +271,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
       headers = res.getHeaders(HeaderName.preferenceApplied.toString());
       if (ArrayUtils.isNotEmpty(headers)) {
         for (Header header : headers) {
-          if (header.getValue().equalsIgnoreCase(new ODataPreferences(ODataServiceVersion.V40).respondAsync())) {
+          if (header.getValue().equalsIgnoreCase(new ODataPreferences().respondAsync())) {
             preferenceApplied = true;
           }
         }

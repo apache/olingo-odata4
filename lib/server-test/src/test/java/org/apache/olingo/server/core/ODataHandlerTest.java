@@ -717,7 +717,7 @@ public class ODataHandlerTest {
 
     if (request.getHeaders(HttpHeader.CONTENT_TYPE) == null) {
       request.addHeader(HttpHeader.CONTENT_TYPE, Collections.singletonList(
-          ODataFormat.JSON.getContentType(ODataServiceVersion.V40).toContentTypeString()));
+          ODataFormat.JSON.getContentType().toContentTypeString()));
     }
 
     final OData odata = OData.newInstance();

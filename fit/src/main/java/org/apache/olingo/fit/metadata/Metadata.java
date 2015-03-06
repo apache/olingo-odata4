@@ -18,14 +18,11 @@
  */
 package org.apache.olingo.fit.metadata;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.fit.utils.ConstantKey;
-import org.apache.olingo.fit.utils.Constants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -34,11 +31,14 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.fit.utils.ConstantKey;
+import org.apache.olingo.fit.utils.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Metadata extends AbstractMetadataElement {
 
@@ -47,15 +47,13 @@ public class Metadata extends AbstractMetadataElement {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(Metadata.class);
 
-  protected final ODataServiceVersion version;
 
   private final Map<String, Schema> schemas;
 
   private final String DEF_NS;
 
-  public Metadata(final InputStream is, final ODataServiceVersion version) {
-    this.version = version;
-    DEF_NS = Constants.get(version, ConstantKey.EDM_NS);
+  public Metadata(final InputStream is) {
+    DEF_NS = Constants.get(ConstantKey.EDM_NS);
     schemas = new HashMap<String, Schema>();
 
     try {

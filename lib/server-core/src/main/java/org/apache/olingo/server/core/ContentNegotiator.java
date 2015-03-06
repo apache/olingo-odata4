@@ -21,7 +21,6 @@ package org.apache.olingo.server.core;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.AcceptType;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -49,8 +48,8 @@ public class ContentNegotiator {
       return Arrays.asList(ContentType.MULTIPART_MIXED);
     default:
       return Arrays.asList(
-          ODataFormat.JSON.getContentType(ODataServiceVersion.V40),
-          ODataFormat.JSON_NO_METADATA.getContentType(ODataServiceVersion.V40));
+          ODataFormat.JSON.getContentType(),
+          ODataFormat.JSON_NO_METADATA.getContentType());
     }
   }
 
@@ -85,7 +84,7 @@ public class ContentNegotiator {
       try {
         result = getAcceptedType(
             AcceptType.fromContentType(format == null ?
-                ContentType.create(formatOption.getFormat()) : format.getContentType(ODataServiceVersion.V40)),
+                ContentType.create(formatOption.getFormat()) : format.getContentType()),
             supportedContentTypes);
       } catch (final IllegalArgumentException e) {}
       if (result == null) {

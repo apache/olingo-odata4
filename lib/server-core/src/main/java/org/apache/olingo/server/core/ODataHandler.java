@@ -223,7 +223,7 @@ public class ODataHandler {
           uriInfo == null ? null : uriInfo.getFormatOption(), request, customContentTypeSupport,
           RepresentationType.ERROR);
     } catch (final ContentNegotiatorException e) {
-      requestedContentType = ODataFormat.JSON.getContentType(ODataServiceVersion.V40);
+      requestedContentType = ODataFormat.JSON.getContentType();
     }
     exceptionProcessor.processError(request, response, serverError, requestedContentType);
   }

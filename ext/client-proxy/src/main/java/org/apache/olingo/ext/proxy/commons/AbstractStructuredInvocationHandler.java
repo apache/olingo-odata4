@@ -50,7 +50,6 @@ import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.ComplexCollection;
@@ -634,9 +633,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   }
 
   public void refs() {
-    if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V40) >= 0) {
       ((URIBuilder) this.uri).appendRefSegment();
-    }
   }
 
   public void clearQueryOptions() {

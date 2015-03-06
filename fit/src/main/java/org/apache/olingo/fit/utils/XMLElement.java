@@ -31,7 +31,6 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,9 +67,9 @@ public class XMLElement {
     return new ByteArrayInputStream(content.toByteArray());
   }
 
-  public XMLEventReader getContentReader(final ODataServiceVersion version)
+  public XMLEventReader getContentReader()
       throws XMLStreamException, IOException {
-    return new XMLEventReaderWrapper(getContent(), version);
+    return new XMLEventReaderWrapper(getContent());
   }
 
   public void setContent(final InputStream content) throws IOException {

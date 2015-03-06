@@ -18,6 +18,15 @@
  */
 package org.apache.olingo.fit;
 
+import java.io.IOException;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.utils.Accept;
@@ -26,14 +35,6 @@ import org.apache.olingo.fit.utils.Constants;
 import org.apache.olingo.fit.utils.FSManager;
 import org.apache.olingo.fit.utils.XMLUtilities;
 import org.springframework.stereotype.Service;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
 
 @Service
 @Path("/V40/Vocabularies.svc")
@@ -45,9 +46,8 @@ public class V4Vocabularies {
 
   public V4Vocabularies() throws IOException {
     metadata = new Metadata(FSManager.instance(ODataServiceVersion.V40).readRes(
-            "vocabularies-" + Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA), Accept.XML),
-            ODataServiceVersion.V40);
-    xml = new XMLUtilities(ODataServiceVersion.V40, metadata);
+        "vocabularies-" + Constants.get(ConstantKey.METADATA), Accept.XML));
+    xml = new XMLUtilities(metadata);
   }
 
   @GET
@@ -56,13 +56,13 @@ public class V4Vocabularies {
   public Response getMetadata() {
     try {
       return xml.createResponse(
-              null,
-              FSManager.instance(ODataServiceVersion.V40).readRes(
-                      "vocabularies-" + Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA), Accept.XML),
-              null,
-              Accept.XML);
+          null,
+          FSManager.instance(ODataServiceVersion.V40).readRes(
+              "vocabularies-" + Constants.get(ConstantKey.METADATA), Accept.XML),
+          null,
+          Accept.XML);
     } catch (Exception e) {
-      return xml.createFaultResponse(Accept.XML.toString(ODataServiceVersion.V40), e);
+      return xml.createFaultResponse(Accept.XML.toString(), e);
     }
   }
 
@@ -72,12 +72,12 @@ public class V4Vocabularies {
   public Response getVocabulary(@PathParam("vocabulary") final String vocabulary) {
     try {
       return xml.createResponse(
-              null,
-              FSManager.instance(ODataServiceVersion.V40).readFile(vocabulary, null),
-              null,
-              Accept.XML);
+          null,
+          FSManager.instance(ODataServiceVersion.V40).readFile(vocabulary, null),
+          null,
+          Accept.XML);
     } catch (Exception e) {
-      return xml.createFaultResponse(Accept.XML.toString(ODataServiceVersion.V40), e);
+      return xml.createFaultResponse(Accept.XML.toString(), e);
     }
   }
 }

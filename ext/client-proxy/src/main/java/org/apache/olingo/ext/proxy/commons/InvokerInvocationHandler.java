@@ -251,7 +251,7 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
       final EdmTypeInfo returnType = new EdmTypeInfo.Builder().
               setEdm(service.getClient().getCachedEdm()).setTypeExpression(operation.returnType()).build();
 
-      final URI prefixURI = URIUtils.buildFunctionInvokeURI(this.baseURI, parameters, getClient().getServiceVersion());
+      final URI prefixURI = URIUtils.buildFunctionInvokeURI(this.baseURI, parameters);
 
       OperationInvocationHandler handler;
 

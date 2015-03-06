@@ -53,7 +53,6 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmBinary;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
@@ -145,18 +144,18 @@ public final class URIUtils {
   }
 
   // TODO: Delete prefix method since these are not relevant in V4
-  private static String prefix(final ODataServiceVersion version, final EdmPrimitiveTypeKind typeKind) {
+  private static String prefix(final EdmPrimitiveTypeKind typeKind) {
     String result = StringUtils.EMPTY;
     return result;
   }
 
 //TODO: Delete suffix method since these are not relevant in V4
-  private static String suffix(final ODataServiceVersion version, final EdmPrimitiveTypeKind typeKind) {
+  private static String suffix(final EdmPrimitiveTypeKind typeKind) {
     String result = StringUtils.EMPTY;
     return result;
   }
 
-  private static String timestamp(final ODataServiceVersion version, final Timestamp timestamp)
+  private static String timestamp(final Timestamp timestamp)
       throws UnsupportedEncodingException, EdmPrimitiveTypeException {
 
     return URLEncoder.encode(EdmDateTimeOffset.getInstance().
@@ -164,7 +163,7 @@ public final class URIUtils {
         Constants.UTF8);
   }
 
-  private static String calendar(final ODataServiceVersion version, final Calendar calendar)
+  private static String calendar(final Calendar calendar)
       throws UnsupportedEncodingException, EdmPrimitiveTypeException {
 
     return URLEncoder.encode(EdmDateTimeOffset.getInstance().
@@ -172,7 +171,7 @@ public final class URIUtils {
         Constants.UTF8);
   }
 
-  private static String duration(final ODataServiceVersion version, final Duration duration)
+  private static String duration(final Duration duration)
       throws UnsupportedEncodingException, EdmPrimitiveTypeException {
 
     return EdmDuration.getInstance().toUriLiteral(URLEncoder.encode(EdmDuration.getInstance().
@@ -197,21 +196,21 @@ public final class URIUtils {
    * @param obj primitive value
    * @return URI representation
    */
-  public static String escape(final ODataServiceVersion version, final Object obj) {
-    return escape(version, obj, true);
+  public static String escape(final Object obj) {
+    return escape(obj, true);
   }
 
-  private static String escape(final ODataServiceVersion version, final Object obj, final boolean singleQuoteEscape) {
+  private static String escape(final Object obj, final boolean singleQuoteEscape) {
     String value;
 
     try {
       if (obj == null) {
         value = Constants.ATTR_NULL;
-      } else if (version.compareTo(ODataServiceVersion.V40) >= 0 && obj instanceof Collection) {
+      } else if (obj instanceof Collection) {
         final StringBuffer buffer = new StringBuffer("[");
         for (@SuppressWarnings("unchecked")
         final Iterator<Object> itor = ((Collection<Object>) obj).iterator(); itor.hasNext();) {
-          buffer.append(escape(version, itor.next(), false));
+          buffer.append(escape(itor.next(), false));
           if (itor.hasNext()) {
             buffer.append(',');
           }
@@ -219,7 +218,7 @@ public final class URIUtils {
         buffer.append(']');
 
         value = buffer.toString();
-      } else if (version.compareTo(ODataServiceVersion.V40) >= 0 && obj instanceof Map) {
+      } else if (obj instanceof Map) {
         final StringBuffer buffer = new StringBuffer("{");
         for (@SuppressWarnings("unchecked")
         final Iterator<Map.Entry<String, Object>> itor =
@@ -227,7 +226,7 @@ public final class URIUtils {
 
           final Map.Entry<String, Object> entry = itor.next();
           buffer.append("\"").append(entry.getKey()).append("\"");
-          buffer.append(':').append(escape(version, entry.getValue(), false));
+          buffer.append(':').append(escape(entry.getValue(), false));
 
           if (itor.hasNext()) {
             buffer.append(',');
@@ -243,33 +242,33 @@ public final class URIUtils {
                 : (obj instanceof Boolean)
                     ? BooleanUtils.toStringTrueFalse((Boolean) obj)
                     : (obj instanceof UUID)
-                        ? prefix(version, EdmPrimitiveTypeKind.Guid)
+                        ? prefix(EdmPrimitiveTypeKind.Guid)
                             + obj.toString()
-                            + suffix(version, EdmPrimitiveTypeKind.Guid)
+                            + suffix(EdmPrimitiveTypeKind.Guid)
                         : (obj instanceof byte[])
                             ? EdmBinary.getInstance().toUriLiteral(Hex.encodeHexString((byte[]) obj))
                             : (obj instanceof Timestamp)
-                                ? timestamp(version, (Timestamp) obj)
+                                ? timestamp((Timestamp) obj)
                                 : (obj instanceof Calendar)
-                                    ? calendar(version, (Calendar) obj)
+                                    ? calendar((Calendar) obj)
                                     : (obj instanceof Duration)
-                                        ? duration(version, (Duration) obj)
+                                        ? duration((Duration) obj)
                                         : (obj instanceof BigDecimal)
                                             ? EdmDecimal.getInstance().valueToString(obj, null, null,
                                                 Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
-                                                + suffix(version, EdmPrimitiveTypeKind.Decimal)
+                                                + suffix(EdmPrimitiveTypeKind.Decimal)
                                             : (obj instanceof Double)
                                                 ? EdmDouble.getInstance().valueToString(obj, null, null,
                                                     Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
-                                                    + suffix(version, EdmPrimitiveTypeKind.Double)
+                                                    + suffix(EdmPrimitiveTypeKind.Double)
                                                 : (obj instanceof Float)
                                                     ? EdmSingle.getInstance().valueToString(obj, null, null,
                                                         Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
-                                                        + suffix(version, EdmPrimitiveTypeKind.Single)
+                                                        + suffix(EdmPrimitiveTypeKind.Single)
                                                     : (obj instanceof Long)
                                                         ? EdmInt64.getInstance().valueToString(obj, null, null,
                                                             Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
-                                                            + suffix(version, EdmPrimitiveTypeKind.Int64)
+                                                            + suffix(EdmPrimitiveTypeKind.Int64)
                                                         : (obj instanceof Geospatial)
                                                             ? URLEncoder.encode(EdmPrimitiveTypeFactory.getInstance(
                                                                 ((Geospatial) obj).getEdmPrimitiveTypeKind()).
@@ -347,61 +346,43 @@ public final class URIUtils {
     return res;
   }
 
-  public static URI buildFunctionInvokeURI(
-      final URI uri, final Map<String, ODataValue> parameters, final ODataServiceVersion serviceVersion) {
-
-    if (serviceVersion.compareTo(ODataServiceVersion.V40) >= 0) {
-      final String rawQuery = uri.getRawQuery();
-      String baseURI = StringUtils.substringBefore(uri.toASCIIString(), "?" + rawQuery);
-      if (baseURI.endsWith("()")) {
-        baseURI = baseURI.substring(0, baseURI.length() - 2);
-      }
-
-      final StringBuilder inlineParams = new StringBuilder();
-      for (Map.Entry<String, ODataValue> param : parameters.entrySet()) {
-        inlineParams.append(param.getKey()).append("=");
-
-        Object value = null;
-        if (param.getValue().isPrimitive()) {
-          value = param.getValue().asPrimitive().toValue();
-        } else if (param.getValue().isComplex()) {
-          value = param.getValue().asComplex().asJavaMap();
-        } else if (param.getValue().isCollection()) {
-          value = param.getValue().asCollection().asJavaCollection();
-        } else if (param.getValue() instanceof org.apache.olingo.commons.api.domain.ODataValue
-            && ((org.apache.olingo.commons.api.domain.ODataValue) param.getValue()).isEnum()) {
-
-          value = ((org.apache.olingo.commons.api.domain.ODataValue) param.getValue()).asEnum().toString();
-        }
-
-        inlineParams.append(URIUtils.escape(serviceVersion, value)).append(',');
-      }
-
-      if (inlineParams.length() > 0) {
-        inlineParams.deleteCharAt(inlineParams.length() - 1);
-      }
-
-      try {
-        return URI.create(baseURI + "(" + URLEncoder.encode(inlineParams.toString(), Constants.UTF8) + ")"
-            + (StringUtils.isNotBlank(rawQuery) ? "?" + rawQuery : StringUtils.EMPTY));
-      } catch (UnsupportedEncodingException e) {
-        throw new IllegalArgumentException("While adding GET parameters", e);
-      }
-    } else {
-      final URIBuilder uriBuilder = new URIBuilder(uri);
-      for (Map.Entry<String, ODataValue> param : parameters.entrySet()) {
-        if (!param.getValue().isPrimitive()) {
-          throw new IllegalArgumentException("Only primitive values can be passed via GET");
-        }
-
-        uriBuilder.addParameter(param.getKey(), URIUtils.escape(serviceVersion, param.getValue()));
-      }
-
-      try {
-        return uriBuilder.build();
-      } catch (URISyntaxException e) {
-        throw new IllegalArgumentException("While adding GET parameters", e);
-      }
+  public static URI buildFunctionInvokeURI(final URI uri, final Map<String, ODataValue> parameters) {
+    final String rawQuery = uri.getRawQuery();
+    String baseURI = StringUtils.substringBefore(uri.toASCIIString(), "?" + rawQuery);
+    if (baseURI.endsWith("()")) {
+      baseURI = baseURI.substring(0, baseURI.length() - 2);
     }
+
+    final StringBuilder inlineParams = new StringBuilder();
+    for (Map.Entry<String, ODataValue> param : parameters.entrySet()) {
+      inlineParams.append(param.getKey()).append("=");
+
+      Object value = null;
+      if (param.getValue().isPrimitive()) {
+        value = param.getValue().asPrimitive().toValue();
+      } else if (param.getValue().isComplex()) {
+        value = param.getValue().asComplex().asJavaMap();
+      } else if (param.getValue().isCollection()) {
+        value = param.getValue().asCollection().asJavaCollection();
+      } else if (param.getValue() instanceof org.apache.olingo.commons.api.domain.ODataValue
+          && ((org.apache.olingo.commons.api.domain.ODataValue) param.getValue()).isEnum()) {
+
+        value = ((org.apache.olingo.commons.api.domain.ODataValue) param.getValue()).asEnum().toString();
+      }
+
+      inlineParams.append(URIUtils.escape(value)).append(',');
+    }
+
+    if (inlineParams.length() > 0) {
+      inlineParams.deleteCharAt(inlineParams.length() - 1);
+    }
+
+    try {
+      return URI.create(baseURI + "(" + URLEncoder.encode(inlineParams.toString(), Constants.UTF8) + ")"
+          + (StringUtils.isNotBlank(rawQuery) ? "?" + rawQuery : StringUtils.EMPTY));
+    } catch (UnsupportedEncodingException e) {
+      throw new IllegalArgumentException("While adding GET parameters", e);
+    }
+
   }
 }

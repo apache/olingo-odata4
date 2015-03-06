@@ -37,7 +37,6 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
@@ -91,9 +90,7 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
     final XmlMapper xmlMapper = new XmlMapper(
         new XmlFactory(new InputFactoryImpl(), new OutputFactoryImpl()), new JacksonXmlModule());
 
-    xmlMapper.setInjectableValues(new InjectableValues.Std().
-        addValue(ODataServiceVersion.class, ODataServiceVersion.V40).
-        addValue(Boolean.class, Boolean.FALSE));
+    xmlMapper.setInjectableValues(new InjectableValues.Std().addValue(Boolean.class, Boolean.FALSE));
 
     xmlMapper.addHandler(new DeserializationProblemHandler() {
       @Override

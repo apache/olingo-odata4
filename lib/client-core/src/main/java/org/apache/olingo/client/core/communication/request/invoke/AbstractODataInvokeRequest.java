@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -52,8 +52,8 @@ import org.apache.olingo.commons.api.serialization.ODataSerializerException;
  * This class implements an OData invoke operation request.
  */
 public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
-        extends AbstractODataBasicRequest<ODataInvokeResponse<T>>
-        implements ODataInvokeRequest<T>, ODataBatchableRequest {
+    extends AbstractODataBasicRequest<ODataInvokeResponse<T>>
+    implements ODataInvokeRequest<T>, ODataBatchableRequest {
 
   private final Class<T> reference;
 
@@ -71,10 +71,10 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
    * @param uri URI that identifies the operation.
    */
   public AbstractODataInvokeRequest(
-          final ODataClient odataClient,
-          final Class<T> reference,
-          final HttpMethod method,
-          final URI uri) {
+      final ODataClient odataClient,
+      final Class<T> reference,
+      final HttpMethod method,
+      final URI uri) {
 
     super(odataClient, method, uri);
 
@@ -97,8 +97,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
 
   private String getActualFormat(final ODataFormat format) {
     return ((ODataProperty.class.isAssignableFrom(reference) && format == ODataFormat.ATOM)
-            ? ODataFormat.XML : format)
-            .getContentType(odataClient.getServiceVersion()).toContentTypeString();
+        ? ODataFormat.XML : format).getContentType().toContentTypeString();
   }
 
   @Override
@@ -120,18 +119,18 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
 
         if (param.getValue().isPrimitive()) {
           property = odataClient.getObjectFactory().
-                  newPrimitiveProperty(param.getKey(), param.getValue().asPrimitive());
+              newPrimitiveProperty(param.getKey(), param.getValue().asPrimitive());
         } else if (param.getValue().isComplex()) {
           property = odataClient.getObjectFactory().
-                  newComplexProperty(param.getKey(), param.getValue().asComplex());
+              newComplexProperty(param.getKey(), param.getValue().asComplex());
         } else if (param.getValue().isCollection()) {
           property = odataClient.getObjectFactory().
-                  newCollectionProperty(param.getKey(), param.getValue().asCollection());
+              newCollectionProperty(param.getKey(), param.getValue().asCollection());
         } else if (param.getValue() instanceof org.apache.olingo.commons.api.domain.ODataValue
-                && ((org.apache.olingo.commons.api.domain.ODataValue) param.getValue()).isEnum()) {
+            && ((org.apache.olingo.commons.api.domain.ODataValue) param.getValue()).isEnum()) {
 
           property = ((ODataClient) odataClient).getObjectFactory().
-                  newEnumProperty(param.getKey(),
+              newEnumProperty(param.getKey(),
                   ((org.apache.olingo.commons.api.domain.ODataValue) param.getValue()).asEnum());
         }
 
@@ -160,7 +159,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
     if (!this.parameters.isEmpty()) {
       if (this.method == HttpMethod.GET) {
         ((HttpRequestBase) this.request).setURI(
-                URIUtils.buildFunctionInvokeURI(this.uri, parameters, odataClient.getServiceVersion()));
+            URIUtils.buildFunctionInvokeURI(this.uri, parameters));
       } else if (this.method == HttpMethod.POST) {
         ((HttpPost) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 
@@ -183,7 +182,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
     private T invokeResult = null;
 
     private ODataInvokeResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-            final HttpResponse res) {
+        final HttpResponse res) {
 
       super(odataClient, httpClient, res);
     }
@@ -202,13 +201,13 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
             final InputStream responseStream = this.payload == null ? res.getEntity().getContent() : this.payload;
             if (ODataEntitySet.class.isAssignableFrom(reference)) {
               invokeResult = reference.cast(odataClient.getReader().readEntitySet(responseStream,
-                      ODataFormat.fromString(getContentType())));
+                  ODataFormat.fromString(getContentType())));
             } else if (ODataEntity.class.isAssignableFrom(reference)) {
               invokeResult = reference.cast(odataClient.getReader().readEntity(responseStream,
-                      ODataFormat.fromString(getContentType())));
+                  ODataFormat.fromString(getContentType())));
             } else if (ODataProperty.class.isAssignableFrom(reference)) {
               invokeResult = reference.cast(odataClient.getReader().readProperty(responseStream,
-                      ODataFormat.fromString(getContentType())));
+                  ODataFormat.fromString(getContentType())));
             }
           }
         } catch (IOException e) {

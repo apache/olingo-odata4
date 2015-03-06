@@ -102,7 +102,7 @@ public abstract class Commons {
     if (!METADATA.containsKey(version)) {
       final InputStream is = Commons.class.getResourceAsStream("/" + version.name() + "/metadata.xml");
 
-      METADATA.put(version, new Metadata(is, version));
+      METADATA.put(version, new Metadata(is));
     }
 
     return METADATA.get(version);
@@ -130,16 +130,15 @@ public abstract class Commons {
 
   public static String getLinksPath(final String entitySetName, final String entityId,
       final String linkName, final Accept accept) throws IOException {
-    return getLinksPath(ODataServiceVersion.V30, getEntityBasePath(entitySetName, entityId), linkName, accept);
+    return getLinksPath(getEntityBasePath(entitySetName, entityId), linkName, accept);
 
   }
 
-  public static String getLinksPath(
-      final ODataServiceVersion version, final String basePath, final String linkName, final Accept accept)
+  public static String getLinksPath(final String basePath, final String linkName, final Accept accept)
       throws IOException {
     try {
-      return FSManager.instance(version)
-          .getAbsolutePath(basePath + Constants.get(version, ConstantKey.LINKS_FILE_PATH)
+      return FSManager.instance(ODataServiceVersion.V40)
+          .getAbsolutePath(basePath + Constants.get(ConstantKey.LINKS_FILE_PATH)
               + File.separatorChar + linkName, accept);
     } catch (Exception e) {
       throw new IOException(e);
@@ -163,19 +162,18 @@ public abstract class Commons {
     }
   }
 
-  public static InputStream getLinksAsATOM(final ODataServiceVersion version,
-      final Map.Entry<String, Collection<String>> link) throws IOException {
+  public static InputStream getLinksAsATOM(final Map.Entry<String, Collection<String>> link) throws IOException {
 
     final StringBuilder builder = new StringBuilder();
     builder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-    builder.append("<links xmlns=\"").append(Constants.get(version, ConstantKey.DATASERVICES_NS)).append("\">");
+    builder.append("<links xmlns=\"").append(Constants.get(ConstantKey.DATASERVICES_NS)).append("\">");
 
     for (String uri : link.getValue()) {
       builder.append("<uri>");
       if (URI.create(uri).isAbsolute()) {
         builder.append(uri);
       } else {
-        builder.append(Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL)).append(uri);
+        builder.append(Constants.get(ConstantKey.DEFAULT_SERVICE_URL)).append(uri);
       }
       builder.append("</uri>");
     }
@@ -185,14 +183,14 @@ public abstract class Commons {
     return IOUtils.toInputStream(builder.toString(), Constants.ENCODING);
   }
 
-  public static InputStream getLinksAsJSON(final ODataServiceVersion version,
-      final String entitySetName, final Map.Entry<String, Collection<String>> link)
-      throws IOException {
+  public static InputStream
+      getLinksAsJSON(final String entitySetName, final Map.Entry<String, Collection<String>> link)
+          throws IOException {
 
     final ObjectNode links = new ObjectNode(JsonNodeFactory.instance);
     links.put(
-        Constants.get(version, ConstantKey.JSON_ODATAMETADATA_NAME),
-        Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + entitySetName + "/$links/" + link.getKey());
+        Constants.get(ConstantKey.JSON_ODATAMETADATA_NAME),
+        Constants.get(ConstantKey.ODATA_METADATA_PREFIX) + entitySetName + "/$links/" + link.getKey());
 
     final ArrayNode uris = new ArrayNode(JsonNodeFactory.instance);
 
@@ -201,7 +199,7 @@ public abstract class Commons {
       if (URI.create(uri).isAbsolute()) {
         absoluteURI = uri;
       } else {
-        absoluteURI = Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + uri;
+        absoluteURI = Constants.get(ConstantKey.DEFAULT_SERVICE_URL) + uri;
       }
       uris.add(new ObjectNode(JsonNodeFactory.instance).put("url", absoluteURI));
     }
@@ -215,7 +213,7 @@ public abstract class Commons {
     return IOUtils.toInputStream(links.toString(), Constants.ENCODING);
   }
 
-  public static InputStream changeFormat(final InputStream is, final ODataServiceVersion version, final Accept target) {
+  public static InputStream changeFormat(final InputStream is, final Accept target) {
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
     try {
@@ -225,7 +223,7 @@ public abstract class Commons {
       final ObjectMapper mapper = new ObjectMapper(
           new JsonFactory().configure(JsonParser.Feature.ALLOW_NUMERIC_LEADING_ZEROS, true));
       final JsonNode node =
-          changeFormat((ObjectNode) mapper.readTree(new ByteArrayInputStream(bos.toByteArray())), version, target);
+          changeFormat((ObjectNode) mapper.readTree(new ByteArrayInputStream(bos.toByteArray())), target);
 
       return IOUtils.toInputStream(node.toString(), Constants.ENCODING);
     } catch (Exception e) {
@@ -237,33 +235,33 @@ public abstract class Commons {
   }
 
   @SuppressWarnings("fallthrough")
-  public static JsonNode changeFormat(final ObjectNode node, final ODataServiceVersion version, final Accept target) {
+  public static JsonNode changeFormat(final ObjectNode node, final Accept target) {
     final List<String> toBeRemoved = new ArrayList<String>();
     switch (target) {
     case JSON_NOMETA:
       // nometa + minimal
-      toBeRemoved.add(Constants.get(version, ConstantKey.JSON_ODATAMETADATA_NAME));
+      toBeRemoved.add(Constants.get(ConstantKey.JSON_ODATAMETADATA_NAME));
 
     case JSON:
       // minimal
-      toBeRemoved.add(Constants.get(version, ConstantKey.JSON_EDITLINK_NAME));
-      toBeRemoved.add(Constants.get(version, ConstantKey.JSON_ID_NAME));
-      toBeRemoved.add(Constants.get(version, ConstantKey.JSON_TYPE_NAME));
+      toBeRemoved.add(Constants.get(ConstantKey.JSON_EDITLINK_NAME));
+      toBeRemoved.add(Constants.get(ConstantKey.JSON_ID_NAME));
+      toBeRemoved.add(Constants.get(ConstantKey.JSON_TYPE_NAME));
 
       final Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
       while (fields.hasNext()) {
         final Map.Entry<String, JsonNode> field = fields.next();
-        if (field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_MEDIA_SUFFIX))
-            || field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX))
-            || field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_TYPE_SUFFIX))) {
+        if (field.getKey().endsWith(Constants.get(ConstantKey.JSON_MEDIA_SUFFIX))
+            || field.getKey().endsWith(Constants.get(ConstantKey.JSON_NAVIGATION_SUFFIX))
+            || field.getKey().endsWith(Constants.get(ConstantKey.JSON_TYPE_SUFFIX))) {
           toBeRemoved.add(field.getKey());
         } else if (field.getValue().isObject()) {
-          changeFormat((ObjectNode) field.getValue(), version, target);
+          changeFormat((ObjectNode) field.getValue(), target);
         } else if (field.getValue().isArray()) {
           for (final Iterator<JsonNode> subItor = field.getValue().elements(); subItor.hasNext();) {
             final JsonNode subNode = subItor.next();
             if (subNode.isObject()) {
-              changeFormat((ObjectNode) subNode, version, target);
+              changeFormat((ObjectNode) subNode, target);
             }
           }
         }
@@ -280,9 +278,9 @@ public abstract class Commons {
     return node;
   }
 
-  public static String getETag(final String basePath, final ODataServiceVersion version) throws Exception {
+  public static String getETag(final String basePath) throws Exception {
     try {
-      final InputStream is = FSManager.instance(version).readFile(basePath + "etag", Accept.TEXT);
+      final InputStream is = FSManager.instance(ODataServiceVersion.V40).readFile(basePath + "etag", Accept.TEXT);
       if (is.available() <= 0) {
         return null;
       } else {

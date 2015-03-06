@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.fit.utils;
 
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
@@ -120,11 +118,6 @@ public class Constants {
   }
 
   public static String get(final ConstantKey key) {
-    return get(null, key);
-  }
-
-  public static String get(final ODataServiceVersion version, final ConstantKey key) {
-    return (version == null || version.compareTo(ODataServiceVersion.V30) <= 0 || !v4constants.containsKey(key)
-        ? constants : v4constants).get(key);
+    return (!v4constants.containsKey(key) ? constants : v4constants).get(key);
   }
 }

@@ -20,7 +20,6 @@ package org.apache.olingo.server.core;
 
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
@@ -75,7 +74,7 @@ public class ODataImpl extends OData {
 
   @Override
   public ServiceMetadata createServiceMetadata(EdmProvider edmProvider, List<EdmxReference> references) {
-    return new ServiceMetadataImpl(ODataServiceVersion.V40, edmProvider, references);
+    return new ServiceMetadataImpl(edmProvider, references);
   }
 
   @Override
@@ -89,7 +88,7 @@ public class ODataImpl extends OData {
   }
 
   @Override
-  public ODataDeserializer createDeserializer(ODataFormat format) throws DeserializerException{
+  public ODataDeserializer createDeserializer(ODataFormat format) throws DeserializerException {
     ODataDeserializer serializer;
     switch (format) {
     case JSON:
@@ -98,7 +97,7 @@ public class ODataImpl extends OData {
       serializer = new ODataJsonDeserializer();
       break;
     case XML:
-      //We do not support xml deserialization right now so this mus lead to an error
+      // We do not support xml deserialization right now so this mus lead to an error
     default:
       throw new DeserializerException("Unsupported format: " + format,
           SerializerException.MessageKeys.UNSUPPORTED_FORMAT, format.toString());

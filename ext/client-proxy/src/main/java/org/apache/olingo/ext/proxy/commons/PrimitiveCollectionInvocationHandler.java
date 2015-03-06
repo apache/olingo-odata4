@@ -36,7 +36,6 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 
@@ -94,9 +93,7 @@ public class PrimitiveCollectionInvocationHandler<T extends Serializable>
   public Triple<List<T>, URI, List<ODataAnnotation>> fetchPartial(final URI uri, final Class<T> typeRef) {
     final ODataPropertyRequest<org.apache.olingo.commons.api.domain.ODataProperty> req =
             getClient().getRetrieveRequestFactory().getPropertyRequest(uri);
-    if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) > 0) {
       req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
-    }
 
     final ODataRetrieveResponse<org.apache.olingo.commons.api.domain.ODataProperty> res = req.execute();
 

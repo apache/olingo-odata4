@@ -165,12 +165,6 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   }
 
   @Override
-  public ODataRequest setSlug(final String value) {
-    odataHeaders.setHeader(HeaderName.slug, value);
-    return this;
-  }
-
-  @Override
   public ODataRequest addCustomHeader(final String name, final String value) {
     odataHeaders.setHeader(name, value);
     return this;
@@ -186,7 +180,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   public String getAccept() {
     final String acceptHead = odataHeaders.getHeader(HeaderName.accept);
     return StringUtils.isBlank(acceptHead)
-            ? getDefaultFormat().getContentType(odataClient.getServiceVersion()).toContentTypeString()
+            ? getDefaultFormat().getContentType().toContentTypeString()
             : acceptHead;
   }
 
@@ -209,7 +203,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   public String getContentType() {
     final String contentTypeHead = odataHeaders.getHeader(HeaderName.contentType);
     return StringUtils.isBlank(contentTypeHead)
-            ? getDefaultFormat().getContentType(odataClient.getServiceVersion()).toContentTypeString()
+            ? getDefaultFormat().getContentType().toContentTypeString()
             : contentTypeHead;
   }
 

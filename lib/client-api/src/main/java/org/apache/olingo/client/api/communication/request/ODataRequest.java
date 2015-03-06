@@ -158,15 +158,6 @@ public interface ODataRequest {
   String getContentType();
 
   /**
-   * Adds <tt>Slug</tt> OData request header.
-   *
-   * @param value header value.
-   * @return current object
-   * @see org.apache.olingo.client.api.communication.header.HeaderName#slug
-   */
-  ODataRequest setSlug(final String value);
-
-  /**
    * Adds <tt>X-HTTP-METHOD</tt> OData request header.
    *
    * @param value header value.

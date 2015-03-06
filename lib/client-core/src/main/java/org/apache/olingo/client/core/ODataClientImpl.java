@@ -57,7 +57,7 @@ import org.apache.olingo.commons.core.serialization.JsonSerializer;
 
 public class ODataClientImpl implements ODataClient {
 
-  private final FilterFactory filterFactory = new FilterFactoryImpl(getServiceVersion());
+  private final FilterFactory filterFactory = new FilterFactoryImpl();
 
   private final SearchFactory searchFactory = new SearchFactoryImpl();
 
@@ -65,7 +65,7 @@ public class ODataClientImpl implements ODataClient {
 
   private final ODataBinder binder = new ODataBinderImpl(this);
 
-  private final ODataObjectFactory objectFactory = new ODataObjectFactoryImpl(getServiceVersion());
+  private final ODataObjectFactory objectFactory = new ODataObjectFactoryImpl();
 
   private final AsyncRequestFactory asyncReqFact = new AsyncRequestFactoryImpl(this);
 
@@ -88,7 +88,7 @@ public class ODataClientImpl implements ODataClient {
 
   @Override
   public ODataPreferences newPreferences() {
-    return new ODataPreferences(getServiceVersion());
+    return new ODataPreferences();
   }
 
   @Override
@@ -111,7 +111,7 @@ public class ODataClientImpl implements ODataClient {
 
   @Override
   public URIBuilder newURIBuilder(final String serviceRoot) {
-    return new URIBuilderImpl(getServiceVersion(), getConfiguration(), serviceRoot);
+    return new URIBuilderImpl(getConfiguration(), serviceRoot);
   }
   
   @Override

@@ -38,7 +38,6 @@ import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -213,8 +212,7 @@ public class MetadataDocumentXmlSerializerTest {
   @Test
   public void aliasTest() throws Exception {
     EdmProvider provider = new LocalProvider();
-    ServiceMetadata serviceMetadata =
-        new ServiceMetadataImpl(ODataServiceVersion.V40, provider, Collections.<EdmxReference> emptyList());
+    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(provider, Collections.<EdmxReference> emptyList());
     InputStream metadataStream = serializer.metadataDocument(serviceMetadata);
     String metadata = IOUtils.toString(metadataStream);
     assertNotNull(metadata);
@@ -229,7 +227,7 @@ public class MetadataDocumentXmlSerializerTest {
     assertTrue(metadata.contains("<FunctionImport Name=\"FINRTInt16\" " +
         "Function=\"Alias.UFNRTInt16\" IncludeInServiceDocument=\"true\"/>"));
   }
-  
+
   @Test
   public void writeAbstractComplexType() throws Exception {
     EdmSchema schema = mock(EdmSchema.class);
@@ -246,26 +244,25 @@ public class MetadataDocumentXmlSerializerTest {
     complexType.setName(name.getName());
     complexType.setOpenType(true);
     List<Property> properties = new ArrayList<Property>();
-    
+
     properties.add(new Property().setName("prop1").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
     properties.add(new Property().setName("prop2").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
-    
+
     complexType.setProperties(properties);
     EdmComplexTypeImpl c1 = EdmComplexTypeImpl.getInstance(edm, name, complexType);
     complexTypes.add(c1);
-    
+
     when(schema.getComplexTypes()).thenReturn(complexTypes);
-    
-    
+
     InputStream metadataStream = serializer.metadataDocument(serviceMetadata);
     String metadata = IOUtils.toString(metadataStream);
-    
-    assertTrue(metadata.contains("<ComplexType Name=\"ComplexType\" Abstract=\"true\">" 
-        + "<Property Name=\"prop1\" Type=\"Edm.String\"/>" 
-        + "<Property Name=\"prop2\" Type=\"Edm.String\"/>" 
+
+    assertTrue(metadata.contains("<ComplexType Name=\"ComplexType\" Abstract=\"true\">"
+        + "<Property Name=\"prop1\" Type=\"Edm.String\"/>"
+        + "<Property Name=\"prop2\" Type=\"Edm.String\"/>"
         + "</ComplexType>"));
   }
-  
+
   private class LocalProvider extends EdmProvider {
     private final static String nameSpace = "namespace";
 

@@ -34,12 +34,10 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
@@ -452,9 +450,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
       final ODataEntityRequest<ODataEntity> req =
           getClient().getRetrieveRequestFactory().getEntityRequest(uri.build());
 
-      if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) > 0) {
         req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
-      }
 
       final ODataRetrieveResponse<ODataEntity> res = req.execute();
 
@@ -496,10 +492,6 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   // use read- instead of get- for .invoke() to distinguish it from entity property getter.
   public String readEntityReferenceID() {
-    // TODO: Check
-    if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
-      throw new ODataRuntimeException("Only OData V4 or higher supported.");
-    }
     URI id = getEntity() == null ? null : ((ODataEntity) getEntity()).getId();
 
     return id == null ? null : id.toASCIIString();

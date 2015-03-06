@@ -18,15 +18,7 @@
  */
 package org.apache.olingo.client.core.uri;
 
-import org.apache.olingo.client.core.edm.EdmEnumTypeImpl;
-import org.apache.olingo.client.core.edm.xml.EnumTypeImpl;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.edm.EdmEnumType;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.edm.geo.Geospatial;
-import org.apache.olingo.commons.api.edm.geo.Point;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -35,18 +27,25 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.TimeZone;
 
-import static org.junit.Assert.assertEquals;
+import org.apache.olingo.client.core.edm.EdmEnumTypeImpl;
+import org.apache.olingo.client.core.edm.xml.EnumTypeImpl;
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.junit.Test;
 
 public class URIEscapeTest {
 
   @Test
   public void _null() {
-    assertEquals("null", URIUtils.escape(ODataServiceVersion.V40, null));
+    assertEquals("null", URIUtils.escape( null));
   }
 
   @Test
   public void _boolean() {
-    assertEquals("true", URIUtils.escape(ODataServiceVersion.V40, Boolean.TRUE));
+    assertEquals("true", URIUtils.escape( Boolean.TRUE));
   }
 
   @Test
@@ -54,7 +53,7 @@ public class URIEscapeTest {
     final EdmEnumType pattern =
         new EdmEnumTypeImpl(null, new FullQualifiedName("Sales", "Pattern"), new EnumTypeImpl());
 
-    assertEquals("Sales.Pattern'Yellow'", URIUtils.escape(ODataServiceVersion.V40, pattern.toUriLiteral("Yellow")));
+    assertEquals("Sales.Pattern'Yellow'", URIUtils.escape( pattern.toUriLiteral("Yellow")));
   }
 
   @Test
@@ -64,7 +63,7 @@ public class URIEscapeTest {
     calendar.set(2014, 6, 11, 12, 30, 04);
 
     assertEquals(URLEncoder.encode("2014-07-11T12:30:04+01:00", Constants.UTF8),
-        URIUtils.escape(ODataServiceVersion.V40, calendar));
+        URIUtils.escape( calendar));
   }
 
   @Test
@@ -74,18 +73,18 @@ public class URIEscapeTest {
     point.setY(64.1);
 
     assertEquals(URLEncoder.encode("geography'SRID=4326;Point(142.1 64.1)'", Constants.UTF8),
-        URIUtils.escape(ODataServiceVersion.V40, point));
+        URIUtils.escape( point));
   }
 
   @Test
   public void collection() {
     assertEquals("[\"red\",\"green\"]",
-        URIUtils.escape(ODataServiceVersion.V40, Arrays.asList(new String[] { "red", "green" })));
+        URIUtils.escape( Arrays.asList(new String[] { "red", "green" })));
   }
 
   @Test
   public void complex() {
     assertEquals("{\"Name\":\"Value\"}",
-        URIUtils.escape(ODataServiceVersion.V40, Collections.singletonMap("Name", "Value")));
+        URIUtils.escape( Collections.singletonMap("Name", "Value")));
   }
 }

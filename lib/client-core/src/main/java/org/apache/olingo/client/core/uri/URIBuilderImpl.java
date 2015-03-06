@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -39,7 +39,6 @@ import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.api.uri.URISearch;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,14 +51,12 @@ public class URIBuilderImpl implements URIBuilder {
    * @param serviceRoot absolute URL (schema, host and port included) representing the location of the root of the data
    * service.
    */
-  public URIBuilderImpl(
-      final ODataServiceVersion version, final Configuration configuration, final String serviceRoot) {
-    this.version = version;
+  public URIBuilderImpl(final Configuration configuration, final String serviceRoot) {
     this.configuration = configuration;
 
     segments.add(new Segment(SegmentType.SERVICEROOT, serviceRoot));
   }
-  
+
   protected static class Segment {
 
     private final SegmentType type;
@@ -84,8 +81,6 @@ public class URIBuilderImpl implements URIBuilder {
    * Logger.
    */
   protected static final Logger LOG = LoggerFactory.getLogger(URIBuilderImpl.class);
-
-  private final ODataServiceVersion version;
 
   private final Configuration configuration;
 
@@ -136,7 +131,7 @@ public class URIBuilderImpl implements URIBuilder {
 
   @Override
   public URIBuilder appendKeySegment(final Object val) {
-    final String segValue = URIUtils.escape(version, val);
+    final String segValue = URIUtils.escape(val);
 
     segments.add(configuration.isKeyAsSegment()
         ? new Segment(SegmentType.KEY_AS_SEGMENT, segValue)
@@ -343,7 +338,7 @@ public class URIBuilderImpl implements URIBuilder {
       final StringBuilder keyBuilder = new StringBuilder().append('(');
       for (Map.Entry<String, Object> entry : segmentValues.entrySet()) {
         keyBuilder.append(entry.getKey()).append('=').append(
-            escape ? URIUtils.escape(version, entry.getValue()) : entry.getValue());
+            escape ? URIUtils.escape(entry.getValue()) : entry.getValue());
         keyBuilder.append(',');
       }
       keyBuilder.deleteCharAt(keyBuilder.length() - 1).append(')');
@@ -359,7 +354,7 @@ public class URIBuilderImpl implements URIBuilder {
 
   @Override
   public URIBuilder appendKeySegment(final Map<String, Pair<EdmEnumType, String>> enumValues,
-          final Map<String, Object> segmentValues) {
+      final Map<String, Object> segmentValues) {
 
     final Map<String, Object> values = new LinkedHashMap<String, Object>();
     for (Map.Entry<String, Pair<EdmEnumType, String>> entry : enumValues.entrySet()) {
@@ -403,7 +398,7 @@ public class URIBuilderImpl implements URIBuilder {
   @Override
   public URIBuilder appendCrossjoinSegment(final String... segmentValues) {
     final StringBuilder segValue = new StringBuilder(SegmentType.CROSS_JOIN.getValue()).
-            append('(').append(StringUtils.join(segmentValues, ",")).append(')');
+        append('(').append(StringUtils.join(segmentValues, ",")).append(')');
     segments.add(new Segment(SegmentType.CROSS_JOIN, segValue.toString()));
     return this;
   }

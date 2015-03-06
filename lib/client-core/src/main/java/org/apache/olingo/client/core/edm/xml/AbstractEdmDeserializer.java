@@ -21,7 +21,6 @@ package org.apache.olingo.client.core.edm.xml;
 import java.io.IOException;
 
 import org.apache.olingo.client.core.edm.xml.annotation.ConstantAnnotationExpressionImpl;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,7 +30,7 @@ import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 
 public abstract class AbstractEdmDeserializer<T> extends JsonDeserializer<T> {
 
-  protected ODataServiceVersion version;
+  //protected ODataServiceVersion version;
 
   protected boolean isAnnotationConstExprConstruct(final JsonParser jp) throws IOException {
     return ConstantAnnotationExpressionImpl.Type.fromString(jp.getCurrentName()) != null;
@@ -63,7 +62,7 @@ public abstract class AbstractEdmDeserializer<T> extends JsonDeserializer<T> {
   public T deserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    version = (ODataServiceVersion) ctxt.findInjectableValue(ODataServiceVersion.class.getName(), null, null);
+    //version = (ODataServiceVersion) ctxt.findInjectableValue(ODataServiceVersion.class.getName(), null, null);
     return doDeserialize(jp, ctxt);
   }
 
