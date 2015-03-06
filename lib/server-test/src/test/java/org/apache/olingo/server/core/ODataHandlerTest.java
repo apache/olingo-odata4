@@ -97,8 +97,8 @@ public class ODataHandlerTest {
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, "/", processor);
-    dispatchMethodNotAllowed(HttpMethod.PUT, "/", processor);
     dispatchMethodNotAllowed(HttpMethod.PATCH, "/", processor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, "/", processor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, "/", processor);
   }
 
@@ -135,8 +135,8 @@ public class ODataHandlerTest {
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, "$metadata", processor);
-    dispatchMethodNotAllowed(HttpMethod.PUT, "$metadata", processor);
     dispatchMethodNotAllowed(HttpMethod.PATCH, "$metadata", processor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, "$metadata", processor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, "$metadata", processor);
   }
 
@@ -296,88 +296,138 @@ public class ODataHandlerTest {
     EntityProcessor entityProcessor = mock(EntityProcessor.class);
     dispatch(HttpMethod.GET, "FICRTETKeyNav()", entityProcessor);
     verify(entityProcessor).readEntity(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
     EntityCollectionProcessor entityCollectionProcessor = mock(EntityCollectionProcessor.class);
     dispatch(HttpMethod.GET, "FICRTCollESTwoKeyNavParam(ParameterInt16=123)", entityCollectionProcessor);
     verify(entityCollectionProcessor).readEntityCollection(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    final String entityCountUri = "FICRTCollESTwoKeyNavParam(ParameterInt16=123)/$count";
+    final CountEntityCollectionProcessor entityCountProcessor = mock(CountEntityCollectionProcessor.class);
+    dispatch(HttpMethod.GET, entityCountUri, entityCountProcessor);
+    verify(entityCountProcessor).countEntityCollection(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    dispatchMethodNotAllowed(HttpMethod.POST, entityCountUri, entityCountProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, entityCountUri, entityCountProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, entityCountUri, entityCountProcessor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, entityCountUri, entityCountProcessor);
 
     PrimitiveProcessor primitiveProcessor = mock(PrimitiveProcessor.class);
     dispatch(HttpMethod.GET, "FICRTString()", primitiveProcessor);
     verify(primitiveProcessor).readPrimitive(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
+    final String valueUri = "FINRTInt16()/$value";
+    final PrimitiveValueProcessor primitiveValueProcessor = mock(PrimitiveValueProcessor.class);
+    dispatch(HttpMethod.GET, valueUri, primitiveValueProcessor);
+    verify(primitiveValueProcessor).readPrimitiveValue(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+    dispatchMethodNotAllowed(HttpMethod.POST, valueUri, primitiveValueProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, valueUri, primitiveValueProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, valueUri, primitiveValueProcessor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, valueUri, primitiveValueProcessor);
+
+    final String primitiveCollectionUri = "FICRTCollString()";
     PrimitiveCollectionProcessor primitiveCollectionProcessor = mock(PrimitiveCollectionProcessor.class);
-    dispatch(HttpMethod.GET, "FICRTCollString()", primitiveCollectionProcessor);
+    dispatch(HttpMethod.GET, primitiveCollectionUri, primitiveCollectionProcessor);
     verify(primitiveCollectionProcessor).readPrimitiveCollection(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+    dispatchMethodNotAllowed(HttpMethod.POST, primitiveCollectionUri, primitiveCollectionProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, primitiveCollectionUri, primitiveCollectionProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, primitiveCollectionUri, primitiveCollectionProcessor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, primitiveCollectionUri, primitiveCollectionProcessor);
+
+    final String primitiveCountUri = "FICRTCollString()/$count";
+    final CountPrimitiveCollectionProcessor primitiveCountProcessor = mock(CountPrimitiveCollectionProcessor.class);
+    dispatch(HttpMethod.GET, primitiveCountUri, primitiveCountProcessor);
+    verify(primitiveCountProcessor).countPrimitiveCollection(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    dispatchMethodNotAllowed(HttpMethod.POST, primitiveCountUri, primitiveCountProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, primitiveCountUri, primitiveCountProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, primitiveCountUri, primitiveCountProcessor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, primitiveCountUri, primitiveCountProcessor);
 
     ComplexProcessor complexProcessor = mock(ComplexProcessor.class);
     dispatch(HttpMethod.GET, "FICRTCTTwoPrim()", complexProcessor);
     verify(complexProcessor).readComplex(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
     ComplexCollectionProcessor complexCollectionProcessor = mock(ComplexCollectionProcessor.class);
     dispatch(HttpMethod.GET, "FICRTCollCTTwoPrim()", complexCollectionProcessor);
     verify(complexCollectionProcessor).readComplexCollection(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
-    dispatchMethodNotAllowed(HttpMethod.POST, "FICRTCollString()", mock(Processor.class));
-    dispatchMethodNotAllowed(HttpMethod.PUT, "FICRTCollString()", mock(Processor.class));
-    dispatchMethodNotAllowed(HttpMethod.DELETE, "FICRTCollString()", mock(Processor.class));
+    final String complexCountUri = "FICRTCollCTTwoPrim()/$count";
+    final CountComplexCollectionProcessor complexCountProcessor = mock(CountComplexCollectionProcessor.class);
+    dispatch(HttpMethod.GET, complexCountUri, complexCountProcessor);
+    verify(complexCountProcessor).countComplexCollection(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    dispatchMethodNotAllowed(HttpMethod.POST, complexCountUri, complexCountProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, complexCountUri, complexCountProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, complexCountUri, complexCountProcessor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, complexCountUri, complexCountProcessor);
+
+    final String mediaUri = "FICRTESMedia()/$value";
+    final MediaEntityProcessor mediaProcessor = mock(MediaEntityProcessor.class);
+    dispatch(HttpMethod.GET, mediaUri, mediaProcessor);
+    verify(mediaProcessor).readMediaEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+    dispatchMethodNotAllowed(HttpMethod.POST, mediaUri, mediaProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, mediaUri, mediaProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, mediaUri, mediaProcessor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, mediaUri, mediaProcessor);
   }
-
 
   @Test
   public void dispatchAction() throws Exception {
     ActionPrimitiveProcessor primitiveProcessor = mock(ActionPrimitiveProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRT_STRING, primitiveProcessor);
     verify(primitiveProcessor).processActionPrimitive(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
-            any(ContentType.class), any(ContentType.class));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class), any(ContentType.class));
 
     ActionPrimitiveCollectionProcessor primitiveCollectionProcessor = mock(ActionPrimitiveCollectionProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRT_COLL_STRING_TWO_PARAM, primitiveCollectionProcessor);
     verify(primitiveCollectionProcessor).processActionPrimitiveCollection(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
-            any(ContentType.class), any(ContentType.class));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class), any(ContentType.class));
 
     ActionComplexProcessor complexProcessor = mock(ActionComplexProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRTCT_TWO_PRIM_PARAM, complexProcessor);
     verify(complexProcessor).processActionComplex(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
-            any(ContentType.class), any(ContentType.class));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class), any(ContentType.class));
 
     ActionComplexCollectionProcessor complexCollectionProcessor = mock(ActionComplexCollectionProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRT_COLL_CT_TWO_PRIM_PARAM, complexCollectionProcessor);
     verify(complexCollectionProcessor).processActionComplexCollection(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
-            any(ContentType.class), any(ContentType.class));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class), any(ContentType.class));
 
     ActionEntityProcessor entityProcessor = mock(ActionEntityProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRTET_TWO_KEY_TWO_PRIM_PARAM, entityProcessor);
     verify(entityProcessor).processActionEntity(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
-            any(ContentType.class), any(ContentType.class));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class), any(ContentType.class));
 
     ActionEntityCollectionProcessor entityCollectionProcessor = mock(ActionEntityCollectionProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRT_COLL_ET_KEY_NAV_PARAM, entityCollectionProcessor);
     verify(entityCollectionProcessor).processActionEntityCollection(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
-            any(ContentType.class), any(ContentType.class));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class), any(ContentType.class));
 
     ActionEntityProcessor entityProcessorEs = mock(ActionEntityProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRTES_ALL_PRIM_PARAM, entityProcessorEs);
     verify(entityProcessorEs).processActionEntity(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
-            any(ContentType.class), any(ContentType.class));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class), any(ContentType.class));
 
     ActionEntityCollectionProcessor entityCollectionProcessorEs = mock(ActionEntityCollectionProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRT_COLL_ES_ALL_PRIM_PARAM, entityCollectionProcessorEs);
     verify(entityCollectionProcessorEs).processActionEntityCollection(
-            any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
-            any(ContentType.class), any(ContentType.class));
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class), any(ContentType.class));
 
     dispatchMethodNotAllowed(HttpMethod.GET, "AIRTString", mock(Processor.class));
   }
@@ -391,12 +441,12 @@ public class ODataHandlerTest {
     verify(processor).readEntity(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
-    dispatch(HttpMethod.PUT, uri, processor);
+    dispatch(HttpMethod.PATCH, uri, processor);
     verify(processor).updateEntity(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
         any(ContentType.class));
 
-    dispatch(HttpMethod.PATCH, uri, processor);
+    dispatch(HttpMethod.PUT, uri, processor);
     verify(processor, times(2)).updateEntity(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
         any(ContentType.class));
@@ -452,12 +502,12 @@ public class ODataHandlerTest {
     verify(processor).readPrimitive(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
-    dispatch(HttpMethod.PUT, uri, processor);
+    dispatch(HttpMethod.PATCH, uri, processor);
     verify(processor).updatePrimitive(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
         any(ContentType.class));
 
-    dispatch(HttpMethod.PATCH, uri, processor);
+    dispatch(HttpMethod.PUT, uri, processor);
     verify(processor, times(2)).updatePrimitive(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
         any(ContentType.class));
@@ -519,8 +569,8 @@ public class ODataHandlerTest {
     verify(processor).countPrimitiveCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
-    dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
   }
 
@@ -533,12 +583,12 @@ public class ODataHandlerTest {
     verify(processor).readComplex(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
-    dispatch(HttpMethod.PUT, uri, processor);
+    dispatch(HttpMethod.PATCH, uri, processor);
     verify(processor).updateComplex(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
         any(ContentType.class));
 
-    dispatch(HttpMethod.PATCH, uri, processor);
+    dispatch(HttpMethod.PUT, uri, processor);
     verify(processor, times(2)).updateComplex(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
         any(ContentType.class));
@@ -578,8 +628,8 @@ public class ODataHandlerTest {
     verify(processor).countComplexCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
-    dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
   }
 
@@ -592,11 +642,11 @@ public class ODataHandlerTest {
     verify(processor).readReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
         any(ContentType.class));
 
-    dispatch(HttpMethod.PUT, uri, processor);
+    dispatch(HttpMethod.PATCH, uri, processor);
     verify(processor).updateReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
         any(ContentType.class));
 
-    dispatch(HttpMethod.PATCH, uri, processor);
+    dispatch(HttpMethod.PUT, uri, processor);
     verify(processor, times(2)).updateReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
         any(ContentType.class));
 
@@ -619,8 +669,8 @@ public class ODataHandlerTest {
     verify(processor).readReferenceCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
         any(ContentType.class));
 
-    dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
   }
 
@@ -631,22 +681,21 @@ public class ODataHandlerTest {
     dispatch(HttpMethod.POST, "ESAllPrim", "", HttpHeader.CONTENT_TYPE, "some/unsupported", errorProcessor);
     verifyZeroInteractions(processor);
     verify(errorProcessor).processError(any(ODataRequest.class), any(ODataResponse.class), any(ODataServerError.class),
-            any(ContentType.class));
+        any(ContentType.class));
   }
 
   private ODataResponse dispatch(final HttpMethod method, final String path, final String query,
       final String headerName, final String headerValue, final Processor processor) {
     Map<String, List<String>> headers = null;
-    if(headerName != null) {
+    if (headerName != null) {
       headers = Collections.singletonMap(headerName, Collections.singletonList(headerValue));
     }
     List<Processor> processors = null;
-    if(processor != null) {
+    if (processor != null) {
       processors = Collections.singletonList(processor);
     }
     return dispatch(method, path, query, headers, processors);
   }
-
 
   private ODataResponse dispatch(final HttpMethod method, final String path, final String query,
       final Map<String, List<String>> headers, final List<Processor> processors) {
@@ -666,9 +715,9 @@ public class ODataHandlerTest {
       }
     }
 
-    if(request.getHeaders(HttpHeader.CONTENT_TYPE) == null) {
+    if (request.getHeaders(HttpHeader.CONTENT_TYPE) == null) {
       request.addHeader(HttpHeader.CONTENT_TYPE, Collections.singletonList(
-              ODataFormat.JSON.getContentType(ODataServiceVersion.V40).toContentTypeString()));
+          ODataFormat.JSON.getContentType(ODataServiceVersion.V40).toContentTypeString()));
     }
 
     final OData odata = OData.newInstance();
