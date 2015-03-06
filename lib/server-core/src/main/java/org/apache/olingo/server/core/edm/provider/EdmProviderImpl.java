@@ -328,19 +328,16 @@ public class EdmProviderImpl extends AbstractEdm {
 
   @Override
   protected EdmTerm createTerm(final FullQualifiedName termName) {
-    // TODO: implement
-    return null;
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   protected EdmAnnotations createAnnotationGroup(final FullQualifiedName targetName) {
-    // TODO: implement
-    return null;
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   protected List<EdmAnnotation> createAnnotations(final FullQualifiedName annotatedName) {
-    // TODO: implement
-    return null;
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

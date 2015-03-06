@@ -156,7 +156,6 @@ public class BasicBatchITCase extends AbstractBaseTestITCase {
 
   @Override
   protected ODataClient getClient() {
-    // TODO Auto-generated method stub
     return null;
   }
 

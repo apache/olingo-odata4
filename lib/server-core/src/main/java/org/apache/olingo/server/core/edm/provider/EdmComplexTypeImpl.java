@@ -69,13 +69,11 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
 
   @Override
   public EdmAnnotation getAnnotation(final EdmTerm term) {
-    // TODO: implement
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public List<EdmAnnotation> getAnnotations() {
-    // TODO: implement
     throw new UnsupportedOperationException("Not supported yet.");
   }
 }

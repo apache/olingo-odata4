@@ -65,7 +65,6 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
 
   @Override
   public List<EdmAnnotation> getAnnotations() {
-    // TODO: implement
     throw new UnsupportedOperationException("Not supported yet.");
   }
 }

@@ -20,7 +20,6 @@ package org.apache.olingo.server.api.edm.provider;
 
 public class ReferentialConstraint {
 
-  // TODO: check data type
   private String property;
 
   private String referencedProperty;

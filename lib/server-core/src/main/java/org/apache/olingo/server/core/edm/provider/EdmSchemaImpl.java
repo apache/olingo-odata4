@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
@@ -39,10 +42,6 @@ import org.apache.olingo.server.api.edm.provider.EnumType;
 import org.apache.olingo.server.api.edm.provider.Function;
 import org.apache.olingo.server.api.edm.provider.Schema;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class EdmSchemaImpl extends AbstractEdmSchema {
 
@@ -144,31 +143,26 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
 
   @Override
   protected List<EdmTerm> createTerms() {
-    // TODO: implement
-    return Collections.emptyList();
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   protected List<EdmAnnotations> createAnnotationGroups() {
-    // TODO: implement
-    return Collections.emptyList();
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   protected List<EdmAnnotation> createAnnotations() {
-    // TODO: implement
-    return Collections.emptyList();
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public EdmAnnotation getAnnotation(final EdmTerm term) {
-    // TODO: implement
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public List<EdmAnnotation> getAnnotations() {
-    // TODO: implement
     throw new UnsupportedOperationException("Not supported yet.");
   }
 }

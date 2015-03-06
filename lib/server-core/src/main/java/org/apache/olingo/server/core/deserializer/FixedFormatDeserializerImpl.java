@@ -49,7 +49,6 @@ public class FixedFormatDeserializerImpl implements FixedFormatDeserializer {
     return result.toByteArray();
   }
 
-  // TODO: Deserializer
   @Override
   public List<BatchRequestPart> parseBatchRequest(InputStream content, String boundary, BatchOptions options)
       throws BatchDeserializerException {

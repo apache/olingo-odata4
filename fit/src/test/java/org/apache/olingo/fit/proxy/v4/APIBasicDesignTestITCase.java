@@ -416,55 +416,6 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
         container.getProducts().getByKey(1012).operations().getProductDetails(1);
     assertEquals(1, result.execute().size());
   }
-
-//CHECKSTYLE:OFF (Maven checkstyle)
-  // TODO: check replacement
-//  @Test
-//  public void workingWithComplexCollections() throws IOException {
-//    // ---------------------------------------
-//    // Instantiate V3 Service (Currently, complex collections not provided by V4 service)
-//    // ---------------------------------------
-//    org.apache.olingo.fit.proxy.v3.staticservice.Service<org.apache.olingo.client.api.v3.EdmEnabledODataClient> v3serv =
-//            org.apache.olingo.fit.proxy.v3.staticservice.Service.getV3(
-//                    "http://localhost:9080/stub/StaticService/V30/Static.svc");
-//    v3serv.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
-//    final DefaultContainer v3cont = v3serv.getEntityContainer(DefaultContainer.class);
-//    assertNotNull(v3cont);
-//    v3serv.getContext().detachAll();
-//    // ---------------------------------------
-//
-//    final ContactDetailsCollection bci = v3cont.getCustomer().getByKey(-10).getBackupContactInfo(); // 1 HTTP Request
-//    assertNotNull(bci);
-//    assertTrue(bci.isEmpty());
-//
-//    bci.execute();
-//    assertFalse(bci.isEmpty());
-//    assertEquals(9, bci.size());
-//
-//    final PhoneCollection phoneCollection = bci.iterator().next().getMobilePhoneBag(); // No new HTTP Request
-//    assertFalse(phoneCollection.isEmpty());
-//
-//    assertEquals("jlessdhjbgglmofcyßucßqbrfßppgzvygdyssßpehkrdetitmßfddsplccvussrvidmkodchdfzjvfgossbciq",
-//            bci.iterator().next().getHomePhone().getPhoneNumber()); // No new HTTP Request
-//
-//    // assertNotNull(v3cont.getOrder().getByKey(8).getCustomer().getBackupContactInfo().execute().iterator().next().
-//    //        getHomePhone().getPhoneNumber());
-//    // Not supported by the test service BTW generates a single request as expected: 
-//    // <service root>/Order(8)/Customer/BackupContactInfo
-//    v3serv.getContext().detachAll();
-//
-//    // Static test service doesn't support query options about complexes: the following provides just a client example
-//    v3cont.getCustomer().getByKey(-10).getBackupContactInfo().
-//            select("HomePhone").
-//            filter("HomePhone eq 12345").
-//            skip(1).
-//            top(10).
-//            orderBy("HomePhone").
-//            execute(); // New HTTP Request
-//
-//    v3serv.getContext().detachAll();
-//  }
-//CHECKSTYLE:ON (Maven checkstyle)
   
   @Test
   public void workingWithPrimitiveCollections() throws IOException {

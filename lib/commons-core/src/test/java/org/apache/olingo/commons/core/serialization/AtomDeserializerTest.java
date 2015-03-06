@@ -78,7 +78,6 @@ public class AtomDeserializerTest {
         "    </content>\r\n" + 
         " </entry>";
 
-    //TODO: THis was a test for V3
     final AtomDeserializer deserializer = new AtomDeserializer();
     final InputStream in = new ByteArrayInputStream(content.getBytes("UTF-8"));
     final ResWrap<Entity> entity = deserializer.toEntity(in);
@@ -226,7 +225,6 @@ public class AtomDeserializerTest {
         "        </metadata:properties>\r\n" + 
         "    </content>\r\n" + 
         " </entry>";
-    //TODO: THis was a test for V3
     final AtomDeserializer deserializer = new AtomDeserializer();
     final InputStream in = new ByteArrayInputStream(content.getBytes("UTF-8"));
     final ResWrap<Entity> entity = deserializer.toEntity(in);
@@ -318,7 +316,6 @@ public class AtomDeserializerTest {
         "        </metadata:properties>\r\n" + 
         "    </content>\r\n" + 
         " </entry>";
-    //TODO: THis was a test for V3
     final AtomDeserializer deserializer = new AtomDeserializer();
     final InputStream in = new ByteArrayInputStream(content.getBytes("UTF-8"));
     final ResWrap<Entity> entity = deserializer.toEntity(in);

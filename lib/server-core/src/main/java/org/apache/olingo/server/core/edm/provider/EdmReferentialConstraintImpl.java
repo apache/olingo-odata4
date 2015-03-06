@@ -32,13 +32,11 @@ public class EdmReferentialConstraintImpl extends AbstractEdmReferentialConstrai
 
   @Override
   public EdmAnnotation getAnnotation(final EdmTerm term) {
-    // TODO: implement
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public List<EdmAnnotation> getAnnotations() {
-    // TODO: implement
     throw new UnsupportedOperationException("Not supported yet.");
   }
 }

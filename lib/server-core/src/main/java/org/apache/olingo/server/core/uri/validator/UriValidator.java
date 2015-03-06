@@ -652,12 +652,10 @@ public class UriValidator {
               if (!edmPrimitiveType.validate(edmPrimitiveType.fromUriLiteral(value),
                   property.isNullable(), property.getMaxLength(),
                   property.getPrecision(), property.getScale(), property.isUnicode())) {
-                // TODO: Check exception here
                 throw new UriValidationException("PrimitiveTypeException",
                     UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
               }
             } catch (EdmPrimitiveTypeException e) {
-              // TODO: Check exception here
               throw new UriValidationException("PrimitiveTypeException", e,
                   UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
             }

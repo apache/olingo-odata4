@@ -52,7 +52,6 @@ import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmBinary;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
@@ -143,18 +142,6 @@ public final class URIUtils {
     return uri.normalize();
   }
 
-  // TODO: Delete prefix method since these are not relevant in V4
-  private static String prefix(final EdmPrimitiveTypeKind typeKind) {
-    String result = StringUtils.EMPTY;
-    return result;
-  }
-
-//TODO: Delete suffix method since these are not relevant in V4
-  private static String suffix(final EdmPrimitiveTypeKind typeKind) {
-    String result = StringUtils.EMPTY;
-    return result;
-  }
-
   private static String timestamp(final Timestamp timestamp)
       throws UnsupportedEncodingException, EdmPrimitiveTypeException {
 
@@ -242,9 +229,8 @@ public final class URIUtils {
                 : (obj instanceof Boolean)
                     ? BooleanUtils.toStringTrueFalse((Boolean) obj)
                     : (obj instanceof UUID)
-                        ? prefix(EdmPrimitiveTypeKind.Guid)
-                            + obj.toString()
-                            + suffix(EdmPrimitiveTypeKind.Guid)
+                        ?                            obj.toString()
+                            
                         : (obj instanceof byte[])
                             ? EdmBinary.getInstance().toUriLiteral(Hex.encodeHexString((byte[]) obj))
                             : (obj instanceof Timestamp)
@@ -256,19 +242,15 @@ public final class URIUtils {
                                         : (obj instanceof BigDecimal)
                                             ? EdmDecimal.getInstance().valueToString(obj, null, null,
                                                 Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
-                                                + suffix(EdmPrimitiveTypeKind.Decimal)
                                             : (obj instanceof Double)
                                                 ? EdmDouble.getInstance().valueToString(obj, null, null,
                                                     Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
-                                                    + suffix(EdmPrimitiveTypeKind.Double)
                                                 : (obj instanceof Float)
                                                     ? EdmSingle.getInstance().valueToString(obj, null, null,
                                                         Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
-                                                        + suffix(EdmPrimitiveTypeKind.Single)
                                                     : (obj instanceof Long)
                                                         ? EdmInt64.getInstance().valueToString(obj, null, null,
                                                             Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
-                                                            + suffix(EdmPrimitiveTypeKind.Int64)
                                                         : (obj instanceof Geospatial)
                                                             ? URLEncoder.encode(EdmPrimitiveTypeFactory.getInstance(
                                                                 ((Geospatial) obj).getEdmPrimitiveTypeKind()).
