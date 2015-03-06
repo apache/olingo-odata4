@@ -253,7 +253,7 @@ public class FunctionProvider {
     } else if (functionName.equals(nameUFCRTCollETTwoKeyNavParam)) {
       return Arrays.asList(
           new Function()
-              .setName("UFCRTESTwoKeyNavParam")
+              .setName(functionName.getName())
               .setParameters(Collections.singletonList(
                   new Parameter()
                       .setName("ParameterInt16")
@@ -375,7 +375,7 @@ public class FunctionProvider {
     } else if (functionName.equals(nameUFCRTCollETMixPrimCollCompTwoParam)) {
       return Arrays.asList(
           new Function()
-              .setName("UFNRTESMixPrimCollCompTwoParam")
+              .setName(functionName.getName())
               .setParameters(Arrays.asList(
                   new Parameter().setName("ParameterString").setType(PropertyProvider.nameString).setNullable(false),
                   new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16).setNullable(false)))
@@ -400,7 +400,7 @@ public class FunctionProvider {
     } else if (functionName.equals(nameUFCRTESMixPrimCollCompTwoParam)) {
       return Arrays.asList(
           new Function()
-              .setName("UFCRTESMixPrimCollCompTwoParam")
+              .setName(functionName.getName())
               .setParameters(Arrays.asList(
                   new Parameter().setName("ParameterString").setType(PropertyProvider.nameString).setNullable(false),
                   new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16).setNullable(false)

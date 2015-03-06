@@ -127,6 +127,7 @@ public class SchemaProvider {
 
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFNRTInt16));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETKeyNav));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETTwoKeyNavParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETTwoKeyNavParamCTTwoPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTStringTwoParam));
@@ -140,6 +141,7 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCTTwoPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollCTTwoPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETMedia));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollETMedia));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollETMixPrimCollCompTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETAllPrimTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTESMixPrimCollCompTwoParam));

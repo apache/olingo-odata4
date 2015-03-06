@@ -18,12 +18,17 @@
  */
 package org.apache.olingo.server.tecsvc.data;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
 
@@ -63,5 +68,55 @@ public class FunctionData {
     } else {
       throw new DataProviderException("Function " + name + " is not yet implemented.");
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  protected static Property primitiveComplexFunction(final String name, final List<UriParameter> parameters,
+      final Map<String, EntitySet> data) throws DataProviderException {
+    if (name.equals("UFNRTInt16")) {
+      return DataCreator.createPrimitive(name, 12345);
+    } else if (name.equals("UFCRTString")) {
+      return DataCreator.createPrimitive(name, "UFCRTString string value");
+    } else if (name.equals("UFCRTCollString")) {
+      return data.get("ESCollAllPrim").getEntities().get(0).getProperty("CollPropertyString");
+    } else if (name.equals("UFCRTCTTwoPrim")) {
+      return DataCreator.createComplex(name,
+          DataCreator.createPrimitive("PropertyInt16", 16),
+          DataCreator.createPrimitive("PropertyString", "UFCRTCTTwoPrim string value"));
+    } else if (name.equals("UFCRTCTTwoPrimParam")) {
+      try {
+        return DataCreator.createComplex(name,
+            DataCreator.createPrimitive("PropertyInt16",
+                EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16).valueOfString(
+                    getParameterText("ParameterInt16", parameters),
+                    null, null, null, null, null, Short.class)),
+            DataCreator.createPrimitive("PropertyString",
+                EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String).valueOfString(
+                    EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String).fromUriLiteral(
+                        getParameterText("ParameterString", parameters)),
+                    null, null, null, null, null, String.class)));
+      } catch (final EdmPrimitiveTypeException e) {
+        throw new DataProviderException("Error in function " + name + ".", e);
+      }
+    } else if (name.equals("UFCRTCollCTTwoPrim")) {
+      return DataCreator.createComplexCollection(name,
+          Arrays.asList(DataCreator.createPrimitive("PropertyInt16", 16),
+              DataCreator.createPrimitive("PropertyString", "Test123")),
+          Arrays.asList(DataCreator.createPrimitive("PropertyInt16", 17),
+              DataCreator.createPrimitive("PropertyString", "Test456")),
+          Arrays.asList(DataCreator.createPrimitive("PropertyInt16", 18),
+              DataCreator.createPrimitive("PropertyString", "Test678")));
+    } else {
+      throw new DataProviderException("Function " + name + " is not yet implemented.");
+    }
+  }
+
+  private static String getParameterText(final String name, final List<UriParameter> parameters) {
+    for (final UriParameter parameter : parameters) {
+      if (parameter.getName().equals(name)) {
+        return parameter.getText();
+      }
+    }
+    return null;
   }
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.ContextURL.Builder;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
@@ -31,7 +32,10 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -61,6 +65,7 @@ import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -203,7 +208,12 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     final List<String> path = getPropertyPath(resourceParts, 0);
 
     final Entity entity = readEntity(uriInfo);
-    final Property property = getPropertyData(entity, path);
+    final Property property =
+        entity == null ?
+            getPropertyData(dataProvider.readFunctionPrimitiveComplex(((UriResourceFunction) resourceParts.get(0))
+                .getFunction(),
+                ((UriResourceFunction) resourceParts.get(0)).getParameters()), path) :
+            getPropertyData(entity, path);
 
     if (property == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
@@ -211,38 +221,49 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
       if (property.getValue() == null) {
         response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
       } else {
-        final EdmProperty edmProperty = ((UriResourceProperty) resourceParts.get(resourceParts.size() - 1))
-            .getProperty();
+        final EdmProperty edmProperty = path.isEmpty() ? null :
+            ((UriResourceProperty) resourceParts.get(resourceParts.size() - 1)).getProperty();
+        final EdmType type = edmProperty == null ?
+            ((UriResourceFunction) resourceParts.get(0)).getType() :
+            edmProperty.getType();
+        final EdmReturnType returnType = resourceParts.get(0) instanceof UriResourceFunction ?
+            ((UriResourceFunction) resourceParts.get(0)).getFunction().getReturnType() : null;
 
         final ODataFormat format = ODataFormat.fromContentType(contentType);
         ODataSerializer serializer = odata.createSerializer(format);
         final ExpandOption expand = uriInfo.getExpandOption();
         final SelectOption select = uriInfo.getSelectOption();
-        final UriHelper helper = odata.createUriHelper();
         final ContextURL contextURL = format == ODataFormat.JSON_NO_METADATA ? null :
-            ContextURL.with().entitySet(edmEntitySet)
-                .keyPath(helper.buildKeyPredicate(edmEntitySet.getEntityType(), entity))
-                .navOrPropertyPath(buildPropertyPath(path))
-                .selectList(edmProperty.isPrimitive() ? null :
-                    helper.buildContextURLSelectList((EdmStructuredType) edmProperty.getType(), expand, select))
-                .build();
+            getContextUrl(edmEntitySet, entity, path, type, representationType, expand, select);
         switch (representationType) {
         case PRIMITIVE:
-          response.setContent(serializer.primitive((EdmPrimitiveType) edmProperty.getType(), property,
-              PrimitiveSerializerOptions.with().contextURL(contextURL).facetsFrom(edmProperty).build()));
+          response.setContent(serializer.primitive((EdmPrimitiveType) type, property,
+              PrimitiveSerializerOptions.with().contextURL(contextURL)
+                  .nullable(edmProperty == null ? returnType.isNullable() : edmProperty.isNullable())
+                  .maxLength(edmProperty == null ? returnType.getMaxLength() : edmProperty.getMaxLength())
+                  .precision(edmProperty == null ? returnType.getPrecision() : edmProperty.getPrecision())
+                  .scale(edmProperty == null ? returnType.getScale() : edmProperty.getScale())
+                  .unicode(edmProperty == null ? null : edmProperty.isUnicode())
+                  .build()));
           break;
         case COMPLEX:
-          response.setContent(serializer.complex((EdmComplexType) edmProperty.getType(), property,
+          response.setContent(serializer.complex((EdmComplexType) type, property,
               ComplexSerializerOptions.with().contextURL(contextURL)
                   .expand(expand).select(select)
                   .build()));
           break;
         case COLLECTION_PRIMITIVE:
-          response.setContent(serializer.primitiveCollection((EdmPrimitiveType) edmProperty.getType(), property,
-              PrimitiveSerializerOptions.with().contextURL(contextURL).facetsFrom(edmProperty).build()));
+          response.setContent(serializer.primitiveCollection((EdmPrimitiveType) type, property,
+              PrimitiveSerializerOptions.with().contextURL(contextURL)
+                  .nullable(edmProperty == null ? returnType.isNullable() : edmProperty.isNullable())
+                  .maxLength(edmProperty == null ? returnType.getMaxLength() : edmProperty.getMaxLength())
+                  .precision(edmProperty == null ? returnType.getPrecision() : edmProperty.getPrecision())
+                  .scale(edmProperty == null ? returnType.getScale() : edmProperty.getScale())
+                  .unicode(edmProperty == null ? null : edmProperty.isUnicode())
+                  .build()));
           break;
         case COLLECTION_COMPLEX:
-          response.setContent(serializer.complexCollection((EdmComplexType) edmProperty.getType(), property,
+          response.setContent(serializer.complexCollection((EdmComplexType) type, property,
               ComplexSerializerOptions.with().contextURL(contextURL)
                   .expand(expand).select(select)
                   .build()));
@@ -277,22 +298,25 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     }
   }
 
-  private Property getPropertyData(final Entity entity, final List<String> path)
-      throws ODataApplicationException {
-    Property property = entity.getProperty(path.get(0));
-    for (final String name : path.subList(1, path.size())) {
-      if (property != null && (property.isComplex() || property.isComplex())) {
-        final List<Property> complex = property.asComplex().getValue();
-        property = null;
+  private Property getPropertyData(final Entity entity, final List<String> path) {
+    return getPropertyData(entity.getProperty(path.get(0)), path.subList(1, path.size()));
+  }
+
+  private Property getPropertyData(final Property property, final List<String> path) {
+    Property result = property;
+    for (final String name : path) {
+      if (result != null && property.isComplex()) {
+        final List<Property> complex = result.asComplex().getValue();
+        result = null;
         for (final Property innerProperty : complex) {
           if (innerProperty.getName().equals(name)) {
-            property = innerProperty;
+            result = innerProperty;
             break;
           }
         }
       }
     }
-    return property;
+    return result;
   }
 
   private List<String> getPropertyPath(final List<UriResource> path, final int trailing) {
@@ -313,6 +337,24 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     return result.toString();
   }
 
+  private ContextURL getContextUrl(final EdmEntitySet entitySet, final Entity entity, final List<String> path,
+      final EdmType type, final RepresentationType representationType,
+      final ExpandOption expand, final SelectOption select) throws SerializerException {
+    final UriHelper helper = odata.createUriHelper();
+    Builder builder = ContextURL.with();
+    builder = entitySet == null ?
+        representationType == RepresentationType.PRIMITIVE || representationType == RepresentationType.COMPLEX ?
+            builder.type(type) :
+            builder.type(type).asCollection() :
+        builder.entitySet(entitySet).keyPath(helper.buildKeyPredicate(entitySet.getEntityType(), entity));
+    if (entitySet != null && !path.isEmpty()) {
+      builder = builder.navOrPropertyPath(buildPropertyPath(path));
+    }
+    builder = builder.selectList(type.getKind() == EdmTypeKind.PRIMITIVE ? null :
+        helper.buildContextURLSelectList((EdmStructuredType) type, expand, select));
+    return builder.build();
+  }
+
   @Override
   public void readPrimitiveValue(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
@@ -324,19 +366,33 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     final List<UriResource> resourceParts = resource.getUriResourceParts();
     final List<String> path = getPropertyPath(resourceParts, 1);
 
-    final Property property = getPropertyData(readEntity(uriInfo), path);
+    final Entity entity = readEntity(uriInfo);
+    final Property property = entity == null ?
+        dataProvider.readFunctionPrimitiveComplex(((UriResourceFunction) resourceParts.get(0)).getFunction(),
+            ((UriResourceFunction) resourceParts.get(0)).getParameters()) :
+        getPropertyData(entity, path);
 
     if (property == null || property.getValue() == null) {
       response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
     } else {
-      final EdmProperty edmProperty = ((UriResourceProperty) resourceParts.get(resourceParts.size() - 2))
-          .getProperty();
-      final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
+      final EdmProperty edmProperty = path.isEmpty() ? null :
+          ((UriResourceProperty) resourceParts.get(resourceParts.size() - 2)).getProperty();
+      final EdmPrimitiveType type = (EdmPrimitiveType) (edmProperty == null ?
+          ((UriResourceFunction) resourceParts.get(0)).getType() :
+          edmProperty.getType());
+      final EdmReturnType returnType = resourceParts.get(0) instanceof UriResourceFunction ?
+          ((UriResourceFunction) resourceParts.get(0)).getFunction().getReturnType() : null;
       final FixedFormatSerializer serializer = odata.createFixedFormatSerializer();
       response.setContent(type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary) ?
           serializer.binary((byte[]) property.getValue()) :
           serializer.primitiveValue(type, property.getValue(),
-              PrimitiveValueSerializerOptions.with().facetsFrom(edmProperty).build()));
+              PrimitiveValueSerializerOptions.with()
+                  .nullable(edmProperty == null ? returnType.isNullable() : edmProperty.isNullable())
+                  .maxLength(edmProperty == null ? returnType.getMaxLength() : edmProperty.getMaxLength())
+                  .precision(edmProperty == null ? returnType.getPrecision() : edmProperty.getPrecision())
+                  .scale(edmProperty == null ? returnType.getScale() : edmProperty.getScale())
+                  .unicode(edmProperty == null ? null : edmProperty.isUnicode())
+                  .build()));
       response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     }

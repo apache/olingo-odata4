@@ -408,6 +408,11 @@ public class DataProvider {
     return FunctionData.entityFunction(function.getName(), parameters, data);
   }
 
+  public Property readFunctionPrimitiveComplex(final EdmFunction function, final List<UriParameter> parameters)
+      throws DataProviderException {
+    return FunctionData.primitiveComplexFunction(function.getName(), parameters, data);
+  }
+
   public void setEdm(final Edm edm) {
     this.edm = edm;
   }

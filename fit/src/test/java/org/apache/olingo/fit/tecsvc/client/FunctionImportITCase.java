@@ -22,14 +22,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
+import org.apache.olingo.client.api.communication.response.ODataRawResponse;
+import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -80,6 +87,61 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
     assertNotNull(property);
     assertNotNull(property.getPrimitiveValue());
     assertEquals("2", property.getPrimitiveValue().toValue());
+  }
+
+
+  @Test
+  public void countEntityCollection() throws Exception {
+    final ODataRawRequest request = getClient().getRetrieveRequestFactory()
+        .getRawRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+            .appendOperationCallSegment("FICRTCollESMedia").count().build());
+    final ODataRawResponse response = request.execute();
+    assertEquals("4", IOUtils.toString(response.getRawResponse()));
+  }
+
+  @Test
+  public void complexWithPath() throws Exception {
+    final ODataInvokeRequest<ODataProperty> request = getClient().getInvokeRequestFactory()
+        .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+            .appendOperationCallSegment("FICRTCTTwoPrim").appendPropertySegment("PropertyInt16").build(),
+            ODataProperty.class);
+    assertNotNull(request);
+
+    final ODataInvokeResponse<ODataProperty> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    final ODataProperty property = response.getBody();
+    assertNotNull(property);
+    assertEquals(16, property.getPrimitiveValue().toValue());
+  }
+
+  @Test
+  public void primitiveCollection() throws Exception {
+    final ODataInvokeRequest<ODataProperty> request = getClient().getInvokeRequestFactory()
+        .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+            .appendOperationCallSegment("FICRTCollString").build(), ODataProperty.class);
+    assertNotNull(request);
+
+    final ODataInvokeResponse<ODataProperty> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    final ODataProperty property = response.getBody();
+    assertNotNull(property);
+    assertNotNull(property.getCollectionValue());
+    assertEquals(3, property.getCollectionValue().size());
+    Iterator<ODataValue> iterator = property.getCollectionValue().iterator();
+    assertEquals("Employee1@company.example", iterator.next().asPrimitive().toValue());
+    assertEquals("Employee2@company.example", iterator.next().asPrimitive().toValue());
+    assertEquals("Employee3@company.example", iterator.next().asPrimitive().toValue());
+  }
+
+  @Test
+  public void primitiveValue() throws Exception {
+    final ODataValueRequest request = getClient().getRetrieveRequestFactory()
+        .getPropertyValueRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+            .appendOperationCallSegment("FICRTString").appendValueSegment().build());
+    final ODataRetrieveResponse<ODataPrimitiveValue> response = request.execute();
+    assertEquals("UFCRTString string value", response.getBody().toValue());
   }
 
   @Override
