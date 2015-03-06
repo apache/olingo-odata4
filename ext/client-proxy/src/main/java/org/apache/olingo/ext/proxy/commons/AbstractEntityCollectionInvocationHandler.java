@@ -33,6 +33,7 @@ import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataSingleton;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
@@ -100,7 +101,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<T extends Entity
     final List<ODataAnnotation> anns = new ArrayList<ODataAnnotation>();
 
     if (isSingleton) {
-      final ODataRetrieveResponse<org.apache.olingo.commons.api.domain.ODataSingleton> res =
+      final ODataRetrieveResponse<ODataSingleton> res =
           ((ODataClient) getClient()).getRetrieveRequestFactory().getSingletonRequest(uri).execute();
 
       entities.add(res.getBody());
@@ -115,9 +116,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<T extends Entity
       final ODataEntitySet entitySet = res.getBody();
       entities.addAll(entitySet.getEntities());
       next = entitySet.getNext();
-      if (entitySet instanceof ODataEntitySet) {
-        anns.addAll(((ODataEntitySet) entitySet).getAnnotations());
-      }
+      anns.addAll(entitySet.getAnnotations());
     }
 
     final List<T> res = new ArrayList<T>(entities.size());

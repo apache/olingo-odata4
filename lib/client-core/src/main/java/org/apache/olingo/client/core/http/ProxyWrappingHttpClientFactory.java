@@ -65,6 +65,7 @@ public class ProxyWrappingHttpClientFactory implements WrappingHttpClientFactory
     this.wrapped = wrapped;
   }
 
+  @Override
   public DefaultHttpClientFactory getWrappedHttpClientFactory() {
     return this.wrapped;
   }

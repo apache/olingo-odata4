@@ -25,7 +25,6 @@ import org.apache.olingo.client.api.edm.xml.ActionImport;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntitySet;
 import org.apache.olingo.client.api.edm.xml.FunctionImport;
-import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.Singleton;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
@@ -46,35 +45,29 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
   private EdmAnnotationHelper helper;
 
   public EdmEntityContainerImpl(final Edm edm, final FullQualifiedName entityContainerName,
-          final EntityContainer xmlEntityContainer, final List<? extends Schema> xmlSchemas) {
+      final EntityContainer xmlEntityContainer) {
 
     super(edm, entityContainerName, xmlEntityContainer.getExtends() == null
-            ? null : new FullQualifiedName(xmlEntityContainer.getExtends()));
+        ? null : new FullQualifiedName(xmlEntityContainer.getExtends()));
 
     this.xmlEntityContainer = xmlEntityContainer;
-    if (xmlEntityContainer instanceof EntityContainer) {
-      this.helper = new EdmAnnotationHelperImpl(edm,
-              (EntityContainer) xmlEntityContainer);
-    }
+    this.helper = new EdmAnnotationHelperImpl(edm, xmlEntityContainer);
   }
 
   @Override
   public boolean isDefault() {
-    return xmlEntityContainer instanceof EntityContainer
-            ? true
-            : xmlEntityContainer.isDefaultEntityContainer();
+    return true;
   }
 
   @Override
   protected EdmSingleton createSingleton(final String singletonName) {
-    final Singleton singleton = ((EntityContainer) xmlEntityContainer).
-            getSingleton(singletonName);
+    final Singleton singleton = xmlEntityContainer.getSingleton(singletonName);
     return singleton == null
-            ? null
-            : new EdmSingletonImpl(edm, this, singletonName, new EdmTypeInfo.Builder().
-                    setTypeExpression(singleton.getEntityType()).
-                    setDefaultNamespace(entityContainerName.getNamespace()).
-                    build().getFullQualifiedName(), singleton);
+        ? null
+        : new EdmSingletonImpl(edm, this, singletonName, new EdmTypeInfo.Builder().
+            setTypeExpression(singleton.getEntityType()).
+            setDefaultNamespace(entityContainerName.getNamespace()).
+            build().getFullQualifiedName(), singleton);
   }
 
   @Override
@@ -84,11 +77,8 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     final EntitySet entitySet = xmlEntityContainer.getEntitySet(entitySetName);
     if (entitySet != null) {
       final FullQualifiedName entityType = new EdmTypeInfo.Builder().setTypeExpression(entitySet.getEntityType()).
-              setDefaultNamespace(entityContainerName.getNamespace()).build().getFullQualifiedName();
-      if (entitySet instanceof EntitySet) {
-        result = new EdmEntitySetImpl(edm, this, entitySetName, entityType,
-                (EntitySet) entitySet);
-      } 
+          setDefaultNamespace(entityContainerName.getNamespace()).build().getFullQualifiedName();
+      result = new EdmEntitySetImpl(edm, this, entitySetName, entityType, entitySet);
     }
 
     return result;
@@ -98,13 +88,10 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
   protected EdmActionImport createActionImport(final String actionImportName) {
     EdmActionImport result = null;
 
-    if (xmlEntityContainer instanceof EntityContainer) {
-      final ActionImport actionImport = ((EntityContainer) xmlEntityContainer).
-              getActionImport(actionImportName);
-      if (actionImport != null) {
-        result = new EdmActionImportImpl(edm, this, actionImportName, actionImport);
-      }
-    } 
+    final ActionImport actionImport = xmlEntityContainer.getActionImport(actionImportName);
+    if (actionImport != null) {
+      result = new EdmActionImportImpl(edm, this, actionImportName, actionImport);
+    }
     return result;
   }
 
@@ -114,10 +101,7 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
     final FunctionImport functionImport = xmlEntityContainer.getFunctionImport(functionImportName);
     if (functionImport != null) {
-      if (functionImport instanceof org.apache.olingo.client.api.edm.xml.FunctionImport) {
-        result = new EdmFunctionImportImpl(edm, this, functionImportName,
-                (org.apache.olingo.client.api.edm.xml.FunctionImport) functionImport);
-      } 
+      result = new EdmFunctionImportImpl(edm, this, functionImportName, functionImport);
     }
 
     return result;
@@ -130,15 +114,11 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
       for (EntitySet entitySet : localEntitySets) {
         EdmEntitySet edmSet;
         final FullQualifiedName entityType = new EdmTypeInfo.Builder().setTypeExpression(entitySet.getEntityType()).
-                setDefaultNamespace(entityContainerName.getNamespace()).build().getFullQualifiedName();
-        if (entitySet instanceof EntitySet) {
-          edmSet = new EdmEntitySetImpl(edm, this, entitySet.getName(), entityType,
-                  (EntitySet) entitySet);
-          entitySets.put(edmSet.getName(), edmSet);
-        } 
+            setDefaultNamespace(entityContainerName.getNamespace()).build().getFullQualifiedName();
+        edmSet = new EdmEntitySetImpl(edm, this, entitySet.getName(), entityType, entitySet);
+        entitySets.put(edmSet.getName(), edmSet);
       }
     }
-
   }
 
   @Override
@@ -146,22 +126,18 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     final List<? extends FunctionImport> localFunctionImports = xmlEntityContainer.getFunctionImports();
     for (FunctionImport functionImport : localFunctionImports) {
       EdmFunctionImport edmFunctionImport;
-      if (functionImport instanceof org.apache.olingo.client.api.edm.xml.FunctionImport) {
-        edmFunctionImport = new EdmFunctionImportImpl(edm, this, functionImport.getName(),
-                (org.apache.olingo.client.api.edm.xml.FunctionImport) functionImport);
-        functionImports.put(edmFunctionImport.getName(), edmFunctionImport);
-      } 
+      edmFunctionImport = new EdmFunctionImportImpl(edm, this, functionImport.getName(), functionImport);
+      functionImports.put(edmFunctionImport.getName(), edmFunctionImport);
     }
   }
 
   @Override
   protected void loadAllSingletons() {
-    final List<Singleton> localSingletons =
-            ((EntityContainer) xmlEntityContainer).getSingletons();
+    final List<Singleton> localSingletons = xmlEntityContainer.getSingletons();
     if (localSingletons != null) {
       for (Singleton singleton : localSingletons) {
         singletons.put(singleton.getName(), new EdmSingletonImpl(edm, this, singleton.getName(),
-                new EdmTypeInfo.Builder().
+            new EdmTypeInfo.Builder().
                 setTypeExpression(singleton.getEntityType()).setDefaultNamespace(entityContainerName.getNamespace()).
                 build().getFullQualifiedName(), singleton));
       }
@@ -170,16 +146,13 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
   @Override
   protected void loadAllActionImports() {
-    if (xmlEntityContainer instanceof EntityContainer) {
-      final List<ActionImport> localActionImports =
-              ((EntityContainer) xmlEntityContainer).getActionImports();
-      if (actionImports != null) {
-        for (ActionImport actionImport : localActionImports) {
-          actionImports.put(actionImport.getName(),
-                  new EdmActionImportImpl(edm, this, actionImport.getName(), actionImport));
-        }
+    final List<ActionImport> localActionImports = xmlEntityContainer.getActionImports();
+    if (actionImports != null) {
+      for (ActionImport actionImport : localActionImports) {
+        actionImports.put(actionImport.getName(), new EdmActionImportImpl(edm, this, actionImport.getName(),
+            actionImport));
       }
-    } 
+    }
   }
 
   @Override
@@ -194,7 +167,7 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
   @Override
   public List<EdmAnnotation> getAnnotations() {
-    return helper == null ? Collections.<EdmAnnotation>emptyList() : helper.getAnnotations();
+    return helper == null ? Collections.<EdmAnnotation> emptyList() : helper.getAnnotations();
   }
 
 }

@@ -46,7 +46,6 @@ import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -106,8 +105,7 @@ public final class CoreUtils {
         if (intType.isPrimitiveType()) {
           value.asCollection().add(getODataValue(client, intType, collectionItem).asPrimitive());
         } else if (intType.isEnumType()) {
-          value.asCollection().add(((org.apache.olingo.commons.api.domain.ODataValue) getODataValue(
-              client, intType, collectionItem)).asEnum());
+          value.asCollection().add((getODataValue(client, intType, collectionItem)).asEnum());
         } else if (intType.isComplexType()) {
           value.asCollection().add(getODataValue(client, intType, collectionItem).asComplex());
         } else {
@@ -139,8 +137,7 @@ public final class CoreUtils {
       }
 
     } else if (type.isEnumType()) {
-      value = ((org.apache.olingo.commons.api.domain.ODataObjectFactory) client.getObjectFactory()).
-          newEnumValue(type.getFullQualifiedName().toString(), ((Enum<?>) obj).name());
+      value = client.getObjectFactory().newEnumValue(type.getFullQualifiedName().toString(), ((Enum<?>) obj).name());
     } else {
       value = client.getObjectFactory().newPrimitiveValueBuilder().setType(type.getPrimitiveTypeKind()).setValue(obj).
           build();
@@ -204,8 +201,7 @@ public final class CoreUtils {
           : new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).
               setTypeExpression(type.getFullQualifiedName().toString()).build();
 
-      annotation = new ODataAnnotationImpl(term,
-          (org.apache.olingo.commons.api.domain.ODataValue) getODataValue(client, valueType, obj));
+      annotation = new ODataAnnotationImpl(term, getODataValue(client, valueType, obj));
     }
 
     return annotation;
@@ -232,8 +228,7 @@ public final class CoreUtils {
         } else if (valueType.isComplexType()) {
           property = client.getObjectFactory().newComplexProperty(name, value.asComplex());
         } else if (valueType.isEnumType()) {
-          property = ((ODataObjectFactory) client.getObjectFactory()).newEnumProperty(name,
-              ((org.apache.olingo.commons.api.domain.ODataValue) value).asEnum());
+          property = client.getObjectFactory().newEnumProperty(name, value.asEnum());
         } else {
           throw new UnsupportedOperationException("Usupported object type " + valueType.getFullQualifiedName());
         }
@@ -273,15 +268,15 @@ public final class CoreUtils {
     EdmPrimitiveTypeKind bckCandidate = null;
 
     for (EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
-        final Class<?> target = EdmPrimitiveTypeFactory.getInstance(kind).getDefaultType();
+      final Class<?> target = EdmPrimitiveTypeFactory.getInstance(kind).getDefaultType();
 
-        if (clazz.equals(target)) {
-          return new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(kind.toString()).build();
-        } else if (target.isAssignableFrom(clazz)) {
-          bckCandidate = kind;
-        } else if (target == Timestamp.class && kind == EdmPrimitiveTypeKind.DateTimeOffset) {
-          bckCandidate = kind;
-        }
+      if (clazz.equals(target)) {
+        return new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(kind.toString()).build();
+      } else if (target.isAssignableFrom(clazz)) {
+        bckCandidate = kind;
+      } else if (target == Timestamp.class && kind == EdmPrimitiveTypeKind.DateTimeOffset) {
+        bckCandidate = kind;
+      }
     }
 
     if (bckCandidate == null) {
@@ -297,8 +292,8 @@ public final class CoreUtils {
       final ODataEntity entity) {
 
     for (Map.Entry<String, Object> entry : changes.entrySet()) {
-      ((List<ODataProperty>) entity.getProperties()).add(
-          getODataEntityProperty(client, entity.getTypeName(), entry.getKey(), entry.getValue()));
+      entity.getProperties()
+          .add(getODataEntityProperty(client, entity.getTypeName(), entry.getKey(), entry.getValue()));
     }
   }
 

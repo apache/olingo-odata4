@@ -70,18 +70,22 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
     }
   }
 
+  @Override
   public ResWrap<EntitySet> toEntitySet(final InputStream input) throws ODataDeserializerException {
     return deserializer.toEntitySet(input);
   }
 
+  @Override
   public ResWrap<Entity> toEntity(final InputStream input) throws ODataDeserializerException {
     return deserializer.toEntity(input);
   }
 
+  @Override
   public ResWrap<Property> toProperty(final InputStream input) throws ODataDeserializerException {
     return deserializer.toProperty(input);
   }
 
+  @Override
   public ODataError toError(final InputStream input) throws ODataDeserializerException {
     return deserializer.toError(input);
   }

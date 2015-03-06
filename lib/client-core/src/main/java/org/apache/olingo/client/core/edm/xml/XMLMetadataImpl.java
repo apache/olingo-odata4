@@ -69,6 +69,6 @@ public class XMLMetadataImpl extends AbstractEdmItem implements XMLMetadata {
 
   @Override
   public List<Reference> getReferences() {
-    return ((Edmx) this.edmx).getReferences();
+    return this.edmx.getReferences();
   }
 }

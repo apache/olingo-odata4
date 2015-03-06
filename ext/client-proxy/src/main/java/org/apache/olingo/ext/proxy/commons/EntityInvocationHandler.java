@@ -410,12 +410,12 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
     if (annotations.containsKey(term)) {
       res = annotations.get(term);
-    } else if (getEntity() instanceof ODataEntity) {
+    } else {
       try {
         final Term termAnn = term.getAnnotation(Term.class);
         final Namespace namespaceAnn = term.getAnnotation(Namespace.class);
         ODataAnnotation annotation = null;
-        for (ODataAnnotation _annotation : ((ODataEntity) getEntity()).getAnnotations()) {
+        for (ODataAnnotation _annotation : getEntity().getAnnotations()) {
           if ((namespaceAnn.value() + "." + termAnn.name()).equals(_annotation.getTerm())) {
             annotation = _annotation;
           }
@@ -436,9 +436,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   @Override
   public Collection<Class<? extends AbstractTerm>> readAnnotationTerms() {
-    return getEntity() instanceof ODataEntity
-        ? CoreUtils.getAnnotationTerms(service, ((ODataEntity) getEntity()).getAnnotations())
-        : Collections.<Class<? extends AbstractTerm>> emptyList();
+    return CoreUtils.getAnnotationTerms(service, getEntity().getAnnotations());
   }
 
   @Override
@@ -450,7 +448,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
       final ODataEntityRequest<ODataEntity> req =
           getClient().getRetrieveRequestFactory().getEntityRequest(uri.build());
 
-        req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
+      req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
 
       final ODataRetrieveResponse<ODataEntity> res = req.execute();
 
@@ -492,7 +490,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   // use read- instead of get- for .invoke() to distinguish it from entity property getter.
   public String readEntityReferenceID() {
-    URI id = getEntity() == null ? null : ((ODataEntity) getEntity()).getId();
+    URI id = getEntity() == null ? null : getEntity().getId();
 
     return id == null ? null : id.toASCIIString();
   }

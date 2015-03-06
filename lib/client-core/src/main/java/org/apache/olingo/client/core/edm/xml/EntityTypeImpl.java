@@ -97,7 +97,7 @@ public class EntityTypeImpl extends AbstractStructuralType implements EntityType
   
   @Override
   public Property getProperty(final String name) {
-    return (Property) super.getProperty(name);
+    return super.getProperty(name);
   }
 
   @Override
@@ -107,7 +107,7 @@ public class EntityTypeImpl extends AbstractStructuralType implements EntityType
 
   @Override
   public NavigationProperty getNavigationProperty(final String name) {
-    return (NavigationProperty) super.getNavigationProperty(name);
+    return super.getNavigationProperty(name);
   }
 
   @Override

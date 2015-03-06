@@ -63,7 +63,7 @@ public class ODataWriterImpl implements ODataWriter {
 
       return new ByteArrayInputStream(output.toByteArray());
     } finally {
-      IOUtils.closeQuietly(output);
+      IOUtils.closeQuietly(writer);
     }
   }
 
@@ -88,7 +88,7 @@ public class ODataWriterImpl implements ODataWriter {
 
       return new ByteArrayInputStream(output.toByteArray());
     } finally {
-      IOUtils.closeQuietly(output);
+      IOUtils.closeQuietly(writer);
     }
   }
 
@@ -106,7 +106,7 @@ public class ODataWriterImpl implements ODataWriter {
 
       return new ByteArrayInputStream(output.toByteArray());
     } finally {
-      IOUtils.closeQuietly(output);
+      IOUtils.closeQuietly(writer);
     }
   }
 
@@ -125,7 +125,7 @@ public class ODataWriterImpl implements ODataWriter {
 
       return new ByteArrayInputStream(output.toByteArray());
     } finally {
-      IOUtils.closeQuietly(output);
+      IOUtils.closeQuietly(writer);
     }
   }
 }

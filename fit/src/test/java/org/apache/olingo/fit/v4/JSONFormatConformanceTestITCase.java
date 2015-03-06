@@ -299,7 +299,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
     assertEquals(Boolean.TRUE, style.getComplexValue().get("title").getPrimitiveValue().toCastValue(Boolean.class));
     assertEquals(1, style.getComplexValue().get("order").getPrimitiveValue().toCastValue(Integer.class), 0);
 
-    final ODataLink orders = (ODataLink) entity.getNavigationLink("Orders");
+    final ODataLink orders = entity.getNavigationLink("Orders");
     assertEquals(1, orders.getAnnotations().size());
 
     final ODataAnnotation style2 = orders.getAnnotations().get(0);

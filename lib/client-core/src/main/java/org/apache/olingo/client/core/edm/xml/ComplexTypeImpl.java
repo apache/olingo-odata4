@@ -74,7 +74,7 @@ public class ComplexTypeImpl extends AbstractStructuralType implements ComplexTy
 
   @Override
   public Property getProperty(final String name) {
-    return (Property) super.getProperty(name);
+    return super.getProperty(name);
   }
 
   @Override
@@ -84,7 +84,7 @@ public class ComplexTypeImpl extends AbstractStructuralType implements ComplexTy
 
   @Override
   public NavigationProperty getNavigationProperty(final String name) {
-    return (NavigationProperty) super.getNavigationProperty(name);
+    return super.getNavigationProperty(name);
   }
 
   @Override

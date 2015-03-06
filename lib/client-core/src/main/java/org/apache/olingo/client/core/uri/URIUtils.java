@@ -229,8 +229,8 @@ public final class URIUtils {
                 : (obj instanceof Boolean)
                     ? BooleanUtils.toStringTrueFalse((Boolean) obj)
                     : (obj instanceof UUID)
-                        ?                            obj.toString()
-                            
+                        ? obj.toString()
+
                         : (obj instanceof byte[])
                             ? EdmBinary.getInstance().toUriLiteral(Hex.encodeHexString((byte[]) obj))
                             : (obj instanceof Timestamp)
@@ -264,7 +264,11 @@ public final class URIUtils {
       }
     } catch (Exception e) {
       LOG.warn("While escaping '{}', using toString()", obj, e);
-      value = obj.toString();
+      if (obj == null) {
+        value = "null";
+      } else {
+        value = obj.toString();
+      }
     }
 
     return value;
@@ -346,10 +350,8 @@ public final class URIUtils {
         value = param.getValue().asComplex().asJavaMap();
       } else if (param.getValue().isCollection()) {
         value = param.getValue().asCollection().asJavaCollection();
-      } else if (param.getValue() instanceof org.apache.olingo.commons.api.domain.ODataValue
-          && ((org.apache.olingo.commons.api.domain.ODataValue) param.getValue()).isEnum()) {
-
-        value = ((org.apache.olingo.commons.api.domain.ODataValue) param.getValue()).asEnum().toString();
+      } else if (param.getValue().isEnum()) {
+        value = param.getValue().asEnum().toString();
       }
 
       inlineParams.append(URIUtils.escape(value)).append(',');

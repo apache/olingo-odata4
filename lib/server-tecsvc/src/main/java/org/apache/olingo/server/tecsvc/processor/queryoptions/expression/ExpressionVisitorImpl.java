@@ -203,7 +203,7 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
       }
     }
 
-    return new TypedOperand(((Property) currentProperty).getValue(), currentType, currentEdmProperty);
+    return new TypedOperand(currentProperty.getValue(), currentType, currentEdmProperty);
   }
 
   @Override

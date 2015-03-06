@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -51,14 +51,14 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
   private final AbstractStructuredInvocationHandler targetHandler;
 
   private final Map<Class<? extends AbstractTerm>, Object> annotations =
-          new HashMap<Class<? extends AbstractTerm>, Object>();
+      new HashMap<Class<? extends AbstractTerm>, Object>();
 
   public AnnotatableInvocationHandler(
-          final AbstractService<?> service,
-          final String propName,
-          final String navPropName,
-          final EntityInvocationHandler entityHandler,
-          final AbstractStructuredInvocationHandler targetHandler) {
+      final AbstractService<?> service,
+      final String propName,
+      final String navPropName,
+      final EntityInvocationHandler entityHandler,
+      final AbstractStructuredInvocationHandler targetHandler) {
 
     super(service);
 
@@ -78,20 +78,16 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
   }
 
   private List<ODataAnnotation> internalAnnotations() {
-    List<ODataAnnotation> result = Collections.<ODataAnnotation>emptyList();
+    List<ODataAnnotation> result = Collections.<ODataAnnotation> emptyList();
 
-    if (entityHandler.getEntity() instanceof ODataEntity) {
-      if (targetHandler.getInternal() instanceof ODataEntity) {
-        result = propName == null
-                ? ((org.apache.olingo.commons.api.domain.ODataLink) ((ODataEntity) targetHandler.getInternal()).
-                getNavigationLink(navPropName)).getAnnotations()
-                : ((ODataEntity) targetHandler.getInternal()).getProperty(propName).getAnnotations();
-      } else if (targetHandler.getInternal() instanceof ODataComplexValue) {
-        result = propName == null
-                ? ((org.apache.olingo.commons.api.domain.ODataLink) ((ODataComplexValue) targetHandler.
-                getInternal()).getNavigationLink(navPropName)).getAnnotations()
-                : ((ODataComplexValue) targetHandler.getInternal()).get(propName).getAnnotations();
-      }
+    if (targetHandler.getInternal() instanceof ODataEntity) {
+      result = propName == null
+          ? ((ODataEntity) targetHandler.getInternal()).getNavigationLink(navPropName).getAnnotations()
+          : ((ODataEntity) targetHandler.getInternal()).getProperty(propName).getAnnotations();
+    } else if (targetHandler.getInternal() instanceof ODataComplexValue) {
+      result = propName == null
+          ? ((ODataComplexValue) targetHandler.getInternal()).getNavigationLink(navPropName).getAnnotations()
+          : ((ODataComplexValue) targetHandler.getInternal()).get(propName).getAnnotations();
     }
 
     return result;
@@ -113,7 +109,7 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
         if (item instanceof Proxy) {
           final InvocationHandler handler = Proxy.getInvocationHandler(item);
           if ((handler instanceof ComplexInvocationHandler)
-                  && ((ComplexInvocationHandler) handler).getEntityHandler() == null) {
+              && ((ComplexInvocationHandler) handler).getEntityHandler() == null) {
             ((ComplexInvocationHandler) handler).setEntityHandler(entityHandler);
           }
         }
@@ -146,7 +142,7 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
 
     if (annotations.containsKey(term)) {
       res = annotations.get(term);
-    } else if (entityHandler.getEntity() instanceof ODataEntity) {
+    } else {
       try {
         final Term termAnn = term.getAnnotation(Term.class);
         final Namespace namespaceAnn = term.getAnnotation(Namespace.class);
@@ -157,8 +153,8 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
           }
         }
         res = annotation == null || annotation.hasNullValue()
-                ? null
-                : CoreUtils.getObjectFromODataValue(annotation.getValue(), null, targetHandler.service);
+            ? null
+            : CoreUtils.getObjectFromODataValue(annotation.getValue(), null, targetHandler.service);
         if (res != null) {
           annotations.put(term, res);
         }
@@ -172,8 +168,6 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
 
   @Override
   public Collection<Class<? extends AbstractTerm>> readAnnotationTerms() {
-    return entityHandler.getEntity() instanceof ODataEntity
-            ? CoreUtils.getAnnotationTerms(service, internalAnnotations())
-            : Collections.<Class<? extends AbstractTerm>>emptyList();
+    return CoreUtils.getAnnotationTerms(service, internalAnnotations());
   }
 }

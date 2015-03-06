@@ -158,18 +158,18 @@ public class ODataReaderImpl implements ODataReader {
   @Override
   public ODataEntitySet readEntitySet(final InputStream input, final ODataFormat format)
       throws ODataDeserializerException {
-    return ((ODataClient) client).getBinder().getODataEntitySet(client.getDeserializer(format).toEntitySet(input));
+    return client.getBinder().getODataEntitySet(client.getDeserializer(format).toEntitySet(input));
   }
 
   @Override
   public ODataEntity readEntity(final InputStream input, final ODataFormat format)
       throws ODataDeserializerException {
-    return ((ODataClient) client).getBinder().getODataEntity(client.getDeserializer(format).toEntity(input));
+    return client.getBinder().getODataEntity(client.getDeserializer(format).toEntity(input));
   }
 
   @Override
   public ODataProperty readProperty(final InputStream input, final ODataFormat format)
       throws ODataDeserializerException {
-    return ((ODataClient) client).getBinder().getODataProperty(client.getDeserializer(format).toProperty(input));
+    return client.getBinder().getODataProperty(client.getDeserializer(format).toProperty(input));
   }
 }

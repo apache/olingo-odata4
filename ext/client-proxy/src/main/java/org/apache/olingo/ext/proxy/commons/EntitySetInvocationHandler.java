@@ -28,7 +28,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
@@ -196,14 +195,14 @@ public class EntitySetInvocationHandler<
 
   @Override
   public Search<T, EC> createSearch() {
-    return new SearchImpl<T, EC>((EdmEnabledODataClient) getClient(), this.collItemRef, this.baseURI, this);
+    return new SearchImpl<T, EC>(getClient(), this.collItemRef, this.baseURI, this);
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public <S extends T, SEC extends EntityCollection<S, ?, ?>> Search<S, SEC> createSearch(final Class<SEC> reference) {
     return new SearchImpl<S, SEC>(
-            (EdmEnabledODataClient) getClient(),
+            getClient(),
             reference,
             baseURI,
             (EntitySetInvocationHandler<S, ?, SEC>) this);

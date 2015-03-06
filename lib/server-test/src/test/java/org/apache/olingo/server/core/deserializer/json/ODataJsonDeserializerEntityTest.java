@@ -315,7 +315,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     for (Object arrayElement : asCollection) {
       assertTrue(arrayElement instanceof ComplexValue);
-      List<Property> castedArrayElement = (List<Property>) ((ComplexValue) arrayElement).getValue();
+      List<Property> castedArrayElement = ((ComplexValue) arrayElement).getValue();
       assertEquals(2, castedArrayElement.size());
     }
   }
@@ -340,7 +340,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     Property complexProperty = entity.getProperty("PropertyComp");
     assertEquals(ValueType.COMPLEX, complexProperty.getValueType());
-    List<Property> complexPropertyValues = (List<Property>) complexProperty.asComplex().getValue();
+    List<Property> complexPropertyValues = complexProperty.asComplex().getValue();
     assertEquals(1, complexPropertyValues.size());
 
     Property property = entity.getProperty("CollPropertyComp");
@@ -352,7 +352,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     for (Object arrayElement : asCollection) {
       assertTrue(arrayElement instanceof ComplexValue);
-      List<Property> castedArrayElement = (List<Property>) ((ComplexValue) arrayElement).getValue();
+      List<Property> castedArrayElement = ((ComplexValue) arrayElement).getValue();
       assertEquals(1, castedArrayElement.size());
     }
   }
@@ -513,8 +513,9 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertEquals("string", defProperty.getValue());
 
     Property complexProperty = entity.getProperty("PropertyCompMixedEnumDef");
-    List<Property> value = (List<Property>) complexProperty.asComplex().getValue();
+    List<Property> value = complexProperty.asComplex().getValue();
     assertEquals((short) 2, value.get(0).getValue());
+    stream.close();
   }
 
   @Test
@@ -577,7 +578,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     List<?> collPropertyComp = entity.getProperty("CollPropertyComp").asCollection();
     assertNull(collPropertyComp.get(0));
-    List<Property> complexPropertyProperties = (List<Property>) ((ComplexValue) collPropertyComp.get(1)).getValue();
+    List<Property> complexPropertyProperties = ((ComplexValue) collPropertyComp.get(1)).getValue();
     assertEquals(Short.valueOf((short) 789), complexPropertyProperties.get(0).getValue());
     assertEquals("TEST 3", complexPropertyProperties.get(1).getValue());
   }

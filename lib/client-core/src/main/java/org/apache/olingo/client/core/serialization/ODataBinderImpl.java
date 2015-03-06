@@ -118,11 +118,11 @@ public class ODataBinderImpl implements ODataBinder {
 
   @Override
   public boolean add(final ODataEntity entity, final ODataProperty property) {
-    return ((ODataEntity) entity).getProperties().add((ODataProperty) property);
+    return entity.getProperties().add(property);
   }
 
   protected boolean add(final ODataEntitySet entitySet, final ODataEntity entity) {
-    return ((ODataEntitySet) entitySet).getEntities().add((ODataEntity) entity);
+    return entitySet.getEntities().add(entity);
   }
 
   @Override
@@ -212,8 +212,8 @@ public class ODataBinderImpl implements ODataBinder {
       entitySet.getEntities().add(getEntity(entity));
     }
 
-    entitySet.setDeltaLink(((ODataEntitySet) odataEntitySet).getDeltaLink());
-    annotations((ODataEntitySet) odataEntitySet, entitySet);
+    entitySet.setDeltaLink(odataEntitySet.getDeltaLink());
+    annotations(odataEntitySet, entitySet);
     return entitySet;
   }
 
@@ -241,7 +241,7 @@ public class ODataBinderImpl implements ODataBinder {
     for (Link link : linked.getNavigationLinks()) {
       final ODataLink odataLink = odataLinked.getNavigationLink(link.getTitle());
       if (!(odataLink instanceof ODataInlineEntity) && !(odataLink instanceof ODataInlineEntitySet)) {
-        annotations((ODataLink) odataLink, link);
+        annotations(odataLink, link);
       }
     }
   }
@@ -294,8 +294,8 @@ public class ODataBinderImpl implements ODataBinder {
       entity.getProperties().add(getProperty(property));
     }
 
-    entity.setId(((ODataEntity) odataEntity).getId());
-    annotations((ODataEntity) odataEntity, entity);
+    entity.setId(odataEntity.getId());
+    annotations(odataEntity, entity);
     return entity;
   }
 
@@ -327,7 +327,7 @@ public class ODataBinderImpl implements ODataBinder {
 
   @Override
   public Property getProperty(final ODataProperty property) {
-    final ODataProperty _property = (ODataProperty) property;
+    final ODataProperty _property = property;
 
     final Property propertyResource = new PropertyImpl();
     propertyResource.setName(_property.getName());
@@ -340,8 +340,9 @@ public class ODataBinderImpl implements ODataBinder {
   protected Object getValue(final ODataValue value) {
     Object valueResource = null;
     if (value == null) {
-      valueResource = null;
-    } else if (value.isEnum()) {
+      return null;
+    }
+    if (value.isEnum()) {
       valueResource = value.asEnum().getValue();
     } else if (value.isPrimitive()) {
       valueResource = value.asPrimitive().toValue();
@@ -386,8 +387,8 @@ public class ODataBinderImpl implements ODataBinder {
         }
       }
 
-      final ODataAnnotation odataAnnotation = new ODataAnnotationImpl(annotation.getTerm(),
-          (org.apache.olingo.commons.api.domain.ODataValue) getODataValue(fqn, annotation, null, null));
+      final ODataAnnotation odataAnnotation =
+          new ODataAnnotationImpl(annotation.getTerm(), getODataValue(fqn, annotation, null, null));
       odataAnnotatable.getAnnotations().add(odataAnnotation);
     }
   }
@@ -398,7 +399,9 @@ public class ODataBinderImpl implements ODataBinder {
       final StringWriter writer = new StringWriter();
       try {
         client.getSerializer(ODataFormat.JSON).write(writer, resource.getPayload());
-      } catch (final ODataSerializerException e) {}
+      } catch (final ODataSerializerException e) {
+        LOG.debug("EntitySet -> ODataEntitySet:\n{}", writer.toString());
+      }
       writer.flush();
       LOG.debug("EntitySet -> ODataEntitySet:\n{}", writer.toString());
     }
@@ -465,9 +468,9 @@ public class ODataBinderImpl implements ODataBinder {
       }
     }
 
-    for (org.apache.olingo.commons.api.domain.ODataLink link : odataLinked.getNavigationLinks()) {
+    for (ODataLink link : odataLinked.getNavigationLinks()) {
       if (!(link instanceof ODataInlineEntity) && !(link instanceof ODataInlineEntitySet)) {
-        odataAnnotations(linked.getNavigationLink(link.getName()), (ODataAnnotatable) link);
+        odataAnnotations(linked.getNavigationLink(link.getName()), link);
       }
     }
   }
@@ -593,7 +596,9 @@ public class ODataBinderImpl implements ODataBinder {
       final StringWriter writer = new StringWriter();
       try {
         client.getSerializer(ODataFormat.JSON).write(writer, resource.getPayload());
-      } catch (final ODataSerializerException e) {}
+      } catch (final ODataSerializerException e) {
+        LOG.debug("EntityResource -> ODataEntity:\n{}", writer.toString());
+      }
       writer.flush();
       LOG.debug("EntityResource -> ODataEntity:\n{}", writer.toString());
     }
@@ -743,11 +748,11 @@ public class ODataBinderImpl implements ODataBinder {
 
     ODataValue value = null;
     if (valuable.isEnum()) {
-      value = ((ODataClient) client).getObjectFactory().newEnumValue(type == null ? null : type.toString(),
+      value = client.getObjectFactory().newEnumValue(type == null ? null : type.toString(),
           valuable.asEnum().toString());
     } else if (valuable.isComplex()) {
       final ODataComplexValue lcValue =
-          ((ODataClient) client).getObjectFactory().newComplexValue(type == null ? null : type.toString());
+          client.getObjectFactory().newComplexValue(type == null ? null : type.toString());
 
       EdmComplexType edmType = null;
       if (client instanceof EdmEnabledODataClient && type != null) {
@@ -806,8 +811,8 @@ public class ODataBinderImpl implements ODataBinder {
                 : EdmPrimitiveTypeKind.valueOfFQN(type.toString())).
             build();
       } else if (valuable.isComplex()) {
-        final ODataComplexValue cValue = (ODataComplexValue) client.getObjectFactory().
-            newComplexValue(type == null ? null : type.toString());
+        final ODataComplexValue cValue =
+            client.getObjectFactory().newComplexValue(type == null ? null : type.toString());
 
         if (!valuable.isNull()) {
           EdmComplexType edmType = null;
@@ -853,8 +858,8 @@ public class ODataBinderImpl implements ODataBinder {
     final URI next = resource.getPayload().getNext();
 
     final ODataDelta delta = next == null
-        ? ((ODataClient) client).getObjectFactory().newDelta()
-        : ((ODataClient) client).getObjectFactory().newDelta(URIUtils.getURI(base, next.toASCIIString()));
+        ? client.getObjectFactory().newDelta()
+        : client.getObjectFactory().newDelta(URIUtils.getURI(base, next.toASCIIString()));
 
     if (resource.getPayload().getCount() != null) {
       delta.setCount(resource.getPayload().getCount());

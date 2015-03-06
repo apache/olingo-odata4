@@ -245,6 +245,7 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
     return new ODataReferenceAddingRequestImpl(client, HttpMethod.POST, targetURI, wrappedPayload);
   }
 
+  @Override
   public ODataReferenceAddingRequest getReferenceSingleChangeRequest(final URI serviceRoot, final URI targetURI,
       final URI reference) {
     // See OData Protocol 11.4.6.3

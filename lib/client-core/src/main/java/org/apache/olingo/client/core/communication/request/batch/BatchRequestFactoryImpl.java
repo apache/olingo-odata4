@@ -32,7 +32,6 @@ public class BatchRequestFactoryImpl implements BatchRequestFactory {
 
   @Override
   public ODataBatchRequest getBatchRequest(final String serviceRoot) {
-    return new ODataBatchRequestImpl(
-        (ODataClient) client, client.newURIBuilder(serviceRoot).appendBatchSegment().build());
+    return new ODataBatchRequestImpl(client, client.newURIBuilder(serviceRoot).appendBatchSegment().build());
   }
 }

@@ -72,8 +72,9 @@ public interface Customer
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
+    @Override
     java.lang.Integer getID();
-
+    @Override
     void setID(java.lang.Integer _iD);
     
     
@@ -95,8 +96,9 @@ public interface Customer
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
+    @Override
     java.lang.String getName();
-
+    @Override
     void setName(java.lang.String _name);
     
     

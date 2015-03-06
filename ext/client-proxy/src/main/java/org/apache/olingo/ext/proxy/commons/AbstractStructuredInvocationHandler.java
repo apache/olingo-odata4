@@ -633,7 +633,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   }
 
   public void refs() {
-      ((URIBuilder) this.uri).appendRefSegment();
+      this.uri.appendRefSegment();
   }
 
   public void clearQueryOptions() {

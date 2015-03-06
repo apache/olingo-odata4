@@ -50,10 +50,8 @@ import org.apache.olingo.commons.core.edm.AbstractEdmSchema;
 
 public class EdmSchemaImpl extends AbstractEdmSchema {
 
-
   private final Edm edm;
 
-  private final List<Schema> xmlSchemas;
 
   private final Schema schema;
 
@@ -61,12 +59,11 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
 
   private List<EdmEntityContainer> entityContainers;
 
-  public EdmSchemaImpl(final Edm edm, final List<Schema> xmlSchemas, final Schema schema) {
+  public EdmSchemaImpl(final Edm edm, final Schema schema) {
 
     super(schema.getNamespace(), schema.getAlias());
 
     this.edm = edm;
-    this.xmlSchemas = xmlSchemas;
     this.schema = schema;
   }
 
@@ -75,20 +72,9 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
     if (entityContainers == null) {
       entityContainerByName = new HashMap<FullQualifiedName, EdmEntityContainer>();
 
-      if (schema instanceof Schema) {
-        entityContainers = super.getEntityContainers();
-        if (getEntityContainer() != null) {
-          entityContainerByName.put(getEntityContainer().getFullQualifiedName(), getEntityContainer());
-        }
-      } else {
-        entityContainers = new ArrayList<EdmEntityContainer>(schema.getEntityContainers().size());
-        for (EntityContainer entityContainer : schema.getEntityContainers()) {
-          final EdmEntityContainer edmContainer = createEntityContainer(entityContainer.getName());
-          if (edmContainer != null) {
-            entityContainers.add(edmContainer);
-            entityContainerByName.put(edmContainer.getFullQualifiedName(), edmContainer);
-          }
-        }
+      entityContainers = super.getEntityContainers();
+      if (getEntityContainer() != null) {
+        entityContainerByName.put(getEntityContainer().getFullQualifiedName(), getEntityContainer());
       }
     }
 
@@ -106,7 +92,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
     if (defaultContainer != null) {
       final FullQualifiedName entityContainerName =
           new FullQualifiedName(schema.getNamespace(), defaultContainer.getName());
-      return new EdmEntityContainerImpl(edm, entityContainerName, defaultContainer, xmlSchemas);
+      return new EdmEntityContainerImpl(edm, entityContainerName, defaultContainer);
     }
     return null;
   }
@@ -123,14 +109,12 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
   @Override
   protected List<EdmTypeDefinition> createTypeDefinitions() {
     final List<EdmTypeDefinition> typeDefinitions = new ArrayList<EdmTypeDefinition>();
-    if (schema instanceof Schema) {
-      final List<TypeDefinition> providerTypeDefinitions =
-          ((Schema) schema).getTypeDefinitions();
-      if (providerTypeDefinitions != null) {
-        for (TypeDefinition def : providerTypeDefinitions) {
-          typeDefinitions.add(
-              new EdmTypeDefinitionImpl(edm, new FullQualifiedName(namespace, def.getName()), def));
-        }
+    final List<TypeDefinition> providerTypeDefinitions =
+        schema.getTypeDefinitions();
+    if (providerTypeDefinitions != null) {
+      for (TypeDefinition def : providerTypeDefinitions) {
+        typeDefinitions.add(
+            new EdmTypeDefinitionImpl(edm, new FullQualifiedName(namespace, def.getName()), def));
       }
     }
     return typeDefinitions;
@@ -156,7 +140,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
     if (providerEntityTypes != null) {
       for (EntityType entityType : providerEntityTypes) {
         entityTypes.add(EdmEntityTypeImpl.getInstance(edm,
-            new FullQualifiedName(namespace, entityType.getName()), xmlSchemas, entityType));
+            new FullQualifiedName(namespace, entityType.getName()), entityType));
       }
     }
     return entityTypes;
@@ -169,7 +153,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
     if (providerComplexTypes != null) {
       for (ComplexType complexType : providerComplexTypes) {
         complexTypes.add(EdmComplexTypeImpl.getInstance(edm, new FullQualifiedName(namespace, complexType.getName()),
-            xmlSchemas, complexType));
+            complexType));
       }
     }
     return complexTypes;
@@ -178,12 +162,10 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
   @Override
   protected List<EdmAction> createActions() {
     final List<EdmAction> actions = new ArrayList<EdmAction>();
-    if (schema instanceof Schema) {
-      final List<Action> providerActions = ((Schema) schema).getActions();
-      if (providerActions != null) {
-        for (Action action : providerActions) {
-          actions.add(EdmActionImpl.getInstance(edm, new FullQualifiedName(namespace, action.getName()), action));
-        }
+    final List<Action> providerActions = schema.getActions();
+    if (providerActions != null) {
+      for (Action action : providerActions) {
+        actions.add(EdmActionImpl.getInstance(edm, new FullQualifiedName(namespace, action.getName()), action));
       }
     }
     return actions;
@@ -192,15 +174,13 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
   @Override
   protected List<EdmFunction> createFunctions() {
     final List<EdmFunction> functions = new ArrayList<EdmFunction>();
-    if (schema instanceof Schema) {
-      final List<Function> providerFunctions = ((Schema) schema).getFunctions();
-      if (providerFunctions != null) {
-        for (Function function : providerFunctions) {
-          functions.add(
-              EdmFunctionImpl.getInstance(edm, new FullQualifiedName(namespace, function.getName()), function));
-        }
-        return functions;
+    final List<Function> providerFunctions = schema.getFunctions();
+    if (providerFunctions != null) {
+      for (Function function : providerFunctions) {
+        functions.add(
+            EdmFunctionImpl.getInstance(edm, new FullQualifiedName(namespace, function.getName()), function));
       }
+      return functions;
     }
     return functions;
   }
@@ -208,12 +188,10 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
   @Override
   protected List<EdmTerm> createTerms() {
     final List<EdmTerm> terms = new ArrayList<EdmTerm>();
-    if (schema instanceof Schema) {
-      final List<Term> providerTerms = ((Schema) schema).getTerms();
-      if (providerTerms != null) {
-        for (Term term : providerTerms) {
-          terms.add(new EdmTermImpl(edm, getNamespace(), term));
-        }
+    final List<Term> providerTerms = schema.getTerms();
+    if (providerTerms != null) {
+      for (Term term : providerTerms) {
+        terms.add(new EdmTermImpl(edm, getNamespace(), term));
       }
     }
     return terms;
@@ -222,13 +200,11 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
   @Override
   protected List<EdmAnnotations> createAnnotationGroups() {
     final List<EdmAnnotations> annotationGroups = new ArrayList<EdmAnnotations>();
-    if (schema instanceof Schema) {
-      final List<Annotations> providerAnnotations =
-          ((Schema) schema).getAnnotationGroups();
-      if (providerAnnotations != null) {
-        for (Annotations annotationGroup : providerAnnotations) {
-          annotationGroups.add(new EdmAnnotationsImpl(edm, this, annotationGroup));
-        }
+    final List<Annotations> providerAnnotations =
+        schema.getAnnotationGroups();
+    if (providerAnnotations != null) {
+      for (Annotations annotationGroup : providerAnnotations) {
+        annotationGroups.add(new EdmAnnotationsImpl(edm, this, annotationGroup));
       }
     }
     return annotationGroups;
@@ -237,13 +213,11 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
   @Override
   protected List<EdmAnnotation> createAnnotations() {
     final List<EdmAnnotation> annotations = new ArrayList<EdmAnnotation>();
-    if (schema instanceof Schema) {
-      final List<Annotation> providerAnnotations =
-          ((Schema) schema).getAnnotations();
-      if (providerAnnotations != null) {
-        for (Annotation annotation : providerAnnotations) {
-          annotations.add(new EdmAnnotationImpl(edm, annotation));
-        }
+    final List<Annotation> providerAnnotations =
+        schema.getAnnotations();
+    if (providerAnnotations != null) {
+      for (Annotation annotation : providerAnnotations) {
+        annotations.add(new EdmAnnotationImpl(edm, annotation));
       }
     }
     return annotations;

@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.PropertyRef;
-import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -44,20 +43,19 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
 
   private EdmAnnotationHelper annotationHelper;
 
-  public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName fqn,
-      final List<? extends Schema> xmlSchemas, final EntityType entityType) {
+  public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName fqn, final EntityType entityType) {
 
     final FullQualifiedName baseTypeName = entityType.getBaseType() == null
         ? null
         : new EdmTypeInfo.Builder().setTypeExpression(entityType.getBaseType()).build().getFullQualifiedName();
-    final EdmEntityTypeImpl instance = new EdmEntityTypeImpl(edm, fqn, baseTypeName, xmlSchemas, entityType);
+    final EdmEntityTypeImpl instance = new EdmEntityTypeImpl(edm, fqn, baseTypeName, entityType);
     instance.baseType = instance.buildBaseType(baseTypeName);
 
     if (instance.baseType == null) {
       instance.entityBaseType = null;
 
       final List<EdmKeyPropertyRef> edmKey;
-      //Abstract EntityTypes do not necessarily have keys
+      // Abstract EntityTypes do not necessarily have keys
       if (entityType.isAbstractType() && entityType.getKey() == null) {
         edmKey = new ArrayList<EdmKeyPropertyRef>();
       } else {
@@ -76,14 +74,11 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
   }
 
   private EdmEntityTypeImpl(final Edm edm, final FullQualifiedName fqn, final FullQualifiedName baseTypeName,
-      final List<? extends Schema> xmlSchemas, final EntityType entityType) {
+      final EntityType entityType) {
 
     super(edm, fqn, baseTypeName, entityType.isHasStream());
-    this.typeHelper = new EdmStructuredTypeHelperImpl(edm, getFullQualifiedName(), xmlSchemas, entityType);
-    if (entityType instanceof EntityType) {
-      this.annotationHelper = new EdmAnnotationHelperImpl(edm,
-          (EntityType) entityType);
-    }
+    this.typeHelper = new EdmStructuredTypeHelperImpl(edm, getFullQualifiedName(), entityType);
+    this.annotationHelper = new EdmAnnotationHelperImpl(edm, entityType);
   }
 
   @Override

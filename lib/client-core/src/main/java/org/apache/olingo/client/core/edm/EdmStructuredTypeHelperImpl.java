@@ -19,14 +19,12 @@
 package org.apache.olingo.client.core.edm;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.NavigationProperty;
 import org.apache.olingo.client.api.edm.xml.Property;
-import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.StructuralType;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
@@ -47,7 +45,7 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
   private Map<String, EdmNavigationProperty> navigationProperties;
 
   public EdmStructuredTypeHelperImpl(final Edm edm, final FullQualifiedName structuredTypeName,
-      final List<? extends Schema> xmlSchemas, final StructuralType structuralType) {
+      final StructuralType structuralType) {
 
     this.edm = edm;
     this.structuredTypeName = structuredTypeName;
@@ -70,11 +68,8 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
     if (navigationProperties == null) {
       navigationProperties = new LinkedHashMap<String, EdmNavigationProperty>();
       for (NavigationProperty navigationProperty : structuralType.getNavigationProperties()) {
-        if (navigationProperty instanceof org.apache.olingo.client.api.edm.xml.NavigationProperty) {
-          navigationProperties.put(navigationProperty.getName(), new EdmNavigationPropertyImpl(
-              edm, structuredTypeName,
-              (org.apache.olingo.client.api.edm.xml.NavigationProperty) navigationProperty));
-        }
+        navigationProperties.put(navigationProperty.getName(), new EdmNavigationPropertyImpl(
+            edm, structuredTypeName, navigationProperty));
       }
     }
     return navigationProperties;
@@ -83,9 +78,9 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
   @Override
   public boolean isOpenType() {
     boolean isOpen = false;
-    if(structuralType instanceof ComplexType){
+    if (structuralType instanceof ComplexType) {
       isOpen = ((ComplexType) structuralType).isOpenType();
-    }else if(structuralType instanceof EntityType){
+    } else if (structuralType instanceof EntityType) {
       isOpen = ((EntityType) structuralType).isOpenType();
     }
     return isOpen;
@@ -94,9 +89,9 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
   @Override
   public boolean isAbstract() {
     boolean isAbstract = false;
-    if(structuralType instanceof ComplexType){
+    if (structuralType instanceof ComplexType) {
       isAbstract = ((ComplexType) structuralType).isAbstractType();
-    }else if(structuralType instanceof EntityType){
+    } else if (structuralType instanceof EntityType) {
       isAbstract = ((EntityType) structuralType).isAbstractType();
     }
     return isAbstract;

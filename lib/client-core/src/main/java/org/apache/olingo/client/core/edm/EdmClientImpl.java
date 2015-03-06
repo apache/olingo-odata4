@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -95,7 +95,7 @@ public class EdmClientImpl extends AbstractEdm {
   protected Map<String, EdmSchema> createSchemas() {
     final Map<String, EdmSchema> _schemas = new LinkedHashMap<String, EdmSchema>(xmlSchemas.size());
     for (Schema schema : xmlSchemas) {
-      _schemas.put(schema.getNamespace(), new EdmSchemaImpl(this, xmlSchemas, schema));
+      _schemas.put(schema.getNamespace(), new EdmSchemaImpl(this, schema));
     }
     return _schemas;
   }
@@ -108,7 +108,7 @@ public class EdmClientImpl extends AbstractEdm {
     if (schema != null) {
       final EntityContainer xmlEntityContainer = schema.getDefaultEntityContainer();
       if (xmlEntityContainer != null) {
-        result = new EdmEntityContainerImpl(this, containerName, xmlEntityContainer, xmlSchemas);
+        result = new EdmEntityContainerImpl(this, containerName, xmlEntityContainer);
       }
     }
 
@@ -135,14 +135,13 @@ public class EdmClientImpl extends AbstractEdm {
     EdmTypeDefinition result = null;
 
     final Schema schema = xmlSchemaByNamespace.get(typeDefinitionName.getNamespace());
-    if (schema instanceof Schema) {
-      final TypeDefinition xmlTypeDefinition = ((Schema) schema).
-              getTypeDefinition(typeDefinitionName.getName());
+    if (schema != null) {
+      final TypeDefinition xmlTypeDefinition = schema.
+          getTypeDefinition(typeDefinitionName.getName());
       if (xmlTypeDefinition != null) {
         result = new EdmTypeDefinitionImpl(this, typeDefinitionName, xmlTypeDefinition);
       }
     }
-
     return result;
   }
 
@@ -154,7 +153,7 @@ public class EdmClientImpl extends AbstractEdm {
     if (schema != null) {
       final EntityType xmlEntityType = schema.getEntityType(entityTypeName.getName());
       if (xmlEntityType != null) {
-        result = EdmEntityTypeImpl.getInstance(this, entityTypeName, xmlSchemas, xmlEntityType);
+        result = EdmEntityTypeImpl.getInstance(this, entityTypeName, xmlEntityType);
       }
     }
 
@@ -169,7 +168,7 @@ public class EdmClientImpl extends AbstractEdm {
     if (schema != null) {
       final ComplexType xmlComplexType = schema.getComplexType(complexTypeName.getName());
       if (xmlComplexType != null) {
-        result = EdmComplexTypeImpl.getInstance(this, complexTypeName, xmlSchemas, xmlComplexType);
+        result = EdmComplexTypeImpl.getInstance(this, complexTypeName, xmlComplexType);
       }
     }
 
@@ -181,18 +180,16 @@ public class EdmClientImpl extends AbstractEdm {
     EdmAction result = null;
 
     final Schema schema = xmlSchemaByNamespace.get(actionName.getNamespace());
-    if (schema instanceof Schema) {
-      final List<Action> actions = ((Schema) schema).
-              getActions(actionName.getName());
-      boolean found = false;
-      for (final Iterator<Action> itor = actions.iterator(); itor.hasNext() && !found;) {
-        final Action action = itor.next();
-        if (!action.isBound()) {
-          found = true;
-          result = EdmActionImpl.getInstance(this, actionName, action);
-        }
+    final List<Action> actions = schema.
+        getActions(actionName.getName());
+    boolean found = false;
+    for (final Iterator<Action> itor = actions.iterator(); itor.hasNext() && !found;) {
+      final Action action = itor.next();
+      if (!action.isBound()) {
+        found = true;
+        result = EdmActionImpl.getInstance(this, actionName, action);
       }
-    } 
+    }
     return result;
   }
 
@@ -201,16 +198,14 @@ public class EdmClientImpl extends AbstractEdm {
     final List<EdmFunction> result = new ArrayList<EdmFunction>();
 
     final Schema schema = xmlSchemaByNamespace.get(functionName.getNamespace());
-    if (schema instanceof Schema) {
-      final List<Function> functions = ((Schema) schema).
-              getFunctions(functionName.getName());
-      for (final Iterator<Function> itor = functions.iterator(); itor.hasNext();) {
-        final Function function = itor.next();
-        if (!function.isBound()) {
-          result.add(EdmFunctionImpl.getInstance(this, functionName, function));
-        }
+    final List<Function> functions = schema.
+        getFunctions(functionName.getName());
+    for (final Iterator<Function> itor = functions.iterator(); itor.hasNext();) {
+      final Function function = itor.next();
+      if (!function.isBound()) {
+        result.add(EdmFunctionImpl.getInstance(this, functionName, function));
       }
-    } 
+    }
     return result;
   }
 
@@ -219,89 +214,83 @@ public class EdmClientImpl extends AbstractEdm {
     EdmFunction result = null;
 
     final Schema schema = xmlSchemaByNamespace.get(functionName.getNamespace());
-    if (schema instanceof Schema) {
-      final List<Function> functions = ((Schema) schema).
-              getFunctions(functionName.getName());
-      boolean found = false;
-      for (final Iterator<Function> itor = functions.iterator(); itor.hasNext() && !found;) {
-        final Function function = itor.next();
-        if (!function.isBound()) {
-          final Set<String> functionParamNames = new HashSet<String>();
-          for (Parameter param : function.getParameters()) {
-            functionParamNames.add(param.getName());
-          }
-          found = parameterNames == null
-                  ? functionParamNames.isEmpty()
-                  : functionParamNames.containsAll(parameterNames);
-          result = EdmFunctionImpl.getInstance(this, functionName, function);
+    final List<Function> functions = schema.
+        getFunctions(functionName.getName());
+    boolean found = false;
+    for (final Iterator<Function> itor = functions.iterator(); itor.hasNext() && !found;) {
+      final Function function = itor.next();
+      if (!function.isBound()) {
+        final Set<String> functionParamNames = new HashSet<String>();
+        for (Parameter param : function.getParameters()) {
+          functionParamNames.add(param.getName());
         }
+        found = parameterNames == null
+            ? functionParamNames.isEmpty()
+            : functionParamNames.containsAll(parameterNames);
+        result = EdmFunctionImpl.getInstance(this, functionName, function);
       }
-    } 
+    }
     return result;
   }
 
   @Override
   protected EdmAction createBoundAction(final FullQualifiedName actionName,
-          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
+      final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
 
     EdmAction result = null;
 
     final Schema schema = xmlSchemaByNamespace.get(actionName.getNamespace());
-    if (schema instanceof Schema) {
-      final List<Action> actions =
-              ((Schema) schema).getActions(actionName.getName());
-      boolean found = false;
-      for (final Iterator<Action> itor = actions.iterator(); itor.hasNext() && !found;) {
-        final Action action = itor.next();
-        if (action.isBound()) {
-          final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
-                  setTypeExpression(action.getParameters().get(0).getType()).build();
-          if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
-                  && (isBindingParameterCollection == null
-                  || isBindingParameterCollection.booleanValue() == boundParam.isCollection())) {
+    final List<Action> actions =
+        schema.getActions(actionName.getName());
+    boolean found = false;
+    for (final Iterator<Action> itor = actions.iterator(); itor.hasNext() && !found;) {
+      final Action action = itor.next();
+      if (action.isBound()) {
+        final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
+            setTypeExpression(action.getParameters().get(0).getType()).build();
+        if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
+            && (isBindingParameterCollection == null
+            || isBindingParameterCollection.booleanValue() == boundParam.isCollection())) {
 
-            found = true;
-            result = EdmActionImpl.getInstance(this, actionName, action);
-          }
+          found = true;
+          result = EdmActionImpl.getInstance(this, actionName, action);
         }
       }
-    } 
+    }
     return result;
   }
 
   @Override
   protected EdmFunction createBoundFunction(final FullQualifiedName functionName,
-          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection,
-          final List<String> parameterNames) {
+      final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection,
+      final List<String> parameterNames) {
 
     EdmFunction result = null;
 
     final Schema schema = xmlSchemaByNamespace.get(functionName.getNamespace());
-    if (schema instanceof Schema) {
-      final List<Function> functions = ((Schema) schema).
-              getFunctions(functionName.getName());
-      boolean found = false;
-      for (final Iterator<Function> itor = functions.iterator(); itor.hasNext() && !found;) {
-        final Function function = itor.next();
-        if (function.isBound()) {
-          final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
-                  setTypeExpression(function.getParameters().get(0).getType()).build();
-          if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
-                  && (isBindingParameterCollection == null
-                  || isBindingParameterCollection.booleanValue() == boundParam.isCollection())) {
+    final List<Function> functions = schema.
+        getFunctions(functionName.getName());
+    boolean found = false;
+    for (final Iterator<Function> itor = functions.iterator(); itor.hasNext() && !found;) {
+      final Function function = itor.next();
+      if (function.isBound()) {
+        final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
+            setTypeExpression(function.getParameters().get(0).getType()).build();
+        if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
+            && (isBindingParameterCollection == null
+            || isBindingParameterCollection.booleanValue() == boundParam.isCollection())) {
 
-            final Set<String> functionParamNames = new HashSet<String>();
-            for (Parameter param : function.getParameters()) {
-              functionParamNames.add(param.getName());
-            }
-            found = parameterNames == null
-                    ? functionParamNames.isEmpty()
-                    : functionParamNames.containsAll(parameterNames);
-            result = EdmFunctionImpl.getInstance(this, functionName, function);
+          final Set<String> functionParamNames = new HashSet<String>();
+          for (Parameter param : function.getParameters()) {
+            functionParamNames.add(param.getName());
           }
+          found = parameterNames == null
+              ? functionParamNames.isEmpty()
+              : functionParamNames.containsAll(parameterNames);
+          result = EdmFunctionImpl.getInstance(this, functionName, function);
         }
       }
-    } 
+    }
     return result;
   }
 
@@ -310,13 +299,12 @@ public class EdmClientImpl extends AbstractEdm {
     EdmTerm result = null;
 
     final Schema schema = xmlSchemaByNamespace.get(termName.getNamespace());
-    if (schema instanceof Schema) {
-      final Term term = ((Schema) schema).getTerm(termName.getName());
+    if (schema != null) {
+      final Term term = schema.getTerm(termName.getName());
       if (term != null) {
         result = new EdmTermImpl(this, schema.getNamespace(), term);
       }
     }
-
     return result;
   }
 
@@ -325,12 +313,10 @@ public class EdmClientImpl extends AbstractEdm {
     EdmAnnotationsImpl result = null;
 
     final Schema schema = xmlSchemaByNamespace.get(targetName.getNamespace());
-    if (schema instanceof Schema) {
-      final Annotations annotationGroup =
-              ((Schema) schema).getAnnotationGroup(targetName.getName());
-      if (annotationGroup != null) {
-        result = new EdmAnnotationsImpl(this, schemas.get(schema.getNamespace()), annotationGroup);
-      }
+    final Annotations annotationGroup =
+        schema.getAnnotationGroup(targetName.getName());
+    if (annotationGroup != null) {
+      result = new EdmAnnotationsImpl(this, schemas.get(schema.getNamespace()), annotationGroup);
     }
 
     return result;
@@ -341,15 +327,13 @@ public class EdmClientImpl extends AbstractEdm {
     List<EdmAnnotation> result = null;
 
     final Schema schema = xmlSchemaByNamespace.get(annotatedName.getNamespace());
-    if (schema instanceof Schema) {
-      final Annotatable annotatable =
-              ((Schema) schema).getAnnotatables().get(annotatedName.getName());
-      if (annotatable != null && annotatable.getAnnotations() != null) {
-        result = new ArrayList<EdmAnnotation>();
-        for (Annotation annotation : annotatable.getAnnotations()) {
-          final EdmTerm term = getTerm(new FullQualifiedName(annotation.getTerm()));
-          result.add(new EdmAnnotationImpl(this, annotation));
-        }
+    final Annotatable annotatable =
+        schema.getAnnotatables().get(annotatedName.getName());
+    if (annotatable != null && annotatable.getAnnotations() != null) {
+      result = new ArrayList<EdmAnnotation>();
+      for (Annotation annotation : annotatable.getAnnotations()) {
+        final EdmTerm term = getTerm(new FullQualifiedName(annotation.getTerm()));
+        result.add(new EdmAnnotationImpl(this, annotation));
       }
     }
 

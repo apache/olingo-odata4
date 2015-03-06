@@ -43,7 +43,7 @@ import org.apache.olingo.commons.api.domain.ODataSingleton;
 public class RetrieveRequestFactoryImpl implements RetrieveRequestFactory {
 
   protected final ODataClient client;
-  
+
   public RetrieveRequestFactoryImpl(final ODataClient client) {
     this.client = client;
   }
@@ -89,8 +89,7 @@ public class RetrieveRequestFactoryImpl implements RetrieveRequestFactory {
 
   @Override
   public XMLMetadataRequest getXMLMetadataRequest(final String serviceRoot) {
-    return new XMLMetadataRequestImpl(((ODataClient) client),
-        client.newURIBuilder(serviceRoot).appendMetadataSegment().build());
+    return new XMLMetadataRequestImpl(client, client.newURIBuilder(serviceRoot).appendMetadataSegment().build());
   }
 
   @Override

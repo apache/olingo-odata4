@@ -156,14 +156,12 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
       entity.getProperties().clear();
       CoreUtils.addProperties(service.getClient(), handler.getPropertyChanges(), entity);
 
-      if (entity instanceof ODataEntity) {
-        ((ODataEntity) entity).getAnnotations().clear();
-        CoreUtils.addAnnotations(service.getClient(), handler.getAnnotations(), (ODataEntity) entity);
+      entity.getAnnotations().clear();
+      CoreUtils.addAnnotations(service.getClient(), handler.getAnnotations(), entity);
 
-        for (Map.Entry<String, AnnotatableInvocationHandler> entry : handler.getPropAnnotatableHandlers().entrySet()) {
-          CoreUtils.addAnnotations(service.getClient(),
-              entry.getValue().getAnnotations(), ((ODataEntity) entity).getProperty(entry.getKey()));
-        }
+      for (Map.Entry<String, AnnotatableInvocationHandler> entry : handler.getPropAnnotatableHandlers().entrySet()) {
+        CoreUtils.addAnnotations(service.getClient(),
+            entry.getValue().getAnnotations(), entity.getProperty(entry.getKey()));
       }
     }
 
@@ -235,13 +233,11 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
       }
     }
 
-    if (entity instanceof ODataEntity) {
-      for (Map.Entry<String, AnnotatableInvocationHandler> entry : handler.getNavPropAnnotatableHandlers().entrySet()) {
+    for (Map.Entry<String, AnnotatableInvocationHandler> entry : handler.getNavPropAnnotatableHandlers().entrySet()) {
 
-        CoreUtils.addAnnotations(service.getClient(),
-            entry.getValue().getAnnotations(),
-            (org.apache.olingo.commons.api.domain.ODataLink) entity.getNavigationLink(entry.getKey()));
-      }
+      CoreUtils.addAnnotations(service.getClient(),
+          entry.getValue().getAnnotations(),
+          entity.getNavigationLink(entry.getKey()));
     }
 
     final AttachedEntityStatus processedStatus = queue(handler, entity, changeset);
