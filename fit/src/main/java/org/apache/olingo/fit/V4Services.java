@@ -1082,8 +1082,9 @@ public class V4Services extends AbstractServices {
       @PathParam("containedEntitySetName") String containedEntitySetName,
       @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
-    if ("MyGiftCard".equals(containedEntitySetName)) {
-      return getContainedEntity(accept, entityId, containedEntitySetName, null, format);
+    String tempContainedESName = containedEntitySetName;
+    if ("MyGiftCard".equals(tempContainedESName)) {
+      return getContainedEntity(accept, entityId, tempContainedESName, null, format);
     }
 
     try {
@@ -1098,14 +1099,14 @@ public class V4Services extends AbstractServices {
       }
 
       String derivedType = null;
-      if (containedEntitySetName.contains("/")) {
-        final String[] parts = containedEntitySetName.split("/");
-        containedEntitySetName = parts[0];
+      if (tempContainedESName.contains("/")) {
+        final String[] parts = tempContainedESName.split("/");
+        tempContainedESName = parts[0];
         derivedType = parts[1];
       }
 
       final InputStream feed = FSManager.instance(version).
-          readFile(containedPath(entityId, containedEntitySetName).toString(), Accept.ATOM);
+          readFile(containedPath(entityId, tempContainedESName).toString(), Accept.ATOM);
 
       final ResWrap<EntitySet> container = atomDeserializer.toEntitySet(feed);
 

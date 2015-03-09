@@ -520,16 +520,17 @@ public class MockedBatchHandlerTest {
    * Helper methods
    */
   private String checkChangeSetPartHeader(final List<String> response, int line) {
-    assertEquals(CRLF, response.get(line++));
-    assertTrue(response.get(line++).contains("--changeset_"));
-    assertEquals("Content-Type: application/http" + CRLF, response.get(line++));
-    assertEquals("Content-Transfer-Encoding: binary" + CRLF, response.get(line++));
+    int lineNumber = line;
+    assertEquals(CRLF, response.get(lineNumber++));
+    assertTrue(response.get(lineNumber++).contains("--changeset_"));
+    assertEquals("Content-Type: application/http" + CRLF, response.get(lineNumber++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, response.get(lineNumber++));
 
-    assertTrue(response.get(line).contains("Content-Id:"));
-    String contentId = response.get(line).split(":")[1].trim();
-    line++;
+    assertTrue(response.get(lineNumber).contains("Content-Id:"));
+    String contentId = response.get(lineNumber).split(":")[1].trim();
+    lineNumber++;
 
-    assertEquals(CRLF, response.get(line++));
+    assertEquals(CRLF, response.get(lineNumber++));
 
     return contentId;
   }

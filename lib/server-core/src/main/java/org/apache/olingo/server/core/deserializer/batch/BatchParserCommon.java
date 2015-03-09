@@ -82,15 +82,15 @@ public class BatchParserCommon {
   }
 
   public static String removeEndingSlash(String content) {
-    content = content.trim();
-    int lastSlashIndex = content.lastIndexOf('/');
+    String newContent = content.trim();
+    int lastSlashIndex = newContent.lastIndexOf('/');
 
-    return (lastSlashIndex == content.length() - 1) ? content.substring(0, content.length() - 1) : content;
+    return (lastSlashIndex == newContent.length() - 1) ? newContent.substring(0, newContent.length() - 1) : newContent;
   }
 
   private static String trimQuota(String boundary) {
     if (boundary.matches("\".*\"")) {
-      boundary = boundary.replace("\"", "");
+      return boundary.replace("\"", "");
     }
 
     return boundary;

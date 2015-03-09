@@ -1185,7 +1185,7 @@ public abstract class AbstractServices {
       final String format,
       String expand,
       final String select) {
-
+    
     try {
       final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
 
@@ -1238,9 +1238,10 @@ public abstract class AbstractServices {
         entry.getNavigationLinks().removeAll(linkToBeRemoved);
       }
 
-      if (StringUtils.isNotBlank(expand)) {
-        expand = StringUtils.substringBefore(expand, "(");
-        final List<String> links = Arrays.asList(expand.split(","));
+      String tempExpand = expand;
+      if (StringUtils.isNotBlank(tempExpand)) {
+        tempExpand = StringUtils.substringBefore(tempExpand, "(");
+        final List<String> links = Arrays.asList(tempExpand.split(","));
 
         final Map<Link, Link> replace = new HashMap<Link, Link>();
 
