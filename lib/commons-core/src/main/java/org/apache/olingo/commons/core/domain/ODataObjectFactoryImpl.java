@@ -117,7 +117,7 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
 
   @Override
   public ODataCollectionValue<ODataValue> newCollectionValue(final String typeName) {
-    return new ODataCollectionValueImpl(typeName);
+    return new ODataCollectionValueImpl<ODataValue>(typeName);
   }
 
   @Override

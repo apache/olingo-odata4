@@ -96,7 +96,7 @@ public class ODataEntityCreateRequestImpl<E extends ODataEntity>
    */
   private class ODataEntityCreateResponseImpl extends AbstractODataResponse implements ODataEntityCreateResponse<E> {
 
-    private E entity = null;
+    private E resEntity = null;
 
     private ODataEntityCreateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
@@ -110,19 +110,19 @@ public class ODataEntityCreateRequestImpl<E extends ODataEntity>
     @Override
     @SuppressWarnings("unchecked")
     public E getBody() {
-      if (entity == null) {
+      if (resEntity == null) {
         try {
           final ResWrap<Entity> resource = odataClient.getDeserializer(ODataFormat.fromString(getAccept())).
                   toEntity(getRawResponse());
 
-          entity = (E) odataClient.getBinder().getODataEntity(resource);
+          resEntity = (E) odataClient.getBinder().getODataEntity(resource);
         } catch (final ODataDeserializerException e) {
           throw new IllegalArgumentException(e);
         } finally {
           this.close();
         }
       }
-      return entity;
+      return resEntity;
     }
   }
 }

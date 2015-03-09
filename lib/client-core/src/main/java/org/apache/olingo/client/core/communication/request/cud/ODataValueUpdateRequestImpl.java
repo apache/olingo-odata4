@@ -94,7 +94,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
    */
   private class ODataValueUpdateResponseImpl extends AbstractODataResponse implements ODataValueUpdateResponse {
 
-    private ODataPrimitiveValue value = null;
+    private ODataPrimitiveValue resValue = null;
 
     private ODataValueUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
@@ -104,11 +104,11 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
 
     @Override
     public ODataPrimitiveValue getBody() {
-      if (value == null) {
+      if (resValue == null) {
         final ODataFormat format = ODataFormat.fromString(getAccept());
 
         try {
-          value = odataClient.getObjectFactory().newPrimitiveValueBuilder().
+          resValue = odataClient.getObjectFactory().newPrimitiveValueBuilder().
                   setType(format == ODataFormat.TEXT_PLAIN
                           ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                   setValue(getRawResponse()).
@@ -119,7 +119,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
           this.close();
         }
       }
-      return value;
+      return resValue;
     }
   }
 }

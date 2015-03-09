@@ -28,12 +28,8 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PingITCase extends AbstractBaseTestITCase{
-
-  private static final Logger LOG = LoggerFactory.getLogger(PingITCase.class);
 
   private static final String SERVICE_URI = TecSvcConst.BASE_URI + "/";
   private static final String REDIRECT_URI = TecSvcConst.BASE_URI;

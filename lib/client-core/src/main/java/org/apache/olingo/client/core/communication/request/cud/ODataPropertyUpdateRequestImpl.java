@@ -97,7 +97,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
    */
   private class ODataPropertyUpdateResponseImpl extends AbstractODataResponse implements ODataPropertyUpdateResponse {
 
-    private ODataProperty property = null;
+    private ODataProperty resProperty = null;
 
     private ODataPropertyUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
@@ -107,19 +107,19 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
 
     @Override
     public ODataProperty getBody() {
-      if (property == null) {
+      if (resProperty == null) {
         try {
           final ResWrap<Property> resource = odataClient.getDeserializer(ODataFormat.fromString(getAccept())).
                   toProperty(getRawResponse());
 
-          property = odataClient.getBinder().getODataProperty(resource);
+          resProperty = odataClient.getBinder().getODataProperty(resource);
         } catch (final ODataDeserializerException e) {
           throw new IllegalArgumentException(e);
         } finally {
           this.close();
         }
       }
-      return property;
+      return resProperty;
     }
   }
 }

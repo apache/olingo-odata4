@@ -143,7 +143,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
       final TransactionItems items,
       final List<EntityLinkDesc> delayedUpdates,
       final PersistenceChanges changeset) {
-
+    int posNumber = pos;
     items.put(handler, null);
 
     final ODataEntity entity = handler.getEntity();
@@ -195,8 +195,8 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
               URIUtils.getURI(service.getClient().getServiceRoot(), editLink.toASCIIString()), type));
         } else {
           if (!items.contains(target)) {
-            pos = processEntityContext(target, pos, items, delayedUpdates, changeset);
-            pos++;
+            posNumber = processEntityContext(target, posNumber, items, delayedUpdates, changeset);
+            posNumber++;
           }
 
           final Integer targetPos = items.get(target);
@@ -243,14 +243,14 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     final AttachedEntityStatus processedStatus = queue(handler, entity, changeset);
     if (processedStatus != null) {
       // insert into the process queue
-      LOG.debug("{}: Insert '{}' into the process queue", pos, handler);
-      items.put(handler, pos);
+      LOG.debug("{}: Insert '{}' into the process queue", posNumber, handler);
+      items.put(handler, posNumber);
     } else {
-      pos--;
+      posNumber--;
     }
 
     if (processedStatus != AttachedEntityStatus.DELETED) {
-      int startingPos = pos;
+      int startingPos = posNumber;
 
       if (handler.getEntity().isMediaEntity() && handler.isChanged()) {
         // update media properties
@@ -260,9 +260,9 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
               : URIUtils.getURI(
                   service.getClient().getServiceRoot(), handler.getEntity().getEditLink().toASCIIString());
           queueUpdate(handler, targetURI, entity, changeset);
-          pos++;
-          items.put(handler, pos);
-          LOG.debug("{}: Update media properties for '{}' into the process queue", pos, handler);
+          posNumber++;
+          items.put(handler, posNumber);
+          LOG.debug("{}: Update media properties for '{}' into the process queue", posNumber, handler);
         }
 
         // update media content
@@ -276,9 +276,9 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
           queueUpdateMediaEntity(handler, targetURI, handler.getStreamChanges(), changeset);
 
           // update media info (use null key)
-          pos++;
-          items.put(null, pos);
-          LOG.debug("{}: Update media info for '{}' into the process queue", pos, handler);
+          posNumber++;
+          items.put(null, posNumber);
+          LOG.debug("{}: Update media info for '{}' into the process queue", posNumber, handler);
         }
       }
 
@@ -291,13 +291,13 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
         queueUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
 
         // update media info (use null key)
-        pos++;
-        items.put(handler, pos);
-        LOG.debug("{}: Update media info (null key) for '{}' into the process queue", pos, handler);
+        posNumber++;
+        items.put(handler, posNumber);
+        LOG.debug("{}: Update media info (null key) for '{}' into the process queue", posNumber, handler);
       }
     }
 
-    return pos;
+    return posNumber;
   }
 
   protected void processDelayedUpdates(
@@ -305,12 +305,12 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
       int pos,
       final TransactionItems items,
       final PersistenceChanges changeset) {
-
+    int posNumber = pos;
     for (EntityLinkDesc delayedUpdate : delayedUpdates) {
       if (StringUtils.isBlank(delayedUpdate.getReference())) {
 
-        pos++;
-        items.put(delayedUpdate.getSource(), pos);
+        posNumber++;
+        items.put(delayedUpdate.getSource(), posNumber);
 
         final ODataEntity changes =
             service.getClient().getObjectFactory().newEntity(delayedUpdate.getSource().getEntity().getTypeName());
@@ -357,8 +357,8 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
         if (queueUpdateLinkViaRef(
             delayedUpdate.getSource(), sourceURI, URI.create(delayedUpdate.getReference()), changeset)) {
-          pos++;
-          items.put(delayedUpdate.getSource(), pos);
+          posNumber++;
+          items.put(delayedUpdate.getSource(), posNumber);
         }
       }
     }
