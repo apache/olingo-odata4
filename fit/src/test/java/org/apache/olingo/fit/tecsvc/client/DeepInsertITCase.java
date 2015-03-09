@@ -73,7 +73,9 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
   private static final String NAV_PROPERTY_ET_TWO_KEY_NAV_MANY = "NavPropertyETTwoKeyNavMany";
 
   @AfterClass
-  public static void tearDownAfterClass() throws Exception {}
+  public static void tearDownAfterClass() throws Exception {
+  //Nothing needed here.
+  }
 
   @Test
   public void testSimpleDeepInsert() throws EdmPrimitiveTypeException {

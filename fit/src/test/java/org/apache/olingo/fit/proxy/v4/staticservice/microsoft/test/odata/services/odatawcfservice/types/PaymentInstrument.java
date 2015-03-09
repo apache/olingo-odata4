@@ -134,7 +134,7 @@ public interface PaymentInstrument
         Operations operations();
 
     interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
-    
+    //No additional methods needed for now.
         }
     Annotations annotations();
 
@@ -183,6 +183,7 @@ public interface PaymentInstrument
       extends org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Statement, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StatementCollection>, 
       org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<BillingStatements>,
       AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Statement, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StatementCollection> {
+    //No additional methods needed for now.
     }
 
   }

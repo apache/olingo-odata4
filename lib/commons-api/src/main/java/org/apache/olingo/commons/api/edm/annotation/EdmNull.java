@@ -21,5 +21,5 @@ package org.apache.olingo.commons.api.edm.annotation;
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 
 public interface EdmNull extends EdmDynamicAnnotationExpression, EdmAnnotatable {
-
+//No additional methods needed for now.
 }

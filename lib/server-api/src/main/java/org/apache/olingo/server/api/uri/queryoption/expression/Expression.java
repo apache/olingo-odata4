@@ -22,5 +22,5 @@ package org.apache.olingo.server.api.uri.queryoption.expression;
  * Super class of all classes used to build the expression tree
  */
 public interface Expression extends VisitableExpression {
-
+//No additional methods needed for now.
 }

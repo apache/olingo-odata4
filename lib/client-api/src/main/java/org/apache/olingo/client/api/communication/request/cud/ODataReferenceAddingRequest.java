@@ -35,4 +35,5 @@ import org.apache.olingo.client.api.communication.response.ODataReferenceAddingR
  */
 public interface ODataReferenceAddingRequest
         extends ODataBasicRequest<ODataReferenceAddingResponse>, ODataBatchableRequest {
+//No additional methods needed for now.
 }

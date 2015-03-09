@@ -150,6 +150,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
       otcontainer.getRowIndex().getByKey(id).load();
       fail();
     } catch (IllegalArgumentException e) {
+      //Expected
     }
   }
 }

@@ -23,5 +23,5 @@ package org.apache.olingo.server.api.uri;
  * For example: http://.../serviceroot/entityset(1)/$count
  */
 public interface UriResourceCount extends UriResource {
-
+//No additional methods needed for now.
 }

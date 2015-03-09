@@ -27,4 +27,6 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @HttpMethod("PATCH")
-public @interface PATCH {}
+public @interface PATCH {
+//No additional methods needed for now.
+}

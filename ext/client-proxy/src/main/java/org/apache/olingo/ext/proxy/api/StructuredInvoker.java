@@ -20,4 +20,5 @@ package org.apache.olingo.ext.proxy.api;
 
 public interface StructuredInvoker<T extends StructuredType<?>>
         extends StructuredQuery<StructuredInvoker<T>>, Invoker<T> {
+//No additional methods needed for now.
 }

@@ -310,7 +310,7 @@ public interface Employee
         Operations operations();
 
     interface Operations extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.Operations{
-    
+    //No additional methods needed for now.
         }
     Annotations annotations();
 

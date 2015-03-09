@@ -27,4 +27,5 @@ import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateRe
  */
 public interface ODataPropertyUpdateRequest
     extends ODataBasicRequest<ODataPropertyUpdateResponse>, ODataBatchableRequest {
+//No additional methods needed for now.
 }

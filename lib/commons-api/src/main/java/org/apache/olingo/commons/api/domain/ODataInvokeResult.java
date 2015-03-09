@@ -25,4 +25,6 @@ package org.apache.olingo.commons.api.domain;
  * @see ODataEntity
  * @see ODataProperty
  */
-public interface ODataInvokeResult {}
+public interface ODataInvokeResult {
+//No additional methods needed for now.
+}

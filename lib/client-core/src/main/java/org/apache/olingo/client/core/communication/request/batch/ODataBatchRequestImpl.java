@@ -91,6 +91,7 @@ public class ODataBatchRequestImpl
 
     @Override
     protected void validateSingleRequest(final ODataBatchableRequest request) {
+      //TODO: Validate single batch request
     }
   }
 

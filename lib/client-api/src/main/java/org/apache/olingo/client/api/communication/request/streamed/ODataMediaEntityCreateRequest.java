@@ -30,4 +30,5 @@ import org.apache.olingo.commons.api.domain.ODataEntity;
 public interface ODataMediaEntityCreateRequest<E extends ODataEntity>
         extends ODataStreamedEntityRequest<ODataMediaEntityCreateResponse<E>, MediaEntityCreateStreamManager<E>>,
         ODataBatchableRequest{
+//No additional methods needed for now.
 }

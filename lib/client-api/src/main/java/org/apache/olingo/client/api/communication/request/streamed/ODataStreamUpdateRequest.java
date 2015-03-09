@@ -27,4 +27,5 @@ import org.apache.olingo.client.api.communication.response.ODataStreamUpdateResp
  */
 public interface ODataStreamUpdateRequest
         extends ODataStreamedRequest<ODataStreamUpdateResponse, StreamUpdateStreamManager>, ODataBatchableRequest {
+//No additional methods needed for now.
 }

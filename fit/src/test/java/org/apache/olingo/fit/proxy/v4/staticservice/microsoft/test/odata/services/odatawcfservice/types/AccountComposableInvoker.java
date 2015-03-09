@@ -146,6 +146,7 @@ public interface AccountComposableInvoker
       extends org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection>, 
       org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<MyPaymentInstruments>,
       AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection> {
+    //No additional methods needed for now.
     }
 
         @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "ActiveSubscriptions", 
@@ -164,6 +165,7 @@ public interface AccountComposableInvoker
       extends org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Subscription, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.SubscriptionCollection>, 
       org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<ActiveSubscriptions>,
       AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Subscription, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.SubscriptionCollection> {
+    //No additional methods needed for now.
     }
 
   }

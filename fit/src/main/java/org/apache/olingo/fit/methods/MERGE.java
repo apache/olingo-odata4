@@ -27,4 +27,6 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @HttpMethod("MERGE")
-public @interface MERGE {}
+public @interface MERGE {
+  //No additional methods needed for now.
+}

@@ -24,4 +24,5 @@ import org.apache.olingo.client.api.edm.xml.XMLMetadata;
  * This class implements an XML metadata request.
  */
 public interface XMLMetadataRequest extends ODataRetrieveRequest<XMLMetadata> {
+//No additional methods needed for now.
 }

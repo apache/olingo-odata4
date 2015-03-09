@@ -21,5 +21,5 @@ package org.apache.olingo.commons.core.edm.annotation;
 import org.apache.olingo.commons.api.edm.annotation.EdmNull;
 
 public class EdmNullImpl extends AbstractEdmAnnotatableDynamicAnnotationExpression implements EdmNull {
-
+//No additional methods needed for now.
 }

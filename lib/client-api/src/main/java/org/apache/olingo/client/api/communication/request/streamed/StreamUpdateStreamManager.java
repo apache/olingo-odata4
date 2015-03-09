@@ -25,4 +25,5 @@ import org.apache.olingo.client.api.communication.response.ODataStreamUpdateResp
  * Streamed entity payload object.
  */
 public interface StreamUpdateStreamManager extends ODataPayloadManager<ODataStreamUpdateResponse> {
+//No additional methods needed for now.
 }

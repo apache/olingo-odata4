@@ -51,7 +51,9 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   private static final String ES_ALL_PRIM = "ESAllPrim";
 
   @AfterClass
-  public static void tearDownAfterClass() throws Exception {}
+  public static void tearDownAfterClass() throws Exception {
+    //Nothing here.
+  }
 
   @Test
   public void testTimeOfDayLiteral() {

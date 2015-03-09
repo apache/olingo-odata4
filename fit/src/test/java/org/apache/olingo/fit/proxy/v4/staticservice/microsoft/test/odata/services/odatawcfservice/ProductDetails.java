@@ -36,5 +36,5 @@ public interface ProductDetails
         Operations operations();
 
     interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
-    
+    //No additional methods needed for now.
         }}

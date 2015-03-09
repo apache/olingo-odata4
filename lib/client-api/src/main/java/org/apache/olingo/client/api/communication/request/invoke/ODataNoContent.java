@@ -24,4 +24,5 @@ import org.apache.olingo.commons.api.domain.ODataInvokeResult;
  * Marker class for invoke with no return type.
  */
 public class ODataNoContent implements ODataInvokeResult {
+//No additional methods needed for now.
 }

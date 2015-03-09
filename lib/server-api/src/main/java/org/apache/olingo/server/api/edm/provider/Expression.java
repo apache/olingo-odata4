@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.api.edm.provider;
 
-//TODO: Expression implementation
 public class Expression {
-
+//TODO: Expression implementation
 }

@@ -43,14 +43,14 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
     final CustomerCollection customers = container.getPeople().execute(CustomerCollection.class);
     assertNotNull(customers);
 
-    for (Customer customer : customers) {
+    for (Object customer : customers) {
       assertTrue(customer instanceof Customer);
     }
 
     final CreditCardPICollection creditCards = container.getAccounts().getByKey(101).
             getMyPaymentInstruments().execute(CreditCardPICollection.class);
     assertNotNull(creditCards);
-    for (CreditCardPI creditCard : creditCards) {
+    for (Object creditCard : creditCards) {
       assertTrue(creditCard instanceof CreditCardPI);
     }
   }

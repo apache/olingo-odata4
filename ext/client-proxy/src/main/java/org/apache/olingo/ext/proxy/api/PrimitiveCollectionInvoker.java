@@ -20,4 +20,5 @@ package org.apache.olingo.ext.proxy.api;
 
 public interface PrimitiveCollectionInvoker<T extends CollectionQuery<?>>
         extends CollectionQuery<PrimitiveCollectionInvoker<T>>, Invoker<T> {
+//No additional methods needed for now.
 }

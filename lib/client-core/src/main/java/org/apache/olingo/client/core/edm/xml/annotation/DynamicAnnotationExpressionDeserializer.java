@@ -108,9 +108,11 @@ public class DynamicAnnotationExpressionDeserializer
 
       jp.nextToken();
       for (; jp.getCurrentToken() != JsonToken.FIELD_NAME; jp.nextToken()) {
+      //Search for field name
       }
       not.setExpression(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
       for (; jp.getCurrentToken() != JsonToken.END_OBJECT || !jp.getCurrentName().equals("Not"); jp.nextToken()) {
+      //Search for end object
       }
 
       expression = not;
@@ -121,11 +123,13 @@ public class DynamicAnnotationExpressionDeserializer
 
       jp.nextToken();
       for (; jp.getCurrentToken() != JsonToken.FIELD_NAME; jp.nextToken()) {
+      //Search for field name
       }
       dynExprDoubleParamOp.setLeftExpression(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
       dynExprDoubleParamOp.setRightExpression(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
       for (; jp.getCurrentToken() != JsonToken.END_OBJECT
               || !jp.getCurrentName().equals(dynExprDoubleParamOp.getType().name()); jp.nextToken()) {
+        //Search for expression
       }
 
       expression = dynExprDoubleParamOp;

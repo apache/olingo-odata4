@@ -114,6 +114,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
       getContainer().getAdvertisements().getByKey(uuid).load();
       fail();
     } catch (IllegalArgumentException e) {
+      //expected
     }
     getService().getContext().detachAll();
   }

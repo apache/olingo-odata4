@@ -354,7 +354,9 @@ public abstract class AbstractUtilities {
       try {
         final Map.Entry<String, List<String>> currents = extractLinkURIs(entitySetName, entityKey, linkName);
         uris.addAll(currents.getValue());
-      } catch (Exception ignore) {}
+      } catch (Exception ignore) {
+        //Expected exception
+      }
     }
 
     uris.addAll(links);

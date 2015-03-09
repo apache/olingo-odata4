@@ -46,7 +46,7 @@ public interface DefaultContainer extends PersistenceManager {
   Operations operations();
 
   public interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
-  
+  //No additional methods needed for now.
     }
 
   <NE extends EntityType<?>> NE newEntityInstance(Class<NE> ref);

@@ -86,7 +86,9 @@ public class ContentNegotiator {
             AcceptType.fromContentType(format == null ?
                 ContentType.create(formatOption.getFormat()) : format.getContentType()),
             supportedContentTypes);
-      } catch (final IllegalArgumentException e) {}
+      } catch (final IllegalArgumentException e) {
+        //Exception results in result = null for next check.
+      }
       if (result == null) {
         throw new ContentNegotiatorException("Unsupported $format = " + formatString,
             ContentNegotiatorException.MessageKeys.UNSUPPORTED_FORMAT_OPTION, formatString);

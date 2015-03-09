@@ -56,21 +56,21 @@ class TestErrorLogger implements ANTLRErrorListener {
   public void reportAmbiguity(final Parser recognizer, final DFA dfa, final int startIndex, final int stopIndex,
       final boolean exact,
       final BitSet ambigAlts, final ATNConfigSet configs) {
-
+    //Test
   }
 
   @Override
   public void reportAttemptingFullContext(final Parser recognizer, final DFA dfa, final int startIndex,
       final int stopIndex,
       final BitSet conflictingAlts, final ATNConfigSet configs) {
-
+    //Test
   }
 
   @Override
   public void reportContextSensitivity(final Parser recognizer, final DFA dfa, final int startIndex,
       final int stopIndex, final int prediction,
       final ATNConfigSet configs) {
-
+  //Test
   }
 
   private void printStack(final Recognizer<?, ?> recognizer) {

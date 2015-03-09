@@ -18,4 +18,6 @@
  */
 package org.apache.olingo.commons.api.domain;
 
-public interface ODataSingleton extends ODataEntity {}
+public interface ODataSingleton extends ODataEntity {
+//No additional methods needed for now.
+}

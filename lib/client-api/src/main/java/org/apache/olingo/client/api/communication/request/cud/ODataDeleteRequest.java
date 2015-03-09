@@ -27,4 +27,5 @@ import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
  */
 public interface ODataDeleteRequest
     extends ODataBasicRequest<ODataDeleteResponse>, ODataBatchableRequest {
+//No additional methods needed for now.
 }

@@ -255,6 +255,7 @@ public interface PublicCompanyComposableInvoker
       extends org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Asset, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AssetCollection>, 
       org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<Assets>,
       AbstractEntitySet<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Asset, java.lang.Integer, org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AssetCollection> {
+    //No additional methods needed for now.
     }
 
   }

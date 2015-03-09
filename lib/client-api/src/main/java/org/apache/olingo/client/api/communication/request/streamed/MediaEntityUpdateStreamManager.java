@@ -29,4 +29,5 @@ import org.apache.olingo.commons.api.domain.ODataEntity;
  */
 public interface MediaEntityUpdateStreamManager<E extends ODataEntity>
         extends ODataPayloadManager<ODataMediaEntityUpdateResponse<E>> {
+//No additional methods needed for now.
 }

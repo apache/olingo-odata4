@@ -20,5 +20,5 @@ package org.apache.olingo.client.api.edm.xml;
 
 
 public interface ComplexType extends StructuralType {
-
+//No additional methods needed for now.
 }

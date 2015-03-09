@@ -185,7 +185,7 @@ public interface Employee
         Operations operations();
 
     interface Operations extends org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Person.Operations{
-    
+    //No additional methods needed for now.
         }
     Annotations annotations();
 

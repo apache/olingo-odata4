@@ -23,5 +23,5 @@ package org.apache.olingo.server.api.uri;
  * For example: http://.../serviceroot/entityset(1)/property
  */
 public interface UriResourcePrimitiveProperty extends UriResourceProperty {
-
+//No additional methods needed for now.
 }

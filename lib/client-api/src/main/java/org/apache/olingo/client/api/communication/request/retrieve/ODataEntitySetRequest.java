@@ -26,4 +26,5 @@ import org.apache.olingo.commons.api.domain.ODataEntitySet;
  * @param <ES> concrete ODataEntitySet implementation
  */
 public interface ODataEntitySetRequest<ES extends ODataEntitySet> extends ODataRetrieveRequest<ES> {
+//No additional methods needed for now.
 }

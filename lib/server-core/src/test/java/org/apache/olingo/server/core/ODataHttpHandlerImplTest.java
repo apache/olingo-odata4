@@ -87,7 +87,9 @@ public class ODataHttpHandlerImplTest {
       try {
         ODataHttpHandlerImpl.extractMethod(odr, hr);
         fail();
-      } catch (ODataTranslatedException e) {}
+      } catch (ODataTranslatedException e) {
+        //expected
+      }
     }
   }
 

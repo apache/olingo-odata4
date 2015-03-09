@@ -23,5 +23,5 @@ package org.apache.olingo.server.api.uri;
  * http://.../serviceroot/$all
  */
 public interface UriInfoAll {
-
+//No additional methods needed for now.
 }

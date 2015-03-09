@@ -22,5 +22,5 @@ package org.apache.olingo.commons.api.edm;
  * A CSDL action.
  */
 public interface EdmAction extends EdmOperation {
-
+//No additional methods needed for now.
 }

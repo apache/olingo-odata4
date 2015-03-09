@@ -31,7 +31,7 @@ public interface AddressCollection extends
         Operations operations();
 
     interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
-    
+    //No additional methods needed for now.
         }
   Object getAnnotation(Class<? extends AbstractTerm> term);
 

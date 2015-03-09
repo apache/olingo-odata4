@@ -28,4 +28,5 @@ package org.apache.olingo.client.api.communication.response;
  * @see org.apache.olingo.client.api.communication.request.cud.api.request.cud.v4.ODataReferenceAddingRequest
  */
 public interface ODataReferenceAddingResponse extends ODataResponse {
+//No additional methods needed for now.
 }

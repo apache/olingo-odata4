@@ -24,4 +24,5 @@ import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
  * This class implements an OData entity property value query request.
  */
 public interface ODataValueRequest extends ODataRetrieveRequest<ODataPrimitiveValue> {
+//No additional methods needed for now.
 }

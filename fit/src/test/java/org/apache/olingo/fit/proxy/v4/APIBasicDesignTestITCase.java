@@ -295,7 +295,9 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     try {
       getContainer().getOrders().getByKey(1105).load();
       fail();
-    } catch (IllegalArgumentException e) {}
+    } catch (IllegalArgumentException e) {
+      // Test
+    }
     service.getContext().detachAll(); // avoid influences
   }
 
@@ -416,7 +418,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
         container.getProducts().getByKey(1012).operations().getProductDetails(1);
     assertEquals(1, result.execute().size());
   }
-  
+
   @Test
   public void workingWithPrimitiveCollections() throws IOException {
     final PrimitiveCollection<String> emails = container.getPeople().getByKey(1).getEmails();
@@ -572,7 +574,9 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     try {
       getContainer().getOrders().getByKey(1105).load();
       fail();
-    } catch (IllegalArgumentException e) {}
+    } catch (IllegalArgumentException e) {
+      // Expected Exception
+    }
     service.getContext().detachAll(); // avoid influences
 
     order = getContainer().newEntityInstance(Order.class);
@@ -585,7 +589,9 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     try {
       getContainer().getOrders().getByKey(1105).load();
       fail();
-    } catch (IllegalArgumentException e) {}
+    } catch (IllegalArgumentException e) {
+      // Expected Exception
+    }
     service.getContext().detachAll(); // avoid influences
   }
 

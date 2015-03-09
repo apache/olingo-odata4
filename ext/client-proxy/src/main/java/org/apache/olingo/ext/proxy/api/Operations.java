@@ -19,4 +19,5 @@
 package org.apache.olingo.ext.proxy.api;
 
 public interface Operations {
+//No additional methods needed for now.
 }

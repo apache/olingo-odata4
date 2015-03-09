@@ -30,4 +30,5 @@ import org.apache.olingo.commons.api.domain.ODataEntity;
  */
 public interface ODataEntityCreateRequest<E extends ODataEntity>
     extends ODataBasicRequest<ODataEntityCreateResponse<E>>, ODataBatchableRequest {
+//No additional methods needed for now.
 }

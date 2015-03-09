@@ -113,11 +113,12 @@ public class ODataWriterImpl implements ODataWriter {
   @Override
   public InputStream writeReference(ResWrap<URI> reference, ODataFormat format) throws ODataSerializerException {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
-    OutputStreamWriter writer = null;
+    OutputStreamWriter writer;
     
     try {
       writer = new OutputStreamWriter(output, Constants.UTF8);
     } catch (final UnsupportedEncodingException e) {
+      writer = null;
     }
     
     try {

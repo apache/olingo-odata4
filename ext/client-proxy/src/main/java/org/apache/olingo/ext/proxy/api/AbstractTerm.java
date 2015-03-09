@@ -21,4 +21,5 @@ package org.apache.olingo.ext.proxy.api;
 import java.io.Serializable;
 
 public interface AbstractTerm extends Serializable {
+//No additional methods needed for now.
 }

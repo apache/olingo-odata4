@@ -308,7 +308,7 @@ public final class ContentType {
    * @return <code>true</code> if both strings are equal (ignoring the case), otherwise <code>false</code>
    */
   private static boolean areEqual(final String first, final String second) {
-    return first == null && second == null || first.equalsIgnoreCase(second);
+    return first == null && second == null || (first != null && first.equalsIgnoreCase(second));
   }
 
   /**

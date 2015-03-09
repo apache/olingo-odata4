@@ -25,4 +25,5 @@ package org.apache.olingo.client.api.communication.response;
  * @see org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkUpdateRequest
  */
 public interface ODataLinkOperationResponse extends ODataResponse {
+//No additional methods needed for now.
 }

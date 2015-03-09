@@ -46,7 +46,9 @@ public class OrderBySystemQueryITCase extends AbstractBaseTestITCase {
   private static final String SERVICE_URI = TecSvcConst.BASE_URI;
 
   @AfterClass
-  public static void tearDownAfterClass() throws Exception {}
+  public static void tearDownAfterClass() throws Exception {
+    //no teardown needed
+  }
 
   @Test
   public void testSimpleOrderBy() {

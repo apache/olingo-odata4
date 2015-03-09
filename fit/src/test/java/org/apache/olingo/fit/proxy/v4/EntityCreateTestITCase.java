@@ -121,6 +121,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
       getContainer().getPeople().getByKey(id, Employee.class).load();
       fail();
     } catch (IllegalArgumentException e) {
+    //Expected
     }
 
     getService().getContext().detachAll();
@@ -128,6 +129,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
       getContainer().getPeople().getByKey(id, Employee.class).load();
       fail();
     } catch (IllegalArgumentException e) {
+    //Expected
     }
   }
 
@@ -176,6 +178,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
       getContainer().getCustomers().getByKey(id).load();
       fail();
     } catch (IllegalArgumentException e) {
+    //Expected
     }
   }
 
@@ -260,6 +263,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
       getContainer().getOrders().getByKey(id).load();
       fail();
     } catch (IllegalArgumentException e) {
+    //Expected
     }
 
     actual = readCustomer(getContainer(), id);
@@ -272,6 +276,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
       getContainer().getCustomers().getByKey(id).load();
       fail();
     } catch (IllegalArgumentException e) {
+    //Expected
     }
   }
 
@@ -304,6 +309,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
       getContainer().getOrderDetails().getByKey(key).load();
       fail();
     } catch (IllegalArgumentException e) {
+      //Expected
     }
   }
 

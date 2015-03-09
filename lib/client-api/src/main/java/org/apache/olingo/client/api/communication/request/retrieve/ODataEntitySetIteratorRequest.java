@@ -27,4 +27,5 @@ import org.apache.olingo.commons.api.domain.ODataEntitySet;
  */
 public interface ODataEntitySetIteratorRequest<ES extends ODataEntitySet, E extends ODataEntity>
         extends ODataRetrieveRequest<ODataEntitySetIterator<ES, E>> {
+//No additional methods needed for now.
 }

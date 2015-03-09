@@ -19,5 +19,5 @@
 package org.apache.olingo.commons.api.edm.annotation;
 
 public interface EdmAnd extends EdmTwoParamsOpDynamicAnnotationExpression {
-
+//No additional methods needed for now.
 }

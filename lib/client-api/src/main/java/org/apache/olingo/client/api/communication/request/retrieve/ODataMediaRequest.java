@@ -24,4 +24,5 @@ import java.io.InputStream;
  * This class implements an OData media query request.
  */
 public interface ODataMediaRequest extends ODataRetrieveRequest<InputStream> {
+//No additional methods needed for now.
 }

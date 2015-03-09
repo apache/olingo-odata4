@@ -20,4 +20,5 @@ package org.apache.olingo.client.api.communication.response;
 
 
 public interface AsyncResponse extends ODataResponse {
+//No additional methods needed for now.
 }

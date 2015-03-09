@@ -132,6 +132,6 @@ public interface HomeAddress
         Operations operations();
 
     interface Operations extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address.Operations{
-    
+    //No additional methods needed for now.
         }
 }

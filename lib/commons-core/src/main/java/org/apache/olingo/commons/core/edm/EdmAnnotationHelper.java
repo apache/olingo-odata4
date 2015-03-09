@@ -20,4 +20,6 @@ package org.apache.olingo.commons.core.edm;
 
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 
-public interface EdmAnnotationHelper extends EdmAnnotatable {}
+public interface EdmAnnotationHelper extends EdmAnnotatable {
+//No additional methods needed for now.
+}

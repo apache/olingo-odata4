@@ -139,7 +139,9 @@ public class ContentNegotiatorTest {
       try {
         testContentNegotiation(useCase, RepresentationType.COLLECTION_ENTITY);
         fail("Exception expected for '" + useCase[1] + '|' + useCase[2] + '|' + useCase[3] + "'!");
-      } catch (final ContentNegotiatorException e) {}
+      } catch (final ContentNegotiatorException e) {
+        //Expected Exception
+      }
     }
   }
 

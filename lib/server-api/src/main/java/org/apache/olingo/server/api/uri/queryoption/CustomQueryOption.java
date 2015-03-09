@@ -24,5 +24,5 @@ package org.apache.olingo.server.api.uri.queryoption;
  * http://.../entitySet?myOption=true
  */
 public interface CustomQueryOption extends QueryOption {
-
+//No additional methods needed for now.
 }

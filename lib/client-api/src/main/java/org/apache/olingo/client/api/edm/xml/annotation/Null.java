@@ -21,5 +21,5 @@ package org.apache.olingo.client.api.edm.xml.annotation;
 import org.apache.olingo.client.api.edm.xml.Annotatable;
 
 public interface Null extends DynamicAnnotationExpression, Annotatable {
-
+//No additional methods needed for now.
 }

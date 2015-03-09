@@ -27,4 +27,5 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
  */
 public interface ODataRetrieveRequest<T>
     extends ODataBasicRequest<ODataRetrieveResponse<T>>, ODataBatchableRequest {
+//No additional methods needed for now.
 }

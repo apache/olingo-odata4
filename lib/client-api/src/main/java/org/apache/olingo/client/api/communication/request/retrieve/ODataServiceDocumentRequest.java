@@ -24,4 +24,5 @@ import org.apache.olingo.commons.api.domain.ODataServiceDocument;
  * This class implements an OData service document request.
  */
 public interface ODataServiceDocumentRequest extends ODataRetrieveRequest<ODataServiceDocument> {
+//No additional methods needed for now.
 }

@@ -20,5 +20,5 @@ package org.apache.olingo.client.api.edm.xml;
 
 
 public interface Singleton extends EntitySet, BindingTarget {
-
+//No additional methods needed for now.
 }

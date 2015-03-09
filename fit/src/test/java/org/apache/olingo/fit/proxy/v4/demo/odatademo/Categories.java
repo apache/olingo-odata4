@@ -34,5 +34,5 @@ public interface Categories
         Operations operations();
 
     interface Operations extends org.apache.olingo.ext.proxy.api.Operations{
-    
+    //No additional methods needed for now.
         }}

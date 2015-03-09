@@ -23,4 +23,5 @@ import java.io.Serializable;
 public interface AbstractSingleton<
         T extends EntityType<?>, KEY extends Serializable, EC extends EntityCollection<T, ?, ?>>
         extends Serializable {
+  //No additional methods needed for now.
 }

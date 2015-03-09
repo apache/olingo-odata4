@@ -24,4 +24,5 @@ package org.apache.olingo.client.api.communication.response;
  * @see org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest
  */
 public interface ODataDeleteResponse extends ODataResponse {
+//No additional methods needed for now.
 }

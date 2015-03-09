@@ -23,5 +23,5 @@ package org.apache.olingo.server.api.uri;
  * http://.../serviceroot/$batch
  */
 public interface UriInfoBatch {
-
+//No additional methods needed for now.
 }

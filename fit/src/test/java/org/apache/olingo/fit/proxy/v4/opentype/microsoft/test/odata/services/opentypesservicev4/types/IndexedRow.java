@@ -84,7 +84,7 @@ public interface IndexedRow
         Operations operations();
 
     interface Operations extends org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row.Operations{
-    
+    //No additional methods needed for now.
         }
     Annotations annotations();
 

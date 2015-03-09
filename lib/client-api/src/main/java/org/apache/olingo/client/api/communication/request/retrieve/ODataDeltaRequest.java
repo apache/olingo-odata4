@@ -24,4 +24,5 @@ import org.apache.olingo.commons.api.domain.ODataDelta;
  * Describes an OData retrieve request returning a delta object.
  */
 public interface ODataDeltaRequest extends ODataRetrieveRequest<ODataDelta> {
+//No additional methods needed for now.
 }

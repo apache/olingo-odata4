@@ -24,5 +24,5 @@ package org.apache.olingo.server.api.uri;
  * For example: http://.../serviceroot/entityset(1)?$filter=property eq $root/singleton/configstring
  */
 public interface UriResourceRoot extends UriResource {
-
+//No additional methods needed for now.
 }

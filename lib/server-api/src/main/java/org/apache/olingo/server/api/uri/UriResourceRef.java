@@ -23,5 +23,5 @@ package org.apache.olingo.server.api.uri;
  * For example: http://.../serviceroot/entityset/$ref
  */
 public interface UriResourceRef extends UriResource {
-
+//No additional methods needed for now.
 }

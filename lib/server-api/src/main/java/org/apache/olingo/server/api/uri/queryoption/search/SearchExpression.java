@@ -19,5 +19,5 @@
 package org.apache.olingo.server.api.uri.queryoption.search;
 
 public interface SearchExpression {
-
+//No additional methods needed for now.
 }

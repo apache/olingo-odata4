@@ -138,6 +138,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
       container.getOrders().getByKey(105).load();
       fail();
     } catch (IllegalArgumentException e) {
+      //Expected Exception
     }
   }
 

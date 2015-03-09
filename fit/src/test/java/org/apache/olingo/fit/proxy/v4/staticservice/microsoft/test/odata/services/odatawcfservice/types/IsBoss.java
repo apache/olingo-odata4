@@ -26,4 +26,5 @@ import org.apache.olingo.ext.proxy.api.AbstractTerm;
 @org.apache.olingo.ext.proxy.api.annotations.Term(name = "IsBoss",
       type="Edm.Boolean")
 public interface IsBoss extends AbstractTerm {
+//No additional methods needed for now.
 }
