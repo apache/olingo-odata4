@@ -19,12 +19,14 @@
 package org.apache.olingo.fit.tecsvc.client;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
@@ -39,6 +41,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
@@ -213,6 +216,49 @@ public class BindingITCase extends AbstractBaseTestITCase {
     assertEquals(1, iterator.next().asComplex().get(PROPERTY_INT16).getPrimitiveValue().toValue());
     assertEquals(2, iterator.next().asComplex().get(PROPERTY_INT16).getPrimitiveValue().toValue());
     assertEquals(3, iterator.next().asComplex().get(PROPERTY_INT16).getPrimitiveValue().toValue());
+  }
+
+  @Test
+  @SuppressWarnings("unused")
+  public void testMissingEntity() {
+    // Update an existing entity, use a URI to a not existing entity
+    // Perform the request to a single navigation property and a collection navigation property as well.
+    // Expected: Not Found (404)
+
+    final ODataClient client = getClient();
+    final URI entityURI =
+        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
+    final ODataObjectFactory of = client.getObjectFactory();
+
+    // Request to single (non collection) navigation property
+    ODataEntity entity = of.newEntity(ET_KEY_NAV);
+    final ODataLink navLinkOne =
+        of.newEntityNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE, client.newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(42).build());
+    entity.addLink(navLinkOne);
+
+    ODataEntityUpdateResponse<ODataEntity> updateResponse = null;
+    try {
+      updateResponse =
+          client.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
+      fail();
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+
+    // Request to collection navigation propetry
+    entity = of.newEntity(ET_KEY_NAV);
+    final ODataLink navLinkMany =
+        of.newEntitySetNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY, client.newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(3).build());
+    entity.addLink(navLinkMany);
+
+    try {
+      updateResponse =
+          client.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
   }
 
   @Override

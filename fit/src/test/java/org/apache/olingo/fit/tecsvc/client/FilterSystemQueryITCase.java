@@ -63,24 +63,24 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     ODataEntity oDataEntity = result.getBody().getEntities().get(0);
     assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
   }
-  
+
   @Test
   public void testBooleanLiteral() {
     ODataRetrieveResponse<ODataEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyBoolean eq false");
     assertEquals(2, response.getBody().getEntities().size());
-    
+
     ODataEntity oDataEntity = response.getBody().getEntities().get(0);
     assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
     oDataEntity = response.getBody().getEntities().get(1);
     assertEquals("0", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    
+
     response = sendRequest(ES_ALL_PRIM, "PropertyBoolean eq true");
     assertEquals(1, response.getBody().getEntities().size());
-    
+
     oDataEntity = response.getBody().getEntities().get(0);
     assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
   }
-  
+
   @Test
   public void testDateLiteral() {
     ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "PropertyDate eq 2012-12-03");
@@ -243,6 +243,23 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
 
     result = sendRequest(ES_ALL_PRIM, "substring(PropertyString, 0, null) eq null"); // null eq null => true
     assertEquals(3, result.getBody().getEntities().size());
+  }
+
+  @Test
+  public void testSubstringWithNegativeValues() {
+    // See OASIS JIRA ODATA-781
+
+    // -1 should be treated as 0
+    ODataRetrieveResponse<ODataEntitySet> response =
+        sendRequest(ES_ALL_PRIM, "substring(PropertyString, -1, 1) eq 'F'");
+    assertEquals(1, response.getBody().getEntities().size());
+
+    assertEquals(32767, response.getBody().getEntities().get(0).getProperty("PropertyInt16").getPrimitiveValue()
+        .toValue());
+    
+    // -1 should be treated as 0, Same values substring(PropertyString, 0, 0) returns the empty String
+    response = sendRequest(ES_ALL_PRIM, "substring(PropertyString, 0, -1) eq ''");
+    assertEquals(3, response.getBody().getEntities().size());
   }
 
   @Test
@@ -949,7 +966,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     result = sendRequest("ESKeyNav", "PropertyCompComp/PropertyComp/PropertyInt16 eq null", cookie);
     assertEquals(1, result.getBody().getEntities().size());
   }
-  
+
   @Test
   public void testSringFunctionWithoutStringParameters() {
     fail("ESServerSidePaging", "filter=contains(PropertyInt16, 3) eq 'hallo'", HttpStatusCode.BAD_REQUEST);

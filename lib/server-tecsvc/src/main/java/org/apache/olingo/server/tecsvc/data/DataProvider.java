@@ -172,7 +172,7 @@ public class DataProvider {
           i++;
         }
       } else {
-        throw new DataProviderException("Key type not supported");
+        throw new DataProviderException("Key type not supported", HttpStatusCode.NOT_IMPLEMENTED);
       }
 
       keys.put(keyName, newValue);
@@ -274,12 +274,12 @@ public class DataProvider {
       final Entity entity = read(edmEntitySetTarget, keys);
 
       if (entity == null) {
-        throw new DataProviderException("Entity " + bindingLink + " not found");
+        throw new DataProviderException("Entity " + bindingLink + " not found", HttpStatusCode.NOT_FOUND);
       }
 
       return entity;
     } catch (DeserializerException e) {
-      throw new DataProviderException("Invalid entity binding link", e);
+      throw new DataProviderException("Invalid entity binding link", HttpStatusCode.BAD_REQUEST);
     }
   }
 
@@ -356,13 +356,14 @@ public class DataProvider {
       if (newProperty != null || !patch) {
         final Object value = newProperty == null ? null : newProperty.getValue();
         if (value == null && edmProperty.isNullable() != null && !edmProperty.isNullable()) {
-          throw new DataProviderException("Cannot null non-nullable property!");
+          throw new DataProviderException("Cannot null non-nullable property!", HttpStatusCode.BAD_REQUEST);
         }
         property.setValue(property.getValueType(), value);
       }
     } else if (edmProperty.isCollection()) {
       if (newProperty != null && !newProperty.asCollection().isEmpty()) {
-        throw new DataProviderException("Update of a complex-collection property not supported!");
+        throw new DataProviderException("Update of a complex-collection property not supported!",
+            HttpStatusCode.NOT_IMPLEMENTED);
       } else {
         property.asCollection().clear();
       }
@@ -430,6 +431,10 @@ public class DataProvider {
 
     public DataProviderException(final String message) {
       super(message, HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
+    }
+
+    public DataProviderException(final String message, HttpStatusCode statusCode) {
+      super(message, statusCode.getStatusCode(), Locale.ROOT);
     }
   }
 }

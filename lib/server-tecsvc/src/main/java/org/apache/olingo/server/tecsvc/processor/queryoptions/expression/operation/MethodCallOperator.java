@@ -64,6 +64,7 @@ public class MethodCallOperator {
     return stringFunction(new StringFunction() {
       @Override
       public Object perform(List<String> params) {
+        // If the first string do not contain the second string, return -1. See OASIS JIRA ODATA-780
         return params.get(0).indexOf(params.get(1));
       }
     }, EdmInt32.getInstance());
@@ -106,6 +107,8 @@ public class MethodCallOperator {
   }
 
   public VisitorOperand substring() throws ODataApplicationException {
+    // See OASIS JIRA ODATA-781
+
     final TypedOperand valueOperand = parameters.get(0).asTypedOperand();
     final TypedOperand startOperand = parameters.get(1).asTypedOperand();
 
@@ -113,7 +116,9 @@ public class MethodCallOperator {
       return new TypedOperand(null, EdmString.getInstance());
     } else if (valueOperand.is(EdmString.getInstance()) && startOperand.isIntegerType()) {
       final String value = valueOperand.getTypedValue(String.class);
-      final BigInteger start = startOperand.getTypedValue(BigInteger.class);
+      int start = Math.min(startOperand.getTypedValue(BigInteger.class).intValue(), value.length());
+      start = start < 0 ? 0 : start;
+      
       int end = value.length();
 
       if (parameters.size() == 3) {
@@ -122,14 +127,15 @@ public class MethodCallOperator {
         if (lengthOperand.isNull()) {
           return new TypedOperand(null, EdmString.getInstance());
         } else if (lengthOperand.isIntegerType()) {
-          end = Math.min(start.add(lengthOperand.getTypedValue(BigInteger.class)).intValue(), value.length());
+          end = Math.min(start + lengthOperand.getTypedValue(BigInteger.class).intValue(), value.length());
+          end = end < 0 ? 0 : end;
         } else {
           throw new ODataApplicationException("Third substring parameter should be Edm.Int32",
               HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
         }
       }
 
-      return new TypedOperand(value.substring(Math.min(start.intValue(), value.length()), end),
+      return new TypedOperand(value.substring(start, end),
           EdmString.getInstance());
     } else {
       throw new ODataApplicationException("Substring has invalid parameters. First parameter should be Edm.String,"
