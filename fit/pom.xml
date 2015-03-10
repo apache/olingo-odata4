@@ -195,35 +195,7 @@
           <aggregate>true</aggregate>
         </configuration>
       </plugin>
-
-      <!--<plugin>-->
-        <!--<groupId>org.apache.maven.plugins</groupId>-->
-        <!--<artifactId>maven-invoker-plugin</artifactId>-->
-        <!--<inherited>true</inherited>-->
-        <!--<configuration>-->
-          <!--<debug>true</debug>-->
-          <!--<cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>-->
-          <!--<pomIncludes>-->
-            <!--<pomInclude>*/pom.xml</pomInclude>-->
-          <!--</pomIncludes>-->
-          <!--<postBuildHookScript>verify</postBuildHookScript>-->
-          <!--<goals>-->
-            <!--<goal>clean</goal>-->
-            <!--<goal>test-compile</goal>-->
-          <!--</goals>-->
-        <!--</configuration>-->
-        <!--<executions>-->
-          <!--<execution>-->
-            <!--<id>pojogen-integration-test</id>-->
-            <!--<phase>integration-test</phase>-->
-            <!--<goals>-->
-              <!--<goal>integration-test</goal>-->
-              <!--<goal>verify</goal>-->
-            <!--</goals>-->
-          <!--</execution>-->
-        <!--</executions>-->
-      <!--</plugin>-->
-
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
