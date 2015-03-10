@@ -19,7 +19,6 @@
 package org.apache.olingo.commons.core.serialization;
 
 import java.io.IOException;
-import java.net.URI;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;

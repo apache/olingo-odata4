@@ -22,14 +22,13 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
-import org.apache.olingo.server.api.processor.BatchProcessor;
 
 /**
  * Provides methods to process {@link ODataRequest} and {@link BatchRequestPart}.
  * 
- * Within a {@link BatchProcessor} implementation BatchRequestsParts should be passed to
- * {@link BatchFacade#handleBatchRequest(BatchRequestPart)}. If only if the BatchRequests part represents
- * a change set, the request will be delegated to
+ * Within a {@link org.apache.olingo.server.api.processor.BatchProcessor} implementation BatchRequestsParts
+ * should be passed to {@link BatchFacade#handleBatchRequest(BatchRequestPart)}.
+ * If only if the BatchRequests part represents a change set, the request will be delegated to
  * {@link org.apache.olingo.server.api.processor.BatchProcessor#processChangeSet(BatchFacade, java.util.List)}.
  * Otherwise the requests will be directly executed.
  * 

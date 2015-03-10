@@ -38,7 +38,6 @@ import java.util.regex.Pattern;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -131,7 +130,7 @@ public abstract class AbstractUtilities {
    * @param is
    * @return
    * @throws IOException
-   * @throws XMLStreamException
+   * @throws javax.xml.stream.XMLStreamException
    */
   protected abstract Set<String> retrieveAllLinkNames(final InputStream is) throws Exception;
 

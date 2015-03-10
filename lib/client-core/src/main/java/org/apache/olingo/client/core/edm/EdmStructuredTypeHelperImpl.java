@@ -21,8 +21,6 @@ package org.apache.olingo.client.core.edm;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.olingo.client.api.edm.xml.ComplexType;
-import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.NavigationProperty;
 import org.apache.olingo.client.api.edm.xml.Property;
 import org.apache.olingo.client.api.edm.xml.StructuralType;

@@ -19,7 +19,6 @@
 package org.apache.olingo.server.api.edm.provider;
 
 import org.apache.olingo.commons.api.edm.EdmMapping;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 
 /**
  * Content of this class does not appear within the CSDL metadata document. This class is used to perform server
@@ -30,9 +29,9 @@ public class Mapping implements EdmMapping {
   private Class<?> mappedJavaClass;
 
   /**
-   * Sets the class to be used during deserialization to transofrm an EDM primitive type into this java class. To see
-   * which classes work for which primitive type refer to {@link EdmPrimitiveType}.
-   * @param mappedJavaClass
+   * Sets the class to be used during deserialization to transform an EDM primitive type into this java class. To see
+   * which classes work for which primitive type refer to {@link org.apache.olingo.commons.api.edm.EdmPrimitiveType}.
+   * @param mappedJavaClass class to which is mapped
    * @return this for method chaining
    */
   public Mapping setMappedJavaClass(Class<?> mappedJavaClass) {

@@ -37,7 +37,7 @@ public interface BatchProcessor extends Processor {
    * @param facade   BatchFacade which should be used for further batch part handling
    * @param request  OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
-   * @throws BatchException               if the service implementation encounters a failure
+   * @throws BatchSerializerException     if the service implementation encounters a failure
    * @throws BatchDeserializerException   if de-serialization failed
    */
   void processBatch(BatchFacade facade, ODataRequest request, ODataResponse response)

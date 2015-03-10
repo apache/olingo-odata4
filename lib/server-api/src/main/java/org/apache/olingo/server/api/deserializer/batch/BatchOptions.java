@@ -18,14 +18,10 @@
  */
 package org.apache.olingo.server.api.deserializer.batch;
 
-import java.io.InputStream;
-
-import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
-
 /**
  * Options for the batch deserializer.
- * See {@link FixedFormatDeserializer#parseBatchRequest(InputStream, String, BatchOptions)}
+ * See {@link org.apache.olingo.server.api.deserializer.FixedFormatDeserializer
+ * #parseBatchRequest(java.io.InputStream, String, BatchOptions)}
  */
 public class BatchOptions {
   private boolean isStrict = true;
@@ -45,14 +41,14 @@ public class BatchOptions {
   }
 
   /**
-   * See {@link ODataRequest#getRawBaseUri()}
+   * See {@link org.apache.olingo.server.api.ODataRequest#getRawBaseUri()}
    */
   public String getRawBaseUri() {
     return rawBaseUri;
   }
   
   /**
-   * See {@link ODataRequest#getRawServiceResolutionUri()}
+   * See {@link org.apache.olingo.server.api.ODataRequest#getRawServiceResolutionUri()}
    */
   public String getRawServiceResolutionUri() {
     return rawServiceResolutionUri;
@@ -87,7 +83,7 @@ public class BatchOptions {
     }
     
     /**
-     * See {@link ODataRequest#getRawBaseUri()}
+     * See {@link org.apache.olingo.server.api.ODataRequest#getRawBaseUri()}
      */
     public Builder rawBaseUri(String baseUri) {
       options.rawBaseUri = baseUri;
@@ -95,7 +91,7 @@ public class BatchOptions {
     }
     
     /**
-     * See {@link ODataRequest#getRawServiceResolutionUri()}
+     * See {@link org.apache.olingo.server.api.ODataRequest#getRawServiceResolutionUri()}
      */
     public Builder rawServiceResolutionUri(String serviceResolutionUri) {
       options.rawServiceResolutionUri = serviceResolutionUri;
