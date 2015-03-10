@@ -91,6 +91,49 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
 
 
   @Test
+  public void entityCollectionWithAppendedKey() {
+    // .../odata.svc/FICRTCollESMedia()(1)
+    final ODataInvokeRequest<ODataEntity> request = getClient().getInvokeRequestFactory()
+            .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+                    .appendOperationCallSegment("FICRTCollESMedia")
+                    .appendKeySegment(getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(1))
+                    .build(), ODataEntity.class);
+    assertNotNull(request);
+
+    final ODataInvokeResponse<ODataEntity> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    final ODataEntity entity = response.getBody();
+    assertNotNull(entity);
+    final ODataProperty property = entity.getProperty("PropertyInt16");
+    assertNotNull(property);
+    assertNotNull(property.getPrimitiveValue());
+    assertEquals(1, property.getPrimitiveValue().toValue());
+  }
+
+
+  @Test
+  public void entityCollectionWithAppendedKeyAndProperty() {
+    // .../odata.svc/FICRTCollESMedia()(2)/PropertyInt16
+    final ODataInvokeRequest<ODataProperty> request = getClient().getInvokeRequestFactory()
+            .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+                    .appendOperationCallSegment("FICRTCollESMedia")
+                    .appendKeySegment(getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(2))
+                    .appendPropertySegment("PropertyInt16")
+                    .build(), ODataProperty.class);
+    assertNotNull(request);
+
+    final ODataInvokeResponse<ODataProperty> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    final ODataProperty property = response.getBody();
+    assertNotNull(property);
+    assertNotNull(property.getPrimitiveValue());
+    assertEquals(2, property.getPrimitiveValue().toValue());
+  }
+
+
+  @Test
   public void countEntityCollection() throws Exception {
     final ODataRawRequest request = getClient().getRetrieveRequestFactory()
         .getRawRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)

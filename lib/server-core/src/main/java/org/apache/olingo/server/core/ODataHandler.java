@@ -299,8 +299,12 @@ public class ODataHandler {
       throw new ODataHandlerException("No unbound function defined for function import",
           ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
-    EdmReturnType returnType = unboundFunctions.get(0).getReturnType();
-    handleOperationDispatching(request, response, false, returnType);
+    if(uriResourceFunction.getKeyPredicates().isEmpty()) {
+      EdmReturnType returnType = unboundFunctions.get(0).getReturnType();
+      handleOperationDispatching(request, response, false, returnType);
+    } else {
+      handleEntityDispatching(request, response, false, false, false);
+    }
   }
 
   private void handleActionDispatching(final ODataRequest request, final ODataResponse response,
@@ -331,19 +335,19 @@ public class ODataHandler {
   }
 
   private void handleOperationDispatching(final ODataRequest request, final ODataResponse response,
-      final boolean isAction, final EdmReturnType edmReturnTypeKind)
+      final boolean isAction, final EdmReturnType edmReturnType)
       throws ODataHandlerException, SerializerException, ContentNegotiatorException,
       ODataApplicationException, DeserializerException {
 
-    switch (edmReturnTypeKind.getType().getKind()) {
+    switch (edmReturnType.getType().getKind()) {
     case ENTITY:
-      handleEntityDispatching(request, response, edmReturnTypeKind.isCollection(), false, isAction);
+      handleEntityDispatching(request, response, edmReturnType.isCollection(), false, isAction);
       break;
     case PRIMITIVE:
-      handlePrimitivePropertyDispatching(request, response, isAction, edmReturnTypeKind.isCollection());
+      handlePrimitivePropertyDispatching(request, response, isAction, edmReturnType.isCollection());
       break;
     case COMPLEX:
-      handleComplexPropertyDispatching(request, response, isAction, edmReturnTypeKind.isCollection());
+      handleComplexPropertyDispatching(request, response, isAction, edmReturnType.isCollection());
       break;
     default:
       throw new ODataHandlerException("not implemented",
