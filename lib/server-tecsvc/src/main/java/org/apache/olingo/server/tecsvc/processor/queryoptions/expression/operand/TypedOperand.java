@@ -127,7 +127,7 @@ public class TypedOperand extends VisitorOperand {
       return asTypedOperand(EdmInt64.getInstance());
     } else if (type.equals(EdmInt32.getInstance()) || oType.equals(EdmInt32.getInstance())) {
       return asTypedOperand(EdmInt32.getInstance());
-    } else if (type.equals(EdmInt16.getInstance()) || oType.equals(equals(EdmInt16.getInstance()))) {
+    } else if (type.equals(EdmInt16.getInstance()) || oType.equals(EdmInt16.getInstance())) {
       return asTypedOperand(EdmInt16.getInstance());
     } else {
       return asTypedOperand((EdmPrimitiveType) type);

@@ -170,7 +170,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
         final String linkTitle = getTitle(field);
         for (Link link : entity.getMediaEditLinks()) {
           if (linkTitle.equals(link.getTitle())) {
-            ((LinkImpl) link).setType(field.getValue().asText());
+            link.setType(field.getValue().asText());
           }
         }
         toRemove.add(field.getKey());

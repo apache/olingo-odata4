@@ -123,7 +123,7 @@ public final class EdmSingle extends SingletonPrimitiveType {
         return (Double) value == Double.NEGATIVE_INFINITY ? EdmDouble.NEGATIVE_INFINITY : EdmDouble.POSITIVE_INFINITY;
       } else {
         final String floatString = Float.toString(((Double) value).floatValue());
-        if (floatString.equals(((Double) value).toString())) {
+        if (floatString.equals(value.toString())) {
           return floatString;
         } else {
           throw new EdmPrimitiveTypeException("The value '" + value + "' is not valid.");
@@ -135,7 +135,7 @@ public final class EdmSingle extends SingletonPrimitiveType {
     } else if (value instanceof BigDecimal) {
       final float floatValue = ((BigDecimal) value).floatValue();
       if (!Float.isInfinite(floatValue) && BigDecimal.valueOf(floatValue).compareTo((BigDecimal) value) == 0) {
-        return ((BigDecimal) value).toString();
+        return value.toString();
       } else {
         throw new EdmPrimitiveTypeException("The value '" + value + "' is not valid.");
       }

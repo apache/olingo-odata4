@@ -44,7 +44,7 @@ public class JSONServiceDocumentDeserializer extends JsonDeserializer {
 
   protected ResWrap<ServiceDocument> doDeserialize(final JsonParser parser) throws IOException {
 
-    final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
+    final ObjectNode tree = parser.getCodec().readTree(parser);
 
     ServiceDocumentImpl serviceDocument = new ServiceDocumentImpl();
 

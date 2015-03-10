@@ -67,8 +67,7 @@ public class ParseTreeToText {
       } else if (t instanceof TerminalNode) {
         Token symbol = ((TerminalNode) t).getSymbol();
         if (symbol != null) {
-          String s = symbol.getText();
-          return s;
+          return symbol.getText();
         }
       }
     }

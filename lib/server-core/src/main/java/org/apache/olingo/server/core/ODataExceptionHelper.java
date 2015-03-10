@@ -119,8 +119,7 @@ public class ODataExceptionHelper {
   }
 
   private static ODataServerError basicServerError(Exception e) {
-    ODataServerError serverError = new ODataServerError().setException(e).setMessage(e.getMessage());
-    return serverError;
+    return new ODataServerError().setException(e).setMessage(e.getMessage());
   }
 
   private static ODataServerError basicTranslatedError(ODataTranslatedException e, Locale requestedLocale) {

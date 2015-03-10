@@ -77,23 +77,11 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
 
   @Override
   public boolean isOpenType() {
-    boolean isOpen = false;
-    if (structuralType instanceof ComplexType) {
-      isOpen = ((ComplexType) structuralType).isOpenType();
-    } else if (structuralType instanceof EntityType) {
-      isOpen = ((EntityType) structuralType).isOpenType();
-    }
-    return isOpen;
+    return structuralType.isOpenType();
   }
 
   @Override
   public boolean isAbstract() {
-    boolean isAbstract = false;
-    if (structuralType instanceof ComplexType) {
-      isAbstract = ((ComplexType) structuralType).isAbstractType();
-    } else if (structuralType instanceof EntityType) {
-      isAbstract = ((EntityType) structuralType).isAbstractType();
-    }
-    return isAbstract;
+    return structuralType.isAbstractType();
   }
 }

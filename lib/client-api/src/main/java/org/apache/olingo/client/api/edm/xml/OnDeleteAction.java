@@ -23,6 +23,6 @@ public enum OnDeleteAction {
   Cascade,
   None,
   SetNull,
-  SetDefault;
+  SetDefault
 
 }

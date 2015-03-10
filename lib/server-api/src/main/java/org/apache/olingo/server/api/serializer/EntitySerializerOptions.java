@@ -46,7 +46,7 @@ public class EntitySerializerOptions {
   private EntitySerializerOptions() {}
 
   /** Initializes the options builder. */
-  public static final Builder with() {
+  public static Builder with() {
     return new Builder();
   }
 

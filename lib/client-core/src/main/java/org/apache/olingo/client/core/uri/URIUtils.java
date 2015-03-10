@@ -194,7 +194,7 @@ public final class URIUtils {
       if (obj == null) {
         value = Constants.ATTR_NULL;
       } else if (obj instanceof Collection) {
-        final StringBuffer buffer = new StringBuffer("[");
+        final StringBuilder buffer = new StringBuilder("[");
         for (@SuppressWarnings("unchecked")
         final Iterator<Object> itor = ((Collection<Object>) obj).iterator(); itor.hasNext();) {
           buffer.append(escape(itor.next(), false));
@@ -206,7 +206,7 @@ public final class URIUtils {
 
         value = buffer.toString();
       } else if (obj instanceof Map) {
-        final StringBuffer buffer = new StringBuffer("{");
+        final StringBuilder buffer = new StringBuilder("{");
         for (@SuppressWarnings("unchecked")
         final Iterator<Map.Entry<String, Object>> itor =
             ((Map<String, Object>) obj).entrySet().iterator(); itor.hasNext();) {

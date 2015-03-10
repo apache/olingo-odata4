@@ -46,8 +46,7 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
   public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName name,
       final EntityType entityType) {
 
-    final EdmEntityTypeImpl instance = new EdmEntityTypeImpl(edm, name, entityType);
-    return instance;
+    return new EdmEntityTypeImpl(edm, name, entityType);
   }
 
   private EdmEntityTypeImpl(final Edm edm, final FullQualifiedName name, final EntityType entityType) {

@@ -59,8 +59,6 @@ public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements Ur
     return this;
   }
 
-  ;
-
   @Override
   public Expression getExpression() {
     return expression;
@@ -74,5 +72,5 @@ public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements Ur
   @Override
   public String toString() {
     return "any";
-  };
+  }
 }

@@ -673,7 +673,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
             entity.getOperations().add(operation);
           } else if (Constants.QNAME_ATOM_ELEM_CONTENT.equals(event.asStartElement().getName())) {
             final Attribute type = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TYPE));
-            if (type == null || ContentType.APPLICATION_XML.equals(type.getValue())) {
+            if (type == null || ContentType.APPLICATION_XML.toContentTypeString().equals(type.getValue())) {
               properties(reader, skipBeforeFirstStartElement(reader), entity);
             } else {
               entity.setMediaContentType(type.getValue());

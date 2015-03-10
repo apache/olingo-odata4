@@ -36,7 +36,7 @@ public abstract class Geospatial implements Serializable {
   public enum Dimension {
 
     GEOMETRY,
-    GEOGRAPHY;
+    GEOGRAPHY
 
   }
 
@@ -69,7 +69,7 @@ public abstract class Geospatial implements Serializable {
     /**
      * The OGIS geometry type number for feature collections.
      */
-    GEOSPATIALCOLLECTION;
+    GEOSPATIALCOLLECTION
 
   }
 

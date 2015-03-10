@@ -69,7 +69,7 @@ public class Parser {
 
   private enum ParserEntryRules {
     All, Batch, CrossJoin, Entity, ExpandItems, FilterExpression, Metadata, PathSegment, Orderby, Select
-  };
+  }
 
   public Parser setLogLevel(final int logLevel) {
     this.logLevel = logLevel;
@@ -162,10 +162,7 @@ public class Parser {
             FilterExpressionEOFContext ctxFilterExpression =
                 (FilterExpressionEOFContext) parseRule(option.value, ParserEntryRules.FilterExpression);
 
-            FilterOptionImpl filterOption =
-                (FilterOptionImpl) uriParseTreeVisitor.visitFilterExpressionEOF(ctxFilterExpression);
-
-            systemOption = filterOption;
+            systemOption = (FilterOptionImpl) uriParseTreeVisitor.visitFilterExpressionEOF(ctxFilterExpression);
 
           } else if (option.name.equals(SystemQueryOptionKind.FORMAT.toString())) {
             FormatOptionImpl formatOption = new FormatOptionImpl();
@@ -186,10 +183,7 @@ public class Parser {
             ExpandItemsEOFContext ctxExpandItems =
                 (ExpandItemsEOFContext) parseRule(option.value, ParserEntryRules.ExpandItems);
 
-            ExpandOptionImpl expandOption =
-                (ExpandOptionImpl) uriParseTreeVisitor.visitExpandItemsEOF(ctxExpandItems);
-
-            systemOption = expandOption;
+            systemOption = (ExpandOptionImpl) uriParseTreeVisitor.visitExpandItemsEOF(ctxExpandItems);
 
           } else if (option.name.equals(SystemQueryOptionKind.ID.toString())) {
             IdOptionImpl idOption = new IdOptionImpl();
@@ -204,20 +198,14 @@ public class Parser {
             OrderByEOFContext ctxOrderByExpression =
                 (OrderByEOFContext) parseRule(option.value, ParserEntryRules.Orderby);
 
-            OrderByOptionImpl orderByOption =
-                (OrderByOptionImpl) uriParseTreeVisitor.visitOrderByEOF(ctxOrderByExpression);
-
-            systemOption = orderByOption;
+            systemOption = (OrderByOptionImpl) uriParseTreeVisitor.visitOrderByEOF(ctxOrderByExpression);
           } else if (option.name.equals(SystemQueryOptionKind.SEARCH.toString())) {
             throw new RuntimeException("System query option '$search' not implemented!");
           } else if (option.name.equals(SystemQueryOptionKind.SELECT.toString())) {
             SelectEOFContext ctxSelectEOF =
                 (SelectEOFContext) parseRule(option.value, ParserEntryRules.Select);
 
-            SelectOptionImpl selectOption =
-                (SelectOptionImpl) uriParseTreeVisitor.visitSelectEOF(ctxSelectEOF);
-
-            systemOption = selectOption;
+            systemOption = (SelectOptionImpl) uriParseTreeVisitor.visitSelectEOF(ctxSelectEOF);
           } else if (option.name.equals(SystemQueryOptionKind.SKIP.toString())) {
             SkipOptionImpl skipOption = new SkipOptionImpl();
             skipOption.setName(option.name);

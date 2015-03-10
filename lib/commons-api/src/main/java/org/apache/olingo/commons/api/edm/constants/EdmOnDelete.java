@@ -20,6 +20,6 @@ package org.apache.olingo.commons.api.edm.constants;
 
 public enum EdmOnDelete {
 
-  Cascade, None, SetNull, SetDefault;
+  Cascade, None, SetNull, SetDefault
 
 }

@@ -25,7 +25,7 @@ public interface DeletedEntity {
   enum Reason {
 
     deleted,
-    changed;
+    changed
 
   }
 

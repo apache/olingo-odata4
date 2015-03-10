@@ -666,8 +666,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitAllEOF(final AllEOFContext ctx) {
-    UriInfoImpl crossJoin = new UriInfoImpl().setKind(UriInfoKind.all);
-    context.contextUriInfo = crossJoin;
+    context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.all);
     return null;
   }
 
@@ -861,9 +860,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitMetadataEOF(final MetadataEOFContext ctx) {
-    UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.metadata);
 
-    context.contextUriInfo = uriInfo;
+    context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.metadata);
     return null;
   }
 
@@ -1259,15 +1257,13 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   @Override
   public Object visitFilter(final FilterContext ctx) {
 
-    FilterOptionImpl filter = new FilterOptionImpl().setExpression((ExpressionImpl) ctx.children.get(2).accept(this));
-    return filter;
+    return new FilterOptionImpl().setExpression((ExpressionImpl) ctx.children.get(2).accept(this));
   }
 
   @Override
   public Object visitFilterExpressionEOF(final FilterExpressionEOFContext ctx) {
 
-    FilterOptionImpl filter = new FilterOptionImpl().setExpression((ExpressionImpl) ctx.children.get(0).accept(this));
-    return filter;
+    return new FilterOptionImpl().setExpression((ExpressionImpl) ctx.children.get(0).accept(this));
   }
 
   @Override

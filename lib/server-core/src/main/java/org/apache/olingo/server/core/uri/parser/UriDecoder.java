@@ -87,7 +87,6 @@ public class UriDecoder {
     // Empty path segments of the resource path are removed.
     while (list.remove("")) {
       // this place intentionally left blank
-      ;
     }
 
     return skipSegments > 0 ? list.subList(skipSegments, list.size()) : list;

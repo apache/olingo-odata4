@@ -38,8 +38,7 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
   public static EdmComplexTypeImpl getInstance(
       final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
 
-    final EdmComplexTypeImpl instance = new EdmComplexTypeImpl(edm, name, complexType);
-    return instance;
+    return new EdmComplexTypeImpl(edm, name, complexType);
   }
 
   private EdmComplexTypeImpl(final Edm edm, final FullQualifiedName name, final ComplexType complexType) {

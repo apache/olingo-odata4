@@ -82,7 +82,7 @@ public class XMLMetadataRequestImpl
           forInclusion.setAlias(schema.getAlias());
 
           // process all edm:Annotations in each schema of the included document
-          for (Annotations annotationGroup : ((SchemaImpl) schema).getAnnotationGroups()) {
+          for (Annotations annotationGroup : schema.getAnnotationGroups()) {
             // take into account only when (TargetNamespace was either not provided or matches) and
             // (Qualifier was either not provided or matches)
             if ((StringUtils.isBlank(include.getTargetNamespace())

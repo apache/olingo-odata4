@@ -85,7 +85,7 @@ public class EnumTypeImpl extends AbstractEdmItem implements EnumType, Annotatab
   public Member getMember(final Integer value) {
     Member result = null;
     for (Member member : getMembers()) {
-      if (value.equals(member.getValue())) {
+      if (String.valueOf(value).equals(member.getValue())) {
         result = member;
       }
     }

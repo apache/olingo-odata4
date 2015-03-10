@@ -112,10 +112,9 @@ public class ExpandValidator implements TestValidator {
   }
 
   public ExpandValidator goExpand() {
-    ExpandValidator val = new ExpandValidator()
+    return new ExpandValidator()
         .setExpand((ExpandOptionImpl) expandItem.getExpandOption())
         .setUpValidator(this);
-    return val;
   }
 
   public ExpandValidator first() {

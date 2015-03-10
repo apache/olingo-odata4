@@ -25,7 +25,7 @@ public interface ODataDeletedEntity {
   enum Reason {
 
     deleted,
-    changed;
+    changed
 
   }
 

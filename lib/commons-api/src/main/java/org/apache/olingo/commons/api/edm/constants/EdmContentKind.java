@@ -25,6 +25,6 @@ public enum EdmContentKind {
 
   text,
   html,
-  xhtml;
+  xhtml
 
 }

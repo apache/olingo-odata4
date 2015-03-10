@@ -285,9 +285,8 @@ public class URIBuilderImpl implements URIBuilder {
     }
 
     try {
-      StringBuilder sb = segmentsBuilder;
       if ((queryOptions.size() + parameters.size()) > 0) {
-        sb.append("?");
+        segmentsBuilder.append("?");
         List<NameValuePair> list1 = new LinkedList<NameValuePair>();
         for (Map.Entry<String, String> option : queryOptions.entrySet()) {
           list1.add(new BasicNameValuePair("$" + option.getKey(), option.getValue()));
@@ -301,10 +300,10 @@ public class URIBuilderImpl implements URIBuilder {
         // which works in desktop java application, however, throws NoSuchMethodError in android OS,
         // so here manually construct the URL by its overload URLEncodedUtils.format(List<>,String).
         final String queryStr = encodeQueryParameter(list1);
-        sb.append(queryStr);
+        segmentsBuilder.append(queryStr);
       }
 
-      return URI.create(sb.toString());
+      return URI.create(segmentsBuilder.toString());
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("Could not build valid URI", e);
     }

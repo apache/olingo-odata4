@@ -90,6 +90,32 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
   }
 
 
+//  @Test
+//  public void entityCollection22() {
+//    final ODataInvokeRequest<ODataEntitySet> request = getClient().getInvokeRequestFactory()
+//            .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+//                            .appendOperationCallSegment("FICRTCollESTwoKeyNavParam").build(), ODataEntitySet.class,
+//                    Collections.<String, ODataValue> singletonMap("ParameterInt16",
+//                            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(2)));
+//    assertNotNull(request);
+//
+//    final ODataInvokeResponse<ODataEntitySet> response = request.execute();
+//    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+//
+//    final ODataEntitySet entitySet = response.getBody();
+//    assertNotNull(entitySet);
+//    final List<ODataEntity> entities = entitySet.getEntities();
+//    assertNotNull(entities);
+//    assertEquals(2, entities.size());
+//    final ODataEntity entity = entities.get(1);
+//    assertNotNull(entity);
+//    final ODataProperty property = entity.getProperty("PropertyString");
+//    assertNotNull(property);
+//    assertNotNull(property.getPrimitiveValue());
+//    assertEquals("2", property.getPrimitiveValue().toValue());
+//  }
+
+
   @Test
   public void countEntityCollection() throws Exception {
     final ODataRawRequest request = getClient().getRetrieveRequestFactory()

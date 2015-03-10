@@ -28,6 +28,6 @@ public enum HttpMethod {
   PUT,
   PATCH,
   MERGE,
-  DELETE;
+  DELETE
 
 }

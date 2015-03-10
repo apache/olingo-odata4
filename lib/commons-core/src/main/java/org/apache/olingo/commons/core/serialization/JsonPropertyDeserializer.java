@@ -49,7 +49,7 @@ public class JsonPropertyDeserializer extends JsonDeserializer {
 
   protected ResWrap<Property> doDeserialize(final JsonParser parser) throws IOException {
 
-    final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
+    final ObjectNode tree = parser.getCodec().readTree(parser);
 
     final String metadataETag;
     final URI contextURL;

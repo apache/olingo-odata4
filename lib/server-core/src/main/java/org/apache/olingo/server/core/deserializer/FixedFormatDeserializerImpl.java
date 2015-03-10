@@ -36,7 +36,7 @@ public class FixedFormatDeserializerImpl implements FixedFormatDeserializer {
   public byte[] binary(InputStream content) throws DeserializerException {
     ByteArrayOutputStream result = new ByteArrayOutputStream();
     byte[] buffer = new byte[128];
-    int count = -1;
+    int count;
     try {
       while ((count = content.read(buffer)) > -1) {
         result.write(buffer, 0, count);

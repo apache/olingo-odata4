@@ -133,7 +133,7 @@ public final class EdmDouble extends SingletonPrimitiveType {
     } else if (value instanceof BigDecimal) {
       final double doubleValue = ((BigDecimal) value).doubleValue();
       if (!Double.isInfinite(doubleValue) && BigDecimal.valueOf(doubleValue).compareTo((BigDecimal) value) == 0) {
-        return ((BigDecimal) value).toString();
+        return value.toString();
       } else {
         throw new EdmPrimitiveTypeException("The value '" + value + "' is not valid.");
       }

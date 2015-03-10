@@ -39,7 +39,7 @@ public class JsonEntitySetSerializer extends JsonSerializer {
 
   protected void doSerialize(final EntitySet entitySet, final JsonGenerator jgen)
       throws IOException, EdmPrimitiveTypeException {
-    doContainerSerialize(new ResWrap<EntitySet>((URI) null, null, entitySet), jgen);
+    doContainerSerialize(new ResWrap<EntitySet>(null, null, entitySet), jgen);
   }
 
   protected void doContainerSerialize(final ResWrap<EntitySet> container, final JsonGenerator jgen)

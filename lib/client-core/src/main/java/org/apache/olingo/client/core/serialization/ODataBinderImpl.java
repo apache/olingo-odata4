@@ -327,12 +327,11 @@ public class ODataBinderImpl implements ODataBinder {
 
   @Override
   public Property getProperty(final ODataProperty property) {
-    final ODataProperty _property = property;
 
     final Property propertyResource = new PropertyImpl();
-    propertyResource.setName(_property.getName());
-    updateValuable(propertyResource, _property);
-    annotations(_property, propertyResource);
+    propertyResource.setName(property.getName());
+    updateValuable(propertyResource, property);
+    annotations(property, propertyResource);
 
     return propertyResource;
   }

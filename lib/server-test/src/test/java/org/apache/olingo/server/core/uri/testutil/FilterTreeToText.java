@@ -62,7 +62,7 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
   public String visitUnaryOperator(final UnaryOperatorKind operator, final String operand)
       throws ExpressionVisitException {
 
-    return "<" + operator + " " + operand.toString() + ">";
+    return "<" + operator + " " + operand + ">";
   }
 
   @Override
@@ -90,9 +90,7 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
   public String visitMember(final UriInfoResource resource) throws ExpressionVisitException, ODataApplicationException {
     String ret = "";
 
-    UriInfoResource path = resource;
-
-    for (UriResource item : path.getUriResourceParts()) {
+    for (UriResource item : resource.getUriResourceParts()) {
       String tmp = "";
       if (item instanceof UriResourceLambdaAll) {
         UriResourceLambdaAll all = (UriResourceLambdaAll) item;

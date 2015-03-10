@@ -121,7 +121,7 @@ public class BatchResponseSerializer {
   }
 
   private void appendChangeSetHeader(StringBuilder builder, final String changeSetBoundary) {
-    appendHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED.toString() + "; boundary="
+    appendHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + "; boundary="
         + changeSetBoundary, builder);
   }
 
@@ -136,7 +136,7 @@ public class BatchResponseSerializer {
   private void appendStatusLine(ODataResponse response, StringBuilder builder) {
     builder.append("HTTP/1.1")
         .append(SP)
-        .append("" + response.getStatusCode())
+        .append(response.getStatusCode())
         .append(SP)
         .append(HttpStatusCode.fromStatusCode(response.getStatusCode()).toString())
         .append(CRLF);

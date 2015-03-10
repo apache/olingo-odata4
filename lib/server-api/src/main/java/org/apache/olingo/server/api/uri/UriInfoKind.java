@@ -63,5 +63,5 @@ public enum UriInfoKind {
    * Class: {@link UriInfoService}<br>
    * URI: http://.../serviceroot
    */
-  service;
+  service
 }

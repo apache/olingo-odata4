@@ -102,8 +102,7 @@ public enum EdmPrimitiveTypeKind {
       throw new IllegalArgumentException(fqn + " does not look like an Edm primitive type");
     }
 
-    final EdmPrimitiveTypeKind kind = valueOf(fqn.substring(4));
-    return kind;
+    return valueOf(fqn.substring(4));
   }
 
 }
