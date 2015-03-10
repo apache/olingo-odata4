@@ -126,7 +126,7 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   protected String setInline(final String name, final String suffix, final JsonNode tree,
-      final ObjectCodec codec, final LinkImpl link) throws IOException {
+      final ObjectCodec codec, final Linked linked) throws IOException {
 
     final String entityNamePrefix = name.substring(0, name.indexOf(suffix));
     if (tree.has(entityNamePrefix)) {
@@ -134,18 +134,16 @@ public class JsonDeserializer implements ODataDeserializer {
       JsonEntityDeserializer entityDeserializer = new JsonEntityDeserializer(serverMode);
 
       if (inline instanceof ObjectNode) {
-        link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
-        link.setInlineEntity(entityDeserializer.doDeserialize(inline.traverse(codec)).getPayload());
+        linked.addInlineEntity(entityNamePrefix, entityDeserializer.doDeserialize(inline.traverse(codec)).getPayload());
 
       } else if (inline instanceof ArrayNode) {
-        link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
 
         final EntitySet entitySet = new EntitySetImpl();
         for (final Iterator<JsonNode> entries = inline.elements(); entries.hasNext();) {
           entitySet.getEntities().add(entityDeserializer.doDeserialize(entries.next().traverse(codec)).getPayload());
         }
 
-        link.setInlineEntitySet(entitySet);
+        linked.addInlineEntitySet(entityNamePrefix, entitySet);
       }
     }
     return entityNamePrefix;
@@ -176,7 +174,7 @@ public class JsonDeserializer implements ODataDeserializer {
       linked.getNavigationLinks().add(link);
 
       toRemove.add(field.getKey());
-      toRemove.add(setInline(field.getKey(), jsonNavigationLink, tree, codec, link));
+      toRemove.add(setInline(field.getKey(), jsonNavigationLink, tree, codec, linked));
     } else if (field.getKey().endsWith(jsonAssociationLink)) {
       final LinkImpl link = new LinkImpl();
       link.setTitle(getTitle(field));
@@ -205,7 +203,7 @@ public class JsonDeserializer implements ODataDeserializer {
         link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
         linked.getNavigationLinks().add(link);
 
-        toRemove.add(setInline(field.getKey(), suffix, tree, codec, link));
+        toRemove.add(setInline(field.getKey(), suffix, tree, codec, linked));
       } else if (field.getValue().isArray()) {
         for (final Iterator<JsonNode> itor = field.getValue().elements(); itor.hasNext();) {
           final JsonNode node = itor.next();
@@ -216,7 +214,7 @@ public class JsonDeserializer implements ODataDeserializer {
           link.setHref(node.asText());
           link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
           linked.getNavigationLinks().add(link);
-          toRemove.add(setInline(field.getKey(), Constants.JSON_BIND_LINK_SUFFIX, tree, codec, link));
+          toRemove.add(setInline(field.getKey(), Constants.JSON_BIND_LINK_SUFFIX, tree, codec, linked));
         }
       }
       toRemove.add(field.getKey());

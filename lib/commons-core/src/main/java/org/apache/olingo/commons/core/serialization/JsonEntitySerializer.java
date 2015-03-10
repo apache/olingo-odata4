@@ -109,12 +109,12 @@ public class JsonEntitySerializer extends JsonSerializer {
         jgen.writeStringField(Constants.JSON_MEDIA_EDIT_LINK, link.getHref());
       }
 
-      if (link.getInlineEntity() != null) {
-        jgen.writeObjectField(link.getTitle(), link.getInlineEntity());
+      if (entity.getInlineEntity(link.getTitle()) != null) {
+        jgen.writeObjectField(link.getTitle(), entity.getInlineEntity(link.getTitle()));
       }
-      if (link.getInlineEntitySet() != null) {
+      if (entity.getInlineEntitySet(link.getTitle()) != null) {
         jgen.writeArrayFieldStart(link.getTitle());
-        for (Entity subEntry : link.getInlineEntitySet().getEntities()) {
+        for (Entity subEntry : entity.getInlineEntitySet(link.getTitle()).getEntities()) {
           jgen.writeObject(subEntry);
         }
         jgen.writeEndArray();

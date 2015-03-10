@@ -56,6 +56,7 @@ import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.core.data.AbstractLinked;
 import org.apache.olingo.commons.core.data.AbstractODataObject;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
 import org.apache.olingo.commons.core.data.ComplexValueImpl;
@@ -151,9 +152,9 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
           }
 
           if (link.getRel().startsWith(Constants.NS_NAVIGATION_LINK_REL)) {
-
-            ((ComplexValue) value).getNavigationLinks().add(link);
-            inline(reader, event.asStartElement(), link);
+            ((ComplexValueImpl) value).getNavigationLinks().add(link);
+            String navigationName = link.getRel().substring(Constants.NS_NAVIGATION_LINK_REL.length());
+            inline(reader, event.asStartElement(), navigationName, ((ComplexValueImpl) value));
           } else if (link.getRel().startsWith(Constants.NS_ASSOCIATION_LINK_REL)) {
 
             ((Valuable) value).asComplex().getAssociationLinks().add(link);
@@ -379,8 +380,8 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     }
   }
 
-  private void inline(final XMLEventReader reader, final StartElement start, final LinkImpl link)
-      throws XMLStreamException, EdmPrimitiveTypeException {
+  private void inline(final XMLEventReader reader, final StartElement start, final String navigationName,
+      final AbstractLinked linked) throws XMLStreamException, EdmPrimitiveTypeException {
 
     boolean foundEndElement = false;
     while (reader.hasNext() && !foundEndElement) {
@@ -391,14 +392,14 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
           StartElement inline = getStartElement(reader);
           if (inline != null) {
             if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(inline.getName())) {
-              link.setInlineEntity(entity(reader, inline));
+              linked.addInlineEntity(navigationName, entity(reader, inline));
             }
             if (Constants.QNAME_ATOM_ELEM_FEED.equals(inline.getName())) {
-              link.setInlineEntitySet(entitySet(reader, inline));
+              linked.addInlineEntitySet(navigationName, entitySet(reader, inline));
             }
           }
         } else if (annotationQName.equals(event.asStartElement().getName())) {
-          link.getAnnotations().add(annotation(reader, event.asStartElement()));
+          linked.getAnnotations().add(annotation(reader, event.asStartElement()));
         }
       }
 
@@ -642,7 +643,8 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
             } else if (link.getRel().startsWith(Constants.NS_NAVIGATION_LINK_REL)) {
 
               entity.getNavigationLinks().add(link);
-              inline(reader, event.asStartElement(), link);
+              String navigationName = link.getRel().substring(Constants.NS_NAVIGATION_LINK_REL.length());
+              inline(reader, event.asStartElement(), navigationName, entity);
             } else if (link.getRel().startsWith(Constants.NS_ASSOCIATION_LINK_REL)) {
 
               entity.getAssociationLinks().add(link);

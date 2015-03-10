@@ -18,71 +18,18 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import org.apache.olingo.commons.api.data.Annotation;
-import org.apache.olingo.commons.api.data.Link;
-import org.apache.olingo.commons.api.data.ComplexValue;
-import org.apache.olingo.commons.api.data.Property;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComplexValueImpl implements ComplexValue {
+import org.apache.olingo.commons.api.data.ComplexValue;
+import org.apache.olingo.commons.api.data.Property;
+
+public class ComplexValueImpl extends AbstractLinked implements ComplexValue {
 
   private final List<Property> value = new ArrayList<Property>();
-  private final List<Link> associationLinks = new ArrayList<Link>();
-  private final List<Link> navigationLinks = new ArrayList<Link>();
-  private final List<Link> bindingLinks = new ArrayList<Link>();
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
   public List<Property> getValue() {
     return value;
-  }
-
-  private Link getOneByTitle(final String name, final List<Link> links) {
-    Link result = null;
-
-    for (Link link : links) {
-      if (name.equals(link.getTitle())) {
-        result = link;
-      }
-    }
-
-    return result;
-  }
-
-  @Override
-  public Link getAssociationLink(final String name) {
-    return getOneByTitle(name, associationLinks);
-  }
-
-  @Override
-  public List<Link> getAssociationLinks() {
-    return associationLinks;
-  }
-
-  @Override
-  public Link getNavigationLink(final String name) {
-    return getOneByTitle(name, navigationLinks);
-  }
-
-  @Override
-  public List<Link> getNavigationLinks() {
-    return navigationLinks;
-  }
-
-  @Override
-  public List<Annotation> getAnnotations() {
-    return annotations;
-  }
-
-  @Override
-  public Link getNavigationBinding(String name) {
-    return getOneByTitle(name, bindingLinks);
-  }
-
-  @Override
-  public List<Link> getNavigationBindings() {
-    return bindingLinks;
   }
 }

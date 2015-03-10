@@ -181,13 +181,13 @@ public class JsonSerializer implements ODataSerializer {
         }
       }
 
-      if (link.getInlineEntity() != null) {
+      if (linked.getInlineEntity(link.getTitle()) != null) {
         jgen.writeFieldName(link.getTitle());
-        new JsonEntitySerializer(serverMode).doSerialize(link.getInlineEntity(), jgen);
-      } else if (link.getInlineEntitySet() != null) {
+        new JsonEntitySerializer(serverMode).doSerialize(linked.getInlineEntity(link.getTitle()), jgen);
+      } else if (linked.getInlineEntitySet(link.getTitle()) != null) {
         jgen.writeArrayFieldStart(link.getTitle());
         final JsonEntitySerializer entitySerializer = new JsonEntitySerializer(serverMode);
-        for (Entity subEntry : link.getInlineEntitySet().getEntities()) {
+        for (Entity subEntry : linked.getInlineEntitySet(link.getTitle()).getEntities()) {
           entitySerializer.doSerialize(subEntry, jgen);
         }
         jgen.writeEndArray();
@@ -235,13 +235,13 @@ public class JsonSerializer implements ODataSerializer {
                 link.getHref());
       }
 
-      if (link.getInlineEntity() != null) {
+      if (linked.getInlineEntity(link.getTitle()) != null) {
         jgen.writeFieldName(link.getTitle());
-        new JsonEntitySerializer(serverMode).doSerialize(link.getInlineEntity(), jgen);
-      } else if (link.getInlineEntitySet() != null) {
+        new JsonEntitySerializer(serverMode).doSerialize(linked.getInlineEntity(link.getTitle()), jgen);
+      } else if (linked.getInlineEntitySet(link.getTitle()) != null) {
         jgen.writeArrayFieldStart(link.getTitle());
         JsonEntitySerializer entitySerializer = new JsonEntitySerializer(serverMode);
-        for (Entity subEntry : link.getInlineEntitySet().getEntities()) {
+        for (Entity subEntry : linked.getInlineEntitySet(link.getTitle()).getEntities()) {
           entitySerializer.doSerialize(subEntry, jgen);
         }
         jgen.writeEndArray();

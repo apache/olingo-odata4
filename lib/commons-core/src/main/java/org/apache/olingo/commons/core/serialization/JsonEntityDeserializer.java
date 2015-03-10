@@ -165,7 +165,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
         }
 
         toRemove.add(field.getKey());
-        toRemove.add(setInline(field.getKey(), getJSONAnnotation(jsonMediaEditLink), tree, parser.getCodec(), link));
+        toRemove.add(setInline(field.getKey(), getJSONAnnotation(jsonMediaEditLink), tree, parser.getCodec(), entity));
       } else if (field.getKey().endsWith(getJSONAnnotation(jsonMediaContentType))) {
         final String linkTitle = getTitle(field);
         for (Link link : entity.getMediaEditLinks()) {

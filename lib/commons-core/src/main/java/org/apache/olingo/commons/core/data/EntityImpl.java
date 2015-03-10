@@ -18,19 +18,19 @@
  */
 package org.apache.olingo.commons.core.data;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Class implementing an OData entity.
  */
-public class EntityImpl extends AbstractODataObject implements Entity {
+public class EntityImpl extends AbstractLinked implements Entity {
 
   private String eTag;
 
@@ -39,10 +39,7 @@ public class EntityImpl extends AbstractODataObject implements Entity {
   private Link readLink;
   private Link editLink;
 
-  private final List<Link> associationLinks = new ArrayList<Link>();
-  private final List<Link> navigationLinks = new ArrayList<Link>();
   private final List<Link> mediaEditLinks = new ArrayList<Link>();
-  private final List<Link> bindingLinks = new ArrayList<Link>();
 
   private final List<ODataOperation> operations = new ArrayList<ODataOperation>();
 
@@ -91,51 +88,9 @@ public class EntityImpl extends AbstractODataObject implements Entity {
     this.editLink = editLink;
   }
 
-  private Link getOneByTitle(final String name, final List<Link> links) {
-    Link result = null;
-
-    for (Link link : links) {
-      if (name.equals(link.getTitle())) {
-        result = link;
-      }
-    }
-
-    return result;
-  }
-
-  @Override
-  public Link getAssociationLink(final String name) {
-    return getOneByTitle(name, associationLinks);
-  }
-
-  @Override
-  public List<Link> getAssociationLinks() {
-    return associationLinks;
-  }
-
-  @Override
-  public Link getNavigationLink(final String name) {
-    return getOneByTitle(name, navigationLinks);
-  }
-
-  @Override
-  public List<Link> getNavigationLinks() {
-    return navigationLinks;
-  }
-
   @Override
   public List<Link> getMediaEditLinks() {
     return mediaEditLinks;
-  }
-  
-  @Override
-  public Link getNavigationBinding(String name) {
-    return getOneByTitle(name, bindingLinks);
-  }
-
-  @Override
-  public List<Link> getNavigationBindings() {
-    return bindingLinks;
   }
 
   @Override

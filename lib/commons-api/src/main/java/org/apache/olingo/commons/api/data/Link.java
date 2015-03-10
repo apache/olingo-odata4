@@ -93,34 +93,6 @@ public interface Link extends Annotatable {
   void setMediaETag(String etag);
 
   /**
-   * Gets in-line entity.
-   * 
-   * @return in-line entity.
-   */
-  Entity getInlineEntity();
-
-  /**
-   * Sets in-line entity.
-   * 
-   * @param entity entity.
-   */
-  void setInlineEntity(Entity entity);
-
-  /**
-   * Gets in-line entity set.
-   * 
-   * @return in-line entity set.
-   */
-  EntitySet getInlineEntitySet();
-
-  /**
-   * Sets in-line entity set.
-   * 
-   * @param entitySet entity set.
-   */
-  void setInlineEntitySet(EntitySet entitySet);
-
-  /**
    * If this is a "toOne" relationship this method delivers the binding link or <tt>null</tt> if not set.
    * @return String the binding link.
    */
@@ -143,5 +115,4 @@ public interface Link extends Annotatable {
    * @param bindingLinks
    */
   void setBindingLinks(List<String> bindingLinks);
-
 }

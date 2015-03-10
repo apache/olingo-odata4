@@ -36,6 +36,7 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.ValueType;
@@ -139,7 +140,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
         property.getValue());
     if (!property.isNull() && property.isComplex()) {
       links(writer, property.asComplex().getAssociationLinks());
-      links(writer, property.asComplex().getNavigationLinks());
+      navigationLinks(writer, property.asComplex().getNavigationLinks(), property.asComplex());
     }
 
     writer.writeEndElement();
@@ -180,30 +181,51 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     for (Link link : links) {
       writer.writeStartElement(Constants.ATOM_ELEM_LINK);
 
-      if (StringUtils.isNotBlank(link.getRel())) {
-        writer.writeAttribute(Constants.ATTR_REL, link.getRel());
-      }
-      if (StringUtils.isNotBlank(link.getTitle())) {
-        writer.writeAttribute(Constants.ATTR_TITLE, link.getTitle());
-      }
-      if (StringUtils.isNotBlank(link.getHref())) {
-        writer.writeAttribute(Constants.ATTR_HREF, link.getHref());
-      }
-      if (StringUtils.isNotBlank(link.getType())) {
-        writer.writeAttribute(Constants.ATTR_TYPE, link.getType());
+      commonLinkAttributes(writer, link);
+
+      for (Annotation annotation : link.getAnnotations()) {
+        annotation(writer, annotation, null);
       }
 
-      if (link.getInlineEntity() != null || link.getInlineEntitySet() != null) {
+      writer.writeEndElement();
+    }
+  }
+
+  private void commonLinkAttributes(final XMLStreamWriter writer, Link link) throws XMLStreamException {
+    if (StringUtils.isNotBlank(link.getRel())) {
+      writer.writeAttribute(Constants.ATTR_REL, link.getRel());
+    }
+    if (StringUtils.isNotBlank(link.getTitle())) {
+      writer.writeAttribute(Constants.ATTR_TITLE, link.getTitle());
+    }
+    if (StringUtils.isNotBlank(link.getHref())) {
+      writer.writeAttribute(Constants.ATTR_HREF, link.getHref());
+    }
+    if (StringUtils.isNotBlank(link.getType())) {
+      writer.writeAttribute(Constants.ATTR_TYPE, link.getType());
+    }
+  }
+
+  private void navigationLinks(final XMLStreamWriter writer, final List<Link> links, Linked linked)
+      throws XMLStreamException, EdmPrimitiveTypeException {
+    for (Link link : links) {
+      writer.writeStartElement(Constants.ATOM_ELEM_LINK);
+
+      commonLinkAttributes(writer, link);
+
+      String navigationName = link.getRel().substring(Constants.NS_NAVIGATION_LINK_REL.length());
+
+      if (linked.getInlineEntity(navigationName) != null || linked.getInlineEntitySet(navigationName) != null) {
         writer.writeStartElement(Constants.PREFIX_METADATA, Constants.ATOM_ELEM_INLINE, namespaceMetadata);
 
-        if (link.getInlineEntity() != null) {
+        if (linked.getInlineEntity(navigationName) != null) {
           writer.writeStartElement(Constants.ATOM_ELEM_ENTRY);
-          entity(writer, link.getInlineEntity());
+          entity(writer, linked.getInlineEntity(navigationName));
           writer.writeEndElement();
         }
-        if (link.getInlineEntitySet() != null) {
+        if (linked.getInlineEntitySet(navigationName) != null) {
           writer.writeStartElement(Constants.ATOM_ELEM_FEED);
-          entitySet(writer, link.getInlineEntitySet());
+          entitySet(writer, linked.getInlineEntitySet(navigationName));
           writer.writeEndElement();
         }
 
@@ -299,7 +321,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     }
 
     links(writer, entity.getAssociationLinks());
-    links(writer, entity.getNavigationLinks());
+    navigationLinks(writer, entity.getNavigationLinks(), entity);
     links(writer, entity.getMediaEditLinks());
 
     if (serverMode) {
