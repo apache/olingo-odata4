@@ -236,11 +236,35 @@ public class DataProvider {
     // Deep insert (only if not an update)
     if (isInsert) {
       handleDeepInsert(rawBaseUri, edmEntitySet, entity, changedEntity);
+    } else {
+      handleDeleteSingleNavigationProperties(edmEntitySet, entity, changedEntity);
     }
 
     final boolean navigationBindingsAvailable = !changedEntity.getNavigationBindings().isEmpty();
     if (navigationBindingsAvailable) {
       applyNavigationBinding(rawBaseUri, edmEntitySet, entity, changedEntity.getNavigationBindings());
+    }
+  }
+
+  private void handleDeleteSingleNavigationProperties(EdmEntitySet edmEntitySet, Entity entity, Entity changedEntity)
+      throws DataProviderException {
+    final EdmEntityType entityType = edmEntitySet.getEntityType();
+    final List<String> navigationPropertyNames = entityType.getNavigationPropertyNames();
+
+    for (final String navPropertyName : navigationPropertyNames) {
+      final Link navigationLink = changedEntity.getNavigationLink(navPropertyName);
+      final EdmNavigationProperty navigationProperty = entityType.getNavigationProperty(navPropertyName);
+      if (!navigationProperty.isCollection() && navigationLink != null && navigationLink.getInlineEntity() == null) {
+        
+        // Check if partner is available
+        if (navigationProperty.getPartner() != null && entity.getNavigationLink(navPropertyName) != null) {
+          Entity partnerEntity =  entity.getNavigationLink(navPropertyName).getInlineEntity();
+          removeLink(navigationProperty.getPartner(), partnerEntity);
+        }
+        
+        // Remove link
+        removeLink(navigationProperty, entity);
+      }
     }
   }
 
@@ -303,12 +327,18 @@ public class DataProvider {
           for (final Entity inlineEntity : entities) {
             createLink(navigationProperty, entity, inlineEntity);
           }
-        } else {
-          final Entity inlineEntity =
-              createInlineEntity(rawBaseUri, target, navigationLink.getInlineEntity());
+        } else if (!navigationProperty.isCollection() && navigationLink.getInlineEntity() != null) {
+          final Entity inlineEntity = createInlineEntity(rawBaseUri, target, navigationLink.getInlineEntity());
           createLink(navigationProperty, entity, inlineEntity);
         }
       }
+    }
+  }
+
+  private void removeLink(EdmNavigationProperty navigationProperty, Entity entity) {
+    final Link link = entity.getNavigationLink(navigationProperty.getName());
+    if(link != null) {
+      entity.getNavigationLinks().remove(link);
     }
   }
 

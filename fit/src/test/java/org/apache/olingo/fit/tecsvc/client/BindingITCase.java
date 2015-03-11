@@ -36,6 +36,7 @@ import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataObjectFactory;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -261,6 +262,53 @@ public class BindingITCase extends AbstractBaseTestITCase {
     }
   }
 
+  @Test
+  public void testUpdateSingleNavigationPropertyWithNull() {
+    final ODataClient client = getClient();
+    final URI entityURI =
+        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
+    final ODataObjectFactory of = client.getObjectFactory();
+
+    // Request to single (non collection) navigation property
+    ODataEntity entity = of.newEntity(ET_KEY_NAV);
+    final ODataProperty navPropery = of.newComplexProperty(NAV_PROPERTY_ET_KEY_NAV_ONE, null);
+    entity.getProperties().add(navPropery);
+
+    ODataEntityUpdateResponse<ODataEntity> updateResponse =
+        client.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), updateResponse.getStatusCode());
+
+    final ODataEntityRequest<ODataEntity> getRequest =
+        client.getRetrieveRequestFactory().getEntityRequest(
+            client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).expand(
+                NAV_PROPERTY_ET_KEY_NAV_ONE).build());
+    getRequest.addCustomHeader(HttpHeader.COOKIE, updateResponse.getHeader(HttpHeader.SET_COOKIE).iterator().next());
+    final ODataRetrieveResponse<ODataEntity> getResponse = getRequest.execute();
+
+    ODataProperty property = getResponse.getBody().getProperty(NAV_PROPERTY_ET_KEY_NAV_ONE);
+    assertEquals(null, property.getPrimitiveValue());
+  }
+  
+  @Test
+  public void testUpdateCollectionNavigationPropertyWithNull() {
+    final ODataClient client = getClient();
+    final URI entityURI =
+        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
+    final ODataObjectFactory of = client.getObjectFactory();
+
+    // Request to single (non collection) navigation property
+    ODataEntity entity = of.newEntity(ET_KEY_NAV);
+    final ODataProperty navPropery = of.newComplexProperty(NAV_PROPERTY_ET_KEY_NAV_MANY, null);
+    entity.getProperties().add(navPropery);
+
+    try {
+      client.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
+      fail();
+    } catch(ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+  }
+  
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();
