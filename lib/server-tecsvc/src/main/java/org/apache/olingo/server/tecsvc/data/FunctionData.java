@@ -64,7 +64,7 @@ public class FunctionData {
     } else if (name.equals("UFCRTETMedia")) {
       final int index = parameters.isEmpty() ? 1 : Short.valueOf(parameters.get(0).getText());
       final List<Entity> esMedia = data.get("ESMedia").getEntities();
-      return index < 1 || index > esTwoKeyNav.size() ? null : esMedia.get(index - 1);
+      return index < 1 || index > esMedia.size() ? null : esMedia.get(index - 1);
     } else {
       throw new DataProviderException("Function " + name + " is not yet implemented.");
     }
