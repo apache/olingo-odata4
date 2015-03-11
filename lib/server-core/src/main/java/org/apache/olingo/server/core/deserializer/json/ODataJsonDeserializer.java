@@ -250,7 +250,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           EntitySetImpl inlineEntitySet = new EntitySetImpl();
           inlineEntitySet.getEntities().addAll(consumeEntitySetArray(edmNavigationProperty.getType(), jsonNode));
           link.setInlineEntitySet(inlineEntitySet);
-        } else if (!jsonNode.isArray() && !jsonNode.isValueNode() && !edmNavigationProperty.isCollection()) {
+        } else if (!jsonNode.isArray() && (!jsonNode.isValueNode() || jsonNode.isNull()) 
+            && !edmNavigationProperty.isCollection()) {
           link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
           if (!jsonNode.isNull()) {
             Entity inlineEntity = consumeEntityNode(edmNavigationProperty.getType(), (ObjectNode) jsonNode);

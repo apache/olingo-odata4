@@ -121,7 +121,25 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
       throw e;
     }
   }
-
+  
+  @Test
+  public void expandedToOneValidNullValue() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"NavPropertyETAllPrimOne\":null"
+            + "}";
+    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoPrim"));
+    final Entity entity = OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+  
+    assertEquals(1, entity.getNavigationLinks().size());
+    final Link link = entity.getNavigationLinks().get(0);
+    
+    assertEquals("NavPropertyETAllPrimOne", link.getTitle());
+    assertNull(link.getInlineEntity());
+    assertNull(link.getInlineEntitySet());
+  }
+  
   @Test(expected = DeserializerException.class)
   public void expandedToOneInvalidStringValue() throws Exception {
     String entityString =
