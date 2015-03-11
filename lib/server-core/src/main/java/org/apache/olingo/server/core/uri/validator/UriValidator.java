@@ -438,11 +438,10 @@ public class UriValidator {
     EdmReturnType rt = urf.getFunction().getReturnType();
     switch (rt.getType().getKind()) {
     case ENTITY:
-      if (((EdmEntityType) rt.getType()).hasStream()) {
-        idx = RowIndexForUriType.mediaStream;
-      } else {
-        idx = rt.isCollection() ? RowIndexForUriType.entitySet : RowIndexForUriType.entity;
-      }
+      idx = rt.isCollection() ?
+          RowIndexForUriType.entitySet :
+          ((EdmEntityType) rt.getType()).hasStream() ?
+              RowIndexForUriType.mediaStream : RowIndexForUriType.entity;
       break;
     case PRIMITIVE:
       idx = rt.isCollection() ? RowIndexForUriType.propertyPrimitiveCollection : RowIndexForUriType.propertyPrimitive;

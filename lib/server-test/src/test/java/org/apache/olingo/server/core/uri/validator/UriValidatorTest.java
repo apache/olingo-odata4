@@ -61,6 +61,8 @@ public class UriValidatorTest {
   private static final String URI_SINGLETON = "/SI";
   private static final String URI_NAV_ENTITY = "/ESKeyNav(1)/NavPropertyETKeyNavOne";
   private static final String URI_NAV_ENTITY_SET = "/ESKeyNav(1)/NavPropertyETKeyNavMany";
+  private static final String URI_FI_ENTITY_SET = "FICRTCollESMedia()";
+  private static final String URI_FI_ENTITY = "FICRTETTwoKeyNavParam(ParameterInt16=1)";
 
   private static final String QO_FILTER = "$filter='1' eq '1'";
   private static final String QO_FORMAT = "$format=bla/bla";
@@ -143,13 +145,18 @@ public class UriValidatorTest {
       /* { URI_NAV_ENTITY_SET, QO_SEARCH }, */{ URI_NAV_ENTITY_SET, QO_SELECT }, { URI_NAV_ENTITY_SET, QO_SKIP },
       { URI_NAV_ENTITY_SET, QO_SKIPTOKEN }, { URI_NAV_ENTITY_SET, QO_LEVELS }, { URI_NAV_ENTITY_SET, QO_TOP },
 
-      { "FINRTInt16()" },
-      { "FICRTETKeyNav()" },
-      { "FICRTETTwoKeyNavParam(ParameterInt16=1)" },
-      { "FICRTCollString()" },
-      { "FICRTCTTwoPrim()" },
-      { "FICRTCollCTTwoPrim()" },
-      { "FICRTESMedia()" },
+      { URI_FI_ENTITY_SET, QO_FILTER }, { URI_FI_ENTITY_SET, QO_FORMAT }, { URI_FI_ENTITY_SET, QO_EXPAND },
+      { URI_FI_ENTITY_SET, QO_COUNT }, { URI_FI_ENTITY_SET, QO_ORDERBY }, /* { URI_FI_ENTITY_SET, QO_SEARCH }, */
+      { URI_FI_ENTITY_SET, QO_SELECT }, { URI_FI_ENTITY_SET, QO_SKIP }, { URI_FI_ENTITY_SET, QO_SKIPTOKEN },
+      { URI_FI_ENTITY_SET, QO_LEVELS }, { URI_FI_ENTITY_SET, QO_TOP },
+
+      { URI_FI_ENTITY, QO_FORMAT }, { URI_FI_ENTITY, QO_EXPAND }, { URI_FI_ENTITY, QO_SELECT },
+      { URI_FI_ENTITY, QO_LEVELS },
+
+      { "FINRTInt16()", QO_FORMAT },
+      { "FICRTCollString()", QO_FORMAT },
+      { "FICRTCTTwoPrim()", QO_FORMAT },
+      { "FICRTCollCTTwoPrim()", QO_FORMAT },
 
       { "ESTwoKeyNav/olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav" },
       { "ESAllPrim/olingo.odata.test1.BAESAllPrimRTETAllPrim" },
@@ -252,7 +259,13 @@ public class UriValidatorTest {
       { URI_NAV_ENTITY, QO_ORDERBY }, /* { URI_NAV_ENTITY, QO_SEARCH }, */{ URI_NAV_ENTITY, QO_SKIP },
       { URI_NAV_ENTITY, QO_SKIPTOKEN }, { URI_SINGLETON, QO_TOP },
 
-      { URI_NAV_ENTITY_SET, QO_ID }
+      { URI_NAV_ENTITY_SET, QO_ID },
+
+      { URI_FI_ENTITY_SET, QO_ID },
+
+      { URI_FI_ENTITY, QO_FILTER }, { URI_FI_ENTITY, QO_ID }, { URI_FI_ENTITY, QO_COUNT },
+      { URI_FI_ENTITY, QO_ORDERBY }, /* { URI_FI_ENTITY, QO_SEARCH }, */ { URI_FI_ENTITY, QO_SKIP },
+      { URI_FI_ENTITY, QO_SKIPTOKEN }, { URI_FI_ENTITY, QO_TOP }
   };
 
   private static final Edm edm = new EdmProviderImpl(new EdmTechProvider());
