@@ -63,6 +63,7 @@ public class UriValidatorTest {
   private static final String URI_NAV_ENTITY_SET = "/ESKeyNav(1)/NavPropertyETKeyNavMany";
   private static final String URI_FI_ENTITY_SET = "FICRTCollESMedia()";
   private static final String URI_FI_ENTITY = "FICRTETTwoKeyNavParam(ParameterInt16=1)";
+  private static final String URI_FI_ENTITY_SET_KEY = "FICRTCollESMedia()(3)";
 
   private static final String QO_FILTER = "$filter='1' eq '1'";
   private static final String QO_FORMAT = "$format=bla/bla";
@@ -152,6 +153,8 @@ public class UriValidatorTest {
 
       { URI_FI_ENTITY, QO_FORMAT }, { URI_FI_ENTITY, QO_EXPAND }, { URI_FI_ENTITY, QO_SELECT },
       { URI_FI_ENTITY, QO_LEVELS },
+      { URI_FI_ENTITY_SET_KEY, QO_FORMAT }, { URI_FI_ENTITY_SET_KEY, QO_EXPAND }, { URI_FI_ENTITY_SET_KEY, QO_SELECT },
+      { URI_FI_ENTITY_SET_KEY, QO_LEVELS },
 
       { "FINRTInt16()", QO_FORMAT },
       { "FICRTCollString()", QO_FORMAT },
@@ -265,7 +268,10 @@ public class UriValidatorTest {
 
       { URI_FI_ENTITY, QO_FILTER }, { URI_FI_ENTITY, QO_ID }, { URI_FI_ENTITY, QO_COUNT },
       { URI_FI_ENTITY, QO_ORDERBY }, /* { URI_FI_ENTITY, QO_SEARCH }, */ { URI_FI_ENTITY, QO_SKIP },
-      { URI_FI_ENTITY, QO_SKIPTOKEN }, { URI_FI_ENTITY, QO_TOP }
+      { URI_FI_ENTITY, QO_SKIPTOKEN }, { URI_FI_ENTITY, QO_TOP },
+      { URI_FI_ENTITY_SET_KEY, QO_FILTER }, { URI_FI_ENTITY_SET_KEY, QO_ID }, { URI_FI_ENTITY_SET_KEY, QO_COUNT },
+      { URI_FI_ENTITY_SET_KEY, QO_ORDERBY }, /* { URI_FI_ENTITY_SET_KEY, QO_SEARCH },*/
+      { URI_FI_ENTITY_SET_KEY, QO_SKIP }, { URI_FI_ENTITY_SET_KEY, QO_SKIPTOKEN }, { URI_FI_ENTITY_SET_KEY, QO_TOP }
   };
 
   private static final Edm edm = new EdmProviderImpl(new EdmTechProvider());

@@ -53,10 +53,7 @@ public class UriResourceEntitySetImpl extends UriResourceWithKeysImpl implements
 
   @Override
   public boolean isCollection() {
-    if (keyPredicates == null) {
-      return true;
-    }
-    return false;
+    return keyPredicates == null;
   }
 
   @Override
