@@ -24,7 +24,7 @@ import java.util.Collection;
  * Marker interface for Entity and complex type.
  */
 public interface StructuredCollection<
-        T extends StructuredType<?>, EC extends Collection<T>, CT extends StructuredCollection<T, EC, ?>>
+        T extends StructuredType, EC extends Collection<T>, CT extends StructuredCollection<T, EC, ?>>
         extends GenericCollection<T, EC> {
 
   /**

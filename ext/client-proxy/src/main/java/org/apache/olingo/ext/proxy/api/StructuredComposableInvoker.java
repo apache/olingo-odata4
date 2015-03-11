@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-public interface StructuredComposableInvoker<T extends StructuredType<?>, O extends Operations>
+public interface StructuredComposableInvoker<T extends StructuredType, O extends Operations>
         extends StructuredInvoker<T>, ComposableInvoker<T, O> {
 //No additional methods needed for now.
 }

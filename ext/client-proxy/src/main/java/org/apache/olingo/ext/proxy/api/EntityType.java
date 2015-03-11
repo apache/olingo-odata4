@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.ext.proxy.api;
 
-public interface EntityType<T extends StructuredType<?>> extends StructuredType<T> {
+public interface EntityType<T extends StructuredType> extends StructuredType<T> {
 
   /**
    * Appends ref segment to the URI.
