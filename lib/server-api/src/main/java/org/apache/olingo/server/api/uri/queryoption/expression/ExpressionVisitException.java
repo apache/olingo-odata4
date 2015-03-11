@@ -18,11 +18,24 @@
  */
 package org.apache.olingo.server.api.uri.queryoption.expression;
 
+import org.apache.olingo.commons.api.ODataException;
+
 /**
  * Exception class used by the {@link ExpressionVisitor} to throw exceptions while traversing the expression tree
  */
-public class ExpressionVisitException extends Exception {
+public class ExpressionVisitException extends ODataException {
 
   private static final long serialVersionUID = 1L;
 
+  public ExpressionVisitException(String msg) {
+    super(msg);
+  }
+
+  public ExpressionVisitException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
+
+  public ExpressionVisitException(Throwable cause) {
+    super(cause);
+  }
 }
