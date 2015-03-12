@@ -632,12 +632,18 @@ public class PropertyProvider {
           .setType(EntityTypeProvider.nameETMedia)
           .setCollection(true);
 
+  public static final NavigationProperty collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav_WithPartnerERKeyNavOne 
+          = new NavigationProperty()
+            .setName("NavPropertyETTwoKeyNavMany")
+            .setType(EntityTypeProvider.nameETTwoKeyNav)
+            .setCollection(true)
+            .setPartner("NavPropertyETKeyNavOne");
+  
   public static final NavigationProperty collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav = new NavigationProperty()
-          .setName("NavPropertyETTwoKeyNavMany")
-          .setType(EntityTypeProvider.nameETTwoKeyNav)
-          .setCollection(true)
-          .setPartner("NavPropertyETKeyNavOne");
-
+        .setName("NavPropertyETTwoKeyNavMany")
+        .setType(EntityTypeProvider.nameETTwoKeyNav)
+        .setCollection(true);
+  
   public static final NavigationProperty collectionNavPropertyETTwoKeyNavOne_ETTwoKeyNav = new NavigationProperty()
           .setName("NavPropertyETTwoKeyNavOne")
           .setType(EntityTypeProvider.nameETTwoKeyNav);

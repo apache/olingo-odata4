@@ -55,6 +55,7 @@ import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.ExpandSystemQueryOptionHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.CountHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.FilterHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.OrderByHandler;
@@ -104,12 +105,21 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
           entitySet,
           edmEntitySet,
           request.getRawRequestUri());
-
+      
+      // Apply expand system query option
       final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
       ODataSerializer serializer = odata.createSerializer(format);
       final ExpandOption expand = uriInfo.getExpandOption();
       final SelectOption select = uriInfo.getSelectOption();
-      response.setContent(serializer.entityCollection(edmEntityType, entitySet,
+      
+      // Create a shallow copy of each entity. So the expanded navigation properties can be modified for serialization,
+      // without affecting the data stored in the database.
+      final ExpandSystemQueryOptionHandler expandHandler = new ExpandSystemQueryOptionHandler();
+      final EntitySet entitySetSerialization = expandHandler.copyEntitySetShallowRekursive(entitySet);
+      expandHandler.applyExpandQueryOptions(entitySetSerialization, edmEntitySet, expand);
+      
+      // Serialize
+      response.setContent(serializer.entityCollection(edmEntityType, entitySetSerialization,
           EntityCollectionSerializerOptions.with()
               .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                   getContextUrl(edmEntitySet, edmEntityType, false, expand, select))

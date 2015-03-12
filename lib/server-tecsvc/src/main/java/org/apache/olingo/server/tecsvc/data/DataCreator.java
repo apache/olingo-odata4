@@ -664,9 +664,9 @@ public class DataCreator {
 
     // NavPropertyETTwoKeyNavMany
     setLinks(entitySet.getEntities().get(0), "NavPropertyETTwoKeyNavMany",
-        esKeyNavTargets.get(0), esKeyNavTargets.get(1));
-    setLinks(entitySet.getEntities().get(1), "NavPropertyETTwoKeyNavMany", esKeyNavTargets.get(0));
-    setLinks(entitySet.getEntities().get(2), "NavPropertyETTwoKeyNavMany", esKeyNavTargets.get(1));
+        esTwoKeyNavTargets.get(0), esTwoKeyNavTargets.get(1));
+    setLinks(entitySet.getEntities().get(1), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(0));
+    setLinks(entitySet.getEntities().get(2), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(1));
   }
 
   protected static Property createPrimitive(final String name, final Object value) {

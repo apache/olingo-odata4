@@ -315,7 +315,7 @@ public class EntityTypeProvider {
           .setNavigationProperties(
               Arrays.asList(
                   PropertyProvider.navPropertyETTwoKeyNavOne_ETTwoKeyNav_NotNullable,
-                  PropertyProvider.collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav,
+                  PropertyProvider.collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav_WithPartnerERKeyNavOne,
                   PropertyProvider.navPropertyETKeyNavOne_ETKeyNav,
                   PropertyProvider.collectionNavPropertyETKeyNavMany_ETKeyNav,
                   PropertyProvider.navPropertyETMediaOne_ETMedia,
