@@ -21,8 +21,6 @@ package org.apache.olingo.server.core.uri.validator;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.EdmAction;
-import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
@@ -49,41 +47,40 @@ public class UriValidator {
 
   //@formatter:off (Eclipse formatter)
   //CHECKSTYLE:OFF (Maven checkstyle)
-  private boolean[][] decisionMatrix =
+  private final boolean[][] decisionMatrix =
       {
-          /*                                          0-FILTER 1-FORMAT 2-EXPAND 3-ID     4-COUNT  5-ORDERBY 6-SEARCH 7-SELECT 8-SKIP   9-SKIPTOKEN 10-LEVELS 11-TOP */
-          /*                              all  0 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true ,    false },
-          /*                            batch  1 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
-          /*                        crossjoin  2 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true ,    true  },
-          /*                         entityId  3 */ { false,   true ,   true ,   true ,   false,   false,    false,   true ,   false,   false,      true ,    false },
-          /*                         metadata  4 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
-          /*                         resource  5 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
-          /*                          service  6 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
-          /*                        entitySet  7 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true ,    true  },
-          /*                   entitySetCount  8 */ { true,    false,   false,   false,   false,   false,    true,    false,   false,   false,      false,    false },
-          /*                           entity  9 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      true ,    false },
-          /*                      mediaStream 10 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
-          /*                       references 11 */ { true ,   true ,   false,   false,   false,   true ,    true ,   false,   true ,   true ,      false,    true  },
-          /*                        reference 12 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
-          /*                  propertyComplex 13 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      true ,    false },
-          /*        propertyComplexCollection 14 */ { true ,   true ,   true ,   false,   true ,   true ,    false,   false,   true ,   true ,      true ,    true  },
-          /*   propertyComplexCollectionCount 15 */ { true,    false,   false,   false,   false,   false,    true,    false,   false,   false,      false,    false },
-          /*                propertyPrimitive 16 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
-          /*      propertyPrimitiveCollection 17 */ { true ,   true ,   false,   false,   false,   true ,    false,   false,   true ,   true ,      false,    true  },
-          /* propertyPrimitiveCollectionCount 18 */ { true,    false,   false,   false,   false,   false,    true,    false,   false,   false,      false,    false },
-          /*           propertyPrimitiveValue 19 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },                    
+          /*                                          0-FILTER 1-FORMAT 2-EXPAND 3-ID     4-COUNT  5-ORDERBY 6-SEARCH 7-SELECT 8-SKIP   9-SKIPTOKEN 10-TOP */
+          /*                              all  0 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true  },
+          /*                            batch  1 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false },
+          /*                        crossjoin  2 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true  },
+          /*                         entityId  3 */ { false,   true ,   true ,   true ,   false,   false,    false,   true ,   false,   false,      false },
+          /*                         metadata  4 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
+          /*                          service  5 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
+          /*                        entitySet  6 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true  },
+          /*                   entitySetCount  7 */ { true ,   false,   false,   false,   false,   false,    true,    false,   false,   false,      false },
+          /*                           entity  8 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      false },
+          /*                      mediaStream  9 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false },
+          /*                       references 10 */ { true ,   true ,   false,   false,   false,   true ,    true ,   false,   true ,   true ,      true  },
+          /*                        reference 11 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
+          /*                  propertyComplex 12 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      false },
+          /*        propertyComplexCollection 13 */ { true ,   true ,   true ,   false,   true ,   true ,    false,   true ,   true ,   true ,      true  },
+          /*   propertyComplexCollectionCount 14 */ { true ,   false,   false,   false,   false,   false,    true,    false,   false,   false,      false },
+          /*                propertyPrimitive 15 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
+          /*      propertyPrimitiveCollection 16 */ { true ,   true ,   false,   false,   true ,   true ,    false,   false,   true ,   true ,      true  },
+          /* propertyPrimitiveCollectionCount 17 */ { true ,   false,   false,   false,   false,   false,    true,    false,   false,   false,      false },
+          /*           propertyPrimitiveValue 18 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
+          /*                             none 19 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false }
       };
 
-  private boolean[][] decisionMatrixForHttpMethod =
+  private final boolean[][] decisionMatrixForHttpMethod =
     {
-        /*                                          0-FILTER 1-FORMAT 2-EXPAND 3-ID     4-COUNT  5-ORDERBY 6-SEARCH 7-SELECT 8-SKIP   9-SKIPTOKEN 10-LEVELS 11-TOP */
-        /*                              GET  0 */ { true ,   true ,   true ,   true,    true ,   true ,    true ,   true ,   true ,   true ,      true ,    true },
-        /*                             POST  0 */ { true ,   false ,  true ,   false,   false ,  true ,    false ,  true ,   false ,  false ,     true ,    false },
-        /*                              PUT  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false ,   false },
-        /*                           DELETE  0 */ { false ,  false ,  false ,  false,   false ,  false,    false ,  false,   false ,  false ,     false,    false },
-        /*                            PATCH  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false ,   false },
+        /*                                          0-FILTER 1-FORMAT 2-EXPAND 3-ID     4-COUNT  5-ORDERBY 6-SEARCH 7-SELECT 8-SKIP   9-SKIPTOKEN 10-TOP */
+        /*                              GET  0 */ { true ,   true ,   true ,   true,    true ,   true ,    true ,   true ,   true ,   true ,      true  },
+        /*                             POST  0 */ { true ,   false ,  true ,   false,   false ,  true ,    false ,  true ,   false ,  false ,     false },
+        /*                              PUT  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false },
+        /*                           DELETE  0 */ { false ,  false ,  false ,  false,   false ,  false,    false ,  false,   false ,  false ,     false },
+        /*                            PATCH  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false }
     };
-
   //CHECKSTYLE:ON
   //@formatter:on
 
@@ -93,23 +90,23 @@ public class UriValidator {
     crossjoin(2),
     entityId(3),
     metadata(4),
-    resource(5),
-    service(6),
-    entitySet(7),
-    entitySetCount(8),
-    entity(9),
-    mediaStream(10),
-    references(11),
-    reference(12),
-    propertyComplex(13),
-    propertyComplexCollection(14),
-    propertyComplexCollectionCount(15),
-    propertyPrimitive(16),
-    propertyPrimitiveCollection(17),
-    propertyPrimitiveCollectionCount(18),
-    propertyPrimitiveValue(19);
+    service(5),
+    entitySet(6),
+    entitySetCount(7),
+    entity(8),
+    mediaStream(9),
+    references(10),
+    reference(11),
+    propertyComplex(12),
+    propertyComplexCollection(13),
+    propertyComplexCollectionCount(14),
+    propertyPrimitive(15),
+    propertyPrimitiveCollection(16),
+    propertyPrimitiveCollectionCount(17),
+    propertyPrimitiveValue(18),
+    none(19);
 
-    private int idx;
+    private final int idx;
 
     RowIndexForUriType(final int i) {
       idx = i;
@@ -131,10 +128,9 @@ public class UriValidator {
     select(7),
     skip(8),
     skiptoken(9),
-    levels(10),
-    top(11);
+    top(10);
 
-    private int idx;
+    private final int idx;
 
     ColumnIndex(final int i) {
       idx = i;
@@ -143,7 +139,6 @@ public class UriValidator {
     public int getIndex() {
       return idx;
     }
-
   }
 
   private enum RowIndexForHttpMethod {
@@ -162,7 +157,6 @@ public class UriValidator {
     public int getIndex() {
       return idx;
     }
-
   }
 
   public UriValidator() {
@@ -208,9 +202,6 @@ public class UriValidator {
       break;
     case SKIPTOKEN:
       idx = ColumnIndex.skiptoken;
-      break;
-    case LEVELS:
-      idx = ColumnIndex.levels;
       break;
     case TOP:
       idx = ColumnIndex.top;
@@ -324,14 +315,6 @@ public class UriValidator {
       idx = function.getReturnType().getType().getKind() == EdmTypeKind.ENTITY ?
           RowIndexForUriType.mediaStream : RowIndexForUriType.propertyPrimitiveValue;
       break;
-    case action:
-      UriResourceAction uriAction = (UriResourceAction) secondLastPathSegment;
-      final EdmActionImport actionImport = uriAction.getActionImport();
-      final EdmAction action = actionImport == null ?
-          uriAction.getAction() : actionImport.getUnboundAction();
-      idx = action.getReturnType().getType().getKind() == EdmTypeKind.ENTITY ?
-          RowIndexForUriType.mediaStream : RowIndexForUriType.propertyPrimitiveValue;
-      break;
     default:
       throw new UriValidationException("Unexpected kind in path segment before $value: "
           + secondLastPathSegment.getKind(), UriValidationException.MessageKeys.UNALLOWED_KIND_BEFORE_VALUE,
@@ -377,6 +360,8 @@ public class UriValidator {
           RowIndexForUriType.entitySet : RowIndexForUriType.entity;
       break;
     case PRIMITIVE:
+    case ENUM:
+    case DEFINITION:
       idx = rt.isCollection() ? RowIndexForUriType.propertyPrimitiveCollection : RowIndexForUriType.propertyPrimitive;
       break;
     case COMPLEX:
@@ -415,13 +400,18 @@ public class UriValidator {
   }
 
   private RowIndexForUriType rowIndexForAction(final UriResource lastPathSegment) throws UriValidationException {
-    RowIndexForUriType idx;
     final EdmReturnType rt = ((UriResourceAction) lastPathSegment).getAction().getReturnType();
+    if (rt == null) {
+      return RowIndexForUriType.none;
+    }
+    RowIndexForUriType idx;
     switch (rt.getType().getKind()) {
     case ENTITY:
       idx = rt.isCollection() ? RowIndexForUriType.entitySet : RowIndexForUriType.entity;
       break;
     case PRIMITIVE:
+    case ENUM:
+    case DEFINITION:
       idx = rt.isCollection() ? RowIndexForUriType.propertyPrimitiveCollection : RowIndexForUriType.propertyPrimitive;
       break;
     case COMPLEX:
@@ -431,7 +421,6 @@ public class UriValidator {
       throw new UriValidationException("Unsupported action return type: " + rt.getType().getKind(),
           UriValidationException.MessageKeys.UNSUPPORTED_ACTION_RETURN_TYPE, rt.getType().getKind().toString());
     }
-
     return idx;
   }
 
