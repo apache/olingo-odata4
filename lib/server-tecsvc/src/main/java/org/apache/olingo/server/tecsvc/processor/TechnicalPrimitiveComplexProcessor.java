@@ -208,12 +208,11 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     final List<String> path = getPropertyPath(resourceParts, 0);
 
     final Entity entity = readEntity(uriInfo);
-    final Property property =
-        entity == null ?
-            getPropertyData(dataProvider.readFunctionPrimitiveComplex(((UriResourceFunction) resourceParts.get(0))
-                .getFunction(),
-                ((UriResourceFunction) resourceParts.get(0)).getParameters()), path) :
-            getPropertyData(entity, path);
+    final Property property = entity == null ?
+        getPropertyData(dataProvider.readFunctionPrimitiveComplex(((UriResourceFunction) resourceParts.get(0))
+            .getFunction(),
+            ((UriResourceFunction) resourceParts.get(0)).getParameters()), path) :
+        getPropertyData(entity, path);
 
     if (property == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
@@ -368,8 +367,9 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
     final Entity entity = readEntity(uriInfo);
     final Property property = entity == null ?
-        dataProvider.readFunctionPrimitiveComplex(((UriResourceFunction) resourceParts.get(0)).getFunction(),
-            ((UriResourceFunction) resourceParts.get(0)).getParameters()) :
+        getPropertyData(dataProvider.readFunctionPrimitiveComplex(((UriResourceFunction) resourceParts.get(0))
+            .getFunction(),
+            ((UriResourceFunction) resourceParts.get(0)).getParameters()), path) :
         getPropertyData(entity, path);
 
     if (property == null || property.getValue() == null) {
