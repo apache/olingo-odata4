@@ -24,9 +24,9 @@ import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.ComplexType;
 import org.apache.olingo.commons.core.edm.AbstractEdmComplexType;
 import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
-import org.apache.olingo.server.api.edm.provider.ComplexType;
 
 import java.util.List;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
   }
 
   private EdmComplexTypeImpl(final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
-    super(edm, name, complexType.getBaseType());
+    super(edm, name, complexType.getBaseTypeFQN());
     helper = new EdmStructuredTypeHelperImpl(edm, name, complexType);
   }
 

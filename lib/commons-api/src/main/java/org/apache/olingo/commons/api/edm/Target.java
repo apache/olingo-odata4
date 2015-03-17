@@ -33,16 +33,20 @@ public class Target {
     private final Target instance;
 
     public Builder(final String target, final EdmEntityContainer defaultContainer) {
-      final String[] bindingTargetParts = target.split("/");
-
-      instance = new Target();
-      if (bindingTargetParts.length == 1) {
-        instance.setEntityContainer(defaultContainer.getFullQualifiedName()).
-            setTargetName(bindingTargetParts[0]);
+      if (target != null) {
+        final String[] bindingTargetParts = target.split("/");
+        instance = new Target();
+        if (bindingTargetParts.length == 1) {
+          instance.setEntityContainer(defaultContainer.getFullQualifiedName()).
+              setTargetName(bindingTargetParts[0]);
+        } else {
+          instance.setEntityContainer(new FullQualifiedName(bindingTargetParts[0])).
+              setTargetName(bindingTargetParts[1]);
+        }
       } else {
-        instance.setEntityContainer(new FullQualifiedName(bindingTargetParts[0])).
-            setTargetName(bindingTargetParts[1]);
+        instance = null;
       }
+
     }
 
     public Target build() {
@@ -72,6 +76,14 @@ public class Target {
   public Target setEntityContainer(final FullQualifiedName entityContainer) {
     this.entityContainer = entityContainer;
     return this;
+  }
+
+  @Override
+  public String toString() {
+    if(entityContainer == null){
+      return targetName;
+    }
+    return entityContainer.getFullQualifiedNameAsString() + "/" + targetName;
   }
 
 }

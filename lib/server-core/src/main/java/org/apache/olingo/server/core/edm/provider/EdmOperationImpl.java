@@ -18,19 +18,18 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.edm.provider.Operation;
+import org.apache.olingo.commons.api.edm.provider.Parameter;
 import org.apache.olingo.commons.core.edm.AbstractEdmOperation;
-import org.apache.olingo.server.api.edm.provider.EntitySetPath;
-import org.apache.olingo.server.api.edm.provider.Operation;
-import org.apache.olingo.server.api.edm.provider.Parameter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class EdmOperationImpl extends AbstractEdmOperation {
 
@@ -46,9 +45,9 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
       instance.setParameters(_parameters);
     }
 
-    final EntitySetPath entitySetPath = instance.operation.getEntitySetPath();
-    if (entitySetPath != null && entitySetPath.getPath() != null) {
-      instance.setEntitySetPath(entitySetPath.getPath());
+    final String entitySetPath = instance.operation.getEntitySetPath();
+    if (entitySetPath != null) {
+      instance.setEntitySetPath(entitySetPath);
     }
 
     instance.setIsBound(instance.operation.isBound());
@@ -71,7 +70,7 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
   public FullQualifiedName getBindingParameterTypeFqn() {
     if (isBound()) {
       Parameter bindingParameter = operation.getParameters().get(0);
-      return bindingParameter.getType();
+      return bindingParameter.getTypeFQN();
     }
     return null;
   }

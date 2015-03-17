@@ -24,7 +24,7 @@ import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.server.api.edm.provider.Function;
+import org.apache.olingo.commons.api.edm.provider.Function;
 
 public class EdmFunctionImpl extends EdmOperationImpl implements EdmFunction {
 

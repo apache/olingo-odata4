@@ -19,8 +19,8 @@
 package org.apache.olingo.server.core.edm.provider;
 
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 import org.apache.olingo.commons.core.edm.AbstractEdmKeyPropertyRef;
-import org.apache.olingo.server.api.edm.provider.PropertyRef;
 
 public class EdmKeyPropertyRefImpl extends AbstractEdmKeyPropertyRef {
 
@@ -33,7 +33,7 @@ public class EdmKeyPropertyRefImpl extends AbstractEdmKeyPropertyRef {
 
   @Override
   public String getName() {
-    return ref.getPropertyName();
+    return ref.getName();
   }
 
   @Override

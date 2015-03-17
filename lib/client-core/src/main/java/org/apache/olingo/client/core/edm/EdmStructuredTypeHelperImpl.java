@@ -21,13 +21,13 @@ package org.apache.olingo.client.core.edm;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.olingo.client.api.edm.xml.NavigationProperty;
-import org.apache.olingo.client.api.edm.xml.Property;
-import org.apache.olingo.client.api.edm.xml.StructuralType;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.Property;
+import org.apache.olingo.commons.api.edm.provider.StructuralType;
 import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
 
 public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
@@ -80,6 +80,6 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
 
   @Override
   public boolean isAbstract() {
-    return structuralType.isAbstractType();
+    return structuralType.isAbstract();
   }
 }

@@ -20,8 +20,8 @@ package org.apache.olingo.server.tecsvc.provider;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.server.api.edm.provider.NavigationProperty;
-import org.apache.olingo.server.api.edm.provider.Property;
+import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.Property;
 
 public class PropertyProvider {
 
@@ -553,7 +553,7 @@ public class PropertyProvider {
    * TODO add propertyStream
    * Property propertyStream = new Property()
    * .setName("PropertyStream")
-   * .setType(EdmStream.getFullQualifiedName());
+   * .setFQNTypeName(EdmStream.getFullQualifiedName());
    */
 
   // Complex Properties ----------------------------------------------------------------------------------------------

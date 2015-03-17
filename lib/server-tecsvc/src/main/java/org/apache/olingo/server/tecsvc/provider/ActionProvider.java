@@ -23,9 +23,9 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.server.api.edm.provider.Action;
-import org.apache.olingo.server.api.edm.provider.Parameter;
-import org.apache.olingo.server.api.edm.provider.ReturnType;
+import org.apache.olingo.commons.api.edm.provider.Action;
+import org.apache.olingo.commons.api.edm.provider.Parameter;
+import org.apache.olingo.commons.api.edm.provider.ReturnType;
 
 public class ActionProvider {
 

@@ -21,13 +21,13 @@ package org.apache.olingo.client.core.edm;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.Parameter;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
+import org.apache.olingo.commons.api.edm.provider.Parameter;
 import org.apache.olingo.commons.core.edm.AbstractEdmParameter;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -58,7 +58,7 @@ public class EdmParameterImpl extends AbstractEdmParameter {
   }
 
   @Override
-  public Boolean isNullable() {
+  public boolean isNullable() {
     return parameter.isNullable();
   }
 

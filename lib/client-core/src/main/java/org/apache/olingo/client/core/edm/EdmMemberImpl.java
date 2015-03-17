@@ -21,12 +21,12 @@ package org.apache.olingo.client.core.edm;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.Member;
-import org.apache.olingo.client.core.edm.xml.MemberImpl;
+import org.apache.olingo.client.core.edm.xml.EnumMemberImpl;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.EnumMember;
 import org.apache.olingo.commons.core.edm.AbstractEdmMember;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
@@ -34,10 +34,10 @@ public class EdmMemberImpl extends AbstractEdmMember {
 
   private EdmAnnotationHelper helper;
 
-  public EdmMemberImpl(final Edm edm, final FullQualifiedName enumFQN, final Member member) {
+  public EdmMemberImpl(final Edm edm, final FullQualifiedName enumFQN, final EnumMember member) {
     super(edm, enumFQN, member.getName(), member.getValue());
-    this.helper = member instanceof MemberImpl
-            ? new EdmAnnotationHelperImpl(edm, (MemberImpl) member)
+    this.helper = member instanceof EnumMemberImpl
+            ? new EdmAnnotationHelperImpl(edm, member)
             : null;
   }
 

@@ -1,77 +1,51 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.olingo.client.api.edm.xml.ActionImport;
-import org.apache.olingo.client.api.edm.xml.Annotation;
+import org.apache.olingo.commons.api.edm.provider.ActionImport;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ActionImportImpl extends AbstractEdmItem implements ActionImport {
+public class ActionImportImpl extends ActionImport {
 
   private static final long serialVersionUID = 2971468441177647068L;
 
-  @JsonProperty(value = "Name", required = true)
-  private String name;
-
-  @JsonProperty(value = "Action", required = true)
-  private String action;
-
-  @JsonProperty(value = "EntitySet")
-  private String entitySet;
-
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
-
   @Override
-  public List<Annotation> getAnnotations() {
-    return annotations;
+  @JsonProperty(value = "Action", required = true)
+  public ActionImport setAction(final String action) {
+    super.setAction(action);
+    return this;
   }
   
   @Override
-  public String getName() {
-    return name;
-  }
-
-  public void setName(final String name) {
-    this.name = name;
-  }
-
-  @Override
-  public String getAction() {
-    return action;
-  }
-
-  public void setAction(final String action) {
-    this.action = action;
+  @JsonProperty(value = "Name", required = true)
+  public ActionImport setName(final String name) {
+    super.setName(name);
+    return this;
   }
 
   @Override
-  public String getEntitySet() {
-    return entitySet;
+  @JsonProperty(value = "EntitySet")
+  public ActionImport setEntitySet(final String entitySet) {
+    super.setEntitySet(entitySet);
+    return this;
   }
-
-  @Override
-  public void setEntitySet(final String entitySet) {
-    this.entitySet = entitySet;
-  }
+  
 
 }

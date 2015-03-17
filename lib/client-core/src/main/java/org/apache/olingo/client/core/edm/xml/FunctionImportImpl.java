@@ -18,69 +18,12 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.olingo.client.api.edm.xml.Annotation;
-import org.apache.olingo.client.api.edm.xml.FunctionImport;
+import org.apache.olingo.commons.api.edm.provider.FunctionImport;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = FunctionImportDeserializer.class)
-public class FunctionImportImpl implements FunctionImport {
+public class FunctionImportImpl extends FunctionImport {
 
   private static final long serialVersionUID = -1686801084142932402L;
-
-  private String name;
-
-  private String function;
-
-  private String entitySet;
-
-  private boolean includeInServiceDocument = false;
-
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  public void setName(final String name) {
-    this.name = name;
-  }
-
-  @Override
-  public String getFunction() {
-    return function;
-  }
-
-  public void setFunction(final String function) {
-    this.function = function;
-  }
-
-  @Override
-  public String getEntitySet() {
-    return entitySet;
-  }
-
-  @Override
-  public void setEntitySet(final String entitySet) {
-    this.entitySet = entitySet;
-  }
-
-  @Override
-  public boolean isIncludeInServiceDocument() {
-    return includeInServiceDocument;
-  }
-
-  public void setIncludeInServiceDocument(final boolean includeInServiceDocument) {
-    this.includeInServiceDocument = includeInServiceDocument;
-  }
-
-  @Override
-  public List<Annotation> getAnnotations() {
-    return annotations;
-  }
-
 }

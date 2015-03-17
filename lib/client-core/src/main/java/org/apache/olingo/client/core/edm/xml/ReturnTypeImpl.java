@@ -18,80 +18,12 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import org.apache.olingo.client.api.edm.xml.ReturnType;
-import org.apache.olingo.commons.api.edm.geo.SRID;
+import org.apache.olingo.commons.api.edm.provider.ReturnType;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ReturnTypeDeserializer.class)
-public class ReturnTypeImpl extends AbstractEdmItem implements ReturnType {
+public class ReturnTypeImpl extends ReturnType {
 
   private static final long serialVersionUID = 6261092793901735110L;
-
-  private String type;
-
-  private boolean nullable = true;
-
-  private Integer maxLength;
-
-  private Integer precision;
-
-  private Integer scale;
-
-  private SRID srid;
-
-  @Override
-  public String getType() {
-    return type;
-  }
-
-  public void setType(final String type) {
-    this.type = type;
-  }
-
-  @Override
-  public boolean isNullable() {
-    return nullable;
-  }
-
-  public void setNullable(final boolean nullable) {
-    this.nullable = nullable;
-  }
-
-  @Override
-  public Integer getMaxLength() {
-    return maxLength;
-  }
-
-  public void setMaxLength(final Integer maxLength) {
-    this.maxLength = maxLength;
-  }
-
-  @Override
-  public Integer getPrecision() {
-    return precision;
-  }
-
-  public void setPrecision(final Integer precision) {
-    this.precision = precision;
-  }
-
-  @Override
-  public Integer getScale() {
-    return scale;
-  }
-
-  public void setScale(final Integer scale) {
-    this.scale = scale;
-  }
-
-  @Override
-  public SRID getSrid() {
-    return srid;
-  }
-
-  public void setSrid(final SRID srid) {
-    this.srid = srid;
-  }
-
 }

@@ -608,7 +608,7 @@ public class UriValidator {
         throw new UriValidationException("Attempt to patch collection property.",
             UriValidationException.MessageKeys.UNSUPPORTED_HTTP_METHOD, method.toString());
       }
-      if (method == HttpMethod.DELETE && property.isNullable() != null && !property.isNullable()) {
+      if (method == HttpMethod.DELETE && !property.isNullable()) {
         throw new UriValidationException("Attempt to delete non-nullable property.",
             UriValidationException.MessageKeys.UNSUPPORTED_HTTP_METHOD, method.toString());
       }

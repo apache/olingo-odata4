@@ -21,13 +21,13 @@ package org.apache.olingo.client.core.edm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.NavigationProperty;
-import org.apache.olingo.client.api.edm.xml.ReferentialConstraint;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.ReferentialConstraint;
 import org.apache.olingo.commons.core.edm.AbstractEdmNavigationProperty;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -71,7 +71,7 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
   }
 
   @Override
-  public Boolean isNullable() {
+  public boolean isNullable() {
     return navigationProperty.isNullable();
   }
 

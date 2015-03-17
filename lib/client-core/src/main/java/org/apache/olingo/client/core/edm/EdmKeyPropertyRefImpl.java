@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import org.apache.olingo.client.api.edm.xml.PropertyRef;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 import org.apache.olingo.commons.core.edm.AbstractEdmKeyPropertyRef;
 
 public class EdmKeyPropertyRefImpl extends AbstractEdmKeyPropertyRef {

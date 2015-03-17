@@ -86,9 +86,6 @@ public class MetadataDocumentTest {
         containsString("<ComplexType Name=\"CTBase\" BaseType=\"Namespace1_Alias.CTTwoPrim\">"
             + "<Property Name=\"AdditionalPropString\" Type=\"Edm.String\"/></ComplexType>"));
 
-    // TODO: TypeDefinition
-    // assertThat(metadata, containsString("<TypeDefinition Name=\"typeDef\" Type=\"Edm.Int16\"/>"));
-
     assertThat(metadata, containsString("<Action Name=\"UARTCTTwoPrimParam\" IsBound=\"false\">"
         + "<Parameter Name=\"ParameterInt16\" Type=\"Edm.Int16\"/>"
         + "<ReturnType Type=\"Namespace1_Alias.CTTwoPrim\"/></Action>"));

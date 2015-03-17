@@ -28,9 +28,9 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
+import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 import org.apache.olingo.commons.core.edm.AbstractEdmTypeDefinition;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 
 public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition {
 
@@ -50,7 +50,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition {
     if (edmPrimitiveTypeInstance == null) {
       try {
         edmPrimitiveTypeInstance = EdmPrimitiveTypeFactory.getInstance(
-            EdmPrimitiveTypeKind.valueOf(typeDefinition.getUnderlyingType().getName()));
+            EdmPrimitiveTypeKind.valueOfFQN(typeDefinition.getUnderlyingType()));
       } catch (IllegalArgumentException e) {
         throw new EdmException("Invalid underlying type: " + typeDefinition.getUnderlyingType(), e);
       }
@@ -80,7 +80,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition {
 
   @Override
   public Boolean isUnicode() {
-    return typeDefinition.getIsUnicode();
+    return typeDefinition.isUnicode();
   }
 
   @Override

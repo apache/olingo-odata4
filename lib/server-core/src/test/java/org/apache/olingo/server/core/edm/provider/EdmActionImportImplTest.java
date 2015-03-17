@@ -25,7 +25,7 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.Target;
-import org.apache.olingo.server.api.edm.provider.ActionImport;
+import org.apache.olingo.commons.api.edm.provider.ActionImport;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,7 +51,7 @@ public class EdmActionImportImplTest {
     FullQualifiedName entityContainerFqn = new FullQualifiedName("namespace", "containerName");
     Target target = new Target().setEntityContainer(entityContainerFqn).setTargetName("entitySetName");
     ActionImport providerActionImport =
-        new ActionImport().setName("actionImportName").setAction(actionFqn).setEntitySet(target);
+        new ActionImport().setName("actionImportName").setAction(actionFqn).setEntitySet(target.toString());
 
     EdmProviderImpl edm = mock(EdmProviderImpl.class);
     container = mock(EdmEntityContainer.class);
@@ -83,8 +83,8 @@ public class EdmActionImportImplTest {
 
   @Test(expected = EdmException.class)
   public void getReturnedEntitySetNonExistingContainer() {
-    Target target = new Target();
-    ActionImport providerActionImport = new ActionImport().setName("actionImportName").setEntitySet(target);
+    Target target = new Target().setEntityContainer(new FullQualifiedName("alias.nonexisting")).setTargetName("Es");
+    ActionImport providerActionImport = new ActionImport().setName("actionImportName").setEntitySet(target.toString());
     EdmActionImport actionImport =
         new EdmActionImportImpl(mock(EdmProviderImpl.class), container, providerActionImport);
     actionImport.getReturnedEntitySet();
@@ -92,8 +92,8 @@ public class EdmActionImportImplTest {
 
   @Test(expected = EdmException.class)
   public void getReturnedEntitySetNonExistingEntitySet() {
-    Target target = new Target();
-    ActionImport providerActionImport = new ActionImport().setName("actionImportName").setEntitySet(target);
+    Target target = new Target().setTargetName("nonExisting");
+    ActionImport providerActionImport = new ActionImport().setName("actionImportName").setEntitySet(target.toString());
     EdmProviderImpl edm = mock(EdmProviderImpl.class);
     when(edm.getEntityContainer(null)).thenReturn(container);
     EdmActionImport actionImport = new EdmActionImportImpl(edm, container, providerActionImport);

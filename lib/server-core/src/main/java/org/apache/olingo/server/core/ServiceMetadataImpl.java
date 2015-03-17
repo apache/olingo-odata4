@@ -20,9 +20,9 @@ package org.apache.olingo.server.core;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 
 import java.util.ArrayList;

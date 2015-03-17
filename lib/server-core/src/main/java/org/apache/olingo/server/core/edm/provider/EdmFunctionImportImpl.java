@@ -24,7 +24,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.server.api.edm.provider.FunctionImport;
+import org.apache.olingo.commons.api.edm.provider.FunctionImport;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
 
   @Override
   public FullQualifiedName getFunctionFqn() {
-    return functionImport.getFunction();
+    return functionImport.getFunctionFQN();
   }
 
   @Override

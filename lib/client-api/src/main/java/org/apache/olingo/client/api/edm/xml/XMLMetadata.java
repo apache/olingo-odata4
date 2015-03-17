@@ -21,6 +21,8 @@ package org.apache.olingo.client.api.edm.xml;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.edm.provider.Schema;
+
 /**
  * Entry point for access information about EDM metadata.
  */

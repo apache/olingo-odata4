@@ -23,8 +23,8 @@ import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.geo.SRID;
+import org.apache.olingo.commons.api.edm.provider.Parameter;
 import org.apache.olingo.commons.core.edm.AbstractEdmParameter;
-import org.apache.olingo.server.api.edm.provider.Parameter;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class EdmParameterImpl extends AbstractEdmParameter {
   private final Parameter parameter;
 
   public EdmParameterImpl(final Edm edm, final Parameter parameter) {
-    super(edm, parameter.getName(), parameter.getType());
+    super(edm, parameter.getName(), parameter.getTypeFQN());
     this.parameter = parameter;
   }
 
@@ -48,8 +48,8 @@ public class EdmParameterImpl extends AbstractEdmParameter {
   }
 
   @Override
-  public Boolean isNullable() {
-    return parameter.getNullable();
+  public boolean isNullable() {
+    return parameter.isNullable();
   }
 
   @Override
@@ -69,7 +69,7 @@ public class EdmParameterImpl extends AbstractEdmParameter {
 
   @Override
   public SRID getSrid() {
-    return null; // TODO: provide implementation
+    return parameter.getSrid();
   }
 
   @Override

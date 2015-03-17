@@ -23,10 +23,10 @@ import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.server.api.edm.provider.ComplexType;
-import org.apache.olingo.server.api.edm.provider.EdmProvider;
-import org.apache.olingo.server.api.edm.provider.NavigationProperty;
-import org.apache.olingo.server.api.edm.provider.Property;
+import org.apache.olingo.commons.api.edm.provider.ComplexType;
+import org.apache.olingo.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.Property;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,7 +55,8 @@ public class EdmComplexTypeImplTest {
     FullQualifiedName baseName = new FullQualifiedName("namespace", "BaseTypeName");
     ComplexType baseComplexType = new ComplexType();
     List<Property> baseProperties = new ArrayList<Property>();
-    baseProperties.add(new Property().setName("prop1").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    baseProperties.add(new Property().setName("prop1").setType(
+        EdmPrimitiveTypeKind.String.getFullQualifiedName()));
     List<NavigationProperty> baseNavigationProperties = new ArrayList<NavigationProperty>();
     baseNavigationProperties.add(new NavigationProperty().setName("nav1"));
     baseComplexType.setName("BaseTypeName").setAbstract(false).setOpenType(false).setProperties(baseProperties)

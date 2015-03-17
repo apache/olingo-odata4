@@ -22,20 +22,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.edm.xml.Action;
-import org.apache.olingo.client.api.edm.xml.Parameter;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.edm.provider.Operation;
+import org.apache.olingo.commons.api.edm.provider.Parameter;
 import org.apache.olingo.commons.core.edm.AbstractEdmOperation;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
 public abstract class EdmOperationImpl extends AbstractEdmOperation {
 
-  protected final Action operation;
+  protected final Operation operation;
 
   protected final EdmAnnotationHelper helper;
 
@@ -63,7 +63,7 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
     return instance;
   }
 
-  protected EdmOperationImpl(final Edm edm, final FullQualifiedName name, final Action operation,
+  protected EdmOperationImpl(final Edm edm, final FullQualifiedName name, final Operation operation,
           final EdmTypeKind kind) {
 
     super(edm, name, kind);

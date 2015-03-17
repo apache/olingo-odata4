@@ -24,12 +24,12 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.Target;
-import org.apache.olingo.server.api.edm.provider.EdmProvider;
-import org.apache.olingo.server.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.server.api.edm.provider.EntitySet;
-import org.apache.olingo.server.api.edm.provider.EntityType;
-import org.apache.olingo.server.api.edm.provider.NavigationPropertyBinding;
-import org.apache.olingo.server.api.edm.provider.PropertyRef;
+import org.apache.olingo.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.EntitySet;
+import org.apache.olingo.commons.api.edm.provider.EntityType;
+import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -64,7 +64,7 @@ public class EdmEntitySetImplTest {
         .setIncludeInServiceDocument(true)
         .setNavigationPropertyBindings(Arrays.asList(
             new NavigationPropertyBinding().setPath("path")
-                .setTarget(new Target().setEntityContainer(containerName).setTargetName(entitySetName))));
+                .setTarget(new Target().setEntityContainer(containerName).setTargetName(entitySetName).toString())));
     when(provider.getEntitySet(containerName, entitySetName)).thenReturn(entitySetProvider);
 
     final EdmEntitySet entitySet = new EdmEntitySetImpl(edm, entityContainer, entitySetProvider);

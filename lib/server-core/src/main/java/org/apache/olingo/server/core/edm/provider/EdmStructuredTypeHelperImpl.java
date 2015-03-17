@@ -22,10 +22,10 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.Property;
+import org.apache.olingo.commons.api.edm.provider.StructuralType;
 import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
-import org.apache.olingo.server.api.edm.provider.NavigationProperty;
-import org.apache.olingo.server.api.edm.provider.Property;
-import org.apache.olingo.server.api.edm.provider.StructuredType;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -36,14 +36,14 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
 
   private final FullQualifiedName structuredTypeName;
 
-  private final StructuredType structuredType;
+  private final StructuralType structuredType;
 
   private Map<String, EdmProperty> properties;
 
   private Map<String, EdmNavigationProperty> navigationProperties;
 
   public EdmStructuredTypeHelperImpl(
-      final Edm edm, final FullQualifiedName structuredTypeName, final StructuredType structuredType) {
+      final Edm edm, final FullQualifiedName structuredTypeName, final StructuralType structuredType) {
 
     this.edm = edm;
     this.structuredTypeName = structuredTypeName;

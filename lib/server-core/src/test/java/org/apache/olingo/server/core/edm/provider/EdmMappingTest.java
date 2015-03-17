@@ -28,9 +28,9 @@ import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.server.api.edm.provider.Mapping;
-import org.apache.olingo.server.api.edm.provider.Parameter;
-import org.apache.olingo.server.api.edm.provider.Property;
+import org.apache.olingo.commons.api.edm.provider.Mapping;
+import org.apache.olingo.commons.api.edm.provider.Parameter;
+import org.apache.olingo.commons.api.edm.provider.Property;
 import org.junit.Test;
 
 public class EdmMappingTest {

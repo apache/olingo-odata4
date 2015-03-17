@@ -22,8 +22,9 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmTerm;
+import org.apache.olingo.commons.api.edm.Target;
+import org.apache.olingo.commons.api.edm.provider.OperationImport;
 import org.apache.olingo.commons.core.edm.AbstractEdmOperationImport;
-import org.apache.olingo.server.api.edm.provider.OperationImport;
 
 import java.util.List;
 
@@ -31,7 +32,8 @@ public abstract class EdmOperationImportImpl extends AbstractEdmOperationImport 
 
   public EdmOperationImportImpl(final Edm edm, final EdmEntityContainer container,
       final OperationImport operationImport) {
-    super(edm, container, operationImport.getName(), operationImport.getEntitySet());
+    super(edm, container, operationImport.getName(), new Target.Builder(operationImport.getEntitySet(), container
+        ).build());
   }
 
   @Override

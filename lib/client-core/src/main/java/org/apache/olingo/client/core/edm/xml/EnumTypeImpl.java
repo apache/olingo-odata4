@@ -18,88 +18,13 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.olingo.client.api.edm.xml.Annotatable;
-import org.apache.olingo.client.api.edm.xml.Annotation;
-import org.apache.olingo.client.api.edm.xml.EnumType;
-import org.apache.olingo.client.api.edm.xml.Member;
+import org.apache.olingo.commons.api.edm.provider.EnumType;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = EnumTypeDeserializer.class)
-public class EnumTypeImpl extends AbstractEdmItem implements EnumType, Annotatable {
+public class EnumTypeImpl extends EnumType {
 
   private static final long serialVersionUID = 9191189755592743333L;
-
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
-
-  private String name;
-
-  private String underlyingType;
-
-  private boolean flags;
-
-  private final List<Member> members = new ArrayList<Member>();
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  public void setName(final String name) {
-    this.name = name;
-  }
-
-  @Override
-  public String getUnderlyingType() {
-    return underlyingType;
-  }
-
-  public void setUnderlyingType(final String underlyingType) {
-    this.underlyingType = underlyingType;
-  }
-
-  @Override
-  public boolean isFlags() {
-    return flags;
-  }
-
-  public void setFlags(final boolean flags) {
-    this.flags = flags;
-  }
-
-  @Override
-  public Member getMember(final String name) {
-    Member result = null;
-    for (Member member : getMembers()) {
-      if (name.equals(member.getName())) {
-        result = member;
-      }
-    }
-    return result;
-  }
-
-  @Override
-  public Member getMember(final Integer value) {
-    Member result = null;
-    for (Member member : getMembers()) {
-      if (String.valueOf(value).equals(member.getValue())) {
-        result = member;
-      }
-    }
-    return result;
-  }
-
-  @Override
-  public List<Member> getMembers() {
-    return members;
-  }
-  
-  @Override
-  public List<Annotation> getAnnotations() {
-    return annotations;
-  }
 
 }

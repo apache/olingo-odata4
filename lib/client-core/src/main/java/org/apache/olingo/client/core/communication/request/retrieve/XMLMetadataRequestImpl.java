@@ -27,15 +27,15 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.edm.xml.Annotation;
-import org.apache.olingo.client.api.edm.xml.Annotations;
 import org.apache.olingo.client.api.edm.xml.Include;
 import org.apache.olingo.client.api.edm.xml.IncludeAnnotations;
 import org.apache.olingo.client.api.edm.xml.Reference;
-import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.core.edm.xml.AnnotationsImpl;
 import org.apache.olingo.client.core.edm.xml.SchemaImpl;
+import org.apache.olingo.commons.api.edm.provider.Annotation;
+import org.apache.olingo.commons.api.edm.provider.Annotations;
+import org.apache.olingo.commons.api.edm.provider.Schema;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 public class XMLMetadataRequestImpl

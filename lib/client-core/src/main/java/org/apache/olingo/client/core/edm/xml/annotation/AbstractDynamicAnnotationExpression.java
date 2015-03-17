@@ -18,24 +18,24 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
-import org.apache.olingo.client.api.edm.xml.annotation.AnnotationPath;
-import org.apache.olingo.client.api.edm.xml.annotation.Apply;
-import org.apache.olingo.client.api.edm.xml.annotation.Cast;
-import org.apache.olingo.client.api.edm.xml.annotation.Collection;
-import org.apache.olingo.client.api.edm.xml.annotation.DynamicAnnotationExpression;
-import org.apache.olingo.client.api.edm.xml.annotation.If;
-import org.apache.olingo.client.api.edm.xml.annotation.IsOf;
-import org.apache.olingo.client.api.edm.xml.annotation.LabeledElement;
-import org.apache.olingo.client.api.edm.xml.annotation.LabeledElementReference;
-import org.apache.olingo.client.api.edm.xml.annotation.NavigationPropertyPath;
-import org.apache.olingo.client.api.edm.xml.annotation.Not;
-import org.apache.olingo.client.api.edm.xml.annotation.Null;
-import org.apache.olingo.client.api.edm.xml.annotation.Path;
-import org.apache.olingo.client.api.edm.xml.annotation.PropertyPath;
-import org.apache.olingo.client.api.edm.xml.annotation.PropertyValue;
-import org.apache.olingo.client.api.edm.xml.annotation.Record;
-import org.apache.olingo.client.api.edm.xml.annotation.TwoParamsOpDynamicAnnotationExpression;
-import org.apache.olingo.client.api.edm.xml.annotation.UrlRef;
+import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.Apply;
+import org.apache.olingo.commons.api.edm.provider.annotation.Cast;
+import org.apache.olingo.commons.api.edm.provider.annotation.Collection;
+import org.apache.olingo.commons.api.edm.provider.annotation.DynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.If;
+import org.apache.olingo.commons.api.edm.provider.annotation.IsOf;
+import org.apache.olingo.commons.api.edm.provider.annotation.LabeledElement;
+import org.apache.olingo.commons.api.edm.provider.annotation.LabeledElementReference;
+import org.apache.olingo.commons.api.edm.provider.annotation.NavigationPropertyPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.Not;
+import org.apache.olingo.commons.api.edm.provider.annotation.Null;
+import org.apache.olingo.commons.api.edm.provider.annotation.Path;
+import org.apache.olingo.commons.api.edm.provider.annotation.PropertyPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.PropertyValue;
+import org.apache.olingo.commons.api.edm.provider.annotation.Record;
+import org.apache.olingo.commons.api.edm.provider.annotation.TwoParamsOpDynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.UrlRef;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 

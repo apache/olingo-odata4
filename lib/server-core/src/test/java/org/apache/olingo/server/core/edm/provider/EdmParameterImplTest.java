@@ -25,11 +25,11 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.server.api.edm.provider.ComplexType;
-import org.apache.olingo.server.api.edm.provider.EdmProvider;
-import org.apache.olingo.server.api.edm.provider.EnumType;
-import org.apache.olingo.server.api.edm.provider.Parameter;
-import org.apache.olingo.server.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.ComplexType;
+import org.apache.olingo.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.commons.api.edm.provider.EnumType;
+import org.apache.olingo.commons.api.edm.provider.Parameter;
+import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

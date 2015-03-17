@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
-import org.apache.olingo.client.api.edm.xml.annotation.LabeledElementReference;
+import org.apache.olingo.commons.api.edm.provider.annotation.LabeledElementReference;
 
 public class LabeledElementReferenceImpl
         extends AbstractElementOrAttributeExpression implements LabeledElementReference {

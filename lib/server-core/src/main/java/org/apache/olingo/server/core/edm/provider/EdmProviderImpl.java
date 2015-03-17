@@ -32,18 +32,18 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.Action;
+import org.apache.olingo.commons.api.edm.provider.AliasInfo;
+import org.apache.olingo.commons.api.edm.provider.ComplexType;
+import org.apache.olingo.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.EntityType;
+import org.apache.olingo.commons.api.edm.provider.EnumType;
+import org.apache.olingo.commons.api.edm.provider.Function;
+import org.apache.olingo.commons.api.edm.provider.Parameter;
+import org.apache.olingo.commons.api.edm.provider.Schema;
+import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 import org.apache.olingo.commons.core.edm.AbstractEdm;
-import org.apache.olingo.server.api.edm.provider.Action;
-import org.apache.olingo.server.api.edm.provider.AliasInfo;
-import org.apache.olingo.server.api.edm.provider.ComplexType;
-import org.apache.olingo.server.api.edm.provider.EdmProvider;
-import org.apache.olingo.server.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.server.api.edm.provider.EntityType;
-import org.apache.olingo.server.api.edm.provider.EnumType;
-import org.apache.olingo.server.api.edm.provider.Function;
-import org.apache.olingo.server.api.edm.provider.Parameter;
-import org.apache.olingo.server.api.edm.provider.Schema;
-import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -149,7 +149,7 @@ public class EdmProviderImpl extends AbstractEdm {
         if (action.isBound()) {
           final List<Parameter> parameters = action.getParameters();
           final Parameter parameter = parameters.get(0);
-          if (bindingParameterTypeName.equals(parameter.getType())
+          if (bindingParameterTypeName.equals(parameter.getTypeFQN())
               && isBindingParameterCollection.booleanValue() == parameter.isCollection()) {
 
             return EdmActionImpl.getInstance(this, actionName, action);
@@ -187,7 +187,7 @@ public class EdmProviderImpl extends AbstractEdm {
             throw new EdmException("No parameter specified for bound function: " + functionName);
           }
           final Parameter bindingParameter = providerParameters.get(0);
-          if (bindingParameterTypeName.equals(bindingParameter.getType())
+          if (bindingParameterTypeName.equals(bindingParameter.getTypeFQN())
               && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()) {
 
             if (parameterNamesCopy.size() == providerParameters.size() - 1) {

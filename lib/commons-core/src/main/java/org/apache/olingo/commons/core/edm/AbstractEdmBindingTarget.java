@@ -69,13 +69,16 @@ public abstract class AbstractEdmBindingTarget extends EdmNamedImpl implements E
 
   @Override
   public EdmBindingTarget getRelatedBindingTarget(final String path) {
+    if(path == null){
+      return null;
+    }
     EdmBindingTarget bindingTarget = null;
     boolean found = false;
     for (final Iterator<EdmNavigationPropertyBinding> itor = getNavigationPropertyBindings().iterator(); itor.hasNext()
         && !found;) {
 
       final EdmNavigationPropertyBinding binding = itor.next();
-      if (binding.getPath().equals(path)) {
+      if (path.startsWith(binding.getPath())) {
         final Target edmTarget = new Target.Builder(binding.getTarget(), container).build();
 
         final EdmEntityContainer entityContainer = edm.getEntityContainer(edmTarget.getEntityContainer());

@@ -18,13 +18,17 @@
  */
 package org.apache.olingo.commons.api.edm;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * A full qualified name of any element in the EDM consists of a name and a namespace.
  */
-public class FullQualifiedName {
+public class FullQualifiedName implements Serializable{
+
+  private static final long serialVersionUID = -4063629050858999076L;
 
   private final String namespace;
 

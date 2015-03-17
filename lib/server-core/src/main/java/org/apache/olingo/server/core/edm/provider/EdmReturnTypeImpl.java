@@ -20,15 +20,15 @@ package org.apache.olingo.server.core.edm.provider;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.geo.SRID;
+import org.apache.olingo.commons.api.edm.provider.ReturnType;
 import org.apache.olingo.commons.core.edm.AbstractEdmReturnType;
-import org.apache.olingo.server.api.edm.provider.ReturnType;
 
 public class EdmReturnTypeImpl extends AbstractEdmReturnType {
 
   private final ReturnType returnType;
 
   public EdmReturnTypeImpl(final Edm edm, final ReturnType returnType) {
-    super(edm, returnType.getType());
+    super(edm, returnType.getTypeFQN());
     this.returnType = returnType;
   }
 
@@ -38,8 +38,8 @@ public class EdmReturnTypeImpl extends AbstractEdmReturnType {
   }
 
   @Override
-  public Boolean isNullable() {
-    return returnType.getNullable();
+  public boolean isNullable() {
+    return returnType.isNullable();
   }
 
   @Override

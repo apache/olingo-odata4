@@ -26,10 +26,10 @@ import org.apache.olingo.commons.api.edm.EdmMember;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.EnumMember;
+import org.apache.olingo.commons.api.edm.provider.EnumType;
 import org.apache.olingo.commons.core.edm.AbstractEdmEnumType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.server.api.edm.provider.EnumMember;
-import org.apache.olingo.server.api.edm.provider.EnumType;
 
 public class EdmEnumTypeImpl extends AbstractEdmEnumType {
 
@@ -46,8 +46,7 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType {
       underlyingType = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32);
     } else {
       underlyingType = EdmPrimitiveTypeFactory.getInstance(
-          EdmPrimitiveTypeKind.valueOf(enumType.getUnderlyingType().getName()));
-      // TODO: Should we validate that the underlying type is of byte, sbyte, in16, int32 or int64?
+          EdmPrimitiveTypeKind.valueOfFQN(enumType.getUnderlyingType()));
     }
 
     this.enumType = enumType;

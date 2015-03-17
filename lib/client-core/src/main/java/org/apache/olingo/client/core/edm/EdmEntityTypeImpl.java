@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.client.api.edm.xml.EntityType;
-import org.apache.olingo.client.api.edm.xml.PropertyRef;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -32,6 +30,8 @@ import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.EntityType;
+import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 import org.apache.olingo.commons.core.edm.AbstractEdmEntityType;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
@@ -56,12 +56,11 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
 
       final List<EdmKeyPropertyRef> edmKey;
       // Abstract EntityTypes do not necessarily have keys
-      if (entityType.isAbstractType() && entityType.getKey() == null) {
+      if (entityType.isAbstract() && entityType.getKey() == null) {
         edmKey = new ArrayList<EdmKeyPropertyRef>();
       } else {
-        edmKey = new ArrayList<EdmKeyPropertyRef>(
-            entityType.getKey().getPropertyRefs().size());
-        for (PropertyRef ref : entityType.getKey().getPropertyRefs()) {
+        edmKey = new ArrayList<EdmKeyPropertyRef>(entityType.getKey().size());
+        for (PropertyRef ref : entityType.getKey()) {
           edmKey.add(new EdmKeyPropertyRefImpl(instance, ref));
         }
       }
@@ -76,7 +75,7 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
   private EdmEntityTypeImpl(final Edm edm, final FullQualifiedName fqn, final FullQualifiedName baseTypeName,
       final EntityType entityType) {
 
-    super(edm, fqn, baseTypeName, entityType.isHasStream());
+    super(edm, fqn, baseTypeName, entityType.hasStream());
     this.typeHelper = new EdmStructuredTypeHelperImpl(edm, getFullQualifiedName(), entityType);
     this.annotationHelper = new EdmAnnotationHelperImpl(edm, entityType);
   }

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.edm.xml.annotation.ConstantAnnotationExpression;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -31,6 +30,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.annotation.EdmConstantAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
 import org.apache.olingo.commons.core.domain.ODataCollectionValueImpl;
 import org.apache.olingo.commons.core.domain.ODataEnumValueImpl;
 import org.apache.olingo.commons.core.domain.ODataPrimitiveValueImpl;

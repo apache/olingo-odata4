@@ -21,8 +21,8 @@ package org.apache.olingo.client.core.edm.xml.annotation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.annotation.PropertyValue;
-import org.apache.olingo.client.api.edm.xml.annotation.Record;
+import org.apache.olingo.commons.api.edm.provider.annotation.PropertyValue;
+import org.apache.olingo.commons.api.edm.provider.annotation.Record;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 

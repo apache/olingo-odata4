@@ -26,14 +26,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.olingo.client.api.edm.xml.EnumType;
-import org.apache.olingo.client.api.edm.xml.Member;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmMember;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.EnumMember;
+import org.apache.olingo.commons.api.edm.provider.EnumType;
 import org.apache.olingo.commons.core.edm.AbstractEdmEnumType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
@@ -69,10 +69,10 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType {
       this.underlyingType = EdmPrimitiveTypeFactory.getInstance(underlyingTipeKind);
     }
 
-    final List<? extends Member> xmlMembers = xmlEnumType.getMembers();
+    final List<EnumMember> xmlMembers = xmlEnumType.getMembers();
     final List<String> _memberNames = new ArrayList<String>();
     final Map<String, EdmMember> _members = new LinkedHashMap<String, EdmMember>(xmlMembers.size());
-    for (Member xmlMember : xmlMembers) {
+    for (EnumMember xmlMember : xmlMembers) {
       _memberNames.add(xmlMember.getName());
       _members.put(xmlMember.getName(), new EdmMemberImpl(edm, fqn, xmlMember));
     }

@@ -18,23 +18,6 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import org.apache.olingo.commons.api.edm.EdmAction;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmException;
-import org.apache.olingo.commons.api.edm.EdmParameter;
-import org.apache.olingo.commons.api.edm.EdmSingleton;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.server.api.edm.provider.Action;
-import org.apache.olingo.server.api.edm.provider.EntitySetPath;
-import org.apache.olingo.server.api.edm.provider.Parameter;
-import org.apache.olingo.server.api.edm.provider.ReturnType;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -43,6 +26,22 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmParameter;
+import org.apache.olingo.commons.api.edm.EdmSingleton;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.edm.provider.Action;
+import org.apache.olingo.commons.api.edm.provider.Parameter;
+import org.apache.olingo.commons.api.edm.provider.ReturnType;
+import org.junit.Before;
+import org.junit.Test;
 
 public class EdmActionImplTest {
 
@@ -66,10 +65,9 @@ public class EdmActionImplTest {
     actionImpl2 = EdmActionImpl.getInstance(provider, action2Name, action2);
 
     FullQualifiedName action3Name = new FullQualifiedName("namespace", "action3");
-    EntitySetPath entitySetPath = new EntitySetPath().setBindingParameter("Id").setPath("path");
     Action action3 =
         new Action().setName("action3").setParameters(parameters).setReturnType(returnType).setEntitySetPath(
-            entitySetPath);
+            "path/Id");
     actionImpl3 = EdmActionImpl.getInstance(provider, action3Name, action3);
   }
 
@@ -127,7 +125,7 @@ public class EdmActionImplTest {
   @Test
   public void action3getReturnedEntitySetWithEntitySet() {
     EdmEntitySet set = mock(EdmEntitySet.class);
-    when(set.getRelatedBindingTarget("path")).thenReturn(set);
+    when(set.getRelatedBindingTarget("path/Id")).thenReturn(set);
 
     EdmEntitySet returnedEntitySet = actionImpl3.getReturnedEntitySet(set);
 

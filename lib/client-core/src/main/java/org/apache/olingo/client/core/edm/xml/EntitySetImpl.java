@@ -18,65 +18,13 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.olingo.client.api.edm.xml.Annotation;
-import org.apache.olingo.client.api.edm.xml.EntitySet;
-import org.apache.olingo.client.api.edm.xml.NavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.provider.EntitySet;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = EntitySetDeserializer.class)
-public class EntitySetImpl extends AbstractEdmItem implements EntitySet {
+public class EntitySetImpl extends EntitySet {
 
   private static final long serialVersionUID = -5553885465204370676L;
-
-  private boolean includeInServiceDocument = true;
-
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
-
-  private final List<NavigationPropertyBinding> navigationPropertyBindings = new ArrayList<NavigationPropertyBinding>();
-
-  private String name;
-
-  private String entityType;
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  public void setName(final String name) {
-    this.name = name;
-  }
-
-  @Override
-  public String getEntityType() {
-    return entityType;
-  }
-
-  public void setEntityType(final String entityType) {
-    this.entityType = entityType;
-  }
-  
-  @Override
-  public boolean isIncludeInServiceDocument() {
-    return includeInServiceDocument;
-  }
-
-  public void setIncludeInServiceDocument(final boolean includeInServiceDocument) {
-    this.includeInServiceDocument = includeInServiceDocument;
-  }
-
-  @Override
-  public List<NavigationPropertyBinding> getNavigationPropertyBindings() {
-    return navigationPropertyBindings;
-  }
-
-  @Override
-  public List<Annotation> getAnnotations() {
-    return annotations;
-  }
 
 }

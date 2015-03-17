@@ -28,7 +28,7 @@ public interface EdmReturnType extends EdmTyped {
   /**
    * @return true if nullable or null if not specified
    */
-  Boolean isNullable();
+  boolean isNullable();
 
   /**
    * @return the maximum length as an Integer or null if not specified

@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import org.apache.olingo.client.api.edm.xml.EntitySet;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.EntitySet;
 
 public class EdmEntitySetImpl extends EdmBindingTargetImpl implements EdmEntitySet {
 

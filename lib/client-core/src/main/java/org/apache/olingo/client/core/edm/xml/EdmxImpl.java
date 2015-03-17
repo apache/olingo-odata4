@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.olingo.client.api.edm.xml.DataServices;
 import org.apache.olingo.client.api.edm.xml.Edmx;
 import org.apache.olingo.client.api.edm.xml.Reference;
+import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 

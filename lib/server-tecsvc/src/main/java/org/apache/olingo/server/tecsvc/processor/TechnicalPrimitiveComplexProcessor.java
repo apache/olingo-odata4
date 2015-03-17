@@ -290,7 +290,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     final EdmProperty edmProperty = ((UriResourceProperty) resourceParts.get(resourceParts.size() - 1))
         .getProperty();
 
-    if (edmProperty.isNullable() == null || edmProperty.isNullable()) {
+    if (edmProperty.isNullable()) {
       property.setValue(property.getValueType(), edmProperty.isCollection() ? Collections.emptyList() : null);
       response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
     } else {

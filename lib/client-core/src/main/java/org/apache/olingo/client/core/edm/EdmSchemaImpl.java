@@ -23,17 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.client.api.edm.xml.Action;
-import org.apache.olingo.client.api.edm.xml.Annotation;
-import org.apache.olingo.client.api.edm.xml.Annotations;
-import org.apache.olingo.client.api.edm.xml.ComplexType;
-import org.apache.olingo.client.api.edm.xml.EntityContainer;
-import org.apache.olingo.client.api.edm.xml.EntityType;
-import org.apache.olingo.client.api.edm.xml.EnumType;
-import org.apache.olingo.client.api.edm.xml.Function;
-import org.apache.olingo.client.api.edm.xml.Schema;
-import org.apache.olingo.client.api.edm.xml.Term;
-import org.apache.olingo.client.api.edm.xml.TypeDefinition;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
@@ -46,6 +35,17 @@ import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.Action;
+import org.apache.olingo.commons.api.edm.provider.Annotation;
+import org.apache.olingo.commons.api.edm.provider.Annotations;
+import org.apache.olingo.commons.api.edm.provider.ComplexType;
+import org.apache.olingo.commons.api.edm.provider.EntityContainer;
+import org.apache.olingo.commons.api.edm.provider.EntityType;
+import org.apache.olingo.commons.api.edm.provider.EnumType;
+import org.apache.olingo.commons.api.edm.provider.Function;
+import org.apache.olingo.commons.api.edm.provider.Schema;
+import org.apache.olingo.commons.api.edm.provider.Term;
+import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 import org.apache.olingo.commons.core.edm.AbstractEdmSchema;
 
 public class EdmSchemaImpl extends AbstractEdmSchema {
@@ -88,7 +88,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
   }
 
   private EdmEntityContainer createEntityContainer(final String name) {
-    final EntityContainer defaultContainer = schema.getEntityContainer(name);
+    final EntityContainer defaultContainer = schema.getEntityContainer();
     if (defaultContainer != null) {
       final FullQualifiedName entityContainerName =
           new FullQualifiedName(schema.getNamespace(), defaultContainer.getName());
@@ -99,7 +99,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
 
   @Override
   protected EdmEntityContainer createEntityContainer() {
-    final EntityContainer defaultContainer = schema.getDefaultEntityContainer();
+    final EntityContainer defaultContainer = schema.getEntityContainer();
     if (defaultContainer != null) {
       return createEntityContainer(defaultContainer.getName());
     }

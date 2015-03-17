@@ -26,10 +26,10 @@ import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.EntityType;
+import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 import org.apache.olingo.commons.core.edm.AbstractEdmEntityType;
 import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
-import org.apache.olingo.server.api.edm.provider.EntityType;
-import org.apache.olingo.server.api.edm.provider.PropertyRef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +50,7 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
   }
 
   private EdmEntityTypeImpl(final Edm edm, final FullQualifiedName name, final EntityType entityType) {
-    super(edm, name, entityType.getBaseType(), entityType.hasStream());
+    super(edm, name, entityType.getBaseTypeFQN(), entityType.hasStream());
     this.entityType = entityType;
     helper = new EdmStructuredTypeHelperImpl(edm, name, entityType);
   }

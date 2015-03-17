@@ -385,7 +385,7 @@ public class DataProvider {
     if (edmProperty.isPrimitive()) {
       if (newProperty != null || !patch) {
         final Object value = newProperty == null ? null : newProperty.getValue();
-        if (value == null && edmProperty.isNullable() != null && !edmProperty.isNullable()) {
+        if (value == null && !edmProperty.isNullable()) {
           throw new DataProviderException("Cannot null non-nullable property!", HttpStatusCode.BAD_REQUEST);
         }
         property.setValue(property.getValueType(), value);

@@ -20,8 +20,6 @@ package org.apache.olingo.client.core.edm.xml;
 
 import java.io.IOException;
 
-import org.apache.commons.lang3.BooleanUtils;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
@@ -41,9 +39,7 @@ public class EntityContainerDeserializer extends AbstractEdmDeserializer<EntityC
         if ("Name".equals(jp.getCurrentName())) {
           entityContainer.setName(jp.nextTextValue());
         } else if ("Extends".equals(jp.getCurrentName())) {
-          entityContainer.setExtends(jp.nextTextValue());
-        } else if ("LazyLoadingEnabled".equals(jp.getCurrentName())) {
-          entityContainer.setLazyLoadingEnabled(BooleanUtils.toBoolean(jp.nextTextValue()));
+          entityContainer.setExtendsContainer(jp.nextTextValue());
         } else if ("EntitySet".equals(jp.getCurrentName())) {
           jp.nextToken();
           entityContainer.getEntitySets().add(jp.readValueAs(EntitySetImpl.class));

@@ -38,7 +38,7 @@ public class EntityKeyDeserializer extends AbstractEdmDeserializer<EntityKeyImpl
 
       if (token == JsonToken.FIELD_NAME && "PropertyRef".equals(jp.getCurrentName())) {
         jp.nextToken();
-        entityKey.getPropertyRefs().add(jp.readValueAs( PropertyRefImpl.class));
+        entityKey.getPropertyRefs().add(jp.readValueAs(PropertyRefImpl.class));
       }
     }
 

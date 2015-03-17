@@ -21,11 +21,6 @@ package org.apache.olingo.client.core.edm;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.ActionImport;
-import org.apache.olingo.client.api.edm.xml.EntityContainer;
-import org.apache.olingo.client.api.edm.xml.EntitySet;
-import org.apache.olingo.client.api.edm.xml.FunctionImport;
-import org.apache.olingo.client.api.edm.xml.Singleton;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
@@ -34,6 +29,11 @@ import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.ActionImport;
+import org.apache.olingo.commons.api.edm.provider.EntityContainer;
+import org.apache.olingo.commons.api.edm.provider.EntitySet;
+import org.apache.olingo.commons.api.edm.provider.FunctionImport;
+import org.apache.olingo.commons.api.edm.provider.Singleton;
 import org.apache.olingo.commons.core.edm.AbstractEdmEntityContainer;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -47,8 +47,8 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
   public EdmEntityContainerImpl(final Edm edm, final FullQualifiedName entityContainerName,
       final EntityContainer xmlEntityContainer) {
 
-    super(edm, entityContainerName, xmlEntityContainer.getExtends() == null
-        ? null : new FullQualifiedName(xmlEntityContainer.getExtends()));
+    super(edm, entityContainerName, xmlEntityContainer.getExtendsContainer() == null
+        ? null : new FullQualifiedName(xmlEntityContainer.getExtendsContainer()));
 
     this.xmlEntityContainer = xmlEntityContainer;
     this.helper = new EdmAnnotationHelperImpl(edm, xmlEntityContainer);
@@ -65,7 +65,7 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     return singleton == null
         ? null
         : new EdmSingletonImpl(edm, this, singletonName, new EdmTypeInfo.Builder().
-            setTypeExpression(singleton.getEntityType()).
+            setTypeExpression(singleton.getType()).
             setDefaultNamespace(entityContainerName.getNamespace()).
             build().getFullQualifiedName(), singleton);
   }
@@ -76,7 +76,7 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
     final EntitySet entitySet = xmlEntityContainer.getEntitySet(entitySetName);
     if (entitySet != null) {
-      final FullQualifiedName entityType = new EdmTypeInfo.Builder().setTypeExpression(entitySet.getEntityType()).
+      final FullQualifiedName entityType = new EdmTypeInfo.Builder().setTypeExpression(entitySet.getType()).
           setDefaultNamespace(entityContainerName.getNamespace()).build().getFullQualifiedName();
       result = new EdmEntitySetImpl(edm, this, entitySetName, entityType, entitySet);
     }
@@ -113,7 +113,7 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     if (localEntitySets != null) {
       for (EntitySet entitySet : localEntitySets) {
         EdmEntitySet edmSet;
-        final FullQualifiedName entityType = new EdmTypeInfo.Builder().setTypeExpression(entitySet.getEntityType()).
+        final FullQualifiedName entityType = new EdmTypeInfo.Builder().setTypeExpression(entitySet.getType()).
             setDefaultNamespace(entityContainerName.getNamespace()).build().getFullQualifiedName();
         edmSet = new EdmEntitySetImpl(edm, this, entitySet.getName(), entityType, entitySet);
         entitySets.put(edmSet.getName(), edmSet);
@@ -138,7 +138,7 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
       for (Singleton singleton : localSingletons) {
         singletons.put(singleton.getName(), new EdmSingletonImpl(edm, this, singleton.getName(),
             new EdmTypeInfo.Builder().
-                setTypeExpression(singleton.getEntityType()).setDefaultNamespace(entityContainerName.getNamespace()).
+                setTypeExpression(singleton.getType()).setDefaultNamespace(entityContainerName.getNamespace()).
                 build().getFullQualifiedName(), singleton));
       }
     }

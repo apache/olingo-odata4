@@ -18,25 +18,19 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import org.apache.olingo.client.api.edm.xml.OnDelete;
-import org.apache.olingo.client.api.edm.xml.OnDeleteAction;
+import org.apache.olingo.commons.api.edm.provider.OnDelete;
+import org.apache.olingo.commons.api.edm.provider.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class OnDeleteImpl extends AbstractEdmItem implements OnDelete {
+public class OnDeleteImpl extends OnDelete {
 
   private static final long serialVersionUID = -7130889202653716784L;
 
-  @JsonProperty(value = "Action", required = true)
-  private OnDeleteAction action = OnDeleteAction.None;
-
   @Override
-  public OnDeleteAction getAction() {
-    return action;
+  @JsonProperty(value = "Action", required = true)
+  public OnDelete setAction(final OnDeleteAction action) {
+    super.setAction(action);
+    return this;
   }
-
-  public void setAction(final OnDeleteAction action) {
-    this.action = action;
-  }
-
 }

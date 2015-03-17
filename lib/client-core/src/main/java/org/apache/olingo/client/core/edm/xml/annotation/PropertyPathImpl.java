@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
-import org.apache.olingo.client.api.edm.xml.annotation.PropertyPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.PropertyPath;
 
 public class PropertyPathImpl extends AbstractElementOrAttributeExpression implements PropertyPath {
 

@@ -26,9 +26,9 @@ import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
+import org.apache.olingo.commons.api.edm.provider.Property;
 import org.apache.olingo.commons.core.edm.AbstractEdmProperty;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-import org.apache.olingo.server.api.edm.provider.Property;
 
 public class EdmPropertyImpl extends AbstractEdmProperty {
 
@@ -67,8 +67,8 @@ public class EdmPropertyImpl extends AbstractEdmProperty {
   }
 
   @Override
-  public Boolean isNullable() {
-    return property.getNullable();
+  public boolean isNullable() {
+    return property.isNullable();
   }
 
   @Override
@@ -88,11 +88,11 @@ public class EdmPropertyImpl extends AbstractEdmProperty {
 
   @Override
   public SRID getSrid() {
-    return null; // TODO: provide implementation
+    return property.getSrid();
   }
 
   @Override
-  public Boolean isUnicode() {
+  public boolean isUnicode() {
     return property.isUnicode();
   }
 

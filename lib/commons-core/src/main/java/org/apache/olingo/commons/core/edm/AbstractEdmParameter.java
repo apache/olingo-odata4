@@ -20,7 +20,6 @@ package org.apache.olingo.commons.core.edm;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmException;
-import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -47,20 +46,4 @@ public abstract class AbstractEdmParameter extends EdmElementImpl implements Edm
 
     return typeImpl;
   }
-
-  @Override
-  public abstract EdmMapping getMapping();
-
-  @Override
-  public abstract Boolean isNullable();
-
-  @Override
-  public abstract Integer getMaxLength();
-
-  @Override
-  public abstract Integer getPrecision();
-
-  @Override
-  public abstract Integer getScale();
-
 }

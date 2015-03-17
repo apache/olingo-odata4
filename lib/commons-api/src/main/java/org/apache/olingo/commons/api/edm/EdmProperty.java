@@ -44,7 +44,7 @@ public interface EdmProperty extends EdmElement, EdmMappable, EdmAnnotationsTarg
   /**
    * @return true if nullable or null if not specified
    */
-  Boolean isNullable();
+  boolean isNullable();
 
   /**
    * @return the maximum length as an Integer or null if not specified
@@ -69,7 +69,7 @@ public interface EdmProperty extends EdmElement, EdmMappable, EdmAnnotationsTarg
   /**
    * @return true if unicode or null if not specified
    */
-  Boolean isUnicode();
+  boolean isUnicode();
 
   /**
    * @return the default value as a String or null if not specified

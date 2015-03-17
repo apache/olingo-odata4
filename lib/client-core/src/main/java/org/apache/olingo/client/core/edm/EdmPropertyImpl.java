@@ -21,13 +21,13 @@ package org.apache.olingo.client.core.edm;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
+import org.apache.olingo.commons.api.edm.provider.Property;
 import org.apache.olingo.commons.core.edm.AbstractEdmProperty;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -47,7 +47,9 @@ public class EdmPropertyImpl extends AbstractEdmProperty {
 
     this.structuredTypeName = structuredTypeName;
     this.property = property;
-    this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(property.getType()).build();
+    this.typeInfo =
+        new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(property.getType())
+            .build();
     this.helper = new EdmAnnotationHelperImpl(edm, property);
   }
 
@@ -67,7 +69,7 @@ public class EdmPropertyImpl extends AbstractEdmProperty {
   }
 
   @Override
-  public Boolean isNullable() {
+  public boolean isNullable() {
     return property.isNullable();
   }
 
@@ -87,7 +89,7 @@ public class EdmPropertyImpl extends AbstractEdmProperty {
   }
 
   @Override
-  public Boolean isUnicode() {
+  public boolean isUnicode() {
     return property.isUnicode();
   }
 

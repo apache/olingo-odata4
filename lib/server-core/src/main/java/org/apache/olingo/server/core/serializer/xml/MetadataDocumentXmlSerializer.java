@@ -385,7 +385,7 @@ public class MetadataDocumentXmlSerializer {
 
   private void appendReturnTypeFacets(final XMLStreamWriter writer, final EdmReturnType returnType)
       throws XMLStreamException {
-    if (returnType.isNullable() != null) {
+    if (returnType.isNullable() == false) {
       writer.writeAttribute(XML_NULLABLE, "" + returnType.isNullable());
     }
     if (returnType.getMaxLength() != null) {
@@ -401,7 +401,7 @@ public class MetadataDocumentXmlSerializer {
 
   private void appendParameterFacets(final XMLStreamWriter writer, final EdmParameter parameter)
       throws XMLStreamException {
-    if (parameter.isNullable() != null) {
+    if (parameter.isNullable() == false) {
       writer.writeAttribute(XML_NULLABLE, "" + parameter.isNullable());
     }
     if (parameter.getMaxLength() != null) {
@@ -478,7 +478,7 @@ public class MetadataDocumentXmlSerializer {
       writer.writeAttribute(XML_NAME, navigationPropertyName);
       writer.writeAttribute(XML_TYPE, getAliasedFullQualifiedName(navigationProperty.getType(), navigationProperty
           .isCollection()));
-      if (navigationProperty.isNullable() != null) {
+      if (navigationProperty.isNullable() == false) {
         writer.writeAttribute(XML_NULLABLE, "" + navigationProperty.isNullable());
       }
 
@@ -517,11 +517,11 @@ public class MetadataDocumentXmlSerializer {
       writer.writeAttribute(XML_TYPE, fqnString);
 
       // Facets
-      if (property.isNullable() != null) {
+      if (property.isNullable() == false) {
         writer.writeAttribute(XML_NULLABLE, "" + property.isNullable());
       }
 
-      if (property.isUnicode() != null) {
+      if (property.isUnicode() == false) {
         writer.writeAttribute(XML_UNICODE, "" + property.isUnicode());
       }
 

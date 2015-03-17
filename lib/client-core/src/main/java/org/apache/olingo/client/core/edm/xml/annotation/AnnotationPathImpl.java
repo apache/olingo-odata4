@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
-import org.apache.olingo.client.api.edm.xml.annotation.AnnotationPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationPath;
 
 public class AnnotationPathImpl extends AbstractElementOrAttributeExpression implements AnnotationPath {
 

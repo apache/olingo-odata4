@@ -21,7 +21,7 @@ package org.apache.olingo.client.core.edm.xml;
 import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.client.api.edm.xml.EntitySet;
+import org.apache.olingo.commons.api.edm.provider.EntitySet;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -42,7 +42,7 @@ public class EntitySetDeserializer extends AbstractEdmDeserializer<EntitySet> {
         if ("Name".equals(jp.getCurrentName())) {
           entitySet.setName(jp.nextTextValue());
         } else if ("EntityType".equals(jp.getCurrentName())) {
-          entitySet.setEntityType(jp.nextTextValue());
+          entitySet.setType(jp.nextTextValue());
         } else if ("IncludeInServiceDocument".equals(jp.getCurrentName())) {
           entitySet.setIncludeInServiceDocument(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("NavigationPropertyBinding".equals(jp.getCurrentName())) {

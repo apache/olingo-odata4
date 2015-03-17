@@ -20,7 +20,7 @@ package org.apache.olingo.server.tecsvc.provider;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.server.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 
 public class TypeDefinitionProvider {
 

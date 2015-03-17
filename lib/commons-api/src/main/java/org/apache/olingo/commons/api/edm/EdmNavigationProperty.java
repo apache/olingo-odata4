@@ -33,7 +33,7 @@ public interface EdmNavigationProperty extends EdmElement, EdmAnnotationsTarget,
   /**
    * @return true if nullable or null if not specified
    */
-  Boolean isNullable();
+  boolean isNullable();
 
   /**
    * @return true if containsTarget or null if not specified

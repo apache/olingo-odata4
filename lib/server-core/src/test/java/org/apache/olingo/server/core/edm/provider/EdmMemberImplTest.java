@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import org.apache.olingo.server.api.edm.provider.EnumMember;
+import org.apache.olingo.commons.api.edm.provider.EnumMember;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

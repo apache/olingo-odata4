@@ -32,19 +32,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.olingo.client.api.edm.xml.Action;
-import org.apache.olingo.client.api.edm.xml.Annotatable;
-import org.apache.olingo.client.api.edm.xml.Annotation;
-import org.apache.olingo.client.api.edm.xml.Annotations;
-import org.apache.olingo.client.api.edm.xml.ComplexType;
-import org.apache.olingo.client.api.edm.xml.EntityContainer;
-import org.apache.olingo.client.api.edm.xml.EntityType;
-import org.apache.olingo.client.api.edm.xml.EnumType;
-import org.apache.olingo.client.api.edm.xml.Function;
-import org.apache.olingo.client.api.edm.xml.Parameter;
-import org.apache.olingo.client.api.edm.xml.Schema;
-import org.apache.olingo.client.api.edm.xml.Term;
-import org.apache.olingo.client.api.edm.xml.TypeDefinition;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmAnnotations;
@@ -57,6 +44,19 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.Action;
+import org.apache.olingo.commons.api.edm.provider.Annotatable;
+import org.apache.olingo.commons.api.edm.provider.Annotation;
+import org.apache.olingo.commons.api.edm.provider.Annotations;
+import org.apache.olingo.commons.api.edm.provider.ComplexType;
+import org.apache.olingo.commons.api.edm.provider.EntityContainer;
+import org.apache.olingo.commons.api.edm.provider.EntityType;
+import org.apache.olingo.commons.api.edm.provider.EnumType;
+import org.apache.olingo.commons.api.edm.provider.Function;
+import org.apache.olingo.commons.api.edm.provider.Parameter;
+import org.apache.olingo.commons.api.edm.provider.Schema;
+import org.apache.olingo.commons.api.edm.provider.Term;
+import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 import org.apache.olingo.commons.core.edm.AbstractEdm;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
@@ -106,7 +106,7 @@ public class EdmClientImpl extends AbstractEdm {
 
     final Schema schema = xmlSchemaByNamespace.get(containerName.getNamespace());
     if (schema != null) {
-      final EntityContainer xmlEntityContainer = schema.getDefaultEntityContainer();
+      final EntityContainer xmlEntityContainer = schema.getEntityContainer();
       if (xmlEntityContainer != null) {
         result = new EdmEntityContainerImpl(this, containerName, xmlEntityContainer);
       }

@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
-import org.apache.olingo.client.api.edm.xml.annotation.NavigationPropertyPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.NavigationPropertyPath;
 
 public class NavigationPropertyPathImpl extends AbstractElementOrAttributeExpression implements NavigationPropertyPath {
 

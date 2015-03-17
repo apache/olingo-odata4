@@ -26,21 +26,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.edm.xml.Annotation;
-import org.apache.olingo.client.api.edm.xml.Annotations;
-import org.apache.olingo.client.api.edm.xml.ComplexType;
-import org.apache.olingo.client.api.edm.xml.EntityContainer;
-import org.apache.olingo.client.api.edm.xml.EntityType;
-import org.apache.olingo.client.api.edm.xml.Function;
-import org.apache.olingo.client.api.edm.xml.FunctionImport;
-import org.apache.olingo.client.api.edm.xml.Schema;
-import org.apache.olingo.client.api.edm.xml.Singleton;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
-import org.apache.olingo.client.api.edm.xml.annotation.Apply;
-import org.apache.olingo.client.api.edm.xml.annotation.Collection;
-import org.apache.olingo.client.api.edm.xml.annotation.ConstantAnnotationExpression;
-import org.apache.olingo.client.api.edm.xml.annotation.TwoParamsOpDynamicAnnotationExpression;
-import org.apache.olingo.client.api.edm.xml.annotation.UrlRef;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.client.core.edm.xml.annotation.ConstantAnnotationExpressionImpl;
 import org.apache.olingo.client.core.edm.xml.annotation.PathImpl;
@@ -63,6 +49,20 @@ import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.annotation.EdmUrlRef;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.edm.provider.Annotation;
+import org.apache.olingo.commons.api.edm.provider.Annotations;
+import org.apache.olingo.commons.api.edm.provider.ComplexType;
+import org.apache.olingo.commons.api.edm.provider.EntityContainer;
+import org.apache.olingo.commons.api.edm.provider.EntityType;
+import org.apache.olingo.commons.api.edm.provider.Function;
+import org.apache.olingo.commons.api.edm.provider.FunctionImport;
+import org.apache.olingo.commons.api.edm.provider.Schema;
+import org.apache.olingo.commons.api.edm.provider.Singleton;
+import org.apache.olingo.commons.api.edm.provider.annotation.Apply;
+import org.apache.olingo.commons.api.edm.provider.annotation.Collection;
+import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.TwoParamsOpDynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.UrlRef;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
@@ -193,7 +193,6 @@ public class MetadataTest extends AbstractTest {
     final EntityContainer entityContainer = second.getEntityContainer();
     assertNotNull(entityContainer);
     assertEquals("NorthwindEntities", entityContainer.getName());
-    assertTrue(entityContainer.isLazyLoadingEnabled());
   }
 
   /**
@@ -209,7 +208,7 @@ public class MetadataTest extends AbstractTest {
     assertEquals("Org.OData.Measures.V1", metadata.getReferences().get(1).getIncludes().get(0).getNamespace());
 
     final EntityType product = metadata.getSchema(0).getEntityType("Product");
-    assertTrue(product.isHasStream());
+    assertTrue(product.hasStream());
     assertEquals("UoM.ISOCurrency", product.getProperty("Price").getAnnotations().get(0).getTerm());
     assertEquals("Products", product.getNavigationProperty("Supplier").getPartner());
 

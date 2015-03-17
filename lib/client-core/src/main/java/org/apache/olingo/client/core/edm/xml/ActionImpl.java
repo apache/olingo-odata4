@@ -18,82 +18,12 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.olingo.client.api.edm.xml.Action;
-import org.apache.olingo.client.api.edm.xml.Annotation;
-import org.apache.olingo.client.api.edm.xml.Parameter;
-import org.apache.olingo.client.api.edm.xml.ReturnType;
+import org.apache.olingo.commons.api.edm.provider.Action;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ActionDeserializer.class)
-public class ActionImpl extends AbstractEdmItem implements Action {
+public class ActionImpl extends  Action {
 
   private static final long serialVersionUID = 5321541275349234088L;
-
-  private String name;
-
-  private boolean bound = false;
-
-  private String entitySetPath;
-
-  private final List<Parameter> parameters = new ArrayList<Parameter>();
-
-  private ReturnType returnType;
-
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
-
-  @Override
-  public List<Annotation> getAnnotations() {
-    return annotations;
-  }
-  
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  public void setName(final String name) {
-    this.name = name;
-  }
-
-  @Override
-  public boolean isBound() {
-    return bound;
-  }
-
-  public void setBound(final boolean bound) {
-    this.bound = bound;
-  }
-
-  @Override
-  public String getEntitySetPath() {
-    return entitySetPath;
-  }
-
-  public void setEntitySetPath(final String entitySetPath) {
-    this.entitySetPath = entitySetPath;
-  }
-
-  @Override
-  public Parameter getParameter(final String name) {
-    return getOneByName(name, getParameters());
-  }
-
-  @Override
-  public List<Parameter> getParameters() {
-    return parameters;
-  }
-
-  @Override
-  public ReturnType getReturnType() {
-    return returnType;
-  }
-
-  public void setReturnType(final ReturnType returnType) {
-    this.returnType = returnType;
-  }
-
 }

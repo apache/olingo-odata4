@@ -22,10 +22,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.Annotation;
 import org.apache.olingo.client.api.edm.xml.Include;
 import org.apache.olingo.client.api.edm.xml.IncludeAnnotations;
 import org.apache.olingo.client.api.edm.xml.Reference;
+import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
+import org.apache.olingo.commons.api.edm.provider.Annotation;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 

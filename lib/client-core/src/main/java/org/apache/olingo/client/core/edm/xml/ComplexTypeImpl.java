@@ -18,83 +18,13 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.olingo.client.api.edm.xml.Annotation;
-import org.apache.olingo.client.api.edm.xml.ComplexType;
-import org.apache.olingo.client.api.edm.xml.NavigationProperty;
-import org.apache.olingo.client.api.edm.xml.Property;
+import org.apache.olingo.commons.api.edm.provider.ComplexType;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ComplexTypeDeserializer.class)
-public class ComplexTypeImpl extends AbstractStructuralType implements ComplexType {
+public class ComplexTypeImpl extends ComplexType {
 
   private static final long serialVersionUID = 4076944306925840115L;
-
-  private boolean abstractEntityType = false;
-
-  private String baseType;
-
-  private boolean openType = false;
-
-  private final List<Property> properties = new ArrayList<Property>();
-
-  private final List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
-
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
-
-  @Override
-  public boolean isAbstractType() {
-    return abstractEntityType;
-  }
-
-  public void setAbstractEntityType(final boolean abstractEntityType) {
-    this.abstractEntityType = abstractEntityType;
-  }
-
-  @Override
-  public String getBaseType() {
-    return baseType;
-  }
-
-  public void setBaseType(final String baseType) {
-    this.baseType = baseType;
-  }
-
-  @Override
-  public boolean isOpenType() {
-    return openType;
-  }
-
-  public void setOpenType(final boolean openType) {
-    this.openType = openType;
-  }
-
-  @Override
-  public Property getProperty(final String name) {
-    return super.getProperty(name);
-  }
-
-  @Override
-  public List<Property> getProperties() {
-    return properties;
-  }
-
-  @Override
-  public NavigationProperty getNavigationProperty(final String name) {
-    return super.getNavigationProperty(name);
-  }
-
-  @Override
-  public List<NavigationProperty> getNavigationProperties() {
-    return navigationProperties;
-  }
-
-  @Override
-  public List<Annotation> getAnnotations() {
-    return annotations;
-  }
 
 }

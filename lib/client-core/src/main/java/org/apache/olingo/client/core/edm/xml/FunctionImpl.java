@@ -18,24 +18,13 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import org.apache.olingo.client.api.edm.xml.Function;
+import org.apache.olingo.commons.api.edm.provider.Function;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = FunctionDeserializer.class)
-public class FunctionImpl extends ActionImpl implements Function {
+public class FunctionImpl extends Function {
 
   private static final long serialVersionUID = -5494898295282843362L;
-
-  private boolean composable = false;
-
-  @Override
-  public boolean isComposable() {
-    return composable;
-  }
-
-  public void setComposable(final boolean composable) {
-    this.composable = composable;
-  }
 
 }

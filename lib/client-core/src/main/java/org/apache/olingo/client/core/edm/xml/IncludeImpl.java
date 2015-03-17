@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.edm.xml;
 
 import org.apache.olingo.client.api.edm.xml.Include;
+import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

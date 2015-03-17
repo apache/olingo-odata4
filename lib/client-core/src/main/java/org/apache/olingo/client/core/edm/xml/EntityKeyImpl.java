@@ -21,19 +21,18 @@ package org.apache.olingo.client.core.edm.xml;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.EntityKey;
-import org.apache.olingo.client.api.edm.xml.PropertyRef;
+import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
+import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = EntityKeyDeserializer.class)
-public class EntityKeyImpl extends AbstractEdmItem implements EntityKey {
+public class EntityKeyImpl extends AbstractEdmItem {
 
   private static final long serialVersionUID = 520227585458843347L;
 
   private final List<PropertyRef> propertyRefs = new ArrayList<PropertyRef>();
 
-  @Override
   public List<PropertyRef> getPropertyRefs() {
     return propertyRefs;
   }

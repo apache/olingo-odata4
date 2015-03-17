@@ -23,9 +23,9 @@ import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.ReferentialConstraint;
 import org.apache.olingo.commons.core.edm.AbstractEdmNavigationProperty;
-import org.apache.olingo.server.api.edm.provider.NavigationProperty;
-import org.apache.olingo.server.api.edm.provider.ReferentialConstraint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
 
   @Override
   protected FullQualifiedName getTypeFQN() {
-    return navigationProperty.getType();
+    return navigationProperty.getTypeFQN();
   }
 
   @Override
@@ -58,8 +58,8 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
   }
 
   @Override
-  public Boolean isNullable() {
-    return navigationProperty.getNullable();
+  public boolean isNullable() {
+    return navigationProperty.isNullable();
   }
 
   @Override

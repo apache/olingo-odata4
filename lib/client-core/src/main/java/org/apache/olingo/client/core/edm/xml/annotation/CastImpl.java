@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
-import org.apache.olingo.client.api.edm.xml.annotation.Cast;
-import org.apache.olingo.client.api.edm.xml.annotation.DynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.geo.SRID;
+import org.apache.olingo.commons.api.edm.provider.annotation.Cast;
+import org.apache.olingo.commons.api.edm.provider.annotation.DynamicAnnotationExpression;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 

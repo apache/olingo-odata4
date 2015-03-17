@@ -21,7 +21,7 @@ package org.apache.olingo.client.core.edm.xml;
 import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.client.api.edm.xml.EntityType;
+import org.apache.olingo.commons.api.edm.provider.EntityType;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -42,7 +42,7 @@ public class EntityTypeDeserializer extends AbstractEdmDeserializer<EntityType> 
         if ("Name".equals(jp.getCurrentName())) {
           entityType.setName(jp.nextTextValue());
         } else if ("Abstract".equals(jp.getCurrentName())) {
-          entityType.setAbstractEntityType(BooleanUtils.toBoolean(jp.nextTextValue()));
+          entityType.setAbstract(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("BaseType".equals(jp.getCurrentName())) {
           entityType.setBaseType(jp.nextTextValue());
         } else if ("OpenType".equals(jp.getCurrentName())) {
@@ -51,7 +51,8 @@ public class EntityTypeDeserializer extends AbstractEdmDeserializer<EntityType> 
           entityType.setHasStream(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("Key".equals(jp.getCurrentName())) {
           jp.nextToken();
-          entityType.setKey(jp.readValueAs(EntityKeyImpl.class));
+          EntityKeyImpl keyImpl = jp.readValueAs(EntityKeyImpl.class);
+          entityType.setKey(keyImpl.getPropertyRefs());
         } else if ("Property".equals(jp.getCurrentName())) {
           jp.nextToken();
           entityType.getProperties().add(jp.readValueAs(PropertyImpl.class));

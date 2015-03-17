@@ -46,7 +46,7 @@ public class EnumTypeDeserializer extends AbstractEdmDeserializer<EnumTypeImpl> 
           enumType.setFlags(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("Member".equals(jp.getCurrentName())) {
           jp.nextToken();
-          enumType.getMembers().add(jp.readValueAs(MemberImpl.class));
+          enumType.getMembers().add(jp.readValueAs(EnumMemberImpl.class));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
           enumType.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));

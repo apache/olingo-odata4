@@ -26,17 +26,17 @@ import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.Target;
-import org.apache.olingo.server.api.edm.provider.ComplexType;
-import org.apache.olingo.server.api.edm.provider.EdmProvider;
-import org.apache.olingo.server.api.edm.provider.EntityContainer;
-import org.apache.olingo.server.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.server.api.edm.provider.EntitySet;
-import org.apache.olingo.server.api.edm.provider.EntityType;
-import org.apache.olingo.server.api.edm.provider.NavigationProperty;
-import org.apache.olingo.server.api.edm.provider.NavigationPropertyBinding;
-import org.apache.olingo.server.api.edm.provider.Property;
-import org.apache.olingo.server.api.edm.provider.PropertyRef;
-import org.apache.olingo.server.api.edm.provider.Schema;
+import org.apache.olingo.commons.api.edm.provider.ComplexType;
+import org.apache.olingo.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.commons.api.edm.provider.EntityContainer;
+import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.EntitySet;
+import org.apache.olingo.commons.api.edm.provider.EntityType;
+import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.provider.Property;
+import org.apache.olingo.commons.api.edm.provider.PropertyRef;
+import org.apache.olingo.commons.api.edm.provider.Schema;
 
 public class CarsEdmProvider extends EdmProvider {
 
@@ -122,14 +122,15 @@ public class CarsEdmProvider extends EdmProvider {
             .setNavigationPropertyBindings(
                 Arrays.asList(
                     new NavigationPropertyBinding().setPath("Manufacturer").setTarget(
-                        new Target().setTargetName(ES_MANUFACTURER_NAME).setEntityContainer(CONTAINER_FQN))));
+                        new Target().setTargetName(ES_MANUFACTURER_NAME).setEntityContainer(CONTAINER_FQN)
+                        .toString())));
       } else if (ES_MANUFACTURER_NAME.equals(entitySetName)) {
         return new EntitySet()
             .setName(ES_MANUFACTURER_NAME)
             .setType(ET_MANUFACTURER).setNavigationPropertyBindings(
                 Arrays.asList(
                     new NavigationPropertyBinding().setPath("Cars").setTarget(
-                        new Target().setTargetName(ES_CARS_NAME).setEntityContainer(CONTAINER_FQN))));
+                        new Target().setTargetName(ES_CARS_NAME).setEntityContainer(CONTAINER_FQN).toString())));
       }
     }
 

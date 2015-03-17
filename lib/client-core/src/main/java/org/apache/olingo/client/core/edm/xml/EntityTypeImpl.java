@@ -18,106 +18,12 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.olingo.client.api.edm.xml.Annotation;
-import org.apache.olingo.client.api.edm.xml.EntityKey;
-import org.apache.olingo.client.api.edm.xml.EntityType;
-import org.apache.olingo.client.api.edm.xml.NavigationProperty;
-import org.apache.olingo.client.api.edm.xml.Property;
+import org.apache.olingo.commons.api.edm.provider.EntityType;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = EntityTypeDeserializer.class)
-public class EntityTypeImpl extends AbstractStructuralType implements EntityType {
+public class EntityTypeImpl extends EntityType {
 
   private static final long serialVersionUID = -3986417775876689669L;
-
-  private final List<Property> properties = new ArrayList<Property>();
-
-  private final List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
-
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
-
-  private boolean abstractEntityType = false;
-
-  private String baseType;
-
-  private boolean openType = false;
-
-  private boolean hasStream = false;
-
-  private EntityKeyImpl key;
-
-  @Override
-  public boolean isAbstractType() {
-    return abstractEntityType;
-  }
-
-  public void setAbstractEntityType(final boolean abstractEntityType) {
-    this.abstractEntityType = abstractEntityType;
-  }
-
-  @Override
-  public String getBaseType() {
-    return baseType;
-  }
-
-  public void setBaseType(final String baseType) {
-    this.baseType = baseType;
-  }
-
-  @Override
-  public boolean isOpenType() {
-    return openType;
-  }
-
-  public void setOpenType(final boolean openType) {
-    this.openType = openType;
-  }
-
-  @Override
-  public EntityKeyImpl getKey() {
-    return key;
-  }
-
-  public void setKey(final EntityKey key) {
-    this.key = (EntityKeyImpl) key;
-  }
-
-  @Override
-  public boolean isHasStream() {
-    return hasStream;
-  }
-
-  public void setHasStream(final boolean hasStream) {
-    this.hasStream = hasStream;
-  }
-  
-  @Override
-  public Property getProperty(final String name) {
-    return super.getProperty(name);
-  }
-
-  @Override
-  public List<Property> getProperties() {
-    return properties;
-  }
-
-  @Override
-  public NavigationProperty getNavigationProperty(final String name) {
-    return super.getNavigationProperty(name);
-  }
-
-  @Override
-  public List<NavigationProperty> getNavigationProperties() {
-    return navigationProperties;
-  }
-
-  @Override
-  public List<Annotation> getAnnotations() {
-    return annotations;
-  }
-
 }

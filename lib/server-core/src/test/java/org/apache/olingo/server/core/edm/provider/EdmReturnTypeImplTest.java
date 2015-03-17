@@ -27,8 +27,8 @@ import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.ReturnType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.server.api.edm.provider.ReturnType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -48,11 +48,11 @@ public class EdmReturnTypeImplTest {
 
     assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String), typeImpl.getType());
     assertFalse(typeImpl.isCollection());
+    assertTrue(typeImpl.isNullable());
 
     assertNull(typeImpl.getPrecision());
     assertNull(typeImpl.getMaxLength());
     assertNull(typeImpl.getScale());
-    assertNull(typeImpl.isNullable());
   }
 
   @Test

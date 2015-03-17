@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
-import org.apache.olingo.client.api.edm.xml.annotation.AnnotationExpression;
-import org.apache.olingo.client.api.edm.xml.annotation.UrlRef;
+import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.UrlRef;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 

@@ -28,14 +28,14 @@ import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.ActionImport;
+import org.apache.olingo.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.commons.api.edm.provider.EntityContainer;
+import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.EntitySet;
+import org.apache.olingo.commons.api.edm.provider.FunctionImport;
+import org.apache.olingo.commons.api.edm.provider.Singleton;
 import org.apache.olingo.commons.core.edm.AbstractEdmEntityContainer;
-import org.apache.olingo.server.api.edm.provider.ActionImport;
-import org.apache.olingo.server.api.edm.provider.EdmProvider;
-import org.apache.olingo.server.api.edm.provider.EntityContainer;
-import org.apache.olingo.server.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.server.api.edm.provider.EntitySet;
-import org.apache.olingo.server.api.edm.provider.FunctionImport;
-import org.apache.olingo.server.api.edm.provider.Singleton;
 
 import java.util.List;
 
@@ -53,7 +53,7 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
   public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider, final FullQualifiedName containerFQN,
       final EntityContainer entityContainer) {
-    super(edm, containerFQN, entityContainer.getExtendsContainer());
+    super(edm, containerFQN, entityContainer.getExtendsContainerFQN());
     this.provider = provider;
     container = entityContainer;
   }

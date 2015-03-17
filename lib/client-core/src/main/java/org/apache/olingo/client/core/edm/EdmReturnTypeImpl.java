@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import org.apache.olingo.client.api.edm.xml.ReturnType;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.geo.SRID;
+import org.apache.olingo.commons.api.edm.provider.ReturnType;
 import org.apache.olingo.commons.core.edm.AbstractEdmReturnType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
@@ -47,7 +47,7 @@ public class EdmReturnTypeImpl extends AbstractEdmReturnType {
   }
 
   @Override
-  public Boolean isNullable() {
+  public boolean isNullable() {
     return returnType.isNullable();
   }
 

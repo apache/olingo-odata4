@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
-import org.apache.olingo.client.api.edm.xml.annotation.Null;
+import org.apache.olingo.commons.api.edm.provider.annotation.Null;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 

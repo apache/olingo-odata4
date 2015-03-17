@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
-import org.apache.olingo.client.api.edm.xml.annotation.AnnotationExpression;
-import org.apache.olingo.client.api.edm.xml.annotation.ConstantAnnotationExpression;
-import org.apache.olingo.client.api.edm.xml.annotation.DynamicAnnotationExpression;
-import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
+import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
+import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.DynamicAnnotationExpression;
 
 public abstract class AbstractAnnotationExpression extends AbstractEdmItem implements AnnotationExpression {
 
