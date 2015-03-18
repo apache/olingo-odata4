@@ -18,25 +18,37 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
+@JsonDeserialize(using = PropertyRefImpl.PropertyRefDeserializer.class)
 public class PropertyRefImpl extends PropertyRef {
 
   private static final long serialVersionUID = 1504095609268590326L;
 
-  @Override
-  @JsonProperty(value = "Name", required = true)
-  public PropertyRef setName(final String name) {
-    super.setName(name);
-    return this;
-  }
+  static class PropertyRefDeserializer extends AbstractEdmDeserializer<PropertyRef> {
+    @Override
+    protected PropertyRef doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
 
-  @Override
-  @JsonProperty(value = "Alias")
-  public PropertyRef setAlias(final String alias) {
-    super.setAlias(alias);
-    return this;
+      final PropertyRef propertyRef = new PropertyRefImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Name".equals(jp.getCurrentName())) {
+            propertyRef.setName(jp.nextTextValue());
+          } else if ("Alias".equals(jp.getCurrentName())) {
+            propertyRef.setAlias(jp.nextTextValue());
+          }
+        }
+      }
+      return propertyRef;
+    }
   }
 }

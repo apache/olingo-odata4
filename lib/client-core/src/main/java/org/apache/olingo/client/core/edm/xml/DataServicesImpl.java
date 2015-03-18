@@ -18,16 +18,20 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.olingo.client.api.edm.xml.DataServices;
 import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
 import org.apache.olingo.commons.api.edm.provider.Schema;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = DataServicesDeserializer.class)
+@JsonDeserialize(using = DataServicesImpl.DataServicesDeserializer.class)
 public class DataServicesImpl extends AbstractEdmItem implements DataServices {
 
   private static final long serialVersionUID = 4200317286476885204L;
@@ -61,4 +65,29 @@ public class DataServicesImpl extends AbstractEdmItem implements DataServices {
     return schemas;
   }
 
+  static class DataServicesDeserializer extends AbstractEdmDeserializer<DataServicesImpl> {
+
+    @Override
+    protected DataServicesImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final DataServicesImpl dataServices = new DataServicesImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("DataServiceVersion".equals(jp.getCurrentName())) {
+            dataServices.setDataServiceVersion(jp.nextTextValue());
+          } else if ("MaxDataServiceVersion".equals(jp.getCurrentName())) {
+            dataServices.setMaxDataServiceVersion(jp.nextTextValue());
+          } else if ("Schema".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            dataServices.getSchemas().add(jp.readValueAs(SchemaImpl.class));
+          }
+        }
+      }
+
+      return dataServices;
+    }
+  }
 }

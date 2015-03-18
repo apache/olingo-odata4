@@ -18,19 +18,37 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.commons.api.edm.provider.OnDelete;
 import org.apache.olingo.commons.api.edm.provider.OnDeleteAction;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
+@JsonDeserialize(using = OnDeleteImpl.OnDeleteDeserializer.class)
 public class OnDeleteImpl extends OnDelete {
 
   private static final long serialVersionUID = -7130889202653716784L;
 
-  @Override
-  @JsonProperty(value = "Action", required = true)
-  public OnDelete setAction(final OnDeleteAction action) {
-    super.setAction(action);
-    return this;
+  static class OnDeleteDeserializer extends AbstractEdmDeserializer<OnDelete> {
+    @Override
+    protected OnDelete doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final OnDelete ondelete = new OnDeleteImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Action".equals(jp.getCurrentName())) {
+            OnDeleteAction action = OnDeleteAction.valueOf(jp.nextTextValue());
+            ondelete.setAction(action);
+          }
+        }
+      }
+      return ondelete;
+    }
   }
 }

@@ -18,19 +18,21 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.client.api.edm.xml.Include;
 import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
+@JsonDeserialize(using = IncludeImpl.IncludeDeserializer.class)
 public class IncludeImpl extends AbstractEdmItem implements Include {
 
   private static final long serialVersionUID = -5450008299655584221L;
 
-  @JsonProperty(value = "Namespace", required = true)
   private String namespace;
-
-  @JsonProperty(value = "Alias")
   private String alias;
 
   @Override
@@ -51,4 +53,24 @@ public class IncludeImpl extends AbstractEdmItem implements Include {
     this.alias = alias;
   }
 
+  static class IncludeDeserializer extends AbstractEdmDeserializer<Include> {
+    @Override
+    protected Include doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final IncludeImpl include = new IncludeImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Namespace".equals(jp.getCurrentName())) {
+            include.setNamespace(jp.nextTextValue());
+          } else if ("Alias".equals(jp.getCurrentName())) {
+            include.setAlias(jp.nextTextValue());
+          }
+        }
+      }
+      return include;
+    }
+  }
 }

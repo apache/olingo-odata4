@@ -39,7 +39,7 @@ public class Annotation extends AbstractEdmItem implements Annotatable {
     return annotationExpression;
   }
 
-  public void setAnnotationExpression(final AnnotationExpression annotationExpression) {
+  public void setExpression(final AnnotationExpression annotationExpression) {
     this.annotationExpression = annotationExpression;
   }
 

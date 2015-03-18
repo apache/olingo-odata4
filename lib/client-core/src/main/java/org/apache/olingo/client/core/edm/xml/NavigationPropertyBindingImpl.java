@@ -18,25 +18,49 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
+@JsonDeserialize(using = NavigationPropertyBindingImpl.NavigationPropertyBindingDeserializer.class)
 public class NavigationPropertyBindingImpl extends NavigationPropertyBinding {
 
   private static final long serialVersionUID = -7056978592235483660L;
 
   @Override
-  @JsonProperty(value = "Path", required = true)
   public NavigationPropertyBinding setPath(final String path) {
     super.setPath(path);
     return this;
   }
 
   @Override
-  @JsonProperty(value = "Target", required = true)
   public NavigationPropertyBinding setTarget(final String target) {
     super.setTarget(target);
     return this;
+  }
+
+  static class NavigationPropertyBindingDeserializer extends AbstractEdmDeserializer<NavigationPropertyBinding> {
+    @Override
+    protected NavigationPropertyBinding doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final NavigationPropertyBindingImpl member = new NavigationPropertyBindingImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Path".equals(jp.getCurrentName())) {
+            member.setPath(jp.nextTextValue());
+          } else if ("Target".equals(jp.getCurrentName())) {
+            member.setTarget(jp.nextTextValue());
+          }
+        }
+      }
+      return member;
+    }
   }
 }

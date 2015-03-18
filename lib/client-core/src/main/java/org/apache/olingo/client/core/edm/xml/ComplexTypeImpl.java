@@ -18,13 +18,55 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.commons.api.edm.provider.ComplexType;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = ComplexTypeDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = ComplexTypeImpl.ComplexTypeDeserializer.class)
 public class ComplexTypeImpl extends ComplexType {
 
   private static final long serialVersionUID = 4076944306925840115L;
+
+  static class ComplexTypeDeserializer extends AbstractEdmDeserializer<ComplexType> {
+
+    @Override
+    protected ComplexType doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final ComplexTypeImpl complexType = new ComplexTypeImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Name".equals(jp.getCurrentName())) {
+            complexType.setName(jp.nextTextValue());
+          } else if ("Abstract".equals(jp.getCurrentName())) {
+            complexType.setAbstract(BooleanUtils.toBoolean(jp.nextTextValue()));
+          } else if ("BaseType".equals(jp.getCurrentName())) {
+            complexType.setBaseType(jp.nextTextValue());
+          } else if ("OpenType".equals(jp.getCurrentName())) {
+            complexType.setOpenType(BooleanUtils.toBoolean(jp.nextTextValue()));
+          } else if ("Property".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            complexType.getProperties().add(jp.readValueAs(PropertyImpl.class));
+          } else if ("NavigationProperty".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            complexType.getNavigationProperties().add(jp.readValueAs(NavigationPropertyImpl.class));
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            complexType.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          }
+        }
+      }
+
+      return complexType;
+    }
+  }
 
 }

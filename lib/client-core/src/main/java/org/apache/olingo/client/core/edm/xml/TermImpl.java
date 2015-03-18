@@ -23,7 +23,7 @@ import org.apache.olingo.commons.api.edm.provider.Term;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = TermDeserializer.class)
-public class TermImpl extends  Term {
+public class TermImpl extends Term {
 
   private static final long serialVersionUID = -8350072064720586186L;
 

@@ -18,34 +18,41 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.commons.api.edm.provider.ActionImport;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
+@JsonDeserialize(using = ActionImportImpl.ActionImportDeserializer.class)
 public class ActionImportImpl extends ActionImport {
 
   private static final long serialVersionUID = 2971468441177647068L;
 
-  @Override
-  @JsonProperty(value = "Action", required = true)
-  public ActionImport setAction(final String action) {
-    super.setAction(action);
-    return this;
-  }
-  
-  @Override
-  @JsonProperty(value = "Name", required = true)
-  public ActionImport setName(final String name) {
-    super.setName(name);
-    return this;
-  }
+  static class ActionImportDeserializer extends AbstractEdmDeserializer<ActionImportImpl> {
 
-  @Override
-  @JsonProperty(value = "EntitySet")
-  public ActionImport setEntitySet(final String entitySet) {
-    super.setEntitySet(entitySet);
-    return this;
-  }
-  
+    @Override
+    protected ActionImportImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
 
+      final ActionImportImpl action = new ActionImportImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Action".equals(jp.getCurrentName())) {
+            action.setAction(jp.nextTextValue());
+          } else if ("Name".equals(jp.getCurrentName())) {
+            action.setName(jp.nextTextValue());
+          } else if ("EntitySet".equals(jp.getCurrentName())) {
+            action.setEntitySet(jp.nextTextValue());
+          }
+        }
+      }
+
+      return action;
+    }
+  }
 }

@@ -18,9 +18,13 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.olingo.client.api.edm.xml.DataServices;
 import org.apache.olingo.client.api.edm.xml.Edmx;
 import org.apache.olingo.client.api.edm.xml.Reference;
@@ -28,7 +32,7 @@ import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = EdmxDeserializer.class)
+@JsonDeserialize(using = EdmxImpl.EdmxDeserializer.class)
 public class EdmxImpl extends AbstractEdmItem implements Edmx {
 
   private static final long serialVersionUID = -6293476719276092572L;
@@ -62,4 +66,30 @@ public class EdmxImpl extends AbstractEdmItem implements Edmx {
     return references;
   }
 
+  static class EdmxDeserializer extends AbstractEdmDeserializer<EdmxImpl> {
+
+    @Override
+    protected EdmxImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final EdmxImpl edmx = new EdmxImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Version".equals(jp.getCurrentName())) {
+            edmx.setVersion(jp.nextTextValue());
+          } else if ("DataServices".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            edmx.setDataServices(jp.readValueAs(DataServicesImpl.class));
+          } else if ("Reference".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            edmx.getReferences().add(jp.readValueAs(ReferenceImpl.class));
+          }
+        }
+      }
+
+      return edmx;
+    }
+  }
 }

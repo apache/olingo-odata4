@@ -18,27 +18,63 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = NavigationPropertyDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = NavigationPropertyImpl.NavigationPropertyDeserializer.class)
 public class NavigationPropertyImpl extends NavigationProperty {
 
   private static final long serialVersionUID = 6240231735592427582L;
 
-  @Override
-  @JsonProperty(value = "Name", required = true)
-  public NavigationProperty setName(final String name) {
-    super.setName(name);
-    return this;
-  }
+  static class NavigationPropertyDeserializer extends AbstractEdmDeserializer<NavigationProperty> {
 
-  @Override
-  @JsonProperty(value = "ContainsTarget")
-  public NavigationProperty setContainsTarget(final boolean containsTarget) {
-    super.setContainsTarget(containsTarget);
-    return this;
+    @Override
+    protected NavigationProperty doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final NavigationProperty property = new NavigationPropertyImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Name".equals(jp.getCurrentName())) {
+            property.setName(jp.nextTextValue());
+          } else if ("Type".equals(jp.getCurrentName())) {
+            String metadataTypeName = jp.nextTextValue();
+            if (metadataTypeName.startsWith("Collection(")) {
+              property.setType(metadataTypeName.substring(metadataTypeName.indexOf("(") + 1,
+                      metadataTypeName.length() - 1));
+              property.setCollection(true);
+            } else {
+              property.setType(metadataTypeName);
+              property.setCollection(false);
+            }
+          } else if ("Nullable".equals(jp.getCurrentName())) {
+            property.setNullable(BooleanUtils.toBoolean(jp.nextTextValue()));
+          } else if ("Partner".equals(jp.getCurrentName())) {
+            property.setPartner(jp.nextTextValue());
+          } else if ("ContainsTarget".equals(jp.getCurrentName())) {
+            property.setContainsTarget(BooleanUtils.toBoolean(jp.nextTextValue()));
+          } else if ("ReferentialConstraint".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            property.getReferentialConstraints().add(jp.readValueAs(ReferentialConstraintImpl.class));
+          } else if ("OnDelete".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            property.setOnDelete(jp.readValueAs(OnDeleteImpl.class));
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            property.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          }
+        }
+      }
+      return property;
+    }
   }
 }

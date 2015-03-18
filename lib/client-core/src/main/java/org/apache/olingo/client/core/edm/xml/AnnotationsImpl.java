@@ -18,13 +18,45 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.olingo.commons.api.edm.provider.Annotations;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = AnnotationsDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = AnnotationsImpl.AnnotationsDeserializer.class)
 public class AnnotationsImpl extends Annotations {
 
   private static final long serialVersionUID = -5961207981571644200L;
+
+  static class AnnotationsDeserializer extends AbstractEdmDeserializer<AnnotationsImpl> {
+
+    @Override
+    protected AnnotationsImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final AnnotationsImpl annotations = new AnnotationsImpl();
+
+      for (; jp.getCurrentToken() != null && jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Target".equals(jp.getCurrentName())) {
+            annotations.setTarget(jp.nextTextValue());
+          } else if ("Qualifier".equals(jp.getCurrentName())) {
+            annotations.setQualifier(jp.nextTextValue());
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            annotations.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          }
+        }
+      }
+
+      return annotations;
+    }
+
+  }
 
 }

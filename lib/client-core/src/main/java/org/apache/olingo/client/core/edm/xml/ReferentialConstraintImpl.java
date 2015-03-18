@@ -18,26 +18,37 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.commons.api.edm.provider.ReferentialConstraint;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
+@JsonDeserialize(using = ReferentialConstraintImpl.ReferentialConstraintDeserializer.class)
 public class ReferentialConstraintImpl extends ReferentialConstraint {
 
   private static final long serialVersionUID = -5822115908069878139L;
 
-  @Override
-  @JsonProperty(value = "Property", required = true)
-  public ReferentialConstraint setProperty(final String property) {
-    super.setProperty(property);
-    return this;
-  }
+  static class ReferentialConstraintDeserializer extends AbstractEdmDeserializer<ReferentialConstraint> {
+    @Override
+    protected ReferentialConstraint doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
 
-  @Override
-  @JsonProperty(value = "ReferencedProperty", required = true)
-  public ReferentialConstraint setReferencedProperty(final String referencedProperty) {
-    super.setReferencedProperty(referencedProperty);
-    return this;
-  }
+      final ReferentialConstraint refConst = new ReferentialConstraintImpl();
 
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Property".equals(jp.getCurrentName())) {
+            refConst.setProperty(jp.nextTextValue());
+          } else if ("ReferencedProperty".equals(jp.getCurrentName())) {
+            refConst.setReferencedProperty(jp.nextTextValue());
+          }
+        }
+      }
+      return refConst;
+    }
+  }
 }

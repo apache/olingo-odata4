@@ -18,22 +18,22 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.client.api.edm.xml.IncludeAnnotations;
 import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
+@JsonDeserialize(using = IncludeAnnotationsImpl.IncludeAnnotationsDeserializer.class)
 public class IncludeAnnotationsImpl extends AbstractEdmItem implements IncludeAnnotations {
 
   private static final long serialVersionUID = -8157841387011422396L;
 
-  @JsonProperty(value = "TermNamespace", required = true)
   private String termNamespace;
-
-  @JsonProperty(value = "Qualifier")
   private String qualifier;
-
-  @JsonProperty(value = "TargetNamespace")
   private String targetNamespace;
 
   @Override
@@ -59,8 +59,30 @@ public class IncludeAnnotationsImpl extends AbstractEdmItem implements IncludeAn
     return targetNamespace;
   }
 
-  public void setTargeyNamespace(final String targeyNamespace) {
-    this.targetNamespace = targeyNamespace;
+  public void setTargetNamespace(final String targetNamespace) {
+    this.targetNamespace = targetNamespace;
   }
 
+  static class IncludeAnnotationsDeserializer extends AbstractEdmDeserializer<IncludeAnnotations> {
+    @Override
+    protected IncludeAnnotations doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final IncludeAnnotationsImpl member = new IncludeAnnotationsImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("TermNamespace".equals(jp.getCurrentName())) {
+            member.setTermNamespace(jp.nextTextValue());
+          } else if ("Qualifier".equals(jp.getCurrentName())) {
+            member.setQualifier(jp.nextTextValue());
+          } else if ("TargetNamespace".equals(jp.getCurrentName())) {
+            member.setTargetNamespace(jp.nextTextValue());
+          }
+        }
+      }
+      return member;
+    }
+  }
 }

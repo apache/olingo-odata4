@@ -18,12 +18,51 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.commons.api.edm.provider.Action;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = ActionDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = ActionImpl.ActionDeserializer.class)
 public class ActionImpl extends  Action {
 
   private static final long serialVersionUID = 5321541275349234088L;
+
+  static class ActionDeserializer extends AbstractEdmDeserializer<ActionImpl> {
+
+    @Override
+    protected ActionImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final ActionImpl action = new ActionImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Name".equals(jp.getCurrentName())) {
+            action.setName(jp.nextTextValue());
+          } else if ("IsBound".equals(jp.getCurrentName())) {
+            action.setBound(BooleanUtils.toBoolean(jp.nextTextValue()));
+          } else if ("EntitySetPath".equals(jp.getCurrentName())) {
+            action.setEntitySetPath(jp.nextTextValue());
+          } else if ("Parameter".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            action.getParameters().add(jp.readValueAs(ParameterImpl.class));
+          } else if ("ReturnType".equals(jp.getCurrentName())) {
+            action.setReturnType(parseReturnType(jp, "Action"));
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            action.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          }
+        }
+      }
+
+      return action;
+    }
+  }
 }

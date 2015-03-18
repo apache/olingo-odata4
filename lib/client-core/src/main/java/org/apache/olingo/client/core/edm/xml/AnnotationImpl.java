@@ -18,13 +18,50 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.olingo.client.core.edm.xml.annotation.AbstractDynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.Annotation;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = AnnotationDeserializer.class)
+@JsonDeserialize(using = AnnotationImpl.AnnotationDeserializer.class)
 public class AnnotationImpl extends Annotation {
 
   private static final long serialVersionUID = 5464714417411058033L;
 
+  static class AnnotationDeserializer extends AbstractEdmDeserializer<Annotation> {
+
+    @Override
+    protected Annotation doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final AnnotationImpl annotation = new AnnotationImpl();
+
+      for (; jp.getCurrentToken() != null && jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Term".equals(jp.getCurrentName())) {
+            annotation.setTerm(jp.nextTextValue());
+          } else if ("Qualifier".equals(jp.getCurrentName())) {
+            annotation.setQualifier(jp.nextTextValue());
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            annotation.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          } else if (isAnnotationConstExprConstruct(jp)) {
+            // Constant Expressions
+            annotation.setExpression(parseAnnotationConstExprConstruct(jp));
+          } else {
+            // Dynamic Expressions
+            annotation.setExpression(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
+          }
+        }
+      }
+
+      return annotation;
+    }
+  }
 }

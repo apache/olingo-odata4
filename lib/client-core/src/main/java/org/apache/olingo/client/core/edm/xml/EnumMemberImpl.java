@@ -18,26 +18,40 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.commons.api.edm.provider.EnumMember;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
+@JsonDeserialize(using = EnumMemberImpl.EnumMemberDeserializer.class)
 public class EnumMemberImpl extends EnumMember {
 
   private static final long serialVersionUID = -6138606817225829791L;
 
-  @Override
-  @JsonProperty(value = "Name", required = true)
-  public EnumMember setName(final String name) {
-    super.setName(name);
-    return this;
-  }
+  static class EnumMemberDeserializer extends AbstractEdmDeserializer<EnumMember> {
+    @Override
+    protected EnumMember doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
 
-  @Override
-  @JsonProperty("Value")
-  public EnumMember setValue(final String value) {
-    super.setValue(value);
-    return this;
-  }
+      final EnumMember member = new EnumMember();
 
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Name".equals(jp.getCurrentName())) {
+            member.setName(jp.nextTextValue());
+          } else if ("Value".equals(jp.getCurrentName())) {
+            member.setValue(jp.nextTextValue());
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            member.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          }
+        }
+      }
+      return member;
+    }
+  }
 }
