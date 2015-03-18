@@ -143,7 +143,7 @@ public class URIBuilderImpl implements URIBuilder {
   @Override
   public URIBuilder appendKeySegment(final Map<String, Object> segmentValues) {
     if (!configuration.isKeyAsSegment()) {
-      final String key = buildMultiKeySegment(segmentValues, true);
+      final String key = buildMultiKeySegment(segmentValues, true, ',');
       if (StringUtils.isEmpty(key)) {
         segments.add(new Segment(SegmentType.KEY, noKeysWrapper()));
       } else {
@@ -330,7 +330,8 @@ public class URIBuilderImpl implements URIBuilder {
     return build().toASCIIString();
   }
 
-  protected String buildMultiKeySegment(final Map<String, Object> segmentValues, final boolean escape) {
+  protected String buildMultiKeySegment(final Map<String, Object> segmentValues, final boolean escape,
+      final char sperator) {
     if (segmentValues == null || segmentValues.isEmpty()) {
       return StringUtils.EMPTY;
     } else {
@@ -338,7 +339,7 @@ public class URIBuilderImpl implements URIBuilder {
       for (Map.Entry<String, Object> entry : segmentValues.entrySet()) {
         keyBuilder.append(entry.getKey()).append('=').append(
             escape ? URIUtils.escape(entry.getValue()) : entry.getValue());
-        keyBuilder.append(',');
+        keyBuilder.append(sperator);
       }
       keyBuilder.deleteCharAt(keyBuilder.length() - 1).append(')');
 
@@ -434,7 +435,7 @@ public class URIBuilderImpl implements URIBuilder {
     for (Map.Entry<QueryOption, Object> entry : options.entrySet()) {
       _options.put("$" + entry.getKey().toString(), entry.getValue());
     }
-    return expand(expandItem + buildMultiKeySegment(_options, false));
+    return expand(expandItem + buildMultiKeySegment(_options, false, ';'));
   }
 
   @Override
