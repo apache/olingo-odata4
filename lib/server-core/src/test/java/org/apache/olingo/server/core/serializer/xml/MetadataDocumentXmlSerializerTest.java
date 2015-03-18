@@ -57,6 +57,7 @@ import org.apache.olingo.commons.api.edm.provider.ReturnType;
 import org.apache.olingo.commons.api.edm.provider.Schema;
 import org.apache.olingo.commons.api.edm.provider.Singleton;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.core.edm.provider.EdmComplexTypeImpl;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
@@ -65,7 +66,6 @@ import org.apache.olingo.server.api.edmx.EdmxReferenceIncludeAnnotation;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.ServiceMetadataImpl;
-import org.apache.olingo.server.core.edm.provider.EdmComplexTypeImpl;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -216,7 +216,6 @@ public class MetadataDocumentXmlSerializerTest {
     InputStream metadataStream = serializer.metadataDocument(serviceMetadata);
     String metadata = IOUtils.toString(metadataStream);
     assertNotNull(metadata);
-    System.out.println(metadata);
 
     assertTrue(metadata.contains("<EnumType Name=\"ENString\" IsFlags=\"true\" UnderlyingType=\"Edm.Int16\">"));
     assertTrue(metadata.contains("<EntityType Name=\"ETAbstractBase\" BaseType=\"Alias.ETAbstract\">"));

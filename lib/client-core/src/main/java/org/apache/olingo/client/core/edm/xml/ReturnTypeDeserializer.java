@@ -40,7 +40,15 @@ public class ReturnTypeDeserializer extends AbstractEdmDeserializer<ReturnTypeIm
       final JsonToken token = jp.getCurrentToken();
       if (token == JsonToken.FIELD_NAME) {
         if ("Type".equals(jp.getCurrentName())) {
-          returnType.setType(jp.nextTextValue());
+          String metadataTypeName = jp.nextTextValue();
+          if (metadataTypeName.startsWith("Collection(")) {
+            returnType.setType(metadataTypeName.substring(metadataTypeName.indexOf("(") + 1,
+                metadataTypeName.length() - 1));
+            returnType.setCollection(true);
+          } else {
+            returnType.setType(metadataTypeName);
+            returnType.setCollection(false);
+          }
         } else if ("Nullable".equals(jp.getCurrentName())) {
           returnType.setNullable(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("MaxLength".equals(jp.getCurrentName())) {

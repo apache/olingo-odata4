@@ -42,7 +42,15 @@ public class ParameterDeserializer extends AbstractEdmDeserializer<ParameterImpl
         if ("Name".equals(jp.getCurrentName())) {
           parameter.setName(jp.nextTextValue());
         } else if ("Type".equals(jp.getCurrentName())) {
-          parameter.setType(jp.nextTextValue());
+          String metadataTypeName = jp.nextTextValue();
+          if (metadataTypeName.startsWith("Collection(")) {
+            parameter.setType(metadataTypeName.substring(metadataTypeName.indexOf("(") + 1,
+                metadataTypeName.length() - 1));
+            parameter.setCollection(true);
+          } else {
+            parameter.setType(metadataTypeName);
+            parameter.setCollection(false);
+          }
         } else if ("Nullable".equals(jp.getCurrentName())) {
           parameter.setNullable(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("MaxLength".equals(jp.getCurrentName())) {

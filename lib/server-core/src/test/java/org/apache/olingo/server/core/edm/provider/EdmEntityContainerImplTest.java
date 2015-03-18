@@ -33,6 +33,8 @@ import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.commons.api.edm.provider.EntitySet;
 import org.apache.olingo.commons.api.edm.provider.FunctionImport;
 import org.apache.olingo.commons.api.edm.provider.Singleton;
+import org.apache.olingo.commons.core.edm.provider.EdmEntityContainerImpl;
+import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
 

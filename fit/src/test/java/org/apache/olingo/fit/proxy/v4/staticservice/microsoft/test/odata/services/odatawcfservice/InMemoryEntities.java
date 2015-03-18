@@ -33,8 +33,7 @@ import java.io.InputStream;
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
 @org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "InMemoryEntities",
-  namespace = "Microsoft.Test.OData.Services.ODataWCFService",
-  isDefaultEntityContainer = true)
+  namespace = "Microsoft.Test.OData.Services.ODataWCFService")
 public interface InMemoryEntities extends PersistenceManager {
 
     Accounts getAccounts();

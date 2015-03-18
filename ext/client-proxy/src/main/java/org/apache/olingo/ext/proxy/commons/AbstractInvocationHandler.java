@@ -26,7 +26,6 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.util.Arrays;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -35,8 +34,6 @@ import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.ComplexType;
@@ -213,15 +210,16 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
       final String containerNS, final String entitySetName, final AbstractService<?> service) {
 
     final URIBuilder uriBuilder = service.getClient().newURIBuilder();
-    final Edm edm = service.getClient().getCachedEdm();
+//    final Edm edm = service.getClient().getCachedEdm();
 
     final StringBuilder entitySetSegment = new StringBuilder();
-    if (StringUtils.isNotBlank(containerNS)) {
-      final EdmEntityContainer container = edm.getEntityContainer(new FullQualifiedName(containerNS));
-      if (!container.isDefault()) {
-        entitySetSegment.append(container.getFullQualifiedName().toString()).append('.');
-      }
-    }
+    //TODO: Container is always default in v4
+//    if (StringUtils.isNotBlank(containerNS)) {
+//      final EdmEntityContainer container = edm.getEntityContainer(new FullQualifiedName(containerNS));
+//      if (!container.isDefault()) {
+//        entitySetSegment.append(container.getFullQualifiedName().toString()).append('.');
+//      }
+//    }
 
     entitySetSegment.append(entitySetName);
     uriBuilder.appendEntitySetSegment(entitySetSegment.toString());

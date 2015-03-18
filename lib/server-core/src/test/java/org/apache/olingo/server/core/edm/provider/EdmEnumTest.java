@@ -27,6 +27,8 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.provider.EnumMember;
 import org.apache.olingo.commons.api.edm.provider.EnumType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.commons.core.edm.provider.EdmEnumTypeImpl;
+import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 import org.junit.Test;
 
 import java.util.Arrays;

@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.edm.provider.Action;
 import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.edm.provider.Function;
 import org.apache.olingo.commons.api.edm.provider.Parameter;
+import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
 

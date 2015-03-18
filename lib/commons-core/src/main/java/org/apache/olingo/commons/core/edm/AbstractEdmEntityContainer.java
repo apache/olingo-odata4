@@ -61,11 +61,6 @@ public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements
   }
 
   @Override
-  public boolean isDefault() {
-    return true;
-  }
-
-  @Override
   public String getNamespace() {
     return entityContainerName.getNamespace();
   }

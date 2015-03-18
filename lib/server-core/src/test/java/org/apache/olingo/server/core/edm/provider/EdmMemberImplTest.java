@@ -19,6 +19,8 @@
 package org.apache.olingo.server.core.edm.provider;
 
 import org.apache.olingo.commons.api.edm.provider.EnumMember;
+import org.apache.olingo.commons.core.edm.provider.EdmMemberImpl;
+import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -29,8 +31,7 @@ public class EdmMemberImplTest {
   @Test
   public void enumMember() {
     final EnumMember member = new EnumMember().setName("name").setValue("value");
-    final EdmMemberImpl memberImpl =
-        new EdmMemberImpl(mock(EdmProviderImpl.class), null, member.getName(), member.getValue());
+    final EdmMemberImpl memberImpl = new EdmMemberImpl(mock(EdmProviderImpl.class), null, member);
 
     assertEquals("name", memberImpl.getName());
     assertEquals("value", memberImpl.getValue());

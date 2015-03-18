@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -83,7 +83,7 @@ public class MetadataTest extends AbstractTest {
 
     // 1. Enum
     final EdmEnumType responseEnumType = edm.getEnumType(
-            new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "ResponseType"));
+        new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "ResponseType"));
     assertNotNull(responseEnumType);
     assertEquals(6, responseEnumType.getMemberNames().size());
     assertEquals("3", responseEnumType.getMember("Accepted").getValue());
@@ -91,56 +91,56 @@ public class MetadataTest extends AbstractTest {
 
     // 2. Complex
     final EdmComplexType responseStatus = edm.getComplexType(
-            new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "ResponseStatus"));
+        new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "ResponseStatus"));
     assertNotNull(responseStatus);
     assertTrue(responseStatus.getNavigationPropertyNames().isEmpty());
     assertEquals("Recipient", responseStatus.getBaseType().getName());
     assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.DateTimeOffset),
-            responseStatus.getProperty("Time").getType());
+        responseStatus.getProperty("Time").getType());
 
     // 3. Entity
     final EdmEntityType user = edm.getEntityType(
-            new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "User"));
+        new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "User"));
     assertNotNull(user);
     assertFalse(user.getPropertyNames().isEmpty());
     assertFalse(user.getNavigationPropertyNames().isEmpty());
 
     final EdmEntityType entity = edm.getEntityType(
-            new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Entity"));
+        new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Entity"));
     assertEquals(entity, user.getBaseType());
     assertFalse(entity.getPropertyNames().isEmpty());
     assertTrue(entity.getNavigationPropertyNames().isEmpty());
 
     final EdmEntityType folder = edm.getEntityType(
-            new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Folder"));
+        new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Folder"));
     assertEquals(folder, user.getNavigationProperty("Inbox").getType());
 
     // 4. Action
     final EdmAction move = edm.getBoundAction(
-            new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Move"),
-            new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Folder"),
-            false);
+        new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Move"),
+        new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Folder"),
+        false);
     assertNotNull(move);
     assertTrue(move.isBound());
     assertEquals(2, move.getParameterNames().size());
     assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String),
-            move.getParameter("DestinationId").getType());
+        move.getParameter("DestinationId").getType());
 
     // 5. EntityContainer
     final EdmEntityContainer container = edm.getEntityContainer(
-            new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "EntityContainer"));
+        new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "EntityContainer"));
     assertNotNull(container);
     final EdmEntitySet users = container.getEntitySet("Users");
     assertNotNull(users);
     assertEquals(edm.getEntityType(new FullQualifiedName(container.getNamespace(), "User")),
-            users.getEntityType());
+        users.getEntityType());
     assertEquals(container.getEntitySet("Folders"), users.getRelatedBindingTarget("Folders"));
   }
 
   @Test
   public void demo() {
     final XMLMetadata metadata = getClient().getDeserializer(ODataFormat.XML).
-            toMetadata(getClass().getResourceAsStream("demo-metadata.xml"));
+        toMetadata(getClass().getResourceAsStream("demo-metadata.xml"));
     assertNotNull(metadata);
 
     assertFalse(metadata.getSchema(0).getAnnotationGroups().isEmpty());
@@ -148,13 +148,13 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(annots);
     assertFalse(annots.getAnnotations().isEmpty());
     assertEquals(ConstantAnnotationExpression.Type.String,
-            annots.getAnnotation("Org.OData.Publication.V1.PrivacyPolicyUrl").getExpression().asConstant().getType());
+        annots.getAnnotation("Org.OData.Publication.V1.PrivacyPolicyUrl").getExpression().asConstant().getType());
     assertEquals("http://www.odata.org/",
-            annots.getAnnotation("Org.OData.Publication.V1.PrivacyPolicyUrl").getExpression().asConstant().getValue());
+        annots.getAnnotation("Org.OData.Publication.V1.PrivacyPolicyUrl").getExpression().asConstant().getValue());
 
     // Now let's test some edm:Annotations
     final Edm edm = getClient().getReader().
-            readMetadata(getClass().getResourceAsStream("demo-metadata.xml"));
+        readMetadata(getClass().getResourceAsStream("demo-metadata.xml"));
     assertNotNull(edm);
 
     final EdmSchema schema = edm.getSchema("ODataDemo");
@@ -181,7 +181,7 @@ public class MetadataTest extends AbstractTest {
   @Test
   public void multipleSchemas() {
     final XMLMetadata metadata = getClient().getDeserializer(ODataFormat.XML).
-            toMetadata(getClass().getResourceAsStream("northwind-metadata.xml"));
+        toMetadata(getClass().getResourceAsStream("northwind-metadata.xml"));
     assertNotNull(metadata);
 
     final Schema first = metadata.getSchema("NorthwindModel");
@@ -201,7 +201,7 @@ public class MetadataTest extends AbstractTest {
   @Test
   public void fromdoc1() {
     final XMLMetadata metadata = getClient().getDeserializer(ODataFormat.XML).
-            toMetadata(getClass().getResourceAsStream("fromdoc1-metadata.xml"));
+        toMetadata(getClass().getResourceAsStream("fromdoc1-metadata.xml"));
     assertNotNull(metadata);
 
     assertFalse(metadata.getReferences().isEmpty());
@@ -218,12 +218,14 @@ public class MetadataTest extends AbstractTest {
     final ComplexType address = metadata.getSchema(0).getComplexType("Address");
     assertFalse(address.getNavigationProperty("Country").getReferentialConstraints().isEmpty());
     assertEquals("Name",
-            address.getNavigationProperty("Country").getReferentialConstraints().get(0).getReferencedProperty());
+        address.getNavigationProperty("Country").getReferentialConstraints().get(0).getReferencedProperty());
 
     final Function productsByRating = metadata.getSchema(0).getFunctions("ProductsByRating").get(0);
     assertNotNull(productsByRating.getParameter("Rating"));
     assertEquals("Edm.Int32", productsByRating.getParameter("Rating").getType());
-    assertEquals("Collection(ODataDemo.Product)", productsByRating.getReturnType().getType());
+//    assertEquals("Collection(ODataDemo.Product)", productsByRating.getReturnType().getType());
+    assertEquals("ODataDemo.Product", productsByRating.getReturnType().getType());
+    assertTrue(productsByRating.getReturnType().isCollection());
 
     final Singleton contoso = metadata.getSchema(0).getEntityContainer().getSingleton("Contoso");
     assertNotNull(contoso);
@@ -231,10 +233,10 @@ public class MetadataTest extends AbstractTest {
     assertEquals("Products", contoso.getNavigationPropertyBindings().get(0).getPath());
 
     final FunctionImport functionImport = metadata.getSchema(0).getEntityContainer().
-            getFunctionImport("ProductsByRating");
+        getFunctionImport("ProductsByRating");
     assertNotNull(functionImport);
     assertEquals(metadata.getSchema(0).getNamespace() + "." + productsByRating.getName(),
-            functionImport.getFunction());
+        functionImport.getFunction());
 
     // Now let's go high-level
     final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("fromdoc1-metadata.xml"));
@@ -252,16 +254,19 @@ public class MetadataTest extends AbstractTest {
       assertNotNull(fi);
       assertEquals(demoService.getEntitySet("Products"), fi.getReturnedEntitySet());
 
-      final EdmFunction edmFunction = edm.getUnboundFunction(
-              new FullQualifiedName(metadata.getSchema(0).getNamespace(), "ProductsByRating"), null);
+      final EdmFunction edmFunction =
+          edm.getUnboundFunction(
+              new FullQualifiedName(metadata.getSchema(0).getNamespace(), "ProductsByRating"), function
+                  .getParameterNames());
       assertNotNull(edmFunction);
-      assertEquals(edmFunction.getName(), fi.getUnboundFunction(null).getName());
-      assertEquals(edmFunction.getNamespace(), fi.getUnboundFunction(null).getNamespace());
-      assertEquals(edmFunction.getParameterNames(), fi.getUnboundFunction(null).getParameterNames());
+      assertEquals(edmFunction.getName(), fi.getUnboundFunction(function.getParameterNames()).getName());
+      assertEquals(edmFunction.getNamespace(), fi.getUnboundFunction(function.getParameterNames()).getNamespace());
+      assertEquals(edmFunction.getParameterNames(), fi.getUnboundFunction(function.getParameterNames())
+          .getParameterNames());
       assertEquals(edmFunction.getReturnType().getType().getName(),
-              fi.getUnboundFunction(null).getReturnType().getType().getName());
+          fi.getUnboundFunction(function.getParameterNames()).getReturnType().getType().getName());
       assertEquals(edmFunction.getReturnType().getType().getNamespace(),
-              fi.getUnboundFunction(null).getReturnType().getType().getNamespace());
+          fi.getUnboundFunction(function.getParameterNames()).getReturnType().getType().getNamespace());
     }
 
     final EdmTypeDefinition weight = edm.getTypeDefinition(new FullQualifiedName("ODataDemo", "Weight"));
@@ -277,12 +282,12 @@ public class MetadataTest extends AbstractTest {
   @Test
   public void fromdoc2() {
     final XMLMetadata metadata = getClient().getDeserializer(ODataFormat.XML)
-            .toMetadata(getClass().getResourceAsStream("fromdoc2-metadata.xml"));
+        .toMetadata(getClass().getResourceAsStream("fromdoc2-metadata.xml"));
     assertNotNull(metadata);
 
     // Check displayName
     final Annotation displayName = metadata.getSchema(0).getAnnotationGroup("ODataDemo.Supplier").
-            getAnnotation("Vocabulary1.DisplayName");
+        getAnnotation("Vocabulary1.DisplayName");
     assertNotNull(displayName);
     assertTrue(displayName.getExpression().isDynamic());
 
@@ -306,7 +311,7 @@ public class MetadataTest extends AbstractTest {
 
     // Check Tags
     final Annotation tags = metadata.getSchema(0).getAnnotationGroup("ODataDemo.Product").
-            getAnnotation("Vocabulary1.Tags");
+        getAnnotation("Vocabulary1.Tags");
     assertNotNull(tags);
     assertTrue(tags.getExpression().isDynamic());
 
@@ -341,7 +346,7 @@ public class MetadataTest extends AbstractTest {
   @Test
   public void fromdoc4() {
     final XMLMetadata metadata = getClient().getDeserializer(ODataFormat.XML).
-            toMetadata(getClass().getResourceAsStream("fromdoc4-metadata.xml"));
+        toMetadata(getClass().getResourceAsStream("fromdoc4-metadata.xml"));
     assertNotNull(metadata);
 
     final Annotations group = metadata.getSchema(0).getAnnotationGroups().get(0);
@@ -356,7 +361,7 @@ public class MetadataTest extends AbstractTest {
     assertTrue(annotation.getExpression().isDynamic());
     assertTrue(annotation.getExpression().asDynamic().isTwoParamsOp());
     assertEquals(TwoParamsOpDynamicAnnotationExpression.Type.And,
-            annotation.getExpression().asDynamic().asTwoParamsOp().getType());
+        annotation.getExpression().asDynamic().asTwoParamsOp().getType());
     assertTrue(annotation.getExpression().asDynamic().asTwoParamsOp().getLeftExpression().isPath());
 
     annotation = group.getAnnotation("Vocab.Supplier");
@@ -367,7 +372,7 @@ public class MetadataTest extends AbstractTest {
     assertTrue(urlRef.getValue().isDynamic());
     assertTrue(urlRef.getValue().asDynamic().isApply());
 
-    // Now let's go high-level    
+    // Now let's go high-level
     final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("fromdoc4-metadata.xml"));
     assertNotNull(edm);
 

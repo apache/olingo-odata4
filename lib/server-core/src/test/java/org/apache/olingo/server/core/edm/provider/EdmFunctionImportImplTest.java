@@ -30,6 +30,9 @@ import org.apache.olingo.commons.api.edm.provider.FunctionImport;
 import org.apache.olingo.commons.api.edm.provider.Parameter;
 import org.apache.olingo.commons.api.edm.provider.ReturnType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.commons.core.edm.provider.EdmEntityContainerImpl;
+import org.apache.olingo.commons.core.edm.provider.EdmFunctionImportImpl;
+import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 import org.junit.Test;
 
 import java.util.Arrays;

@@ -32,8 +32,7 @@ import java.io.InputStream;
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
 @org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "DefaultContainer",
-  namespace = "Microsoft.Test.OData.Services.OpenTypesServiceV4",
-  isDefaultEntityContainer = true)
+  namespace = "Microsoft.Test.OData.Services.OpenTypesServiceV4")
 public interface DefaultContainer extends PersistenceManager {
 
     Row getRow();

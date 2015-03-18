@@ -39,15 +39,6 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
   FullQualifiedName getFullQualifiedName();
 
   /**
-   * Returns whether this container is the default container in the current schema.
-   * <br/>
-   * According to CSDL specifications, this method will always return <tt>true</tt> for OData 4.0.
-   * 
-   * @return whether this container is the default container in the current schema, always <tt>true</tt> for OData 4.0
-   */
-  boolean isDefault();
-
-  /**
    * Get contained Singleton by name.
    * 
    * @param name

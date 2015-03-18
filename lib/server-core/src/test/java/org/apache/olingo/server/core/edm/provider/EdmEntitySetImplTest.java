@@ -30,6 +30,9 @@ import org.apache.olingo.commons.api.edm.provider.EntitySet;
 import org.apache.olingo.commons.api.edm.provider.EntityType;
 import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.provider.PropertyRef;
+import org.apache.olingo.commons.core.edm.provider.EdmEntityContainerImpl;
+import org.apache.olingo.commons.core.edm.provider.EdmEntitySetImpl;
+import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 import org.junit.Test;
 
 import java.util.Arrays;

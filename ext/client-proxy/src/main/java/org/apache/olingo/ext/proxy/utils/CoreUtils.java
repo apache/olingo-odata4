@@ -49,9 +49,7 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmElement;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmTerm;
@@ -655,22 +653,22 @@ public final class CoreUtils {
 
   public static URI getTargetEntitySetURI(
       final EdmEnabledODataClient client, final NavigationProperty property) {
-    final Edm edm = client.getCachedEdm();
+//    final Edm edm = client.getCachedEdm();
+//
+//    final FullQualifiedName containerName =
+//        new FullQualifiedName(property.targetSchema(), property.targetContainer());
 
-    final FullQualifiedName containerName =
-        new FullQualifiedName(property.targetSchema(), property.targetContainer());
-
-    final EdmEntityContainer container = edm.getEntityContainer(containerName);
+//    final EdmEntityContainer container = edm.getEntityContainer(containerName);
     final URIBuilder uriBuilder = client.newURIBuilder(client.getServiceRoot());
-
-    if (!container.isDefault()) {
-      final StringBuilder entitySetSegment = new StringBuilder();
-      entitySetSegment.append(container.getFullQualifiedName()).append('.');
-      entitySetSegment.append(property.targetEntitySet());
-      uriBuilder.appendEntitySetSegment(entitySetSegment.toString());
-    } else {
+//TODO: Container can only be default in V4
+//    if (!container.isDefault()) {
+//      final StringBuilder entitySetSegment = new StringBuilder();
+//      entitySetSegment.append(container.getFullQualifiedName()).append('.');
+//      entitySetSegment.append(property.targetEntitySet());
+//      uriBuilder.appendEntitySetSegment(entitySetSegment.toString());
+//    } else {
       uriBuilder.appendEntitySetSegment(property.targetEntitySet());
-    }
+//    }
 
     return uriBuilder.build();
   }

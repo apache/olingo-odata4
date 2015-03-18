@@ -55,7 +55,10 @@ public class TypeDefinition extends AbstractEdmItem implements Named, Annotatabl
   }
 
   public String getUnderlyingType() {
-    return underlyingType.getFullQualifiedNameAsString();
+    if(underlyingType != null){
+      return underlyingType.getFullQualifiedNameAsString();
+    }
+    return null;
   }
 
   public TypeDefinition setUnderlyingType(final String underlyingType) {

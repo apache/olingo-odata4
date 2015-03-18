@@ -18,10 +18,12 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import org.apache.olingo.commons.api.edm.provider.Property;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = PropertyDeserializer.class)
-public class PropertyImpl extends org.apache.olingo.commons.api.edm.provider.Property {
+public class PropertyImpl extends Property {
 
   private static final long serialVersionUID = -4521766603286651372L;
 

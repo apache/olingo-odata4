@@ -30,6 +30,8 @@ import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.edm.provider.EnumType;
 import org.apache.olingo.commons.api.edm.provider.Parameter;
 import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.core.edm.provider.EdmParameterImpl;
+import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

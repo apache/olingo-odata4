@@ -34,5 +34,4 @@ public @interface EntityContainer {
 
   String namespace();
 
-  boolean isDefaultEntityContainer() default false;
 }

@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.api.edm.provider;
 
+import java.util.List;
+
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-
-import java.util.List;
 
 public abstract class EdmProvider {
 
@@ -190,6 +190,22 @@ public abstract class EdmProvider {
    * @return {@link EntityContainer} of this edm
    */
   public EntityContainer getEntityContainer() throws ODataException {
+    return null;
+  }
+
+  /**
+   * @param targetName
+   * @return {@link Annotations} group for the given Target
+   */
+  public Annotations getAnnotationsGroup(FullQualifiedName targetName) throws ODataException {
+    return null;
+  }
+
+  /**
+   * @param annotatedName
+   * @return Annotatble element by target name
+   */
+  public Annotatable getAnnoatatable(FullQualifiedName annotatedName) throws ODataException {
     return null;
   }
 }

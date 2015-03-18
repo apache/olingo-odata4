@@ -46,8 +46,6 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
   protected final String namespace;
   private final String name;
 
-  private final boolean defaultEC;
-
   public static EntityContainerInvocationHandler getInstance(final Class<?> ref, final AbstractService<?> service) {
 
     final EntityContainerInvocationHandler instance = new EntityContainerInvocationHandler(ref, service);
@@ -64,16 +62,11 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
     }
 
     this.name = ((EntityContainer) annotation).name();
-    this.defaultEC = ((EntityContainer) annotation).isDefaultEntityContainer();
     this.namespace = ((EntityContainer) annotation).namespace();
   }
 
   protected AbstractService<?> getService() {
     return service;
-  }
-
-  protected boolean isDefaultEntityContainer() {
-    return defaultEC;
   }
 
   protected String getEntityContainerName() {

@@ -33,8 +33,7 @@ import java.io.InputStream;
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("ODataDemo")
 @org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "DemoService",
-  namespace = "ODataDemo",
-  isDefaultEntityContainer = true)
+  namespace = "ODataDemo")
 public interface DemoService extends PersistenceManager {
 
     Products getProducts();

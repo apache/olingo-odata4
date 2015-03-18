@@ -53,7 +53,7 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
     uriSuffix = "'";
   }
 
-  protected abstract Collection<? extends EdmMember> getMembers();
+  protected abstract Collection<EdmMember> getMembers();
 
   @Override
   public EdmMember getMember(final String name) {

@@ -29,6 +29,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
@@ -49,6 +50,7 @@ import org.apache.olingo.commons.api.edm.provider.Schema;
 import org.apache.olingo.commons.api.edm.provider.Singleton;
 import org.apache.olingo.commons.api.edm.provider.Term;
 import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -314,8 +316,10 @@ public class EdmSchemaImplTest {
       providerSchema.setEntityContainer(container);
 
       List<TypeDefinition> typeDefinitions = new ArrayList<TypeDefinition>();
-      typeDefinitions.add(new TypeDefinition().setName("typeDefinition1"));
-      typeDefinitions.add(new TypeDefinition().setName("typeDefinition2"));
+      typeDefinitions.add(new TypeDefinition().setName("typeDefinition1").setUnderlyingType(
+          EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+      typeDefinitions.add(new TypeDefinition().setName("typeDefinition2").setUnderlyingType(
+          EdmPrimitiveTypeKind.String.getFullQualifiedName()));
       providerSchema.setTypeDefinitions(typeDefinitions);
 
       List<EnumType> enumTypes = new ArrayList<EnumType>();

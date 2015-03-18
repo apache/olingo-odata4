@@ -40,6 +40,8 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.provider.Action;
 import org.apache.olingo.commons.api.edm.provider.Parameter;
 import org.apache.olingo.commons.api.edm.provider.ReturnType;
+import org.apache.olingo.commons.core.edm.provider.EdmActionImpl;
+import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
 

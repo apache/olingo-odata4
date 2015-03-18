@@ -56,8 +56,7 @@ import javax.xml.datatype.Duration;
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("$namespace")
 @org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "$container.Name",
-  namespace = "$namespace",
-  isDefaultEntityContainer = $container.Default)
+  namespace = "$namespace")
 public interface $utility.capitalize($container.Name) extends PersistenceManager {
 
 #foreach($entitySet in $container.EntitySets)

@@ -42,7 +42,15 @@ public class PropertyDeserializer extends AbstractEdmDeserializer<PropertyImpl> 
         if ("Name".equals(jp.getCurrentName())) {
           property.setName(jp.nextTextValue());
         } else if ("Type".equals(jp.getCurrentName())) {
-          property.setType(jp.nextTextValue());
+          String metadataTypeName = jp.nextTextValue();
+          if (metadataTypeName.startsWith("Collection(")) {
+            property.setType(metadataTypeName.substring(metadataTypeName.indexOf("(") + 1,
+                metadataTypeName.length() - 1));
+            property.setCollection(true);
+          } else {
+            property.setType(metadataTypeName);
+            property.setCollection(false);
+          }
         } else if ("Nullable".equals(jp.getCurrentName())) {
           property.setNullable(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("DefaultValue".equals(jp.getCurrentName())) {
