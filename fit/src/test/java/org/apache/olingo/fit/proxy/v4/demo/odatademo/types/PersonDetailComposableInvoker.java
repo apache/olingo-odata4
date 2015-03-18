@@ -19,8 +19,6 @@
 package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public interface PersonDetailComposableInvoker 
@@ -47,14 +45,7 @@ public interface PersonDetailComposableInvoker
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.Integer getPersonID();
 
     void setPersonID(java.lang.Integer _personID);
@@ -70,14 +61,7 @@ public interface PersonDetailComposableInvoker
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.Short getAge();
 
     void setAge(java.lang.Short _age);
@@ -93,14 +77,7 @@ public interface PersonDetailComposableInvoker
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.Boolean getGender();
 
     void setGender(java.lang.Boolean _gender);
@@ -116,14 +93,7 @@ public interface PersonDetailComposableInvoker
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.String getPhone();
 
     void setPhone(java.lang.String _phone);
@@ -139,14 +109,7 @@ public interface PersonDetailComposableInvoker
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Address getAddress();
 
     void setAddress(org.apache.olingo.fit.proxy.v4.demo.odatademo.types.Address _address);
@@ -162,14 +125,7 @@ public interface PersonDetailComposableInvoker
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     org.apache.olingo.ext.proxy.api.EdmStreamValue getPhoto();
 
     void setPhoto(org.apache.olingo.ext.proxy.api.EdmStreamValue _photo);

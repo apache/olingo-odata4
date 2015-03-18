@@ -19,8 +19,6 @@
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -48,14 +46,7 @@ public interface StoredPI
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.Integer getStoredPIID();
 
     void setStoredPIID(java.lang.Integer _storedPIID);
@@ -71,14 +62,7 @@ public interface StoredPI
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.String getPIName();
 
     void setPIName(java.lang.String _pIName);
@@ -94,14 +78,7 @@ public interface StoredPI
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.String getPIType();
 
     void setPIType(java.lang.String _pIType);
@@ -117,14 +94,7 @@ public interface StoredPI
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.sql.Timestamp getCreatedDate();
 
     void setCreatedDate(java.sql.Timestamp _createdDate);

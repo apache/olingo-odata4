@@ -19,8 +19,6 @@
 package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -48,14 +46,7 @@ public interface ProductDetail
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.Integer getProductID();
 
     void setProductID(java.lang.Integer _productID);
@@ -71,14 +62,7 @@ public interface ProductDetail
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.String getDetails();
 
     void setDetails(java.lang.String _details);

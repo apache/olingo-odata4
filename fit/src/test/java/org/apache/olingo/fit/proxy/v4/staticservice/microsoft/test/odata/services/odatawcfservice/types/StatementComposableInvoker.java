@@ -19,8 +19,6 @@
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public interface StatementComposableInvoker 
@@ -47,14 +45,7 @@ public interface StatementComposableInvoker
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.Integer getStatementID();
 
     void setStatementID(java.lang.Integer _statementID);
@@ -70,14 +61,7 @@ public interface StatementComposableInvoker
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.String getTransactionType();
 
     void setTransactionType(java.lang.String _transactionType);
@@ -93,14 +77,7 @@ public interface StatementComposableInvoker
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.String getTransactionDescription();
 
     void setTransactionDescription(java.lang.String _transactionDescription);
@@ -116,14 +93,7 @@ public interface StatementComposableInvoker
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.Double getAmount();
 
     void setAmount(java.lang.Double _amount);

@@ -22,8 +22,6 @@ import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 
@@ -51,14 +49,7 @@ public interface Company
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.Integer getCompanyID();
 
     void setCompanyID(java.lang.Integer _companyID);
@@ -74,14 +65,7 @@ public interface Company
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory getCompanyCategory();
 
     void setCompanyCategory(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory _companyCategory);
@@ -97,14 +81,7 @@ public interface Company
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.Long getRevenue();
 
     void setRevenue(java.lang.Long _revenue);
@@ -120,14 +97,7 @@ public interface Company
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.String getName();
 
     void setName(java.lang.String _name);
@@ -143,14 +113,7 @@ public interface Company
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address getAddress();
 
     void setAddress(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _address);

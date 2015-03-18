@@ -19,8 +19,6 @@
 package org.apache.olingo.fit.proxy.v4.demo.odatademo.types;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import java.util.concurrent.Future;
 //CHECKSTYLE:ON (Maven checkstyle)
 
@@ -64,14 +62,7 @@ public interface Employee
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.Integer getID();
 
     void setID(java.lang.Integer _iD);
@@ -87,14 +78,7 @@ public interface Employee
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.String getName();
 
     void setName(java.lang.String _name);
@@ -110,14 +94,7 @@ public interface Employee
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.Long getEmployeeID();
 
     void setEmployeeID(java.lang.Long _employeeID);
@@ -133,14 +110,7 @@ public interface Employee
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.sql.Timestamp getHireDate();
 
     void setHireDate(java.sql.Timestamp _hireDate);
@@ -156,14 +126,7 @@ public interface Employee
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.Float getSalary();
 
     void setSalary(java.lang.Float _salary);

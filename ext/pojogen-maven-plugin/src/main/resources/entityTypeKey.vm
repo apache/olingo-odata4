@@ -26,8 +26,6 @@ import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.AbstractEntityKey;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
 #foreach($ns in $namespaces)
 import #if($basePackage)${basePackage}.#end${ns}.*;
 #end

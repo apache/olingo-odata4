@@ -20,8 +20,6 @@ package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.op
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public interface RowIndexComposableInvoker 
@@ -48,14 +46,7 @@ public interface RowIndexComposableInvoker
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
+                srid = "")
     java.lang.Integer getId();
 
     void setId(java.lang.Integer _id);

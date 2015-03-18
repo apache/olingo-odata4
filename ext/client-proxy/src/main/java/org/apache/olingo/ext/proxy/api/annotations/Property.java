@@ -18,14 +18,12 @@
  */
 package org.apache.olingo.ext.proxy.api.annotations;
 
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.client.api.edm.StoreGeneratedPattern;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.apache.olingo.client.api.edm.StoreGeneratedPattern;
 
 /**
  * Bind POJO field to EDM property.
@@ -56,22 +54,7 @@ public @interface Property {
 
   String srid() default "";
 
-  ConcurrencyMode concurrencyMode() default ConcurrencyMode.None;
-
   String mimeType() default "";
-
-  /* -- Feed Customization annotations -- */
-  String fcSourcePath() default "";
-
-  String fcTargetPath() default "";
-
-  EdmContentKind fcContentKind() default EdmContentKind.text;
-
-  String fcNSPrefix() default "";
-
-  String fcNSURI() default "";
-
-  boolean fcKeepInContent() default false;
 
   StoreGeneratedPattern storeGeneratedPattern() default StoreGeneratedPattern.None;
 }
