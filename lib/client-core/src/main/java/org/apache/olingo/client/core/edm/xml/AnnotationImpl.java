@@ -18,11 +18,7 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.provider.Annotation;
-import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationExpression;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -30,47 +26,5 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 public class AnnotationImpl extends Annotation {
 
   private static final long serialVersionUID = 5464714417411058033L;
-
-  private String term;
-
-  private String qualifier;
-
-  private AnnotationExpression annotationExpression;
-
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
-
-  @Override
-  public List<Annotation> getAnnotations() {
-    return annotations;
-  }
-  
-  @Override
-  public String getTerm() {
-    return term;
-  }
-
-  public AnnotationImpl setTerm(final String term) {
-    this.term = term;
-    return this;
-  }
-
-  @Override
-  public String getQualifier() {
-    return qualifier;
-  }
-
-  public AnnotationImpl setQualifier(final String qualifier) {
-    this.qualifier = qualifier;
-    return this;
-  }
-
-  @Override
-  public AnnotationExpression getExpression() {
-    return annotationExpression;
-  }
-
-  public void setAnnotationExpression(final AnnotationExpression annotationExpression) {
-    this.annotationExpression = annotationExpression;
-  }
 
 }

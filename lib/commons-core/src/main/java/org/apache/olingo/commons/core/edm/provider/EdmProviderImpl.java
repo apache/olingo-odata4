@@ -340,7 +340,7 @@ public class EdmProviderImpl extends AbstractEdm {
     }
   }
 
-  //TODO: Check implementation
+  //TODO: Check Provider annotations implementation
   @Override
   protected EdmAnnotations createAnnotationGroup(final FullQualifiedName targetName) {
     try {

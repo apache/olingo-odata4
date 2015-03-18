@@ -61,7 +61,6 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
     CircleStreamBuffer buffer;
     XMLStreamWriter xmlStreamWriter = null;
 
-    // TODO: move stream initialization into separate method
     try {
       buffer = new CircleStreamBuffer();
       xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET);

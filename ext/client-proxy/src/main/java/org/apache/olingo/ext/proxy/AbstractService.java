@@ -91,7 +91,6 @@ public abstract class AbstractService<C extends EdmEnabledODataClient> {
     }else{
       edm = null;
     }
-    // TODO: check runtime exception or not
     if (version.compareTo(ODataServiceVersion.V40) < 0) {
       throw new ODataRuntimeException("Only OData V4 or higher supported.");
     }

@@ -210,16 +210,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
       final String containerNS, final String entitySetName, final AbstractService<?> service) {
 
     final URIBuilder uriBuilder = service.getClient().newURIBuilder();
-//    final Edm edm = service.getClient().getCachedEdm();
-
     final StringBuilder entitySetSegment = new StringBuilder();
-    //TODO: Container is always default in v4
-//    if (StringUtils.isNotBlank(containerNS)) {
-//      final EdmEntityContainer container = edm.getEntityContainer(new FullQualifiedName(containerNS));
-//      if (!container.isDefault()) {
-//        entitySetSegment.append(container.getFullQualifiedName().toString()).append('.');
-//      }
-//    }
 
     entitySetSegment.append(entitySetName);
     uriBuilder.appendEntitySetSegment(entitySetSegment.toString());

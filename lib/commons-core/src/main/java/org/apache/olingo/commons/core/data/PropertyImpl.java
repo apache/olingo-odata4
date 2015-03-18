@@ -60,6 +60,6 @@ public class PropertyImpl extends AbstractValuable implements Property {
 
   @Override
   public boolean isNull() {
-    return getValue() == null || "Edm.Null".equals(type); // TODO: improve
+    return getValue() == null || "Edm.Null".equals(type);
   }
 }

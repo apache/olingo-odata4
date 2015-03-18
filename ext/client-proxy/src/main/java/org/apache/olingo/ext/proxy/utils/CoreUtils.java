@@ -651,25 +651,9 @@ public final class CoreUtils {
     return mediaEditLink == null ? URIUtils.getURI(entity.getEditLink(), name) : mediaEditLink.getLink();
   }
 
-  public static URI getTargetEntitySetURI(
-      final EdmEnabledODataClient client, final NavigationProperty property) {
-//    final Edm edm = client.getCachedEdm();
-//
-//    final FullQualifiedName containerName =
-//        new FullQualifiedName(property.targetSchema(), property.targetContainer());
-
-//    final EdmEntityContainer container = edm.getEntityContainer(containerName);
+  public static URI getTargetEntitySetURI(final EdmEnabledODataClient client, final NavigationProperty property) {
     final URIBuilder uriBuilder = client.newURIBuilder(client.getServiceRoot());
-//TODO: Container can only be default in V4
-//    if (!container.isDefault()) {
-//      final StringBuilder entitySetSegment = new StringBuilder();
-//      entitySetSegment.append(container.getFullQualifiedName()).append('.');
-//      entitySetSegment.append(property.targetEntitySet());
-//      uriBuilder.appendEntitySetSegment(entitySetSegment.toString());
-//    } else {
-      uriBuilder.appendEntitySetSegment(property.targetEntitySet());
-//    }
-
+    uriBuilder.appendEntitySetSegment(property.targetEntitySet());
     return uriBuilder.build();
   }
 }

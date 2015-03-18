@@ -79,7 +79,6 @@ public class ODataJsonSerializer implements ODataSerializer {
     CircleStreamBuffer buffer;
     JsonGenerator gen = null;
 
-    // TODO: move stream initialization into separate method
     try {
       buffer = new CircleStreamBuffer();
       gen = new JsonFactory().createGenerator(buffer.getOutputStream())
@@ -88,10 +87,6 @@ public class ODataJsonSerializer implements ODataSerializer {
       new ServiceDocumentJsonSerializer(edm, serviceRoot).writeServiceDocument(gen);
 
       gen.close();
-
-      // TODO: Check correct stream handling
-      // writer.flush();
-      // buffer.closeWrite();
 
       return buffer.getInputStream();
 

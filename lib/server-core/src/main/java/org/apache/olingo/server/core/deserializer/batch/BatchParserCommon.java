@@ -185,7 +185,6 @@ public class BatchParserCommon {
 
   public static void consumeBlankLine(final List<Line> remainingMessage, final boolean isStrict)
       throws BatchDeserializerException {
-    // TODO is \r\n to strict?
     if (remainingMessage.size() > 0 && remainingMessage.get(0).toString().matches("\\s*(\r\n|\n)\\s*")) {
       remainingMessage.remove(0);
     } else {

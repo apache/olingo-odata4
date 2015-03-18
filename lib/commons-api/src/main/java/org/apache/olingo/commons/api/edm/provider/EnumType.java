@@ -55,7 +55,6 @@ public class EnumType extends AbstractEdmItem implements Named, Annotatable {
     return this;
   }
 
-  //TODO: Underlying type has a default
   public String getUnderlyingType() {
     if(underlyingType != null){
       return underlyingType.getFullQualifiedNameAsString();

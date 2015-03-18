@@ -63,5 +63,10 @@ public interface EdmOperation extends EdmType, EdmAnnotatable {
    * @return true if binding parameter is of type collection.
    */
   Boolean isBindingParameterTypeCollection();
+  
+  /**
+   * @return the entity set path as a String or null if not present
+   */
+  String getEntitySetPath();
 
 }

@@ -60,7 +60,7 @@ public class FixedFormatSerializerImpl implements FixedFormatSerializer {
     }
   }
 
-  // TODO: Signature
+  // TODO: Signature refactoring for writeBatchResponse
   @Override
   public InputStream batchResponse(final List<ODataResponsePart> batchResponses, final String boundary)
       throws BatchSerializerException {

@@ -34,7 +34,6 @@ public class Property extends AbstractEdmItem implements Named, Annotatable{
 
   private boolean collection;
 
-  // TODO: Mimetype and mapping what here
   private String mimeType;
 
   private Mapping mapping;

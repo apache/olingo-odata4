@@ -49,7 +49,6 @@ public interface FixedFormatSerializer {
   InputStream primitiveValue(EdmPrimitiveType type, Object value, PrimitiveValueSerializerOptions options)
       throws SerializerException;
 
-  // TODO: Return type
   /**
    * Serializes a batch response
    * @param batchResponses

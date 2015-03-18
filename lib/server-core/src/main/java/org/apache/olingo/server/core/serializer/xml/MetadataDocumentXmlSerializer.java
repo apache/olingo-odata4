@@ -116,6 +116,7 @@ public class MetadataDocumentXmlSerializer {
   private final static String NS_EDMX = "http://docs.oasis-open.org/odata/ns/edmx";
 
   private final static String NS_EDM = "http://docs.oasis-open.org/odata/ns/edm";
+  private static final String XML_ENTITY_SET_PATH = "EntitySetPath";
 
   private final ServiceMetadata serviceMetadata;
   private final Map<String, String> namespaceToAlias = new HashMap<String, String>();
@@ -123,6 +124,8 @@ public class MetadataDocumentXmlSerializer {
   public MetadataDocumentXmlSerializer(final ServiceMetadata serviceMetadata) {
     this.serviceMetadata = serviceMetadata;
   }
+
+  // TODO: Annotations in metadata document
 
   public void writeMetadataDocument(final XMLStreamWriter writer) throws XMLStreamException {
     writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
@@ -247,7 +250,7 @@ public class MetadataDocumentXmlSerializer {
     for (EdmFunctionImport functionImport : functionImports) {
       writer.writeStartElement(XML_FUNCTION_IMPORT);
       writer.writeAttribute(XML_NAME, functionImport.getName());
-      
+
       String functionFQNString;
       FullQualifiedName functionFqn = functionImport.getFunctionFqn();
       if (namespaceToAlias.get(functionFqn.getNamespace()) != null) {
@@ -256,14 +259,13 @@ public class MetadataDocumentXmlSerializer {
         functionFQNString = functionFqn.getFullQualifiedNameAsString();
       }
       writer.writeAttribute(XML_FUNCTION, functionFQNString);
-      
+
       EdmEntitySet returnedEntitySet = functionImport.getReturnedEntitySet();
       if (returnedEntitySet != null) {
         writer.writeAttribute(XML_ENTITY_SET, containerNamespace + "." + returnedEntitySet.getName());
       }
       writer.writeAttribute(XML_INCLUDE_IN_SERVICE_DOCUMENT, "" + functionImport.isIncludeInServiceDocument());
 
-      // TODO: Annotations
       writer.writeEndElement();
     }
   }
@@ -274,7 +276,6 @@ public class MetadataDocumentXmlSerializer {
       writer.writeStartElement(XML_ACTION_IMPORT);
       writer.writeAttribute(XML_NAME, actionImport.getName());
       writer.writeAttribute(XML_ACTION, getAliasedFullQualifiedName(actionImport.getUnboundAction(), false));
-      // TODO: Annotations
       writer.writeEndElement();
     }
   }
@@ -287,7 +288,6 @@ public class MetadataDocumentXmlSerializer {
       writer.writeAttribute(XML_ENTITY_TYPE, getAliasedFullQualifiedName(singleton.getEntityType(), false));
 
       appendNavigationPropertyBindings(writer, singleton);
-      // TODO: Annotations
       writer.writeEndElement();
     }
 
@@ -312,7 +312,6 @@ public class MetadataDocumentXmlSerializer {
       writer.writeAttribute(XML_ENTITY_TYPE, getAliasedFullQualifiedName(entitySet.getEntityType(), false));
 
       appendNavigationPropertyBindings(writer, entitySet);
-      // TODO: Annotations
       writer.writeEndElement();
     }
   }
@@ -322,7 +321,9 @@ public class MetadataDocumentXmlSerializer {
     for (EdmFunction function : functions) {
       writer.writeStartElement(XML_FUNCTION);
       writer.writeAttribute(XML_NAME, function.getName());
-      // TODO: EntitySetPath
+      if (function.getEntitySetPath() != null) {
+        writer.writeAttribute(XML_ENTITY_SET_PATH, function.getEntitySetPath());
+      }
       writer.writeAttribute(XML_IS_BOUND, "" + function.isBound());
       writer.writeAttribute(XML_IS_COMPOSABLE, "" + function.isComposable());
 
@@ -373,6 +374,9 @@ public class MetadataDocumentXmlSerializer {
     for (EdmAction action : actions) {
       writer.writeStartElement(XML_ACTION);
       writer.writeAttribute(XML_NAME, action.getName());
+      if (action.getEntitySetPath() != null) {
+        writer.writeAttribute(XML_ENTITY_SET_PATH, action.getEntitySetPath());
+      }
       writer.writeAttribute(XML_IS_BOUND, "" + action.isBound());
 
       appendOperationParameters(writer, action);
@@ -424,11 +428,11 @@ public class MetadataDocumentXmlSerializer {
       if (complexType.getBaseType() != null) {
         writer.writeAttribute(XML_BASE_TYPE, getAliasedFullQualifiedName(complexType.getBaseType(), false));
       }
-      
-      if(complexType.isAbstract()) {
+
+      if (complexType.isAbstract()) {
         writer.writeAttribute(ABSTRACT, TRUE);
       }
-      
+
       appendProperties(writer, complexType);
 
       appendNavigationProperties(writer, complexType);

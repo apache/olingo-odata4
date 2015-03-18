@@ -96,4 +96,9 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
   public List<EdmAnnotation> getAnnotations() {
     return helper.getAnnotations();
   }
+  
+  @Override
+  public String getEntitySetPath(){
+    return operation.getEntitySetPath();
+  }
 }

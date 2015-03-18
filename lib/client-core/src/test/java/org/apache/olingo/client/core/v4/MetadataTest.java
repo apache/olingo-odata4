@@ -223,7 +223,6 @@ public class MetadataTest extends AbstractTest {
     final Function productsByRating = metadata.getSchema(0).getFunctions("ProductsByRating").get(0);
     assertNotNull(productsByRating.getParameter("Rating"));
     assertEquals("Edm.Int32", productsByRating.getParameter("Rating").getType());
-//    assertEquals("Collection(ODataDemo.Product)", productsByRating.getReturnType().getType());
     assertEquals("ODataDemo.Product", productsByRating.getReturnType().getType());
     assertTrue(productsByRating.getReturnType().isCollection());
 

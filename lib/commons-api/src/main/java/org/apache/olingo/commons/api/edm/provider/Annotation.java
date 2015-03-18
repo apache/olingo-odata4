@@ -18,23 +18,30 @@
  */
 package org.apache.olingo.commons.api.edm.provider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationExpression;
 
-public class Annotation extends AbstractEdmItem implements Annotatable{
+public class Annotation extends AbstractEdmItem implements Annotatable {
 
   private static final long serialVersionUID = -7137313445729486860L;
 
   private String term;
 
-  // Target should be a target path
-//  private String targetPath;
   private String qualifier;
 
-  private AnnotationExpression expression;
+  private List<Annotation> annotation = new ArrayList<Annotation>();
 
-  private List<Annotation> annotation;
+  private AnnotationExpression annotationExpression;
+
+  public AnnotationExpression getExpression() {
+    return annotationExpression;
+  }
+
+  public void setAnnotationExpression(final AnnotationExpression annotationExpression) {
+    this.annotationExpression = annotationExpression;
+  }
 
   public String getTerm() {
     return term;
@@ -54,27 +61,17 @@ public class Annotation extends AbstractEdmItem implements Annotatable{
     return this;
   }
 
-  public AnnotationExpression getExpression() {
-    return expression;
-  }
+//  public List<Annotation> getAnnotation() {
+//    return annotation;
+//  }
 
-  public Annotation setExpression(final AnnotationExpression expression) {
-    this.expression = expression;
-    return this;
-  }
-
-  public List<Annotation> getAnnotation() {
-    return annotation;
-  }
-
-  public Annotation setAnnotation(final List<Annotation> annotation) {
+  public Annotation setAnnotations(final List<Annotation> annotation) {
     this.annotation = annotation;
     return this;
   }
 
   @Override
   public List<Annotation> getAnnotations() {
-    // TODO Auto-generated method stub
-    return null;
+    return annotation;
   }
 }
