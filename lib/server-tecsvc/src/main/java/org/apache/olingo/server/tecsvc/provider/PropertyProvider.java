@@ -549,13 +549,6 @@ public class PropertyProvider {
           .setType(nameTimeOfDay)
           .setNullable(true);
 
-  /*
-   * TODO add propertyStream
-   * Property propertyStream = new Property()
-   * .setName("PropertyStream")
-   * .setFQNTypeName(EdmStream.getFullQualifiedName());
-   */
-
   // Complex Properties ----------------------------------------------------------------------------------------------
   public static final Property collPropertyComp_CTPrimComp = new Property()
           .setName("CollPropertyComp")

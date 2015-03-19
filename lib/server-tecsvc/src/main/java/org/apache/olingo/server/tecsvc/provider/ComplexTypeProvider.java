@@ -69,7 +69,7 @@ public class ComplexTypeProvider {
                   PropertyProvider.propertySingle, PropertyProvider.propertyDouble, PropertyProvider.propertyDuration,
                   PropertyProvider.propertyGuid, PropertyProvider.propertyInt16, PropertyProvider.propertyInt32,
                   PropertyProvider.propertyInt64, PropertyProvider.propertySByte, PropertyProvider.propertyTimeOfDay
-                  /* TODO add propertyStream */));
+                  ));
 
     } else if (complexTypeName.equals(nameCTCollAllPrim)) {
       return new ComplexType()
@@ -84,7 +84,7 @@ public class ComplexTypeProvider {
                   PropertyProvider.collPropertyBinary, PropertyProvider.collPropertyDate,
                   PropertyProvider.collPropertyDateTimeOffset, PropertyProvider.collPropertyDuration,
                   PropertyProvider.collPropertyGuid, PropertyProvider.collPropertyTimeOfDay
-                  /* TODO add collectionPropertyStream */));
+                  ));
 
     } else if (complexTypeName.equals(nameCTTwoPrim)) {
       return new ComplexType()

@@ -43,6 +43,101 @@ import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
 //CHECKSTYLE:ON (Maven checkstyle)
 
-#parse( "${odataVersion}/complexTypeComposableInvoker.vm" )
+public interface $utility.capitalize($complexType.Name)ComposableInvoker 
+  extends org.apache.olingo.ext.proxy.api.StructuredComposableInvoker<$utility.capitalize($complexType.Name), ${utility.capitalize($complexType.Name)}.Operations>
+  #{if}( $complexType.isOpenType() ),AbstractOpenType#end {
+
+  @Override
+  $utility.capitalize($complexType.Name)ComposableInvoker select(String... select);
+
+  @Override
+  $utility.capitalize($complexType.Name)ComposableInvoker expand(String... expand);
+
+#set( $complexProps = [] )
+#set( $contained = [] )
+#foreach($propertyName in $complexType.PropertyNames)
+    #set($property = $complexType.getProperty($propertyName))#*
+
+    *##if($property.Type.FullQualifiedName.toString().equals("Edm.Stream"))#*
+      *##set( $returnType = "org.apache.olingo.ext.proxy.api.EdmStreamValue" )#*
+    *##else#*
+      *##set( $returnType = $utility.getJavaType($property.Type, $property.Collection) )#*
+    *##end
+
+    @org.apache.olingo.ext.proxy.api.annotations.Property(name = "$property.Name", 
+                type = "$property.Type.getFullQualifiedName().toString()",
+                nullable = $property.Nullable,
+                defaultValue = "#if($property.getDefaultValue())$property.getDefaultValue()#end",
+                maxLenght = #if($property.getMaxLength() && !$property.getMaxLength().equalsIgnoreCase("max"))$property.getMaxLength()#{else}Integer.MAX_VALUE#end,
+                fixedLenght = #if($property.isFixedLength())$property.isFixedLength()#{else}false#end,
+                precision = #if($property.getPrecision())$property.getPrecision()#{else}0#end,
+                scale = #if($property.getScale())$property.getScale()#{else}0#end,
+                unicode = #if($property.isUnicode())$property.isUnicode()#{else}false#end,
+                collation = "#if($property.getCollation())$property.getCollation()#end",
+                srid = "#if($property.getSRID())$property.getSRID()#end")
+    $returnType get$utility.capitalize($property.Name)();
+
+    void set$utility.capitalize($property.Name)($returnType _$utility.uncapitalize($property.Name));
+
+    #if($utility.isComplex($property.Type.FullQualifiedName))#*
+      *##set( $adding = $complexProps.add($property) )
+    #end
+
+#end
+
+#foreach($propertyName in $complexType.NavigationPropertyNames)
+    #set($property = $complexType.getNavigationProperty($propertyName))
+    #set( $type = $utility.getNavigationType($property) )
+    #set( $binding = $utility.getNavigationBindingDetails($complexType, $property) )
+
+    #if($property.containsTarget() && $property.Collection)#*
+      *##set( $contains = $contained.add($property) )
+    #else#*
+      *#@org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "$property.Name", 
+                type = "$type", 
+                targetSchema = "$binding.Schema.Namespace", 
+                targetContainer = "#if($binding.Container)$binding.Container.Name#end", 
+                targetEntitySet = "#if($binding.EntitySet)$binding.EntitySet.Name#end")
+    $utility.getJavaType($type, $property.Collection) get$utility.capitalize($property.Name)();
+
+    void set$utility.capitalize($property.Name)($utility.getJavaType($type, $property.Collection) _$utility.uncapitalize($property.Name));
+    #end
+#end
+
+#foreach($property in $contained)
+  #if( !$entityType.BaseType.getNavigationProperty($property.Name))
+    #set( $pkgname = "${package}.${utility.capitalize($entityType.Name)}.$utility.capitalize($property.Name)" )
+    @NavigationProperty(name = "$property.Name", 
+                type = "$type", 
+                targetSchema = "$binding.Schema.Namespace", 
+                targetContainer = "#if($binding.Container)$binding.Container.Name#end", 
+                targetEntitySet = "#if($binding.EntitySet)$binding.EntitySet.Name#end",
+                containsTarget = $property.containsTarget())
+    $pkgname get$utility.capitalize($property.Name)();
+    void set$utility.capitalize($property.Name)($pkgname _$utility.uncapitalize($property.Name));
+
+    #set( $keys = $utility.getEntityKeyType($property) )
+    #if( $keys.size() > 1 )
+      #set( $type = $utility.getEdmType($property).EntityType.Name + "Key" )
+    #elseif( $keys.size() == 1 )
+      #set( $type = $keys.values().iterator().next() )
+    #else
+      #set( $type = "" )
+    #end
+
+    @EntitySet(name = "$property.Name", contained = true)
+    interface $utility.capitalize($property.Name) 
+      extends AbstractEntitySet<$utility.getJavaType($property.Type), $type, $utility.getJavaType($property.Type)Collection> {
+
+    #foreach( $dos in $utility.getDescendantsOrSelf($utility.getEdmType($property)) )
+        #set( $djt = $utility.getJavaType($dos) )
+        #set( $sIdx = $djt.lastIndexOf('.') + 1 )
+        $djt new$djt.substring($sIdx)();
+        ${djt}Collection new$djt.substring($sIdx)Collection();
+    #end
+    }
+
+  #end
+#end
 
 }

@@ -222,7 +222,7 @@ public class QueryOptionTest {
   public void testSearchOptionImpl() {
     SearchOptionImpl option = new SearchOptionImpl();
     assertEquals(SystemQueryOptionKind.SEARCH, option.getKind());
-    // TODO $search is not supported yet
+    // $search is not supported yet
   }
 
   @Test

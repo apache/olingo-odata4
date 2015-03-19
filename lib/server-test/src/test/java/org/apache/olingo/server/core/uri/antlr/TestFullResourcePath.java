@@ -924,15 +924,6 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void runEntityIdError() {
-    // TODO planned: move to validator
-    // testUri.runEx("$entity").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-    // testUri.runEx("$entity?$idfalse=ESKeyNav(1)").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-    // testUri.runEx("$entity/olingo.odata.test1.invalidType?$id=ESKeyNav(1)").isExSemantic();
-    // testUri.runEx("$entity/invalid?$id=ESKeyNav(1)").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-  }
-
-  @Test
   public void runEsName() throws Exception {
     testUri.run("ESAllPrim")
         .isKind(UriInfoKind.resource).goPath()
@@ -4195,9 +4186,6 @@ public class TestFullResourcePath {
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
         .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
-
-    // TODO planned: lambda does not check if the previous path segment is a collection
-    // testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavOne/any(d:d/PropertyString eq 'SomeString')");
 
     testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any()")
         .is("<NavPropertyETTwoKeyNavMany/<ANY;>>");

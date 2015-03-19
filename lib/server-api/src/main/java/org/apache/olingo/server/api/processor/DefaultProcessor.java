@@ -56,7 +56,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
   public void readServiceDocument(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-    response.setContent(serializer.serviceDocument(serviceMetadata.getEdm(), request.getRawBaseUri()));
+    response.setContent(serializer.serviceDocument(serviceMetadata.getEdm(), null));
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
   }

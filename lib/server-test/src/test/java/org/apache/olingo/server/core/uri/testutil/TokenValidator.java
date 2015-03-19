@@ -26,7 +26,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-//TODO extend to test also exception which can occure while paring
 public class TokenValidator {
 
   private String input = null;

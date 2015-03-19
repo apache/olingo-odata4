@@ -64,7 +64,13 @@ public interface $utility.capitalize($container.Name) extends PersistenceManager
 
 #end
 
-#parse( "${odataVersion}/container.vm" )
+#foreach($singleton in $container.Singletons)
+    @org.apache.olingo.ext.proxy.api.annotations.Singleton(
+                name = "$singleton.Name",
+                container = "${container.Namespace}.${container.Name}")
+    $utility.getJavaType($singleton.EntityType) get$utility.capitalize($singleton.Name)();
+
+#end
 
   Operations operations();
 

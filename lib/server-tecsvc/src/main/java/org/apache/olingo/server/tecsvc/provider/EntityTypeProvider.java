@@ -92,7 +92,7 @@ public class EntityTypeProvider {
               PropertyProvider.propertySingle, PropertyProvider.propertyDouble, PropertyProvider.propertyDecimal,
               PropertyProvider.propertyBinary, PropertyProvider.propertyDate, PropertyProvider.propertyDateTimeOffset,
               PropertyProvider.propertyDuration, PropertyProvider.propertyGuid, PropertyProvider.propertyTimeOfDay
-              /* TODO add propertyStream */))
+              ))
           .setNavigationProperties(Arrays.asList(PropertyProvider.navPropertyETTwoPrimOne_ETTwoPrim,
               PropertyProvider.collectionNavPropertyETTwoPrimMany_ETTwoPrim));
 
@@ -115,7 +115,7 @@ public class EntityTypeProvider {
                   PropertyProvider.collPropertyDateTimeOffset_NotNullable,
                   PropertyProvider.collPropertyDuration_NotNullable,
                   PropertyProvider.collPropertyGuid, PropertyProvider.collPropertyTimeOfDay
-                  /* TODO add propertyStream */));
+                  ));
 
     } else if (entityTypeName.equals(nameETTwoPrim)) {
       return new EntityType()
@@ -197,7 +197,7 @@ public class EntityTypeProvider {
                   PropertyProvider.propertyDecimal_NotNullable, PropertyProvider.propertyDate_NotNullable,
                   PropertyProvider.propertyDateTimeOffset_NotNullable,
                   PropertyProvider.propertyDuration_NotNullable, PropertyProvider.propertyGuid_NotNullable,
-                  PropertyProvider.propertyTimeOfDay_NotNullable /* TODO add propertyStream */));
+                  PropertyProvider.propertyTimeOfDay_NotNullable));
 
     } else if (entityTypeName.equals(nameETCompAllPrim)) {
       return new EntityType()
@@ -280,7 +280,7 @@ public class EntityTypeProvider {
                   PropertyProvider.propertyBinary_ExplicitNullable, PropertyProvider.propertyDate_ExplicitNullable,
                   PropertyProvider.propertyDateTimeOffset_ExplicitNullable,
                   PropertyProvider.propertyDuration_ExplicitNullable, PropertyProvider.propertyGuid_ExplicitNullable,
-                  PropertyProvider.propertyTimeOfDay_ExplicitNullable /* TODO add propertyStream */,
+                  PropertyProvider.propertyTimeOfDay_ExplicitNullable,
                   PropertyProvider.collPropertyString_ExplicitNullable,
                   PropertyProvider.collPropertyBoolean_ExplicitNullable,
                   PropertyProvider.collPropertyByte_ExplicitNullable,
@@ -296,7 +296,7 @@ public class EntityTypeProvider {
                   PropertyProvider.collPropertyDateTimeOffset_ExplicitNullable,
                   PropertyProvider.collPropertyDuration_ExplicitNullable,
                   PropertyProvider.collPropertyGuid_ExplicitNullable,
-                  PropertyProvider.collPropertyTimeOfDay_ExplicitNullable /* TODO add propertyStream */));
+                  PropertyProvider.collPropertyTimeOfDay_ExplicitNullable));
 
     } else if (entityTypeName.equals(nameETKeyNav)) {
       return new EntityType()

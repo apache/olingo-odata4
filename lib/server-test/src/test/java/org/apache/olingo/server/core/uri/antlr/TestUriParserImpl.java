@@ -1094,7 +1094,6 @@ public class TestUriParserImpl {
 
   @Test
   public void testGeo() throws UriParserException {
-    // TODO sync
     testFilter.runOnETAllPrim("geo.distance(PropertySByte,PropertySByte)")
         .is("<geo.distance(<PropertySByte>,<PropertySByte>)>")
         .isMethod(MethodKind.GEODISTANCE, 2);
