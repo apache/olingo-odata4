@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.server.api.serializer;
 
-import java.io.InputStream;
-
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
@@ -41,20 +39,20 @@ public interface ODataSerializer {
    * @param edm         the Entity Data Model
    * @param serviceRoot the service-root URI of this OData service 
    */
-  InputStream serviceDocument(Edm edm, String serviceRoot) throws SerializerException;
+   SerializerResult serviceDocument(Edm edm, String serviceRoot) throws SerializerException;
 
   /**
    * Writes the metadata document into an InputStream.
    * @param serviceMetadata the metadata information for the service
    */
-  InputStream metadataDocument(ServiceMetadata serviceMetadata) throws SerializerException;
+   SerializerResult metadataDocument(ServiceMetadata serviceMetadata) throws SerializerException;
 
   /**
    * Writes an ODataError into an InputStream.
    * @param error the main error
    * @return inputStream containing the OData-formatted error
    */
-  InputStream error(ODataServerError error) throws SerializerException;
+   SerializerResult error(ODataServerError error) throws SerializerException;
 
   /**
    * Writes entity-collection data into an InputStream.
@@ -62,7 +60,7 @@ public interface ODataSerializer {
    * @param entitySet  the data of the entity set
    * @param options    options for the serializer
    */
-  InputStream entityCollection(EdmEntityType entityType, EntitySet entitySet,
+   SerializerResult entityCollection(EdmEntityType entityType, EntitySet entitySet,
       EntityCollectionSerializerOptions options) throws SerializerException;
 
   /**
@@ -71,7 +69,7 @@ public interface ODataSerializer {
    * @param entity     the data of the entity
    * @param options    options for the serializer
    */
-  InputStream entity(EdmEntityType entityType, Entity entity, EntitySerializerOptions options)
+   SerializerResult entity(EdmEntityType entityType, Entity entity, EntitySerializerOptions options)
       throws SerializerException;
 
   /**
@@ -80,7 +78,7 @@ public interface ODataSerializer {
    * @param property property value
    * @param options options for the serializer
    */
-  InputStream primitive(EdmPrimitiveType type, Property property, PrimitiveSerializerOptions options)
+   SerializerResult primitive(EdmPrimitiveType type, Property property, PrimitiveSerializerOptions options)
       throws SerializerException;
 
   /**
@@ -89,7 +87,7 @@ public interface ODataSerializer {
    * @param property property value
    * @param options options for the serializer
    */
-  InputStream complex(EdmComplexType type, Property property, ComplexSerializerOptions options)
+   SerializerResult complex(EdmComplexType type, Property property, ComplexSerializerOptions options)
       throws SerializerException;
 
   /**
@@ -98,7 +96,7 @@ public interface ODataSerializer {
    * @param property property value
    * @param options options for the serializer
    */
-  InputStream primitiveCollection(EdmPrimitiveType type, Property property, PrimitiveSerializerOptions options)
+   SerializerResult primitiveCollection(EdmPrimitiveType type, Property property, PrimitiveSerializerOptions options)
       throws SerializerException;
 
   /**
@@ -107,6 +105,6 @@ public interface ODataSerializer {
    * @param property property value
    * @param options options for the serializer
    */
-  InputStream complexCollection(EdmComplexType type, Property property, ComplexSerializerOptions options)
+   SerializerResult complexCollection(EdmComplexType type, Property property, ComplexSerializerOptions options)
       throws SerializerException;
 }

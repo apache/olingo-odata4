@@ -111,7 +111,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
                 getContextUrl(edmEntitySet, false, expand, select, null))
             .count(uriInfo.getCountOption())
             .expand(expand).select(select)
-            .build());
+            .build()).getContent();
 
     // Finally we set the response data, headers and status code
     response.setContent(serializedContent);
@@ -148,7 +148,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
               .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                   getContextUrl(edmEntitySet, true, expand, select, null))
               .expand(expand).select(select)
-              .build());
+              .build()).getContent();
       response.setContent(serializedContent);
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
@@ -257,7 +257,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
               getContextUrl(edmEntitySet, true, null, null, edmProperty.getName());
           InputStream serializerContent = complex ?
               serializer.complex((EdmComplexType) edmProperty.getType(), property,
-                  ComplexSerializerOptions.with().contextURL(contextURL).build()) :
+                  ComplexSerializerOptions.with().contextURL(contextURL).build()).getContent() :
               serializer.primitive((EdmPrimitiveType) edmProperty.getType(), property,
                                     PrimitiveSerializerOptions.with()
                                     .contextURL(contextURL)
@@ -265,7 +265,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
                                     .nullable(edmProperty.isNullable())
                                     .precision(edmProperty.getPrecision())
                                     .maxLength(edmProperty.getMaxLength())
-                                    .unicode(edmProperty.isUnicode()).build());
+                                    .unicode(edmProperty.isUnicode()).build()).getContent();
           response.setContent(serializerContent);
           response.setStatusCode(HttpStatusCode.OK.getStatusCode());
           response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());

@@ -87,7 +87,7 @@ public class MetadataDocumentXmlSerializerTest {
     assertEquals("<?xml version='1.0' encoding='UTF-8'?>"
         + "<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">"
         + "<edmx:DataServices/></edmx:Edmx>",
-        IOUtils.toString(serializer.metadataDocument(metadata)));
+        IOUtils.toString(serializer.metadataDocument(metadata).getContent()));
   }
 
   /** Writes simplest (empty) Schema. */
@@ -100,7 +100,7 @@ public class MetadataDocumentXmlSerializerTest {
     ServiceMetadata serviceMetadata = mock(ServiceMetadata.class);
     when(serviceMetadata.getEdm()).thenReturn(edm);
 
-    InputStream metadata = serializer.metadataDocument(serviceMetadata);
+    InputStream metadata = serializer.metadataDocument(serviceMetadata).getContent();
     assertNotNull(metadata);
     assertEquals("<?xml version='1.0' encoding='UTF-8'?>" +
         "<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">" +
@@ -166,7 +166,7 @@ public class MetadataDocumentXmlSerializerTest {
     when(serviceMetadata.getEdm()).thenReturn(edm);
     when(serviceMetadata.getReferences()).thenReturn(edmxReferences);
 
-    InputStream metadata = serializer.metadataDocument(serviceMetadata);
+    InputStream metadata = serializer.metadataDocument(serviceMetadata).getContent();
     assertNotNull(metadata);
     final String metadataString = IOUtils.toString(metadata);
     // edmx reference
@@ -213,7 +213,7 @@ public class MetadataDocumentXmlSerializerTest {
   public void aliasTest() throws Exception {
     EdmProvider provider = new LocalProvider();
     ServiceMetadata serviceMetadata = new ServiceMetadataImpl(provider, Collections.<EdmxReference> emptyList());
-    InputStream metadataStream = serializer.metadataDocument(serviceMetadata);
+    InputStream metadataStream = serializer.metadataDocument(serviceMetadata).getContent();
     String metadata = IOUtils.toString(metadataStream);
     assertNotNull(metadata);
 
@@ -254,7 +254,7 @@ public class MetadataDocumentXmlSerializerTest {
 
     when(schema.getComplexTypes()).thenReturn(complexTypes);
 
-    InputStream metadataStream = serializer.metadataDocument(serviceMetadata);
+    InputStream metadataStream = serializer.metadataDocument(serviceMetadata).getContent();
     String metadata = IOUtils.toString(metadataStream);
     assertTrue(metadata.contains("<ComplexType Name=\"ComplexType\" Abstract=\"true\">"
         + "<Property Name=\"prop1\" Type=\"Edm.String\"/>"

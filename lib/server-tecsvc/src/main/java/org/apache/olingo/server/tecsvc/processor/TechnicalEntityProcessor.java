@@ -125,7 +125,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
                   getContextUrl(edmEntitySet, edmEntityType, false, expand, select))
               .count(uriInfo.getCountOption())
               .expand(expand).select(select)
-              .build()));
+              .build()).getContent());
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     }
@@ -176,7 +176,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
             .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                 getContextUrl(edmEntitySet, edmEntityType, true, expand, select))
             .expand(expand).select(select)
-            .build()));
+            .build()).getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
   }
@@ -218,7 +218,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     } else {
       dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity,
           odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-              .entity(request.getBody(), edmEntityType),
+              .entity(request.getBody(), edmEntityType).getEntity(),
           false, true);
     }
 
@@ -228,7 +228,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         EntitySerializerOptions.with()
             .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                 getContextUrl(edmEntitySet, edmEntityType, true, null, null))
-            .build()));
+            .build()).getContent());
     response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
     response.setHeader(HttpHeader.LOCATION,
@@ -243,7 +243,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     Entity entity = readEntity(uriInfo);
     checkRequestFormat(requestFormat);
     ODataDeserializer deserializer = odata.createDeserializer(ODataFormat.fromContentType(requestFormat));
-    final Entity changedEntity = deserializer.entity(request.getBody(), edmEntitySet.getEntityType());
+    final Entity changedEntity = deserializer.entity(request.getBody(), edmEntitySet.getEntityType()).getEntity();
     dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity, changedEntity,
         request.getMethod() == HttpMethod.PATCH, false);
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());

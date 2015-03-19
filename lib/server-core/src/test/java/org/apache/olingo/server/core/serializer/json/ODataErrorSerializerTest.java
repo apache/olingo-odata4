@@ -52,7 +52,7 @@ public class ODataErrorSerializerTest {
   public void basicODataErrorNoCode() throws Exception {
     ODataServerError error = new ODataServerError();
     error.setMessage("ErrorMessage");
-    InputStream stream = ser.error(error);
+    InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
     assertEquals("{\"error\":{\"code\":null,\"message\":\"ErrorMessage\"}}", jsonString);
   }
@@ -61,7 +61,7 @@ public class ODataErrorSerializerTest {
   public void basicODataErrorWithCode() throws Exception {
     ODataServerError error = new ODataServerError();
     error.setCode("Code").setMessage("ErrorMessage");
-    InputStream stream = ser.error(error);
+    InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
     assertEquals("{\"error\":{\"code\":\"Code\",\"message\":\"ErrorMessage\"}}", jsonString);
   }
@@ -70,7 +70,7 @@ public class ODataErrorSerializerTest {
   public void basicODataErrorWithCodeAndTarget() throws Exception {
     ODataServerError error = new ODataServerError();
     error.setCode("Code").setMessage("ErrorMessage").setTarget("Target");
-    InputStream stream = ser.error(error);
+    InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
     assertEquals("{\"error\":{\"code\":\"Code\",\"message\":\"ErrorMessage\",\"target\":\"Target\"}}", jsonString);
   }
@@ -84,7 +84,7 @@ public class ODataErrorSerializerTest {
   public void emptyDetailsList() throws Exception {
     ODataServerError error = new ODataServerError();
     error.setMessage("ErrorMessage").setDetails(new ArrayList<ODataErrorDetail>());
-    InputStream stream = ser.error(error);
+    InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
     assertEquals("{\"error\":{\"code\":null,\"message\":\"ErrorMessage\",\"details\":[]}}", jsonString);
   }
@@ -92,7 +92,7 @@ public class ODataErrorSerializerTest {
   @Test
   public void nothingSetAtODataErrorObject() throws Exception {
     ODataServerError error = new ODataServerError();
-    InputStream stream = ser.error(error);
+    InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
     assertEquals("{\"error\":{\"code\":null,\"message\":null}}", jsonString);
   }
@@ -102,7 +102,7 @@ public class ODataErrorSerializerTest {
     List<ODataErrorDetail> details = new ArrayList<ODataErrorDetail>();
     details.add(new ODataErrorDetail());
     ODataServerError error = new ODataServerError().setDetails(details);
-    InputStream stream = ser.error(error);
+    InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
     assertEquals("{\"error\":{\"code\":null,\"message\":null,\"details\":[{\"code\":null,\"message\":null}]}}",
         jsonString);
@@ -114,7 +114,7 @@ public class ODataErrorSerializerTest {
     details.add(new ODataErrorDetail().setCode("detailCode").setMessage("detailMessage").setTarget("detailTarget"));
     ODataServerError error =
         new ODataServerError().setCode("Code").setMessage("Message").setTarget("Target").setDetails(details);
-    InputStream stream = ser.error(error);
+    InputStream stream = ser.error(error).getContent();
     JsonNode tree = new ObjectMapper().readTree(stream);
     assertNotNull(tree);
     tree = tree.get("error");

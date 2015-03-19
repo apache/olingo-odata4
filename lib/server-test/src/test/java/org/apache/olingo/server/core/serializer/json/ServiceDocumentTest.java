@@ -114,7 +114,7 @@ public class ServiceDocumentTest {
     ODataSerializer serializer = server.createSerializer(ODataFormat.JSON);
     assertNotNull(serializer);
 
-    InputStream result = serializer.serviceDocument(edm, serviceRoot);
+    InputStream result = serializer.serviceDocument(edm, serviceRoot).getContent();
     assertNotNull(result);
     String jsonString = IOUtils.toString(result);
 

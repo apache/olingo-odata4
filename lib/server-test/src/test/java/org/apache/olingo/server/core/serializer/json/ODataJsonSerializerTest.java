@@ -80,7 +80,7 @@ public class ODataJsonSerializerTest {
     InputStream result = serializer.entity(edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-            .build());
+            .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
         + "\"@odata.context\":\"$metadata#ESAllPrim/$entity\","
@@ -112,7 +112,7 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(serializer.entity(edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-            .build()));
+            .build()).getContent());
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESAllPrim/$entity\","
         + "\"PropertyInt16\":32767,"
         + "\"PropertyString\":null,\"PropertyBoolean\":null,"
@@ -167,7 +167,7 @@ public class ODataJsonSerializerTest {
         EntityCollectionSerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
             .count(countOption)
-            .build());
+            .build()).getContent();
     final String resultString = IOUtils.toString(result);
 
     Assert.assertThat(resultString, CoreMatchers.startsWith("{"
@@ -192,7 +192,7 @@ public class ODataJsonSerializerTest {
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().serviceRoot(URI.create("http://host/service/"))
                 .entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-            .build());
+            .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
         + "\"@odata.context\":\"http://host/service/$metadata#ESCollAllPrim/$entity\","
@@ -227,7 +227,7 @@ public class ODataJsonSerializerTest {
     InputStream result = serializer.entity(edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-            .build());
+            .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
         + "\"@odata.context\":\"$metadata#ESCompAllPrim/$entity\","
@@ -260,7 +260,7 @@ public class ODataJsonSerializerTest {
     InputStream result = serializer.entity(edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-            .build());
+            .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
         + "\"@odata.context\":\"$metadata#ESMixPrimCollComp/$entity\","
@@ -283,7 +283,7 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(serializer.entity(edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-            .build()));
+            .build()).getContent());
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESMixPrimCollComp/$entity\","
         + "\"PropertyInt16\":32767,"
         + "\"CollPropertyString\":null,\"PropertyComp\":null,\"CollPropertyComp\":null}";
@@ -295,7 +295,7 @@ public class ODataJsonSerializerTest {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     InputStream result = new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA)
-        .entity(edmEntitySet.getEntityType(), entity, null);
+        .entity(edmEntitySet.getEntityType(), entity, null).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"}";
     Assert.assertEquals(expectedResult, resultString);
@@ -308,7 +308,7 @@ public class ODataJsonSerializerTest {
     InputStream result = new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA)
         .entityCollection(edmEntitySet.getEntityType(), entitySet,
             EntityCollectionSerializerOptions.with()
-                .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build());
+                .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{\"value\":["
         + "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"},"
@@ -326,7 +326,7 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(serializer.entity(edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-            .build()));
+            .build()).getContent());
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia/$entity\","
         + "\"@odata.mediaEtag\":\"theMediaETag\",\"@odata.mediaContentType\":\"image/svg+xml\","
         + "\"PropertyInt16\":1}";
@@ -339,7 +339,7 @@ public class ODataJsonSerializerTest {
     final EntitySet entitySet = data.readAll(edmEntitySet);
     final String resultString = IOUtils.toString(serializer.entityCollection(edmEntitySet.getEntityType(), entitySet,
         EntityCollectionSerializerOptions.with()
-            .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build()));
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build()).getContent());
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia\",\"value\":["
         + "{\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":1},"
         + "{\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":2},"
@@ -364,7 +364,7 @@ public class ODataJsonSerializerTest {
                     .selectList(helper.buildContextURLSelectList(entityType, null, select))
                     .suffix(Suffix.ENTITY).build())
                 .select(select)
-                .build());
+                .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
         + "\"@odata.context\":\"$metadata#ESAllPrim(PropertyBoolean,PropertyDate)/$entity\","
@@ -384,7 +384,7 @@ public class ODataJsonSerializerTest {
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .select(select)
-            .build());
+            .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESTwoPrim/$entity\","
         + "\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"}";
@@ -405,7 +405,7 @@ public class ODataJsonSerializerTest {
                     .selectList(helper.buildContextURLSelectList(entityType, null, select))
                     .build())
                 .select(select)
-                .build());
+                .build()).getContent();
     final String resultString = IOUtils.toString(result);
     Assert.assertEquals("{"
             + "\"@odata.context\":\"$metadata#ESCompComp(PropertyComp/PropertyComp/PropertyString)\","
@@ -430,7 +430,7 @@ public class ODataJsonSerializerTest {
                     .selectList(helper.buildContextURLSelectList(entityType, null, select))
                     .build())
                 .select(select)
-                .build()));
+                .build()).getContent());
     Assert.assertEquals("{"
             + "\"@odata.context\":\"$metadata#ESCompComp(PropertyComp/PropertyComp)\","
             + "\"value\":["
@@ -449,7 +449,7 @@ public class ODataJsonSerializerTest {
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .expand(expand)
-            .build());
+            .build()).getContent();
     final String resultString = IOUtils.toString(result);
     Assert.assertEquals("{\"@odata.context\":\"$metadata#ESTwoPrim/$entity\","
             + "\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\","
@@ -490,7 +490,7 @@ public class ODataJsonSerializerTest {
                     .selectList(helper.buildContextURLSelectList(entityType, expand, select))
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
-                .build()));
+                .build()).getContent());
     Assert.assertEquals("{"
             + "\"@odata.context\":\"$metadata#ESTwoPrim(NavPropertyETAllPrimOne(PropertyDate))/$entity\","
             + "\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\","
@@ -518,7 +518,7 @@ public class ODataJsonSerializerTest {
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
                 .select(select)
-                .build()));
+                .build()).getContent());
     Assert.assertEquals("{"
             + "\"@odata.context\":\"$metadata#ESAllPrim(PropertySByte)/$entity\","
             + "\"PropertySByte\":127,"
@@ -545,7 +545,7 @@ public class ODataJsonSerializerTest {
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
                 .select(select)
-                .build()));
+                .build()).getContent());
     Assert.assertEquals("{"
             + "\"@odata.context\":\"$metadata#ESAllPrim(PropertyTimeOfDay)/$entity\","
             + "\"PropertyTimeOfDay\":\"23:49:14\","
@@ -575,7 +575,7 @@ public class ODataJsonSerializerTest {
                     .selectList(helper.buildContextURLSelectList(entityType, expand, select))
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
-                .build()));
+                .build()).getContent());
     Assert.assertEquals("{"
             + "\"@odata.context\":\"$metadata#ESTwoPrim(NavPropertyETAllPrimMany(PropertyInt32))/$entity\","
             + "\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\","
@@ -600,7 +600,7 @@ public class ODataJsonSerializerTest {
                 .contextURL(ContextURL.with()
                     .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName())
                     .build())
-                .build()));
+                .build()).getContent());
     Assert.assertEquals("{"
             + "\"@odata.context\":\"$metadata#ESAllPrim(32767)/PropertyString\","
             + "\"value\":\"First Resource - positive values\"}",
@@ -632,7 +632,7 @@ public class ODataJsonSerializerTest {
                 .contextURL(ContextURL.with()
                     .entitySet(edmEntitySet).keyPath("1").navOrPropertyPath(edmProperty.getName())
                     .build())
-                .build()));
+                .build()).getContent());
     Assert.assertEquals("{"
             + "\"@odata.context\":\"$metadata#ESCollAllPrim(1)/CollPropertyString\","
             + "\"value\":[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"]}",
@@ -651,7 +651,7 @@ public class ODataJsonSerializerTest {
                 .contextURL(ContextURL.with()
                     .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName())
                     .build())
-                .build()));
+                .build()).getContent());
     Assert.assertEquals("{"
             + "\"@odata.context\":\"$metadata#ESMixPrimCollComp(32767)/PropertyComp\","
             + "\"PropertyInt16\":111,\"PropertyString\":\"TEST A\"}",
@@ -670,7 +670,7 @@ public class ODataJsonSerializerTest {
                 .contextURL(ContextURL.with()
                     .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName())
                     .build())
-                .build()));
+                .build()).getContent());
     Assert.assertEquals("{"
             + "\"@odata.context\":\"$metadata#ESMixPrimCollComp(32767)/CollPropertyComp\","
             + "\"value\":[{\"PropertyInt16\":123,\"PropertyString\":\"TEST 1\"},"

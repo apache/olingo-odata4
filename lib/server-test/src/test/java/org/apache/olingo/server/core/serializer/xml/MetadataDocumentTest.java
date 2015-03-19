@@ -48,7 +48,7 @@ public class MetadataDocumentTest {
         new EdmTechProvider(references), references);
 
     final String metadata = IOUtils.toString(
-        odata.createSerializer(ODataFormat.XML).metadataDocument(serviceMetadata));
+        odata.createSerializer(ODataFormat.XML).metadataDocument(serviceMetadata).getContent());
     assertNotNull(metadata);
 
     assertThat(metadata,

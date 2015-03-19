@@ -49,7 +49,9 @@ import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
+import org.apache.olingo.server.core.deserializer.DeserializerResultImpl;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -66,14 +68,15 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   private static final String ODATA_CONTROL_INFORMATION_PREFIX = "@odata.";
 
   @Override
-  public EntitySet entityCollection(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException {
+  public DeserializerResult entityCollection(InputStream stream, EdmEntityType edmEntityType) 
+      throws DeserializerException {
     try {
       ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
       JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
       final ObjectNode tree = parser.getCodec().readTree(parser);
 
-      return consumeEntitySetNode(edmEntityType, tree);
+      return DeserializerResultImpl.with().entitySet(consumeEntitySetNode(edmEntityType, tree)).build();
     } catch (JsonParseException e) {
       throw new DeserializerException("An JsonParseException occurred", e,
           DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
@@ -139,14 +142,13 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   }
 
   @Override
-  public Entity entity(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException {
+  public DeserializerResult entity(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException {
     try {
       ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
       JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
       final ObjectNode tree = parser.getCodec().readTree(parser);
-
-      return consumeEntityNode(edmEntityType, tree);
+      return DeserializerResultImpl.with().entity(consumeEntityNode(edmEntityType, tree)).build();
 
     } catch (JsonParseException e) {
       throw new DeserializerException("An JsonParseException occurred", e,

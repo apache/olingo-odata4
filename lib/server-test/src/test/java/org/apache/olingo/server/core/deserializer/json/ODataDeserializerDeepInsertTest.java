@@ -41,7 +41,7 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
   public void esAllPrimExpandedToOne() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("EntityESAllPrimExpandedNavPropertyETTwoPrimOne.json");
-    Entity entity = OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+    Entity entity = OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType).getEntity();
 
     Link navigationLink = entity.getNavigationLink("NavPropertyETTwoPrimOne");
     assertNotNull(navigationLink);
@@ -63,7 +63,7 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
   public void esAllPrimExpandedToMany() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("EntityESAllPrimExpandedNavPropertyETTwoPrimMany.json");
-    Entity entity = OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+    Entity entity = OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType).getEntity();
 
     Link navigationLink = entity.getNavigationLink("NavPropertyETTwoPrimMany");
     assertNotNull(navigationLink);
@@ -130,7 +130,8 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
             + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoPrim"));
-    final Entity entity = OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+    final Entity entity = OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType)
+                                                                                  .getEntity();
   
     assertEquals(1, entity.getNavigationLinks().size());
     final Link link = entity.getNavigationLinks().get(0);

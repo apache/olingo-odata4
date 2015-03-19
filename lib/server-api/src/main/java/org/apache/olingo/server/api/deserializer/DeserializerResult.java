@@ -18,39 +18,29 @@
  */
 package org.apache.olingo.server.api.deserializer;
 
-import java.io.InputStream;
-
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 
 /**
- * Deserializer on OData server side.
+ * Result type for {@link ODataDeserializer} methods
  */
-public interface ODataDeserializer {
+public interface DeserializerResult {
+  /**
+   * Return an entity
+   * @return an {@link Entity} or null
+   */
+  Entity getEntity();
 
   /**
-   * Deserializes an entity stream into an {@link Entity} object.
-   * Validates: property types, no double properties, correct json types 
-   * Returns a deserialized {@link Entity} object and an {@link ExpandOption}
-   * @param stream
-   * @param edmEntityType
-   * @return {@link DeserializerResult}
-   * @throws DeserializerException
+   * Returns a entity set
+   * @return an {@link EntitySet} or null
    */
-  DeserializerResult entity(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException;
+  EntitySet getEntitySet();
 
   /**
-   * Deserializes an entity collection stream into an {@link EntitySet} object.
-   * Returns a deserialized {@link EntitySet} object
-   * @param stream
-   * @param edmEntityType
-   * @return {@link DeserializerResult}
-   * @throws DeserializerException
+   * Returns the ExpandOptions for serialized entities
+   * @return an {@link ExpandOption}
    */
-  DeserializerResult entityCollection(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException;
-  
-  
-
+  ExpandOption getExpandTree();
 }

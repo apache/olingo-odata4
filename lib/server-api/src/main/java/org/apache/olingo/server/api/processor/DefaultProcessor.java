@@ -56,7 +56,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
   public void readServiceDocument(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-    response.setContent(serializer.serviceDocument(serviceMetadata.getEdm(), null));
+    response.setContent(serializer.serviceDocument(serviceMetadata.getEdm(), request.getRawBaseUri()).getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
   }
@@ -65,7 +65,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
   public void readMetadata(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-    response.setContent(serializer.metadataDocument(serviceMetadata));
+    response.setContent(serializer.metadataDocument(serviceMetadata).getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
   }
@@ -75,7 +75,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
                            ContentType requestedContentType) {
     try {
       ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-      response.setContent(serializer.error(serverError));
+      response.setContent(serializer.error(serverError).getContent());
       response.setStatusCode(serverError.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     } catch (Exception e) {
