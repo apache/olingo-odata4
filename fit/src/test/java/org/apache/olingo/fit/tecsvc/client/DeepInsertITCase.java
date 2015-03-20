@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.olingo.client.api.ODataClient;
@@ -45,7 +46,6 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.junit.AfterClass;
 import org.junit.Test;
 
 public class DeepInsertITCase extends AbstractBaseTestITCase {
@@ -72,9 +72,131 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
   private static final String NAV_PROPERTY_ET_TWO_KEY_NAV_ONE = "NavPropertyETTwoKeyNavOne";
   private static final String NAV_PROPERTY_ET_TWO_KEY_NAV_MANY = "NavPropertyETTwoKeyNavMany";
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
-  //Nothing needed here.
+  @Test
+  public void testDeepInsertExpandedResponse() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
+    final ODataObjectFactory of = client.getObjectFactory();
+    final ODataEntity entity = of.newEntity(ET_KEY_NAV);
+
+    // Root entity
+    entity.getProperties().add(
+        of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("String Property level 0")));
+    entity.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 41)))
+            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString(
+                "String Property level 0, complex level 1")))));
+
+    // First level NavPropertyETTwoKeyNavOne => Type ETTwoKeyNav
+    final ODataEntity firstLevelTwoKeyNav = of.newEntity(ET_TWO_KEY_NAV);
+    firstLevelTwoKeyNav.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))
+            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString(
+                "String Property level 1, complex level 1")))));
+    final ODataInlineEntity firstLevelTwoKeyOneInline =
+        of.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, firstLevelTwoKeyNav);
+    entity.addLink(firstLevelTwoKeyOneInline);
+
+    // Second level NavPropertyETTwoKeyNavOne => Type ETTwoKeyNav
+    final ODataEntity secondLevelTwoKeyNav = of.newEntity(ET_TWO_KEY_NAV);
+    secondLevelTwoKeyNav.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 421)))
+            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString(
+                "String Property level 2, complex level 1")))));
+
+    // Binding links
+    secondLevelTwoKeyNav.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, client.newURIBuilder(
+        SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(new LinkedHashMap<String, Object>() {
+      private static final long serialVersionUID = 3109256773218160485L;
+      {
+        put(PROPERTY_INT16, 3);
+        put(PROPERTY_STRING, "1");
+      }
+    }).build()));
+
+    final ODataInlineEntity secondLevelTwoKeyOneInline =
+        of.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, secondLevelTwoKeyNav);
+    firstLevelTwoKeyNav.addLink(secondLevelTwoKeyOneInline);
+
+    // Third level NavPropertyETTwoKeyNavMany => Type ETTwoKeyNav
+    final ODataEntity thirdLevelTwoKeyNavMany1 = of.newEntity(ET_TWO_KEY_NAV);
+    thirdLevelTwoKeyNavMany1.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))
+            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString(
+                "String Property level 3, complex level 1")))));
+
+    final ODataEntity thirdLevelTwoKeyNavMany2 = of.newEntity(ET_TWO_KEY_NAV);
+    thirdLevelTwoKeyNavMany2.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 432)))
+            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString(
+                "String Property level 3, complex level 1")))));
+
+    final ODataEntitySet entitySetThirdLevelTwoKeyNavMany = of.newEntitySet();
+    entitySetThirdLevelTwoKeyNavMany.getEntities().add(thirdLevelTwoKeyNavMany1);
+    entitySetThirdLevelTwoKeyNavMany.getEntities().add(thirdLevelTwoKeyNavMany2);
+    secondLevelTwoKeyNav.addLink(of.newDeepInsertEntitySet(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
+        entitySetThirdLevelTwoKeyNavMany));
+
+    // First level NavPropertyETTwoKeyNavMany => Type ETTwoKeyNav
+    final ODataEntity firstLevelTwoKeyNavMany1 = of.newEntity(ET_TWO_KEY_NAV);
+    firstLevelTwoKeyNavMany1.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 422)))
+            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString(
+                "String Property level 1, complex level 1")))));
+
+    final ODataEntitySet entitySetfirstLevelTwoKeyNavMany = of.newEntitySet();
+    entitySetfirstLevelTwoKeyNavMany.getEntities().add(firstLevelTwoKeyNavMany1);
+    entity.addLink(of.newDeepInsertEntitySet(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
+        entitySetfirstLevelTwoKeyNavMany));
+
+    final ODataEntityCreateResponse<ODataEntity> createResponse =
+        client.getCUDRequestFactory().getEntityCreateRequest(createURI, entity).execute();
+
+    // Check response
+    final ODataEntity resultEntityFirstLevel =
+        createResponse.getBody().getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE).asInlineEntity().getEntity();
+    assertEquals(42, resultEntityFirstLevel.getProperty(PROPERTY_COMP_TWO_PRIM).getComplexValue().get(PROPERTY_INT16)
+        .getPrimitiveValue().toValue());
+    assertEquals("String Property level 1, complex level 1", resultEntityFirstLevel.getProperty(PROPERTY_COMP_TWO_PRIM)
+        .getComplexValue().get(PROPERTY_STRING)
+        .getPrimitiveValue().toValue());
+
+    final ODataEntity resultEntitySecondLevel =
+        resultEntityFirstLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE).asInlineEntity().getEntity();
+    assertEquals(421, resultEntitySecondLevel.getProperty(PROPERTY_COMP_TWO_PRIM).getComplexValue().get(PROPERTY_INT16)
+        .getPrimitiveValue().toValue());
+    assertEquals("String Property level 2, complex level 1", resultEntitySecondLevel.getProperty(PROPERTY_COMP_TWO_PRIM)
+        .getComplexValue().get(PROPERTY_STRING)
+        .getPrimitiveValue().toValue());
+
+    final ODataEntitySet thirdLevelEntitySetNavMany =
+        resultEntitySecondLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
+    assertEquals(2, thirdLevelEntitySetNavMany.getEntities().size());
+
+    assertEquals(431, thirdLevelEntitySetNavMany.getEntities().get(0).getProperty(PROPERTY_COMP_TWO_PRIM)
+        .getComplexValue().get(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertEquals("String Property level 3, complex level 1", thirdLevelEntitySetNavMany.getEntities().get(0)
+        .getProperty(PROPERTY_COMP_TWO_PRIM).getComplexValue().get(PROPERTY_STRING).getPrimitiveValue().toValue());
+
+    assertEquals(432, thirdLevelEntitySetNavMany.getEntities().get(1).getProperty(PROPERTY_COMP_TWO_PRIM)
+        .getComplexValue().get(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertEquals("String Property level 3, complex level 1", thirdLevelEntitySetNavMany.getEntities().get(1)
+        .getProperty(PROPERTY_COMP_TWO_PRIM).getComplexValue().get(PROPERTY_STRING).getPrimitiveValue().toValue());
+
+    final ODataEntitySet firstLevelEntitySetNavMany =
+        createResponse.getBody().getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
+    assertEquals(1, firstLevelEntitySetNavMany.getEntities().size());
+    assertEquals(422, firstLevelEntitySetNavMany.getEntities().get(0).getProperty(PROPERTY_COMP_TWO_PRIM)
+        .getComplexValue().get(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertEquals("String Property level 1, complex level 1", firstLevelEntitySetNavMany.getEntities().get(0)
+        .getProperty(PROPERTY_COMP_TWO_PRIM).getComplexValue().get(PROPERTY_STRING).getPrimitiveValue().toValue());
   }
 
   @Test

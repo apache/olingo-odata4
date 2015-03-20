@@ -17,53 +17,24 @@
  * under the License.
  */
 package org.apache.olingo.server.core.deserializer.helper;
-
+ 
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
-import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
-import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
 import org.apache.olingo.server.core.uri.UriResourceNavigationPropertyImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandItemImpl;
-import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
-
-public class ExpandTreeBuilder {
-  
-  private ExpandItemImpl parrentItem;
-  private ExpandOptionImpl expandOption;
-
-  public ExpandTreeBuilder() {
-    
-  }
-
-  protected ExpandTreeBuilder(final ExpandItemImpl item) {
-    parrentItem = item;
-  }
-
-  public ExpandTreeBuilder addChild(EdmNavigationProperty edmNavigationProperty) {
-    if(expandOption == null) {
-      expandOption = new ExpandOptionImpl();
-      if(parrentItem != null) {
-        ExpandOptionImpl parentOptions = (ExpandOptionImpl) parrentItem.getExpandOption();
-      }
-    }
-    
+ 
+public abstract class ExpandTreeBuilder {
+  public abstract ExpandTreeBuilder expand(EdmNavigationProperty edmNavigationProperty);
+   
+  protected ExpandItemImpl buildExpandItem(final EdmNavigationProperty edmNavigationProperty) {
     final ExpandItemImpl expandItem = new ExpandItemImpl();
     final UriInfoImpl uriInfo = new UriInfoImpl();
-    final UriResourceNavigationPropertyImpl uriResourceNavProperty = new UriResourceNavigationPropertyImpl();
-    uriResourceNavProperty.setNavigationProperty(edmNavigationProperty);
-    uriInfo.addResourcePart(uriResourceNavProperty);
+    final UriResourceNavigationPropertyImpl resourceNavigation = new UriResourceNavigationPropertyImpl();
+    
+    resourceNavigation.setNavigationProperty(edmNavigationProperty);
+    uriInfo.addResourcePart(resourceNavigation);
     expandItem.setResourcePath(uriInfo);
-    expandOption.addExpandItem(expandItem);
-    
-    return new ExpandTreeBuilder(expandItem);
-  }
-
-  public ExpandOption build() {
-    final ExpandOptionImpl expandOption = new ExpandOptionImpl();
-    if(expandOption != null) {
-      expandOption.addExpandItem(expandOption);
-    }
-    
-    return expandOption;
+     
+    return expandItem;
   }
 }

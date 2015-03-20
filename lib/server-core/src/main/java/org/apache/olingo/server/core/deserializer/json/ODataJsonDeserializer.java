@@ -52,6 +52,8 @@ import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.core.deserializer.DeserializerResultImpl;
+import org.apache.olingo.server.core.deserializer.helper.ExpandTreeBuilder;
+import org.apache.olingo.server.core.deserializer.helper.ExpandTreeBuilderImpl;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -75,8 +77,11 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
       JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
       final ObjectNode tree = parser.getCodec().readTree(parser);
-
-      return DeserializerResultImpl.with().entitySet(consumeEntitySetNode(edmEntityType, tree)).build();
+      final ExpandTreeBuilderImpl expandBuilder = new ExpandTreeBuilderImpl();
+      
+      return DeserializerResultImpl.with().entitySet(consumeEntitySetNode(edmEntityType, tree, expandBuilder))
+                                          .expandOption(expandBuilder.build())
+                                          .build();
     } catch (JsonParseException e) {
       throw new DeserializerException("An JsonParseException occurred", e,
           DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
@@ -88,8 +93,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
   }
 
-  private EntitySet consumeEntitySetNode(EdmEntityType edmEntityType, final ObjectNode tree)
-      throws DeserializerException {
+  private EntitySet consumeEntitySetNode(EdmEntityType edmEntityType, final ObjectNode tree, 
+      final ExpandTreeBuilder expandBuilder) throws DeserializerException {
     EntitySetImpl entitySet = new EntitySetImpl();
 
     // Consume entities
@@ -100,7 +105,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
             DeserializerException.MessageKeys.VALUE_TAG_MUST_BE_AN_ARRAY);
       }
 
-      entitySet.getEntities().addAll(consumeEntitySetArray(edmEntityType, jsonNode));
+      entitySet.getEntities().addAll(consumeEntitySetArray(edmEntityType, jsonNode, expandBuilder));
       tree.remove(Constants.VALUE);
     } else {
       throw new DeserializerException("Could not find value array.",
@@ -127,8 +132,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     return entitySet;
   }
 
-  private List<Entity> consumeEntitySetArray(EdmEntityType edmEntityType, JsonNode jsonNode)
-      throws DeserializerException {
+  private List<Entity> consumeEntitySetArray(EdmEntityType edmEntityType, JsonNode jsonNode, 
+      final ExpandTreeBuilder expandBuilder) throws DeserializerException {
     List<Entity> entities = new ArrayList<Entity>();
     for (JsonNode arrayElement : jsonNode) {
       if (arrayElement.isArray() || arrayElement.isValueNode()) {
@@ -136,7 +141,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
             DeserializerException.MessageKeys.INVALID_ENTITY);
       }
 
-      entities.add(consumeEntityNode(edmEntityType, (ObjectNode) arrayElement));
+      entities.add(consumeEntityNode(edmEntityType, (ObjectNode) arrayElement, expandBuilder));
     }
     return entities;
   }
@@ -148,7 +153,11 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
       JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
       final ObjectNode tree = parser.getCodec().readTree(parser);
-      return DeserializerResultImpl.with().entity(consumeEntityNode(edmEntityType, tree)).build();
+      final ExpandTreeBuilderImpl expandBuilder = new ExpandTreeBuilderImpl();
+      
+      return DeserializerResultImpl.with().entity(consumeEntityNode(edmEntityType, tree, expandBuilder))
+                                          .expandOption(expandBuilder.build())
+                                          .build();
 
     } catch (JsonParseException e) {
       throw new DeserializerException("An JsonParseException occurred", e,
@@ -162,7 +171,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   }
 
-  private Entity consumeEntityNode(EdmEntityType edmEntityType, final ObjectNode tree) throws DeserializerException {
+  private Entity consumeEntityNode(EdmEntityType edmEntityType, final ObjectNode tree, ExpandTreeBuilder expandBuilder) 
+      throws DeserializerException {
     EntityImpl entity = new EntityImpl();
     entity.setType(edmEntityType.getFullQualifiedName().getFullQualifiedNameAsString());
 
@@ -170,7 +180,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     consumeEntityProperties(edmEntityType, tree, entity);
 
     // Check and consume all expanded Navigation Properties
-    consumeExpandedNavigationProperties(edmEntityType, tree, entity);
+    consumeExpandedNavigationProperties(edmEntityType, tree, entity, expandBuilder);
 
     // consume remaining json node fields
     consumeRemainingJsonNodeFields(edmEntityType, tree, entity);
@@ -232,7 +242,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   }
 
   private void consumeExpandedNavigationProperties(final EdmEntityType edmEntityType, final ObjectNode node,
-      final EntityImpl entity) throws DeserializerException {
+      final EntityImpl entity, ExpandTreeBuilder expandBuilder) throws DeserializerException {
     List<String> navigationPropertyNames = edmEntityType.getNavigationPropertyNames();
     for (String navigationPropertyName : navigationPropertyNames) {
       // read expanded navigation property
@@ -250,13 +260,17 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         if (jsonNode.isArray() && edmNavigationProperty.isCollection()) {
           link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
           EntitySetImpl inlineEntitySet = new EntitySetImpl();
-          inlineEntitySet.getEntities().addAll(consumeEntitySetArray(edmNavigationProperty.getType(), jsonNode));
+          inlineEntitySet.getEntities().addAll(consumeEntitySetArray(edmNavigationProperty.getType(), 
+                                                                     jsonNode, 
+                                                                     expandBuilder.expand(edmNavigationProperty)));
           link.setInlineEntitySet(inlineEntitySet);
         } else if (!jsonNode.isArray() && (!jsonNode.isValueNode() || jsonNode.isNull()) 
             && !edmNavigationProperty.isCollection()) {
           link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
           if (!jsonNode.isNull()) {
-            Entity inlineEntity = consumeEntityNode(edmNavigationProperty.getType(), (ObjectNode) jsonNode);
+            Entity inlineEntity = consumeEntityNode(edmNavigationProperty.getType(), 
+                                                    (ObjectNode) jsonNode, 
+                                                    expandBuilder.expand(edmNavigationProperty));
             link.setInlineEntity(inlineEntity);
           }
         } else {

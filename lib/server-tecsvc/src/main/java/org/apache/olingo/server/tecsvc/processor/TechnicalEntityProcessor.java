@@ -38,6 +38,7 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.processor.ActionEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionEntityProcessor;
@@ -210,16 +211,18 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
     final EdmEntitySet edmEntitySet = resourceEntitySet.getEntitySet();
     final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
-
+    ExpandOption expand = null;
+    
     Entity entity = dataProvider.create(edmEntitySet);
     if (edmEntityType.hasStream()) { // called from createMediaEntity(...), not directly
       dataProvider.setMedia(entity, odata.createFixedFormatDeserializer().binary(request.getBody()),
           requestFormat.toContentTypeString());
     } else {
-      dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity,
-          odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-              .entity(request.getBody(), edmEntityType).getEntity(),
-          false, true);
+      DeserializerResult deserializerResult = odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
+                                                                          .entity(request.getBody(), edmEntityType);
+      
+      dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity,deserializerResult.getEntity(), false, true);
+      expand = deserializerResult.getExpandTree();
     }
 
     final ODataFormat format = ODataFormat.fromContentType(responseFormat);
@@ -228,7 +231,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         EntitySerializerOptions.with()
             .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                 getContextUrl(edmEntitySet, edmEntityType, true, null, null))
-            .build()).getContent());
+            .expand(expand).build()).getContent());
     response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
     response.setHeader(HttpHeader.LOCATION,
