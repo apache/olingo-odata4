@@ -44,6 +44,9 @@ public class ContainerProvider {
   public static final String AIRT_COLL_ET_KEY_NAV_PARAM = "AIRTCollETKeyNavParam";
   public static final String AIRTES_ALL_PRIM_PARAM = "AIRTESAllPrimParam";
   public static final String AIRT_COLL_ES_ALL_PRIM_PARAM = "AIRTCollESAllPrimParam";
+  public static final String AIRT = "AIRT";
+  public static final String AIRT_PARAM = "AIRTParam";
+  public static final String AIRT_TWO_PARAM = "AIRTTwoParam";
 
   EntityContainerInfo entityContainerInfoTest1 =
       new EntityContainerInfo().setContainerName(nameContainer);
@@ -115,6 +118,9 @@ public class ContainerProvider {
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_COLL_ET_KEY_NAV_PARAM));
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRTES_ALL_PRIM_PARAM));
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_COLL_ES_ALL_PRIM_PARAM));
+    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT));
+    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_PARAM));
+    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_TWO_PARAM));
 
     // FunctionImports
     List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
@@ -434,6 +440,21 @@ public class ContainerProvider {
         return new ActionImport()
             .setName(AIRT_COLL_ES_ALL_PRIM_PARAM)
             .setAction(ActionProvider.nameUARTCollETAllPrimParam);
+
+      } else if (name.equals(AIRT)) {
+        return new ActionImport()
+            .setName(AIRT)
+            .setAction(ActionProvider.nameUART);
+
+      } else if (name.equals(AIRT_PARAM)) {
+        return new ActionImport()
+            .setName(AIRT_PARAM)
+            .setAction(ActionProvider.nameUARTParam);
+
+      } else if (name.equals(AIRT_TWO_PARAM)) {
+        return new ActionImport()
+            .setName(AIRT_TWO_PARAM)
+            .setAction(ActionProvider.nameUARTTwoParam);
       }
     }
 

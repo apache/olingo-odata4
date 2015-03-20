@@ -120,6 +120,9 @@ public class SchemaProvider {
     actions.addAll(prov.getActions(ActionProvider.nameUARTCollETKeyNavParam));
     actions.addAll(prov.getActions(ActionProvider.nameUARTETAllPrimParam));
     actions.addAll(prov.getActions(ActionProvider.nameUARTCollETAllPrimParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUART));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTTwoParam));
 
     // Functions
     List<Function> functions = new ArrayList<Function>();

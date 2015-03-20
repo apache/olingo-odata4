@@ -60,6 +60,7 @@ import org.apache.olingo.server.api.processor.ActionEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionEntityProcessor;
 import org.apache.olingo.server.api.processor.ActionPrimitiveCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionPrimitiveProcessor;
+import org.apache.olingo.server.api.processor.ActionVoidProcessor;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
@@ -381,11 +382,15 @@ public class ODataHandlerTest {
 
   @Test
   public void dispatchAction() throws Exception {
-    ActionPrimitiveProcessor primitiveProcessor = mock(ActionPrimitiveProcessor.class);
+    final ActionPrimitiveProcessor primitiveProcessor = mock(ActionPrimitiveProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRT_STRING, primitiveProcessor);
     verify(primitiveProcessor).processActionPrimitive(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
         any(ContentType.class), any(ContentType.class));
+    dispatchMethodNotAllowed(HttpMethod.GET, ContainerProvider.AIRT_STRING, primitiveProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, ContainerProvider.AIRT_STRING, primitiveProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, ContainerProvider.AIRT_STRING, primitiveProcessor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, ContainerProvider.AIRT_STRING, primitiveProcessor);
 
     ActionPrimitiveCollectionProcessor primitiveCollectionProcessor = mock(ActionPrimitiveCollectionProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRT_COLL_STRING_TWO_PARAM, primitiveCollectionProcessor);
@@ -429,7 +434,14 @@ public class ODataHandlerTest {
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
         any(ContentType.class), any(ContentType.class));
 
-    dispatchMethodNotAllowed(HttpMethod.GET, "AIRTString", mock(Processor.class));
+    final ActionVoidProcessor voidProcessor = mock(ActionVoidProcessor.class);
+    dispatch(HttpMethod.POST, ContainerProvider.AIRT, voidProcessor);
+    verify(voidProcessor).processActionVoid(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+    dispatchMethodNotAllowed(HttpMethod.GET, ContainerProvider.AIRT, voidProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, ContainerProvider.AIRT, voidProcessor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, ContainerProvider.AIRT, voidProcessor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, ContainerProvider.AIRT, voidProcessor);
   }
 
   @Test

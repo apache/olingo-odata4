@@ -2728,6 +2728,11 @@ public class TestFullResourcePath {
         .goPath().first()
         .isActionImport(ContainerProvider.AIRT_COLL_ES_ALL_PRIM_PARAM);
 
+    testUri.run(ContainerProvider.AIRT)
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isActionImport(ContainerProvider.AIRT);
+
     testUri.run("ESKeyNav/$count")
         .isKind(UriInfoKind.resource)
         .goPath().first()

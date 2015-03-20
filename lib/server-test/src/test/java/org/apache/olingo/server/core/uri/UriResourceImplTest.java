@@ -48,6 +48,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class UriResourceImplTest {
 
@@ -90,6 +91,11 @@ public class UriResourceImplTest {
     assertEquals(false, impl.isCollection());
     assertEquals("AIRTCTTwoPrimParam", impl.toString());
     assertEquals(actionImport.getUnboundAction().getReturnType().getType(), impl.getType());
+
+    actionImport = edm.getEntityContainer(null).getActionImport("AIRT");
+    impl.setActionImport(actionImport);
+    assertEquals(false, impl.isCollection());
+    assertNull(impl.getType());
   }
 
   @Test

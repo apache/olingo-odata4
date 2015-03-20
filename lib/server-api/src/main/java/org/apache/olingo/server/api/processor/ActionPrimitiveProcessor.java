@@ -27,22 +27,21 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor interface for handling an action import request which has a
- * return type of Primitive.
+ * Processor interface for handling an action request with a return type of Primitive.
  */
 public interface ActionPrimitiveProcessor extends PrimitiveProcessor {
   /**
    * Process an action which has as return type a primitive-type.
-   * @param request  OData request object containing raw HTTP information
-   * @param response OData response object for collecting response data
-   * @param uriInfo  information of a parsed OData URI
+   * @param request         OData request object containing raw HTTP information
+   * @param response        OData response object for collecting response data
+   * @param uriInfo         information about a parsed OData URI
    * @param requestFormat   content type of body sent with request
-   * @param responseFormat   requested content type after content negotiation
-   * @throws org.apache.olingo.server.api.ODataApplicationException if the service implementation encounters a failure
-   * @throws org.apache.olingo.server.api.deserializer.DeserializerException     if deserialization failed
-   * @throws org.apache.olingo.server.api.serializer.SerializerException       if serialization failed
+   * @param responseFormat  requested content type after content negotiation
+   * @throws ODataApplicationException if the service implementation encounters a failure
+   * @throws DeserializerException     if deserialization failed
+   * @throws SerializerException       if serialization failed
    */
   void processActionPrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-                        ContentType requestFormat, ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException;
+      ContentType requestFormat, ContentType responseFormat)
+      throws ODataApplicationException, DeserializerException, SerializerException;
 }

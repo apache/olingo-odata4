@@ -41,6 +41,7 @@ import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.processor.ActionEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionEntityProcessor;
+import org.apache.olingo.server.api.processor.ActionVoidProcessor;
 import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
@@ -68,7 +69,8 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.options.TopHandler
  */
 public class TechnicalEntityProcessor extends TechnicalProcessor
     implements EntityCollectionProcessor, ActionEntityCollectionProcessor, CountEntityCollectionProcessor,
-    EntityProcessor, ActionEntityProcessor, MediaEntityProcessor {
+    EntityProcessor, ActionEntityProcessor, MediaEntityProcessor,
+    ActionVoidProcessor {
 
   public TechnicalEntityProcessor(final DataProvider dataProvider) {
     super(dataProvider);
@@ -271,11 +273,17 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void processActionEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
+  public void processActionEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Process entity is not supported yet.",
         HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+  }
+
+  @Override
+  public void processActionVoid(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+      final ContentType requestFormat) throws ODataApplicationException, DeserializerException {
+    response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
   }
 
   private void setCount(EntitySet entitySet) {

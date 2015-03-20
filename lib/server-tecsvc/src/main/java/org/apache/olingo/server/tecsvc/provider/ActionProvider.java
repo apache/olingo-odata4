@@ -19,6 +19,7 @@
 package org.apache.olingo.server.tecsvc.provider;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.ODataException;
@@ -62,6 +63,11 @@ public class ActionProvider {
           new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTETAllPrimParam");
   public static final FullQualifiedName nameUARTCollETAllPrimParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTCollETAllPrimParam");
+  public static final FullQualifiedName nameUART = new FullQualifiedName(SchemaProvider.NAMESPACE, "UART");
+  public static final FullQualifiedName nameUARTParam =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTParam");
+  public static final FullQualifiedName nameUARTTwoParam =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTTwoParam");
 
 
   public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
@@ -131,6 +137,24 @@ public class ActionProvider {
                           .setReturnType(
                                   new ReturnType().setType(EntityTypeProvider.nameETAllPrim).setCollection(true))
       );
+
+    } else if (actionName.equals(nameUART)) {
+      return Collections.singletonList(new Action().setName(nameUART.getName()));
+
+    } else if (actionName.equals(nameUARTParam)) {
+      return Collections.singletonList(
+          new Action()
+              .setName(nameUARTParam.getName())
+              .setParameters(Collections.singletonList(
+                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16))));
+
+    } else if (actionName.equals(nameUARTTwoParam)) {
+      return Collections.singletonList(
+          new Action()
+              .setName(nameUARTTwoParam.getName())
+              .setParameters(Arrays.asList(
+                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16),
+                  new Parameter().setName("ParameterDuration").setType(PropertyProvider.nameDuration))));
 
     } else if (actionName.equals(nameBAETTwoKeyNavRTETTwoKeyNav)) {
       return Arrays.asList(

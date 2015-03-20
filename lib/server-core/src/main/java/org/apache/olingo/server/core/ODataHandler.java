@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmAction;
-import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
@@ -49,6 +48,7 @@ import org.apache.olingo.server.api.processor.ActionEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionEntityProcessor;
 import org.apache.olingo.server.api.processor.ActionPrimitiveCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionPrimitiveProcessor;
+import org.apache.olingo.server.api.processor.ActionVoidProcessor;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
@@ -318,20 +318,20 @@ public class ODataHandler {
           ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
     }
 
-    EdmActionImport actionImport = uriResourceAction.getActionImport();
-    // could be null for bound actions
-    if (actionImport == null) {
-      throw new ODataHandlerException("Bound actions are not implemented yet",
+    final EdmAction action = uriResourceAction.getAction();
+    if (action == null) {
+      throw new ODataHandlerException("No action defined for action import.",
           ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
-
-    EdmAction unboundActions = actionImport.getUnboundAction();
-    if (unboundActions == null) {
-      throw new ODataHandlerException("No unbound function defined for function import",
-          ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+    final EdmReturnType returnType = action.getReturnType();
+    if (returnType == null) {
+      final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
+      checkContentTypeSupport(requestFormat, RepresentationType.ACTION_PARAMETERS);
+      selectProcessor(ActionVoidProcessor.class)
+          .processActionVoid(request, response, uriInfo, requestFormat);
+    } else {
+      handleOperationDispatching(request, response, true, returnType);
     }
-    EdmReturnType returnType = unboundActions.getReturnType();
-    handleOperationDispatching(request, response, true, returnType);
   }
 
   private void handleOperationDispatching(final ODataRequest request, final ODataResponse response,
@@ -460,42 +460,44 @@ public class ODataHandler {
     if (method == HttpMethod.GET) {
       final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, customContentTypeSupport, complexRepresentationType);
-      if (complexRepresentationType == RepresentationType.COMPLEX) {
-        selectProcessor(ComplexProcessor.class)
-            .readComplex(request, response, uriInfo, requestedContentType);
-      } else {
+      if (isCollection) {
         selectProcessor(ComplexCollectionProcessor.class)
             .readComplexCollection(request, response, uriInfo, requestedContentType);
+      } else {
+        selectProcessor(ComplexProcessor.class)
+            .readComplex(request, response, uriInfo, requestedContentType);
       }
     } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH) {
       final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
       checkContentTypeSupport(requestFormat, complexRepresentationType);
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, customContentTypeSupport, complexRepresentationType);
-      if (complexRepresentationType == RepresentationType.COMPLEX) {
-        selectProcessor(ComplexProcessor.class)
-            .updateComplex(request, response, uriInfo, requestFormat, responseFormat);
-      } else {
+      if (isCollection) {
         selectProcessor(ComplexCollectionProcessor.class)
             .updateComplexCollection(request, response, uriInfo, requestFormat, responseFormat);
+      } else {
+        selectProcessor(ComplexProcessor.class)
+            .updateComplex(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else if (method == HttpMethod.POST && isAction) {
       final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
-      checkContentTypeSupport(requestFormat, complexRepresentationType);
+      checkContentTypeSupport(requestFormat, RepresentationType.ACTION_PARAMETERS);
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, customContentTypeSupport, complexRepresentationType);
-      if (complexRepresentationType == RepresentationType.COMPLEX) {
-        selectProcessor(ActionComplexProcessor.class)
-            .processActionComplex(request, response, uriInfo, requestFormat, responseFormat);
-      } else {
+      if (isCollection) {
         selectProcessor(ActionComplexCollectionProcessor.class)
             .processActionComplexCollection(request, response, uriInfo, requestFormat, responseFormat);
+      } else {
+        selectProcessor(ActionComplexProcessor.class)
+            .processActionComplex(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else if (method == HttpMethod.DELETE) {
-      if (complexRepresentationType == RepresentationType.COMPLEX) {
-        selectProcessor(ComplexProcessor.class).deleteComplex(request, response, uriInfo);
+      if (isCollection) {
+        selectProcessor(ComplexCollectionProcessor.class)
+            .deleteComplexCollection(request, response, uriInfo);
       } else {
-        selectProcessor(ComplexCollectionProcessor.class).deleteComplexCollection(request, response, uriInfo);
+        selectProcessor(ComplexProcessor.class)
+            .deleteComplex(request, response, uriInfo);
       }
     } else {
       throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
@@ -514,41 +516,44 @@ public class ODataHandler {
     if (method == HttpMethod.GET) {
       final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, customContentTypeSupport, representationType);
-      if (representationType == RepresentationType.PRIMITIVE) {
-        selectProcessor(PrimitiveProcessor.class).readPrimitive(request, response, uriInfo, requestedContentType);
-      } else {
+      if (isCollection) {
         selectProcessor(PrimitiveCollectionProcessor.class)
             .readPrimitiveCollection(request, response, uriInfo, requestedContentType);
+      } else {
+        selectProcessor(PrimitiveProcessor.class)
+            .readPrimitive(request, response, uriInfo, requestedContentType);
       }
     } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH) {
       final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
       checkContentTypeSupport(requestFormat, representationType);
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, customContentTypeSupport, representationType);
-      if (representationType == RepresentationType.PRIMITIVE) {
-        selectProcessor(PrimitiveProcessor.class)
-            .updatePrimitive(request, response, uriInfo, requestFormat, responseFormat);
-      } else {
+      if (isCollection) {
         selectProcessor(PrimitiveCollectionProcessor.class)
             .updatePrimitiveCollection(request, response, uriInfo, requestFormat, responseFormat);
+      } else {
+        selectProcessor(PrimitiveProcessor.class)
+            .updatePrimitive(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else if (method == HttpMethod.DELETE) {
-      if (representationType == RepresentationType.PRIMITIVE) {
-        selectProcessor(PrimitiveProcessor.class).deletePrimitive(request, response, uriInfo);
+      if (isCollection) {
+        selectProcessor(PrimitiveCollectionProcessor.class)
+            .deletePrimitiveCollection(request, response, uriInfo);
       } else {
-        selectProcessor(PrimitiveCollectionProcessor.class).deletePrimitiveCollection(request, response, uriInfo);
+        selectProcessor(PrimitiveProcessor.class)
+            .deletePrimitive(request, response, uriInfo);
       }
     } else if (method == HttpMethod.POST && isAction) {
       final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
-      checkContentTypeSupport(requestFormat, representationType);
+      checkContentTypeSupport(requestFormat, RepresentationType.ACTION_PARAMETERS);
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, customContentTypeSupport, representationType);
-      if (representationType == RepresentationType.PRIMITIVE) {
-        selectProcessor(ActionPrimitiveProcessor.class)
-            .processActionPrimitive(request, response, uriInfo, requestFormat, responseFormat);
-      } else {
+      if (isCollection) {
         selectProcessor(ActionPrimitiveCollectionProcessor.class)
             .processActionPrimitiveCollection(request, response, uriInfo, requestFormat, responseFormat);
+      } else {
+        selectProcessor(ActionPrimitiveProcessor.class)
+            .processActionPrimitive(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else {
       throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
@@ -612,9 +617,9 @@ public class ODataHandler {
           selectProcessor(MediaEntityProcessor.class)
               .createMediaEntity(request, response, uriInfo, requestFormat, responseFormat);
         } else if (isAction) {
-          checkContentTypeSupport(requestFormat, RepresentationType.ENTITY);
+          checkContentTypeSupport(requestFormat, RepresentationType.ACTION_PARAMETERS);
           final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
-              request, customContentTypeSupport, RepresentationType.ENTITY);
+              request, customContentTypeSupport, RepresentationType.COLLECTION_ENTITY);
           selectProcessor(ActionEntityCollectionProcessor.class)
               .processActionEntityCollection(request, response, uriInfo, requestFormat, responseFormat);
         } else {
@@ -642,7 +647,7 @@ public class ODataHandler {
         selectProcessor(EntityProcessor.class).updateEntity(request, response, uriInfo, requestFormat, responseFormat);
       } else if (method == HttpMethod.POST && isAction) {
         final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
-        checkContentTypeSupport(requestFormat, RepresentationType.ENTITY);
+        checkContentTypeSupport(requestFormat, RepresentationType.ACTION_PARAMETERS);
         final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
             request, customContentTypeSupport, RepresentationType.ENTITY);
         selectProcessor(ActionEntityProcessor.class).processActionEntity(

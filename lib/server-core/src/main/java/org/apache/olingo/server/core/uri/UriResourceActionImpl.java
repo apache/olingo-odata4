@@ -56,22 +56,17 @@ public class UriResourceActionImpl extends UriResourceTypedImpl implements UriRe
 
   @Override
   public boolean isCollection() {
-    return action.getReturnType().isCollection();
+    return action.getReturnType() !=null && action.getReturnType().isCollection();
   }
 
   @Override
   public EdmType getType() {
-    return action.getReturnType().getType();
+    return action.getReturnType() == null ? null : action.getReturnType().getType();
   }
 
   @Override
   public String toString() {
-    if (actionImport != null) {
-      return actionImport.getName();
-    } else if (action != null) {
-      return action.getName();
-    }
-    return "";
+    return actionImport == null ? (action == null ? "" : action.getName()) : actionImport.getName();
   }
 
 }

@@ -23,25 +23,21 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
-import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
- * Processor interface for handling an action request with a return type of Complex.
+ * Processor interface for handling an action request with no return type.
  */
-public interface ActionComplexProcessor extends ComplexProcessor {
+public interface ActionVoidProcessor extends Processor {
   /**
-   * Process an action which has as return type a complex type.
-   * @param request          OData request object containing raw HTTP information
-   * @param response         OData response object for collecting response data
-   * @param uriInfo          information about a parsed OData URI
-   * @param requestFormat    content type of body sent with request
-   * @param responseFormat   requested content type after content negotiation
+   * Process an action which has no return type.
+   * @param request        OData request object containing raw HTTP information
+   * @param response       OData response object for collecting response data
+   * @param uriInfo        information about a parsed OData URI
+   * @param requestFormat  content type of body sent with request
    * @throws ODataApplicationException if the service implementation encounters a failure
    * @throws DeserializerException     if deserialization failed
-   * @throws SerializerException       if serialization failed
    */
-  void processActionComplex(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-      ContentType requestFormat, ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException;
+  void processActionVoid(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestFormat)
+      throws ODataApplicationException, DeserializerException;
 }
