@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.tecsvc.processor.queryoptions;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,8 +47,8 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.options.SkipHandle
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.TopHandler;
 
 public class ExpandSystemQueryOptionHandler {
-  private HashMap<Entity, Entity> copiedEntities = new HashMap<Entity, Entity>();
-  private HashMap<EntitySet, EntitySet> copiedEntitySets = new HashMap<EntitySet, EntitySet>();
+  private IdentityHashMap<Entity, Entity> copiedEntities = new IdentityHashMap<Entity, Entity>();
+  private IdentityHashMap<EntitySet, EntitySet> copiedEntitySets = new IdentityHashMap<EntitySet, EntitySet>();
 
   public void applyExpandQueryOptions(final EntitySet entitySet, final EdmEntitySet edmEntitySet,
       final ExpandOption expandOption) throws ODataApplicationException {
