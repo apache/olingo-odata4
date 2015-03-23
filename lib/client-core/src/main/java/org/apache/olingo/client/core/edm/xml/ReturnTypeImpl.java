@@ -18,12 +18,61 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.ReturnType;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = ReturnTypeDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = ReturnTypeImpl.ReturnTypeDeserializer.class)
 public class ReturnTypeImpl extends ReturnType {
 
   private static final long serialVersionUID = 6261092793901735110L;
+
+  static class ReturnTypeDeserializer extends AbstractEdmDeserializer<ReturnTypeImpl> {
+    @Override
+    protected ReturnTypeImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+      final ReturnTypeImpl returnType = new ReturnTypeImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Type".equals(jp.getCurrentName())) {
+            String metadataTypeName = jp.nextTextValue();
+            if (metadataTypeName.startsWith("Collection(")) {
+              returnType.setType(metadataTypeName.substring(metadataTypeName.indexOf("(") + 1,
+                      metadataTypeName.length() - 1));
+              returnType.setCollection(true);
+            } else {
+              returnType.setType(metadataTypeName);
+              returnType.setCollection(false);
+            }
+          } else if ("Nullable".equals(jp.getCurrentName())) {
+            returnType.setNullable(BooleanUtils.toBoolean(jp.nextTextValue()));
+          } else if ("MaxLength".equals(jp.getCurrentName())) {
+            final String maxLenght = jp.nextTextValue();
+            returnType.setMaxLength(maxLenght.equalsIgnoreCase("max") ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
+          } else if ("Precision".equals(jp.getCurrentName())) {
+            returnType.setPrecision(Integer.valueOf(jp.nextTextValue()));
+          } else if ("Scale".equals(jp.getCurrentName())) {
+            final String scale = jp.nextTextValue();
+            returnType.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
+          } else if ("SRID".equals(jp.getCurrentName())) {
+            final String srid = jp.nextTextValue();
+            if (srid != null) {
+              returnType.setSrid(SRID.valueOf(srid));
+            }
+          }
+        }
+      }
+
+      return returnType;
+    }
+  }
 }

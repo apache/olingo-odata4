@@ -18,13 +18,57 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = TypeDefinitionDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = TypeDefinitionImpl.TypeDefinitionDeserializer.class)
 public class TypeDefinitionImpl extends TypeDefinition {
 
   private static final long serialVersionUID = -902407149079419602L;
 
+  static class TypeDefinitionDeserializer extends AbstractEdmDeserializer<TypeDefinitionImpl> {
+    @Override
+    protected TypeDefinitionImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+      final TypeDefinitionImpl typeDefinition = new TypeDefinitionImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Name".equals(jp.getCurrentName())) {
+            typeDefinition.setName(jp.nextTextValue());
+          } else if ("UnderlyingType".equals(jp.getCurrentName())) {
+            typeDefinition.setUnderlyingType(jp.nextTextValue());
+          } else if ("MaxLength".equals(jp.getCurrentName())) {
+            typeDefinition.setMaxLength(jp.nextIntValue(0));
+          } else if ("Unicode".equals(jp.getCurrentName())) {
+            typeDefinition.setUnicode(BooleanUtils.toBoolean(jp.nextTextValue()));
+          } else if ("Precision".equals(jp.getCurrentName())) {
+            typeDefinition.setPrecision(jp.nextIntValue(0));
+          } else if ("Scale".equals(jp.getCurrentName())) {
+            final String scale = jp.nextTextValue();
+            typeDefinition.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
+          } else if ("SRID".equals(jp.getCurrentName())) {
+            final String srid = jp.nextTextValue();
+            if (srid != null) {
+              typeDefinition.setSrid(SRID.valueOf(srid));
+            }
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            typeDefinition.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          }
+        }
+      }
+
+      return typeDefinition;
+    }
+  }
 }

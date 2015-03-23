@@ -18,13 +18,45 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.olingo.commons.api.edm.provider.Singleton;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = SingletonDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = SingletonImpl.SingletonDeserializer.class)
 public class SingletonImpl extends Singleton {
 
   private static final long serialVersionUID = 1656749615107151921L;
 
+  static class SingletonDeserializer extends AbstractEdmDeserializer<SingletonImpl> {
+    @Override
+    protected SingletonImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+      final SingletonImpl singleton = new SingletonImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Name".equals(jp.getCurrentName())) {
+            singleton.setName(jp.nextTextValue());
+          } else if ("Type".equals(jp.getCurrentName())) {
+            singleton.setType(jp.nextTextValue());
+          } else if ("NavigationPropertyBinding".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            singleton.getNavigationPropertyBindings().add(
+                    jp.readValueAs(NavigationPropertyBindingImpl.class));
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            singleton.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          }
+        }
+      }
+
+      return singleton;
+    }
+  }
 }

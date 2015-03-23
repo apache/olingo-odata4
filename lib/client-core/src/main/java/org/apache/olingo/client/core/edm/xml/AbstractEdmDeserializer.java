@@ -23,14 +23,11 @@ import java.io.IOException;
 import org.apache.olingo.client.core.edm.xml.annotation.ConstantAnnotationExpressionImpl;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 
 public abstract class AbstractEdmDeserializer<T> extends JsonDeserializer<T> {
-
-  //protected ODataServiceVersion version;
 
   protected boolean isAnnotationConstExprConstruct(final JsonParser jp) throws IOException {
     return ConstantAnnotationExpressionImpl.Type.fromString(jp.getCurrentName()) != null;
@@ -44,7 +41,7 @@ public abstract class AbstractEdmDeserializer<T> extends JsonDeserializer<T> {
   }
 
   protected ReturnTypeImpl parseReturnType(final JsonParser jp, final String elementName) throws IOException {
-    ReturnTypeImpl returnType;
+    final ReturnTypeImpl returnType;
     if (elementName.equals(((FromXmlParser) jp).getStaxReader().getLocalName())) {
       returnType = new ReturnTypeImpl();
       returnType.setType(jp.nextTextValue());
@@ -55,15 +52,10 @@ public abstract class AbstractEdmDeserializer<T> extends JsonDeserializer<T> {
     return returnType;
   }
 
-  protected abstract T doDeserialize(JsonParser jp, DeserializationContext ctxt)
-          throws IOException, JsonProcessingException;
+  protected abstract T doDeserialize(JsonParser jp, DeserializationContext ctxt) throws IOException;
 
   @Override
-  public T deserialize(final JsonParser jp, final DeserializationContext ctxt)
-          throws IOException, JsonProcessingException {
-
-    //version = (ODataServiceVersion) ctxt.findInjectableValue(ODataServiceVersion.class.getName(), null, null);
+  public T deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
     return doDeserialize(jp, ctxt);
   }
-
 }

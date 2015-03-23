@@ -18,10 +18,14 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.olingo.client.api.edm.xml.Include;
 import org.apache.olingo.client.api.edm.xml.IncludeAnnotations;
 import org.apache.olingo.client.api.edm.xml.Reference;
@@ -30,17 +34,14 @@ import org.apache.olingo.commons.api.edm.provider.Annotation;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = ReferenceDeserializer.class)
+@JsonDeserialize(using = ReferenceImpl.ReferenceDeserializer.class)
 public class ReferenceImpl extends AbstractEdmItem implements Reference {
 
   private static final long serialVersionUID = 7720274712545267654L;
 
   private URI uri;
-
   private final List<Include> includes = new ArrayList<Include>();
-
   private final List<IncludeAnnotations> includeAnnotations = new ArrayList<IncludeAnnotations>();
-
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
@@ -67,4 +68,31 @@ public class ReferenceImpl extends AbstractEdmItem implements Reference {
     return includeAnnotations;
   }
 
+  static class ReferenceDeserializer extends AbstractEdmDeserializer<ReferenceImpl> {
+    @Override
+    protected ReferenceImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+      final ReferenceImpl reference = new ReferenceImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Uri".equals(jp.getCurrentName())) {
+            reference.setUri(URI.create(jp.nextTextValue()));
+          } else if ("Include".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            reference.getIncludes().add(jp.readValueAs( IncludeImpl.class));
+          } else if ("IncludeAnnotations".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            reference.getIncludeAnnotations().add(jp.readValueAs( IncludeAnnotationsImpl.class));
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            reference.getAnnotations().add(jp.readValueAs( AnnotationImpl.class));
+          }
+        }
+      }
+
+      return reference;
+    }
+  }
 }

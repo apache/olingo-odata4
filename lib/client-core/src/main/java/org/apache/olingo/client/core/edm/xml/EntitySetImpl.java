@@ -18,13 +18,48 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.commons.api.edm.provider.EntitySet;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = EntitySetDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = EntitySetImpl.EntitySetDeserializer.class)
 public class EntitySetImpl extends EntitySet {
 
   private static final long serialVersionUID = -5553885465204370676L;
 
+  static class EntitySetDeserializer extends AbstractEdmDeserializer<EntitySet> {
+    @Override
+    protected EntitySet doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final EntitySetImpl entitySet = new EntitySetImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Name".equals(jp.getCurrentName())) {
+            entitySet.setName(jp.nextTextValue());
+          } else if ("EntityType".equals(jp.getCurrentName())) {
+            entitySet.setType(jp.nextTextValue());
+          } else if ("IncludeInServiceDocument".equals(jp.getCurrentName())) {
+            entitySet.setIncludeInServiceDocument(BooleanUtils.toBoolean(jp.nextTextValue()));
+          } else if ("NavigationPropertyBinding".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            entitySet.getNavigationPropertyBindings().add(jp.readValueAs(NavigationPropertyBindingImpl.class));
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            entitySet.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          }
+        }
+      }
+
+      return entitySet;
+    }
+  }
 }

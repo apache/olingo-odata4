@@ -23,11 +23,27 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
+import com.fasterxml.aalto.stax.InputFactoryImpl;
+import com.fasterxml.aalto.stax.OutputFactoryImpl;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
+import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.client.core.edm.xml.EdmxImpl;
+import org.apache.olingo.client.core.edm.xml.XMLMetadataImpl;
 import org.apache.olingo.client.core.edm.xml.annotation.ConstantAnnotationExpressionImpl;
 import org.apache.olingo.client.core.edm.xml.annotation.PathImpl;
 import org.apache.olingo.commons.api.Constants;
@@ -44,7 +60,9 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmSchema;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.annotation.EdmUrlRef;
@@ -58,15 +76,18 @@ import org.apache.olingo.commons.api.edm.provider.Function;
 import org.apache.olingo.commons.api.edm.provider.FunctionImport;
 import org.apache.olingo.commons.api.edm.provider.Schema;
 import org.apache.olingo.commons.api.edm.provider.Singleton;
+import org.apache.olingo.commons.api.edm.provider.Term;
 import org.apache.olingo.commons.api.edm.provider.annotation.Apply;
 import org.apache.olingo.commons.api.edm.provider.annotation.Collection;
 import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.TwoParamsOpDynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.UrlRef;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmBoolean;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MetadataTest extends AbstractTest {
@@ -395,5 +416,20 @@ public class MetadataTest extends AbstractTest {
     final EdmUrlRef edmUrlRef = edmAnnotation.getExpression().asDynamic().asUrlRef();
     assertTrue(edmUrlRef.getValue().isDynamic());
     assertTrue(edmUrlRef.getValue().asDynamic().isApply());
+  }
+
+  @Test
+  public void metadataWithCapabilities() throws Exception {
+    InputStream input = getClass().getResourceAsStream("Metadata-With-Capabilities.xml");
+    final XMLMetadata metadata = getClient().getDeserializer(ODataFormat.XML).
+            toMetadata(input);
+
+    Schema schema = metadata.getSchema("Capabilities");
+    assertNotNull(schema);
+    assertEquals(23, schema.getTerms().size());
+
+    final Term deleteRestrictions = schema.getTerm("DeleteRestrictions");
+    assertNotNull(deleteRestrictions);
+    assertEquals("Capabilities.DeleteRestrictionsType", deleteRestrictions.getType());
   }
 }

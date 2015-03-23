@@ -18,13 +18,69 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.olingo.commons.api.edm.provider.Schema;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = SchemaDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = SchemaImpl.SchemaDeserializer.class)
 public class SchemaImpl extends Schema {
 
   private static final long serialVersionUID = 1911087363912024939L;
 
+  static class SchemaDeserializer extends AbstractEdmDeserializer<SchemaImpl> {
+    @Override
+    protected SchemaImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+      final SchemaImpl schema = new SchemaImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Namespace".equals(jp.getCurrentName())) {
+            schema.setNamespace(jp.nextTextValue());
+          } else if ("Alias".equals(jp.getCurrentName())) {
+            schema.setAlias(jp.nextTextValue());
+          } else if ("ComplexType".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            schema.getComplexTypes().add(jp.readValueAs(ComplexTypeImpl.class));
+          } else if ("EntityType".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            schema.getEntityTypes().add(jp.readValueAs(EntityTypeImpl.class));
+          } else if ("EnumType".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            schema.getEnumTypes().add(jp.readValueAs(EnumTypeImpl.class));
+          } else if ("EntityContainer".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            EntityContainerImpl entityContainer = jp.readValueAs(EntityContainerImpl.class);
+            schema.setEntityContainer(entityContainer);
+          } else if ("Action".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            schema.getActions().add(jp.readValueAs(ActionImpl.class));
+          } else if ("Function".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            schema.getFunctions().add(jp.readValueAs(FunctionImpl.class));
+          } else if ("TypeDefinition".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            schema.getTypeDefinitions().add(jp.readValueAs(TypeDefinitionImpl.class));
+          }
+        } else if ("Annotations".equals(jp.getCurrentName())) {
+          jp.nextToken();
+          schema.getAnnotationGroups().add(jp.readValueAs(AnnotationsImpl.class));
+        } else if ("Annotation".equals(jp.getCurrentName())) {
+          jp.nextToken();
+          schema.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+        } else if ("Term".equals(jp.getCurrentName())) {
+          jp.nextToken();
+          schema.getTerms().add(jp.readValueAs(TermImpl.class));
+        }
+      }
+
+      return schema;
+    }
+  }
 }

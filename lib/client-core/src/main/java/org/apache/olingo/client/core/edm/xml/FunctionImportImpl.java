@@ -18,12 +18,47 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.commons.api.edm.provider.FunctionImport;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = FunctionImportDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = FunctionImportImpl.FunctionImportDeserializer.class)
 public class FunctionImportImpl extends FunctionImport {
 
   private static final long serialVersionUID = -1686801084142932402L;
+
+  static class FunctionImportDeserializer extends AbstractEdmDeserializer<FunctionImportImpl> {
+    @Override
+    protected FunctionImportImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final FunctionImportImpl functImpImpl = new FunctionImportImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Name".equals(jp.getCurrentName())) {
+            functImpImpl.setName(jp.nextTextValue());
+          } else if ("Function".equals(jp.getCurrentName())) {
+            functImpImpl.setFunction(jp.nextTextValue());
+          } else if ("EntitySet".equals(jp.getCurrentName())) {
+            functImpImpl.setEntitySet(jp.nextTextValue());
+          } else if ("IncludeInServiceDocument".equals(jp.getCurrentName())) {
+            functImpImpl.setIncludeInServiceDocument(BooleanUtils.toBoolean(jp.nextTextValue()));
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            functImpImpl.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          }
+        }
+      }
+
+      return functImpImpl;
+    }
+  }
 }

@@ -18,12 +18,55 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.olingo.commons.api.edm.provider.EntityContainer;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = EntityContainerDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = EntityContainerImpl.EntityContainerDeserializer.class)
 public class EntityContainerImpl extends EntityContainer {
 
   private static final long serialVersionUID = 5631432527646955795L;
+
+  static class EntityContainerDeserializer extends AbstractEdmDeserializer<EntityContainerImpl> {
+
+    @Override
+    protected EntityContainerImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final EntityContainerImpl entityContainer = new EntityContainerImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Name".equals(jp.getCurrentName())) {
+            entityContainer.setName(jp.nextTextValue());
+          } else if ("Extends".equals(jp.getCurrentName())) {
+            entityContainer.setExtendsContainer(jp.nextTextValue());
+          } else if ("EntitySet".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            entityContainer.getEntitySets().add(jp.readValueAs(EntitySetImpl.class));
+          } else if ("Singleton".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            entityContainer.getSingletons().add(jp.readValueAs(SingletonImpl.class));
+          } else if ("ActionImport".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            entityContainer.getActionImports().add(jp.readValueAs(ActionImportImpl.class));
+          } else if ("FunctionImport".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            entityContainer.getFunctionImports().add(jp.readValueAs(FunctionImportImpl.class));
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            entityContainer.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          }
+        }
+      }
+
+      return entityContainer;
+    }
+  }
 }

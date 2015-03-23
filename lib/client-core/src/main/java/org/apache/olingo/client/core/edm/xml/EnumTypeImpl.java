@@ -18,13 +18,48 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.commons.api.edm.provider.EnumType;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = EnumTypeDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = EnumTypeImpl.EnumTypeDeserializer.class)
 public class EnumTypeImpl extends EnumType {
 
   private static final long serialVersionUID = 9191189755592743333L;
 
+  static class EnumTypeDeserializer extends AbstractEdmDeserializer<EnumTypeImpl> {
+    @Override
+    protected EnumTypeImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final EnumTypeImpl enumType = new EnumTypeImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Name".equals(jp.getCurrentName())) {
+            enumType.setName(jp.nextTextValue());
+          } else if ("UnderlyingType".equals(jp.getCurrentName())) {
+            enumType.setUnderlyingType(jp.nextTextValue());
+          } else if ("IsFlags".equals(jp.getCurrentName())) {
+            enumType.setFlags(BooleanUtils.toBoolean(jp.nextTextValue()));
+          } else if ("Member".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            enumType.getMembers().add(jp.readValueAs(EnumMemberImpl.class));
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            enumType.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          }
+        }
+      }
+
+      return enumType;
+    }
+  }
 }

@@ -18,15 +18,19 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
 import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = EntityKeyDeserializer.class)
+@JsonDeserialize(using = EntityKeyImpl.EntityKeyDeserializer.class)
 public class EntityKeyImpl extends AbstractEdmItem {
 
   private static final long serialVersionUID = 520227585458843347L;
@@ -35,5 +39,25 @@ public class EntityKeyImpl extends AbstractEdmItem {
 
   public List<PropertyRef> getPropertyRefs() {
     return propertyRefs;
+  }
+
+  static class EntityKeyDeserializer extends AbstractEdmDeserializer<EntityKeyImpl> {
+    @Override
+    protected EntityKeyImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final EntityKeyImpl entityKey = new EntityKeyImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+
+        if (token == JsonToken.FIELD_NAME && "PropertyRef".equals(jp.getCurrentName())) {
+          jp.nextToken();
+          entityKey.getPropertyRefs().add(jp.readValueAs(PropertyRefImpl.class));
+        }
+      }
+
+      return entityKey;
+    }
   }
 }

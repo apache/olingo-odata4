@@ -18,13 +18,52 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.commons.api.edm.provider.Function;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = FunctionDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = FunctionImpl.FunctionDeserializer.class)
 public class FunctionImpl extends Function {
 
   private static final long serialVersionUID = -5494898295282843362L;
 
+  static class FunctionDeserializer extends AbstractEdmDeserializer<FunctionImpl> {
+    @Override
+    protected FunctionImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      final FunctionImpl functionImpl = new FunctionImpl();
+
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Name".equals(jp.getCurrentName())) {
+            functionImpl.setName(jp.nextTextValue());
+          } else if ("IsBound".equals(jp.getCurrentName())) {
+            functionImpl.setBound(BooleanUtils.toBoolean(jp.nextTextValue()));
+          } else if ("IsComposable".equals(jp.getCurrentName())) {
+            functionImpl.setComposable(BooleanUtils.toBoolean(jp.nextTextValue()));
+          } else if ("EntitySetPath".equals(jp.getCurrentName())) {
+            functionImpl.setEntitySetPath(jp.nextTextValue());
+          } else if ("Parameter".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            functionImpl.getParameters().add(jp.readValueAs(ParameterImpl.class));
+          } else if ("ReturnType".equals(jp.getCurrentName())) {
+            functionImpl.setReturnType(parseReturnType(jp, "Function"));
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            functionImpl.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          }
+        }
+      }
+
+      return functionImpl;
+    }
+  }
 }
