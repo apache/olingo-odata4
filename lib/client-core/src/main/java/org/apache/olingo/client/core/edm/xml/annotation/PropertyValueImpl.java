@@ -18,12 +18,19 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
+import org.apache.olingo.client.core.edm.xml.AnnotationImpl;
 import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.PropertyValue;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = PropertyValueDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = PropertyValueImpl.PropertyValueDeserializer.class)
 public class PropertyValueImpl extends AbstractAnnotatableDynamicAnnotationExpression implements PropertyValue {
 
   private static final long serialVersionUID = -8437649215282645228L;
@@ -50,4 +57,26 @@ public class PropertyValueImpl extends AbstractAnnotatableDynamicAnnotationExpre
     this.value = value;
   }
 
+  static class PropertyValueDeserializer extends AbstractEdmDeserializer<PropertyValueImpl> {
+    @Override
+    protected PropertyValueImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+      final PropertyValueImpl propValue = new PropertyValueImpl();
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Property".equals(jp.getCurrentName())) {
+            propValue.setProperty(jp.nextTextValue());
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            propValue.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          } else if (isAnnotationConstExprConstruct(jp)) {
+            propValue.setValue(parseAnnotationConstExprConstruct(jp));
+          } else {
+            propValue.setValue(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
+          }
+        }
+      }
+      return propValue;
+    }
+  }
 }

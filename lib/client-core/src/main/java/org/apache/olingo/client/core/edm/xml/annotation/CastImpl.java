@@ -18,13 +18,20 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
+import org.apache.olingo.client.core.edm.xml.AnnotationImpl;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.annotation.Cast;
 import org.apache.olingo.commons.api.edm.provider.annotation.DynamicAnnotationExpression;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = CastDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = CastImpl.CastDeserializer.class)
 public class CastImpl extends AbstractAnnotatableDynamicAnnotationExpression implements Cast {
 
   private static final long serialVersionUID = 3312415984116005313L;
@@ -95,4 +102,38 @@ public class CastImpl extends AbstractAnnotatableDynamicAnnotationExpression imp
     this.value = value;
   }
 
+  static class CastDeserializer extends AbstractEdmDeserializer<CastImpl> {
+
+    @Override
+    protected CastImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+      final CastImpl cast = new CastImpl();
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Type".equals(jp.getCurrentName())) {
+            cast.setType(jp.nextTextValue());
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            cast.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          } else if ("MaxLength".equals(jp.getCurrentName())) {
+            final String maxLenght = jp.nextTextValue();
+            cast.setMaxLength(maxLenght.equalsIgnoreCase("max") ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
+          } else if ("Precision".equals(jp.getCurrentName())) {
+            cast.setPrecision(Integer.valueOf(jp.nextTextValue()));
+          } else if ("Scale".equals(jp.getCurrentName())) {
+            final String scale = jp.nextTextValue();
+            cast.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
+          } else if ("SRID".equals(jp.getCurrentName())) {
+            final String srid = jp.nextTextValue();
+            if (srid != null) {
+              cast.setSrid(SRID.valueOf(srid));
+            }
+          } else {
+            cast.setValue(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
+          }
+        }
+      }
+      return cast;
+    }
+  }
 }

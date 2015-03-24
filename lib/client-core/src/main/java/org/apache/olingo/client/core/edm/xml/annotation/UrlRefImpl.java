@@ -18,12 +18,18 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.UrlRef;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = UrlRefDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = UrlRefImpl.UrlRefDeserializer.class)
 public class UrlRefImpl extends AbstractDynamicAnnotationExpression implements UrlRef {
 
   private static final long serialVersionUID = -7693224811739000440L;
@@ -39,4 +45,22 @@ public class UrlRefImpl extends AbstractDynamicAnnotationExpression implements U
     this.value = value;
   }
 
+  static class UrlRefDeserializer extends AbstractEdmDeserializer<UrlRefImpl> {
+    @Override
+    protected UrlRefImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+      final UrlRefImpl urlref = new UrlRefImpl();
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if (isAnnotationConstExprConstruct(jp)) {
+            urlref.setValue(parseAnnotationConstExprConstruct(jp));
+          } else {
+            urlref.setValue(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
+          }
+        }
+      }
+      return urlref;
+    }
+  }
 }

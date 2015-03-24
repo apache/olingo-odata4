@@ -18,12 +18,19 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
+import org.apache.olingo.client.core.edm.xml.AnnotationImpl;
 import org.apache.olingo.commons.api.edm.provider.annotation.DynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.LabeledElement;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = LabeledElementDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = LabeledElementImpl.LabeledElementDeserializer.class)
 public class LabeledElementImpl
         extends AbstractAnnotatableDynamicAnnotationExpression implements LabeledElement {
 
@@ -51,4 +58,24 @@ public class LabeledElementImpl
     this.value = value;
   }
 
+  static class LabeledElementDeserializer extends AbstractEdmDeserializer<LabeledElementImpl> {
+    @Override
+    protected LabeledElementImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+      final LabeledElementImpl element = new LabeledElementImpl();
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Name".equals(jp.getCurrentName())) {
+            element.setName(jp.nextTextValue());
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            element.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          } else {
+            element.setValue(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
+          }
+        }
+      }
+      return element;
+    }
+  }
 }

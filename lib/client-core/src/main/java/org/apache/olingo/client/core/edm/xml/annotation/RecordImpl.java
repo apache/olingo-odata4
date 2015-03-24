@@ -18,15 +18,21 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
+import org.apache.olingo.client.core.edm.xml.AnnotationImpl;
 import org.apache.olingo.commons.api.edm.provider.annotation.PropertyValue;
 import org.apache.olingo.commons.api.edm.provider.annotation.Record;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = RecordDeserializer.class)
+@JsonDeserialize(using = RecordImpl.RecordDeserializer.class)
 public class RecordImpl extends AbstractAnnotatableDynamicAnnotationExpression implements Record {
 
   private static final long serialVersionUID = 4275271751615410709L;
@@ -49,4 +55,24 @@ public class RecordImpl extends AbstractAnnotatableDynamicAnnotationExpression i
     return propertyValues;
   }
 
+  static class RecordDeserializer extends AbstractEdmDeserializer<RecordImpl> {
+    @Override
+    protected RecordImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+      final RecordImpl record = new RecordImpl();
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Type".equals(jp.getCurrentName())) {
+            record.setType(jp.nextTextValue());
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            record.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          } else {
+            record.getPropertyValues().add(jp.readValueAs(PropertyValueImpl.class));
+          }
+        }
+      }
+      return record;
+    }
+  }
 }

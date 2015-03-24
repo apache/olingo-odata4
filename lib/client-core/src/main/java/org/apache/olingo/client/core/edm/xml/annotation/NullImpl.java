@@ -18,13 +18,36 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
+import org.apache.olingo.client.core.edm.xml.AnnotationImpl;
 import org.apache.olingo.commons.api.edm.provider.annotation.Null;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = NullDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = NullImpl.NullDeserializer.class)
 public class NullImpl extends AbstractAnnotatableDynamicAnnotationExpression implements Null {
 
   private static final long serialVersionUID = -3148516847180393142L;
 
+  static class NullDeserializer extends AbstractEdmDeserializer<NullImpl> {
+    @Override
+    protected NullImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+      final NullImpl _null = new NullImpl();
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if ("Annotation".equals(jp.getCurrentName())) {
+            _null.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
+          }
+        }
+      }
+      return _null;
+    }
+  }
 }

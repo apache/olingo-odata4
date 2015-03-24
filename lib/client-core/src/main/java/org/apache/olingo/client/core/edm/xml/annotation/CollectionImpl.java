@@ -18,15 +18,20 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.Collection;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = CollectionDeserializer.class)
+@JsonDeserialize(using = CollectionImpl.CollectionDeserializer.class)
 public class CollectionImpl extends AbstractDynamicAnnotationExpression implements Collection {
 
   private static final long serialVersionUID = -724749123749715643L;
@@ -38,4 +43,23 @@ public class CollectionImpl extends AbstractDynamicAnnotationExpression implemen
     return items;
   }
 
+  static class CollectionDeserializer extends AbstractEdmDeserializer<CollectionImpl> {
+    @Override
+    protected CollectionImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+      final CollectionImpl collection = new CollectionImpl();
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+        final JsonToken token = jp.getCurrentToken();
+        if (token == JsonToken.FIELD_NAME) {
+          if (isAnnotationConstExprConstruct(jp)) {
+            collection.getItems().add(parseAnnotationConstExprConstruct(jp));
+          } else {
+            collection.getItems().add(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
+          }
+        }
+      }
+
+      return collection;
+    }
+  }
 }

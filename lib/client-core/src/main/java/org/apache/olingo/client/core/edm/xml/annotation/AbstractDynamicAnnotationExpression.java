@@ -18,6 +18,14 @@
  */
 package org.apache.olingo.client.core.edm.xml.annotation;
 
+import com.fasterxml.jackson.core.JsonLocation;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationPath;
 import org.apache.olingo.commons.api.edm.provider.annotation.Apply;
 import org.apache.olingo.commons.api.edm.provider.annotation.Cast;
@@ -39,7 +47,9 @@ import org.apache.olingo.commons.api.edm.provider.annotation.UrlRef;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = DynamicAnnotationExpressionDeserializer.class)
+import java.io.IOException;
+
+@JsonDeserialize(using = AbstractDynamicAnnotationExpression.DynamicAnnotationExpressionDeserializer.class)
 public abstract class AbstractDynamicAnnotationExpression
         extends AbstractAnnotationExpression implements DynamicAnnotationExpression {
 
@@ -214,5 +224,133 @@ public abstract class AbstractDynamicAnnotationExpression
   @Override
   public UrlRef asUrlRef() {
     return isUrlRef() ? (UrlRef) this : null;
+  }
+
+  static class DynamicAnnotationExpressionDeserializer
+          extends AbstractEdmDeserializer<AbstractDynamicAnnotationExpression> {
+
+    private static final String[] EL_OR_ATTR = {
+            AnnotationPath.class.getSimpleName(), NavigationPropertyPath.class.getSimpleName(),
+            Path.class.getSimpleName(), PropertyPath.class.getSimpleName()
+    };
+
+    private static final String APPLY = Apply.class.getSimpleName();
+    private static final String CAST = Cast.class.getSimpleName();
+    private static final String COLLECTION = Collection.class.getSimpleName();
+    private static final String IF = If.class.getSimpleName();
+    private static final String IS_OF = IsOf.class.getSimpleName();
+    private static final String LABELED_ELEMENT = LabeledElement.class.getSimpleName();
+    private static final String NULL = Null.class.getSimpleName();
+    private static final String RECORD = Record.class.getSimpleName();
+    private static final String URL_REF = UrlRef.class.getSimpleName();
+
+    private AbstractElementOrAttributeExpression getElementOrAttributeExpression(final String simpleClassName)
+            throws JsonParseException {
+
+      try {
+        @SuppressWarnings("unchecked")
+        Class<? extends AbstractElementOrAttributeExpression> elOrAttrClass =
+                (Class<? extends AbstractElementOrAttributeExpression>) ClassUtils.getClass(
+                        getClass().getPackage().getName() + "." + simpleClassName + "Impl");
+        return elOrAttrClass.newInstance();
+      } catch (Exception e) {
+        throw new JsonParseException("Could not instantiate " + simpleClassName, JsonLocation.NA, e);
+      }
+    }
+
+    private AbstractAnnotationExpression parseConstOrEnumExpression(final JsonParser jp) throws IOException {
+      AbstractAnnotationExpression result;
+      if (isAnnotationConstExprConstruct(jp)) {
+        result = parseAnnotationConstExprConstruct(jp);
+      } else {
+        result = jp.readValueAs(AbstractDynamicAnnotationExpression.class);
+      }
+      jp.nextToken();
+
+      return result;
+    }
+
+    @Override
+    protected AbstractDynamicAnnotationExpression doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+            throws IOException {
+
+      AbstractDynamicAnnotationExpression expression = null;
+
+      if ("Not".equals(jp.getCurrentName())) {
+        final NotImpl not = new NotImpl();
+
+        jp.nextToken();
+        //Search for field name
+        while (jp.getCurrentToken() != JsonToken.FIELD_NAME) {
+          jp.nextToken();
+        }
+        not.setExpression(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
+        //Search for end object
+        while (jp.getCurrentToken() != JsonToken.END_OBJECT || !jp.getCurrentName().equals("Not")) {
+          jp.nextToken();
+        }
+
+        expression = not;
+      } else if (TwoParamsOpDynamicAnnotationExpression.Type.fromString(jp.getCurrentName()) != null) {
+        final TwoParamsOpDynamicAnnotationExpressionImpl dynExprDoubleParamOp =
+                new TwoParamsOpDynamicAnnotationExpressionImpl();
+        dynExprDoubleParamOp.setType(TwoParamsOpDynamicAnnotationExpression.Type.fromString(jp.getCurrentName()));
+
+        jp.nextToken();
+        //Search for field name
+        while (jp.getCurrentToken() != JsonToken.FIELD_NAME) {
+          jp.nextToken();
+        }
+        dynExprDoubleParamOp.setLeftExpression(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
+        dynExprDoubleParamOp.setRightExpression(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
+        //Search for expression
+        while (jp.getCurrentToken() != JsonToken.END_OBJECT || !jp.getCurrentName().equals(dynExprDoubleParamOp
+                .getType().name())) {
+          jp.nextToken();
+        }
+
+        expression = dynExprDoubleParamOp;
+      } else if (ArrayUtils.contains(EL_OR_ATTR, jp.getCurrentName())) {
+        final AbstractElementOrAttributeExpression elOrAttr = getElementOrAttributeExpression(jp.getCurrentName());
+        elOrAttr.setValue(jp.nextTextValue());
+        expression = elOrAttr;
+      } else if (APPLY.equals(jp.getCurrentName())) {
+        jp.nextToken();
+        expression = jp.readValueAs(ApplyImpl.class);
+      } else if (CAST.equals(jp.getCurrentName())) {
+        jp.nextToken();
+        expression = jp.readValueAs(CastImpl.class);
+      } else if (COLLECTION.equals(jp.getCurrentName())) {
+        jp.nextToken();
+        expression = jp.readValueAs(CollectionImpl.class);
+      } else if (IF.equals(jp.getCurrentName())) {
+        jp.nextToken();
+        jp.nextToken();
+
+        final IfImpl ifImpl = new IfImpl();
+        ifImpl.setGuard(parseConstOrEnumExpression(jp));
+        ifImpl.setThen(parseConstOrEnumExpression(jp));
+        ifImpl.setElse(parseConstOrEnumExpression(jp));
+
+        expression = ifImpl;
+      } else if (IS_OF.equals(jp.getCurrentName())) {
+        jp.nextToken();
+        expression = jp.readValueAs(IsOfImpl.class);
+      } else if (LABELED_ELEMENT.equals(jp.getCurrentName())) {
+        jp.nextToken();
+        expression = jp.readValueAs(LabeledElementImpl.class);
+      } else if (NULL.equals(jp.getCurrentName())) {
+        jp.nextToken();
+        expression = jp.readValueAs(NullImpl.class);
+      } else if (RECORD.equals(jp.getCurrentName())) {
+        jp.nextToken();
+        expression = jp.readValueAs(RecordImpl.class);
+      } else if (URL_REF.equals(jp.getCurrentName())) {
+        jp.nextToken();
+        expression = jp.readValueAs(UrlRefImpl.class);
+      }
+
+      return expression;
+    }
   }
 }
