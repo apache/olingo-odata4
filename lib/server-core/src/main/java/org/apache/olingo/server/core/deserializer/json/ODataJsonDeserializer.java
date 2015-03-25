@@ -77,10 +77,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
       JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
       final ObjectNode tree = parser.getCodec().readTree(parser);
-      final ExpandTreeBuilderImpl expandBuilder = new ExpandTreeBuilderImpl();
       
-      return DeserializerResultImpl.with().entitySet(consumeEntitySetNode(edmEntityType, tree, expandBuilder))
-                                          .expandOption(expandBuilder.build())
+      return DeserializerResultImpl.with().entitySet(consumeEntitySetNode(edmEntityType, tree, null))
                                           .build();
     } catch (JsonParseException e) {
       throw new DeserializerException("An JsonParseException occurred", e,
@@ -261,16 +259,16 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
           EntitySetImpl inlineEntitySet = new EntitySetImpl();
           inlineEntitySet.getEntities().addAll(consumeEntitySetArray(edmNavigationProperty.getType(), 
-                                                                     jsonNode, 
-                                                                     expandBuilder.expand(edmNavigationProperty)));
+                                         jsonNode, 
+                                         expandBuilder != null ? expandBuilder.expand(edmNavigationProperty) : null));
           link.setInlineEntitySet(inlineEntitySet);
         } else if (!jsonNode.isArray() && (!jsonNode.isValueNode() || jsonNode.isNull()) 
             && !edmNavigationProperty.isCollection()) {
           link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
           if (!jsonNode.isNull()) {
             Entity inlineEntity = consumeEntityNode(edmNavigationProperty.getType(), 
-                                                    (ObjectNode) jsonNode, 
-                                                    expandBuilder.expand(edmNavigationProperty));
+                                          (ObjectNode) jsonNode, 
+                                          expandBuilder != null ? expandBuilder.expand(edmNavigationProperty) : null);
             link.setInlineEntity(inlineEntity);
           }
         } else {
