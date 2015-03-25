@@ -19,10 +19,10 @@
 package org.apache.olingo.commons.core.edm.provider;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.olingo.commons.api.edm.Edm;
@@ -55,8 +55,7 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   private final String uriPrefix;
   private final String uriSuffix;
   private List<String> memberNames;
-  private List<EdmMember> members;
-  private Map<String, EdmMember> membersMap;
+  private LinkedHashMap<String, EdmMember> membersMap;
 
   public EdmEnumTypeImpl(final Edm edm, final FullQualifiedName enumName, final EnumType enumType) {
     super(edm, enumName, EdmTypeKind.ENUM);
@@ -81,14 +80,11 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   public EdmPrimitiveType getUnderlyingType() {
     return underlyingType;
   }
-  
+
   @Override
   public EdmMember getMember(final String name) {
     if (membersMap == null) {
-      membersMap = new LinkedHashMap<String, EdmMember>();
-      for (final EdmMember member : getMembers()) {
-        membersMap.put(member.getName(), member);
-      }
+      createEdmMembers();
     }
     return membersMap.get(name);
   }
@@ -96,12 +92,20 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   @Override
   public List<String> getMemberNames() {
     if (memberNames == null) {
-      memberNames = new ArrayList<String>();
-      for (final EdmMember member : getMembers()) {
+      createEdmMembers();
+    }
+    return memberNames;
+  }
+
+  private void createEdmMembers() {
+    membersMap = new LinkedHashMap<String, EdmMember>();
+    memberNames = new ArrayList<String>();
+    if (enumType.getMembers() != null) {
+      for (final EnumMember member : enumType.getMembers()) {
+        membersMap.put(member.getName(), new EdmMemberImpl(edm, getFullQualifiedName(), member));
         memberNames.add(member.getName());
       }
     }
-    return memberNames;
   }
 
   @Override
@@ -186,6 +190,13 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
     return result.toString();
   }
 
+  private Collection<EdmMember> getMembers() {
+   if(membersMap == null){
+     createEdmMembers();
+   }
+    return membersMap.values();
+  }
+
   @Override
   public String valueToString(final Object value, final Boolean isNullable, final Integer maxLength,
       final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
@@ -242,15 +253,4 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   public FullQualifiedName getAnnotationsTargetFQN() {
     return getFullQualifiedName();
   }
-
-  protected List<EdmMember> getMembers() {
-    if (members == null) {
-      members = new ArrayList<EdmMember>(enumType.getMembers().size());
-      for (EnumMember member : enumType.getMembers()) {
-        members.add(new EdmMemberImpl(edm, getFullQualifiedName(), member));
-      }
-    }
-    return members;
-  }
-
 }

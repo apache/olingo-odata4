@@ -22,12 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.provider.Annotatable;
 import org.apache.olingo.commons.api.edm.provider.Annotation;
 
-public class EdmAnnotationHelperImpl implements EdmAnnotationHelper {
+public class EdmAnnotationHelperImpl implements EdmAnnotatable {
 
   private final Edm edm;
 

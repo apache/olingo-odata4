@@ -38,7 +38,7 @@ import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
 public abstract class EdmBindingTargetImpl extends EdmNamedImpl implements EdmBindingTarget {
 
   private final BindingTarget target;
-  private final EdmAnnotationHelper helper;
+  private final EdmAnnotationHelperImpl helper;
   private final EdmEntityContainer container;
 
   private List<EdmNavigationPropertyBinding> navigationPropertyBindings;

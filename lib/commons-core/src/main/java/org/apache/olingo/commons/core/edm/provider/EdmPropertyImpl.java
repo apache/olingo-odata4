@@ -36,7 +36,7 @@ public class EdmPropertyImpl extends EdmElementImpl implements EdmProperty {
   private final FullQualifiedName structuredTypeName;
   private final Property property;
   private final EdmTypeInfo typeInfo;
-  private EdmAnnotationHelper helper;
+  private EdmAnnotationHelperImpl helper;
   private EdmType propertyType;
 
   public EdmPropertyImpl(final Edm edm, final FullQualifiedName structuredTypeName, final Property property) {

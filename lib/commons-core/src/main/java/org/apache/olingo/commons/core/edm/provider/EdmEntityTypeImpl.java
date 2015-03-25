@@ -39,10 +39,10 @@ import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 
 public class EdmEntityTypeImpl extends EdmStructuredTypeImpl implements EdmEntityType {
 
-  private final EdmStructuredTypeHelper helper;
+  private final EdmStructuredTypeHelperImpl helper;
   private EntityType entityType;
   private boolean baseTypeChecked = false;
-  private EdmAnnotationHelper annotationHelper;
+  private EdmAnnotationHelperImpl annotationHelper;
   private final boolean hasStream;
   protected EdmEntityType entityBaseType;
   private final List<String> keyPredicateNames = new ArrayList<String>();

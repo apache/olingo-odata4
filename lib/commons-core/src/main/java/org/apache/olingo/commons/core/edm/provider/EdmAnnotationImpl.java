@@ -63,13 +63,9 @@ import org.apache.olingo.commons.core.edm.annotation.EdmUrlRefImpl;
 public class EdmAnnotationImpl implements EdmAnnotation {
 
   private final Edm edm;
-
   private final Annotation annotation;
-
-  private final EdmAnnotationHelper helper;
-
+  private final EdmAnnotationHelperImpl helper;
   private EdmTerm term;
-
   private EdmAnnotationExpression expression;
 
   public EdmAnnotationImpl(final Edm edm, final Annotation annotation) {

@@ -37,19 +37,12 @@ import org.slf4j.LoggerFactory;
 public class EdmTermImpl extends EdmNamedImpl implements EdmTerm {
 
   private static final Logger LOG = LoggerFactory.getLogger(EdmTermImpl.class);
-
   private final Term term;
-
   private final FullQualifiedName fqn;
-
   private final EdmTypeInfo typeInfo;
-
-  private final EdmAnnotationHelper helper;
-
+  private final EdmAnnotationHelperImpl helper;
   private EdmType termType;
-
   private EdmTerm baseTerm;
-
   private List<Class<?>> appliesTo;
 
   public EdmTermImpl(final Edm edm, final String namespace, final Term term) {

@@ -40,7 +40,7 @@ import org.apache.olingo.commons.api.edm.provider.Parameter;
 public abstract class EdmOperationImpl extends EdmTypeImpl implements EdmOperation {
 
   protected final Operation operation;
-  protected final EdmAnnotationHelper helper;
+  protected final EdmAnnotationHelperImpl helper;
   private final Map<String, EdmParameter> parameters = new LinkedHashMap<String, EdmParameter>();
   private String entitySetPath;
   private boolean isBound;

@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.edm.provider.StructuralType;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
+public class EdmStructuredTypeHelperImpl {
 
   private final Edm edm;
   private final FullQualifiedName structuredTypeName;
@@ -44,7 +44,6 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
     this.structuredType = structuredType;
   }
 
-  @Override
   public Map<String, EdmProperty> getProperties() {
     if (properties == null) {
       properties = new LinkedHashMap<String, EdmProperty>();
@@ -57,7 +56,6 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
     return properties;
   }
 
-  @Override
   public Map<String, EdmNavigationProperty> getNavigationProperties() {
     if (navigationProperties == null) {
       navigationProperties = new LinkedHashMap<String, EdmNavigationProperty>();
@@ -71,12 +69,10 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
     return navigationProperties;
   }
 
-  @Override
   public boolean isOpenType() {
     return structuredType.isOpenType();
   }
 
-  @Override
   public boolean isAbstract() {
     return structuredType.isAbstract();
   }

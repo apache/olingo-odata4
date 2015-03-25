@@ -26,9 +26,7 @@ public abstract class OperationImport extends AbstractEdmItem implements Named, 
   private static final long serialVersionUID = -8928186067970681061L;
 
   protected String name;
-
   protected String entitySet;
-
   protected final List<Annotation> annotations = new ArrayList<Annotation>();
 
   public String getName() {

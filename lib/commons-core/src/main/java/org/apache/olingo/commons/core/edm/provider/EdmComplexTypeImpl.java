@@ -35,13 +35,12 @@ import org.apache.olingo.commons.api.edm.provider.ComplexType;
 
 public class EdmComplexTypeImpl extends EdmStructuredTypeImpl implements EdmComplexType {
 
-  private final EdmStructuredTypeHelper helper;
+  private final EdmStructuredTypeHelperImpl helper;
   
-  private EdmAnnotationHelper annotationHelper;
+  private EdmAnnotationHelperImpl annotationHelper;
 
   public static EdmComplexTypeImpl getInstance(
       final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
-
     return new EdmComplexTypeImpl(edm, name, complexType);
   }
 

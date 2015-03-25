@@ -251,6 +251,7 @@ public class ContainerProvider {
       } else if (name.equals("ESInvisible")) {
         return new EntitySet()
             .setName("ESInvisible")
+            .setIncludeInServiceDocument(false)
             .setType(EntityTypeProvider.nameETAllPrim);
 
       } else if (name.equals("ESServerSidePaging")) {

@@ -28,9 +28,8 @@ import org.apache.olingo.commons.api.edm.provider.ReferentialConstraint;
 
 public class EdmReferentialConstraintImpl implements EdmReferentialConstraint {
 
-  private final EdmAnnotationHelper helper;
+  private final EdmAnnotationHelperImpl helper;
   private final ReferentialConstraint constraint;
-  
   
   public EdmReferentialConstraintImpl(final Edm edm, final ReferentialConstraint constraint) {
     this.constraint = constraint;

@@ -36,7 +36,7 @@ public abstract class EdmOperationImportImpl extends EdmNamedImpl implements Edm
   protected final EdmEntityContainer container;
   private final Target entitySet;
   private EdmEntitySet returnedEntitySet;
-  private final EdmAnnotationHelper helper;
+  private final EdmAnnotationHelperImpl helper;
 
   public EdmOperationImportImpl(final Edm edm, final EdmEntityContainer container,
       final OperationImport operationImport) {

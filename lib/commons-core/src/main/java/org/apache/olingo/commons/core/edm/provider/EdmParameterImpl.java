@@ -33,7 +33,7 @@ import org.apache.olingo.commons.api.edm.provider.Parameter;
 public class EdmParameterImpl extends EdmElementImpl implements EdmParameter {
 
   private final Parameter parameter;
-  private final EdmAnnotationHelper helper;
+  private final EdmAnnotationHelperImpl helper;
   private final EdmTypeInfo typeInfo;
   private EdmType typeImpl;
 

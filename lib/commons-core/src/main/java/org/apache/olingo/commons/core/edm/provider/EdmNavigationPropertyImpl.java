@@ -37,8 +37,8 @@ public class EdmNavigationPropertyImpl extends EdmElementImpl implements EdmNavi
 
   private final FullQualifiedName structuredTypeName;
   private final NavigationProperty navigationProperty;
+  private final EdmAnnotationHelperImpl helper;
   private List<EdmReferentialConstraint> referentialConstraints;
-  private final EdmAnnotationHelper helper;
   private EdmEntityType typeImpl;
   private EdmNavigationProperty partnerNavigationProperty;
 

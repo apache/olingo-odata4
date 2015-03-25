@@ -37,25 +37,16 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 public class EdmTypeDefinitionImpl extends EdmNamedImpl implements EdmTypeDefinition {
 
   private TypeDefinition typeDefinition;
-  private final EdmPrimitiveType edmPrimitiveTypeInstance;
-  private final EdmAnnotationHelper helper;
   private FullQualifiedName typeDefinitionName;
+  private EdmPrimitiveType edmPrimitiveTypeInstance;
+  private final EdmAnnotationHelperImpl helper;
 
   public EdmTypeDefinitionImpl(final Edm edm, final FullQualifiedName typeDefinitionName,
       final TypeDefinition typeDefinition) {
     super(edm, typeDefinitionName.getName());
     this.typeDefinitionName = typeDefinitionName;
     this.typeDefinition = typeDefinition;
-    try {
-      if (typeDefinition.getUnderlyingType() == null) {
-        throw new EdmException("Underlying Type for type definition: "
-            + typeDefinitionName.getFullQualifiedNameAsString() + " must not be null.");
-      }
-      this.edmPrimitiveTypeInstance = EdmPrimitiveTypeFactory.getInstance(
-          EdmPrimitiveTypeKind.valueOfFQN(typeDefinition.getUnderlyingType()));
-    } catch (IllegalArgumentException e) {
-      throw new EdmException("Invalid underlying type: " + typeDefinition.getUnderlyingType(), e);
-    }
+  
     this.helper = new EdmAnnotationHelperImpl(edm, typeDefinition);
   }
 
@@ -76,6 +67,18 @@ public class EdmTypeDefinitionImpl extends EdmNamedImpl implements EdmTypeDefini
   
   @Override
   public EdmPrimitiveType getUnderlyingType() {
+    if(edmPrimitiveTypeInstance == null){
+      try {
+        if (typeDefinition.getUnderlyingType() == null) {
+          throw new EdmException("Underlying Type for type definition: "
+              + typeDefinitionName.getFullQualifiedNameAsString() + " must not be null.");
+        }
+        this.edmPrimitiveTypeInstance = EdmPrimitiveTypeFactory.getInstance(
+            EdmPrimitiveTypeKind.valueOfFQN(typeDefinition.getUnderlyingType()));
+      } catch (IllegalArgumentException e) {
+        throw new EdmException("Invalid underlying type: " + typeDefinition.getUnderlyingType(), e);
+      }
+    }
     return edmPrimitiveTypeInstance;
   }
 

@@ -27,6 +27,7 @@ public class FunctionImport extends OperationImport {
 
   private FullQualifiedName function;
 
+  //Default include in service document is false for function imports
   private boolean includeInServiceDocument;
 
   @Override

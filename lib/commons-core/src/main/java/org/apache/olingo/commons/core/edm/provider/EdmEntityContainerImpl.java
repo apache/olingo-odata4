@@ -47,7 +47,7 @@ public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityCon
 
   private final EdmProvider provider;
   private EntityContainer container;
-  private EdmAnnotationHelper helper;
+  private EdmAnnotationHelperImpl helper;
 
   protected final FullQualifiedName entityContainerName;
   private final FullQualifiedName parentContainerName;

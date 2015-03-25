@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.edm.provider.EnumMember;
 
 public class EdmMemberImpl extends EdmNamedImpl implements EdmMember {
 
-  private final EdmAnnotationHelper helper;
+  private final EdmAnnotationHelperImpl helper;
   private final FullQualifiedName enumFQN;
   private final EnumMember member;
 
