@@ -41,7 +41,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;

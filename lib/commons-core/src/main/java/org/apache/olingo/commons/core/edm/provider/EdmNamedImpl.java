@@ -16,28 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.edm;
+package org.apache.olingo.commons.core.edm.provider;
 
-import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmNamed;
 
-public abstract class AbstractEdmReferentialConstraint implements EdmReferentialConstraint {
+public abstract class EdmNamedImpl implements EdmNamed {
 
-  private final String property;
+  protected final Edm edm;
 
-  private final String referencedProperty;
+  private final String name;
 
-  public AbstractEdmReferentialConstraint(final String property, final String referencedProperty) {
-    this.property = property;
-    this.referencedProperty = referencedProperty;
+  public EdmNamedImpl(final Edm edm, final String name) {
+    this.edm = edm;
+    this.name = name;
   }
 
   @Override
-  public String getPropertyName() {
-    return property;
-  }
-
-  @Override
-  public String getReferencedPropertyName() {
-    return referencedProperty;
+  public String getName() {
+    return name;
   }
 }

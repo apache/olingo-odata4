@@ -24,7 +24,7 @@ import org.apache.olingo.commons.api.edm.annotation.EdmCast;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.annotation.Cast;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
 
 public class EdmCastImpl extends AbstractEdmAnnotatableDynamicAnnotationExpression implements EdmCast {
 

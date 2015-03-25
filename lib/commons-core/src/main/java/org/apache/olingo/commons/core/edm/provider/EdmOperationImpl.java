@@ -19,23 +19,33 @@
 package org.apache.olingo.commons.core.edm.provider;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmBindingTarget;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.api.edm.EdmParameter;
+import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.provider.Operation;
 import org.apache.olingo.commons.api.edm.provider.Parameter;
-import org.apache.olingo.commons.core.edm.AbstractEdmOperation;
-import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
-public abstract class EdmOperationImpl extends AbstractEdmOperation {
+public abstract class EdmOperationImpl extends EdmTypeImpl implements EdmOperation {
 
   protected final Operation operation;
   protected final EdmAnnotationHelper helper;
+  private final Map<String, EdmParameter> parameters = new LinkedHashMap<String, EdmParameter>();
+  private String entitySetPath;
+  private boolean isBound;
+  private EdmReturnType returnType;
+  private List<String> parameterNames;
 
   protected static <T extends EdmOperationImpl> T getInstance(final T instance) {
     final List<Parameter> providerParameters = instance.operation.getParameters();
@@ -67,6 +77,68 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
     super(edm, name, kind);
     this.operation = operation;
     this.helper = new EdmAnnotationHelperImpl(edm, operation);
+  }
+  
+  protected void setParameters(final List<EdmParameter> _parameters) {
+    for (EdmParameter parameter : _parameters) {
+      parameters.put(parameter.getName(), parameter);
+    }
+  }
+
+  protected void setEntitySetPath(final String entitySetPath) {
+    this.entitySetPath = entitySetPath;
+  }
+
+  protected void setIsBound(final boolean isBound) {
+    this.isBound = isBound;
+  }
+
+  protected void setReturnType(final EdmReturnType returnType) {
+    this.returnType = returnType;
+  }
+
+  @Override
+  public EdmParameter getParameter(final String name) {
+    return parameters.get(name);
+  }
+
+  @Override
+  public List<String> getParameterNames() {
+    if (parameterNames == null) {
+      parameterNames = new ArrayList<String>(parameters.size());
+      for (String parameterName : parameters.keySet()) {
+        parameterNames.add(parameterName);
+      }
+    }
+    return parameterNames;
+  }
+
+  @Override
+  public EdmEntitySet getReturnedEntitySet(final EdmEntitySet bindingParameterEntitySet) {
+    EdmEntitySet returnedEntitySet = null;
+    if (bindingParameterEntitySet != null && entitySetPath != null) {
+      final EdmBindingTarget relatedBindingTarget = bindingParameterEntitySet.getRelatedBindingTarget(entitySetPath);
+      if (relatedBindingTarget == null) {
+        throw new EdmException("Cannot find entity set with path: " + entitySetPath);
+      }
+      if (relatedBindingTarget instanceof EdmEntitySet) {
+        returnedEntitySet = (EdmEntitySet) relatedBindingTarget;
+      } else {
+        throw new EdmException("BindingTarget with name: " + relatedBindingTarget.getName()
+            + " must be an entity set");
+      }
+    }
+    return returnedEntitySet;
+  }
+
+  @Override
+  public EdmReturnType getReturnType() {
+    return returnType;
+  }
+
+  @Override
+  public boolean isBound() {
+    return isBound;
   }
 
   @Override

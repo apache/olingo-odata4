@@ -19,17 +19,22 @@
 package org.apache.olingo.commons.core.edm.provider;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmReturnType;
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.ReturnType;
-import org.apache.olingo.commons.core.edm.AbstractEdmReturnType;
 
-public class EdmReturnTypeImpl extends AbstractEdmReturnType {
+public class EdmReturnTypeImpl implements EdmReturnType {
 
   private final ReturnType returnType;
-
+  private final EdmTypeInfo typeInfo;
+  private EdmType typeImpl;
+  
+  
   public EdmReturnTypeImpl(final Edm edm, final ReturnType returnType) {
-    super(edm, returnType.getTypeFQN());
     this.returnType = returnType;
+    this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(returnType.getType()).build();
   }
 
   @Override
@@ -60,5 +65,17 @@ public class EdmReturnTypeImpl extends AbstractEdmReturnType {
   @Override
   public SRID getSrid() {
     return returnType.getSrid();
+  }
+  
+  @Override
+  public EdmType getType() {
+    if (typeImpl == null) {
+      typeImpl = typeInfo.getType();
+      if (typeImpl == null) {
+        throw new EdmException("Cannot find type with name: " + typeInfo.getFullQualifiedName());
+      }
+    }
+
+    return typeImpl;
   }
 }

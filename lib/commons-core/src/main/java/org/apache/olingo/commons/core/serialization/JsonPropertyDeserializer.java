@@ -32,7 +32,7 @@ import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;

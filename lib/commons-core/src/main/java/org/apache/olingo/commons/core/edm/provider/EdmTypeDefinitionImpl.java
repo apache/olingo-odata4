@@ -24,24 +24,27 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmTerm;
+import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
-import org.apache.olingo.commons.core.edm.AbstractEdmTypeDefinition;
-import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
-public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition {
+public class EdmTypeDefinitionImpl extends EdmNamedImpl implements EdmTypeDefinition {
 
   private TypeDefinition typeDefinition;
-  private EdmPrimitiveType edmPrimitiveTypeInstance;
+  private final EdmPrimitiveType edmPrimitiveTypeInstance;
   private final EdmAnnotationHelper helper;
+  private FullQualifiedName typeDefinitionName;
 
   public EdmTypeDefinitionImpl(final Edm edm, final FullQualifiedName typeDefinitionName,
       final TypeDefinition typeDefinition) {
-    super(edm, typeDefinitionName);
+    super(edm, typeDefinitionName.getName());
+    this.typeDefinitionName = typeDefinitionName;
     this.typeDefinition = typeDefinition;
     try {
       if (typeDefinition.getUnderlyingType() == null) {
@@ -57,15 +60,22 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition {
   }
 
   @Override
+  public FullQualifiedName getFullQualifiedName() {
+    return typeDefinitionName;
+  }
+
+  @Override
+  public String getNamespace() {
+    return typeDefinitionName.getNamespace();
+  }
+
+  @Override
+  public EdmTypeKind getKind() {
+    return EdmTypeKind.DEFINITION;
+  }
+  
+  @Override
   public EdmPrimitiveType getUnderlyingType() {
-    if (edmPrimitiveTypeInstance == null) {
-      try {
-        edmPrimitiveTypeInstance = EdmPrimitiveTypeFactory.getInstance(
-            EdmPrimitiveTypeKind.valueOfFQN(typeDefinition.getUnderlyingType()));
-      } catch (IllegalArgumentException e) {
-        throw new EdmException("Invalid underlying type: " + typeDefinition.getUnderlyingType(), e);
-      }
-    }
     return edmPrimitiveTypeInstance;
   }
 
@@ -93,7 +103,63 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition {
   public Boolean isUnicode() {
     return typeDefinition.isUnicode();
   }
+  
+  @Override
+  public boolean isCompatible(final EdmPrimitiveType primitiveType) {
+    return getUnderlyingType().isCompatible(primitiveType);
+  }
 
+  @Override
+  public Class<?> getDefaultType() {
+    return getUnderlyingType().getDefaultType();
+  }
+
+  @Override
+  public boolean validate(final String value, final Boolean isNullable, final Integer maxLength,
+      final Integer precision, final Integer scale,
+      final Boolean isUnicode) {
+
+    return getUnderlyingType().validate(value, isNullable, maxLength, precision, scale, isUnicode);
+  }
+
+  @Override
+  public <T> T valueOfString(final String value, final Boolean isNullable, final Integer maxLength,
+      final Integer precision, final Integer scale,
+      final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+
+    return getUnderlyingType().
+        valueOfString(value, isNullable, maxLength, precision, scale, isUnicode, returnType);
+  }
+
+  @Override
+  public String valueToString(final Object value, final Boolean isNullable, final Integer maxLength,
+      final Integer precision, final Integer scale,
+      final Boolean isUnicode) throws EdmPrimitiveTypeException {
+
+    return getUnderlyingType().valueToString(value, isNullable, maxLength, precision, scale, isUnicode);
+  }
+
+  @Override
+  public String toUriLiteral(final String literal) {
+    return getUnderlyingType().toUriLiteral(literal);
+  }
+
+  @Override
+  public String fromUriLiteral(final String literal) throws EdmPrimitiveTypeException {
+    return getUnderlyingType().fromUriLiteral(literal);
+  }
+
+
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.TypeDefinition;
+  }
+
+  @Override
+  public FullQualifiedName getAnnotationsTargetFQN() {
+    return getFullQualifiedName();
+  }
+  
   @Override
   public EdmAnnotation getAnnotation(final EdmTerm term) {
     return helper.getAnnotation(term);
@@ -102,6 +168,11 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition {
   @Override
   public List<EdmAnnotation> getAnnotations() {
     return helper.getAnnotations();
+  }
+  
+  @Override
+  public String getAnnotationsTargetPath() {
+    return getName();
   }
 
 }

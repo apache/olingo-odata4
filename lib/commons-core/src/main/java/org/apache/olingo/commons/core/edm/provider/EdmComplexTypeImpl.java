@@ -18,21 +18,22 @@
  */
 package org.apache.olingo.commons.core.edm.provider;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
-import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
-import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.EdmTerm;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.core.edm.AbstractEdmComplexType;
-import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
-import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
-
 import java.util.List;
 import java.util.Map;
 
-public class EdmComplexTypeImpl extends AbstractEdmComplexType {
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.commons.api.edm.EdmTerm;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.edm.provider.ComplexType;
+
+public class EdmComplexTypeImpl extends EdmStructuredTypeImpl implements EdmComplexType {
 
   private final EdmStructuredTypeHelper helper;
   
@@ -45,7 +46,7 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
   }
 
   private EdmComplexTypeImpl(final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
-    super(edm, name, complexType.getBaseTypeFQN());
+    super(edm, name, EdmTypeKind.COMPLEX, complexType.getBaseTypeFQN());
     this.helper = new EdmStructuredTypeHelperImpl(edm, name, complexType);
     this.annotationHelper = new EdmAnnotationHelperImpl(edm, complexType);
   }
@@ -78,5 +79,36 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
   @Override
   public List<EdmAnnotation> getAnnotations() {
     return annotationHelper == null ? null : annotationHelper.getAnnotations();
+  }
+  
+  @Override
+  protected EdmStructuredType buildBaseType(final FullQualifiedName baseTypeName) {
+    EdmComplexType baseType = null;
+    if (baseTypeName != null) {
+      baseType = edm.getComplexType(baseTypeName);
+      if (baseType == null) {
+        throw new EdmException("Can't find base type with name: " + baseTypeName + " for complex type: "
+            + getName());
+      }
+    }
+    return baseType;
+  }
+
+  @Override
+  public EdmComplexType getBaseType() {
+    checkBaseType();
+    return (EdmComplexType) baseType;
+  }
+
+  @Override
+  protected void checkBaseType() {
+    if (baseTypeName != null && baseType == null) {
+      baseType = buildBaseType(baseTypeName);
+    }
+  }
+
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.ComplexType;
   }
 }

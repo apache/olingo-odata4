@@ -16,34 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.edm;
+package org.apache.olingo.commons.core.edm.provider;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmException;
-import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 
-public abstract class AbstractEdmParameter extends EdmElementImpl implements EdmParameter {
+public class EdmTypeImpl extends EdmNamedImpl implements EdmType {
 
-  private final EdmTypeInfo typeInfo;
+  protected final FullQualifiedName typeName;
 
-  private EdmType typeImpl;
+  protected final EdmTypeKind kind;
 
-  public AbstractEdmParameter(final Edm edm, final String name, final FullQualifiedName paramType) {
-    super(edm, name);
-    typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(paramType.toString()).build();
+  public EdmTypeImpl(final Edm edm, final FullQualifiedName typeName, final EdmTypeKind kind) {
+    super(edm, typeName.getName());
+    this.typeName = typeName;
+    this.kind = kind;
   }
 
   @Override
-  public EdmType getType() {
-    if (typeImpl == null) {
-      typeImpl = typeInfo.getType();
-      if (typeImpl == null) {
-        throw new EdmException("Cannot find type with name: " + typeInfo.getFullQualifiedName());
-      }
-    }
+  public FullQualifiedName getFullQualifiedName() {
+    return typeName;
+  }
 
-    return typeImpl;
+  @Override
+  public String getNamespace() {
+    return typeName.getNamespace();
+  }
+
+  @Override
+  public EdmTypeKind getKind() {
+    return kind;
   }
 }

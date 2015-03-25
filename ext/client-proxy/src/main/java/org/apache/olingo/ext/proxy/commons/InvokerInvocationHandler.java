@@ -44,7 +44,7 @@ import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.ComplexCollection;
 import org.apache.olingo.ext.proxy.api.EntityCollection;

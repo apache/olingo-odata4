@@ -19,27 +19,33 @@
 package org.apache.olingo.commons.core.edm.provider;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.EdmTerm;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.api.edm.provider.BindingTarget;
 import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
-import org.apache.olingo.commons.core.edm.AbstractEdmBindingTarget;
-import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
-import org.apache.olingo.commons.core.edm.EdmNavigationPropertyBindingImpl;
 
-public abstract class EdmBindingTargetImpl extends AbstractEdmBindingTarget {
+public abstract class EdmBindingTargetImpl extends EdmNamedImpl implements EdmBindingTarget {
 
   private final BindingTarget target;
-  private List<EdmNavigationPropertyBinding> navigationPropertyBindings;
   private final EdmAnnotationHelper helper;
+  private final EdmEntityContainer container;
+
+  private List<EdmNavigationPropertyBinding> navigationPropertyBindings;
 
   public EdmBindingTargetImpl(final Edm edm, final EdmEntityContainer container, final BindingTarget target) {
-    super(edm, container, target.getName(), target.getTypeFQN());
+    super(edm, target.getName());
+    this.container = container;
     this.target = target;
     this.helper = new EdmAnnotationHelperImpl(edm, target);
   }
@@ -57,7 +63,71 @@ public abstract class EdmBindingTargetImpl extends AbstractEdmBindingTarget {
     }
     return navigationPropertyBindings;
   }
-  
+
+  @Override
+  public EdmEntityContainer getEntityContainer() {
+    return container;
+  }
+
+  @Override
+  public EdmEntityType getEntityType() {
+    final EdmEntityType entityType = edm.getEntityType(target.getTypeFQN());
+    if (entityType == null) {
+      throw new EdmException("Can´t find entity type: " + target.getTypeFQN() + " for entity set or singleton: "
+          + getName());
+    }
+    return entityType;
+  }
+
+  @Override
+  public FullQualifiedName getAnnotationsTargetFQN() {
+    return container.getFullQualifiedName();
+  }
+
+  @Override
+  public String getAnnotationsTargetPath() {
+    return getName();
+  }
+
+  @Override
+  public EdmBindingTarget getRelatedBindingTarget(final String path) {
+    if (path == null) {
+      return null;
+    }
+    EdmBindingTarget bindingTarget = null;
+    boolean found = false;
+    for (final Iterator<EdmNavigationPropertyBinding> itor = getNavigationPropertyBindings().iterator(); itor.hasNext()
+        && !found;) {
+
+      final EdmNavigationPropertyBinding binding = itor.next();
+      if (path.startsWith(binding.getPath())) {
+        final Target edmTarget = new Target.Builder(binding.getTarget(), container).build();
+
+        final EdmEntityContainer entityContainer = edm.getEntityContainer(edmTarget.getEntityContainer());
+        if (entityContainer == null) {
+          throw new EdmException("Cannot find entity container with name: " + edmTarget.getEntityContainer());
+        }
+        try {
+          bindingTarget = entityContainer.getEntitySet(edmTarget.getTargetName());
+
+          if (bindingTarget == null) {
+            throw new EdmException("Cannot find EntitySet " + edmTarget.getTargetName());
+          }
+        } catch (EdmException e) {
+          // try with singletons ...
+          bindingTarget = entityContainer.getSingleton(edmTarget.getTargetName());
+
+          if (bindingTarget == null) {
+            throw new EdmException("Cannot find Singleton " + edmTarget.getTargetName());
+          }
+        } finally {
+          found = bindingTarget != null;
+        }
+      }
+    }
+
+    return bindingTarget;
+  }
 
   @Override
   public EdmAnnotation getAnnotation(final EdmTerm term) {

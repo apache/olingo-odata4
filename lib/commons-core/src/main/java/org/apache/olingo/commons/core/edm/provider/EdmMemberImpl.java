@@ -22,19 +22,42 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmMember;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.EnumMember;
-import org.apache.olingo.commons.core.edm.AbstractEdmMember;
-import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
-public class EdmMemberImpl extends AbstractEdmMember {
+public class EdmMemberImpl extends EdmNamedImpl implements EdmMember {
 
   private final EdmAnnotationHelper helper;
+  private final FullQualifiedName enumFQN;
+  private final EnumMember member;
 
   public EdmMemberImpl(final Edm edm, final FullQualifiedName enumFQN, final EnumMember member) {
-    super(edm, enumFQN, member.getName(), member.getValue());
+    super(edm, member.getName());
+    this.enumFQN = enumFQN;
+    this.member = member;
     this.helper = new EdmAnnotationHelperImpl(edm, member);
+  }
+  
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.Member;
+  }
+
+  @Override
+  public FullQualifiedName getAnnotationsTargetFQN() {
+    return enumFQN;
+  }
+
+  @Override
+  public String getAnnotationsTargetPath() {
+    return getName();
+  }
+
+  @Override
+  public String getValue() {
+    return member.getValue();
   }
 
   @Override

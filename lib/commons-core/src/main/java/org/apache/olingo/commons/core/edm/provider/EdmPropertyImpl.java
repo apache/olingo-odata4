@@ -22,21 +22,22 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmMapping;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmTerm;
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.Property;
-import org.apache.olingo.commons.core.edm.AbstractEdmProperty;
-import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
-public class EdmPropertyImpl extends AbstractEdmProperty {
+public class EdmPropertyImpl extends EdmElementImpl implements EdmProperty {
 
   private final FullQualifiedName structuredTypeName;
   private final Property property;
   private final EdmTypeInfo typeInfo;
   private EdmAnnotationHelper helper;
+  private EdmType propertyType;
 
   public EdmPropertyImpl(final Edm edm, final FullQualifiedName structuredTypeName, final Property property) {
     super(edm, property.getName());
@@ -48,10 +49,17 @@ public class EdmPropertyImpl extends AbstractEdmProperty {
   }
 
   @Override
-  public EdmTypeInfo getTypeInfo() {
-    return typeInfo;
-  }
+  public EdmType getType() {
+    if (propertyType == null) {
+      propertyType = typeInfo.getType();
+      if (propertyType == null) {
+        throw new EdmException("Cannot find type with name: " + typeInfo.getFullQualifiedName());
+      }
+    }
 
+    return propertyType;
+  }
+ 
   @Override
   public boolean isCollection() {
     return property.isCollection();
@@ -103,6 +111,16 @@ public class EdmPropertyImpl extends AbstractEdmProperty {
   }
 
   @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.Property;
+  }
+
+  @Override
+  public String getAnnotationsTargetPath() {
+    return getName();
+  }
+  
+  @Override
   public FullQualifiedName getAnnotationsTargetFQN() {
     return structuredTypeName;
   }
@@ -115,5 +133,10 @@ public class EdmPropertyImpl extends AbstractEdmProperty {
   @Override
   public List<EdmAnnotation> getAnnotations() {
     return helper.getAnnotations();
+  }
+
+  @Override
+  public boolean isPrimitive() {
+    return typeInfo.isPrimitiveType();
   }
 }

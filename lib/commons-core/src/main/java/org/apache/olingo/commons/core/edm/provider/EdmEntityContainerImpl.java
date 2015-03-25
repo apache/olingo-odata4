@@ -18,13 +18,17 @@
  */
 package org.apache.olingo.commons.core.edm.provider;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
@@ -38,30 +42,146 @@ import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.commons.api.edm.provider.EntitySet;
 import org.apache.olingo.commons.api.edm.provider.FunctionImport;
 import org.apache.olingo.commons.api.edm.provider.Singleton;
-import org.apache.olingo.commons.core.edm.AbstractEdmEntityContainer;
-import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
-public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
+public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityContainer {
 
   private final EdmProvider provider;
   private EntityContainer container;
   private EdmAnnotationHelper helper;
 
-  public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider,
+  protected final FullQualifiedName entityContainerName;
+  private final FullQualifiedName parentContainerName;
+
+  protected final Map<String, EdmSingleton> singletons = new HashMap<String, EdmSingleton>();
+  private boolean allSingletonsLoaded = false;
+
+  protected final Map<String, EdmEntitySet> entitySets = new HashMap<String, EdmEntitySet>();
+  private boolean allEntitySetsLoaded = false;
+
+  protected final Map<String, EdmActionImport> actionImports = new HashMap<String, EdmActionImport>();
+  private boolean allActionImportsLoaded = false;
+
+  protected final Map<String, EdmFunctionImport> functionImports = new HashMap<String, EdmFunctionImport>();
+  private boolean allFunctionImportsLoaded = false;
+
+  public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider, 
       final EntityContainerInfo entityContainerInfo) {
-    super(edm, entityContainerInfo.getContainerName(), entityContainerInfo.getExtendsContainer());
+    super(edm, entityContainerInfo.getContainerName().getName());
     this.provider = provider;
+    this.entityContainerName = entityContainerInfo.getContainerName();
+    this.parentContainerName = entityContainerInfo.getExtendsContainer();
   }
 
   public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider, final FullQualifiedName containerFQN,
       final EntityContainer entityContainer) {
-    super(edm, containerFQN, entityContainer.getExtendsContainerFQN());
+    super(edm, containerFQN.getName());
     this.provider = provider;
     container = entityContainer;
+    this.entityContainerName = containerFQN;
+    this.parentContainerName = entityContainer.getExtendsContainerFQN();
     this.helper = new EdmAnnotationHelperImpl(edm, entityContainer);
   }
 
   @Override
+  public String getNamespace() {
+    return entityContainerName.getNamespace();
+  }
+
+  @Override
+  public FullQualifiedName getFullQualifiedName() {
+    return entityContainerName;
+  }
+
+  @Override
+  public EdmSingleton getSingleton(final String singletonName) {
+    EdmSingleton singleton = singletons.get(singletonName);
+    if (singleton == null) {
+      singleton = createSingleton(singletonName);
+      if (singleton != null) {
+        singletons.put(singletonName, singleton);
+      }
+    }
+    return singleton;
+  }
+
+  @Override
+  public EdmEntitySet getEntitySet(final String entitySetName) {
+    EdmEntitySet entitySet = entitySets.get(entitySetName);
+    if (entitySet == null) {
+      entitySet = createEntitySet(entitySetName);
+      if (entitySet != null) {
+        entitySets.put(entitySetName, entitySet);
+      }
+    }
+    return entitySet;
+  }
+
+  @Override
+  public EdmActionImport getActionImport(final String actionImportName) {
+    EdmActionImport actionImport = actionImports.get(actionImportName);
+    if (actionImport == null) {
+      actionImport = createActionImport(actionImportName);
+      if (actionImport != null) {
+        actionImports.put(actionImportName, actionImport);
+      }
+    }
+    return actionImport;
+  }
+
+  @Override
+  public EdmFunctionImport getFunctionImport(final String functionImportName) {
+    EdmFunctionImport functionImport = functionImports.get(functionImportName);
+    if (functionImport == null) {
+      functionImport = createFunctionImport(functionImportName);
+      if (functionImport != null) {
+        functionImports.put(functionImportName, functionImport);
+      }
+    }
+    return functionImport;
+  }
+
+  @Override
+  public List<EdmEntitySet> getEntitySets() {
+    if (!allEntitySetsLoaded) {
+      loadAllEntitySets();
+      allEntitySetsLoaded = true;
+    }
+    return new ArrayList<EdmEntitySet>(entitySets.values());
+  }
+
+  @Override
+  public List<EdmFunctionImport> getFunctionImports() {
+    if (!allFunctionImportsLoaded) {
+      loadAllFunctionImports();
+      allFunctionImportsLoaded = true;
+    }
+    return new ArrayList<EdmFunctionImport>(functionImports.values());
+  }
+
+  @Override
+  public List<EdmSingleton> getSingletons() {
+    if (!allSingletonsLoaded) {
+      loadAllSingletons();
+      allSingletonsLoaded = true;
+    }
+    return new ArrayList<EdmSingleton>(singletons.values());
+  }
+
+  @Override
+  public List<EdmActionImport> getActionImports() {
+    if (!allActionImportsLoaded) {
+      loadAllActionImports();
+      allActionImportsLoaded = true;
+    }
+    return new ArrayList<EdmActionImport>(actionImports.values());
+  }
+
+  @Override
+  public FullQualifiedName getParentContainerName() {
+    return parentContainerName;
+  }
+
+
   protected EdmSingleton createSingleton(final String singletonName) {
     EdmSingleton singleton = null;
 
@@ -77,7 +197,6 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     return singleton;
   }
 
-  @Override
   protected EdmEntitySet createEntitySet(final String entitySetName) {
     EdmEntitySet entitySet = null;
 
@@ -93,7 +212,6 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     return entitySet;
   }
 
-  @Override
   protected EdmActionImport createActionImport(final String actionImportName) {
     EdmActionImport actionImport = null;
 
@@ -109,7 +227,6 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     return actionImport;
   }
 
-  @Override
   protected EdmFunctionImport createFunctionImport(final String functionImportName) {
     EdmFunctionImport functionImport = null;
 
@@ -125,7 +242,6 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     return functionImport;
   }
 
-  @Override
   protected void loadAllEntitySets() {
     loadContainer();
     List<EntitySet> providerEntitySets = container.getEntitySets();
@@ -139,7 +255,6 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     }
   }
 
-  @Override
   protected void loadAllFunctionImports() {
     loadContainer();
     List<FunctionImport> providerFunctionImports = container.getFunctionImports();
@@ -155,7 +270,6 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
   }
 
-  @Override
   protected void loadAllSingletons() {
     loadContainer();
     List<Singleton> providerSingletons = container.getSingletons();
@@ -170,7 +284,6 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
   }
 
-  @Override
   protected void loadAllActionImports() {
     loadContainer();
     List<ActionImport> providerActionImports = container.getActionImports();
@@ -199,6 +312,16 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     }
   }
 
+  @Override
+  public String getAnnotationsTargetPath() {
+    return null;
+  }
+
+  @Override
+  public FullQualifiedName getAnnotationsTargetFQN() {
+    return getFullQualifiedName();
+  }
+  
   @Override
   public TargetType getAnnotationsTargetType() {
     return TargetType.EntityContainer;

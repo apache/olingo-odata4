@@ -18,33 +18,36 @@
  */
 package org.apache.olingo.commons.core.edm.provider;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
-import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
-import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.EdmTerm;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.PropertyRef;
-import org.apache.olingo.commons.core.edm.AbstractEdmEntityType;
-import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
-import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
-
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EdmEntityTypeImpl extends AbstractEdmEntityType {
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.commons.api.edm.EdmTerm;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.edm.provider.EntityType;
+import org.apache.olingo.commons.api.edm.provider.PropertyRef;
+
+public class EdmEntityTypeImpl extends EdmStructuredTypeImpl implements EdmEntityType {
 
   private final EdmStructuredTypeHelper helper;
-
   private EntityType entityType;
-
   private boolean baseTypeChecked = false;
-  
   private EdmAnnotationHelper annotationHelper;
+  private final boolean hasStream;
+  protected EdmEntityType entityBaseType;
+  private final List<String> keyPredicateNames = new ArrayList<String>();
+  private final Map<String, EdmKeyPropertyRef> keyPropertyRefs = new LinkedHashMap<String, EdmKeyPropertyRef>();
+  private List<EdmKeyPropertyRef> keyPropertyRefsList;
 
   public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName name,
       final EntityType entityType) {
@@ -53,9 +56,10 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
   }
 
   private EdmEntityTypeImpl(final Edm edm, final FullQualifiedName name, final EntityType entityType) {
-    super(edm, name, entityType.getBaseTypeFQN(), entityType.hasStream());
+    super(edm, name, EdmTypeKind.ENTITY, entityType.getBaseTypeFQN());
     this.entityType = entityType;
     helper = new EdmStructuredTypeHelperImpl(edm, name, entityType);
+    hasStream = entityType.hasStream();
   }
 
   @Override
@@ -76,7 +80,7 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
         entityBaseType = (EdmEntityType) baseType;
       }
       if (baseType == null
-          || (baseType.isAbstract() && ((AbstractEdmEntityType) baseType).getKeyPropertyRefs().size() == 0)) {
+          || (baseType.isAbstract() && ((EdmEntityType) baseType).getKeyPropertyRefs().size() == 0)) {
         final List<PropertyRef> key = entityType.getKey();
         if (key != null) {
           final List<EdmKeyPropertyRef> edmKey = new ArrayList<EdmKeyPropertyRef>();
@@ -90,6 +94,77 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
     }
   }
 
+  protected void setEdmKeyPropertyRef(final List<EdmKeyPropertyRef> edmKey) {
+    for (EdmKeyPropertyRef ref : edmKey) {
+      if (ref.getAlias() == null) {
+        keyPredicateNames.add(ref.getName());
+        keyPropertyRefs.put(ref.getName(), ref);
+      } else {
+        keyPredicateNames.add(ref.getAlias());
+        keyPropertyRefs.put(ref.getAlias(), ref);
+      }
+    }
+  }
+
+  @Override
+  protected EdmStructuredType buildBaseType(final FullQualifiedName baseTypeName) {
+    EdmEntityType baseType = null;
+    if (baseTypeName != null) {
+      baseType = edm.getEntityType(baseTypeName);
+      if (baseType == null) {
+        throw new EdmException("Cannot find base type with name: " + baseTypeName + " for entity type: " + getName());
+      }
+    }
+    return baseType;
+  }
+
+  @Override
+  public EdmEntityType getBaseType() {
+    checkBaseType();
+    return entityBaseType;
+  }
+
+  @Override
+  public List<String> getKeyPredicateNames() {
+    checkBaseType();
+    if (keyPredicateNames.isEmpty() && baseType != null) {
+      return entityBaseType.getKeyPredicateNames();
+    }
+    return keyPredicateNames;
+  }
+
+  @Override
+  public List<EdmKeyPropertyRef> getKeyPropertyRefs() {
+    checkBaseType();
+    if (keyPropertyRefsList == null) {
+      keyPropertyRefsList = new ArrayList<EdmKeyPropertyRef>(keyPropertyRefs.values());
+    }
+    if (keyPropertyRefsList.isEmpty() && entityBaseType != null) {
+      return entityBaseType.getKeyPropertyRefs();
+    }
+    return keyPropertyRefsList;
+  }
+
+  @Override
+  public EdmKeyPropertyRef getKeyPropertyRef(final String keyPredicateName) {
+    checkBaseType();
+    final EdmKeyPropertyRef edmKeyPropertyRef = keyPropertyRefs.get(keyPredicateName);
+    if (edmKeyPropertyRef == null && entityBaseType != null) {
+      return entityBaseType.getKeyPropertyRef(keyPredicateName);
+    }
+    return edmKeyPropertyRef;
+  }
+
+  @Override
+  public boolean hasStream() {
+    return hasStream;
+  }
+
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.EntityType;
+  }
+  
   @Override
   public boolean isOpenType() {
     return helper.isOpenType();

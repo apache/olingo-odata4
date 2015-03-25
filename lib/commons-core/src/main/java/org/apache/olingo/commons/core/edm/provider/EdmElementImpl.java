@@ -16,31 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.edm;
+package org.apache.olingo.commons.core.edm.provider;
 
-import java.net.URI;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmElement;
 
-/**
- * Objects of this class contain information about one entity set inside the EntityDataModel.
- */
-public interface EdmEntitySetInfo {
+public abstract class EdmElementImpl extends EdmNamedImpl implements EdmElement {
 
-  /**
-   * @return the entity container name which contains this entity set.
-   */
-  String getEntityContainerName();
-
-  /**
-   * @return the entity set name
-   */
-  String getEntitySetName();
-
-  /**
-   * We use a {@link URI} object here to ensure the right encoding. If a string representation is needed the
-   * toASCIIString() method can be used.
-   * 
-   * @return the uri to this entity set e.g. "Employees"
-   */
-  URI getEntitySetUri();
-
+  public EdmElementImpl(final Edm edm, final String name) {
+    super(edm, name);
+  }
 }

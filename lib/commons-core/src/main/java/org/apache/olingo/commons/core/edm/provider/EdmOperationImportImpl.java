@@ -18,26 +18,67 @@
  */
 package org.apache.olingo.commons.core.edm.provider;
 
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmOperationImport;
 import org.apache.olingo.commons.api.edm.EdmTerm;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.api.edm.provider.OperationImport;
-import org.apache.olingo.commons.core.edm.AbstractEdmOperationImport;
-import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
-import java.util.List;
+public abstract class EdmOperationImportImpl extends EdmNamedImpl implements EdmOperationImport {
 
-public abstract class EdmOperationImportImpl extends AbstractEdmOperationImport {
-
+  protected final EdmEntityContainer container;
+  private final Target entitySet;
+  private EdmEntitySet returnedEntitySet;
   private final EdmAnnotationHelper helper;
-  
+
   public EdmOperationImportImpl(final Edm edm, final EdmEntityContainer container,
       final OperationImport operationImport) {
-    super(edm, container, operationImport.getName(), new Target.Builder(operationImport.getEntitySet(), container
-        ).build());
+    super(edm, operationImport.getName());
+    this.container = container;
     this.helper = new EdmAnnotationHelperImpl(edm, operationImport);
+    this.entitySet = new Target.Builder(operationImport.getEntitySet(), container).build();
+  }
+
+  @Override
+  public FullQualifiedName getFullQualifiedName() {
+    return new FullQualifiedName(container.getNamespace(), getName());
+  }
+
+  @Override
+  public EdmEntitySet getReturnedEntitySet() {
+    if (entitySet != null && returnedEntitySet == null) {
+      EdmEntityContainer entityContainer = edm.getEntityContainer(entitySet.getEntityContainer());
+      if (entityContainer == null) {
+        throw new EdmException("Can´t find entity container with name: " + entitySet.getEntityContainer());
+      }
+      returnedEntitySet = entityContainer.getEntitySet(entitySet.getTargetName());
+      if (returnedEntitySet == null) {
+        throw new EdmException("Can´t find entity set with name: " + entitySet.getTargetName());
+      }
+    }
+    return returnedEntitySet;
+  }
+
+  @Override
+  public EdmEntityContainer getEntityContainer() {
+    return container;
+  }
+
+  @Override
+  public FullQualifiedName getAnnotationsTargetFQN() {
+    return container.getFullQualifiedName();
+  }
+
+  @Override
+  public String getAnnotationsTargetPath() {
+    return getName();
   }
 
   @Override

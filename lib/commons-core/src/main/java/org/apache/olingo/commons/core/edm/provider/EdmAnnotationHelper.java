@@ -16,30 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.edm;
+package org.apache.olingo.commons.core.edm.provider;
 
-import java.net.URI;
+import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 
-/**
- * Objects of this class contain information about one singleton inside the EntityDataModel.
- */
-public interface EdmSingletonInfo {
-
-  /**
-   * @return the entity container name which contains this singleton.
-   */
-  String getEntityContainerName();
-
-  /**
-   * @return the singleton name
-   */
-  String getSingletonName();
-
-  /**
-   * We use a {@link URI} object here to ensure the right encoding. If a string representation is needed the
-   * toASCIIString() method can be used.
-   * 
-   * @return the uri to this singleton e.g. "EmployeeOfTheMonth"
-   */
-  URI getEntitySetUri();
+public interface EdmAnnotationHelper extends EdmAnnotatable {
 }

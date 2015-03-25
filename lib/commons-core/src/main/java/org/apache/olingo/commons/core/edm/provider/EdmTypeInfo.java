@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.edm;
+package org.apache.olingo.commons.core.edm.provider;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.Edm;

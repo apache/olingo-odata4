@@ -16,24 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.edm;
+package org.apache.olingo.commons.core.edm.provider;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmNamed;
+import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 
-public abstract class EdmNamedImpl implements EdmNamed {
+public class EdmNavigationPropertyBindingImpl implements EdmNavigationPropertyBinding {
 
-  protected final Edm edm;
+  private final String path;
+  private final String target;
 
-  private final String name;
-
-  public EdmNamedImpl(final Edm edm, final String name) {
-    this.edm = edm;
-    this.name = name;
+  public EdmNavigationPropertyBindingImpl(final String path, final String target) {
+    this.path = path;
+    this.target = target;
   }
 
   @Override
-  public String getName() {
-    return name;
+  public String getPath() {
+    return path;
   }
+
+  @Override
+  public String getTarget() {
+    return target;
+  }
+
 }

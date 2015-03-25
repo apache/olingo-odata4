@@ -19,7 +19,7 @@
 package org.apache.olingo.server.core.edm.provider;
 
 import org.apache.olingo.commons.api.edm.EdmNamed;
-import org.apache.olingo.commons.core.edm.EdmNamedImpl;
+import org.apache.olingo.commons.core.edm.provider.EdmNamedImpl;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

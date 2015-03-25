@@ -25,7 +25,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.Property;
 import org.apache.olingo.commons.api.edm.provider.StructuralType;
-import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

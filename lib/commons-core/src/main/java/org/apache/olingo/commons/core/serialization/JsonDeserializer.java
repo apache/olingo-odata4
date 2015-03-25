@@ -56,7 +56,7 @@ import org.apache.olingo.commons.core.data.ComplexValueImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;

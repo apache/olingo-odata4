@@ -50,8 +50,8 @@ import org.apache.olingo.commons.core.data.AbstractODataObject;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
 
 import com.fasterxml.aalto.stax.OutputFactoryImpl;
 

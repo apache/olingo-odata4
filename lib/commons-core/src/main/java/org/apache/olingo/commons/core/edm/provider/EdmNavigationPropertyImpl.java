@@ -18,25 +18,29 @@
  */
 package org.apache.olingo.commons.core.edm.provider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.ReferentialConstraint;
-import org.apache.olingo.commons.core.edm.AbstractEdmNavigationProperty;
-import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
+public class EdmNavigationPropertyImpl extends EdmElementImpl implements EdmNavigationProperty {
 
   private final FullQualifiedName structuredTypeName;
   private final NavigationProperty navigationProperty;
   private List<EdmReferentialConstraint> referentialConstraints;
   private final EdmAnnotationHelper helper;
+  private EdmEntityType typeImpl;
+  private EdmNavigationProperty partnerNavigationProperty;
 
   public EdmNavigationPropertyImpl(
       final Edm edm, final FullQualifiedName structuredTypeName, final NavigationProperty navigationProperty) {
@@ -44,11 +48,6 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
     this.structuredTypeName = structuredTypeName;
     this.navigationProperty = navigationProperty;
     this.helper = new EdmAnnotationHelperImpl(edm, navigationProperty);
-  }
-
-  @Override
-  protected FullQualifiedName getTypeFQN() {
-    return navigationProperty.getTypeFQN();
   }
 
   @Override
@@ -67,8 +66,36 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
   }
 
   @Override
-  protected String internatGetPartner() {
-    return navigationProperty.getPartner();
+  public EdmEntityType getType() {
+    if (typeImpl == null) {
+      typeImpl = edm.getEntityType(navigationProperty.getTypeFQN());
+      if (typeImpl == null) {
+        throw new EdmException("Cannot find type with name: " + navigationProperty.getTypeFQN());
+      }
+    }
+    return typeImpl;
+  }
+
+  @Override
+  public EdmNavigationProperty getPartner() {
+    if (partnerNavigationProperty == null) {
+      String partner = navigationProperty.getPartner();
+      if (partner != null) {
+        EdmStructuredType type = getType();
+        EdmNavigationProperty property = null;
+        final String[] split = partner.split("/");
+        for (String element : split) {
+          property = type.getNavigationProperty(element);
+          if (property == null) {
+            throw new EdmException("Cannot find navigation property with name: " + element
+                + " at type " + type.getName());
+          }
+          type = property.getType();
+        }
+        partnerNavigationProperty = property;
+      }
+    }
+    return partnerNavigationProperty;
   }
 
   @Override
@@ -91,12 +118,21 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
       referentialConstraints = new ArrayList<EdmReferentialConstraint>();
       if (providerConstraints != null) {
         for (ReferentialConstraint constraint : providerConstraints) {
-          referentialConstraints.add(
-              new EdmReferentialConstraintImpl(edm, constraint));
+          referentialConstraints.add(new EdmReferentialConstraintImpl(edm, constraint));
         }
       }
     }
     return referentialConstraints;
+  }
+
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.NavigationProperty;
+  }
+
+  @Override
+  public String getAnnotationsTargetPath() {
+    return getName();
   }
 
   @Override

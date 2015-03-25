@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 

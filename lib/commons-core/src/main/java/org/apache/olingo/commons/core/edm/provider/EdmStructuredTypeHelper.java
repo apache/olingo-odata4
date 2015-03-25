@@ -16,10 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.edm;
+package org.apache.olingo.commons.core.edm.provider;
 
-import org.apache.olingo.commons.api.edm.EdmAnnotatable;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 
-public interface EdmAnnotationHelper extends EdmAnnotatable {
-//No additional methods needed for now.
+import java.util.Map;
+
+public interface EdmStructuredTypeHelper {
+
+  Map<String, EdmProperty> getProperties();
+
+  Map<String, EdmNavigationProperty> getNavigationProperties();
+
+  boolean isOpenType();
+
+  boolean isAbstract();
 }

@@ -22,22 +22,26 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmMapping;
+import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmTerm;
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.Parameter;
-import org.apache.olingo.commons.core.edm.AbstractEdmParameter;
-import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
-public class EdmParameterImpl extends AbstractEdmParameter {
+public class EdmParameterImpl extends EdmElementImpl implements EdmParameter {
 
   private final Parameter parameter;
   private final EdmAnnotationHelper helper;
+  private final EdmTypeInfo typeInfo;
+  private EdmType typeImpl;
 
   public EdmParameterImpl(final Edm edm, final Parameter parameter) {
-    super(edm, parameter.getName(), parameter.getTypeFQN());
+    super(edm, parameter.getName());
     this.parameter = parameter;
     this.helper = new EdmAnnotationHelperImpl(edm, parameter);
+    this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(parameter.getType()).build();
   }
 
   @Override
@@ -83,5 +87,17 @@ public class EdmParameterImpl extends AbstractEdmParameter {
   @Override
   public List<EdmAnnotation> getAnnotations() {
     return helper.getAnnotations();
+  }
+  
+  @Override
+  public EdmType getType() {
+    if (typeImpl == null) {
+      typeImpl = typeInfo.getType();
+      if (typeImpl == null) {
+        throw new EdmException("Cannot find type with name: " + typeInfo.getFullQualifiedName());
+      }
+    }
+
+    return typeImpl;
   }
 }

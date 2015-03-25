@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.edm;
+package org.apache.olingo.commons.core.edm.provider;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmElement;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements EdmStructuredType {
+public abstract class EdmStructuredTypeImpl extends EdmTypeImpl implements EdmStructuredType {
 
   protected EdmStructuredType baseType;
 
@@ -42,7 +42,7 @@ public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements E
 
   private List<String> navigationPropertyNames;
 
-  public AbstractEdmStructuredType(
+  public EdmStructuredTypeImpl(
       final Edm edm,
       final FullQualifiedName typeName,
       final EdmTypeKind kind,

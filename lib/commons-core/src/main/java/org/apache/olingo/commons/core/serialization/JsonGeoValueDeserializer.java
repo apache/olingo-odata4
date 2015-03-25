@@ -36,8 +36,8 @@ import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
 import org.apache.olingo.commons.api.edm.geo.SRID;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
+import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

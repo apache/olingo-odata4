@@ -35,8 +35,8 @@ import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -47,6 +47,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 public abstract class AbstractUtility {

@@ -26,7 +26,6 @@ import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.provider.Annotatable;
 import org.apache.olingo.commons.api.edm.provider.Annotation;
-import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
 public class EdmAnnotationHelperImpl implements EdmAnnotationHelper {
 

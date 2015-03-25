@@ -34,7 +34,6 @@ import org.apache.olingo.commons.api.edm.provider.Annotation;
 import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.DynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.PropertyValue;
-import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.annotation.EdmAndImpl;
 import org.apache.olingo.commons.core.edm.annotation.EdmAnnotationPathImpl;
 import org.apache.olingo.commons.core.edm.annotation.EdmApplyImpl;
