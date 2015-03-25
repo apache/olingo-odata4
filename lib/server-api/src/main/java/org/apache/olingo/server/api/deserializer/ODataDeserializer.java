@@ -33,7 +33,7 @@ public interface ODataDeserializer {
   /**
    * Deserializes an entity stream into an {@link Entity} object.
    * Validates: property types, no double properties, correct json types 
-   * Returns a deserialized {@link Entity} object and an {@link ExpandOption}
+   * Returns a deserialized {@link Entity} object and an {@link ExpandOption} object
    * @param stream
    * @param edmEntityType
    * @return {@link DeserializerResult}

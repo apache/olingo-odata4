@@ -40,7 +40,7 @@ public interface DeserializerResult {
 
   /**
    * Returns the ExpandOptions for serialized entities
-   * @return an {@link ExpandOption}
+   * @return an {@link ExpandOption} or null
    */
   ExpandOption getExpandTree();
 }
