@@ -52,10 +52,27 @@ public class ExpandSystemQueryOptionHandler {
 
   public void applyExpandQueryOptions(final EntitySet entitySet, final EdmEntitySet edmEntitySet,
       final ExpandOption expandOption) throws ODataApplicationException {
-    final EdmEntityType entityType = edmEntitySet.getEntityType();
     if (expandOption == null) {
       return;
     }
+
+    for (final Entity entity : entitySet.getEntities()) {
+      applyExpandOptionToEntity(entity, edmEntitySet, expandOption);
+    }
+  }
+
+  public void applyExpandQueryOptions(Entity entity, EdmEntitySet edmEntitySet, ExpandOption expandOption)
+      throws ODataApplicationException {
+    if (expandOption == null) {
+      return;
+    }
+
+    applyExpandOptionToEntity(entity, edmEntitySet, expandOption);
+  }
+
+  private void applyExpandOptionToEntity(final Entity entity, final EdmEntitySet edmEntitySet,
+      final ExpandOption expandOption) throws ODataApplicationException {
+    final EdmEntityType entityType = edmEntitySet.getEntityType();
 
     for (ExpandItem item : expandOption.getExpandItems()) {
       final List<UriResource> uriResourceParts = item.getResourcePath().getUriResourceParts();
@@ -63,12 +80,10 @@ public class ExpandSystemQueryOptionHandler {
         final String navPropertyName = ((UriResourceNavigation) uriResourceParts.get(0)).getProperty().getName();
         final EdmEntitySet targetEdmEntitySet = (EdmEntitySet) edmEntitySet.getRelatedBindingTarget(navPropertyName);
 
-        for (final Entity entity : entitySet.getEntities()) {
-          final Link link = entity.getNavigationLink(navPropertyName);
-          if (link != null && entityType.getNavigationProperty(navPropertyName).isCollection()) {
-            applyOptionsToEntityCollection(link.getInlineEntitySet(), targetEdmEntitySet, item.getFilterOption(),
-                item.getOrderByOption(), item.getCountOption(), item.getSkipOption(), item.getTopOption());
-          }
+        final Link link = entity.getNavigationLink(navPropertyName);
+        if (link != null && entityType.getNavigationProperty(navPropertyName).isCollection()) {
+          applyOptionsToEntityCollection(link.getInlineEntitySet(), targetEdmEntitySet, item.getFilterOption(),
+              item.getOrderByOption(), item.getCountOption(), item.getSkipOption(), item.getTopOption());
         }
       } else {
         throw new ODataApplicationException("Not supported resource part in expand system query option",
@@ -83,6 +98,7 @@ public class ExpandSystemQueryOptionHandler {
 
     FilterHandler.applyFilterSystemQuery(filterOption, entitySet, edmEntitySet);
     OrderByHandler.applyOrderByOption(orderByOption, entitySet, edmEntitySet);
+    // TODO Add CountHandler
     SkipHandler.applySkipSystemQueryHandler(skipOption, entitySet);
     TopHandler.applyTopSystemQueryOption(topOption, entitySet);
   }
@@ -96,7 +112,7 @@ public class ExpandSystemQueryOptionHandler {
 
       copiedEntitySets.put(entitySet, copiedEntitySet);
       copiedEntitySets.put(copiedEntitySet, copiedEntitySet);
-      
+
       for (Entity entity : entitySet.getEntities()) {
         copiedEntitySet.getEntities().add(copyEntityShallowRekursive(entity));
       }
@@ -105,7 +121,7 @@ public class ExpandSystemQueryOptionHandler {
     return copiedEntitySets.get(entitySet);
   }
 
-  private Entity copyEntityShallowRekursive(final Entity entity) {
+  public Entity copyEntityShallowRekursive(final Entity entity) {
     if (!copiedEntities.containsKey(entity)) {
       final Entity copiedEntity = new EntityImpl();
       copiedEntity.getProperties().addAll(entity.getProperties());
@@ -120,7 +136,7 @@ public class ExpandSystemQueryOptionHandler {
       copiedEntity.setSelfLink(entity.getSelfLink());
       copiedEntity.setType(entity.getType());
       copiedEntity.getNavigationBindings().addAll(entity.getNavigationBindings());
-      
+
       copiedEntities.put(entity, copiedEntity);
       copiedEntities.put(copiedEntity, copiedEntity);
 

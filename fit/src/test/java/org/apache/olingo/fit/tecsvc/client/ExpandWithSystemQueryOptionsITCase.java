@@ -39,6 +39,7 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
@@ -216,20 +217,80 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
       }
     }
   }
-  
+
+  @Test
+  @Ignore("Server do not support navigation property count annotations")
+  public void testCount() {
+    final ODataClient client = getClient();
+    final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+    options.put(QueryOption.SELECT, "PropertyInt16");
+    options.put(QueryOption.COUNT, true);
+
+    final URI uri =
+        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).expandWithOptions(
+            NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options).addQueryOption(QueryOption.SELECT,
+            "PropertyInt16,PropertyString").build();
+    final ODataRetrieveResponse<ODataEntitySet> response =
+        client.getRetrieveRequestFactory().getEntitySetRequest(uri).execute();
+
+    final List<ODataEntity> entities = response.getBody().getEntities();
+    assertEquals(4, entities.size());
+
+    for (final ODataEntity entity : entities) {
+      final Object propInt16 = entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue();
+      final Object propString = entity.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue();
+      final ODataEntitySet entitySet =
+          entity.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
+
+      if (propInt16.equals(1) && propString.equals("1")) {
+        assertEquals(Integer.valueOf(2), entitySet.getCount());
+      } else if (propInt16.equals(1) && propString.equals("2")) {
+        assertEquals(Integer.valueOf(2), entitySet.getCount());
+      } else if (propInt16.equals(2) && propString.equals("1")) {
+        assertEquals(Integer.valueOf(2), entitySet.getCount());
+      } else if (propInt16.equals(3) && propString.equals("1")) {
+        assertEquals(Integer.valueOf(0), entitySet.getCount());
+      } else {
+        fail();
+      }
+    }
+  }
+
+  @Test
+  public void testSingleEntiyWithExpand() {
+    /* A single entity request will be dispatched to a different processor method than entity set request */
+    final ODataClient client = getClient();
+    final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+    options.put(QueryOption.FILTER, "PropertyInt16 lt 2");
+    final Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("PropertyInt16", 1);
+    keys.put("PropertyString", "1");
+
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(keys)
+        .expandWithOptions(NAV_PROPERTY_ET_KEY_NAV_MANY, options).build();
+    final ODataRetrieveResponse<ODataEntity> response =
+        client.getRetrieveRequestFactory().getEntityRequest(uri).execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    final ODataEntitySet entitySet =
+        response.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
+    assertEquals(1, entitySet.getEntities().size());
+    assertEquals(1, entitySet.getEntities().get(0).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+  }
+
   @Test
   public void testURIEscaping() {
     final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
-    options.put(QueryOption.FILTER, "PropertyInt16 eq 1" 
-    + " and PropertyComp/PropertyComp/PropertyDuration eq duration'PT1S' and length(PropertyString) gt 4");
+    options.put(QueryOption.FILTER, "PropertyInt16 eq 1"
+        + " and PropertyComp/PropertyComp/PropertyDuration eq duration'PT1S' and length(PropertyString) gt 4");
     final ODataRetrieveResponse<ODataEntitySet> response =
         buildRequest(ES_TWO_KEY_NAV, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options);
     final List<ODataEntity> entities = response.getBody().getEntities();
-    
+
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertEquals(4, entities.size());
   }
-  
+
   private ODataRetrieveResponse<ODataEntitySet> buildRequest(final String entitySet, final String navigationProperty,
       final Map<QueryOption, Object> expandOptions) {
     return buildRequest(entitySet, navigationProperty, expandOptions, null);

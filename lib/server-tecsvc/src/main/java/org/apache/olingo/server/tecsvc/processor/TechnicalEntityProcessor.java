@@ -168,12 +168,17 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         edmEntitySet.getEntityType();
 
     final Entity entity = readEntity(uriInfo);
-
+    
     final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
     ODataSerializer serializer = odata.createSerializer(format);
     final ExpandOption expand = uriInfo.getExpandOption();
     final SelectOption select = uriInfo.getSelectOption();
-    response.setContent(serializer.entity(edmEntitySet.getEntityType(), entity,
+    
+    final ExpandSystemQueryOptionHandler expandHandler = new ExpandSystemQueryOptionHandler();
+    final Entity entitySerialization = expandHandler.copyEntityShallowRekursive(entity);
+    expandHandler.applyExpandQueryOptions(entitySerialization, edmEntitySet, expand);
+    
+    response.setContent(serializer.entity(edmEntitySet.getEntityType(), entitySerialization,
         EntitySerializerOptions.with()
             .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                 getContextUrl(edmEntitySet, edmEntityType, true, expand, select))
