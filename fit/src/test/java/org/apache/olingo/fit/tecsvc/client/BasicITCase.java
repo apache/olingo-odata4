@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -54,6 +54,8 @@ import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.domain.ODataInlineEntity;
+import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
@@ -330,17 +332,17 @@ public class BasicITCase extends AbstractBaseTestITCase {
     newEntity.getProperties().add(factory.newComplexProperty("PropertyCompComp", null));
     // The following properties must not be null
     newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyString",
-         factory.newPrimitiveValueBuilder().buildString("Test")));  
+        factory.newPrimitiveValueBuilder().buildString("Test")));
     newEntity.getProperties().add(
         factory.newComplexProperty("PropertyCompTwoPrim",
             factory.newComplexValue("CTTwoPrim")
                 .add(factory.newPrimitiveProperty(
-                      "PropertyInt16", 
-                      factory.newPrimitiveValueBuilder().buildInt16((short) 1)))
+                    "PropertyInt16",
+                    factory.newPrimitiveValueBuilder().buildInt16((short) 1)))
                 .add(factory.newPrimitiveProperty(
-                      "PropertyString", 
-                      factory.newPrimitiveValueBuilder().buildString("Test2")))));
-    
+                    "PropertyString",
+                    factory.newPrimitiveValueBuilder().buildString("Test2")))));
+
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESKeyNav").appendKeySegment(1).build();
     final ODataEntityUpdateRequest<ODataEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
         uri, UpdateType.REPLACE, newEntity);
@@ -386,6 +388,57 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ODataProperty property2 = createdEntity.getProperty("PropertyDecimal");
     assertNotNull(property2);
     assertNull(property2.getPrimitiveValue());
+  }
+
+  @Test
+  public void readEntityWithExpandedNavigationProperty() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    
+    final URI uri = client.newURIBuilder(SERVICE_URI)
+        .appendEntitySetSegment("ESKeyNav")
+        .appendKeySegment(1)
+        .expand("NavPropertyETKeyNavOne", "NavPropertyETKeyNavMany")
+        .build();
+    
+    final ODataRetrieveResponse<ODataEntity> response = client.getRetrieveRequestFactory()
+                                                              .getEntityRequest(uri)
+                                                              .execute();
+    
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    
+    // Check if all inlined entities are available
+    // NavPropertyETKeyNavOne
+    assertNotNull(response.getBody().getNavigationLink("NavPropertyETKeyNavOne"));
+    final ODataInlineEntity inlineEntity = response.getBody()
+                                                   .getNavigationLink("NavPropertyETKeyNavOne")
+                                                   .asInlineEntity();
+    assertNotNull(inlineEntity);
+    assertEquals(Integer.valueOf(2), inlineEntity.getEntity()
+                                                  .getProperty("PropertyInt16")
+                                                  .getPrimitiveValue()
+                                                  .toValue());
+    
+    // NavPropertyETKeyNavMany
+    assertNotNull(response.getBody().getNavigationLink("NavPropertyETKeyNavMany"));
+    final ODataInlineEntitySet inlineEntitySet = response.getBody()
+                                                         .getNavigationLink("NavPropertyETKeyNavMany")
+                                                         .asInlineEntitySet();
+    assertNotNull(inlineEntitySet);
+    assertEquals(2, inlineEntitySet.getEntitySet().getEntities().size());
+    assertEquals(1, inlineEntitySet.getEntitySet()
+                                   .getEntities()
+                                   .get(0)
+                                   .getProperty("PropertyInt16")
+                                   .getPrimitiveValue()
+                                   .toValue());
+    
+    assertEquals(2, inlineEntitySet.getEntitySet()
+                                   .getEntities()
+                                   .get(1)
+                                   .getProperty("PropertyInt16")
+                                   .getPrimitiveValue()
+                                   .toValue());  
   }
 
   @Override
