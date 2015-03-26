@@ -28,8 +28,6 @@ import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
-import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
-import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -39,7 +37,6 @@ import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 
 public class EdmEntityTypeImpl extends EdmStructuredTypeImpl implements EdmEntityType {
 
-  private final EdmStructuredTypeHelperImpl helper;
   private EntityType entityType;
   private boolean baseTypeChecked = false;
   private EdmAnnotationHelperImpl annotationHelper;
@@ -56,20 +53,10 @@ public class EdmEntityTypeImpl extends EdmStructuredTypeImpl implements EdmEntit
   }
 
   private EdmEntityTypeImpl(final Edm edm, final FullQualifiedName name, final EntityType entityType) {
-    super(edm, name, EdmTypeKind.ENTITY, entityType.getBaseTypeFQN());
+    super(edm, name, EdmTypeKind.ENTITY, entityType);
     this.entityType = entityType;
-    helper = new EdmStructuredTypeHelperImpl(edm, name, entityType);
     hasStream = entityType.hasStream();
-  }
-
-  @Override
-  protected Map<String, EdmProperty> getProperties() {
-    return helper.getProperties();
-  }
-
-  @Override
-  protected Map<String, EdmNavigationProperty> getNavigationProperties() {
-    return helper.getNavigationProperties();
+    this.annotationHelper = new EdmAnnotationHelperImpl(edm, entityType);
   }
 
   @Override
@@ -165,16 +152,6 @@ public class EdmEntityTypeImpl extends EdmStructuredTypeImpl implements EdmEntit
     return TargetType.EntityType;
   }
   
-  @Override
-  public boolean isOpenType() {
-    return helper.isOpenType();
-  }
-
-  @Override
-  public boolean isAbstract() {
-    return helper.isAbstract();
-  }
-
   @Override
   public EdmAnnotation getAnnotation(final EdmTerm term) {
     return annotationHelper.getAnnotation(term);

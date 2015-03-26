@@ -27,36 +27,38 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.Property;
+import org.apache.olingo.commons.api.edm.provider.StructuralType;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public abstract class EdmStructuredTypeImpl extends EdmTypeImpl implements EdmStructuredType {
 
   protected EdmStructuredType baseType;
-
   protected FullQualifiedName baseTypeName;
 
   private List<String> propertyNames;
-
   private List<String> navigationPropertyNames;
+  private Map<String, EdmProperty> properties;
+  private Map<String, EdmNavigationProperty> navigationProperties;
+  private final StructuralType structuredType;
 
   public EdmStructuredTypeImpl(
       final Edm edm,
       final FullQualifiedName typeName,
       final EdmTypeKind kind,
-      final FullQualifiedName baseTypeName) {
+      final StructuralType structuredType) {
 
     super(edm, typeName, kind);
-    this.baseTypeName = baseTypeName;
+    this.baseTypeName = structuredType.getBaseTypeFQN();
+    this.structuredType = structuredType;
   }
 
   protected abstract EdmStructuredType buildBaseType(FullQualifiedName baseTypeName);
-
-  protected abstract Map<String, EdmProperty> getProperties();
-
-  protected abstract Map<String, EdmNavigationProperty> getNavigationProperties();
 
   protected abstract void checkBaseType();
 
@@ -149,4 +151,34 @@ public abstract class EdmStructuredTypeImpl extends EdmTypeImpl implements EdmSt
     return getFullQualifiedName();
   }
 
+  public Map<String, EdmProperty> getProperties() {
+    if (properties == null) {
+      properties = new LinkedHashMap<String, EdmProperty>();
+        for (Property property : structuredType.getProperties()) {
+          properties.put(property.getName(), new EdmPropertyImpl(edm, typeName, property));
+      }
+    }
+    return properties;
+  }
+
+  public Map<String, EdmNavigationProperty> getNavigationProperties() {
+    if (navigationProperties == null) {
+      navigationProperties = new LinkedHashMap<String, EdmNavigationProperty>();
+      if (structuredType.getNavigationProperties() != null) {
+        for (NavigationProperty navigationProperty : structuredType.getNavigationProperties()) {
+          navigationProperties.put(navigationProperty.getName(),
+                  new EdmNavigationPropertyImpl(edm, typeName, navigationProperty));
+        }
+      }
+    }
+    return navigationProperties;
+  }
+
+  public boolean isOpenType() {
+    return structuredType.isOpenType();
+  }
+
+  public boolean isAbstract() {
+    return structuredType.isAbstract();
+  }
 }

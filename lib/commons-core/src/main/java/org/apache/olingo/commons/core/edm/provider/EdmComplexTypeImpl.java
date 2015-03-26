@@ -19,14 +19,11 @@
 package org.apache.olingo.commons.core.edm.provider;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmException;
-import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
-import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -35,8 +32,6 @@ import org.apache.olingo.commons.api.edm.provider.ComplexType;
 
 public class EdmComplexTypeImpl extends EdmStructuredTypeImpl implements EdmComplexType {
 
-  private final EdmStructuredTypeHelperImpl helper;
-  
   private EdmAnnotationHelperImpl annotationHelper;
 
   public static EdmComplexTypeImpl getInstance(
@@ -45,29 +40,8 @@ public class EdmComplexTypeImpl extends EdmStructuredTypeImpl implements EdmComp
   }
 
   private EdmComplexTypeImpl(final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
-    super(edm, name, EdmTypeKind.COMPLEX, complexType.getBaseTypeFQN());
-    this.helper = new EdmStructuredTypeHelperImpl(edm, name, complexType);
+    super(edm, name, EdmTypeKind.COMPLEX, complexType);
     this.annotationHelper = new EdmAnnotationHelperImpl(edm, complexType);
-  }
-
-  @Override
-  protected Map<String, EdmProperty> getProperties() {
-    return helper.getProperties();
-  }
-
-  @Override
-  protected Map<String, EdmNavigationProperty> getNavigationProperties() {
-    return helper.getNavigationProperties();
-  }
-
-  @Override
-  public boolean isOpenType() {
-    return helper.isOpenType();
-  }
-
-  @Override
-  public boolean isAbstract() {
-    return helper.isAbstract();
   }
 
   @Override
