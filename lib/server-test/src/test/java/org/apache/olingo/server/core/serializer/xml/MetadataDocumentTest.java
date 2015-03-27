@@ -87,7 +87,7 @@ public class MetadataDocumentTest {
             + "<Property Name=\"AdditionalPropString\" Type=\"Edm.String\"/></ComplexType>"));
 
     assertThat(metadata, containsString("<Action Name=\"UARTCTTwoPrimParam\" IsBound=\"false\">"
-        + "<Parameter Name=\"ParameterInt16\" Type=\"Edm.Int16\"/>"
+        + "<Parameter Name=\"ParameterInt16\" Type=\"Edm.Int16\" Nullable=\"false\"/>"
         + "<ReturnType Type=\"Namespace1_Alias.CTTwoPrim\"/></Action>"));
 
     assertThat(metadata,

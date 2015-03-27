@@ -88,7 +88,8 @@ public class ActionProvider {
       return Arrays.asList(
               new Action().setName(nameUARTCTTwoPrimParam.getName())
                           .setParameters(Arrays.asList(
-                                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)))
+                                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)
+                                      .setNullable(false)))
                           .setReturnType(
                                   new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim))
       );

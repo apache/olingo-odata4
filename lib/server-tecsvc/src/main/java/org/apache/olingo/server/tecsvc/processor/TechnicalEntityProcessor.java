@@ -25,6 +25,7 @@ import org.apache.olingo.commons.api.data.ContextURL.Builder;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -51,6 +52,7 @@ import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -281,13 +283,21 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   public void processActionEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new ODataApplicationException("Process entity is not supported yet.",
+    throw new ODataApplicationException("Any action returning an entity is not supported yet.",
         HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
   }
 
   @Override
   public void processActionVoid(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat) throws ODataApplicationException, DeserializerException {
+    final UriResourceAction resource =
+        ((UriResourceAction) uriInfo.getUriResourceParts().get(uriInfo.getUriResourceParts().size() - 1));
+    final EdmAction action = resource.getAction();
+    if (action.getParameterNames().size() - (action.isBound() ? 1 : 0) > 0) {
+      checkRequestFormat(requestFormat);
+      odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
+          .actionParameters(request.getBody(), action);
+    }
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
   }
 
