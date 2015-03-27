@@ -18,12 +18,18 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.commons.api.edm.provider.EntitySet;
@@ -34,13 +40,6 @@ import org.apache.olingo.commons.core.edm.provider.EdmEntityContainerImpl;
 import org.apache.olingo.commons.core.edm.provider.EdmEntitySetImpl;
 import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 import org.junit.Test;
-
-import java.util.Arrays;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class EdmEntitySetImplTest {
 
@@ -67,7 +66,7 @@ public class EdmEntitySetImplTest {
         .setIncludeInServiceDocument(true)
         .setNavigationPropertyBindings(Arrays.asList(
             new NavigationPropertyBinding().setPath("path")
-                .setTarget(new Target().setEntityContainer(containerName).setTargetName(entitySetName).toString())));
+                .setTarget(containerName.getFullQualifiedNameAsString() + "/" + entitySetName)));
     when(provider.getEntitySet(containerName, entitySetName)).thenReturn(entitySetProvider);
 
     final EdmEntitySet entitySet = new EdmEntitySetImpl(edm, entityContainer, entitySetProvider);

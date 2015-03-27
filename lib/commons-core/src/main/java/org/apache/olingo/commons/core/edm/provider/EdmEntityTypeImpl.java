@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.core.edm.provider;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,13 +44,7 @@ public class EdmEntityTypeImpl extends AbstractEdmStructuredType implements EdmE
   private final Map<String, EdmKeyPropertyRef> keyPropertyRefs = new LinkedHashMap<String, EdmKeyPropertyRef>();
   private List<EdmKeyPropertyRef> keyPropertyRefsList;
 
-  public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName name,
-      final EntityType entityType) {
-
-    return new EdmEntityTypeImpl(edm, name, entityType);
-  }
-
-  private EdmEntityTypeImpl(final Edm edm, final FullQualifiedName name, final EntityType entityType) {
+  public EdmEntityTypeImpl(final Edm edm, final FullQualifiedName name, final EntityType entityType) {
     super(edm, name, EdmTypeKind.ENTITY, entityType);
     this.entityType = entityType;
     hasStream = entityType.hasStream();
@@ -113,7 +108,7 @@ public class EdmEntityTypeImpl extends AbstractEdmStructuredType implements EdmE
     if (keyPredicateNames.isEmpty() && baseType != null) {
       return entityBaseType.getKeyPredicateNames();
     }
-    return keyPredicateNames;
+    return Collections.unmodifiableList(keyPredicateNames);
   }
 
   @Override
@@ -125,7 +120,7 @@ public class EdmEntityTypeImpl extends AbstractEdmStructuredType implements EdmE
     if (keyPropertyRefsList.isEmpty() && entityBaseType != null) {
       return entityBaseType.getKeyPropertyRefs();
     }
-    return keyPropertyRefsList;
+    return Collections.unmodifiableList(keyPropertyRefsList);
   }
 
   @Override

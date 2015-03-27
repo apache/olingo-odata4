@@ -62,6 +62,6 @@ public class ComplexTypeHelper {
         .setNavigationProperties(navigationProperties);
     when(provider.getComplexType(name)).thenReturn(complexType);
 
-    return EdmComplexTypeImpl.getInstance(edm, name, complexType);
+    return new EdmComplexTypeImpl(edm, name, complexType);
   }
 }

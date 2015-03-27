@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.core.edm.provider;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
@@ -119,7 +120,7 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmEl
         }
       }
     }
-    return referentialConstraints;
+    return Collections.unmodifiableList(referentialConstraints);
   }
 
   @Override

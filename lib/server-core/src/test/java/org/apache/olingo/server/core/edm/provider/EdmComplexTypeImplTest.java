@@ -65,7 +65,7 @@ public class EdmComplexTypeImplTest {
         .setNavigationProperties(baseNavigationProperties);
     when(provider.getComplexType(baseName)).thenReturn(baseComplexType);
 
-    baseType = EdmComplexTypeImpl.getInstance(edm, baseName, baseComplexType);
+    baseType = new EdmComplexTypeImpl(edm, baseName, baseComplexType);
 
     FullQualifiedName name = new FullQualifiedName("namespace", "typeName");
     ComplexType complexType = new ComplexType().setBaseType(baseName);
@@ -77,14 +77,14 @@ public class EdmComplexTypeImplTest {
         .setNavigationProperties(navigationProperties);
     when(provider.getComplexType(name)).thenReturn(complexType);
 
-    type = EdmComplexTypeImpl.getInstance(edm, name, complexType);
+    type = new EdmComplexTypeImpl(edm, name, complexType);
   }
 
   @Test
   public void noPropertiesAndNoNavPropertiesMustNotResultInException() {
     EdmProviderImpl edm = mock(EdmProviderImpl.class);
     ComplexType complexType = new ComplexType().setName("n");
-    EdmComplexTypeImpl.getInstance(edm, new FullQualifiedName("n", "n"), complexType);
+    new EdmComplexTypeImpl(edm, new FullQualifiedName("n", "n"), complexType);
   }
 
   @Test
@@ -163,7 +163,7 @@ public class EdmComplexTypeImplTest {
     complexTypeForNonexistingBaseType.setName("typeName");
     when(provider.getComplexType(typeWithNonexistingBaseTypeName)).thenReturn(complexTypeForNonexistingBaseType);
     EdmComplexTypeImpl instance =
-        EdmComplexTypeImpl.getInstance(edm, typeWithNonexistingBaseTypeName, complexTypeForNonexistingBaseType);
+        new EdmComplexTypeImpl(edm, typeWithNonexistingBaseTypeName, complexTypeForNonexistingBaseType);
     instance.getBaseType();
   }
 }

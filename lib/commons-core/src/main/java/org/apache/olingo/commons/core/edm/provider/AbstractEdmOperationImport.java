@@ -24,7 +24,6 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmOperationImport;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.api.edm.provider.OperationImport;
 
 public abstract class AbstractEdmOperationImport extends AbstractEdmNamed implements EdmOperationImport {
@@ -34,10 +33,14 @@ public abstract class AbstractEdmOperationImport extends AbstractEdmNamed implem
   private EdmEntitySet returnedEntitySet;
 
   public AbstractEdmOperationImport(final Edm edm, final EdmEntityContainer container,
-                                    final OperationImport operationImport) {
+      final OperationImport operationImport) {
     super(edm, operationImport.getName(), operationImport);
     this.container = container;
-    this.entitySet = new Target.Builder(operationImport.getEntitySet(), container).build();
+    if (operationImport.getEntitySet() != null) {
+      this.entitySet = new Target(operationImport.getEntitySet(), container);
+    } else {
+      this.entitySet = null;
+    }
   }
 
   @Override

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.serializer.xml;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -471,7 +472,7 @@ public class MetadataDocumentXmlSerializer {
 
   private void appendNavigationProperties(final XMLStreamWriter writer, final EdmStructuredType type)
       throws XMLStreamException {
-    List<String> navigationPropertyNames = type.getNavigationPropertyNames();
+    List<String> navigationPropertyNames = new ArrayList<String>(type.getNavigationPropertyNames());
     if (type.getBaseType() != null) {
       navigationPropertyNames.removeAll(type.getBaseType().getNavigationPropertyNames());
     }
@@ -504,7 +505,7 @@ public class MetadataDocumentXmlSerializer {
   }
 
   private void appendProperties(final XMLStreamWriter writer, final EdmStructuredType type) throws XMLStreamException {
-    List<String> propertyNames = type.getPropertyNames();
+    List<String> propertyNames = new ArrayList<String>(type.getPropertyNames());
     if (type.getBaseType() != null) {
       propertyNames.removeAll(type.getBaseType().getPropertyNames());
     }

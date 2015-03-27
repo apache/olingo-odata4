@@ -18,13 +18,19 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.commons.api.edm.provider.EntityType;
@@ -35,13 +41,6 @@ import org.apache.olingo.commons.core.edm.provider.EdmEntityContainerImpl;
 import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.commons.core.edm.provider.EdmSingletonImpl;
 import org.junit.Test;
-
-import java.util.Arrays;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class EdmSingletonImplTest {
 
@@ -62,12 +61,14 @@ public class EdmSingletonImplTest {
     final EdmEntityContainer entityContainer = new EdmEntityContainerImpl(edm, provider, containerInfo);
 
     final String singletonName = "singleton";
-    final Singleton singletonProvider = new Singleton()
-        .setName(singletonName)
-        .setType(typeName)
-        .setNavigationPropertyBindings(Arrays.asList(
-            new NavigationPropertyBinding().setPath("path")
-                .setTarget(new Target().setEntityContainer(containerName).setTargetName(singletonName).toString())));
+    final Singleton singletonProvider =
+        new Singleton()
+            .setName(singletonName)
+            .setType(typeName)
+            .setNavigationPropertyBindings(
+                Arrays.asList(
+                    new NavigationPropertyBinding().setPath("path").setTarget(
+                        containerName.getFullQualifiedNameAsString() + "/" + singletonName)));
     when(provider.getSingleton(containerName, singletonName)).thenReturn(singletonProvider);
 
     final EdmSingleton singleton = new EdmSingletonImpl(edm, entityContainer, singletonProvider);
@@ -95,7 +96,7 @@ public class EdmSingletonImplTest {
     final Singleton singletonProvider = new Singleton()
         .setNavigationPropertyBindings(Arrays.asList(
             new NavigationPropertyBinding().setPath("path")
-                .setTarget(new Target().setEntityContainer(containerName).setTargetName("wrong").toString())));
+                .setTarget(containerName.getFullQualifiedNameAsString() + "/wrong")));
     when(provider.getSingleton(containerName, singletonName)).thenReturn(singletonProvider);
 
     final EdmSingleton singleton = new EdmSingletonImpl(edm, null, singletonProvider);
@@ -111,9 +112,7 @@ public class EdmSingletonImplTest {
     final String singletonName = "singleton";
     final Singleton singletonProvider = new Singleton()
         .setNavigationPropertyBindings(Arrays.asList(
-            new NavigationPropertyBinding().setPath("path")
-                .setTarget(new Target().setEntityContainer(new FullQualifiedName("ns", "wrongContainer"))
-                    .setTargetName(singletonName).toString())));
+            new NavigationPropertyBinding().setPath("path").setTarget("ns.wrongContainer/" + singletonName)));
     when(provider.getSingleton(containerName, singletonName)).thenReturn(singletonProvider);
 
     final EdmSingleton singleton = new EdmSingletonImpl(edm, null, singletonProvider);

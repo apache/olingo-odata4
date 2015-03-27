@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.core.edm.provider;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,7 +30,6 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.api.edm.provider.BindingTarget;
 import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
 
@@ -57,7 +57,7 @@ public abstract class AbstractEdmBindingTarget extends AbstractEdmNamed implemen
         }
       }
     }
-    return navigationPropertyBindings;
+    return Collections.unmodifiableList(navigationPropertyBindings);
   }
 
   @Override
@@ -96,8 +96,11 @@ public abstract class AbstractEdmBindingTarget extends AbstractEdmNamed implemen
         && !found;) {
 
       final EdmNavigationPropertyBinding binding = itor.next();
+      if(binding.getPath() == null || binding.getTarget() == null){
+        throw new EdmException("Path or Target in navigation property binding must not be null!");
+      }
       if (path.startsWith(binding.getPath())) {
-        final Target edmTarget = new Target.Builder(binding.getTarget(), container).build();
+        final Target edmTarget = new Target(binding.getTarget(), container);
 
         final EdmEntityContainer entityContainer = edm.getEntityContainer(edmTarget.getEntityContainer());
         if (entityContainer == null) {

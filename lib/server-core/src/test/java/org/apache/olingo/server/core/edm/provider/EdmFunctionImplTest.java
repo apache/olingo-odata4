@@ -46,9 +46,9 @@ public class EdmFunctionImplTest {
     EdmProviderImpl provider = mock(EdmProviderImpl.class);
 
     Function function1 = new Function().setReturnType(new ReturnType().setType(new FullQualifiedName("Edm", "String")));
-    functionImpl1 = EdmFunctionImpl.getInstance(provider, new FullQualifiedName("namespace", "name"), function1);
+    functionImpl1 = new EdmFunctionImpl(provider, new FullQualifiedName("namespace", "name"), function1);
     Function function2 = new Function().setComposable(true);
-    functionImpl2 = EdmFunctionImpl.getInstance(provider, new FullQualifiedName("namespace", "name"), function2);
+    functionImpl2 = new EdmFunctionImpl(provider, new FullQualifiedName("namespace", "name"), function2);
   }
 
   @Test

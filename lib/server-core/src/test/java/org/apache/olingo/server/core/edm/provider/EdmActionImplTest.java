@@ -58,19 +58,19 @@ public class EdmActionImplTest {
     parameters.add(new Parameter().setName("Id").setType(new FullQualifiedName("namespace", "name")));
     FullQualifiedName action1Name = new FullQualifiedName("namespace", "action1");
     Action action1 = new Action().setName("action1").setBound(true).setParameters(parameters);
-    actionImpl1 = EdmActionImpl.getInstance(provider, action1Name, action1);
+    actionImpl1 = new EdmActionImpl(provider, action1Name, action1);
 
     FullQualifiedName action2Name = new FullQualifiedName("namespace", "action2");
     FullQualifiedName returnTypeName = new FullQualifiedName("Edm", "String");
     ReturnType returnType = new ReturnType().setType(returnTypeName);
     Action action2 = new Action().setName("action2").setParameters(parameters).setReturnType(returnType);
-    actionImpl2 = EdmActionImpl.getInstance(provider, action2Name, action2);
+    actionImpl2 = new EdmActionImpl(provider, action2Name, action2);
 
     FullQualifiedName action3Name = new FullQualifiedName("namespace", "action3");
     Action action3 =
         new Action().setName("action3").setParameters(parameters).setReturnType(returnType).setEntitySetPath(
             "path/Id");
-    actionImpl3 = EdmActionImpl.getInstance(provider, action3Name, action3);
+    actionImpl3 = new EdmActionImpl(provider, action3Name, action3);
   }
 
   @Test

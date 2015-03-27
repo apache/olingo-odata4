@@ -31,7 +31,6 @@ public class EdmReturnTypeImpl implements EdmReturnType {
   private final EdmTypeInfo typeInfo;
   private EdmType typeImpl;
   
-  
   public EdmReturnTypeImpl(final Edm edm, final ReturnType returnType) {
     this.returnType = returnType;
     this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(returnType.getType()).build();

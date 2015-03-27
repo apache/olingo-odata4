@@ -110,7 +110,7 @@ public class EdmProviderImpl extends AbstractEdm {
     try {
       EntityType entityType = provider.getEntityType(entityTypeName);
       if (entityType != null) {
-        return EdmEntityTypeImpl.getInstance(this, entityTypeName, entityType);
+        return new EdmEntityTypeImpl(this, entityTypeName, entityType);
       }
       return null;
     } catch (ODataException e) {
@@ -123,7 +123,7 @@ public class EdmProviderImpl extends AbstractEdm {
     try {
       final ComplexType complexType = provider.getComplexType(complexTypeName);
       if (complexType != null) {
-        return EdmComplexTypeImpl.getInstance(this, complexTypeName, complexType);
+        return new EdmComplexTypeImpl(this, complexTypeName, complexType);
       }
       return null;
     } catch (ODataException e) {
@@ -153,7 +153,7 @@ public class EdmProviderImpl extends AbstractEdm {
           if (bindingParameterTypeName.equals(parameter.getTypeFQN())
               && isBindingParameterCollection.booleanValue() == parameter.isCollection()) {
 
-            return EdmActionImpl.getInstance(this, actionName, action);
+            return new EdmActionImpl(this, actionName, action);
           }
 
         }
@@ -197,7 +197,7 @@ public class EdmProviderImpl extends AbstractEdm {
                 providerParameterNames.add(providerParameters.get(i).getName());
               }
               if (parameterNamesCopy.containsAll(providerParameterNames)) {
-                return EdmFunctionImpl.getInstance(this, functionName, function);
+                return new EdmFunctionImpl(this, functionName, function);
               }
             }
           }
@@ -240,7 +240,7 @@ public class EdmProviderImpl extends AbstractEdm {
       // Search for first unbound action
       for (Action action : actions) {
         if (!action.isBound()) {
-          return EdmActionImpl.getInstance(this, actionName, action);
+          return new EdmActionImpl(this, actionName, action);
         }
       }
       return null;
@@ -264,7 +264,7 @@ public class EdmProviderImpl extends AbstractEdm {
       if (functions != null) {
         for (Function function : functions) {
           if (!function.isBound()) {
-            result.add(EdmFunctionImpl.getInstance(this, functionName, function));
+            result.add(new EdmFunctionImpl(this, functionName, function));
           }
         }
       }
@@ -303,7 +303,7 @@ public class EdmProviderImpl extends AbstractEdm {
             }
 
             if (parameterNamesCopy.containsAll(functionParameterNames)) {
-              return EdmFunctionImpl.getInstance(this, functionName, function);
+              return new EdmFunctionImpl(this, functionName, function);
             }
           }
         }

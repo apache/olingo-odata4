@@ -26,15 +26,17 @@ import org.apache.olingo.commons.api.edm.provider.Annotatable;
 import org.apache.olingo.commons.api.edm.provider.Annotation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractEdmAnnotatable extends AbstractEdmBase implements EdmAnnotatable {
+public abstract class AbstractEdmAnnotatable implements EdmAnnotatable {
 
   private final Annotatable annotatable;
   private List<EdmAnnotation> annotations;
+  protected final Edm edm;
 
   public AbstractEdmAnnotatable(final Edm edm, final Annotatable annotatable) {
-    super(edm);
+    this.edm = edm;
     this.annotatable = annotatable;
   }
 
@@ -54,12 +56,12 @@ public abstract class AbstractEdmAnnotatable extends AbstractEdmBase implements 
   public List<EdmAnnotation> getAnnotations() {
     if (annotations == null) {
       annotations = new ArrayList<EdmAnnotation>();
-      if(annotatable != null) {
+      if (annotatable != null) {
         for (Annotation annotation : annotatable.getAnnotations()) {
           annotations.add(new EdmAnnotationImpl(edm, annotation));
         }
       }
     }
-    return annotations;
+    return Collections.unmodifiableList(annotations);
   }
 }

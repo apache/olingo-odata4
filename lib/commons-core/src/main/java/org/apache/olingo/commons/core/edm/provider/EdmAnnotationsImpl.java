@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.core.edm.provider;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -137,7 +138,7 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
         annotations.add(new EdmAnnotationImpl(edm, annotation));
       }
     }
-    return annotations;
+    return Collections.unmodifiableList(annotations);
   }
 
 }

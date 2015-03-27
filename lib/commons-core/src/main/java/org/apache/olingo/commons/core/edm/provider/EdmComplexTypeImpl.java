@@ -28,12 +28,7 @@ import org.apache.olingo.commons.api.edm.provider.ComplexType;
 
 public class EdmComplexTypeImpl extends AbstractEdmStructuredType implements EdmComplexType {
 
-  public static EdmComplexTypeImpl getInstance(
-      final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
-    return new EdmComplexTypeImpl(edm, name, complexType);
-  }
-
-  private EdmComplexTypeImpl(final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
+  public EdmComplexTypeImpl(final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
     super(edm, name, EdmTypeKind.COMPLEX, complexType);
   }
 

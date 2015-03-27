@@ -189,7 +189,7 @@ public class ContextURLBuilderTest {
         .setNavigationProperties(baseNavigationProperties);
     when(provider.getComplexType(baseName)).thenReturn(baseComplexType);
 
-    EdmComplexType baseType = EdmComplexTypeImpl.getInstance(edm, baseName, baseComplexType);
+    EdmComplexType baseType = new EdmComplexTypeImpl(edm, baseName, baseComplexType);
 
     EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
     Mockito.when(entitySet.getName()).thenReturn("Customers");

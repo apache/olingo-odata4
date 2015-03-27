@@ -26,11 +26,7 @@ import org.apache.olingo.commons.api.edm.provider.Action;
 
 public class EdmActionImpl extends AbstractEdmOperation implements EdmAction {
 
-  public static EdmActionImpl getInstance(final Edm edm, final FullQualifiedName name, final Action action) {
-    return AbstractEdmOperation.getInstance(new EdmActionImpl(edm, name, action));
-  }
-
-  private EdmActionImpl(final Edm edm, final FullQualifiedName name, final Action action) {
+  public EdmActionImpl(final Edm edm, final FullQualifiedName name, final Action action) {
     super(edm, name, action, EdmTypeKind.ACTION);
   }
 }

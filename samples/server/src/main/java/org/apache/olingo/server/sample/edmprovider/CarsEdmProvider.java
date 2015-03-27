@@ -25,7 +25,6 @@ import java.util.List;
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.api.edm.provider.ComplexType;
 import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.edm.provider.EntityContainer;
@@ -122,15 +121,14 @@ public class CarsEdmProvider extends EdmProvider {
             .setNavigationPropertyBindings(
                 Arrays.asList(
                     new NavigationPropertyBinding().setPath("Manufacturer").setTarget(
-                        new Target().setTargetName(ES_MANUFACTURER_NAME).setEntityContainer(CONTAINER_FQN)
-                        .toString())));
+                        CONTAINER_FQN.getFullQualifiedNameAsString() + "/" + ES_MANUFACTURER_NAME)));
       } else if (ES_MANUFACTURER_NAME.equals(entitySetName)) {
         return new EntitySet()
             .setName(ES_MANUFACTURER_NAME)
             .setType(ET_MANUFACTURER).setNavigationPropertyBindings(
                 Arrays.asList(
-                    new NavigationPropertyBinding().setPath("Cars").setTarget(
-                        new Target().setTargetName(ES_CARS_NAME).setEntityContainer(CONTAINER_FQN).toString())));
+                    new NavigationPropertyBinding().setPath("Cars")
+                        .setTarget(CONTAINER_FQN.getFullQualifiedNameAsString() + "/" + ES_CARS_NAME)));
       }
     }
 

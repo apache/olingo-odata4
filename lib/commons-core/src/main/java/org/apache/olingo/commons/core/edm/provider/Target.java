@@ -16,7 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.edm;
+package org.apache.olingo.commons.core.edm.provider;
+
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 /**
  * An Edm target element. It contains a target as a String name as well as the {@link FullQualifiedName} of the entity
@@ -25,32 +28,16 @@ package org.apache.olingo.commons.api.edm;
 public class Target {
 
   private String targetName;
-
   private FullQualifiedName entityContainer;
 
-  public static class Builder {
-
-    private final Target instance;
-
-    public Builder(final String target, final EdmEntityContainer defaultContainer) {
-      if (target != null) {
-        final String[] bindingTargetParts = target.split("/");
-        instance = new Target();
-        if (bindingTargetParts.length == 1) {
-          instance.setEntityContainer(defaultContainer.getFullQualifiedName()).
-              setTargetName(bindingTargetParts[0]);
-        } else {
-          instance.setEntityContainer(new FullQualifiedName(bindingTargetParts[0])).
-              setTargetName(bindingTargetParts[1]);
-        }
-      } else {
-        instance = null;
-      }
-
-    }
-
-    public Target build() {
-      return instance;
+  public Target(String target, EdmEntityContainer defaultContainer) {
+    final String[] bindingTargetParts = target.split("/");
+    if (bindingTargetParts.length == 1) {
+      entityContainer = defaultContainer.getFullQualifiedName();
+      targetName = bindingTargetParts[0];
+    } else {
+      entityContainer = new FullQualifiedName(bindingTargetParts[0]);
+      targetName = bindingTargetParts[1];
     }
   }
 
@@ -61,11 +48,6 @@ public class Target {
     return targetName;
   }
 
-  public Target setTargetName(final String targetPathName) {
-    targetName = targetPathName;
-    return this;
-  }
-
   /**
    * @return {@link FullQualifiedName} of the entity container this target is contained in.
    */
@@ -73,14 +55,9 @@ public class Target {
     return entityContainer;
   }
 
-  public Target setEntityContainer(final FullQualifiedName entityContainer) {
-    this.entityContainer = entityContainer;
-    return this;
-  }
-
   @Override
   public String toString() {
-    if(entityContainer == null){
+    if (entityContainer == null) {
       return targetName;
     }
     return entityContainer.getFullQualifiedNameAsString() + "/" + targetName;

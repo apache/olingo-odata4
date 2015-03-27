@@ -30,11 +30,7 @@ public class EdmFunctionImpl extends AbstractEdmOperation implements EdmFunction
 
   private final Function function;
 
-  public static EdmFunctionImpl getInstance(final Edm edm, final FullQualifiedName name, final Function function) {
-    return AbstractEdmOperation.getInstance(new EdmFunctionImpl(edm, name, function));
-  }
-
-  private EdmFunctionImpl(final Edm edm, final FullQualifiedName name, final Function function) {
+  public EdmFunctionImpl(final Edm edm, final FullQualifiedName name, final Function function) {
     super(edm, name, function, EdmTypeKind.FUNCTION);
     this.function = function;
   }

@@ -249,7 +249,7 @@ public class MetadataDocumentXmlSerializerTest {
     properties.add(new Property().setName("prop2").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
 
     complexType.setProperties(properties);
-    EdmComplexTypeImpl c1 = EdmComplexTypeImpl.getInstance(edm, name, complexType);
+    EdmComplexTypeImpl c1 = new EdmComplexTypeImpl(edm, name, complexType);
     complexTypes.add(c1);
 
     when(schema.getComplexTypes()).thenReturn(complexTypes);
