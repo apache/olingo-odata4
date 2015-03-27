@@ -19,21 +19,13 @@
 package org.apache.olingo.commons.core.edm.provider;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmNamed;
+import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 
-public abstract class EdmNamedImpl implements EdmNamed {
+public abstract class AbstractEdmBase implements EdmAnnotatable {
 
   protected final Edm edm;
 
-  private final String name;
-
-  public EdmNamedImpl(final Edm edm, final String name) {
+  public AbstractEdmBase(final Edm edm) {
     this.edm = edm;
-    this.name = name;
-  }
-
-  @Override
-  public String getName() {
-    return name;
   }
 }

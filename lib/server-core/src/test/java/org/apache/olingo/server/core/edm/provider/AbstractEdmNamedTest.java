@@ -18,25 +18,42 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 import org.apache.olingo.commons.api.edm.EdmNamed;
-import org.apache.olingo.commons.core.edm.provider.EdmNamedImpl;
+import org.apache.olingo.commons.api.edm.provider.Annotatable;
+import org.apache.olingo.commons.api.edm.provider.Annotation;
+import org.apache.olingo.commons.core.edm.provider.AbstractEdmNamed;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import java.util.Arrays;
+import java.util.List;
 
-public class EdmNamedImplTest {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+public class AbstractEdmNamedTest {
 
   @Test
   public void getNameTest() {
     EdmNamed obj = new EdmNamedImplTester("Name");
     assertEquals("Name", obj.getName());
+    EdmAnnotatable an = (EdmAnnotatable) obj;
+    assertNotNull(an.getAnnotations().get(0));
   }
 
-  private class EdmNamedImplTester extends EdmNamedImpl {
+  private class EdmNamedImplTester extends AbstractEdmNamed {
 
     public EdmNamedImplTester(final String name) {
-      super(null, name);
+      super(null, name, new AnnoTester());
     }
   }
 
+  private class AnnoTester implements Annotatable {
+    @Override
+    public List<Annotation> getAnnotations() {
+      Annotation annotation = new Annotation();
+      annotation.setTerm("NS.SimpleTerm");
+      return Arrays.asList(annotation);
+    }
+  }
 }

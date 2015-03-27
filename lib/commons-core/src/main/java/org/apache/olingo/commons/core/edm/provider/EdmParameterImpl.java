@@ -18,29 +18,24 @@
  */
 package org.apache.olingo.commons.core.edm.provider;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmParameter;
-import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.Parameter;
 
-public class EdmParameterImpl extends EdmElementImpl implements EdmParameter {
+public class EdmParameterImpl extends AbstractEdmNamed implements EdmParameter, EdmElement {
 
   private final Parameter parameter;
-  private final EdmAnnotationHelperImpl helper;
   private final EdmTypeInfo typeInfo;
   private EdmType typeImpl;
 
   public EdmParameterImpl(final Edm edm, final Parameter parameter) {
-    super(edm, parameter.getName());
+    super(edm, parameter.getName(), parameter);
     this.parameter = parameter;
-    this.helper = new EdmAnnotationHelperImpl(edm, parameter);
     this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(parameter.getType()).build();
   }
 
@@ -79,16 +74,6 @@ public class EdmParameterImpl extends EdmElementImpl implements EdmParameter {
     return parameter.getSrid();
   }
 
-  @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    return helper.getAnnotation(term);
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    return helper.getAnnotations();
-  }
-  
   @Override
   public EdmType getType() {
     if (typeImpl == null) {

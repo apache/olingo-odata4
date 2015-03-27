@@ -1,25 +1,22 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.commons.core.edm.provider;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
@@ -28,16 +25,16 @@ import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.provider.Annotatable;
 import org.apache.olingo.commons.api.edm.provider.Annotation;
 
-public class EdmAnnotationHelperImpl implements EdmAnnotatable {
+import java.util.ArrayList;
+import java.util.List;
 
-  private final Edm edm;
+public abstract class AbstractEdmAnnotatable extends AbstractEdmBase implements EdmAnnotatable {
 
   private final Annotatable annotatable;
-
   private List<EdmAnnotation> annotations;
 
-  public EdmAnnotationHelperImpl(final Edm edm, final Annotatable annotatable) {
-    this.edm = edm;
+  public AbstractEdmAnnotatable(final Edm edm, final Annotatable annotatable) {
+    super(edm);
     this.annotatable = annotatable;
   }
 
@@ -57,11 +54,12 @@ public class EdmAnnotationHelperImpl implements EdmAnnotatable {
   public List<EdmAnnotation> getAnnotations() {
     if (annotations == null) {
       annotations = new ArrayList<EdmAnnotation>();
-      for (Annotation annotation : annotatable.getAnnotations()) {
-        annotations.add(new EdmAnnotationImpl(edm, annotation));
+      if(annotatable != null) {
+        for (Annotation annotation : annotatable.getAnnotations()) {
+          annotations.add(new EdmAnnotationImpl(edm, annotation));
+        }
       }
     }
     return annotations;
   }
-
 }

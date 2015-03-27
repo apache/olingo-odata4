@@ -18,21 +18,15 @@
  */
 package org.apache.olingo.commons.core.edm.provider;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
-import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.provider.ComplexType;
 
-public class EdmComplexTypeImpl extends EdmStructuredTypeImpl implements EdmComplexType {
-
-  private EdmAnnotationHelperImpl annotationHelper;
+public class EdmComplexTypeImpl extends AbstractEdmStructuredType implements EdmComplexType {
 
   public static EdmComplexTypeImpl getInstance(
       final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
@@ -41,19 +35,8 @@ public class EdmComplexTypeImpl extends EdmStructuredTypeImpl implements EdmComp
 
   private EdmComplexTypeImpl(final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
     super(edm, name, EdmTypeKind.COMPLEX, complexType);
-    this.annotationHelper = new EdmAnnotationHelperImpl(edm, complexType);
   }
 
-  @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    return annotationHelper == null ? null : annotationHelper.getAnnotation(term);
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    return annotationHelper == null ? null : annotationHelper.getAnnotations();
-  }
-  
   @Override
   protected EdmStructuredType buildBaseType(final FullQualifiedName baseTypeName) {
     EdmComplexType baseType = null;

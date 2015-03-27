@@ -19,7 +19,6 @@
 package org.apache.olingo.commons.core.edm.provider;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,13 +26,11 @@ import java.util.Map;
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
-import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.ActionImport;
 import org.apache.olingo.commons.api.edm.provider.EdmProvider;
@@ -43,11 +40,10 @@ import org.apache.olingo.commons.api.edm.provider.EntitySet;
 import org.apache.olingo.commons.api.edm.provider.FunctionImport;
 import org.apache.olingo.commons.api.edm.provider.Singleton;
 
-public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityContainer {
+public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntityContainer {
 
   private final EdmProvider provider;
   private EntityContainer container;
-  private EdmAnnotationHelperImpl helper;
 
   protected final FullQualifiedName entityContainerName;
   private final FullQualifiedName parentContainerName;
@@ -66,7 +62,7 @@ public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityCon
 
   public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider, 
       final EntityContainerInfo entityContainerInfo) {
-    super(edm, entityContainerInfo.getContainerName().getName());
+    super(edm, entityContainerInfo.getContainerName().getName(), null);
     this.provider = provider;
     this.entityContainerName = entityContainerInfo.getContainerName();
     this.parentContainerName = entityContainerInfo.getExtendsContainer();
@@ -74,12 +70,11 @@ public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityCon
 
   public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider, final FullQualifiedName containerFQN,
       final EntityContainer entityContainer) {
-    super(edm, containerFQN.getName());
+    super(edm, containerFQN.getName(), entityContainer);
     this.provider = provider;
     container = entityContainer;
     this.entityContainerName = containerFQN;
     this.parentContainerName = entityContainer.getExtendsContainerFQN();
-    this.helper = new EdmAnnotationHelperImpl(edm, entityContainer);
   }
 
   @Override
@@ -325,15 +320,5 @@ public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityCon
   @Override
   public TargetType getAnnotationsTargetType() {
     return TargetType.EntityContainer;
-  }
-
-  @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    return helper == null ? null : helper.getAnnotation(term);
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    return helper == null ? Collections.<EdmAnnotation> emptyList() : helper.getAnnotations();
   }
 }

@@ -24,22 +24,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
-import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.provider.EntityType;
 import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 
-public class EdmEntityTypeImpl extends EdmStructuredTypeImpl implements EdmEntityType {
+public class EdmEntityTypeImpl extends AbstractEdmStructuredType implements EdmEntityType {
 
   private EntityType entityType;
   private boolean baseTypeChecked = false;
-  private EdmAnnotationHelperImpl annotationHelper;
   private final boolean hasStream;
   protected EdmEntityType entityBaseType;
   private final List<String> keyPredicateNames = new ArrayList<String>();
@@ -56,7 +53,6 @@ public class EdmEntityTypeImpl extends EdmStructuredTypeImpl implements EdmEntit
     super(edm, name, EdmTypeKind.ENTITY, entityType);
     this.entityType = entityType;
     hasStream = entityType.hasStream();
-    this.annotationHelper = new EdmAnnotationHelperImpl(edm, entityType);
   }
 
   @Override
@@ -150,15 +146,5 @@ public class EdmEntityTypeImpl extends EdmStructuredTypeImpl implements EdmEntit
   @Override
   public TargetType getAnnotationsTargetType() {
     return TargetType.EntityType;
-  }
-  
-  @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    return annotationHelper.getAnnotation(term);
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    return annotationHelper.getAnnotations();
   }
 }

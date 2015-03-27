@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmType;
@@ -34,24 +33,22 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EdmTermImpl extends EdmNamedImpl implements EdmTerm {
+public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
 
   private static final Logger LOG = LoggerFactory.getLogger(EdmTermImpl.class);
   private final Term term;
   private final FullQualifiedName fqn;
   private final EdmTypeInfo typeInfo;
-  private final EdmAnnotationHelperImpl helper;
   private EdmType termType;
   private EdmTerm baseTerm;
   private List<Class<?>> appliesTo;
 
   public EdmTermImpl(final Edm edm, final String namespace, final Term term) {
-    super(edm, term.getName());
+    super(edm, term.getName(), term);
 
     this.term = term;
     this.fqn = new FullQualifiedName(namespace, term.getName());
     this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(term.getType()).build();
-    this.helper = new EdmAnnotationHelperImpl(edm, term);
   }
 
   @Override
@@ -146,15 +143,4 @@ public class EdmTermImpl extends EdmNamedImpl implements EdmTerm {
   public String getAnnotationsTargetPath() {
     return null;
   }
-
-  @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    return helper.getAnnotation(term);
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    return helper.getAnnotations();
-  }
-
 }

@@ -22,14 +22,16 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.edm.provider.Annotatable;
 
-public class EdmTypeImpl extends EdmNamedImpl implements EdmType {
+public class EdmTypeImpl extends AbstractEdmNamed implements EdmType {
 
   protected final FullQualifiedName typeName;
   protected final EdmTypeKind kind;
 
-  public EdmTypeImpl(final Edm edm, final FullQualifiedName typeName, final EdmTypeKind kind) {
-    super(edm, typeName.getName());
+  public EdmTypeImpl(final Edm edm, final FullQualifiedName typeName, final EdmTypeKind kind,
+                     final Annotatable annotatable) {
+    super(edm, typeName.getName(), annotatable);
     this.typeName = typeName;
     this.kind = kind;
   }

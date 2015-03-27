@@ -23,31 +23,27 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
-import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.api.edm.provider.BindingTarget;
 import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
 
-public abstract class EdmBindingTargetImpl extends EdmNamedImpl implements EdmBindingTarget {
+public abstract class AbstractEdmBindingTarget extends AbstractEdmNamed implements EdmBindingTarget {
 
   private final BindingTarget target;
-  private final EdmAnnotationHelperImpl helper;
   private final EdmEntityContainer container;
 
   private List<EdmNavigationPropertyBinding> navigationPropertyBindings;
 
-  public EdmBindingTargetImpl(final Edm edm, final EdmEntityContainer container, final BindingTarget target) {
-    super(edm, target.getName());
+  public AbstractEdmBindingTarget(final Edm edm, final EdmEntityContainer container, final BindingTarget target) {
+    super(edm, target.getName(), target);
     this.container = container;
     this.target = target;
-    this.helper = new EdmAnnotationHelperImpl(edm, target);
   }
 
   @Override
@@ -127,15 +123,5 @@ public abstract class EdmBindingTargetImpl extends EdmNamedImpl implements EdmBi
     }
 
     return bindingTarget;
-  }
-
-  @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    return helper.getAnnotation(term);
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    return helper.getAnnotations();
   }
 }

@@ -26,12 +26,12 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.provider.Function;
 
-public class EdmFunctionImpl extends EdmOperationImpl implements EdmFunction {
+public class EdmFunctionImpl extends AbstractEdmOperation implements EdmFunction {
 
   private final Function function;
 
   public static EdmFunctionImpl getInstance(final Edm edm, final FullQualifiedName name, final Function function) {
-    return EdmOperationImpl.getInstance(new EdmFunctionImpl(edm, name, function));
+    return AbstractEdmOperation.getInstance(new EdmFunctionImpl(edm, name, function));
   }
 
   private EdmFunctionImpl(final Edm edm, final FullQualifiedName name, final Function function) {

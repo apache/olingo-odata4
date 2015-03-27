@@ -18,34 +18,29 @@
  */
 package org.apache.olingo.commons.core.edm.provider;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.Property;
 
-public class EdmPropertyImpl extends EdmElementImpl implements EdmProperty {
+public class EdmPropertyImpl extends AbstractEdmNamed implements EdmProperty, EdmElement {
 
   private final FullQualifiedName structuredTypeName;
   private final Property property;
   private final EdmTypeInfo typeInfo;
-  private EdmAnnotationHelperImpl helper;
   private EdmType propertyType;
 
   public EdmPropertyImpl(final Edm edm, final FullQualifiedName structuredTypeName, final Property property) {
-    super(edm, property.getName());
+    super(edm, property.getName(), property);
 
     this.structuredTypeName = structuredTypeName;
     this.property = property;
     typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(property.getType().toString()).build();
-    this.helper = new EdmAnnotationHelperImpl(edm, property);
   }
 
   @Override
@@ -123,16 +118,6 @@ public class EdmPropertyImpl extends EdmElementImpl implements EdmProperty {
   @Override
   public FullQualifiedName getAnnotationsTargetFQN() {
     return structuredTypeName;
-  }
-
-  @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    return helper.getAnnotation(term);
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    return helper.getAnnotations();
   }
 
   @Override

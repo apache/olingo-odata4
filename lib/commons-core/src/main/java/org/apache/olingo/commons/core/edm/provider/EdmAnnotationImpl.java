@@ -60,18 +60,15 @@ import org.apache.olingo.commons.core.edm.annotation.EdmPropertyValueImpl;
 import org.apache.olingo.commons.core.edm.annotation.EdmRecordImpl;
 import org.apache.olingo.commons.core.edm.annotation.EdmUrlRefImpl;
 
-public class EdmAnnotationImpl implements EdmAnnotation {
+public class EdmAnnotationImpl extends AbstractEdmAnnotatable implements EdmAnnotation {
 
-  private final Edm edm;
   private final Annotation annotation;
-  private final EdmAnnotationHelperImpl helper;
   private EdmTerm term;
   private EdmAnnotationExpression expression;
 
   public EdmAnnotationImpl(final Edm edm, final Annotation annotation) {
-    this.edm = edm;
+    super(edm, annotation);
     this.annotation = annotation;
-    this.helper = new EdmAnnotationHelperImpl(edm, annotation);
   }
 
   @Override
@@ -225,15 +222,4 @@ public class EdmAnnotationImpl implements EdmAnnotation {
     }
     return expression;
   }
-
-  @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    return helper.getAnnotation(term);
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    return helper.getAnnotations();
-  }
-
 }

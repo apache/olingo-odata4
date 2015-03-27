@@ -24,30 +24,27 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
-import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.provider.Operation;
 import org.apache.olingo.commons.api.edm.provider.Parameter;
 
-public abstract class EdmOperationImpl extends EdmTypeImpl implements EdmOperation {
+public abstract class AbstractEdmOperation extends EdmTypeImpl implements EdmOperation {
 
   protected final Operation operation;
-  protected final EdmAnnotationHelperImpl helper;
   private final Map<String, EdmParameter> parameters = new LinkedHashMap<String, EdmParameter>();
   private String entitySetPath;
   private boolean isBound;
   private EdmReturnType returnType;
   private List<String> parameterNames;
 
-  protected static <T extends EdmOperationImpl> T getInstance(final T instance) {
+  protected static <T extends AbstractEdmOperation> T getInstance(final T instance) {
     final List<Parameter> providerParameters = instance.operation.getParameters();
     if (providerParameters != null) {
       final List<EdmParameter> _parameters = new ArrayList<EdmParameter>(providerParameters.size());
@@ -71,12 +68,11 @@ public abstract class EdmOperationImpl extends EdmTypeImpl implements EdmOperati
     return instance;
   }
 
-  protected EdmOperationImpl(final Edm edm, final FullQualifiedName name, final Operation operation,
-      final EdmTypeKind kind) {
+  protected AbstractEdmOperation(final Edm edm, final FullQualifiedName name, final Operation operation,
+                                 final EdmTypeKind kind) {
 
-    super(edm, name, kind);
+    super(edm, name, kind, operation);
     this.operation = operation;
-    this.helper = new EdmAnnotationHelperImpl(edm, operation);
   }
   
   protected void setParameters(final List<EdmParameter> _parameters) {
@@ -159,16 +155,6 @@ public abstract class EdmOperationImpl extends EdmTypeImpl implements EdmOperati
     return null;
   }
 
-  @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    return helper.getAnnotation(term);
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    return helper.getAnnotations();
-  }
-  
   @Override
   public String getEntitySetPath(){
     return operation.getEntitySetPath();

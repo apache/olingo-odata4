@@ -18,26 +18,20 @@
  */
 package org.apache.olingo.commons.core.edm.provider;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMember;
-import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.EnumMember;
 
-public class EdmMemberImpl extends EdmNamedImpl implements EdmMember {
+public class EdmMemberImpl extends AbstractEdmNamed implements EdmMember {
 
-  private final EdmAnnotationHelperImpl helper;
   private final FullQualifiedName enumFQN;
   private final EnumMember member;
 
   public EdmMemberImpl(final Edm edm, final FullQualifiedName enumFQN, final EnumMember member) {
-    super(edm, member.getName());
+    super(edm, member.getName(), member);
     this.enumFQN = enumFQN;
     this.member = member;
-    this.helper = new EdmAnnotationHelperImpl(edm, member);
   }
   
   @Override
@@ -59,15 +53,4 @@ public class EdmMemberImpl extends EdmNamedImpl implements EdmMember {
   public String getValue() {
     return member.getValue();
   }
-
-  @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    return helper.getAnnotation(term);
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    return helper.getAnnotations();
-  }
-
 }

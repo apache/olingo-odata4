@@ -23,7 +23,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.provider.EntitySet;
 
-public class EdmEntitySetImpl extends EdmBindingTargetImpl implements EdmEntitySet {
+public class EdmEntitySetImpl extends AbstractEdmBindingTarget implements EdmEntitySet {
 
   private EntitySet entitySet;
 

@@ -18,31 +18,25 @@
  */
 package org.apache.olingo.commons.core.edm.provider;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmOperationImport;
-import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.api.edm.provider.OperationImport;
 
-public abstract class EdmOperationImportImpl extends EdmNamedImpl implements EdmOperationImport {
+public abstract class AbstractEdmOperationImport extends AbstractEdmNamed implements EdmOperationImport {
 
   protected final EdmEntityContainer container;
   private final Target entitySet;
   private EdmEntitySet returnedEntitySet;
-  private final EdmAnnotationHelperImpl helper;
 
-  public EdmOperationImportImpl(final Edm edm, final EdmEntityContainer container,
-      final OperationImport operationImport) {
-    super(edm, operationImport.getName());
+  public AbstractEdmOperationImport(final Edm edm, final EdmEntityContainer container,
+                                    final OperationImport operationImport) {
+    super(edm, operationImport.getName(), operationImport);
     this.container = container;
-    this.helper = new EdmAnnotationHelperImpl(edm, operationImport);
     this.entitySet = new Target.Builder(operationImport.getEntitySet(), container).build();
   }
 
@@ -79,15 +73,5 @@ public abstract class EdmOperationImportImpl extends EdmNamedImpl implements Edm
   @Override
   public String getAnnotationsTargetPath() {
     return getName();
-  }
-
-  @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    return helper.getAnnotation(term);
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    return helper.getAnnotations();
   }
 }

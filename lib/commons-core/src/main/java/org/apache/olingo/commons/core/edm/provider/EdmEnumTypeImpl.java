@@ -42,13 +42,13 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
 
   private static final Set<EdmPrimitiveTypeKind> VALID_UNDERLYING_TYPES = new HashSet<EdmPrimitiveTypeKind>();
-  {
+  static {
     VALID_UNDERLYING_TYPES.add(EdmPrimitiveTypeKind.Byte);
     VALID_UNDERLYING_TYPES.add(EdmPrimitiveTypeKind.SByte);
     VALID_UNDERLYING_TYPES.add(EdmPrimitiveTypeKind.Int16);
     VALID_UNDERLYING_TYPES.add(EdmPrimitiveTypeKind.Int32);
     VALID_UNDERLYING_TYPES.add(EdmPrimitiveTypeKind.Int64);
-  };
+  }
 
   private final EdmPrimitiveType underlyingType;
   private final EnumType enumType;
@@ -58,7 +58,7 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   private LinkedHashMap<String, EdmMember> membersMap;
 
   public EdmEnumTypeImpl(final Edm edm, final FullQualifiedName enumName, final EnumType enumType) {
-    super(edm, enumName, EdmTypeKind.ENUM);
+    super(edm, enumName, EdmTypeKind.ENUM, enumType);
 
     if (enumType.getUnderlyingType() == null) {
       underlyingType = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32);

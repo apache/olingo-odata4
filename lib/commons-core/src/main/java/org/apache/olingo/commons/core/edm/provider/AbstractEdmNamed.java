@@ -19,11 +19,20 @@
 package org.apache.olingo.commons.core.edm.provider;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmElement;
+import org.apache.olingo.commons.api.edm.EdmNamed;
+import org.apache.olingo.commons.api.edm.provider.Annotatable;
 
-public abstract class EdmElementImpl extends EdmNamedImpl implements EdmElement {
+public abstract class AbstractEdmNamed extends AbstractEdmAnnotatable implements EdmNamed {
 
-  public EdmElementImpl(final Edm edm, final String name) {
-    super(edm, name);
+  private final String name;
+
+  public AbstractEdmNamed(final Edm edm, final String name, final Annotatable annotatable) {
+    super(edm, annotatable);
+    this.name = name;
+  }
+
+  @Override
+  public String getName() {
+    return name;
   }
 }

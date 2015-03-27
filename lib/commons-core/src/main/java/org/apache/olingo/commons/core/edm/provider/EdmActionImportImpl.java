@@ -24,7 +24,7 @@ import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.provider.ActionImport;
 
-public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmActionImport {
+public class EdmActionImportImpl extends AbstractEdmOperationImport implements EdmActionImport {
 
   private final ActionImport actionImport;
 

@@ -35,9 +35,7 @@ public class EdmTypeInfo {
   public static class Builder {
 
     private String typeExpression;
-
     private String defaultNamespace;
-
     private Edm edm;
 
     public Builder setTypeExpression(final String typeExpression) {
@@ -62,25 +60,15 @@ public class EdmTypeInfo {
     }
   }
 
-  private final Edm edm;
-
   private final boolean collection;
-
   private final FullQualifiedName fullQualifiedName;
-
   private EdmPrimitiveTypeKind primitiveType;
-
   private EdmTypeDefinition typeDefinition;
-
   private EdmEnumType enumType;
-
   private EdmComplexType complexType;
-
   private EdmEntityType entityType;
 
   private EdmTypeInfo(final Edm edm, final String typeExpression) {
-    this.edm = edm;
-
     String baseType;
     final int collStartIdx = typeExpression.indexOf("Collection(");
     final int collEndIdx = typeExpression.lastIndexOf(')');
@@ -105,7 +93,6 @@ public class EdmTypeInfo {
     if (lastDotIdx == -1) {
       namespace = EdmPrimitiveType.EDM_NAMESPACE;
       typeName = baseType;
-      baseType = new FullQualifiedName(EdmPrimitiveType.EDM_NAMESPACE, baseType).toString();
     } else {
       namespace = baseType.substring(0, lastDotIdx);
       typeName = baseType.substring(lastDotIdx + 1);
@@ -115,9 +102,6 @@ public class EdmTypeInfo {
       throw new IllegalArgumentException("Null or empty type name in " + typeExpression);
     }
 
-    final StringBuilder exp = new StringBuilder();
-    exp.append(baseType);
-
     fullQualifiedName = new FullQualifiedName(namespace, typeName);
 
     try {
@@ -125,14 +109,14 @@ public class EdmTypeInfo {
     } catch (final IllegalArgumentException e) {
       primitiveType = null;
     }
-    if (primitiveType == null && this.edm != null) {
-      typeDefinition = this.edm.getTypeDefinition(fullQualifiedName);
+    if (primitiveType == null && edm != null) {
+      typeDefinition = edm.getTypeDefinition(fullQualifiedName);
       if (typeDefinition == null) {
-        enumType = this.edm.getEnumType(fullQualifiedName);
+        enumType = edm.getEnumType(fullQualifiedName);
         if (enumType == null) {
-          complexType = this.edm.getComplexType(fullQualifiedName);
+          complexType = edm.getComplexType(fullQualifiedName);
           if (complexType == null) {
-            entityType = this.edm.getEntityType(fullQualifiedName);
+            entityType = edm.getEntityType(fullQualifiedName);
           }
         }
       }

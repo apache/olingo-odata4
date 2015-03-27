@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.FunctionImport;
 
-public class EdmFunctionImportImpl extends EdmOperationImportImpl implements EdmFunctionImport {
+public class EdmFunctionImportImpl extends AbstractEdmOperationImport implements EdmFunctionImport {
 
   private final FunctionImport functionImport;
 

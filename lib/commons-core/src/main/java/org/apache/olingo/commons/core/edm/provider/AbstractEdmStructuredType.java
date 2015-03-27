@@ -36,7 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class EdmStructuredTypeImpl extends EdmTypeImpl implements EdmStructuredType {
+public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements EdmStructuredType {
 
   protected EdmStructuredType baseType;
   protected FullQualifiedName baseTypeName;
@@ -47,13 +47,13 @@ public abstract class EdmStructuredTypeImpl extends EdmTypeImpl implements EdmSt
   private Map<String, EdmNavigationProperty> navigationProperties;
   private final StructuralType structuredType;
 
-  public EdmStructuredTypeImpl(
-      final Edm edm,
-      final FullQualifiedName typeName,
-      final EdmTypeKind kind,
-      final StructuralType structuredType) {
+  public AbstractEdmStructuredType(
+          final Edm edm,
+          final FullQualifiedName typeName,
+          final EdmTypeKind kind,
+          final StructuralType structuredType) {
 
-    super(edm, typeName, kind);
+    super(edm, typeName, kind, structuredType);
     this.baseTypeName = structuredType.getBaseTypeFQN();
     this.structuredType = structuredType;
   }

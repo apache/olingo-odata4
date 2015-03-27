@@ -18,15 +18,11 @@
  */
 package org.apache.olingo.commons.core.edm.provider;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
@@ -34,20 +30,17 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
-public class EdmTypeDefinitionImpl extends EdmNamedImpl implements EdmTypeDefinition {
+public class EdmTypeDefinitionImpl extends AbstractEdmNamed implements EdmTypeDefinition {
 
   private TypeDefinition typeDefinition;
   private FullQualifiedName typeDefinitionName;
   private EdmPrimitiveType edmPrimitiveTypeInstance;
-  private final EdmAnnotationHelperImpl helper;
 
   public EdmTypeDefinitionImpl(final Edm edm, final FullQualifiedName typeDefinitionName,
       final TypeDefinition typeDefinition) {
-    super(edm, typeDefinitionName.getName());
+    super(edm, typeDefinitionName.getName(), typeDefinition);
     this.typeDefinitionName = typeDefinitionName;
     this.typeDefinition = typeDefinition;
-  
-    this.helper = new EdmAnnotationHelperImpl(edm, typeDefinition);
   }
 
   @Override
@@ -164,18 +157,7 @@ public class EdmTypeDefinitionImpl extends EdmNamedImpl implements EdmTypeDefini
   }
   
   @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    return helper.getAnnotation(term);
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    return helper.getAnnotations();
-  }
-  
-  @Override
   public String getAnnotationsTargetPath() {
     return getName();
   }
-
 }

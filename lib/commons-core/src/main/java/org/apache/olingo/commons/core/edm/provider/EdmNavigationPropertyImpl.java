@@ -22,32 +22,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
-import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.ReferentialConstraint;
 
-public class EdmNavigationPropertyImpl extends EdmElementImpl implements EdmNavigationProperty {
+public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmElement, EdmNavigationProperty {
 
   private final FullQualifiedName structuredTypeName;
   private final NavigationProperty navigationProperty;
-  private final EdmAnnotationHelperImpl helper;
   private List<EdmReferentialConstraint> referentialConstraints;
   private EdmEntityType typeImpl;
   private EdmNavigationProperty partnerNavigationProperty;
 
   public EdmNavigationPropertyImpl(
       final Edm edm, final FullQualifiedName structuredTypeName, final NavigationProperty navigationProperty) {
-    super(edm, navigationProperty.getName());
+    super(edm, navigationProperty.getName(), navigationProperty);
     this.structuredTypeName = structuredTypeName;
     this.navigationProperty = navigationProperty;
-    this.helper = new EdmAnnotationHelperImpl(edm, navigationProperty);
   }
 
   @Override
@@ -138,15 +135,5 @@ public class EdmNavigationPropertyImpl extends EdmElementImpl implements EdmNavi
   @Override
   public FullQualifiedName getAnnotationsTargetFQN() {
     return structuredTypeName;
-  }
-
-  @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    return helper.getAnnotation(term);
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    return helper.getAnnotations();
   }
 }

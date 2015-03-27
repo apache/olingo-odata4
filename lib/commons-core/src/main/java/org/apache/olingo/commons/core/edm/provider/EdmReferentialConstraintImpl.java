@@ -18,22 +18,17 @@
  */
 package org.apache.olingo.commons.core.edm.provider;
 
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
-import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.provider.ReferentialConstraint;
 
-public class EdmReferentialConstraintImpl implements EdmReferentialConstraint {
+public class EdmReferentialConstraintImpl extends AbstractEdmAnnotatable implements EdmReferentialConstraint {
 
-  private final EdmAnnotationHelperImpl helper;
   private final ReferentialConstraint constraint;
   
   public EdmReferentialConstraintImpl(final Edm edm, final ReferentialConstraint constraint) {
+    super(edm, constraint);
     this.constraint = constraint;
-    this.helper = new EdmAnnotationHelperImpl(edm, constraint);
   }
 
   @Override
@@ -44,15 +39,5 @@ public class EdmReferentialConstraintImpl implements EdmReferentialConstraint {
   @Override
   public String getReferencedPropertyName() {
     return constraint.getReferencedProperty();
-  }
-  
-  @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    return helper.getAnnotation(term);
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    return helper.getAnnotations();
   }
 }

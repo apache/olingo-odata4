@@ -24,10 +24,10 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.provider.Action;
 
-public class EdmActionImpl extends EdmOperationImpl implements EdmAction {
+public class EdmActionImpl extends AbstractEdmOperation implements EdmAction {
 
   public static EdmActionImpl getInstance(final Edm edm, final FullQualifiedName name, final Action action) {
-    return EdmOperationImpl.getInstance(new EdmActionImpl(edm, name, action));
+    return AbstractEdmOperation.getInstance(new EdmActionImpl(edm, name, action));
   }
 
   private EdmActionImpl(final Edm edm, final FullQualifiedName name, final Action action) {
