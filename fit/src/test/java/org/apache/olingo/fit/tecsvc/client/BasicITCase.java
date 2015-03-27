@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
@@ -440,7 +441,141 @@ public class BasicITCase extends AbstractBaseTestITCase {
                                    .getPrimitiveValue()
                                    .toValue());  
   }
+  
+  @Test
+  public void updateCollectionOfComplexCollection() {
+    final ODataObjectFactory of = getClient().getObjectFactory();
+    final ODataEntity entity = of.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
 
+    entity.getProperties().add(of.newCollectionProperty("CollPropertyComp", 
+        of.newCollectionValue("CTPrimComp")
+          .add(of.newComplexValue("CTPrimComp")
+              .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16((short)42)))
+              .add(of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
+                  .add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder().buildString("42"))))))));
+    
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
+                               .appendEntitySetSegment("ESKeyNav")
+                               .appendKeySegment(3)
+                               .build();
+    
+    final ODataEntityUpdateResponse<ODataEntity> response = getClient().getCUDRequestFactory()
+                                                                       .getEntityUpdateRequest(uri, 
+                                                                                               UpdateType.PATCH, 
+                                                                                               entity)
+                                                                       .execute();
+    
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
+    
+    // Check if entity has changed
+    final ODataEntityRequest<ODataEntity> entityRequest = getClient().getRetrieveRequestFactory().getEntityRequest(uri);
+    entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
+    final ODataRetrieveResponse<ODataEntity> entityResponse = entityRequest.execute();
+    
+    assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
+    assertNotNull(entityResponse.getBody().getProperty("CollPropertyComp"));
+    assertEquals(1, entityResponse.getBody().getProperty("CollPropertyComp").getCollectionValue().size());
+    
+    ODataComplexValue complexProperty = entityResponse.getBody()
+                                                      .getProperty("CollPropertyComp")
+                                                      .getCollectionValue()
+                                                      .iterator()
+                                                      .next()
+                                                      .asComplex();
+    assertEquals(42, complexProperty.get("PropertyInt16").getPrimitiveValue().toValue());
+    assertNotNull(complexProperty.get("PropertyComp"));
+    
+    final ODataComplexValue innerComplexProperty = complexProperty.get("PropertyComp").getComplexValue();
+    assertEquals("42", innerComplexProperty.get("PropertyString").getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  public void createCollectionOfComplexCollection() {
+    /*
+     * Create a new entity which contains a collection of complex collections
+     * Check if all not filled fields are created by the server
+     */
+    final ODataObjectFactory of = getClient().getObjectFactory();
+    final ODataEntity entity = of.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
+    entity.getProperties().add(
+        of.newPrimitiveProperty("PropertyString", 
+                                of.newPrimitiveValueBuilder().buildString("Complex collection test")));
+    entity.getProperties().add(of.newComplexProperty("PropertyCompTwoPrim", 
+         of.newComplexValue("CTTwoPrim")
+           .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16((short) 1)))
+           .add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder().buildString("1")))));
+    
+    entity.getProperties().add(of.newCollectionProperty("CollPropertyComp", 
+        of.newCollectionValue("CTPrimComp")
+          .add(of.newComplexValue("CTPrimComp")
+              .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16((short)1)))
+              .add(of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
+                  .add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder().buildString("1"))))))
+          .add(of.newComplexValue("CTPrimComp")
+              .add(of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
+                  .add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder().buildString("2")))
+                  .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16((short) 2)))
+                  .add(of.newPrimitiveProperty("PropertySingle", of.newPrimitiveValueBuilder().buildSingle(2.0f))))))));
+    
+    final ODataEntityCreateResponse<ODataEntity> response = getClient().getCUDRequestFactory().getEntityCreateRequest(
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESKeyNav").build(),
+        entity).execute();
+    
+    
+    // Check if not declared fields are also available
+    assertEquals(HttpStatusCode.CREATED.getStatusCode(), response.getStatusCode());
+    final ODataEntity newEntity = response.getBody();
+    
+    assertEquals(2, newEntity.getProperty("CollPropertyComp").getCollectionValue().size());
+    final Iterator<ODataValue> iter = newEntity.getProperty("CollPropertyComp").getCollectionValue().iterator();
+    final ODataComplexValue complexProperty1 = iter.next().asComplex();
+    assertEquals(1, complexProperty1.get("PropertyInt16").getPrimitiveValue().toValue());
+    assertNotNull(complexProperty1.get("PropertyComp"));
+    final ODataComplexValue innerComplexProperty1 = complexProperty1.get("PropertyComp").getComplexValue();
+    assertEquals("1", innerComplexProperty1.get("PropertyString").getPrimitiveValue().toValue());
+    assertTrue(innerComplexProperty1.get("PropertyBinary").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertyBoolean").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertyByte").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertyDate").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertyDateTimeOffset").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertyDecimal").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertyDouble").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertyDuration").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertyGuid").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertyInt16").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertyInt32").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertyInt64").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertySByte").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertyTimeOfDay").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertyInt16").hasNullValue());
+    assertTrue(innerComplexProperty1.get("PropertySingle").hasNullValue());
+    
+    final ODataComplexValue complexProperty2 = iter.next().asComplex();
+    assertTrue(complexProperty2.get("PropertyInt16").hasNullValue());
+    assertNotNull(complexProperty2.get("PropertyComp"));
+    final ODataComplexValue innerComplexProperty2 = complexProperty2.get("PropertyComp").getComplexValue();
+    assertEquals("2", innerComplexProperty2.get("PropertyString").getPrimitiveValue().toValue());
+    assertEquals(2, innerComplexProperty2.get("PropertyInt16").getPrimitiveValue().toValue());
+    assertEquals(Double.valueOf(2), innerComplexProperty2.get("PropertySingle").getPrimitiveValue().toValue());
+    assertTrue(innerComplexProperty2.get("PropertyBinary").hasNullValue());
+    assertTrue(innerComplexProperty2.get("PropertyBoolean").hasNullValue());
+    assertTrue(innerComplexProperty2.get("PropertyByte").hasNullValue());
+    assertTrue(innerComplexProperty2.get("PropertyDate").hasNullValue());
+    assertTrue(innerComplexProperty2.get("PropertyDateTimeOffset").hasNullValue());
+    assertTrue(innerComplexProperty2.get("PropertyDecimal").hasNullValue());
+    assertTrue(innerComplexProperty2.get("PropertyDouble").hasNullValue());
+    assertTrue(innerComplexProperty2.get("PropertyDuration").hasNullValue());
+    assertTrue(innerComplexProperty2.get("PropertyGuid").hasNullValue());
+    assertTrue(innerComplexProperty2.get("PropertyInt32").hasNullValue());
+    assertTrue(innerComplexProperty2.get("PropertyInt64").hasNullValue());
+    assertTrue(innerComplexProperty2.get("PropertySByte").hasNullValue());
+    assertTrue(innerComplexProperty2.get("PropertyTimeOfDay").hasNullValue());
+    
+    // Check if not available properties return null
+    assertNull(innerComplexProperty2.get("NotAvailableProperty"));
+  }
+  
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();

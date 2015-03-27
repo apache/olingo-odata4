@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
@@ -42,7 +43,9 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.commons.core.data.ComplexValueImpl;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt16;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
@@ -197,26 +200,33 @@ public class DataProvider {
     for (final String propertyName : type.getPropertyNames()) {
       if (!keyNames.contains(propertyName)) {
         final EdmProperty edmProperty = type.getStructuralProperty(propertyName);
-        Property newProperty;
-        if (edmProperty.isPrimitive()) {
-          newProperty = edmProperty.isCollection() ?
-              DataCreator.createPrimitiveCollection(propertyName) :
-              DataCreator.createPrimitive(propertyName, null);
-        } else {
-          if (edmProperty.isCollection()) {
-            @SuppressWarnings("unchecked")
-            Property newProperty2 = DataCreator.createComplexCollection(propertyName);
-            newProperty = newProperty2;
-          } else {
-            newProperty = DataCreator.createComplex(propertyName);
-            createProperties((EdmComplexType) edmProperty.getType(), newProperty.asComplex().getValue());
-          }
-        }
-        properties.add(newProperty);
+        properties.add(createProperty(edmProperty, propertyName));
       }
     }
   }
-
+  
+  private Property createProperty(final EdmProperty edmProperty, final String propertyName) 
+      throws DataProviderException {
+    Property newProperty;
+    
+    if (edmProperty.isPrimitive()) {
+      newProperty = edmProperty.isCollection() ?
+          DataCreator.createPrimitiveCollection(propertyName) :
+          DataCreator.createPrimitive(propertyName, null);
+    } else {
+      if (edmProperty.isCollection()) {
+        @SuppressWarnings("unchecked")
+        Property newProperty2 = DataCreator.createComplexCollection(propertyName);
+        newProperty = newProperty2;
+      } else {
+        newProperty = DataCreator.createComplex(propertyName);
+        createProperties((EdmComplexType) edmProperty.getType(), newProperty.asComplex().getValue());
+      }
+    }
+    
+    return newProperty;
+  }
+  
   public void update(final String rawBaseUri, final EdmEntitySet edmEntitySet, Entity entity,
       final Entity changedEntity, final boolean patch, final boolean isInsert) throws DataProviderException {
 
@@ -255,13 +265,13 @@ public class DataProvider {
       final Link navigationLink = changedEntity.getNavigationLink(navPropertyName);
       final EdmNavigationProperty navigationProperty = entityType.getNavigationProperty(navPropertyName);
       if (!navigationProperty.isCollection() && navigationLink != null && navigationLink.getInlineEntity() == null) {
-        
+
         // Check if partner is available
         if (navigationProperty.getPartner() != null && entity.getNavigationLink(navPropertyName) != null) {
-          Entity partnerEntity =  entity.getNavigationLink(navPropertyName).getInlineEntity();
+          Entity partnerEntity = entity.getNavigationLink(navPropertyName).getInlineEntity();
           removeLink(navigationProperty.getPartner(), partnerEntity);
         }
-        
+
         // Remove link
         removeLink(navigationProperty, entity);
       }
@@ -337,7 +347,7 @@ public class DataProvider {
 
   private void removeLink(EdmNavigationProperty navigationProperty, Entity entity) {
     final Link link = entity.getNavigationLink(navigationProperty.getName());
-    if(link != null) {
+    if (link != null) {
       entity.getNavigationLinks().remove(link);
     }
   }
@@ -380,6 +390,7 @@ public class DataProvider {
     }
   }
 
+  @SuppressWarnings({ "unchecked" })
   public void updateProperty(final EdmProperty edmProperty, Property property, final Property newProperty,
       final boolean patch) throws DataProviderException {
     if (edmProperty.isPrimitive()) {
@@ -391,11 +402,23 @@ public class DataProvider {
         property.setValue(property.getValueType(), value);
       }
     } else if (edmProperty.isCollection()) {
-      if (newProperty != null && !newProperty.asCollection().isEmpty()) {
-        throw new DataProviderException("Update of a complex-collection property not supported!",
-            HttpStatusCode.NOT_IMPLEMENTED);
-      } else {
-        property.asCollection().clear();
+      // Updating collection properties mean replacing all entites with the given ones
+      property.asCollection().clear();
+
+      if (newProperty != null) {
+        if (edmProperty.getType().getKind() == EdmTypeKind.COMPLEX) {
+          // Complex type
+          final List<ComplexValue> complexValues = (List<ComplexValue>) newProperty.asCollection();
+
+          // Create each complex value
+          for (final ComplexValue complexValue : complexValues) {
+            ((List<ComplexValue>) property.asCollection()).add(createComplexValue(edmProperty, complexValue, patch));
+          }
+        } else {
+          // Primitive type
+          final List<Object> values = (List<Object>) newProperty.asCollection();
+          ((List<Object>) property.asCollection()).addAll(values);
+        }
       }
     } else {
       final EdmComplexType type = (EdmComplexType) edmProperty.getType();
@@ -408,6 +431,36 @@ public class DataProvider {
             patch);
       }
     }
+  }
+
+  private ComplexValue createComplexValue(final EdmProperty edmProperty, final ComplexValue complexValue, 
+      final boolean patch) throws DataProviderException {
+    final ComplexValueImpl result = new ComplexValueImpl();
+    final EdmComplexType edmType =  (EdmComplexType) edmProperty.getType();
+    final List<Property> givenProperties = complexValue.getValue();
+
+    // Create ALL properties, even if no value is given. Check if null is allowed
+    for (final String propertyName : edmType.getPropertyNames()) {
+      final EdmProperty innerEdmProperty = (EdmProperty) edmType.getProperty(propertyName);
+      final Property currentProperty = findProperty(propertyName, givenProperties);
+      final Property newProperty = createProperty(innerEdmProperty, propertyName);
+      result.getValue().add(newProperty);
+      
+      if (currentProperty != null) {
+        updateProperty(innerEdmProperty, newProperty, currentProperty, patch);
+      } else {
+        if (innerEdmProperty.isNullable()) {
+          // Check complex properties ... may be null is not allowed
+          if(edmProperty.getType().getKind() == EdmTypeKind.COMPLEX)  {
+            updateProperty(innerEdmProperty, newProperty, null, patch);
+          }
+        } else {
+          throw new DataProviderException("Null is not allowed for property " + edmProperty.getName());
+        }
+      }
+    }
+    
+    return result;
   }
 
   private Property findProperty(final String propertyName, final List<Property> properties) {
