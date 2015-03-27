@@ -62,12 +62,14 @@ public class BindingITCase extends AbstractBaseTestITCase {
   private static final String PROPERTY_INT16 = "PropertyInt16";
   private static final String PROPERTY_STRING = "PropertyString";
   private static final String PROPERTY_COMP = "PropertyComp";
-  private static final String PROPERTY_COMP_COMP = "PropertyCompComp";
+  private static final String PROPERTY_COMP_NAV = "PropertyCompNav";
+  private static final String PROPERTY_COMP_COMP_NAV = "PropertyCompCompNav";
   private static final String PROPERTY_COMP_TWO_PRIM = "PropertyCompTwoPrim";
   private static final String PROPERTY_COMP_ALL_PRIM = "PropertyCompAllPrim";
   private static final String NAV_PROPERTY_ET_KEY_NAV_ONE = "NavPropertyETKeyNavOne";
   private static final String NAV_PROPERTY_ET_KEY_NAV_MANY = "NavPropertyETKeyNavMany";
   private static final String NAV_PROPERTY_ET_TWO_KEY_NAV_MANY = "NavPropertyETTwoKeyNavMany";
+
 
   @Test
   public void testCreateBindingSimple() throws EdmPrimitiveTypeException {
@@ -82,7 +84,7 @@ public class BindingITCase extends AbstractBaseTestITCase {
     entity.getProperties()
         .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")));
     entity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_NAV_FIVE_PROP)
+        .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))));
     entity.getProperties()
         .add(of.newComplexProperty(PROPERTY_COMP_ALL_PRIM, of.newComplexValue(CT_ALL_PRIM)
@@ -92,7 +94,7 @@ public class BindingITCase extends AbstractBaseTestITCase {
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
     entity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_COMP, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))
             .add(of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_NAV_FIVE_PROP)
                 .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));

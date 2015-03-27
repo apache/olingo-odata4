@@ -305,12 +305,12 @@ public class EntityTypeProvider {
           .setProperties(
               Arrays.asList(
                   PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString_NotNullable,
-                  PropertyProvider.propertyComp_CTNavFiveProp,
+                  PropertyProvider.propertyCompNav_CTNavFiveProp,
                   PropertyProvider.propertyCompAllPrim_CTAllPrim, PropertyProvider.propertyCompTwoPrim_CTTwoPrim,
                   PropertyProvider.collPropertyString, PropertyProvider.collPropertyInt16,
                   PropertyProvider.collPropertyComp_CTPrimComp,
                   new Property()
-                      .setName("PropertyCompComp").setType(ComplexTypeProvider.nameCTCompNav)
+                      .setName("PropertyCompCompNav").setType(ComplexTypeProvider.nameCTCompNav)
                   ))
           .setNavigationProperties(
               Arrays.asList(
@@ -396,8 +396,9 @@ public class EntityTypeProvider {
                   new PropertyRef().setName("PropertyComp/PropertyString").setAlias("KeyAlias2"),
                   new PropertyRef().setName("PropertyCompComp/PropertyComp/PropertyString").setAlias("KeyAlias3")))
           .setProperties(
-              Arrays.asList(PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComp_CTTwoPrim,
-                  PropertyProvider.propertyCompComp_CTCompComp));
+              Arrays.asList(PropertyProvider.propertyInt16_NotNullable, 
+                  PropertyProvider.propertyComp_CTTwoPrim_NotNullable, 
+                  PropertyProvider.propertyCompComp_CTCompComp_NotNullable));
     } else if (entityTypeName.equals(nameETCompMixPrimCollComp)) {
       return new EntityType()
           .setName("ETCompMixPrimCollComp")

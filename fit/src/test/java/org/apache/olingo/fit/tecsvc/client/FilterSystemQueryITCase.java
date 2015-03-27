@@ -927,7 +927,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     final ODataClient client = getClient();
     final ODataObjectFactory factory = client.getObjectFactory();
     ODataEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
-    newEntity.getProperties().add(factory.newComplexProperty("PropertyCompComp", null));
+    newEntity.getProperties().add(factory.newComplexProperty("PropertyCompCompNav", null));
     newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt16",
         factory.newPrimitiveValueBuilder().buildInt16((short) 4)));
     newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyString",
@@ -959,11 +959,11 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
 
     // Do the filter request
     ODataRetrieveResponse<ODataEntitySet> result =
-        sendRequest("ESKeyNav", "PropertyCompComp/PropertyComp/PropertyInt16 eq 1", cookie);
+        sendRequest("ESKeyNav", "PropertyCompCompNav/PropertyComp/PropertyInt16 eq 1", cookie);
     assertEquals(3, result.getBody().getEntities().size());
 
     // Try filter all entries where PropertyCompComp is null
-    result = sendRequest("ESKeyNav", "PropertyCompComp/PropertyComp/PropertyInt16 eq null", cookie);
+    result = sendRequest("ESKeyNav", "PropertyCompCompNav/PropertyComp/PropertyInt16 eq null", cookie);
     assertEquals(1, result.getBody().getEntities().size());
   }
 

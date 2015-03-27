@@ -136,7 +136,7 @@ public class UriResourceImplTest {
     assertEquals(UriResourceKind.complexProperty, impl.getKind());
 
     EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETKeyNav);
-    EdmProperty property = (EdmProperty) entityType.getProperty("PropertyComp");
+    EdmProperty property = (EdmProperty) entityType.getProperty("PropertyCompNav");
     impl.setProperty(property);
 
     assertEquals(property, impl.getProperty());

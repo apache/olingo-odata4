@@ -115,7 +115,7 @@ public class DataCreator {
     return new EntityImpl()
         .addProperty(createPrimitive("PropertyInt16", propertyInt16))
         .addProperty(createPrimitive("PropertyString", propertyString))
-        .addProperty(createComplex("PropertyComp",
+        .addProperty(createComplex("PropertyCompNav",
             createPrimitive("PropertyInt16", 1)))
         .addProperty(createKeyNavAllPrimComplexValue("PropertyCompAllPrim"))
         .addProperty(createComplex("PropertyCompTwoPrim",
@@ -136,7 +136,7 @@ public class DataCreator {
             Arrays.asList(
                 createPrimitive("PropertyInt16", 3),
                 createKeyNavAllPrimComplexValue("PropertyComp"))))
-        .addProperty(createComplex("PropertyCompComp",
+        .addProperty(createComplex("PropertyCompCompNav",
             createPrimitive("PropertyString", "1"),
             createComplex("PropertyComp", createPrimitive("PropertyInt16", 1))));
   }

@@ -330,7 +330,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ODataClient client = getClient();
     final ODataObjectFactory factory = client.getObjectFactory();
     ODataEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
-    newEntity.getProperties().add(factory.newComplexProperty("PropertyCompComp", null));
+    newEntity.getProperties().add(factory.newComplexProperty("PropertyCompCompNav", null));
     // The following properties must not be null
     newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyString",
         factory.newPrimitiveValueBuilder().buildString("Test")));
@@ -358,7 +358,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
     final ODataEntity entity = entityResponse.getBody();
     assertNotNull(entity);
-    final ODataComplexValue complex = entity.getProperty("PropertyCompComp").getComplexValue()
+    final ODataComplexValue complex = entity.getProperty("PropertyCompCompNav").getComplexValue()
         .get("PropertyComp").getComplexValue();
     assertNotNull(complex);
     final ODataProperty property = complex.get("PropertyInt16");

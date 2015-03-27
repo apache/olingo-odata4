@@ -29,7 +29,7 @@ public class TypeDefinitionProvider {
   public TypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) {
     if (nameTDString.equals(typeDefinitionName)) {
       return new TypeDefinition().setName(nameTDString.getName()).setUnderlyingType(
-          EdmPrimitiveTypeKind.String.getFullQualifiedName());
+          EdmPrimitiveTypeKind.String.getFullQualifiedName()).setMaxLength(15);
     }
     return null;
   }

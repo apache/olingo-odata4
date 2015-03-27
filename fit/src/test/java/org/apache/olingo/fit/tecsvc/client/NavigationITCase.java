@@ -122,7 +122,7 @@ public final class NavigationITCase extends AbstractBaseTestITCase {
                 .appendEntitySetSegment("ESKeyNav").appendKeySegment(1)
                 .appendNavigationSegment("NavPropertyETKeyNavOne")
                 .appendNavigationSegment("NavPropertyETKeyNavMany").appendKeySegment(3)
-                .appendPropertySegment("PropertyComp").appendPropertySegment("PropertyInt16").build())
+                .appendPropertySegment("PropertyCompNav").appendPropertySegment("PropertyInt16").build())
             .execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 

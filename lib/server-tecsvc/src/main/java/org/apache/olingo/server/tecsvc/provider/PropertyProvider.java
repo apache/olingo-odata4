@@ -580,6 +580,10 @@ public class PropertyProvider {
           .setName("PropertyComp")
           .setType(ComplexTypeProvider.nameCTNavFiveProp);
 
+  public static final Property propertyCompNav_CTNavFiveProp = new Property()
+          .setName("PropertyCompNav")
+          .setType(ComplexTypeProvider.nameCTNavFiveProp);
+  
   public static final Property propertyComp_CTPrimComp_NotNullable = new Property()
           .setName("PropertyComp")
           .setType(ComplexTypeProvider.nameCTPrimComp)
@@ -589,6 +593,11 @@ public class PropertyProvider {
           .setName("PropertyComp")
           .setType(ComplexTypeProvider.nameCTTwoPrim);
 
+  public static final Property propertyComp_CTTwoPrim_NotNullable = new Property()
+          .setName("PropertyComp")
+          .setType(ComplexTypeProvider.nameCTTwoPrim)
+          .setNullable(false);
+  
   public static final Property propertyCompAllPrim_CTAllPrim = new Property()
           .setName("PropertyCompAllPrim")
           .setType(ComplexTypeProvider.nameCTAllPrim);
@@ -597,6 +606,11 @@ public class PropertyProvider {
           .setName("PropertyCompComp")
           .setType(ComplexTypeProvider.nameCTCompComp);
 
+  public static final Property propertyCompComp_CTCompComp_NotNullable = new Property()
+          .setName("PropertyCompComp")
+          .setType(ComplexTypeProvider.nameCTCompComp)
+          .setNullable(false);
+  
   public static final Property propertyCompTwoPrim_CTTwoPrim = new Property()
           .setName("PropertyCompTwoPrim")
           .setType(ComplexTypeProvider.nameCTTwoPrim);
