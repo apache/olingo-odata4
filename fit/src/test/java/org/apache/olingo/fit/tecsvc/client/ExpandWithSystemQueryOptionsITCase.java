@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -69,13 +69,16 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
           entity.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
 
       if (propInt16.equals(1) && propString.equals("1")) {
-        assertEquals(1, inlineEntitySet.getEntities().size());
-        final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
-
-        assertEquals(1, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-        assertEquals("2", inlineEntity.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
+        assertEquals(2, inlineEntitySet.getEntities().size());
+        for (ODataEntity e:inlineEntitySet.getEntities()) {
+          assertEquals(1, e.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+          String strValue = (String)e.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue();
+          if (!strValue.equals("2") && !strValue.equals("1")) {
+            fail();
+          }
+        }
       } else if (propInt16.equals(1) && propString.equals("2")) {
-        assertEquals(0, inlineEntitySet.getEntities().size());
+        assertEquals(1, inlineEntitySet.getEntities().size());
       } else if (propInt16.equals(2) && propString.equals("1")) {
         assertEquals(1, inlineEntitySet.getEntities().size());
         final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
@@ -108,14 +111,13 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
 
       if (propInt16.equals(1) && propString.equals("1")) {
         assertEquals(2, inlineEntitySet.getEntities().size());
-        final ODataEntity inlineEntity1 = inlineEntitySet.getEntities().get(0);
-        final ODataEntity inlineEntity2 = inlineEntitySet.getEntities().get(1);
-
-        assertEquals(1, inlineEntity1.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-        assertEquals("2", inlineEntity1.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
-
-        assertEquals(1, inlineEntity2.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-        assertEquals("1", inlineEntity2.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
+        for (ODataEntity e:inlineEntitySet.getEntities()) {
+          assertEquals(1, e.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+          String strValue = (String)e.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue();
+          if (!strValue.equals("2") && !strValue.equals("1")) {
+            fail();
+          }
+        }
       }
     }
   }
@@ -136,15 +138,15 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
           entity.getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
 
       if (propInt16.equals(1)) {
-        assertEquals(1, inlineEntitySet.getEntities().size());
+        assertEquals(2, inlineEntitySet.getEntities().size());
+        final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
+
+        assertEquals(1, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+      } else if (propInt16.equals(2)) {
+        assertEquals(2, inlineEntitySet.getEntities().size());
         final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
 
         assertEquals(2, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-      } else if (propInt16.equals(2)) {
-        assertEquals(1, inlineEntitySet.getEntities().size());
-        final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
-
-        assertEquals(3, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
       } else if (propInt16.equals(3)) {
         assertEquals(0, inlineEntitySet.getEntities().size());
       }
@@ -167,12 +169,12 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
           entity.getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
 
       if (propInt16.equals(1)) {
-        assertEquals(1, inlineEntitySet.getEntities().size());
+        assertEquals(2, inlineEntitySet.getEntities().size());
         final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
 
         assertEquals(1, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
       } else if (propInt16.equals(2)) {
-        assertEquals(1, inlineEntitySet.getEntities().size());
+        assertEquals(2, inlineEntitySet.getEntities().size());
         final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
 
         assertEquals(2, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
@@ -201,15 +203,18 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
           entity.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
 
       if (propInt16.equals(1) && propString.equals("1")) {
-        assertEquals(1, inlineEntitySet.getEntities().size());
-        final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
-
-        assertEquals(1, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-        assertEquals("2", inlineEntity.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
+        assertEquals(2, inlineEntitySet.getEntities().size());
+        for (ODataEntity e:inlineEntitySet.getEntities()) {
+          assertEquals(1, e.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+          String strValue = (String)e.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue();
+          if (!strValue.equals("2") && !strValue.equals("1")) {
+            fail();
+          }
+        }
       } else if (propInt16.equals(1) && propString.equals("2")) {
-        assertEquals(0, inlineEntitySet.getEntities().size());
+        assertEquals(1, inlineEntitySet.getEntities().size());
       } else if (propInt16.equals(2) && propString.equals("1")) {
-        assertEquals(0, inlineEntitySet.getEntities().size());
+        assertEquals(1, inlineEntitySet.getEntities().size());
       } else if (propInt16.equals(3) && propString.equals("1")) {
         assertEquals(0, inlineEntitySet.getEntities().size());
       } else {
@@ -274,7 +279,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
 
     final ODataEntitySet entitySet =
         response.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
-    assertEquals(1, entitySet.getEntities().size());
+    assertEquals(2, entitySet.getEntities().size());
     assertEquals(1, entitySet.getEntities().get(0).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
   }
 

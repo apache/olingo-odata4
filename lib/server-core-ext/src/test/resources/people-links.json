@@ -1,0 +1,94 @@
+{
+   "value":[
+      {
+         "UserName":"russellwhyte",
+         "Friends": ["scottketchum", "ronaldmundy", "javieralfred", "angelhuffman"],
+         "Trips": [1001, 1003, 1007],
+         "Photo": 1
+      },
+      {
+         "UserName":"scottketchum",
+         "Friends": ["russellwhyte", "ronaldmundy"],
+         "Trips": [1001, 2004],
+         "Photo": 11
+      },
+      {
+         "UserName":"ronaldmundy",
+         "Friends": ["russellwhyte", "scottketchum"],
+         "Trips": [3009],
+         "Photo": 12
+      },
+      {
+         "UserName":"javieralfred",
+         "Friends": ["willieashmore", "vincentcalabrese", "georginabarlow"],
+         "Trips": [4005]
+      },
+      {
+         "UserName":"willieashmore",
+         "Friends": ["javieralfred", "vincentcalabrese"],
+         "Trips": [5007, 5008]
+      },
+      {
+         "UserName":"vincentcalabrese",
+         "Friends": ["javieralfred", "willieashmore"],
+         "Trips": [7010]
+      },
+      {
+         "UserName":"clydeguess",
+         "Friends": ["keithpinckney", "ursulabright"],
+         "Trips": [8011]
+      },
+      {
+         "UserName":"keithpinckney",
+         "Friends": ["clydeguess", "marshallgaray"],
+         "Trips": []
+      },
+      {
+         "UserName":"marshallgaray",
+         "Friends": ["keithpinckney", "elainestewart", "jonirosales"]
+      },
+      {
+         "UserName":"elainestewart",
+         "Friends": ["marshallgaray"]
+      },
+      {
+         "UserName":"salliesampson",
+         "Friends": [""],
+         "Trips": [13012]
+      },
+      {
+         "UserName":"jonirosales",
+         "Friends": ["marshallgaray"],
+         "Trips": [14013]
+      },
+      {
+         "UserName":"georginabarlow",
+         "Friends": ["javieralfred"]
+      },
+      {
+         "UserName":"angelhuffman",
+         "Friends": ["russellwhyte"],
+         "Trips": [16014]
+      },
+      {
+         "UserName":"laurelosborn",
+         "Friends": ["sandyosborn"]
+      },
+      {
+         "UserName":"sandyosborn",
+         "Friends": ["laurelosborn"]
+      },
+      {
+         "UserName":"ursulabright",
+         "Friends": ["keithpinckney"]
+      },
+      {
+         "UserName":"genevievereeves",
+         "Friends": ["kristakemp"]
+      },
+      {
+         "UserName":"kristakemp",
+         "Friends": ["genevievereeves"]
+      }            
+   ]
+}

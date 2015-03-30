@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -27,6 +27,7 @@ public class EntitySerializerOptions {
   private ContextURL contextURL;
   private ExpandOption expand;
   private SelectOption select;
+  private boolean onlyReferences;
 
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
@@ -43,6 +44,11 @@ public class EntitySerializerOptions {
     return select;
   }
 
+  /** only writes the references of the entities*/
+  public boolean onlyReferences() {
+    return onlyReferences;
+  }
+
   private EntitySerializerOptions() {}
 
   /** Initializes the options builder. */
@@ -53,7 +59,7 @@ public class EntitySerializerOptions {
   /** Builder of OData serializer options. */
   public static final class Builder {
 
-    private EntitySerializerOptions options;
+    private final EntitySerializerOptions options;
 
     private Builder() {
       options = new EntitySerializerOptions();
@@ -74,6 +80,12 @@ public class EntitySerializerOptions {
     /** Sets the $select system query option. */
     public Builder select(final SelectOption select) {
       options.select = select;
+      return this;
+    }
+
+    /** Sets to serialize only references */
+    public Builder setWriteOnlyReferences(final boolean ref) {
+      options.onlyReferences = ref;
       return this;
     }
 

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -1064,12 +1064,15 @@ public class TestUriParserImpl {
   public void testAlias() throws Exception {
     testUri.run("ESAllPrim", "$filter=PropertyInt16 eq @p1&@p1=1)")
         .goFilter().is("<<PropertyInt16> eq <@p1>>");
-  }  
-  
+  }
+
   @Test
   public void testLambda() throws Exception {
     testUri.run("ESTwoKeyNav", "$filter=CollPropertyComp/all( l : true )")
         .goFilter().is("<CollPropertyComp/<ALL;<true>>>");
+
+    testUri.run("ESTwoKeyNav", "$filter=CollPropertyComp/all( x : x/PropertyInt16 eq 2)")
+    .goFilter().is("<CollPropertyComp/<ALL;<<x/PropertyInt16> eq <2>>>>");
 
     testUri.run("ESTwoKeyNav", "$filter=CollPropertyComp/any( l : true )")
         .goFilter().is("<CollPropertyComp/<ANY;<true>>>");

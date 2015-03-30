@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -138,7 +138,7 @@ public class DataProvider {
     final List<Entity> entities = entitySet.getEntities();
     final Map<String, Object> newKey = findFreeComposedKey(entities, edmEntitySet.getEntityType());
     final Entity newEntity = new EntityImpl();
-
+    newEntity.setType(edmEntityType.getFullQualifiedName().getFullQualifiedNameAsString());
     for (final String keyName : edmEntityType.getKeyPredicateNames()) {
       newEntity.addProperty(DataCreator.createPrimitive(keyName, newKey.get(keyName)));
     }
@@ -194,7 +194,8 @@ public class DataProvider {
     return true;
   }
 
-  private void createProperties(final EdmStructuredType type, List<Property> properties) throws DataProviderException {
+  private void createProperties(final EdmStructuredType type, List<Property> properties)
+      throws DataProviderException {
     final List<String> keyNames = type instanceof EdmEntityType ?
         ((EdmEntityType) type).getKeyPredicateNames() : Collections.<String> emptyList();
     for (final String propertyName : type.getPropertyNames()) {
@@ -204,11 +205,11 @@ public class DataProvider {
       }
     }
   }
-  
-  private Property createProperty(final EdmProperty edmProperty, final String propertyName) 
+
+  private Property createProperty(final EdmProperty edmProperty, final String propertyName)
       throws DataProviderException {
     Property newProperty;
-    
+
     if (edmProperty.isPrimitive()) {
       newProperty = edmProperty.isCollection() ?
           DataCreator.createPrimitiveCollection(propertyName) :
@@ -216,17 +217,19 @@ public class DataProvider {
     } else {
       if (edmProperty.isCollection()) {
         @SuppressWarnings("unchecked")
-        Property newProperty2 = DataCreator.createComplexCollection(propertyName);
+        Property newProperty2 = DataCreator.createComplexCollection(propertyName, edmProperty
+            .getType().getFullQualifiedName().getFullQualifiedNameAsString());
         newProperty = newProperty2;
       } else {
-        newProperty = DataCreator.createComplex(propertyName);
+        newProperty = DataCreator.createComplex(propertyName, edmProperty.getType()
+            .getFullQualifiedName().getFullQualifiedNameAsString());
         createProperties((EdmComplexType) edmProperty.getType(), newProperty.asComplex().getValue());
       }
     }
-    
+
     return newProperty;
   }
-  
+
   public void update(final String rawBaseUri, final EdmEntitySet edmEntitySet, Entity entity,
       final Entity changedEntity, final boolean patch, final boolean isInsert) throws DataProviderException {
 
@@ -433,7 +436,7 @@ public class DataProvider {
     }
   }
 
-  private ComplexValue createComplexValue(final EdmProperty edmProperty, final ComplexValue complexValue, 
+  private ComplexValue createComplexValue(final EdmProperty edmProperty, final ComplexValue complexValue,
       final boolean patch) throws DataProviderException {
     final ComplexValueImpl result = new ComplexValueImpl();
     final EdmComplexType edmType =  (EdmComplexType) edmProperty.getType();
@@ -445,7 +448,7 @@ public class DataProvider {
       final Property currentProperty = findProperty(propertyName, givenProperties);
       final Property newProperty = createProperty(innerEdmProperty, propertyName);
       result.getValue().add(newProperty);
-      
+
       if (currentProperty != null) {
         updateProperty(innerEdmProperty, newProperty, currentProperty, patch);
       } else {
@@ -459,7 +462,7 @@ public class DataProvider {
         }
       }
     }
-    
+
     return result;
   }
 

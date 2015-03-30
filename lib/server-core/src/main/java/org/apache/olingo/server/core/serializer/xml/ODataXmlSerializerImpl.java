@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -87,14 +87,15 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
-  public InputStream entity(final EdmEntityType entityType, final Entity entity,
-      final EntitySerializerOptions options) throws SerializerException {
+  public InputStream entity(final ServiceMetadata metadata, final EdmEntityType entityType,
+      final Entity entity, final EntitySerializerOptions options) throws SerializerException {
     throw new SerializerException("Entity serialization not implemented for XML format",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
 
   @Override
-  public InputStream entityCollection(final EdmEntityType entityType, final EntitySet entitySet,
+  public InputStream entityCollection(final ServiceMetadata metadata,
+      final EdmEntityType entityType, final EntitySet entitySet,
       final EntityCollectionSerializerOptions options) throws SerializerException {
     throw new SerializerException("Entityset serialization not implemented for XML format",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
@@ -114,8 +115,8 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
-  public InputStream complex(final EdmComplexType type, final Property property,
-      final ComplexSerializerOptions options) throws SerializerException {
+  public InputStream complex(final ServiceMetadata metadata, final EdmComplexType type,
+      final Property property, final ComplexSerializerOptions options) throws SerializerException {
     throw new SerializerException("Serialization not implemented for XML format.",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
@@ -128,8 +129,8 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
-  public InputStream complexCollection(final EdmComplexType type, final Property property,
-      final ComplexSerializerOptions options) throws SerializerException {
+  public InputStream complexCollection(final ServiceMetadata metadata, final EdmComplexType type,
+      final Property property, final ComplexSerializerOptions options) throws SerializerException {
     throw new SerializerException("Serialization not implemented for XML format.",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }

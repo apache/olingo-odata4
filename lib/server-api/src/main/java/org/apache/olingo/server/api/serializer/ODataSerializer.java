@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -39,7 +39,7 @@ public interface ODataSerializer {
   /**
    * Writes the service document into an InputStream.
    * @param edm         the Entity Data Model
-   * @param serviceRoot the service-root URI of this OData service 
+   * @param serviceRoot the service-root URI of this OData service
    */
   InputStream serviceDocument(Edm edm, String serviceRoot) throws SerializerException;
 
@@ -58,21 +58,23 @@ public interface ODataSerializer {
 
   /**
    * Writes entity-collection data into an InputStream.
+   * @param metadata Metadata for the service
    * @param entityType the {@link EdmEntityType}
    * @param entitySet  the data of the entity set
    * @param options    options for the serializer
    */
-  InputStream entityCollection(EdmEntityType entityType, EntitySet entitySet,
-      EntityCollectionSerializerOptions options) throws SerializerException;
+  InputStream entityCollection(ServiceMetadata metadata, EdmEntityType entityType,
+      EntitySet entitySet, EntityCollectionSerializerOptions options) throws SerializerException;
 
   /**
    * Writes entity data into an InputStream.
+   * @param metadata Metadata for the service
    * @param entityType the {@link EdmEntityType}
    * @param entity     the data of the entity
    * @param options    options for the serializer
    */
-  InputStream entity(EdmEntityType entityType, Entity entity, EntitySerializerOptions options)
-      throws SerializerException;
+  InputStream entity(ServiceMetadata metadata, EdmEntityType entityType, Entity entity,
+      EntitySerializerOptions options) throws SerializerException;
 
   /**
    * Writes primitive-type instance data into an InputStream.
@@ -85,12 +87,13 @@ public interface ODataSerializer {
 
   /**
    * Writes complex-type instance data into an InputStream.
+   * @param metadata Metadata for the service
    * @param type     complex type
    * @param property property value
    * @param options options for the serializer
    */
-  InputStream complex(EdmComplexType type, Property property, ComplexSerializerOptions options)
-      throws SerializerException;
+  InputStream complex(ServiceMetadata metadata, EdmComplexType type, Property property,
+      ComplexSerializerOptions options) throws SerializerException;
 
   /**
    * Writes data of a collection of primitive-type instances into an InputStream.
@@ -103,10 +106,11 @@ public interface ODataSerializer {
 
   /**
    * Writes data of a collection of complex-type instances into an InputStream.
+   * @param metadata Metadata for the service
    * @param type     complex type
    * @param property property value
    * @param options options for the serializer
    */
-  InputStream complexCollection(EdmComplexType type, Property property, ComplexSerializerOptions options)
-      throws SerializerException;
+  InputStream complexCollection(ServiceMetadata metadata, EdmComplexType type, Property property,
+      ComplexSerializerOptions options) throws SerializerException;
 }

@@ -22,9 +22,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;

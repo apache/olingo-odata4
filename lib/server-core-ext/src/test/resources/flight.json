@@ -1,0 +1,66 @@
+{
+   "value":[   
+      {
+          "PlanItemId": 1,
+          "ConfirmationCode": "JH58493",
+          "FlightNumber": "AA26",
+          "StartsAt": "2014-01-01T06:15:00Z",
+          "EndsAt": "2014-01-01T11:35:00Z"
+      },
+      {
+          "PlanItemId": 2,
+          "ConfirmationCode": "JH38143",
+          "FlightNumber": "AA4035",
+          "StartsAt": "2014-01-04T17:55:00Z", 
+          "EndsAt": "2014-01-04T20:45:00Z" 
+      },
+      {
+          "PlanItemId": 3,
+          "ConfirmationCode": "JH58494",
+          "FlightNumber": "FM1930",
+          "StartsAt": "2014-02-01T08:00:00Z", 
+          "EndsAt": "2014-02-01T09:20:00Z",
+          "SeatNumber": "B11"
+      },
+      {
+          "PlanItemId": 4,
+          "ConfirmationCode": "JH58495",
+          "FlightNumber": "MU1930",
+          "StartsAt": "2014-02-10T15:00:00Z", 
+          "EndsAt": "2014-02-10T16:30:00Z",
+          "SeatNumber": "A32"
+      },     
+      {
+          "PlanItemId": 5,
+          "ConfirmationCode": "JH58494",
+          "FlightNumber": "FM1930",
+          "StartsAt": "2014-02-01T08:00:00Z",  
+          "EndsAt": "2014-02-01T09:20:00Z",
+          "SeatNumber": "B11"
+      },
+      {
+          "PlanItemId": 6,
+          "ConfirmationCode": "JH58495",
+          "FlightNumber": "MU1930",
+          "StartsAt": "2014-02-10T15:00:00Z", 
+          "EndsAt": "2014-02-10T16:30:00Z",
+          "SeatNumber": "A32"
+      },
+      {
+          "PlanItemId": 7,
+          "ConfirmationCode": "JH58494",
+          "FlightNumber": "FM1930",
+          "StartsAt": "2014-02-01T08:00:00Z",  
+          "EndsAt": "2014-02-01T09:20:00Z",
+          "SeatNumber": "B12"
+      },
+      {
+          "PlanItemId": 8,
+          "ConfirmationCode": "JH58495",
+          "FlightNumber": "MU1930",
+          "StartsAt": "2014-02-10T16:30:00Z",  
+          "EndsAt": "2014-02-10T16:30:00Z",          
+          "SeatNumber": "A33"
+      }
+   ]
+}                                                                    
