@@ -60,21 +60,19 @@ public class NavPropertyBindingDetails {
   }
 
   private EdmBindingTarget getNavigationBindingDetails(final EdmStructuredType type) {
-    for (EdmSchema sc : edm.getSchemas()) {
-      for (EdmEntityContainer c : sc.getEntityContainers()) {
-        for (EdmEntitySet es : c.getEntitySets()) {
-          if (es.getEntityType().getFullQualifiedName().equals(type.getFullQualifiedName())) {
-            return es;
-          }
-        }
-
-        for (EdmSingleton s : c.getSingletons()) {
-          if (s.getEntityType().getFullQualifiedName().equals(type.getFullQualifiedName())) {
-            return s;
-          }
+    EdmEntityContainer c = edm.getEntityContainer();
+    if (c != null) {
+      for (EdmEntitySet es : c.getEntitySets()) {
+        if (es.getEntityType().getFullQualifiedName().equals(type.getFullQualifiedName())) {
+          return es;
         }
       }
 
+      for (EdmSingleton s : c.getSingletons()) {
+        if (s.getEntityType().getFullQualifiedName().equals(type.getFullQualifiedName())) {
+          return s;
+        }
+      }
     }
 
     throw new IllegalStateException("EntitySet for '" + type.getName() + "' not found");
@@ -83,26 +81,25 @@ public class NavPropertyBindingDetails {
   private EdmBindingTarget getNavigationBindingDetails(
       final EdmStructuredType sourceType, final EdmNavigationProperty property) {
 
-    for (EdmSchema sc : edm.getSchemas()) {
-      for (EdmEntityContainer c : sc.getEntityContainers()) {
-        for (EdmEntitySet es : c.getEntitySets()) {
-          if (es.getEntityType().getFullQualifiedName().equals(sourceType.getFullQualifiedName())) {
-            for (EdmNavigationPropertyBinding binding : es.getNavigationPropertyBindings()) {
-              if (binding.getPath().equals(property.getName())
-                  || binding.getPath().endsWith("/" + property.getName())) {
-                return es.getRelatedBindingTarget(binding.getPath());
-              }
+    EdmEntityContainer c = edm.getEntityContainer();
+    if (c != null) {
+      for (EdmEntitySet es : c.getEntitySets()) {
+        if (es.getEntityType().getFullQualifiedName().equals(sourceType.getFullQualifiedName())) {
+          for (EdmNavigationPropertyBinding binding : es.getNavigationPropertyBindings()) {
+            if (binding.getPath().equals(property.getName())
+                || binding.getPath().endsWith("/" + property.getName())) {
+              return es.getRelatedBindingTarget(binding.getPath());
             }
           }
         }
+      }
 
-        for (EdmSingleton s : c.getSingletons()) {
-          if (s.getEntityType().getFullQualifiedName().equals(sourceType.getFullQualifiedName())) {
-            for (EdmNavigationPropertyBinding binding : s.getNavigationPropertyBindings()) {
-              if (binding.getPath().equals(property.getName())
-                  || binding.getPath().endsWith("/" + property.getName())) {
-                return s.getRelatedBindingTarget(binding.getPath());
-              }
+      for (EdmSingleton s : c.getSingletons()) {
+        if (s.getEntityType().getFullQualifiedName().equals(sourceType.getFullQualifiedName())) {
+          for (EdmNavigationPropertyBinding binding : s.getNavigationPropertyBindings()) {
+            if (binding.getPath().equals(property.getName())
+                || binding.getPath().endsWith("/" + property.getName())) {
+              return s.getRelatedBindingTarget(binding.getPath());
             }
           }
         }

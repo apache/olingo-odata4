@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -54,8 +54,8 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
     EdmAnnotationsTarget _target = null;
     if (structured != null) {
       _target = path == null
-              ? structured
-              : structured.getStructuralProperty(path);
+          ? structured
+          : structured.getStructuralProperty(path);
       if (_target == null) {
         _target = structured.getNavigationProperty(path);
       }
@@ -67,8 +67,8 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
     EdmAnnotationsTarget _target = null;
     if (enumType != null) {
       _target = path == null
-              ? enumType
-              : enumType.getMember(path);
+          ? enumType
+          : enumType.getMember(path);
     }
     return _target;
   }
@@ -80,23 +80,25 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
       final FullQualifiedName base = new FullQualifiedName(splitted[0]);
       final String path = splitted.length > 1 ? splitted[1] : null;
 
-      final EdmEntityContainer baseEntityContainer = schema.getEntityContainer(base);
-      
-      target = baseEntityContainer == null? null: baseEntityContainer.getActionImport(path);
+      final EdmEntityContainer baseEntityContainer = schema.getEntityContainer();
+
+      target = baseEntityContainer == null ? null : baseEntityContainer.getActionImport(path);
       if (target == null) {
         target = getTarget(edm.getComplexType(base), path);
         if (target == null) {
-          target = baseEntityContainer;
+          if(baseEntityContainer != null && baseEntityContainer.getFullQualifiedName().equals(base)){
+            target = baseEntityContainer;
+          }
           if (target == null) {
-            target = baseEntityContainer == null? null: baseEntityContainer.getEntitySet(path);
+            target = baseEntityContainer == null ? null : baseEntityContainer.getEntitySet(path);
             if (target == null) {
               target = getTarget(edm.getEntityType(base), path);
               if (target == null) {
                 target = getTarget(edm.getEnumType(base), path);
                 if (target == null) {
-                  target = baseEntityContainer == null? null: baseEntityContainer.getFunctionImport(path);
+                  target = baseEntityContainer == null ? null : baseEntityContainer.getFunctionImport(path);
                   if (target == null) {
-                    target = baseEntityContainer == null? null: baseEntityContainer.getSingleton(path);
+                    target = baseEntityContainer == null ? null : baseEntityContainer.getSingleton(path);
                     if (target == null) {
                       target = edm.getTerm(base);
                       if (target == null) {

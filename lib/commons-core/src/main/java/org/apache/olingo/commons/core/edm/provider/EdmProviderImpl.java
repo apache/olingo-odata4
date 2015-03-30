@@ -317,11 +317,11 @@ public class EdmProviderImpl extends AbstractEdm {
   @Override
   protected Map<String, EdmSchema> createSchemas() {
     try {
-      final Map<String, EdmSchema> _schemas = new LinkedHashMap<String, EdmSchema>();
+      final Map<String, EdmSchema> providerSchemas = new LinkedHashMap<String, EdmSchema>();
       for (Schema schema : provider.getSchemas()) {
-        _schemas.put(schema.getNamespace(), new EdmSchemaImpl(this, provider, schema));
+        providerSchemas.put(schema.getNamespace(), new EdmSchemaImpl(this, provider, schema));
       }
-      return _schemas;
+      return providerSchemas;
     } catch (ODataException e) {
       throw new EdmException(e);
     }

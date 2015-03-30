@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmAnnotations;
@@ -50,7 +49,7 @@ import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 public class EdmSchemaImpl implements EdmSchema {
 
   private final Schema schema;
-  private final Edm edm;
+  private final EdmProviderImpl edm;
   private final EdmProvider provider;
 
   protected final String namespace;
@@ -66,112 +65,78 @@ public class EdmSchemaImpl implements EdmSchema {
   private List<EdmAnnotation> annotations;
   private EdmEntityContainer entityContainer;
 
-  public EdmSchemaImpl(final Edm edm, final EdmProvider provider, final Schema schema) {
+  public EdmSchemaImpl(final EdmProviderImpl edm, final EdmProvider provider, final Schema schema) {
     this.edm = edm;
     this.provider = provider;
     this.schema = schema;
     this.namespace = schema.getNamespace();
     this.alias = schema.getAlias();
+
+    if (alias != null) {
+      edm.cacheAliasNamespaceInfo(alias, namespace);
+    }
+
+    enumTypes = createEnumTypes();
+    typeDefinitions = createTypeDefinitions();
+    entityTypes = createEntityTypes();
+    complexTypes = createComplexTypes();
+    actions = createActions();
+    functions = createFunctions();
+    entityContainer = createEntityContainer();
+    annotationGroups = createAnnotationGroups();
+    annotations = createAnnotations();
+    terms = createTerms();
+
   }
 
   @Override
   public List<EdmEnumType> getEnumTypes() {
-    if (enumTypes == null) {
-      enumTypes = createEnumTypes();
-    }
     return Collections.unmodifiableList(enumTypes);
   }
 
   @Override
   public List<EdmEntityType> getEntityTypes() {
-    if (entityTypes == null) {
-      entityTypes = createEntityTypes();
-    }
     return Collections.unmodifiableList(entityTypes);
   }
 
   @Override
   public List<EdmComplexType> getComplexTypes() {
-    if (complexTypes == null) {
-      complexTypes = createComplexTypes();
-    }
     return Collections.unmodifiableList(complexTypes);
   }
 
   @Override
   public List<EdmAction> getActions() {
-    if (actions == null) {
-      actions = createActions();
-    }
     return Collections.unmodifiableList(actions);
   }
 
   @Override
   public List<EdmFunction> getFunctions() {
-    if (functions == null) {
-      functions = createFunctions();
-    }
     return Collections.unmodifiableList(functions);
   }
 
   @Override
   public List<EdmTypeDefinition> getTypeDefinitions() {
-    if (typeDefinitions == null) {
-      typeDefinitions = createTypeDefinitions();
-    }
     return Collections.unmodifiableList(typeDefinitions);
   }
 
   @Override
   public List<EdmTerm> getTerms() {
-    if (terms == null) {
-      terms = createTerms();
-    }
     return Collections.unmodifiableList(terms);
   }
 
   @Override
   public List<EdmAnnotations> getAnnotationGroups() {
-    if (annotationGroups == null) {
-      annotationGroups = createAnnotationGroups();
-    }
     return Collections.unmodifiableList(annotationGroups);
   }
 
   @Override
   public List<EdmAnnotation> getAnnotations() {
-    if (annotations == null) {
-      annotations = createAnnotations();
-    }
     return Collections.unmodifiableList(annotations);
   }
 
   @Override
   public EdmEntityContainer getEntityContainer() {
-    if (entityContainer == null) {
-      entityContainer = createEntityContainer();
-    }
     return entityContainer;
-  }
-
-  @Override
-  public List<EdmEntityContainer> getEntityContainers() {
-    if (getEntityContainer() == null) {
-      return Collections.<EdmEntityContainer> emptyList();
-    } else {
-      return Collections.unmodifiableList(Collections.singletonList(getEntityContainer()));
-    }
-  }
-
-  @Override
-  public EdmEntityContainer getEntityContainer(final FullQualifiedName name) {
-    return getEntityContainer() == null
-        ? null
-        : name == null
-            ? getEntityContainer()
-            : name.equals(getEntityContainer().getFullQualifiedName())
-                ? getEntityContainer()
-                : null;
   }
 
   @Override
@@ -187,7 +152,10 @@ public class EdmSchemaImpl implements EdmSchema {
   protected EdmEntityContainer createEntityContainer() {
     if (schema.getEntityContainer() != null) {
       FullQualifiedName containerFQN = new FullQualifiedName(namespace, schema.getEntityContainer().getName());
-      return new EdmEntityContainerImpl(edm, provider, containerFQN, schema.getEntityContainer());
+      EdmEntityContainer impl = new EdmEntityContainerImpl(edm, provider, containerFQN, schema.getEntityContainer());
+      edm.cacheEntityContainer(containerFQN, impl);
+      edm.cacheEntityContainer(null, impl);
+      return impl;
     }
     return null;
   }
@@ -197,7 +165,10 @@ public class EdmSchemaImpl implements EdmSchema {
     final List<TypeDefinition> providerTypeDefinitions = schema.getTypeDefinitions();
     if (providerTypeDefinitions != null) {
       for (TypeDefinition def : providerTypeDefinitions) {
-        typeDefinitions.add(new EdmTypeDefinitionImpl(edm, new FullQualifiedName(namespace, def.getName()), def));
+        FullQualifiedName typeDefName = new FullQualifiedName(namespace, def.getName());
+        EdmTypeDefinitionImpl typeDefImpl = new EdmTypeDefinitionImpl(edm, typeDefName, def);
+        typeDefinitions.add(typeDefImpl);
+        edm.cacheTypeDefinition(typeDefName, typeDefImpl);
       }
     }
     return typeDefinitions;
@@ -208,7 +179,10 @@ public class EdmSchemaImpl implements EdmSchema {
     final List<EnumType> providerEnumTypes = schema.getEnumTypes();
     if (providerEnumTypes != null) {
       for (EnumType enumType : providerEnumTypes) {
-        enumTypes.add(new EdmEnumTypeImpl(edm, new FullQualifiedName(namespace, enumType.getName()), enumType));
+        FullQualifiedName enumName = new FullQualifiedName(namespace, enumType.getName());
+        EdmEnumType enumTypeImpl = new EdmEnumTypeImpl(edm, enumName, enumType);
+        enumTypes.add(enumTypeImpl);
+        edm.cacheEnumType(enumName, enumTypeImpl);
       }
     }
     return enumTypes;
@@ -219,8 +193,10 @@ public class EdmSchemaImpl implements EdmSchema {
     final List<EntityType> providerEntityTypes = schema.getEntityTypes();
     if (providerEntityTypes != null) {
       for (EntityType entityType : providerEntityTypes) {
-        entityTypes.add(new EdmEntityTypeImpl(edm, new FullQualifiedName(namespace, entityType.getName()),
-            entityType));
+        FullQualifiedName entityTypeName = new FullQualifiedName(namespace, entityType.getName());
+        EdmEntityTypeImpl entityTypeImpl = new EdmEntityTypeImpl(edm, entityTypeName, entityType);
+        entityTypes.add(entityTypeImpl);
+        edm.cacheEntityType(entityTypeName, entityTypeImpl);
       }
     }
     return entityTypes;
@@ -231,8 +207,10 @@ public class EdmSchemaImpl implements EdmSchema {
     final List<ComplexType> providerComplexTypes = schema.getComplexTypes();
     if (providerComplexTypes != null) {
       for (ComplexType complexType : providerComplexTypes) {
-        complexTypes.add(new EdmComplexTypeImpl(edm, new FullQualifiedName(namespace, complexType.getName()),
-            complexType));
+        FullQualifiedName comlexTypeName = new FullQualifiedName(namespace, complexType.getName());
+        EdmComplexTypeImpl complexTypeImpl = new EdmComplexTypeImpl(edm, comlexTypeName, complexType);
+        complexTypes.add(complexTypeImpl);
+        edm.cacheComplexType(comlexTypeName, complexTypeImpl);
       }
     }
     return complexTypes;
@@ -243,7 +221,10 @@ public class EdmSchemaImpl implements EdmSchema {
     final List<Action> providerActions = schema.getActions();
     if (providerActions != null) {
       for (Action action : providerActions) {
-        actions.add(new EdmActionImpl(edm, new FullQualifiedName(namespace, action.getName()), action));
+        FullQualifiedName actionName = new FullQualifiedName(namespace, action.getName());
+        EdmActionImpl edmActionImpl = new EdmActionImpl(edm, actionName, action);
+        actions.add(edmActionImpl);
+        edm.cacheAction(actionName, edmActionImpl);
       }
     }
     return actions;
@@ -254,7 +235,10 @@ public class EdmSchemaImpl implements EdmSchema {
     final List<Function> providerFunctions = schema.getFunctions();
     if (providerFunctions != null) {
       for (Function function : providerFunctions) {
-        functions.add(new EdmFunctionImpl(edm, new FullQualifiedName(namespace, function.getName()), function));
+        FullQualifiedName functionName = new FullQualifiedName(namespace, function.getName());
+        EdmFunctionImpl functionImpl = new EdmFunctionImpl(edm, functionName, function);
+        functions.add(functionImpl);
+        edm.cacheFunction(functionName, functionImpl);
       }
     }
     return functions;
@@ -265,7 +249,10 @@ public class EdmSchemaImpl implements EdmSchema {
     final List<Term> providerTerms = schema.getTerms();
     if (providerTerms != null) {
       for (Term term : providerTerms) {
-        terms.add(new EdmTermImpl(edm, getNamespace(), term));
+        FullQualifiedName termName = new FullQualifiedName(namespace, term.getName());
+        EdmTermImpl termImpl = new EdmTermImpl(edm, getNamespace(), term);
+        terms.add(termImpl);
+        edm.cacheTerm(termName, termImpl);
       }
     }
     return terms;
@@ -277,7 +264,15 @@ public class EdmSchemaImpl implements EdmSchema {
         schema.getAnnotationGroups();
     if (providerAnnotations != null) {
       for (Annotations annotationGroup : providerAnnotations) {
-        annotationGroups.add(new EdmAnnotationsImpl(edm, this, annotationGroup));
+        FullQualifiedName annotationsGroupName;
+        if (annotationGroup.getTarget().contains(".")) {
+          annotationsGroupName = new FullQualifiedName(annotationGroup.getTarget());
+        } else {
+          annotationsGroupName = new FullQualifiedName(namespace, annotationGroup.getTarget());
+        }
+        EdmAnnotationsImpl annotationsImpl = new EdmAnnotationsImpl(edm, this, annotationGroup);
+        annotationGroups.add(annotationsImpl);
+        edm.cacheAnnotationGroup(annotationsGroupName, annotationsImpl);
       }
     }
     return annotationGroups;
@@ -289,7 +284,8 @@ public class EdmSchemaImpl implements EdmSchema {
         schema.getAnnotations();
     if (providerAnnotations != null) {
       for (Annotation annotation : providerAnnotations) {
-        annotations.add(new EdmAnnotationImpl(edm, annotation));
+        EdmAnnotationImpl annotationImpl = new EdmAnnotationImpl(edm, annotation);
+        annotations.add(annotationImpl);
       }
     }
     return annotations;

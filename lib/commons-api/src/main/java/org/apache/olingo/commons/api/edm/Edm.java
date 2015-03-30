@@ -43,6 +43,15 @@ public interface Edm {
   EdmSchema getSchema(String namespace);
 
   /**
+   * Get main entity container.
+   * <br/>
+   * See {@link EdmEntityContainer} for more information.
+   * 
+   * @return {@link EdmEntityContainer}
+   */
+  EdmEntityContainer getEntityContainer();
+  
+  /**
    * Get entity container by full qualified name.
    * <br/>
    * See {@link EdmEntityContainer} for more information.
