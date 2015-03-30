@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -37,10 +37,11 @@ import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.server.api.uri.UriParameter;
+import org.apache.olingo.server.sample.edmprovider.CarsEdmProvider;
 
 public class DataProvider {
 
-  private Map<String, EntitySet> data;
+  private final Map<String, EntitySet> data;
 
   public DataProvider() {
     data = new HashMap<String, EntitySet>();
@@ -133,6 +134,9 @@ public class DataProvider {
         .addProperty(createPrimitive("Price", 167189.00))
         .addProperty(createPrimitive("Currency", "EUR")));
 
+    for (Entity entity:entitySet.getEntities()) {
+      entity.setType(CarsEdmProvider.ET_CAR.getFullQualifiedNameAsString());
+    }
     return entitySet;
   }
 
@@ -149,6 +153,9 @@ public class DataProvider {
         .addProperty(createPrimitive("Name", "Horse Powered Racing"))
         .addProperty(createAddress("Horse Street 1", "Maranello", "41053", "Italy")));
 
+    for (Entity entity:entitySet.getEntities()) {
+      entity.setType(CarsEdmProvider.ET_MANUFACTURER.getFullQualifiedNameAsString());
+    }
     return entitySet;
   }
 

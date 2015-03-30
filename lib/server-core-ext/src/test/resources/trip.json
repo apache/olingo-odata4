@@ -1,0 +1,224 @@
+{
+   "value":[
+      {
+        "TripId": 1001,
+        "ShareId": "9d9b2fa0-efbf-490e-a5e3-bac8f7d47354",
+        "Description": "Trip from San Francisco to New York City. Nice trip with two friends. It is a 4 days' trip. We actually had a client meeting, but we also took one to go sightseeings in New York.",
+        "Name": "Trip in US",
+        "Budget": 3000.0,
+        "StartsAt":"2014-01-01T00:00:00Z",
+        "EndsAt": "2014-01-04T00:00:00Z",
+        "Tags": ["Trip in New York", "business","sightseeing"]
+      },
+      {
+          "TripId":2,
+          "ShareId": "f94e9116-8bdd-4dac-ab61-08438d0d9a71",
+          "Description": "Trip from Shanghai to Beijing",
+          "Name":"Trip in Beijing",
+          "Budget": 3000.0,
+          "Tags": ["Travel", "Beijing"],
+          "StartsAt": "2014-02-01T00:00:00Z",
+          "EndsAt": "2014-02-04T00:00:00Z"                  
+      },
+      {
+          "TripId": 3,
+          "ShareId": "9ce142c3-5fd6-4a71-848e-5220ebf1e9f3",
+          "Name": "Honeymoon",
+          "Budget": 800.0,
+          "Description": "Happy honeymoon trip",
+          "Tags": ["Travel", "honeymoon"],
+          "StartsAt": "2014-02-01T00:00:00Z",
+          "EndsAt": "2014-02-04T00:00:00Z"
+      }, 
+      {
+          "TripId": 4,
+          "ShareId": "4CCFB043-C79C-44EF-8CFE-CD493CED6654",
+          "Name": "Business trip to OData",
+          "Budget": 324.6,
+          "Description": "Business trip to OData",
+          "Tags": ["business", "odata"],
+          "StartsAt": "2013-01-01T00:00:00Z",
+          "EndsAt": "2013-01-04T00:00:00Z"
+      },
+      {
+          "TripId": 5,
+          "ShareId": "4546F419-0070-45F7-BA2C-19E4BC3647E1",
+          "Name": "Travel trip in US",
+          "Budget": 1250.0,
+          "Description": "Travel trip in US",
+          "Tags": ["travel", "overseas"],
+          "StartsAt": "2013-01-19T00:00:00Z",
+          "EndsAt": "2013-01-28T00:00:00Z"
+      },
+      {
+          "TripId": 6,
+          "ShareId": "26F0E8F6-657A-4561-BF3B-719366EF04FA",
+          "Name": "Study music in Europe",
+          "Budget": 3200.0,
+          "Description": "Study music in Europe",
+          "Tags": ["study", "overseas"],
+          "StartsAt": "2013-03-01T00:00:00Z",
+          "EndsAt": "2013-05-04T00:00:00Z"
+      }, 
+      {
+          "TripId": 7,
+          "ShareId": "2E77BF06-A354-454B-8BCA-5F004C1AFB59",
+          "Name": "Conference talk about OData",
+          "Budget": 2120.55,
+          "Description": "Conference talk about ODatan",
+          "Tags": ["odata", "overseas"],
+          "StartsAt": "2013-07-02T00:00:00Z",
+          "EndsAt": "2013-07-05T00:00:00Z"
+      }, 
+      {
+          "TripId": 8,
+          "ShareId": "E6E23FB2-C428-439E-BDAB-9283482F49F0",
+          "Name": "Vocation at hometown",
+          "Budget": 1500.0,
+          "Description": "Vocation at hometown",
+          "Tags": ["voaction"],
+          "StartsAt": "2013-10-01T00:00:00Z",
+          "EndsAt": "2013-10-05T00:00:00Z"
+      },
+      {
+          "TripId": 9,
+          "ShareId": "FAE31279-35CE-4119-9BDC-53F6E19DD1C5",
+          "Name": "Business trip for tech training",
+          "Budget": 100.0,
+          "Description": "Business trip for tech training",
+          "Tags": ["business"],
+          "StartsAt": "2013-09-01T00:00:00Z",
+          "EndsAt": "2013-09-04T00:00:00Z"
+      },
+      {
+          "TripId": 3009,
+          "ShareId": "dd6a09c0-e59b-4745-8612-f4499b676c47",
+          "Name": "Gradutaion trip",
+          "Budget": 6000.0,
+          "Description": "Gradution trip with friends",
+          "Tags": ["Travel"],
+          "StartsAt": "2013-05-01T00:00:00Z",
+          "EndsAt": "2013-05-08T00:00:00Z"
+      },
+      {
+          "TripId": 2004,
+          "ShareId": "f94e9116-8bdd-4dac-ab61-08438d0d9a71",
+          "Name": "Trip in Beijing",
+          "Budget": 11000.0,
+          "Description": "Trip from Shanghai to Beijing",
+          "Tags": ["Travel", "Beijing"],
+          "StartsAt": "2014-02-01T00:00:00Z",
+          "EndsAt": "2013-02-02T00:00:00Z"
+      },
+      {
+          "TripId": 4005,
+          "ShareId": "f94e9116-8bdd-4dac-ab61-08438d0d9a71",
+          "Name": "Trip in Beijing",
+          "Budget": 800.0,
+          "Description": "Trip from Shanghai to Beijing",
+          "Tags": ["Travel", "Beijing"],
+          "StartsAt":  "2014-02-01T00:00:00Z",
+          "EndsAt":  "2014-02-04T00:00:00Z"
+      },  
+      {
+          "TripId": 5007,
+          "ShareId": "5ae142c3-5ad6-4a71-768e-5220ebf1e9f3",
+          "Name": "Business Trip",
+          "Budget": 3800.5,
+          "Description": "This is my first business trip",
+          "Tags": ["business", "first"],
+          "StartsAt": "2014-02-01T00:00:00Z",
+          "EndsAt": "2014-02-04T00:00:00Z"
+      },
+      {
+          "TripId": 5008,
+          "ShareId": "9ce32ac3-5fd6-4a72-848e-2250ebf1e9f3",
+          "Name": "Trip in Europe",
+          "Budget": 2000.0,
+          "Description": "The trip is currently in plan.",
+          "Tags": ["Travel", "plan"],
+          "StartsAt": "2014-02-01T00:00:00Z",
+          "EndsAt": "2014-02-04T00:00:00Z"
+      },
+      {
+          "TripId": 1003,
+          "Name": "Trip in Beijing",
+          "Budget": 2000.0,
+          "ShareId": "f94e9116-8bdd-4dac-ab61-08438d0d9a71",
+          "Description": "Trip from Shanghai to Beijing",
+          "Tags": ["Travel", "Beijing"],
+          "StartsAt": "2014-02-01T00:00:00Z",
+          "EndsAt": "2014-02-04T00:00:00Z"
+      },
+      {
+          "TripId": 2004,
+          "ShareId": "f94e9116-8bdd-4dac-ab61-08438d0d9a71",
+          "Name": "Trip in Beijing",
+          "Budget": 11000.0,
+          "Description": "Trip from Shanghai to Beijing",
+          "Tags": ["Travel", "Beijing"],
+          "StartsAt": "2014-02-01T00:00:00Z",
+          "EndsAt": "2014-02-04T00:00:00Z"
+      },
+      {
+          "TripId": 1007,
+          "ShareId": "9ce142c3-5fd6-4a71-848e-5220ebf1e9f3",
+          "Name": "Honeymoon",
+          "Budget": 2650.0,
+          "Description": "Happy honeymoon trip",
+          "Tags": ["Travel", "honeymoon"],
+          "StartsAt": "2014-02-01T00:00:00Z",
+          "EndsAt": "2014-02-04T00:00:00Z"
+      },
+      {
+          "TripId": 7010,
+          "ShareId": "dd6a09c0-e59b-4745-8612-f4499b676c47",
+          "Name": "Gradutaion trip",
+          "Budget": 1000.0,
+          "Description": "Gradution trip with friends",
+          "Tags": ["Travel"],
+          "StartsAt": "2013-05-01T00:00:00Z",
+          "EndsAt": "2013-05-08T00:00:00Z"
+      },
+      {
+          "TripId": 8011,
+          "ShareId": "a88f675d-9199-4392-9656-b08e3b46df8a",
+          "Name": "Study trip",
+          "Budget": 1550.3,
+          "Description": "This is a 2 weeks study trip",
+          "Tags": ["study"],
+          "StartsAt": "2014-01-01T00:00:00Z",
+          "EndsAt": "2013-01-14T00:00:00Z"
+      },
+      {
+          "TripId": 13012,
+          "ShareId": "a88f675d-9199-4392-9656-b08e3b46df8a",
+          "Name": "Study trip",
+          "Budget": 600.0,
+          "Description": "This is a 2 weeks study trip",
+          "Tags": ["study"],
+          "StartsAt": "2014-01-01T00:00:00Z",
+          "EndsAt": "2013-01-14T00:00:00Z"
+      },
+      {
+          "TripId": 14013,
+          "ShareId": "a88f675d-9199-4392-9656-b08e3b46df8a",
+          "Name": "Study trip",
+          "Budget": 2000.0,
+          "Description": "This is a 2 weeks study trip",
+          "Tags": ["study"],
+          "StartsAt": "2014-01-01T00:00:00Z",
+          "EndsAt": "2013-01-14T00:00:00Z"
+      },
+      {
+          "TripId": 16014,
+          "ShareId": "cb0b8acb-79cb-4127-8316-772bc4302824",
+          "Name": "DIY Trip",
+          "Budget": 1500.3,
+          "Description": "This is a DIY trip",
+          "Tags": ["Travel", "DIY"],
+          "StartsAt": "2011-02-11T00:00:00Z",
+          "EndsAt":  "2011-02-14T00:00:00Z"
+      }                                                          
+   ]
+}

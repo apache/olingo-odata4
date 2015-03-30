@@ -1,0 +1,64 @@
+{
+   "value":[
+      {
+         "AirlineCode":"AA",
+         "Name":"American Airlines"
+      },
+      {
+         "AirlineCode":"FM",
+         "Name":"Shanghai Airline"
+      },
+      {
+         "AirlineCode":"MU",
+         "Name":"China Eastern Airlines"
+      },
+      {
+         "AirlineCode":"AF",
+         "Name":"Air France"
+      },
+      {
+         "AirlineCode":"AZ",
+         "Name":"Alitalia"
+      },
+      {
+         "AirlineCode":"AC",
+         "Name":"Air Canada"
+      },
+      {
+         "AirlineCode":"OS",
+         "Name":"Austrian Airlines"
+      },
+      {
+         "AirlineCode":"TK",
+         "Name":"Turkish Airlines"
+      },
+      {
+         "AirlineCode":"JL",
+         "Name":"Japan Airlines"
+      },
+      {
+         "AirlineCode":"SQ",
+         "Name":"Singapore Airlines"
+      },
+      {
+         "AirlineCode":"KE",
+         "Name":"Korean Air"
+      },
+      {
+         "AirlineCode":"CZ",
+         "Name":"China Southern"
+      },
+      {
+         "AirlineCode":"AK",
+         "Name":"AirAsia"
+      },
+      {
+         "AirlineCode":"HX",
+         "Name":"Hong Kong Airlines"
+      },
+      {
+         "AirlineCode":"EK",
+         "Name":"Emirates"
+      }      
+   ]
+}

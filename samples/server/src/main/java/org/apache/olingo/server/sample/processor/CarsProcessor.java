@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -74,7 +74,8 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
     PrimitiveProcessor, PrimitiveValueProcessor, ComplexProcessor {
 
   private OData odata;
-  private DataProvider dataProvider;
+  private final DataProvider dataProvider;
+  private ServiceMetadata edm;
 
   // This constructor is application specific and not mandatory for the Olingo library. We use it here to simulate the
   // database access
@@ -85,6 +86,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
   @Override
   public void init(OData odata, ServiceMetadata edm) {
     this.odata = odata;
+    this.edm = edm;
   }
 
   @Override
@@ -105,7 +107,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
     // Now the content is serialized using the serializer.
     final ExpandOption expand = uriInfo.getExpandOption();
     final SelectOption select = uriInfo.getSelectOption();
-    InputStream serializedContent = serializer.entityCollection(edmEntitySet.getEntityType(), entitySet,
+    InputStream serializedContent = serializer.entityCollection(edm, edmEntitySet.getEntityType(), entitySet,
         EntityCollectionSerializerOptions.with()
             .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                 getContextUrl(edmEntitySet, false, expand, select, null))
@@ -143,7 +145,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
       ODataSerializer serializer = odata.createSerializer(format);
       final ExpandOption expand = uriInfo.getExpandOption();
       final SelectOption select = uriInfo.getSelectOption();
-      InputStream serializedContent = serializer.entity(edmEntitySet.getEntityType(), entity,
+      InputStream serializedContent = serializer.entity(edm, edmEntitySet.getEntityType(), entity,
           EntitySerializerOptions.with()
               .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                   getContextUrl(edmEntitySet, true, expand, select, null))
@@ -256,7 +258,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
           final ContextURL contextURL = format == ODataFormat.JSON_NO_METADATA ? null :
               getContextUrl(edmEntitySet, true, null, null, edmProperty.getName());
           InputStream serializerContent = complex ?
-              serializer.complex((EdmComplexType) edmProperty.getType(), property,
+              serializer.complex(edm, (EdmComplexType) edmProperty.getType(), property,
                   ComplexSerializerOptions.with().contextURL(contextURL).build()) :
               serializer.primitive((EdmPrimitiveType) edmProperty.getType(), property,
                                     PrimitiveSerializerOptions.with()
@@ -273,7 +275,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
       }
     }
   }
-  
+
   private Entity readEntityInternal(final UriInfoResource uriInfo, final EdmEntitySet entitySet)
       throws DataProvider.DataProviderException {
     // This method will extract the key values and pass them to the data provider

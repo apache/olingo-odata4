@@ -1,0 +1,394 @@
+{
+   "value":[
+      {
+         "IcaoCode":"KSFO",
+         "Name":"San Francisco International Airport",
+         "IataCode":"SFO",
+         "Location":{
+            "Address":"South McDonnell Road, San Francisco, CA 94128",
+            "City":{
+               "CountryRegion":"United States",
+               "Name":"San Francisco",
+               "Region":"California"
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  -122.374722222222,
+                  37.6188888888889
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      },
+      {
+         "IcaoCode":"KLAX",
+         "Name":"Los Angeles International Airport",
+         "IataCode":"LAX",
+         "Location":{
+            "Address":"1 World Way, Los Angeles, CA, 90045",
+            "City":{
+               "CountryRegion":"United States",
+               "Name":"Los Angeles",
+               "Region":"California"
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  -118.408055555556,
+                  33.9425
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      },
+      {
+         "IcaoCode":"ZSSS",
+         "Name":"Shanghai Hongqiao International Airport",
+         "IataCode":"SHA",
+         "Location":{
+            "Address":"Hongqiao Road 2550, Changning District",
+            "City":{
+               "CountryRegion":"China",
+               "Name":"Shanghai",
+               "Region":"Shanghai"
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  121.336111111111,
+                  31.1977777777778
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      },
+      {
+         "IcaoCode":"ZBAA",
+         "Name":"Beijing Capital International Airport",
+         "IataCode":"PEK",
+         "Location":{
+            "Address":"Airport Road, Chaoyang District, Beijing, 100621",
+            "City":{
+               "CountryRegion":"China",
+               "Name":"Beijing",
+               "Region":"Beijing"
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  116.584444444444,
+                  40.08
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      },
+      {
+         "IcaoCode":"KJFK",
+         "Name":"John F. Kennedy International Airport",
+         "IataCode":"JFK",
+         "Location":{
+            "Address":"Jamaica, New York, NY 11430",
+            "City":{
+               "CountryRegion":"United States",
+               "Name":"New York City",
+               "Region":"New York"
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  -73.7788888888889,
+                  40.6397222222222
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      },
+      {
+         "IcaoCode":"LIRA",
+         "Name":"Rome Ciampino Airport",
+         "IataCode":"CIA",
+         "Location":{
+            "Address":"Via Appia Nuova, 1651",
+            "City":{
+               "CountryRegion":"Italy",
+               "Name":"Rome",
+               "Region":""
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  12.5947222222222,
+                  41.7991666666667
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      },
+      {
+         "IcaoCode":"CYYZ",
+         "Name":"Toronto Pearson International Airport",
+         "IataCode":"YYZ",
+         "Location":{
+            "Address":"6301 Silver Dart Dr Mississauga",
+            "City":{
+               "CountryRegion":"Canada",
+               "Name":"Mississauga",
+               "Region":"Ontario"
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  -79.6305555555555,
+                  43.6772222222222
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      },
+      {
+         "IcaoCode":"YSSY",
+         "Name":"Sydney Airport",
+         "IataCode":"SYD",
+         "Location":{
+            "Address":"Airport Dr Sydney NSW 2020",
+            "City":{
+               "CountryRegion":"Australia",
+               "Name":"Sydney",
+               "Region":""
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  151.177222222222,
+                  -33.9461111111111
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      },
+      {
+         "IcaoCode":"LTBA",
+         "Name":"Istanbul Ataturk Airport",
+         "IataCode":"IST",
+         "Location":{
+            "Address":"Ye\u015filk\u00f6y Mh.34149 \u0130stanbul",
+            "City":{
+               "CountryRegion":"Turkey",
+               "Name":"Istanbul",
+               "Region":""
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  28.8211111111111,
+                  40.9766666666667
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      },
+      {
+         "IcaoCode":"WSSS",
+         "Name":"Singapore Changi Airport",
+         "IataCode":"SIN",
+         "Location":{
+            "Address":"Airport Blvd, Singapore",
+            "City":{
+               "CountryRegion":"Singapore",
+               "Name":"Changi",
+               "Region":""
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  103.987222222222,
+                  1.35555555555556
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      },
+      {
+         "IcaoCode":"OMAA",
+         "Name":"Abu Dhabi International Airport",
+         "IataCode":"AUH",
+         "Location":{
+            "Address":"Sheik Maktoum Bin Rashid Rd Abu Dhabi",
+            "City":{
+               "CountryRegion":"United Arab Emirates",
+               "Name":"Abu Dhabi",
+               "Region":""
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  54.6511111111111,
+                  24.4327777777778
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      },
+      {
+         "IcaoCode":"ZGGG",
+         "Name":"Guangzhou Baiyun International Airport",
+         "IataCode":"CAN",
+         "Location":{
+            "Address":"Jichang Road, Renhezhen, Huadu",
+            "City":{
+               "CountryRegion":"China",
+               "Name":"Guangzhou",
+               "Region":"Guangdong"
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  113.265833333333,
+                  23.1841666666667
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      },
+      {
+         "IcaoCode":"KORD",
+         "Name":"O'Hare International Airport",
+         "IataCode":"ORD",
+         "Location":{
+            "Address":"10000 W O'Hare Ave",
+            "City":{
+               "CountryRegion":"United States",
+               "Name":"Chicago",
+               "Region":"Illinois"
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  -87.9044444444445,
+                  41.9794444444444
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      },
+      {
+         "IcaoCode":"KATL",
+         "Name":"Hartsfield-Jackson Atlanta International Airport",
+         "IataCode":"ATL",
+         "Location":{
+            "Address":"6000 N Terminal Pkwy",
+            "City":{
+               "CountryRegion":"United States",
+               "Name":"Atlanta",
+               "Region":"Georgia"
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  -84.4269444444444,
+                  33.6402777777778
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      },
+      {
+         "IcaoCode":"KSEA",
+         "Name":"Seattle-Tacoma International Airport",
+         "IataCode":"SEA",
+         "Location":{
+            "Address":"17801 International Blvd",
+            "City":{
+               "CountryRegion":"United States",
+               "Name":"SeaTac",
+               "Region":"Washington"
+            },
+            "Loc":{
+               "type":"Point",
+               "coordinates":[
+                  -122.309166666667,
+                  47.4488888888889
+               ],
+               "crs":{
+                  "type":"name",
+                  "properties":{
+                     "name":"EPSG:4326"
+                  }
+               }
+            }
+         }
+      }      
+   ]
+}

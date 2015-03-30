@@ -1,0 +1,157 @@
+{
+   "value":[
+    {
+        "PlanItemId": 50,
+        "Description": "Client Meeting",
+        "ConfirmationCode": "4372899DD",
+        "StartsAt": "2014-01-02T13:00:00Z",
+        "EndsAt": "2014-01-02T16:00:00Z",
+        "Duration": "PT3H",
+        "OccursAt": 
+        {
+            "BuildingInfo": "Regus Business Center",
+            "City": 
+            {
+                "Name": "New York City",
+                "CountryRegion": "United States",
+                "Region": "New York"
+            },
+            "Address": "100 Church Street, 8th Floor, Manhattan, 10007"
+        }
+    },
+    {
+        "PlanItemId": 51,
+        "Description": "Visit the Brooklyn Bridge Park",
+        "ConfirmationCode": "4372899AA",
+        "StartsAt": "2014-01-01T15:00:00Z",
+        "EndsAt": "2014-01-01T16:00:00Z",
+        "Duration": "PT1H",
+        "OccursAt": 
+        {
+            "BuildingInfo": "Brooklyn Bridge Park, at Fulton Ferry Landing",
+            "City":
+            {
+                "Name": "New York City",
+                "CountryRegion": "United States",
+                "Region": "New York"
+            },
+            "Address": "Main St Dumbo Brooklyn 11201"
+        }
+    },
+    {
+        "PlanItemId": 52,
+        "Description": "Empire State Building",
+        "ConfirmationCode": "4372899BB",
+        "StartsAt": "2014-01-03T10:00:00Z",
+        "EndsAt": "2014-01-03T12:00:00Z",
+        "Duration": "PT2H",
+        "OccursAt": 
+        {
+            "BuildingInfo": "Empire State Building",
+            "City":
+            {
+                "Name": "New York City",
+                "CountryRegion": "United States",
+                "Region": "New York"
+            },
+            "Address": "Empire State Building, 350 5th Ave"
+        }
+    },
+    {
+        "PlanItemId": 53,
+        "Description": "Coney Island",
+        "ConfirmationCode": "4372899CC",
+        "StartsAt": "2014-01-03T14:00:00Z",
+        "EndsAt": "2014-01-03T20:00:00Z",
+        "Duration": "PT6H",
+        "OccursAt":
+        {
+            "BuildingInfo": "",
+            "City": 
+            {
+                "Name": "New York City",
+                "CountryRegion": "United States",
+                "Region": "New York"
+            },
+            "Address": "1208 Surf Ave, Brooklyn"
+        }
+    },
+    {
+        "PlanItemId": 54,
+        "Description": "Shopping at Times Square",
+        "ConfirmationCode": "4372899DD",
+        "StartsAt": "2014-01-04T10:00:00Z",
+        "EndsAt": "2014-01-04T15:00:00Z",
+        "Duration": "PT5H",
+        "OccursAt": 
+        {
+            "BuildingInfo": "",
+            "City": 
+            {
+                "Name": "New York City",
+                "CountryRegion": "United States",
+                "Region": "New York"
+            },
+            "Address": "Broadway, 7th Avenue, 42nd and 47th Streets"
+        }
+    },
+    {
+        "PlanItemId": 55,
+        "Description": "Dinner",
+        "ConfirmationCode": "4372899EE",
+        "StartsAt": "2014-02-02T18:00:00Z",
+        "EndsAt": "2014-02-02T21:00:00Z",
+        "Duration": "PT3H",
+        "OccursAt": 
+         {
+            "Address": "10 Beijing Street, 100000",
+            "City": 
+            {
+                "Name": "Beijing",
+                "CountryRegion": "China",
+                "Region": "Beijing"
+            },
+            "BuildingInfo": "Beijing Restaurant"
+         }
+    }, 
+    {
+        "PlanItemId": 56,
+        "Description": "Dinner",
+        "ConfirmationCode": "4372899FF",
+        "StartsAt": "2014-02-02T18:00:00Z",
+        "EndsAt": "2014-02-02T21:00:00Z",
+        "Duration": "PT3H",
+        "OccursAt": 
+         {
+            "BuildingInfo": "Beijing Restaurant",
+            "City":
+             {
+                "Name": "Beijing",
+                "CountryRegion": "China",
+                "Region": "Beijing"
+             },
+            "Address": "10 Beijing Street, 100000"
+         }
+    },
+    {
+        "PlanItemId": 57,
+        "Description": "Dinner",
+        "ConfirmationCode": "4372899GG",
+        "StartsAt": "2014-02-02T18:00:00Z",
+        "EndsAt": "2014-02-02T21:00:00Z",
+        "Duration": "PT3H",
+        "OccursAt":
+         {
+            "BuildingInfo": "Beijing Restaurant",
+            "City":
+             {
+                "Name": "Beijing",
+                "CountryRegion": "China",
+                "Region": "Beijing"
+             },
+            "Address": "10 Beijing Street, 100000"
+         }
+    }
+   ]
+} 
+                                                                

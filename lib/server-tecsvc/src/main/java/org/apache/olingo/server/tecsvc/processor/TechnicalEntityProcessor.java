@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -38,6 +38,7 @@ import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.processor.ActionEntityCollectionProcessor;
@@ -74,8 +75,11 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     EntityProcessor, ActionEntityProcessor, MediaEntityProcessor,
     ActionVoidProcessor {
 
-  public TechnicalEntityProcessor(final DataProvider dataProvider) {
+  private final ServiceMetadata serviceMetadata;
+
+  public TechnicalEntityProcessor(final DataProvider dataProvider, ServiceMetadata serviceMetadata) {
     super(dataProvider);
+    this.serviceMetadata = serviceMetadata;
   }
 
   @Override
@@ -109,21 +113,24 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
           entitySet,
           edmEntitySet,
           request.getRawRequestUri());
-      
+
       // Apply expand system query option
       final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
       ODataSerializer serializer = odata.createSerializer(format);
       final ExpandOption expand = uriInfo.getExpandOption();
       final SelectOption select = uriInfo.getSelectOption();
-      
+
       // Create a shallow copy of each entity. So the expanded navigation properties can be modified for serialization,
       // without affecting the data stored in the database.
       final ExpandSystemQueryOptionHandler expandHandler = new ExpandSystemQueryOptionHandler();
       final EntitySet entitySetSerialization = expandHandler.copyEntitySetShallowRekursive(entitySet);
       expandHandler.applyExpandQueryOptions(entitySetSerialization, edmEntitySet, expand);
-      
+
       // Serialize
-      response.setContent(serializer.entityCollection(edmEntityType, entitySetSerialization,
+      response.setContent(serializer.entityCollection(
+          this.serviceMetadata,
+          edmEntityType,
+          entitySetSerialization,
           EntityCollectionSerializerOptions.with()
               .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                   getContextUrl(edmEntitySet, edmEntityType, false, expand, select))
@@ -170,17 +177,20 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         edmEntitySet.getEntityType();
 
     final Entity entity = readEntity(uriInfo);
-    
+
     final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
     ODataSerializer serializer = odata.createSerializer(format);
     final ExpandOption expand = uriInfo.getExpandOption();
     final SelectOption select = uriInfo.getSelectOption();
-    
+
     final ExpandSystemQueryOptionHandler expandHandler = new ExpandSystemQueryOptionHandler();
     final Entity entitySerialization = expandHandler.copyEntityShallowRekursive(entity);
     expandHandler.applyExpandQueryOptions(entitySerialization, edmEntitySet, expand);
-    
-    response.setContent(serializer.entity(edmEntitySet.getEntityType(), entitySerialization,
+
+    response.setContent(serializer.entity(
+        this.serviceMetadata,
+        edmEntitySet.getEntityType(),
+        entitySerialization,
         EntitySerializerOptions.with()
             .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                 getContextUrl(edmEntitySet, edmEntityType, true, expand, select))
@@ -233,7 +243,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
     final ODataFormat format = ODataFormat.fromContentType(responseFormat);
     ODataSerializer serializer = odata.createSerializer(format);
-    response.setContent(serializer.entity(edmEntityType, entity,
+    response.setContent(serializer.entity(this.serviceMetadata, edmEntityType, entity,
         EntitySerializerOptions.with()
             .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                 getContextUrl(edmEntitySet, edmEntityType, true, null, null))

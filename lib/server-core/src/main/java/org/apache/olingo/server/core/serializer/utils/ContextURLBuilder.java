@@ -66,7 +66,14 @@ public final class ContextURLBuilder {
       if (contextURL.getEntitySetOrSingletonOrType() != null) {
         throw new IllegalArgumentException("ContextURL: $ref with Entity Set");
       }
-      result.append('#').append(ContextURL.Suffix.REFERENCE.getRepresentation());
+      if(contextURL.isCollection()) {
+        result.append('#');
+        result.append("Collection(")
+                .append(ContextURL.Suffix.REFERENCE.getRepresentation())
+                .append(")");
+      } else {
+        result.append('#').append(ContextURL.Suffix.REFERENCE.getRepresentation());
+      }
     } else if (contextURL.getSuffix() != null) {
       if (contextURL.getEntitySetOrSingletonOrType() == null) {
         throw new IllegalArgumentException("ContextURL: Suffix without preceding Entity Set!");

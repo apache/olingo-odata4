@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -37,7 +37,9 @@ public class SerializerException extends ODataTranslatedException {
     /** parameter: property name */ INCONSISTENT_PROPERTY_TYPE,
     /** parameter: property name */ MISSING_PROPERTY,
     /** parameters: property name, property value */ WRONG_PROPERTY_VALUE,
-    /** parameters: primitive-type name, value */ WRONG_PRIMITIVE_VALUE;
+    /** parameters: primitive-type name, value */ WRONG_PRIMITIVE_VALUE,
+    UNKNOWN_TYPE,
+    WRONG_BASE_TYPE;
 
     @Override
     public String getKey() {

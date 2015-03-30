@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,6 +17,9 @@
  * under the License.
  */
 package org.apache.olingo.server.core.uri.validator;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -30,9 +33,6 @@ import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
 import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class UriValidatorTest {
 
@@ -77,7 +77,7 @@ public class UriValidatorTest {
   private static final String QO_SKIPTOKEN = "$skiptoken=123";
   private static final String QO_TOP = "$top=1";
 
-  private String[][] urisWithValidSystemQueryOptions = {
+  private final String[][] urisWithValidSystemQueryOptions = {
       { URI_ALL, QO_FILTER }, { URI_ALL, QO_FORMAT }, { URI_ALL, QO_EXPAND }, { URI_ALL, QO_COUNT },
       { URI_ALL, QO_ORDERBY }, /* { URI_ALL, QO_SEARCH }, */{ URI_ALL, QO_SELECT }, { URI_ALL, QO_SKIP },
       { URI_ALL, QO_SKIPTOKEN }, { URI_ALL, QO_TOP },
@@ -105,7 +105,7 @@ public class UriValidatorTest {
 
       { URI_REFERENCES, QO_FILTER }, { URI_REFERENCES, QO_FORMAT }, { URI_REFERENCES, QO_ORDERBY },
       /* { URI_REFERENCES, QO_SEARCH }, */{ URI_REFERENCES, QO_SKIP }, { URI_REFERENCES, QO_SKIPTOKEN },
-      { URI_REFERENCES, QO_TOP },
+      { URI_REFERENCES, QO_TOP }, { URI_REFERENCES, QO_ID },
 
       { URI_REFERENCE, QO_FORMAT },
 
@@ -160,7 +160,7 @@ public class UriValidatorTest {
       { ContainerProvider.AIRT_STRING }
   };
 
-  private String[][] urisWithNonValidSystemQueryOptions = {
+  private final String[][] urisWithNonValidSystemQueryOptions = {
       { URI_ALL, QO_ID },
 
       { URI_BATCH, QO_FILTER }, { URI_BATCH, QO_FORMAT }, { URI_BATCH, QO_ID }, { URI_BATCH, QO_EXPAND },
@@ -199,7 +199,7 @@ public class UriValidatorTest {
       /* { URI_MEDIA_STREAM, QO_SEARCH }, */ { URI_MEDIA_STREAM, QO_SELECT }, { URI_MEDIA_STREAM, QO_SKIP },
       { URI_MEDIA_STREAM, QO_SKIPTOKEN }, { URI_MEDIA_STREAM, QO_TOP },
 
-      { URI_REFERENCES, QO_ID }, { URI_REFERENCES, QO_EXPAND }, { URI_REFERENCES, QO_COUNT },
+      { URI_REFERENCES, QO_EXPAND }, { URI_REFERENCES, QO_COUNT },
       { URI_REFERENCES, QO_SELECT },
 
       { URI_REFERENCE, QO_FILTER }, { URI_REFERENCE, QO_ID }, { URI_REFERENCE, QO_EXPAND },

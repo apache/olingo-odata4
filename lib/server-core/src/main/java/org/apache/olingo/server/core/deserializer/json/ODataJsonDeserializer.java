@@ -20,6 +20,8 @@ package org.apache.olingo.server.core.deserializer.json;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -65,6 +67,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ODataJsonDeserializer implements ODataDeserializer {
@@ -267,8 +270,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     node.remove(toRemove);
   }
 
-  private void consumeEntityProperties(final EdmEntityType edmEntityType, final ObjectNode node, final EntityImpl
-      entity) throws DeserializerException {
+  private void consumeEntityProperties(final EdmEntityType edmEntityType, final ObjectNode node,
+      final EntityImpl entity) throws DeserializerException {
     List<String> propertyNames = edmEntityType.getPropertyNames();
     for (String propertyName : propertyNames) {
       JsonNode jsonNode = node.get(propertyName);
@@ -409,7 +412,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     case ENUM:
       value = readEnumValue(name, type, isNullable, maxLength, precision, scale, isUnicode, mapping,
           jsonNode);
-      property.setValue(ValueType.PRIMITIVE, value);
+      property.setValue(ValueType.ENUM, value);
       break;
     case COMPLEX:
       value = readComplexNode(name, type, isNullable, jsonNode);
@@ -704,6 +707,83 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     default:
       throw new DeserializerException("Unsupported Edm Primitive Type: " + primKind,
           DeserializerException.MessageKeys.NOT_IMPLEMENTED);
+    }
+  }
+
+  @Override
+  public Property property(InputStream stream, EdmProperty edmProperty)
+      throws DeserializerException {
+    try {
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
+      JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
+      final ObjectNode tree = parser.getCodec().readTree(parser);
+
+      Property property = null;
+      JsonNode jsonNode = tree.get(Constants.VALUE);
+      if (jsonNode != null) {
+        property = consumePropertyNode(edmProperty.getName(), edmProperty.getType(),
+            edmProperty.isCollection(),
+            edmProperty.isNullable(), edmProperty.getMaxLength(), edmProperty.getPrecision(), edmProperty.getScale(),
+            edmProperty.isUnicode(), edmProperty.getMapping(),
+            jsonNode);
+        tree.remove(Constants.VALUE);
+      } else {
+        property = consumePropertyNode(edmProperty.getName(), edmProperty.getType(),
+            edmProperty.isCollection(),
+            edmProperty.isNullable(), edmProperty.getMaxLength(), edmProperty.getPrecision(), edmProperty.getScale(),
+            edmProperty.isUnicode(), edmProperty.getMapping(),
+            tree);
+      }
+      return property;
+    } catch (JsonParseException e) {
+      throw new DeserializerException("An JsonParseException occurred", e,
+          DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
+    } catch (JsonMappingException e) {
+      throw new DeserializerException("Duplicate property detected", e,
+          DeserializerException.MessageKeys.DUPLICATE_PROPERTY);
+    } catch (IOException e) {
+      throw new DeserializerException("An IOException occurred", e, DeserializerException.MessageKeys.IO_EXCEPTION);
+    }
+  }
+
+  public List<URI> entityReferences(InputStream stream) throws DeserializerException {
+    try {
+      ArrayList<URI> parsedValues = new ArrayList<URI>();
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
+      JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
+      final ObjectNode tree = parser.getCodec().readTree(parser);
+      final String key = "@odata.id";
+      JsonNode jsonNode = tree.get(Constants.VALUE);
+      if (jsonNode != null) {
+        if (jsonNode.isArray()) {
+          ArrayNode arrayNode = (ArrayNode)jsonNode;
+          Iterator<JsonNode> it = arrayNode.iterator();
+          while(it.hasNext()) {
+            parsedValues.add(new URI(it.next().get(key).asText()));
+          }
+        } else {
+          parsedValues.add(new URI(jsonNode.asText()));
+        }
+        tree.remove(Constants.VALUE);
+        // if this is value there can be only one property
+        return parsedValues;
+      }
+      parsedValues.add(new URI(tree.get(key).asText()));
+      return parsedValues;
+    } catch (JsonParseException e) {
+      throw new DeserializerException("An JsonParseException occurred", e,
+          DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
+    } catch (JsonMappingException e) {
+      throw new DeserializerException("Duplicate property detected", e,
+          DeserializerException.MessageKeys.DUPLICATE_PROPERTY);
+    } catch (IOException e) {
+      throw new DeserializerException("An IOException occurred", e,
+          DeserializerException.MessageKeys.IO_EXCEPTION);
+    } catch (URISyntaxException e) {
+      throw new DeserializerException("failed to read @odata.id", e,
+          DeserializerException.MessageKeys.UNKOWN_CONTENT);
     }
   }
 }

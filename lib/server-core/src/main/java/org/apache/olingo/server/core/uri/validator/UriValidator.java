@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -60,7 +60,7 @@ public class UriValidator {
           /*                   entitySetCount  7 */ { true ,   false,   false,   false,   false,   false,    true,    false,   false,   false,      false },
           /*                           entity  8 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      false },
           /*                      mediaStream  9 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false },
-          /*                       references 10 */ { true ,   true ,   false,   false,   false,   true ,    true ,   false,   true ,   true ,      true  },
+          /*                       references 10 */ { true ,   true ,   false,   true,    false,   true ,    true ,   false,   true ,   true ,      true  },
           /*                        reference 11 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
           /*                  propertyComplex 12 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      false },
           /*        propertyComplexCollection 13 */ { true ,   true ,   true ,   false,   true ,   true ,    false,   true ,   true ,   true ,      true  },
@@ -78,7 +78,7 @@ public class UriValidator {
         /*                              GET  0 */ { true ,   true ,   true ,   true,    true ,   true ,    true ,   true ,   true ,   true ,      true  },
         /*                             POST  0 */ { true ,   false ,  true ,   false,   false ,  true ,    false ,  true ,   false ,  false ,     false },
         /*                              PUT  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false },
-        /*                           DELETE  0 */ { false ,  false ,  false ,  false,   false ,  false,    false ,  false,   false ,  false ,     false },
+        /*                           DELETE  0 */ { false ,  false ,  false ,  true,    false ,  false,    false ,  false,   false ,  false ,     false },
         /*                            PATCH  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false }
     };
   //CHECKSTYLE:ON

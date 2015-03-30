@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -44,6 +44,7 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionComplexProcessor;
@@ -81,8 +82,12 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     ComplexProcessor, ActionComplexProcessor,
     ComplexCollectionProcessor, ActionComplexCollectionProcessor {
 
-  public TechnicalPrimitiveComplexProcessor(final DataProvider dataProvider) {
+  private final ServiceMetadata serviceMetadata;
+
+  public TechnicalPrimitiveComplexProcessor(final DataProvider dataProvider,
+      ServiceMetadata serviceMetadata) {
     super(dataProvider);
+    this.serviceMetadata = serviceMetadata;
   }
 
   @Override
@@ -246,7 +251,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
                   .build()));
           break;
         case COMPLEX:
-          response.setContent(serializer.complex((EdmComplexType) type, property,
+          response.setContent(serializer.complex(this.serviceMetadata,(EdmComplexType) type, property,
               ComplexSerializerOptions.with().contextURL(contextURL)
                   .expand(expand).select(select)
                   .build()));
@@ -262,7 +267,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
                   .build()));
           break;
         case COLLECTION_COMPLEX:
-          response.setContent(serializer.complexCollection((EdmComplexType) type, property,
+          response.setContent(serializer.complexCollection(this.serviceMetadata, (EdmComplexType) type, property,
               ComplexSerializerOptions.with().contextURL(contextURL)
                   .expand(expand).select(select)
                   .build()));

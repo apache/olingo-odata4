@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -41,11 +41,14 @@ import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
+import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
+import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
+
 
 public class DataCreator {
 
   private static final UUID GUID = UUID.fromString("01234567-89ab-cdef-0123-456789abcdef");
-
+  private static final String ctPropComp = ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString();
   private final Map<String, EntitySet> data;
 
   public DataCreator() {
@@ -96,7 +99,9 @@ public class DataCreator {
           .addProperty(createPrimitive("PropertyInt16", i))
           .addProperty(createPrimitive("PropertyString", "Number:" + i)));
     }
-
+    for (Entity en:entitySet.getEntities()) {
+      en.setType(EntityTypeProvider.nameETServerSidePaging.getFullQualifiedNameAsString());
+    }
     return entitySet;
   }
 
@@ -106,7 +111,9 @@ public class DataCreator {
     entitySet.getEntities().add(createETKeyNavEntity(1, "I am String Property 1"));
     entitySet.getEntities().add(createETKeyNavEntity(2, "I am String Property 2"));
     entitySet.getEntities().add(createETKeyNavEntity(3, "I am String Property 3"));
-
+    for (Entity en:entitySet.getEntities()) {
+      en.setType(EntityTypeProvider.nameETKeyNav.getFullQualifiedNameAsString());
+    }
     return entitySet;
   }
 
@@ -115,10 +122,12 @@ public class DataCreator {
     return new EntityImpl()
         .addProperty(createPrimitive("PropertyInt16", propertyInt16))
         .addProperty(createPrimitive("PropertyString", propertyString))
-        .addProperty(createComplex("PropertyCompNav",
+        .addProperty(createComplex("PropertyCompNav", ctPropComp,
             createPrimitive("PropertyInt16", 1)))
         .addProperty(createKeyNavAllPrimComplexValue("PropertyCompAllPrim"))
-        .addProperty(createComplex("PropertyCompTwoPrim",
+        .addProperty(
+            createComplex("PropertyCompTwoPrim",
+                ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", 16),
             createPrimitive("PropertyString", "Test123")))
         .addProperty(createPrimitiveCollection("CollPropertyString",
@@ -126,7 +135,9 @@ public class DataCreator {
             "Employee2@company.example",
             "Employee3@company.example"))
         .addProperty(createPrimitiveCollection("CollPropertyInt16", 1000, 2000, 30112))
-        .addProperty(createComplexCollection("CollPropertyComp",
+        .addProperty(
+            createComplexCollection("CollPropertyComp", ComplexTypeProvider.nameCTPrimComp
+                .getFullQualifiedNameAsString(),
             Arrays.asList(
                 createPrimitive("PropertyInt16", 1),
                 createKeyNavAllPrimComplexValue("PropertyComp")),
@@ -136,9 +147,11 @@ public class DataCreator {
             Arrays.asList(
                 createPrimitive("PropertyInt16", 3),
                 createKeyNavAllPrimComplexValue("PropertyComp"))))
-        .addProperty(createComplex("PropertyCompCompNav",
+        .addProperty(
+            createComplex("PropertyCompCompNav",
+                ComplexTypeProvider.nameCTCompComp.getFullQualifiedNameAsString(),
             createPrimitive("PropertyString", "1"),
-            createComplex("PropertyComp", createPrimitive("PropertyInt16", 1))));
+            createComplex("PropertyComp", ctPropComp, createPrimitive("PropertyInt16", 1))));
   }
 
   private EntitySet createESTwoKeyNav() {
@@ -148,7 +161,9 @@ public class DataCreator {
     entitySet.getEntities().add(createESTwoKeyNavEntity(1, "2"));
     entitySet.getEntities().add(createESTwoKeyNavEntity(2, "1"));
     entitySet.getEntities().add(createESTwoKeyNavEntity(3, "1"));
-
+    for (Entity en:entitySet.getEntities()) {
+      en.setType(EntityTypeProvider.nameETTwoKeyNav.getFullQualifiedNameAsString());
+    }
     return entitySet;
   }
 
@@ -157,9 +172,9 @@ public class DataCreator {
     return new EntityImpl()
         .addProperty(createPrimitive("PropertyInt16", propertyInt16))
         .addProperty(createPrimitive("PropertyString", propertyString))
-        .addProperty(createComplex("PropertyComp",
+        .addProperty(createComplex("PropertyComp",ctPropComp,
             createPrimitive("PropertyInt16", 11),
-            createComplex("PropertyComp",
+            createComplex("PropertyComp", ctPropComp,
                 createPrimitive("PropertyString", "StringValue"),
                 createPrimitive("PropertyBinary", new byte[] { 1, 35, 69, 103, -119, -85, -51, -17 }),
                 createPrimitive("PropertyBoolean", true),
@@ -175,20 +190,26 @@ public class DataCreator {
                 createPrimitive("PropertyInt64", Long.MAX_VALUE),
                 createPrimitive("PropertySByte", Byte.MAX_VALUE),
                 createPrimitive("PropertyTimeOfDay", getTime(21, 5, 59)))))
-        .addProperty(createComplex("PropertyCompNav",
+        .addProperty(
+            createComplex("PropertyCompNav",
+                ComplexTypeProvider.nameCTCompNav.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", 1),
             createKeyNavAllPrimComplexValue("PropertyComp")))
-        .addProperty(createComplexCollection("CollPropertyComp"))
-        .addProperty(createComplexCollection("CollPropertyCompNav",
+        .addProperty(createComplexCollection("CollPropertyComp", null))
+        .addProperty(
+            createComplexCollection("CollPropertyCompNav",
+                ComplexTypeProvider.nameCTCompNav.getFullQualifiedNameAsString(),
             Arrays.asList(createPrimitive("PropertyInt16", 1))))
         .addProperty(createPrimitiveCollection("CollPropertyString", 1, 2))
-        .addProperty(createComplex("PropertyCompTwoPrim",
+        .addProperty(
+            createComplex("PropertyCompTwoPrim",
+                ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", 11),
             createPrimitive("PropertyString", "11")));
   }
 
   private Property createKeyNavAllPrimComplexValue(final String name) {
-    return createComplex(name,
+    return createComplex(name, ComplexTypeProvider.nameCTAllPrim.getFullQualifiedNameAsString(),
         createPrimitive("PropertyString", "First Resource - positive values"),
         createPrimitive("PropertyBinary", new byte[] { 1, 35, 69, 103, -119, -85, -51, -17 }),
         createPrimitive("PropertyBoolean", true),
@@ -213,8 +234,9 @@ public class DataCreator {
 
     entitySet.getEntities().add(new EntityImpl()
         .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
-        .addProperty(createComplex("PropertyComp",
-            createComplexCollection("CollPropertyComp",
+        .addProperty(createComplex("PropertyComp", null,
+                    createComplexCollection("CollPropertyComp", ComplexTypeProvider.nameCTTwoPrim
+                        .getFullQualifiedNameAsString(),
                 Arrays.asList(
                     createPrimitive("PropertyInt16", 555),
                     createPrimitive("PropertyString", "1 Test Complex in Complex Property")),
@@ -227,8 +249,9 @@ public class DataCreator {
 
     entitySet.getEntities().add(new EntityImpl()
         .addProperty(createPrimitive("PropertyInt16", 12345))
-        .addProperty(createComplex("PropertyComp",
-            createComplexCollection("CollPropertyComp",
+        .addProperty(createComplex("PropertyComp",null,
+                    createComplexCollection("CollPropertyComp", ComplexTypeProvider.nameCTTwoPrim
+                        .getFullQualifiedNameAsString(),
                 Arrays.asList(
                     createPrimitive("PropertyInt16", 888),
                     createPrimitive("PropertyString", "11 Test Complex in Complex Property")),
@@ -238,7 +261,9 @@ public class DataCreator {
                 Arrays.asList(
                     createPrimitive("PropertyInt16", 0),
                     createPrimitive("PropertyString", "13 Test Complex in Complex Property"))))));
-
+    for (Entity en:entitySet.getEntities()) {
+      en.setType(EntityTypeProvider.nameETCompCollComp.getFullQualifiedNameAsString());
+    }
     return entitySet;
   }
 
@@ -260,7 +285,9 @@ public class DataCreator {
     entitySet.getEntities().add(new EntityImpl()
         .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(createPrimitive("PropertyString", "Test String4")));
-
+    for (Entity en:entitySet.getEntities()) {
+      en.setType(EntityTypeProvider.nameETTwoPrim.getFullQualifiedNameAsString());
+    }
     return entitySet;
   }
 
@@ -322,7 +349,9 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyDuration", 0))
         .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789cccddd")))
         .addProperty(createPrimitive("PropertyTimeOfDay", getTime(0, 1, 1))));
-
+    for (Entity en:entitySet.getEntities()) {
+      en.setType(EntityTypeProvider.nameETAllPrim.getFullQualifiedNameAsString());
+    }
     return entitySet;
   }
 
@@ -331,7 +360,7 @@ public class DataCreator {
 
     Entity entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE));
-    entity.addProperty(createComplex("PropertyComp",
+    entity.addProperty(createComplex("PropertyComp",ctPropComp,
         createPrimitive("PropertyString", "First Resource - first"),
         createPrimitive("PropertyBinary",
             new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }),
@@ -353,7 +382,7 @@ public class DataCreator {
 
     entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 7));
-    entity.addProperty(createComplex("PropertyComp",
+    entity.addProperty(createComplex("PropertyComp",ctPropComp,
         createPrimitive("PropertyString", "Second Resource - second"),
         createPrimitive("PropertyBinary",
             new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }),
@@ -375,7 +404,7 @@ public class DataCreator {
 
     entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 0));
-    entity.addProperty(createComplex("PropertyComp",
+    entity.addProperty(createComplex("PropertyComp",ctPropComp,
         createPrimitive("PropertyString", "Third Resource - third"),
         createPrimitive("PropertyBinary",
             new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }),
@@ -394,7 +423,9 @@ public class DataCreator {
         createPrimitive("PropertySByte", Byte.MAX_VALUE),
         createPrimitive("PropertyTimeOfDay", getTime(13, 27, 45))));
     entitySet.getEntities().add(entity);
-
+    for (Entity en:entitySet.getEntities()) {
+      en.setType(EntityTypeProvider.nameETCompAllPrim.getFullQualifiedNameAsString());
+    }
     return entitySet;
   }
 
@@ -444,13 +475,15 @@ public class DataCreator {
     entity.getProperties().addAll(entitySet.getEntities().get(0).getProperties());
     entity.getProperties().set(0, createPrimitive("PropertyInt16", 3));
     entitySet.getEntities().add(entity);
-
+    for (Entity en:entitySet.getEntities()) {
+      en.setType(EntityTypeProvider.nameETCollAllPrim.getFullQualifiedNameAsString());
+    }
     return entitySet;
   }
 
   private EntitySet createESMixPrimCollComp() {
     @SuppressWarnings("unchecked")
-    final Property complexCollection = createComplexCollection("CollPropertyComp",
+    final Property complexCollection = createComplexCollection("CollPropertyComp", ctPropComp,
         Arrays.asList(createPrimitive("PropertyInt16", 123), createPrimitive("PropertyString", "TEST 1")),
         Arrays.asList(createPrimitive("PropertyInt16", 456), createPrimitive("PropertyString", "TEST 2")),
         Arrays.asList(createPrimitive("PropertyInt16", 789), createPrimitive("PropertyString", "TEST 3")));
@@ -461,7 +494,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(createPrimitiveCollection("CollPropertyString",
             "Employee1@company.example", "Employee2@company.example", "Employee3@company.example"))
-        .addProperty(createComplex("PropertyComp",
+        .addProperty(createComplex("PropertyComp",ctPropComp,
             createPrimitive("PropertyInt16", 111),
             createPrimitive("PropertyString", "TEST A")))
         .addProperty(complexCollection));
@@ -470,7 +503,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyInt16", 7))
         .addProperty(createPrimitiveCollection("CollPropertyString",
             "Employee1@company.example", "Employee2@company.example", "Employee3@company.example"))
-        .addProperty(createComplex("PropertyComp",
+        .addProperty(createComplex("PropertyComp",ctPropComp,
             createPrimitive("PropertyInt16", 222),
             createPrimitive("PropertyString", "TEST B")))
         .addProperty(complexCollection));
@@ -479,11 +512,13 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyInt16", 0))
         .addProperty(createPrimitiveCollection("CollPropertyString",
             "Employee1@company.example", "Employee2@company.example", "Employee3@company.example"))
-        .addProperty(createComplex("PropertyComp",
+        .addProperty(createComplex("PropertyComp",ctPropComp,
             createPrimitive("PropertyInt16", 333),
             createPrimitive("PropertyString", "TEST C")))
         .addProperty(complexCollection));
-
+    for (Entity en:entitySet.getEntities()) {
+      en.setType(EntityTypeProvider.nameETMixPrimCollComp.getFullQualifiedNameAsString());
+    }
     return entitySet;
   }
 
@@ -519,7 +554,9 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyDuration", 6))
         .addProperty(createPrimitive("PropertyGuid", GUID))
         .addProperty(createPrimitive("PropertyTimeOfDay", getTime(2, 48, 21))));
-
+    for (Entity en:entitySet.getEntities()) {
+      en.setType(EntityTypeProvider.nameETAllKey.getFullQualifiedNameAsString());
+    }
     return entitySet;
   }
 
@@ -528,20 +565,22 @@ public class DataCreator {
 
     Entity entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 1));
-    entity.addProperty(createComplex("PropertyComp",
-        createComplex("PropertyComp",
+    entity.addProperty(createComplex("PropertyComp", null,
+        createComplex("PropertyComp",ctPropComp,
             createPrimitive("PropertyInt16", 123),
             createPrimitive("PropertyString", "String 1"))));
     entitySet.getEntities().add(entity);
 
     entity = new EntityImpl();
     entity.addProperty(createPrimitive("PropertyInt16", 2));
-    entity.addProperty(createComplex("PropertyComp",
-        createComplex("PropertyComp",
+    entity.addProperty(createComplex("PropertyComp", null,
+        createComplex("PropertyComp",ctPropComp,
             createPrimitive("PropertyInt16", 987),
             createPrimitive("PropertyString", "String 2"))));
     entitySet.getEntities().add(entity);
-
+    for (Entity en:entitySet.getEntities()) {
+      en.setType(EntityTypeProvider.nameETCompComp.getFullQualifiedNameAsString());
+    }
     return entitySet;
   }
 
@@ -571,7 +610,9 @@ public class DataCreator {
         .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("black")));
     entity.setMediaContentType("image/svg+xml");
     entitySet.getEntities().add(entity);
-
+    for (Entity en:entitySet.getEntities()) {
+      en.setType(EntityTypeProvider.nameETMedia.getFullQualifiedNameAsString());
+    }
     return entitySet;
   }
 
@@ -677,22 +718,23 @@ public class DataCreator {
     return new PropertyImpl(null, name, ValueType.COLLECTION_PRIMITIVE, Arrays.asList(values));
   }
 
-  protected static Property createComplex(final String name, final Property... properties) {
+  protected static Property createComplex(final String name, String type, final Property... properties) {
     ComplexValue complexValue = new ComplexValueImpl();
     for (final Property property : properties) {
       complexValue.getValue().add(property);
     }
-    return new PropertyImpl(null, name, ValueType.COMPLEX, complexValue);
+    return new PropertyImpl(type, name, ValueType.COMPLEX, complexValue);
   }
 
-  protected static Property createComplexCollection(final String name, final List<Property>... propertiesList) {
+  protected static Property createComplexCollection(final String name, String type,
+      final List<Property>... propertiesList) {
     List<ComplexValue> complexCollection = new ArrayList<ComplexValue>();
     for (final List<Property> properties : propertiesList) {
       ComplexValue complexValue = new ComplexValueImpl();
       complexValue.getValue().addAll(properties);
       complexCollection.add(complexValue);
     }
-    return new PropertyImpl(null, name, ValueType.COLLECTION_COMPLEX, complexCollection);
+    return new PropertyImpl(type, name, ValueType.COLLECTION_COMPLEX, complexCollection);
   }
 
   private Calendar getDateTime(final int year, final int month, final int day,
