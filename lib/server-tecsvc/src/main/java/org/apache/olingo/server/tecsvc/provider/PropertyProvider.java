@@ -393,11 +393,17 @@ public class PropertyProvider {
           .setType(nameDateTimeOffset)
           .setNullable(true);
 
-  public static final Property propertyDecimal = new Property()
+  public static final Property propertyDecimal_Scale_Precision = new Property()
+          .setName("PropertyDecimal")
+          .setScale(10)
+          .setPrecision(11)
+          .setType(nameDecimal);
+  
+  public static final Property propertyDecimal_Scale = new Property()
           .setName("PropertyDecimal")
           .setScale(10)
           .setType(nameDecimal);
-
+  
   public static final Property propertyDecimal_NotNullable = new Property()
           .setName("PropertyDecimal")
           .setType(nameDecimal)
@@ -579,7 +585,7 @@ public class PropertyProvider {
   public static final Property propertyComp_CTNavFiveProp = new Property()
           .setName("PropertyComp")
           .setType(ComplexTypeProvider.nameCTNavFiveProp);
-
+  
   public static final Property propertyCompNav_CTNavFiveProp = new Property()
           .setName("PropertyCompNav")
           .setType(ComplexTypeProvider.nameCTNavFiveProp);
@@ -597,6 +603,10 @@ public class PropertyProvider {
           .setName("PropertyComp")
           .setType(ComplexTypeProvider.nameCTTwoPrim)
           .setNullable(false);
+  
+  public static final Property propertyCompNavCont = new Property() 
+          .setName("PropertyCompNavCont")
+          .setType(ComplexTypeProvider.nameCTNavCont);
   
   public static final Property propertyCompAllPrim_CTAllPrim = new Property()
           .setName("PropertyCompAllPrim")
@@ -665,6 +675,23 @@ public class PropertyProvider {
           .setType(EntityTypeProvider.nameETAllPrim)
           .setCollection(true);
 
+  public static final NavigationProperty collectionNavPropertySINav = new NavigationProperty()
+          .setName("NavPropertySINav")
+          .setCollection(true)
+          .setType(EntityTypeProvider.nameETTwoKeyNav);
+  
+  public static final NavigationProperty collectionNavPropertyETKeyNavContMany_CT_ETKeyNav = new NavigationProperty()
+        .setName("NavPropertyETKeyNavContMany")
+        .setCollection(true)
+        .setContainsTarget(true)
+        .setType(EntityTypeProvider.nameETKeyNav);
+  
+  public static final NavigationProperty collectionNavPropertyETTwoKeyNavContMany_CT_ETKeyNav = new NavigationProperty()
+        .setName("NavPropertyETTwoKeyNavContMany")
+        .setCollection(true)
+        .setContainsTarget(true)
+        .setType(EntityTypeProvider.nameETKeyNav);
+  
   public static final NavigationProperty navPropertyETKeyNavOne_ETKeyNav = new NavigationProperty()
           .setName("NavPropertyETKeyNavOne")
           .setType(EntityTypeProvider.nameETKeyNav);
@@ -695,6 +722,28 @@ public class PropertyProvider {
           .setName("NavPropertyETAllPrimOne")
           .setType(EntityTypeProvider.nameETAllPrim);
 
+  public static final NavigationProperty navPropertyETKeyNavContOne_CT_ETeyNav = new NavigationProperty()
+          .setName("NavPropertyETKeyNavContOne")
+          .setContainsTarget(true)
+          .setType(EntityTypeProvider.nameETKeyNav);
+  
+  public static final NavigationProperty navPropertyETTwoKeyNavContOne_CT_ETKeyNav = new NavigationProperty()
+        .setName("NavPropertyETTwoKeyNavContOne")
+        .setContainsTarget(true)
+        .setType(EntityTypeProvider.nameETKeyNav);
+        
+  public static final NavigationProperty navPropertyETTwoKeyNavContOneCT_ETTwoKeyNav = new NavigationProperty()
+        .setName("NavPropertyETKeyNavContOne")
+        .setContainsTarget(true)
+        .setType(EntityTypeProvider.nameETTwoKeyNav);
+  
+  public static final NavigationProperty collectionNavPropertyETTwoKeyNavContMany_CT_ETTwoKeyNav 
+      = new NavigationProperty()
+        .setName("NavPropertyETTwoKeyNavContMany")
+        .setContainsTarget(true)
+        .setCollection(true)
+        .setType(EntityTypeProvider.nameETTwoKeyNav);
+  
   // EnumProperties --------------------------------------------------------------------------------------------------
   public static final Property propertyEnumString_ENString = new Property()
           .setName("PropertyEnumString")

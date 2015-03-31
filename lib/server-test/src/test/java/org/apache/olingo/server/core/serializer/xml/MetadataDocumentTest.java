@@ -88,8 +88,8 @@ public class MetadataDocumentTest {
 
     assertThat(metadata, containsString("<Action Name=\"UARTCTTwoPrimParam\" IsBound=\"false\">"
         + "<Parameter Name=\"ParameterInt16\" Type=\"Edm.Int16\" Nullable=\"false\"/>"
-        + "<ReturnType Type=\"Namespace1_Alias.CTTwoPrim\"/></Action>"));
-
+        + "<ReturnType Type=\"Namespace1_Alias.CTTwoPrim\" Nullable=\"false\"/></Action>"));
+    
     assertThat(metadata,
         containsString("<Action Name=\"BAESAllPrimRTETAllPrim\" IsBound=\"true\">"
             + "<Parameter Name=\"ParameterESAllPrim\" "
@@ -114,6 +114,8 @@ public class MetadataDocumentTest {
     assertThat(metadata,
         containsString("<Singleton Name=\"SINav\" EntityType=\"Namespace1_Alias.ETTwoKeyNav\">"
             + "<NavigationPropertyBinding Path=\"NavPropertyETTwoKeyNavMany\" Target=\"ESTwoKeyNav\"/>"
+            + "<NavigationPropertyBinding Path=\"NavPropertyETTwoKeyNavOne\" Target=\"ESTwoKeyNav\"/>"
+            + "<NavigationPropertyBinding Path=\"NavPropertyETKeyNavOne\" Target=\"ESKeyNav\"/>"
             + "</Singleton>"));
 
     assertThat(metadata,

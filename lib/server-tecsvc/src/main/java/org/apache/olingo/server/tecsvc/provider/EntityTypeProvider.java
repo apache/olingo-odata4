@@ -55,6 +55,8 @@ public class EntityTypeProvider {
   public static final FullQualifiedName nameETKeyNav = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETKeyNav");
   public static final FullQualifiedName nameETKeyPrimNav = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETKeyPrimNav");
+  public static final FullQualifiedName nameETKeyNavCont = new FullQualifiedName(SchemaProvider.NAMESPACE, 
+      "ETKeyNavCont");
   public static final FullQualifiedName nameETKeyTwoKeyComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETKeyTwoKeyComp");
   public static final FullQualifiedName nameETMedia = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETMedia");
@@ -89,7 +91,7 @@ public class EntityTypeProvider {
               PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString,
               PropertyProvider.propertyBoolean, PropertyProvider.propertyByte, PropertyProvider.propertySByte,
               PropertyProvider.propertyInt32, PropertyProvider.propertyInt64,
-              PropertyProvider.propertySingle, PropertyProvider.propertyDouble, PropertyProvider.propertyDecimal,
+              PropertyProvider.propertySingle, PropertyProvider.propertyDouble, PropertyProvider.propertyDecimal_Scale,
               PropertyProvider.propertyBinary, PropertyProvider.propertyDate, PropertyProvider.propertyDateTimeOffset,
               PropertyProvider.propertyDuration, PropertyProvider.propertyGuid, PropertyProvider.propertyTimeOfDay
               ))
@@ -319,8 +321,7 @@ public class EntityTypeProvider {
                   PropertyProvider.navPropertyETKeyNavOne_ETKeyNav,
                   PropertyProvider.collectionNavPropertyETKeyNavMany_ETKeyNav,
                   PropertyProvider.navPropertyETMediaOne_ETMedia,
-                  PropertyProvider.collectionNavPropertyETMediaMany_ETMedia
-                  ));
+                  PropertyProvider.collectionNavPropertyETMediaMany_ETMedia));
     } else if (entityTypeName.equals(nameETKeyPrimNav)) {
       return new EntityType()
           .setName("ETKeyPrimNav")
@@ -330,6 +331,17 @@ public class EntityTypeProvider {
           .setNavigationProperties(
               Arrays.asList(
                   PropertyProvider.navPropertyETKeyPrimNavOne_ETKeyPrimNav));
+    } else if(entityTypeName.equals(nameETKeyNavCont)) {
+      return new EntityType()
+        .setName("ETKeyNavCont")
+        .setKey(Arrays.asList(new PropertyRef().setName("PropertyInt16")))
+        .setProperties(Arrays.asList(
+            PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString_NotNullable, 
+            PropertyProvider.propertyCompNavCont))
+        .setNavigationProperties(Arrays.asList(
+            PropertyProvider.navPropertyETTwoKeyNavContOneCT_ETTwoKeyNav,
+            PropertyProvider.collectionNavPropertyETTwoKeyNavContMany_CT_ETTwoKeyNav
+            ));
 
     } else if (entityTypeName.equals(nameETTwoKeyNav)) {
       return new EntityType()
@@ -358,7 +370,8 @@ public class EntityTypeProvider {
                           .setReferencedProperty("PropertyInt16"))),
               PropertyProvider.collectionNavPropertyETKeyNavMany_ETKeyNav,
               PropertyProvider.navPropertyETTwoKeyNavOne_ETTwoKeyNav,
-              PropertyProvider.collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav));
+              PropertyProvider.collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav,
+              PropertyProvider.collectionNavPropertySINav));
 
     } else if (entityTypeName.equals(nameETBaseTwoKeyNav)) {
       return new EntityType()

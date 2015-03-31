@@ -959,11 +959,11 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
 
     // Do the filter request
     ODataRetrieveResponse<ODataEntitySet> result =
-        sendRequest("ESKeyNav", "PropertyCompCompNav/PropertyComp/PropertyInt16 eq 1", cookie);
+        sendRequest("ESKeyNav", "PropertyCompCompNav/PropertyCompNav/PropertyInt16 eq 1", cookie);
     assertEquals(3, result.getBody().getEntities().size());
 
     // Try filter all entries where PropertyCompComp is null
-    result = sendRequest("ESKeyNav", "PropertyCompCompNav/PropertyComp/PropertyInt16 eq null", cookie);
+    result = sendRequest("ESKeyNav", "PropertyCompCompNav/PropertyCompNav/PropertyInt16 eq null", cookie);
     assertEquals(1, result.getBody().getEntities().size());
   }
 

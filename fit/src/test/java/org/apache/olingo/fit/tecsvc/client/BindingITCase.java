@@ -61,7 +61,6 @@ public class BindingITCase extends AbstractBaseTestITCase {
   private static final String CT_NAV_FIVE_PROP = "CTNavFiveProp";
   private static final String PROPERTY_INT16 = "PropertyInt16";
   private static final String PROPERTY_STRING = "PropertyString";
-  private static final String PROPERTY_COMP = "PropertyComp";
   private static final String PROPERTY_COMP_NAV = "PropertyCompNav";
   private static final String PROPERTY_COMP_COMP_NAV = "PropertyCompCompNav";
   private static final String PROPERTY_COMP_TWO_PRIM = "PropertyCompTwoPrim";
@@ -96,7 +95,7 @@ public class BindingITCase extends AbstractBaseTestITCase {
     entity.getProperties()
         .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))
-            .add(of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_NAV_FIVE_PROP)
+            .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
                 .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
 
     // Bind existing entities via binding synatx

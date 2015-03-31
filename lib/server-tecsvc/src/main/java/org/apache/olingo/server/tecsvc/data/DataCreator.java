@@ -138,7 +138,7 @@ public class DataCreator {
                 createKeyNavAllPrimComplexValue("PropertyComp"))))
         .addProperty(createComplex("PropertyCompCompNav",
             createPrimitive("PropertyString", "1"),
-            createComplex("PropertyComp", createPrimitive("PropertyInt16", 1))));
+            createComplex("PropertyCompNav", createPrimitive("PropertyInt16", 1))));
   }
 
   private EntitySet createESTwoKeyNav() {

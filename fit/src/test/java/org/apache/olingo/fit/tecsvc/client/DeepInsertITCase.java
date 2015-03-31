@@ -64,7 +64,6 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
   private static final String CT_NAV_FIVE_PROP = "CTNavFiveProp";
   private static final String PROPERTY_INT16 = "PropertyInt16";
   private static final String PROPERTY_STRING = "PropertyString";
-  private static final String PROPERTY_COMP = "PropertyComp";
   private static final String PROPERTY_COMP_NAV = "PropertyCompNav";
   private static final String PROPERTY_COMP_COMP_NAV = "PropertyCompCompNav";
   private static final String PROPERTY_COMP_TWO_PRIM = "PropertyCompTwoPrim";
@@ -103,7 +102,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     entity.getProperties()
         .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))
-            .add(of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_NAV_FIVE_PROP)
+            .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
                 .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
 
     // Non collection navigation property
@@ -114,7 +113,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     inlineEntitySingle.getProperties()
         .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("43")));
     inlineEntitySingle.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))));
     inlineEntitySingle.getProperties()
         .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
@@ -130,7 +129,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     inlineEntityCol1.getProperties()
         .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("44")));
     inlineEntityCol1.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 441)))));
     inlineEntityCol1.getProperties()
         .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
@@ -143,7 +142,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     inlineEntityCol2.getProperties()
         .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("45")));
     inlineEntityCol2.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 451)))));
     inlineEntityCol2.getProperties()
         .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
@@ -184,7 +183,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     // Check nav. property NavPropertyETTwoKeyNavOne
     assertNotNull(esKeyNavResponse.getBody().getProperty(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE));
     assertEquals(431, esKeyNavResponse.getBody().getProperty(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE).getComplexValue().get(
-        PROPERTY_COMP).getComplexValue().get(PROPERTY_INT16).getPrimitiveValue().toValue());
+        PROPERTY_COMP_NAV).getComplexValue().get(PROPERTY_INT16).getPrimitiveValue().toValue());
 
     // Check nav. property NavPropertyETTwoKeyNavMany
     assertNotNull(esKeyNavResponse.getBody().getProperty(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY));
@@ -193,10 +192,10 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     Iterator<ODataValue> twoKeyNavManyIterator =
         esKeyNavResponse.getBody().getProperty(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).getCollectionValue().iterator();
     final ODataValue firstTwoKeyNavEnity = twoKeyNavManyIterator.next(); // First entity
-    assertEquals(441, firstTwoKeyNavEnity.asComplex().get(PROPERTY_COMP).getValue().asComplex().get(
+    assertEquals(441, firstTwoKeyNavEnity.asComplex().get(PROPERTY_COMP_NAV).getValue().asComplex().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
     final ODataValue secondTwoKeyNavEnity = twoKeyNavManyIterator.next(); // Second entity
-    assertEquals(451, secondTwoKeyNavEnity.asComplex().get(PROPERTY_COMP).getValue().asComplex().get(
+    assertEquals(451, secondTwoKeyNavEnity.asComplex().get(PROPERTY_COMP_NAV).getValue().asComplex().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
 
     // Fetch ESTwoKeyNav entities and check if available and the partner relation have been set up
@@ -218,7 +217,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         .getEntityRequest(esTwoKeyNavEntitySingleURI);
     esTwoKeyNavSingleRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ODataEntity> esTwoKeyNavSingleResponse = esTwoKeyNavSingleRequest.execute();
-    assertEquals(431, esTwoKeyNavSingleResponse.getBody().getProperty(PROPERTY_COMP).getComplexValue().get(
+    assertEquals(431, esTwoKeyNavSingleResponse.getBody().getProperty(PROPERTY_COMP_NAV).getComplexValue().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
 
     // Check ESTwoKeyNav(Created via NavPropertyETTwoKeyNavMany(0))
@@ -236,7 +235,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     esTwoKeyNavManyOneRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ODataEntity> esTwoKeyNavManyOneResponse = esTwoKeyNavManyOneRequest.execute();
 
-    assertEquals(441, esTwoKeyNavManyOneResponse.getBody().getProperty(PROPERTY_COMP).getComplexValue().get(
+    assertEquals(441, esTwoKeyNavManyOneResponse.getBody().getProperty(PROPERTY_COMP_NAV).getComplexValue().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
     assertNotNull(esTwoKeyNavManyOneResponse.getBody().getProperty(NAV_PROPERTY_ET_KEY_NAV_ONE).getComplexValue());
     assertEquals(propertyInt16.getPrimitiveValue().toValue(), esTwoKeyNavManyOneResponse.getBody().getProperty(
@@ -257,7 +256,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     esTwoKeyNavManyTwoRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ODataEntity> esTwoKeyNavManyTwoResponse = esTwoKeyNavManyTwoRequest.execute();
 
-    assertEquals(451, esTwoKeyNavManyTwoResponse.getBody().getProperty(PROPERTY_COMP).getComplexValue().get(
+    assertEquals(451, esTwoKeyNavManyTwoResponse.getBody().getProperty(PROPERTY_COMP_NAV).getComplexValue().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
     assertNotNull(esTwoKeyNavManyTwoResponse.getBody().getProperty(NAV_PROPERTY_ET_KEY_NAV_ONE).getComplexValue());
     assertEquals(propertyInt16.getPrimitiveValue().toValue(), esTwoKeyNavManyTwoResponse.getBody().getProperty(
@@ -289,7 +288,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     entity.getProperties()
         .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))
-            .add(of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_NAV_FIVE_PROP)
+            .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
                 .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
 
     // Prepare inline entity(EntitySet: ESKeyNav, Type: ETKeyNav)
@@ -312,7 +311,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         .getProperties()
         .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("431")))
-            .add(of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_NAV_FIVE_PROP)
+            .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
                 .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder()
                     .buildInt16((short) 431)))))));
 

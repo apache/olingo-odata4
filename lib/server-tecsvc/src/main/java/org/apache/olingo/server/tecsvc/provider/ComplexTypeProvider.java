@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.olingo.commons.api.ODataException;
@@ -51,6 +52,7 @@ public class ComplexTypeProvider {
   public static final FullQualifiedName nameCTTwoPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTTwoPrim");
   public static final FullQualifiedName nameCTMixEnumDef = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "CTMixEnumDef");
+  public static final FullQualifiedName nameCTNavCont = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTNavCont");
 
   public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
 
@@ -65,12 +67,11 @@ public class ComplexTypeProvider {
           .setProperties(
               Arrays.asList(PropertyProvider.propertyString, PropertyProvider.propertyBinary,
                   PropertyProvider.propertyBoolean, PropertyProvider.propertyByte, PropertyProvider.propertyDate,
-                  PropertyProvider.propertyDateTimeOffset, PropertyProvider.propertyDecimal,
+                  PropertyProvider.propertyDateTimeOffset, PropertyProvider.propertyDecimal_Scale_Precision,
                   PropertyProvider.propertySingle, PropertyProvider.propertyDouble, PropertyProvider.propertyDuration,
                   PropertyProvider.propertyGuid, PropertyProvider.propertyInt16, PropertyProvider.propertyInt32,
                   PropertyProvider.propertyInt64, PropertyProvider.propertySByte, PropertyProvider.propertyTimeOfDay
                   ));
-
     } else if (complexTypeName.equals(nameCTCollAllPrim)) {
       return new ComplexType()
           .setName("CTCollAllPrim")
@@ -96,7 +97,7 @@ public class ComplexTypeProvider {
       return new ComplexType()
           .setName("CTCompNav")
           .setProperties(Arrays.asList(PropertyProvider.propertyString,
-              PropertyProvider.propertyComp_CTNavFiveProp));
+              PropertyProvider.propertyCompNav_CTNavFiveProp));
 
     } else if (complexTypeName.equals(nameCTMixPrimCollComp)) {
       return new ComplexType()
@@ -148,7 +149,17 @@ public class ComplexTypeProvider {
                   .setName("NavPropertyETMediaMany")
                   .setType(EntityTypeProvider.nameETMedia).setCollection(true)
               )));
-
+      
+    } else if(complexTypeName.equals(nameCTNavCont)) {
+      return new ComplexType()
+        .setName("CTNavCont")
+        .setProperties(new ArrayList<Property>())
+        .setNavigationProperties(Arrays.asList(
+            PropertyProvider.collectionNavPropertyETKeyNavContMany_CT_ETKeyNav,
+            PropertyProvider.navPropertyETKeyNavContOne_CT_ETeyNav,
+            PropertyProvider.collectionNavPropertyETTwoKeyNavContMany_CT_ETKeyNav,
+            PropertyProvider.navPropertyETTwoKeyNavContOne_CT_ETKeyNav));
+      
     } else if (complexTypeName.equals(nameCTBasePrimCompNav)) {
       return new ComplexType()
           .setName("CTBasePrimCompNav")
