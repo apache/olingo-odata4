@@ -18,6 +18,17 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -26,6 +37,7 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.AbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.ActionImport;
 import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.edm.provider.EntityContainer;
@@ -37,17 +49,6 @@ import org.apache.olingo.commons.core.edm.provider.EdmEntityContainerImpl;
 import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class EdmEntityContainerImplTest {
 
@@ -231,7 +232,7 @@ public class EdmEntityContainerImplTest {
     assertNull(container.getEntitySet(null));
   }
 
-  private class CustomProvider extends EdmProvider {
+  private class CustomProvider extends AbstractEdmProvider {
     @Override
     public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
         throws ODataException {

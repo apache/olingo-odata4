@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
-public abstract class EdmProvider {
+public interface EdmProvider {
 
   /**
    * This method should return an {@link EnumType} or <b>null</b> if nothing is found
@@ -32,9 +32,7 @@ public abstract class EdmProvider {
    * @return {@link EnumType} for given name
    * @throws ODataException
    */
-  public EnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
-    return null;
-  }
+  public EnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException;
 
   /**
    * This method should return an {@link TypeDefinition} or <b>null</b> if nothing is found
@@ -43,9 +41,7 @@ public abstract class EdmProvider {
    * @return {@link TypeDefinition} for given name
    * @throws ODataException
    */
-  public TypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException {
-    return null;
-  }
+  public TypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException;
 
   /**
    * This method should return an {@link EntityType} or <b>null</b> if nothing is found
@@ -54,9 +50,7 @@ public abstract class EdmProvider {
    * @return {@link EntityType} for the given name
    * @throws ODataException
    */
-  public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
-    return null;
-  }
+  public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException;
 
   /**
    * This method should return a {@link ComplexType} or <b>null</b> if nothing is found.
@@ -65,9 +59,7 @@ public abstract class EdmProvider {
    * @return {@link ComplexType} for the given name
    * @throws ODataException
    */
-  public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
-    return null;
-  }
+  public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException;
 
   /**
    * This method should return a list of all {@link Action} for the FullQualifiedname or <b>null</b> if nothing is found
@@ -76,9 +68,7 @@ public abstract class EdmProvider {
    * @return List of {@link Action} or null
    * @throws ODataException
    */
-  public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
-    return null;
-  }
+  public List<Action> getActions(final FullQualifiedName actionName) throws ODataException;
 
   /**
    * This method should return a list of all {@link Function} for the FullQualifiedname or <b>null</b> if nothing is
@@ -88,9 +78,7 @@ public abstract class EdmProvider {
    * @return List of {@link Function} or null
    * @throws ODataException
    */
-  public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
-    return null;
-  }
+  public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException;
 
   /**
    * This method should return a {@link Term} for the FullQualifiedName or <b>null</b> if nothing is found.
@@ -98,9 +86,7 @@ public abstract class EdmProvider {
    * @return {@link Term} or null
    * @throws ODataException
    */
-  public Term getTerm(final FullQualifiedName termName) throws ODataException {
-    return null;
-  }
+  public Term getTerm(final FullQualifiedName termName) throws ODataException;
 
   /**
    * This method should return an {@link EntitySet} or <b>null</b> if nothing is found
@@ -111,9 +97,7 @@ public abstract class EdmProvider {
    * @throws ODataException
    */
   public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
-      throws ODataException {
-    return null;
-  }
+      throws ODataException;
 
   /**
    * This method should return an {@link Singleton} or <b>null</b> if nothing is found
@@ -124,9 +108,7 @@ public abstract class EdmProvider {
    * @throws ODataException
    */
   public Singleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
-      throws ODataException {
-    return null;
-  }
+      throws ODataException;
 
   /**
    * This method should return an {@link ActionImport} or <b>null</b> if nothing is found
@@ -137,9 +119,7 @@ public abstract class EdmProvider {
    * @throws ODataException
    */
   public ActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
-      throws ODataException {
-    return null;
-  }
+      throws ODataException;
 
   /**
    * This method should return a {@link FunctionImport} or <b>null</b> if nothing is found
@@ -150,9 +130,7 @@ public abstract class EdmProvider {
    * @throws ODataException
    */
   public FunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
-      throws ODataException {
-    return null;
-  }
+      throws ODataException;
 
   /**
    * This method should return an {@link EntityContainerInfo} or <b>null</b> if nothing is found
@@ -161,9 +139,7 @@ public abstract class EdmProvider {
    * @return {@link EntityContainerInfo} for the given name
    * @throws ODataException
    */
-  public EntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName) throws ODataException {
-    return null;
-  }
+  public EntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName) throws ODataException;
 
   /**
    * This method should return a list of all namespaces which have an alias
@@ -171,9 +147,7 @@ public abstract class EdmProvider {
    * @return List of alias info
    * @throws ODataException
    */
-  public List<AliasInfo> getAliasInfos() throws ODataException {
-    return null;
-  }
+  public List<AliasInfo> getAliasInfos() throws ODataException;
 
   /**
    * This method should return a collection of all {@link Schema}
@@ -181,31 +155,23 @@ public abstract class EdmProvider {
    * @return List<{@link Schema}>
    * @throws ODataException
    */
-  public List<Schema> getSchemas() throws ODataException {
-    return null;
-  }
+  public List<Schema> getSchemas() throws ODataException;
 
   /**
    * Returns the entity container of this edm
    * @return {@link EntityContainer} of this edm
    */
-  public EntityContainer getEntityContainer() throws ODataException {
-    return null;
-  }
+  public EntityContainer getEntityContainer() throws ODataException;
 
   /**
    * @param targetName
    * @return {@link Annotations} group for the given Target
    */
-  public Annotations getAnnotationsGroup(FullQualifiedName targetName) throws ODataException {
-    return null;
-  }
+  public Annotations getAnnotationsGroup(FullQualifiedName targetName) throws ODataException;
 
   /**
    * @param annotatedName
    * @return Annotatble element by target name
    */
-  public Annotatable getAnnoatatable(FullQualifiedName annotatedName) throws ODataException {
-    return null;
-  }
+  public Annotatable getAnnoatatable(FullQualifiedName annotatedName) throws ODataException;
 }

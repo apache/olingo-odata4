@@ -18,14 +18,17 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.olingo.commons.api.ODataException;
-import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.AbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.Action;
 import org.apache.olingo.commons.api.edm.provider.ActionImport;
 import org.apache.olingo.commons.api.edm.provider.AliasInfo;
 import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.edm.provider.EntityContainer;
 import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.commons.api.edm.provider.EntitySet;
@@ -37,12 +40,9 @@ import org.apache.olingo.commons.api.edm.provider.Schema;
 import org.apache.olingo.commons.api.edm.provider.Singleton;
 import org.apache.olingo.commons.api.edm.provider.Term;
 import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-public class EdmTechProvider extends EdmProvider {
+public class EdmTechProvider extends AbstractEdmProvider {
 
   public static final String nameSpace = "olingo.odata.test1";
 

@@ -38,6 +38,7 @@ import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.AbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.Action;
 import org.apache.olingo.commons.api.edm.provider.ActionImport;
 import org.apache.olingo.commons.api.edm.provider.AliasInfo;
@@ -262,7 +263,7 @@ public class MetadataDocumentXmlSerializerTest {
         + "</ComplexType>"));
   }
 
-  private class LocalProvider extends EdmProvider {
+  private class LocalProvider extends AbstractEdmProvider {
     private final static String nameSpace = "namespace";
 
     private final FullQualifiedName nameETAbstract = new FullQualifiedName(nameSpace, "ETAbstract");

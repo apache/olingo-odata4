@@ -18,6 +18,15 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
@@ -34,6 +43,7 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.AbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.Action;
 import org.apache.olingo.commons.api.edm.provider.ActionImport;
 import org.apache.olingo.commons.api.edm.provider.AliasInfo;
@@ -53,15 +63,6 @@ import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class EdmSchemaImplTest {
 
@@ -204,7 +205,7 @@ public class EdmSchemaImplTest {
     assertTrue(container == edm.getEntityContainer(null));
   }
 
-  private class LocalProvider extends EdmProvider {
+  private class LocalProvider extends AbstractEdmProvider {
 
     private static final String ALIAS = "alias";
     private static final String NAMESPACE = "org.namespace";

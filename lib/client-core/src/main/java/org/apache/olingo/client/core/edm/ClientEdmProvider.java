@@ -24,13 +24,13 @@ import java.util.Map;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.AbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.Action;
 import org.apache.olingo.commons.api.edm.provider.ActionImport;
 import org.apache.olingo.commons.api.edm.provider.AliasInfo;
 import org.apache.olingo.commons.api.edm.provider.Annotatable;
 import org.apache.olingo.commons.api.edm.provider.Annotations;
 import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.edm.provider.EntityContainer;
 import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.commons.api.edm.provider.EntitySet;
@@ -43,7 +43,7 @@ import org.apache.olingo.commons.api.edm.provider.Singleton;
 import org.apache.olingo.commons.api.edm.provider.Term;
 import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 
-public class ClientEdmProvider extends EdmProvider {
+public class ClientEdmProvider extends AbstractEdmProvider {
 
   private final Map<String, Schema> xmlSchemas;
 

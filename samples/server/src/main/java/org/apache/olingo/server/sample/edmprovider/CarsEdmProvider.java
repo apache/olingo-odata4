@@ -25,8 +25,8 @@ import java.util.List;
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.AbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.edm.provider.EntityContainer;
 import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.commons.api.edm.provider.EntitySet;
@@ -37,7 +37,7 @@ import org.apache.olingo.commons.api.edm.provider.Property;
 import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 import org.apache.olingo.commons.api.edm.provider.Schema;
 
-public class CarsEdmProvider extends EdmProvider {
+public class CarsEdmProvider extends AbstractEdmProvider {
 
   // Service Namespace
   public static final String NAMESPACE = "olingo.odata.sample";
