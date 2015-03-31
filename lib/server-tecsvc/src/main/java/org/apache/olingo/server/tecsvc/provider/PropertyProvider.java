@@ -658,8 +658,7 @@ public class PropertyProvider {
   public static final NavigationProperty collectionNavPropertyETTwoPrimMany_ETTwoPrim = new NavigationProperty()
           .setName("NavPropertyETTwoPrimMany")
           .setType(EntityTypeProvider.nameETTwoPrim)
-          .setCollection(true)
-          .setNullable(false);
+          .setCollection(true);
 
   public static final NavigationProperty collectionNavPropertyETAllPrimMany_ETAllPrim = new NavigationProperty()
           .setName("NavPropertyETAllPrimMany")

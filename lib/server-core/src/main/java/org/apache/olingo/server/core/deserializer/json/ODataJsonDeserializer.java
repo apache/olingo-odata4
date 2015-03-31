@@ -290,7 +290,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       if (jsonNode != null) {
         EdmNavigationProperty edmNavigationProperty = edmEntityType.getNavigationProperty(navigationPropertyName);
         boolean isNullable = edmNavigationProperty.isNullable();
-        if (jsonNode.isNull() && !isNullable) {
+        if ((jsonNode.isNull() && !isNullable) || (jsonNode.isNull() && edmNavigationProperty.isCollection())) {
           throw new DeserializerException("Property: " + navigationPropertyName + " must not be null.",
               DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, navigationPropertyName);
         }
