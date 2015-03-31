@@ -18,19 +18,30 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import org.apache.olingo.commons.api.data.Annotation;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.Parameter;
+import org.apache.olingo.commons.api.data.ValueType;
 
-public class AnnotationImpl extends AbstractValuable implements Annotation {
+public class ParameterImpl extends AbstractValuable implements Parameter {
 
-  private String term;
+  String name;
 
   @Override
-  public String getTerm() {
-    return term;
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   @Override
-  public void setTerm(final String term) {
-    this.term = term;
+  public boolean isEntity() {
+    return getValueType() == ValueType.ENTITY;
+  }
+
+  @Override
+  public Entity asEntity() {
+    return isEntity() ? (Entity) getValue() : null;
   }
 }

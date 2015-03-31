@@ -37,12 +37,23 @@ public abstract class AbstractValuable implements Valuable, Annotatable {
   private ValueType valueType = null;
   private Object value = null;
   private final List<Annotation> annotations = new ArrayList<Annotation>();
+  private String type;
 
   @Override
   public boolean isNull() {
     return value == null;
   }
 
+  @Override
+  public String getType() {
+    return type;
+  }
+
+  @Override
+  public void setType(final String type) {
+    this.type = type;
+  }
+  
   @Override
   public boolean isPrimitive() {
     return valueType == ValueType.PRIMITIVE;

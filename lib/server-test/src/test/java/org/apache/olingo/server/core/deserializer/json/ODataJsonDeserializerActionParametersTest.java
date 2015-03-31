@@ -26,8 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
@@ -39,27 +38,23 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
   @Test
   public void empty() throws Exception {
     final String input = "{}";
-    final Entity entity = deserialize(input, "UART");
-    assertNotNull(entity);
-    final List<Property> properties = entity.getProperties();
-    assertNotNull(properties);
-    assertTrue(properties.isEmpty());
+    final List<Parameter> parameters = deserialize(input, "UART");
+    assertNotNull(parameters);
+    assertTrue(parameters.isEmpty());
   }
 
   @Test
   public void primitive() throws Exception {
     final String input = "{\"ParameterDuration\":\"P42DT11H22M33S\",\"ParameterInt16\":42}";
-    final Entity entity = deserialize(input, "UARTTwoParam");
-    assertNotNull(entity);
-    final List<Property> properties = entity.getProperties();
-    assertNotNull(properties);
-    assertEquals(2, properties.size());
-    Property property = properties.get(0);
-    assertNotNull(property);
-    assertEquals((short) 42, property.getValue());
-    property = properties.get(1);
-    assertNotNull(property);
-    assertEquals(BigDecimal.valueOf(3669753), property.getValue());
+    final List<Parameter> parameters = deserialize(input, "UARTTwoParam");
+    assertNotNull(parameters);
+    assertEquals(2, parameters.size());
+    Parameter parameter = parameters.get(0);
+    assertNotNull(parameter);
+    assertEquals((short) 42, parameter.getValue());
+    parameter = parameters.get(1);
+    assertNotNull(parameter);
+    assertEquals(BigDecimal.valueOf(3669753), parameter.getValue());
   }
 
   @Test(expected = DeserializerException.class)
@@ -77,7 +72,7 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
     deserialize("{\"ParameterInt16\":\"42\"}", "UARTParam");
   }
 
-  private Entity deserialize(final String input, final String actionName) throws DeserializerException {
+  private List<Parameter> deserialize(final String input, final String actionName) throws DeserializerException {
     return OData.newInstance().createDeserializer(ODataFormat.JSON)
         .actionParameters(new ByteArrayInputStream(input.getBytes()),
             edm.getUnboundAction(new FullQualifiedName("Namespace1_Alias", actionName)));

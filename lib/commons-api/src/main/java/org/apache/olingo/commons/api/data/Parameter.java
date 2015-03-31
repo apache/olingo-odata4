@@ -16,21 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.data;
+package org.apache.olingo.commons.api.data;
 
-import org.apache.olingo.commons.api.data.Annotation;
+public interface Parameter extends Valuable {
 
-public class AnnotationImpl extends AbstractValuable implements Annotation {
+  /**
+   * @return name of the parameter
+   */
+  String getName();
 
-  private String term;
+  boolean isEntity();
+  
+  Entity asEntity();
 
-  @Override
-  public String getTerm() {
-    return term;
-  }
-
-  @Override
-  public void setTerm(final String term) {
-    this.term = term;
-  }
 }

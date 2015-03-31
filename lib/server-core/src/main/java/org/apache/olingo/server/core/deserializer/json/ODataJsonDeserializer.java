@@ -31,6 +31,7 @@ import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
@@ -51,6 +52,7 @@ import org.apache.olingo.commons.core.data.ComplexValueImpl;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
+import org.apache.olingo.commons.core.data.ParameterImpl;
 import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
@@ -58,6 +60,7 @@ import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -72,10 +75,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   @Override
   public EntitySet entityCollection(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException {
     try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
-      JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
-      final ObjectNode tree = parser.getCodec().readTree(parser);
+      final ObjectNode tree = parseJsonTree(stream);
 
       return consumeEntitySetNode(edmEntityType, tree);
     } catch (JsonParseException e) {
@@ -145,10 +145,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   @Override
   public Entity entity(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException {
     try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
-      JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
-      final ObjectNode tree = parser.getCodec().readTree(parser);
+      final ObjectNode tree = parseJsonTree(stream);
 
       return consumeEntityNode(edmEntityType, tree);
 
@@ -183,16 +180,13 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   }
 
   @Override
-  public Entity actionParameters(InputStream stream, final EdmAction edmAction) throws DeserializerException {
+  public List<Parameter> actionParameters(InputStream stream, final EdmAction edmAction) throws DeserializerException {
     try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
-      JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
-      ObjectNode tree = parser.getCodec().readTree(parser);
-      EntityImpl entity = new EntityImpl();
-      consumeParameters(edmAction, tree, entity);
+      ObjectNode tree = parseJsonTree(stream);
+      ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+      consumeParameters(edmAction, tree, parameters);
       assertJsonNodeIsEmpty(tree);
-      return entity;
+      return parameters;
 
     } catch (final JsonParseException e) {
       throw new DeserializerException("An JsonParseException occurred", e,
@@ -206,22 +200,36 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
   }
 
-  private void consumeParameters(final EdmAction edmAction, ObjectNode node, EntityImpl entity)
+  private ObjectNode parseJsonTree(InputStream stream) throws IOException, JsonParseException, JsonProcessingException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
+    JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
+    ObjectNode tree = parser.getCodec().readTree(parser);
+    return tree;
+  }
+
+  private void consumeParameters(final EdmAction edmAction, ObjectNode node, ArrayList<Parameter> parameters)
       throws DeserializerException {
     for (final String name : edmAction.getParameterNames()) {
-      final EdmParameter parameter = edmAction.getParameter(name);
+      final EdmParameter edmParameter = edmAction.getParameter(name);
+      ParameterImpl parameter = new ParameterImpl();
+      parameter.setName(name);
       JsonNode jsonNode = node.get(name);
       if (jsonNode == null) {
-        if (!parameter.isNullable()) {
+        if (!edmParameter.isNullable()) {
           // TODO: new message key.
           throw new DeserializerException("Non-nullable parameter not present or null",
               DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, name);
         }
       } else {
-        entity.addProperty(consumePropertyNode(parameter.getName(), parameter.getType(), parameter.isCollection(),
-            parameter.isNullable(), parameter.getMaxLength(), parameter.getPrecision(), parameter.getScale(),
-            true, parameter.getMapping(),
-            jsonNode));
+        Property consumePropertyNode =
+            consumePropertyNode(edmParameter.getName(), edmParameter.getType(), edmParameter.isCollection(),
+                edmParameter.isNullable(), edmParameter.getMaxLength(), edmParameter.getPrecision(), edmParameter
+                    .getScale(),
+                true, edmParameter.getMapping(),
+                jsonNode);
+        parameter.setValue(consumePropertyNode.getValueType(), consumePropertyNode.getValue());
+        parameters.add(parameter);
         node.remove(name);
       }
     }
@@ -302,7 +310,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           EntitySetImpl inlineEntitySet = new EntitySetImpl();
           inlineEntitySet.getEntities().addAll(consumeEntitySetArray(edmNavigationProperty.getType(), jsonNode));
           link.setInlineEntitySet(inlineEntitySet);
-        } else if (!jsonNode.isArray() && (!jsonNode.isValueNode() || jsonNode.isNull()) 
+        } else if (!jsonNode.isArray() && (!jsonNode.isValueNode() || jsonNode.isNull())
             && !edmNavigationProperty.isCollection()) {
           link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
           if (!jsonNode.isNull()) {
@@ -623,7 +631,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   /**
    * Check if JsonNode is a value node (<code>jsonNode.isValueNode()</code>) and if not throw
    * an DeserializerException.
-   * @param name     name of property which is checked
+   * @param name name of property which is checked
    * @param jsonNode node which is checked
    * @throws DeserializerException is thrown if json node is not a value node
    */

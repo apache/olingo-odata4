@@ -24,13 +24,12 @@ import org.apache.olingo.commons.api.data.ValueType;
 public class PropertyImpl extends AbstractValuable implements Property {
 
   private String name;
-  private String type;
 
   public PropertyImpl() {}
 
   public PropertyImpl(final String type, final String name) {
     this.name = name;
-    this.type = type;
+    super.setType(type);
   }
 
   public PropertyImpl(String type, String name, ValueType valueType, Object value) {
@@ -49,17 +48,7 @@ public class PropertyImpl extends AbstractValuable implements Property {
   }
 
   @Override
-  public String getType() {
-    return type;
-  }
-
-  @Override
-  public void setType(final String type) {
-    this.type = type;
-  }
-
-  @Override
   public boolean isNull() {
-    return getValue() == null || "Edm.Null".equals(type);
+    return getValue() == null || "Edm.Null".equals(getType());
   }
 }

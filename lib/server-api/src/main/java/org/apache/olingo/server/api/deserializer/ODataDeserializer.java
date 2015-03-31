@@ -19,9 +19,11 @@
 package org.apache.olingo.server.api.deserializer;
 
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 
@@ -54,8 +56,8 @@ public interface ODataDeserializer {
    * Validates: parameter types, no double parameters, correct json types.
    * @param stream
    * @param edmAction
-   * @return deserialized {@link Entity} object
+   * @return deserialized list of {@link Parameter} objects
    * @throws DeserializerException
    */
-  Entity actionParameters(InputStream stream, EdmAction edmAction) throws DeserializerException;
+  List<Parameter> actionParameters(InputStream stream, EdmAction edmAction) throws DeserializerException;
 }

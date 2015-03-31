@@ -30,6 +30,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
@@ -113,6 +114,9 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
         property(writer, property, false);
       }
       break;
+    case ENTITY:
+    case COLLECTION_ENTITY:
+      throw new ODataRuntimeException("Entities cannot appear in this payload");
     }
   }
 
