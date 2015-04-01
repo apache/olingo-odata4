@@ -23,7 +23,7 @@ import org.apache.olingo.client.api.uri.FilterArg;
 /**
  * Filter value literals; obtain instances via <tt>FilterArgFactory</tt>.
  *
- * @see org.apache.olingo.client.api.uri.v3.FilterArgFactory
+ * @see org.apache.olingo.client.api.uri.FilterArgFactory
  */
 public class FilterLiteral implements FilterArg {
 

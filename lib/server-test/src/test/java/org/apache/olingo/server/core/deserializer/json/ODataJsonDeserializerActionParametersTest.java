@@ -57,6 +57,29 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
     assertEquals(BigDecimal.valueOf(3669753), parameter.getValue());
   }
 
+  @Test
+  public void boundEmpty() throws Exception {
+    final String input = "{}";
+    final List<Parameter> parameters = deserialize(input, "BAETAllPrimRT", "ETAllPrim");
+    assertNotNull(parameters);
+    assertTrue(parameters.isEmpty());
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void bindingParameter() throws Exception {
+    deserialize("{\"ParameterETAllPrim\":{\"PropertyInt16\":42}}", "BAETAllPrimRT", "ETAllPrim");
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void wrongName() throws Exception {
+    deserialize("{\"ParameterWrong\":null}", "UARTParam");
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void nullNotNullable() throws Exception {
+    deserialize("{\"ParameterInt16\":null}", "UARTCTTwoPrimParam");
+  }
+
   @Test(expected = DeserializerException.class)
   public void missingParameter() throws Exception {
     deserialize("{}", "UARTCTTwoPrimParam");
@@ -76,5 +99,13 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
     return OData.newInstance().createDeserializer(ODataFormat.JSON)
         .actionParameters(new ByteArrayInputStream(input.getBytes()),
             edm.getUnboundAction(new FullQualifiedName("Namespace1_Alias", actionName)));
+  }
+
+  private List<Parameter> deserialize(final String input, final String actionName, final String typeName)
+      throws DeserializerException {
+    return OData.newInstance().createDeserializer(ODataFormat.JSON)
+        .actionParameters(new ByteArrayInputStream(input.getBytes()),
+            edm.getBoundAction(new FullQualifiedName("Namespace1_Alias", actionName),
+                new FullQualifiedName("Namespace1_Alias", typeName), false));
   }
 }

@@ -53,7 +53,7 @@ public interface FixedFormatSerializer {
    * Serializes a batch response
    * @param batchResponses
    * @param boundary
-   * @return
+   * @return response as an input stream
    * @throws BatchSerializerException
    */
   InputStream batchResponse(List<ODataResponsePart> batchResponses, String boundary) throws BatchSerializerException;

@@ -23,7 +23,6 @@ import java.util.Map;
 /**
  * OData complex property value.
  * 
- * @param <OP> The actual ODataProperty interface.
  */
 public interface ODataComplexValue extends ODataValue, ODataLinked, ODataAnnotatable, Iterable<ODataProperty> {
 

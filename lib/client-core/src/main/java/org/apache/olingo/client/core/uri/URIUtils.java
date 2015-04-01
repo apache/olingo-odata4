@@ -179,7 +179,6 @@ public final class URIUtils {
   /**
    * Turns primitive values into their respective URI representation.
    *
-   * @param version OData protocol version
    * @param obj primitive value
    * @return URI representation
    */

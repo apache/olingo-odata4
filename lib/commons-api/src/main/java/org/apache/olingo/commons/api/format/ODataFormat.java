@@ -57,7 +57,6 @@ public enum ODataFormat {
 
   /**
    * Gets format as {@link ContentType}.
-   * @param version OData service version.
    * @return format as ContentType.
    */
   public ContentType getContentType() {

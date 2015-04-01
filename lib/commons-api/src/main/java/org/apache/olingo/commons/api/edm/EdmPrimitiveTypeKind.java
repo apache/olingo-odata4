@@ -81,7 +81,6 @@ public enum EdmPrimitiveTypeKind {
   /**
    * Gets <tt>EdmPrimitiveTypeKind</tt> from a full-qualified type name, for the given OData protocol version.
    * 
-   * @param version OData protocol version.
    * @param fqn full-qualified type name.
    * @return <tt>EdmPrimitiveTypeKind</tt> object.
    */
@@ -93,7 +92,6 @@ public enum EdmPrimitiveTypeKind {
    * Gets <tt>EdmPrimitiveTypeKind</tt> from a full type expression (as <tt>Edm.Int32</tt>), for the given OData
    * protocol version.
    * 
-   * @param version OData protocol version.
    * @param fqn string value type.
    * @return <tt>EdmPrimitiveTypeKind</tt> object.
    */

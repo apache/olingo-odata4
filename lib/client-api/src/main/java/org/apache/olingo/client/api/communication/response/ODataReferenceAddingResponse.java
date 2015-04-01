@@ -25,7 +25,7 @@ package org.apache.olingo.client.api.communication.response;
  * If the request was successful, the service response has status code 204 and
  * the body has to be empty.
  *
- * @see org.apache.olingo.client.api.communication.request.cud.api.request.cud.v4.ODataReferenceAddingRequest
+ * @see org.apache.olingo.client.api.communication.request.cud.ODataReferenceAddingRequest
  */
 public interface ODataReferenceAddingResponse extends ODataResponse {
 //No additional methods needed for now.

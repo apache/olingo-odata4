@@ -21,7 +21,7 @@ package org.apache.olingo.client.api.uri;
 /**
  * Interface for any available filter; obtain instances via <tt>FilterFactory</tt>.
  *
- * @see org.apache.olingo.client.api.uri.CommonFilterFactory
+ * @see org.apache.olingo.client.api.uri.FilterFactory
  */
 public interface URIFilter {
 

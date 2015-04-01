@@ -131,7 +131,7 @@ public class Schema extends AbstractEdmItem implements Annotatable{
   /**
    * All actions with the given name
    * @param name
-   * @return
+   * @return a list of actions
    */
   public List<Action> getActions(final String name) {
     return getAllByName(name, getActions());
@@ -149,7 +149,7 @@ public class Schema extends AbstractEdmItem implements Annotatable{
   /**
    * All functions with the given name
    * @param name
-   * @return
+   * @return a list of functions
    */
   public List<Function> getFunctions(final String name) {
     return getAllByName(name, getFunctions());
