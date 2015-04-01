@@ -49,6 +49,9 @@ public class ActionProvider {
   public static final FullQualifiedName nameBAETTwoKeyNavRTETTwoKeyNav =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETTwoKeyNavRTETTwoKeyNav");
   
+  public static final FullQualifiedName nameBAESAllPrimRT = 
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAESAllPrimRT");
+  
   public static final FullQualifiedName nameBAETAllPrimRT = 
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETAllPrimRT");
   
@@ -74,6 +77,7 @@ public class ActionProvider {
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTParam");
   public static final FullQualifiedName nameUARTTwoParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTTwoParam");
+
 
   public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
     if (actionName.equals(nameUARTString)) {
@@ -237,15 +241,20 @@ public class ActionProvider {
               .setParameters(Arrays.asList(
                   new Parameter().setName("ParameterETAllPrim")
                       .setNullable(false)
-                      .setType(EntityTypeProvider.nameETAllPrim))),
-          new Action().setName("BAETAllPrimRT")
-              .setBound(true)
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterETAllPrim")
-                      .setNullable(false)
-                      .setCollection(true)
-                      .setType(EntityTypeProvider.nameETAllPrim))));
-    }    
+                      .setType(EntityTypeProvider.nameETAllPrim)
+                  )));
+    } else if(actionName.equals(nameBAESAllPrimRT)) {
+      return Arrays.asList(
+          new Action().setName("BAESAllPrimRT")
+          .setBound(true)
+          .setParameters(Arrays.asList(
+              new Parameter().setName("ParameterETAllPrim")
+                  .setNullable(false)
+                  .setCollection(true)
+                  .setType(EntityTypeProvider.nameETAllPrim)
+              ))
+      );
+    }
 
     return null;
   }

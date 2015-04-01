@@ -176,6 +176,9 @@ public class FunctionProvider {
   public static final FullQualifiedName nameUFNRTCollCTNavFiveProp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UFNRTCollCTNavFiveProp");
 
+  public static final FullQualifiedName nameUFNRTCollETMixPrimCollCompTwoParam 
+    = new FullQualifiedName(SchemaProvider.NAMESPACE, "UFNRTCollETMixPrimCollCompTwoParam");
+
   public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
 
     if (functionName.equals(nameUFNRTInt16)) {
@@ -332,6 +335,20 @@ public class FunctionProvider {
                   new ReturnType().setType(ComplexTypeProvider.nameCTAllPrim).setNullable(false))
           );
 
+    } else if(functionName.equals(nameUFNRTCollETMixPrimCollCompTwoParam)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFNRTCollETMixPrimCollCompTwoParam")
+              .setParameters(Arrays.asList(
+                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString).setNullable(false),
+                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16).setNullable(false)))
+              .setComposable(false)
+              .setBound(false)
+              .setReturnType(
+                  new ReturnType().setType(ComplexTypeProvider.nameCTMixPrimCollComp)
+                                  .setNullable(false)
+                                  .setCollection(true))
+          );
     } else if (functionName.equals(nameUFCRTCTTwoPrimParam)) {
       return Arrays.asList(
           new Function()
@@ -855,7 +872,7 @@ public class FunctionProvider {
                   Arrays.asList(
                       new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
                           .setCollection(true).setNullable(false),
-                      new Parameter().setName("ParameterComplex").setType(ComplexTypeProvider.nameCTTwoPrim)
+                      new Parameter().setName("ParameterComp").setType(ComplexTypeProvider.nameCTTwoPrim)
                           .setNullable(false)))
               .setComposable(true)
               .setReturnType(
