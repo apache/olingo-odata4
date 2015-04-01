@@ -740,13 +740,22 @@ public class ODataBinderImpl implements ODataBinder {
     // fixes enum values treated as primitive when no type information is available
     if (client instanceof EdmEnabledODataClient && type != null) {
       final EdmEnumType edmType = ((EdmEnabledODataClient) client).getEdm(metadataETag).getEnumType(type);
-      if (valuable.isPrimitive() && edmType != null) {
+      if (!valuable.isCollection() && valuable.isPrimitive() && edmType != null) {
         valuable.setValue(ValueType.ENUM, valuable.asPrimitive());
       }
     }
 
     ODataValue value = null;
-    if (valuable.isEnum()) {
+
+    if (valuable.isCollection()) {
+      value = client.getObjectFactory().newCollectionValue(type == null ? null : "Collection(" + type.toString() + ")");
+
+      for (Object _value : valuable.asCollection()) {
+        final Property fake = new PropertyImpl();
+        fake.setValue(valuable.getValueType().getBaseType(), _value);
+        value.asCollection().add(getODataValue(type, fake, contextURL, metadataETag));
+      }
+    } else if (valuable.isEnum()) {
       value = client.getObjectFactory().newEnumValue(type == null ? null : type.toString(),
           valuable.asEnum().toString());
     } else if (valuable.isComplex()) {
@@ -833,15 +842,6 @@ public class ODataBinderImpl implements ODataBinder {
         }
 
         value = cValue;
-      } else if (valuable.isCollection()) {
-        value =
-            client.getObjectFactory().newCollectionValue(type == null ? null : "Collection(" + type.toString() + ")");
-
-        for (Object _value : valuable.asCollection()) {
-          final Property fake = new PropertyImpl();
-          fake.setValue(valuable.getValueType().getBaseType(), _value);
-          value.asCollection().add(getODataValue(type, fake, contextURL, metadataETag));
-        }
       }
     }
 

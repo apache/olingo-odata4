@@ -56,21 +56,33 @@ public abstract class AbstractValuable implements Valuable, Annotatable {
   
   @Override
   public boolean isPrimitive() {
+    if(isCollection()) {
+      return valueType.getBaseType() == ValueType.PRIMITIVE;
+    }
     return valueType == ValueType.PRIMITIVE;
   }
 
   @Override
   public boolean isGeospatial() {
+    if(isCollection()) {
+      return valueType.getBaseType() == ValueType.GEOSPATIAL;
+    }
     return valueType == ValueType.GEOSPATIAL;
   }
 
   @Override
   public boolean isEnum() {
+    if(isCollection()) {
+      return valueType.getBaseType() == ValueType.ENUM;
+    }
     return valueType == ValueType.ENUM;
   }
 
   @Override
   public boolean isComplex() {
+    if(isCollection()) {
+      return valueType.getBaseType() == ValueType.COMPLEX;
+    }
     return valueType == ValueType.COMPLEX;
   }
 
@@ -81,21 +93,33 @@ public abstract class AbstractValuable implements Valuable, Annotatable {
 
   @Override
   public Object asPrimitive() {
+    if(isCollection()) {
+      return null;
+    }
     return isPrimitive() ? value : null;
   }
 
   @Override
   public Geospatial asGeospatial() {
+    if(isCollection()) {
+      return null;
+    }
     return isGeospatial() ? (Geospatial) value : null;
   }
 
   @Override
   public Object asEnum() {
+    if(isCollection()) {
+      return null;
+    }
     return isEnum() ? value : null;
   }
 
   @Override
   public ComplexValue asComplex() {
+    if(isCollection()) {
+      return null;
+    }
     return isComplex() ? (ComplexValue) value : null;
   }
 

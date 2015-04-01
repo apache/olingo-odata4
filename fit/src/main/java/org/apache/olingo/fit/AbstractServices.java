@@ -1914,15 +1914,7 @@ public abstract class AbstractServices {
 
         alink.setRel(Constants.get(ConstantKey.ATOM_LINK_REL) + property.getName());
 
-        if (property.isComplex()) {
-          Entity inline = new EntityImpl();
-          inline.setType(navProperties.get(property.getName()).getType());
-          for (Property prop : property.asComplex().getValue()) {
-            inline.getProperties().add(prop);
-          }
-          alink.setInlineEntity(inline);
-
-        } else if (property.isCollection()) {
+        if (property.isCollection()) {
           EntitySet inline = new EntitySetImpl();
           for (Object value : property.asCollection()) {
             Entity inlineEntity = new EntityImpl();
@@ -1933,6 +1925,14 @@ public abstract class AbstractServices {
             inline.getEntities().add(inlineEntity);
           }
           alink.setInlineEntitySet(inline);
+        } else if (property.isComplex()) {
+          Entity inline = new EntityImpl();
+          inline.setType(navProperties.get(property.getName()).getType());
+          for (Property prop : property.asComplex().getValue()) {
+            inline.getProperties().add(prop);
+          }
+          alink.setInlineEntity(inline);
+
         } else {
           throw new IllegalStateException("Invalid navigation property " + property);
         }
