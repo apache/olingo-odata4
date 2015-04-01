@@ -43,8 +43,8 @@ public class JsonODataErrorDeserializer extends JsonDeserializer {
     final ODataError error = new ODataError();
 
     final ObjectNode tree = parser.getCodec().readTree(parser);
-    if (tree.has(jsonError)) {
-      final JsonNode errorNode = tree.get(jsonError);
+    if (tree.has(Constants.JSON_ERROR)) {
+      final JsonNode errorNode = tree.get(Constants.JSON_ERROR);
 
       if (errorNode.has(Constants.ERROR_CODE)) {
         error.setCode(errorNode.get(Constants.ERROR_CODE).textValue());

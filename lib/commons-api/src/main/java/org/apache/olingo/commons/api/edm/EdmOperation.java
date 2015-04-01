@@ -32,6 +32,8 @@ public interface EdmOperation extends EdmType, EdmAnnotatable {
   EdmParameter getParameter(String name);
 
   /**
+   * A list of all parameter names. If this is a bound action or function the first parameter name in the list is the
+   * binding parameter
    * @return a list of all parameter names
    */
   List<String> getParameterNames();
@@ -63,7 +65,7 @@ public interface EdmOperation extends EdmType, EdmAnnotatable {
    * @return true if binding parameter is of type collection.
    */
   Boolean isBindingParameterTypeCollection();
-  
+
   /**
    * @return the entity set path as a String or null if not present
    */

@@ -75,9 +75,10 @@ public class JsonPropertyDeserializer extends JsonDeserializer {
       contextURL = null;
     }
 
-    if (tree.has(jsonType)) {
-      property.setType(new EdmTypeInfo.Builder().setTypeExpression(tree.get(jsonType).textValue()).build().internal());
-      tree.remove(jsonType);
+    if (tree.has(Constants.JSON_TYPE)) {
+      property.setType(new EdmTypeInfo.Builder().setTypeExpression(tree.get(Constants.JSON_TYPE).textValue()).build()
+          .internal());
+      tree.remove(Constants.JSON_TYPE);
     }
 
     if (tree.has(Constants.JSON_NULL) && tree.get(Constants.JSON_NULL).asBoolean()) {

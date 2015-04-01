@@ -82,7 +82,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
     if (contextURL != null) {
       entity.setBaseURI(StringUtils.substringBefore(contextURL.toASCIIString(), Constants.METADATA));
     }
-    
+
     final String metadataETag;
     if (tree.hasNonNull(Constants.JSON_METADATA_ETAG)) {
       metadataETag = tree.get(Constants.JSON_METADATA_ETAG).textValue();
@@ -91,56 +91,57 @@ public class JsonEntityDeserializer extends JsonDeserializer {
       metadataETag = null;
     }
 
-    if (tree.hasNonNull(jsonETag)) {
-      entity.setETag(tree.get(jsonETag).textValue());
-      tree.remove(jsonETag);
+    if (tree.hasNonNull(Constants.JSON_ETAG)) {
+      entity.setETag(tree.get(Constants.JSON_ETAG).textValue());
+      tree.remove(Constants.JSON_ETAG);
     }
 
-    if (tree.hasNonNull(jsonType)) {
-      entity.setType(new EdmTypeInfo.Builder().setTypeExpression(tree.get(jsonType).textValue()).build().internal());
-      tree.remove(jsonType);
+    if (tree.hasNonNull(Constants.JSON_TYPE)) {
+      entity.setType(new EdmTypeInfo.Builder().setTypeExpression(tree.get(Constants.JSON_TYPE).textValue()).build()
+          .internal());
+      tree.remove(Constants.JSON_TYPE);
     }
 
-    if (tree.hasNonNull(jsonId)) {
-      entity.setId(URI.create(tree.get(jsonId).textValue()));
-      tree.remove(jsonId);
+    if (tree.hasNonNull(Constants.JSON_ID)) {
+      entity.setId(URI.create(tree.get(Constants.JSON_ID).textValue()));
+      tree.remove(Constants.JSON_ID);
     }
 
-    if (tree.hasNonNull(jsonReadLink)) {
+    if (tree.hasNonNull(Constants.JSON_READ_LINK)) {
       final LinkImpl link = new LinkImpl();
       link.setRel(Constants.SELF_LINK_REL);
-      link.setHref(tree.get(jsonReadLink).textValue());
+      link.setHref(tree.get(Constants.JSON_READ_LINK).textValue());
       entity.setSelfLink(link);
 
-      tree.remove(jsonReadLink);
+      tree.remove(Constants.JSON_READ_LINK);
     }
 
-    if (tree.hasNonNull(jsonEditLink)) {
+    if (tree.hasNonNull(Constants.JSON_EDIT_LINK)) {
       final LinkImpl link = new LinkImpl();
       if (serverMode) {
         link.setRel(Constants.EDIT_LINK_REL);
       }
-      link.setHref(tree.get(jsonEditLink).textValue());
+      link.setHref(tree.get(Constants.JSON_EDIT_LINK).textValue());
       entity.setEditLink(link);
 
-      tree.remove(jsonEditLink);
+      tree.remove(Constants.JSON_EDIT_LINK);
     }
 
-    if (tree.hasNonNull(jsonMediaReadLink)) {
-      entity.setMediaContentSource(URI.create(tree.get(jsonMediaReadLink).textValue()));
-      tree.remove(jsonMediaReadLink);
+    if (tree.hasNonNull(Constants.JSON_MEDIA_READ_LINK)) {
+      entity.setMediaContentSource(URI.create(tree.get(Constants.JSON_MEDIA_READ_LINK).textValue()));
+      tree.remove(Constants.JSON_MEDIA_READ_LINK);
     }
-    if (tree.hasNonNull(jsonMediaEditLink)) {
-      entity.setMediaContentSource(URI.create(tree.get(jsonMediaEditLink).textValue()));
-      tree.remove(jsonMediaEditLink);
+    if (tree.hasNonNull(Constants.JSON_MEDIA_EDIT_LINK)) {
+      entity.setMediaContentSource(URI.create(tree.get(Constants.JSON_MEDIA_EDIT_LINK).textValue()));
+      tree.remove(Constants.JSON_MEDIA_EDIT_LINK);
     }
-    if (tree.hasNonNull(jsonMediaContentType)) {
-      entity.setMediaContentType(tree.get(jsonMediaContentType).textValue());
-      tree.remove(jsonMediaContentType);
+    if (tree.hasNonNull(Constants.JSON_MEDIA_CONTENT_TYPE)) {
+      entity.setMediaContentType(tree.get(Constants.JSON_MEDIA_CONTENT_TYPE).textValue());
+      tree.remove(Constants.JSON_MEDIA_CONTENT_TYPE);
     }
-    if (tree.hasNonNull(jsonMediaETag)) {
-      entity.setMediaETag(tree.get(jsonMediaETag).textValue());
-      tree.remove(jsonMediaETag);
+    if (tree.hasNonNull(Constants.JSON_MEDIA_ETAG)) {
+      entity.setMediaETag(tree.get(Constants.JSON_MEDIA_ETAG).textValue());
+      tree.remove(Constants.JSON_MEDIA_ETAG);
     }
 
     final Set<String> toRemove = new HashSet<String>();
@@ -151,7 +152,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
       final Matcher customAnnotation = CUSTOM_ANNOTATION.matcher(field.getKey());
 
       links(field, entity, toRemove, tree, parser.getCodec());
-      if (field.getKey().endsWith(getJSONAnnotation(jsonMediaEditLink))) {
+      if (field.getKey().endsWith(getJSONAnnotation(Constants.JSON_MEDIA_EDIT_LINK))) {
         final LinkImpl link = new LinkImpl();
         link.setTitle(getTitle(field));
         link.setRel(Constants.NS_MEDIA_EDIT_LINK_REL + getTitle(field));
@@ -159,14 +160,15 @@ public class JsonEntityDeserializer extends JsonDeserializer {
         link.setType(ODataLinkType.MEDIA_EDIT.toString());
         entity.getMediaEditLinks().add(link);
 
-        if (tree.has(link.getTitle() + getJSONAnnotation(jsonMediaETag))) {
-          link.setMediaETag(tree.get(link.getTitle() + getJSONAnnotation(jsonMediaETag)).asText());
-          toRemove.add(link.getTitle() + getJSONAnnotation(jsonMediaETag));
+        if (tree.has(link.getTitle() + getJSONAnnotation(Constants.JSON_MEDIA_ETAG))) {
+          link.setMediaETag(tree.get(link.getTitle() + getJSONAnnotation(Constants.JSON_MEDIA_ETAG)).asText());
+          toRemove.add(link.getTitle() + getJSONAnnotation(Constants.JSON_MEDIA_ETAG));
         }
 
         toRemove.add(field.getKey());
-        toRemove.add(setInline(field.getKey(), getJSONAnnotation(jsonMediaEditLink), tree, parser.getCodec(), link));
-      } else if (field.getKey().endsWith(getJSONAnnotation(jsonMediaContentType))) {
+        toRemove.add(setInline(field.getKey(), getJSONAnnotation(Constants.JSON_MEDIA_EDIT_LINK), tree, parser
+            .getCodec(), link));
+      } else if (field.getKey().endsWith(getJSONAnnotation(Constants.JSON_MEDIA_CONTENT_TYPE))) {
         final String linkTitle = getTitle(field);
         for (Link link : entity.getMediaEditLinks()) {
           if (linkTitle.equals(link.getTitle())) {
