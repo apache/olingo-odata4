@@ -288,7 +288,7 @@ public class ContainerProvider {
                   .setPath("NavPropertyETMediaMany")
                   .setTarget("ESMedia"),
                 new NavigationPropertyBinding()
-                  .setPath("PropertyCompNav/NavPropertyETTwoKeyNavOn")
+                  .setPath("PropertyCompNav/NavPropertyETTwoKeyNavOne")
                   .setTarget("ESTwoKeyNav"),
                 new NavigationPropertyBinding()
                   .setPath("PropertyCompNav/NavPropertyETTwoKeyNavMany")
@@ -370,15 +370,55 @@ public class ContainerProvider {
                   .setPath("NavPropertyETTwoBaseTwoKeyNavOne")
                   .setTarget("ESBaseTwoKeyNav"),
                 new NavigationPropertyBinding()
-                  .setPath("NavPropertySINav")
-                  .setTarget("SINav")
+                  .setPath("ETBaseTwoKeyNav/CollPropertyCompNav/NavPropertyETTwoKeyNavMany")
+                  .setTarget("ESTwoKeyNav"),
+                new NavigationPropertyBinding()
+                  .setPath("ETBaseTwoKeyNav/NavPropertyETTwoBaseTwoKeyNavOne")
+                  .setTarget("ESBaseTwoKeyNav"),
+                new NavigationPropertyBinding()
+                .setPath("NavPropertySINav")
+                .setTarget("SINav")
             ));
+        
+      } else if(name.equals("ESKeyNavCont")) {
+        return new EntitySet()
+          .setName("ESKeyNavCont")
+          .setType(EntityTypeProvider.nameETKeyNavCont)
+          .setNavigationPropertyBindings(Arrays.asList(
+                new NavigationPropertyBinding()
+                    .setPath("NavPropertyETTwoKeyNavContOne/NavPropertyETKeyNavOne")
+                    .setTarget("ESKeyNav"),
+                new NavigationPropertyBinding()
+                    .setPath("NavPropertyETTwoKeyNavContMany/NavPropertyETKeyNavOne")
+                    .setTarget("ESKeyNav"),
+                new NavigationPropertyBinding()
+                    .setPath("PropertyCompNavCont/NavPropertyETKeyNavContMany/NavPropertyETKeyNavOne")
+                    .setTarget("ESKeyNav"),
+                new NavigationPropertyBinding()
+                    .setPath("PropertyCompNavCont/NavPropertyETKeyNavContOne/NavPropertyETKeyNavOne")
+                    .setTarget("ESKeyNav"),
+                new NavigationPropertyBinding()
+                    .setPath("PropertyCompNavCont/NavPropertyETTwoKeyNavContMany/NavPropertyETKeyNavOne")
+                    .setTarget("ESKeyNav"),
+                new NavigationPropertyBinding()
+                    .setPath("PropertyCompNavCont/NavPropertyETTwoKeyNavContOne/NavPropertyETKeyNavOne")
+                    .setTarget("ESKeyNav")
+              ));
 
       } else if (name.equals("ESBaseTwoKeyNav")) {
         return new EntitySet()
             .setName("ESBaseTwoKeyNav")
-            .setType(EntityTypeProvider.nameETBaseTwoKeyNav);
-
+            .setType(EntityTypeProvider.nameETBaseTwoKeyNav)
+            .setNavigationPropertyBindings(Arrays.asList(
+                new NavigationPropertyBinding()
+                        .setPath("NavPropertyETKeyNavMany")
+                        .setTarget("ESKeyNav"))
+            );
+      } else if(name.equals("ESTwoBaseTwoKeyNav")) {
+        return new EntitySet()
+          .setName("ESTwoBaseTwoKeyNav")
+          .setType(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
+        
       } else if (name.equals("ESCompMixPrimCollComp")) {
         return new EntitySet()
             .setName("ESCompMixPrimCollComp")
@@ -434,11 +474,13 @@ public class ContainerProvider {
       } else if (name.equals(AIRTES_ALL_PRIM_PARAM)) {
         return new ActionImport()
             .setName(AIRTES_ALL_PRIM_PARAM)
+            .setEntitySet("ESAllPrim")
             .setAction(ActionProvider.nameUARTETAllPrimParam);
 
       } else if (name.equals(AIRT_COLL_ES_ALL_PRIM_PARAM)) {
         return new ActionImport()
             .setName(AIRT_COLL_ES_ALL_PRIM_PARAM)
+            .setEntitySet("ESAllPrim")
             .setAction(ActionProvider.nameUARTCollETAllPrimParam);
 
       } else if (name.equals(AIRT)) {
@@ -605,7 +647,14 @@ public class ContainerProvider {
             .setNavigationPropertyBindings(Arrays.asList(
                 new NavigationPropertyBinding()
                     .setPath("NavPropertyETTwoKeyNavMany")
-                    .setTarget("ESTwoKeyNav")));
+                    .setTarget("ESTwoKeyNav"),
+                new NavigationPropertyBinding()
+                    .setPath("NavPropertyETTwoKeyNavOne")
+                    .setTarget("ESTwoKeyNav"),
+                new NavigationPropertyBinding()
+                    .setPath("NavPropertyETKeyNavOne")
+                    .setTarget("ESKeyNav")
+                ));
 
       } else if (name.equals("SIMedia")) {
         return new Singleton()

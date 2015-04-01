@@ -359,7 +359,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ODataEntity entity = entityResponse.getBody();
     assertNotNull(entity);
     final ODataComplexValue complex = entity.getProperty("PropertyCompCompNav").getComplexValue()
-        .get("PropertyComp").getComplexValue();
+        .get("PropertyCompNav").getComplexValue();
     assertNotNull(complex);
     final ODataProperty property = complex.get("PropertyInt16");
     assertNotNull(property);

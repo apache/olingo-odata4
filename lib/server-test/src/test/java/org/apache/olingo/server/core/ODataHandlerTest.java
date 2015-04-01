@@ -369,7 +369,7 @@ public class ODataHandlerTest {
     dispatchMethodNotAllowed(HttpMethod.PUT, complexCountUri, complexCountProcessor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, complexCountUri, complexCountProcessor);
 
-    final String mediaUri = "FICRTESMedia()/$value";
+    final String mediaUri = "FICRTESMedia(ParameterInt16=1)/$value";
     final MediaEntityProcessor mediaProcessor = mock(MediaEntityProcessor.class);
     dispatch(HttpMethod.GET, mediaUri, mediaProcessor);
     verify(mediaProcessor).readMediaEntity(

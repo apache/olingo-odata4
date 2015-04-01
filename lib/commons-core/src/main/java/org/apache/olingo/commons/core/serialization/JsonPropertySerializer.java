@@ -67,6 +67,8 @@ public class JsonPropertySerializer extends JsonSerializer {
 
     if (property.isNull()) {
       jgen.writeBooleanField(Constants.JSON_NULL, true);
+    } else if (property.isGeospatial() || property.isCollection()) {
+      valuable(jgen, property, Constants.VALUE);
     } else if (property.isPrimitive()) {
       final EdmTypeInfo typeInfo = property.getType() == null
           ? null
@@ -76,8 +78,6 @@ public class JsonPropertySerializer extends JsonSerializer {
       primitiveValue(jgen, typeInfo, property.asPrimitive());
     } else if (property.isEnum()) {
       jgen.writeStringField(Constants.VALUE, property.asEnum().toString());
-    } else if (property.isGeospatial() || property.isCollection()) {
-      valuable(jgen, property, Constants.VALUE);
     } else if (property.isComplex()) {
       for (Property cproperty : property.asComplex().getValue()) {
         valuable(jgen, cproperty, cproperty.getName());

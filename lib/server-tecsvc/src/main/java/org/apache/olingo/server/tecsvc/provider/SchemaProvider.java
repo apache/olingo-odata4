@@ -79,7 +79,8 @@ public class SchemaProvider {
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAbstract));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAbstractBase));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETMixEnumDefCollComp));
-
+    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETKeyNavCont));
+    
     // ComplexTypes
     List<ComplexType> complexType = new ArrayList<ComplexType>();
     schema.setComplexTypes(complexType);
@@ -98,7 +99,8 @@ public class SchemaProvider {
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoBasePrimCompNav));
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTCompNav));
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTMixEnumDef));
-
+    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTNavCont));
+        
     // TypeDefinitions
     List<TypeDefinition> typeDefinitions = new ArrayList<TypeDefinition>();
     schema.setTypeDefinitions(typeDefinitions);
@@ -107,8 +109,10 @@ public class SchemaProvider {
     // Actions
     List<Action> actions = new ArrayList<Action>();
     schema.setActions(actions);
+    actions.addAll(prov.getActions(ActionProvider.nameBAETAllPrimRT));
     actions.addAll(prov.getActions(ActionProvider.nameBAETTwoKeyNavRTETTwoKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAESAllPrimRTETAllPrim));
+    actions.addAll(prov.getActions(ActionProvider.nameBAESTwoKeyNavRTESKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAESTwoKeyNavRTESTwoKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAETBaseTwoKeyNavRTETBaseTwoKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav));
@@ -131,6 +135,7 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFNRTInt16));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETTwoKeyNav));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollETKeyNavContParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETTwoKeyNavParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETTwoKeyNavParamCTTwoPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTStringTwoParam));
@@ -168,6 +173,7 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCCollCTPrimCompRTESAllPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESKeyNavRTETKeyNav));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESKeyNavRTESTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCETKeyNavRTETKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFESTwoKeyNavRTESTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCETTwoKeyNavRTETTwoKeyNav));
@@ -180,7 +186,7 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESKeyNavRTETKeyNavParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCCTPrimCompRTETTwoKeyNavParam));
     // functions.addAll(prov.getFunctions(FunctionProvider.nameBFCCTPrimCompRTESTwoKeyNavParam));
-
+    
     // EntityContainer
     schema.setEntityContainer(prov.getEntityContainer());
 

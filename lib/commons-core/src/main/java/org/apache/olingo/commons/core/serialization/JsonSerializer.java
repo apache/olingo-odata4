@@ -336,6 +336,8 @@ public class JsonSerializer implements ODataSerializer {
 
     if (value.isNull()) {
       jgen.writeNull();
+    } else if (value.isCollection()) {
+      collection(jgen, typeInfo, value.getValueType(), value.asCollection());
     } else if (value.isPrimitive()) {
       primitiveValue(jgen, typeInfo, value.asPrimitive());
     } else if (value.isEnum()) {
@@ -344,8 +346,6 @@ public class JsonSerializer implements ODataSerializer {
       jgen.writeStartObject();
       geoSerializer.serialize(jgen, value.asGeospatial());
       jgen.writeEndObject();
-    } else if (value.isCollection()) {
-      collection(jgen, typeInfo, value.getValueType(), value.asCollection());
     } else if (value.isComplex()) {
       complexValue(jgen, typeInfo, value.asComplex().getValue(), value.asComplex());
     }
@@ -355,10 +355,12 @@ public class JsonSerializer implements ODataSerializer {
       throws IOException, EdmPrimitiveTypeException {
 
     if (!Constants.VALUE.equals(name) && !(valuable instanceof Annotation)
-        && !valuable.isComplex() && !valuable.isComplex()) {
+        && !(valuable.isComplex() && !valuable.isCollection())) {
 
       String type = valuable.getType();
-      if (StringUtils.isBlank(type) && valuable.isPrimitive() || valuable.isNull()) {
+      if ((!valuable.isCollection() &&
+              StringUtils.isBlank(type) &&
+              valuable.isPrimitive()) || valuable.isNull()) {
         type = EdmPrimitiveTypeKind.String.getFullQualifiedName().toString();
       }
       if (StringUtils.isNotBlank(type) && format != ODataFormat.JSON_NO_METADATA) {

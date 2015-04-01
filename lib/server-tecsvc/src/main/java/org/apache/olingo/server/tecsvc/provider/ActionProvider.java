@@ -37,6 +37,9 @@ public class ActionProvider {
   public static final FullQualifiedName nameBAESTwoKeyNavRTESTwoKeyNav =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAESTwoKeyNavRTESTwoKeyNav");
 
+  public static final FullQualifiedName nameBAESTwoKeyNavRTESKeyNav =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAESTwoKeyNavRTESKeyNav");
+  
   public static final FullQualifiedName nameBAETBaseTwoKeyNavRTETBaseTwoKeyNav =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETBaseTwoKeyNavRTETBaseTwoKeyNav");
 
@@ -45,7 +48,10 @@ public class ActionProvider {
 
   public static final FullQualifiedName nameBAETTwoKeyNavRTETTwoKeyNav =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETTwoKeyNavRTETTwoKeyNav");
-
+  
+  public static final FullQualifiedName nameBAETAllPrimRT = 
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAESAllPrimRT");
+  
   // Unbound Actions
   public static final FullQualifiedName nameUARTString = new FullQualifiedName(SchemaProvider.NAMESPACE,
           "UARTString");
@@ -69,7 +75,6 @@ public class ActionProvider {
   public static final FullQualifiedName nameUARTTwoParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTTwoParam");
 
-
   public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
     if (actionName.equals(nameUARTString)) {
       return Arrays.asList(
@@ -80,7 +85,8 @@ public class ActionProvider {
         return Arrays.asList(
               new Action().setName(nameUARTCollStringTwoParam.getName())
                           .setParameters(Arrays.asList(
-                                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)))
+                                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16),
+                                  new Parameter().setName("ParameterDuration").setType(PropertyProvider.nameDuration)))
                           .setReturnType(new ReturnType().setType(PropertyProvider.nameString).setCollection(true))
               );
 
@@ -91,7 +97,7 @@ public class ActionProvider {
                                   new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)
                                       .setNullable(false)))
                           .setReturnType(
-                                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim))
+                                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setNullable(false))
       );
 
     } else if (actionName.equals(nameUARTCollCTTwoPrimParam)) {
@@ -134,7 +140,8 @@ public class ActionProvider {
       return Arrays.asList(
               new Action().setName(nameUARTCollETAllPrimParam.getName())
                           .setParameters(Arrays.asList(
-                                  new Parameter().setName("ParameterTimeOfDay").setType(PropertyProvider.nameInt16)))
+                                  new Parameter().setName("ParameterTimeOfDay")
+                                                 .setType(PropertyProvider.nameTimeOfDay)))
                           .setReturnType(
                                   new ReturnType().setType(EntityTypeProvider.nameETAllPrim).setCollection(true))
       );
@@ -199,7 +206,20 @@ public class ActionProvider {
               .setReturnType(
                   new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true))
           );
-
+    
+    } else if(actionName.equals(nameBAESTwoKeyNavRTESKeyNav)) {
+      return Arrays.asList(
+          new Action().setName("BAESTwoKeyNavRTESKeyNav")
+          .setBound(true)
+          .setEntitySetPath("BindingParam/NavPropertyETKeyNavMany")
+          .setParameters(Arrays.asList(
+              new Parameter().setName("ParameterETTwoKeyNav")
+                             .setType(EntityTypeProvider.nameETTwoKeyNav)
+                             .setCollection(true)
+                             .setNullable(false)
+              ))
+          .setReturnType(new ReturnType().setType(EntityTypeProvider.nameETKeyNav).setCollection(true))
+          );
     } else if (actionName.equals(nameBAETBaseTwoKeyNavRTETBaseTwoKeyNav)) {
       return Arrays.asList(
           new Action().setName("BAETBaseTwoKeyNavRTETBaseTwoKeyNav")
@@ -222,7 +242,25 @@ public class ActionProvider {
               .setReturnType(
                   new ReturnType().setType(EntityTypeProvider.nameETBaseTwoKeyNav))
           );
-    }
+    } else if(actionName.equals(nameBAETAllPrimRT)) {
+      return Arrays.asList(
+          new Action().setName("BAETAllPrimRT")
+              .setBound(true)
+              .setParameters(Arrays.asList(
+                  new Parameter().setName("ParameterETAllPrim")
+                      .setNullable(false)
+                      .setType(EntityTypeProvider.nameETAllPrim)
+                  )),
+          new Action().setName("BAETAllPrimRT")
+              .setBound(true)
+              .setParameters(Arrays.asList(
+                  new Parameter().setName("ParameterETAllPrim")
+                      .setNullable(false)
+                      .setCollection(true)
+                      .setType(EntityTypeProvider.nameETAllPrim)
+                  ))
+          );
+    }    
 
     return null;
   }

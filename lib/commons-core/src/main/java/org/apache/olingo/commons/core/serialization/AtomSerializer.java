@@ -141,7 +141,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
 
     value(writer, property.getValueType(), typeInfo == null ? null : typeInfo.getPrimitiveTypeKind(),
         property.getValue());
-    if (!property.isNull() && property.isComplex()) {
+    if (!property.isNull() && property.isComplex() && !property.isCollection()) {
       links(writer, property.asComplex().getAssociationLinks());
       links(writer, property.asComplex().getNavigationLinks());
     }

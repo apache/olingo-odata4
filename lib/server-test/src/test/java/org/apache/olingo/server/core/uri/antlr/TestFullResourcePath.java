@@ -1724,7 +1724,7 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'");
 
-    testUri.run("FICRTESMedia()/$value")
+    testUri.run("FICRTESMedia(ParameterInt16=1)/$value")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isFunctionImport("FICRTESMedia")
