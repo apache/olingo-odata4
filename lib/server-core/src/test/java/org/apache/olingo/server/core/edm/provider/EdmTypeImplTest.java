@@ -37,10 +37,10 @@ public class EdmTypeImplTest {
 
   @Test
   public void getterTest() {
-    EdmType type = new EdmTypeImplTester(new FullQualifiedName("namespace", "name"), EdmTypeKind.UNDEFINED);
+    EdmType type = new EdmTypeImplTester(new FullQualifiedName("namespace", "name"), EdmTypeKind.PRIMITIVE);
     assertEquals("name", type.getName());
     assertEquals("namespace", type.getNamespace());
-    assertEquals(EdmTypeKind.UNDEFINED, type.getKind());
+    assertEquals(EdmTypeKind.PRIMITIVE, type.getKind());
     EdmAnnotatable an = (EdmAnnotatable) type;
     assertNotNull(an.getAnnotations().get(0));
   }

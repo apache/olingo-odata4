@@ -215,13 +215,17 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       ParameterImpl parameter = new ParameterImpl();
       parameter.setName(name);
       JsonNode jsonNode = node.get(name);
-      if (jsonNode == null) {
+      if (jsonNode == null || jsonNode.isNull()) {
         if (!edmParameter.isNullable()) {
-          // TODO: new message key.
           throw new DeserializerException("Non-nullable parameter not present or null",
-              DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, name);
+              DeserializerException.MessageKeys.INVALID_NULL_PARAMETER, name);
         }
-      } else {
+      }
+
+      switch (edmParameter.getType().getKind()) {
+      case PRIMITIVE:
+      case DEFINITION:
+      case ENUM:
         Property consumePropertyNode =
             consumePropertyNode(edmParameter.getName(), edmParameter.getType(), edmParameter.isCollection(),
                 edmParameter.isNullable(), edmParameter.getMaxLength(), edmParameter.getPrecision(), edmParameter
@@ -231,6 +235,14 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         parameter.setValue(consumePropertyNode.getValueType(), consumePropertyNode.getValue());
         parameters.add(parameter);
         node.remove(name);
+        break;
+      case COMPLEX:
+      case ENTITY:
+        throw new DeserializerException("Entity an complex parameters currently not Implemented",
+            DeserializerException.MessageKeys.NOT_IMPLEMENTED);
+      default:
+        throw new DeserializerException("Invalid type kind " + edmParameter.getType().getKind().toString()
+            + " for action parameter: " + name, DeserializerException.MessageKeys.INVALID_ACTION_PARAMETER_TYPE, name);
       }
     }
   }

@@ -45,7 +45,9 @@ public class DeserializerException extends ODataTranslatedException {
     /** parameter: navigationPropertyName */NAVIGATION_PROPERTY_NOT_FOUND, 
     /** parameter: annotationName */INVALID_ANNOTATION_TYPE, 
     /** parameter: annotationName */INVALID_NULL_ANNOTATION, 
-    /** parameter: binding link */INVALID_ENTITY_BINDING_LINK;
+    /** parameter: binding link */INVALID_ENTITY_BINDING_LINK, 
+    /** parameter: action parameter name */INVALID_ACTION_PARAMETER_TYPE, 
+    /** parameter: parameterName */ INVALID_NULL_PARAMETER;
 
     @Override
     public String getKey() {
