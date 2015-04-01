@@ -30,7 +30,6 @@ public class ODataInlineEntity extends ODataLink {
   /**
    * Constructor.
    * 
-   * @param version OData service version.
    * @param uri edit link.
    * @param type type.
    * @param title title.
@@ -45,7 +44,6 @@ public class ODataInlineEntity extends ODataLink {
   /**
    * Constructor.
    * 
-   * @param version OData service version.
    * @param baseURI base URI.
    * @param href href.
    * @param type type.

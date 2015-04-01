@@ -98,7 +98,9 @@ public class ContainerProvider {
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCompMixPrimCollComp"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESFourKeyAlias"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESMixEnumDefCollComp"));
-
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoBaseTwoKeyNav"));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESKeyNavCont"));
+    
     // Singletons
     List<Singleton> singletons = new ArrayList<Singleton>();
     container.setSingletons(singletons);
@@ -135,6 +137,7 @@ public class ContainerProvider {
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCTAllPrimTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTESMixPrimCollCompTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollETMixPrimCollCompTwoParam"));
+    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINRTCollETMixPrimCollCompTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollCTTwoPrim"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTESMedia"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollESMedia"));
@@ -144,7 +147,9 @@ public class ContainerProvider {
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTString"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollESTwoKeyNavParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollCTTwoPrimParam"));
-
+    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINRTCollCTNavFiveProp"));
+    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollESKeyNavContParam"));  
+    
     return container;
   }
 
@@ -364,9 +369,6 @@ public class ContainerProvider {
                   .setPath("CollPropertyCompNav/NavPropertyETMediaMany")
                   .setTarget("ESMedia"),
                 new NavigationPropertyBinding()
-                  .setPath("CollPropertyCompNav/NavPropertyETTwoKeyNavMany")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
                   .setPath("NavPropertyETTwoBaseTwoKeyNavOne")
                   .setTarget("ESBaseTwoKeyNav"),
                 new NavigationPropertyBinding()
@@ -563,7 +565,13 @@ public class ContainerProvider {
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTESMixPrimCollCompTwoParam)
             .setIncludeInServiceDocument(true);
-
+        
+      } else if(name.equals("FINRTCollETMixPrimCollCompTwoParam")) {
+        return new FunctionImport()
+          .setName(name)
+          .setFunction(FunctionProvider.nameUFNRTCollETMixPrimCollCompTwoParam)
+          .setIncludeInServiceDocument(true);
+      
       } else if (name.equals("FICRTCollETMixPrimCollCompTwoParam")) {
         return new FunctionImport()
             .setName(name)
@@ -625,10 +633,22 @@ public class ContainerProvider {
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCollCTTwoPrimParam)
             .setIncludeInServiceDocument(true);
-
+        
+      } else if(name.equals("FINRTCollCTNavFiveProp")) {
+        return new FunctionImport()
+          .setName(name)
+          .setFunction(FunctionProvider.nameUFNRTCollCTNavFiveProp)
+          .setIncludeInServiceDocument(true);
+        
+      } else if(name.equals("FICRTCollESKeyNavContParam")) {
+        return new FunctionImport()
+        .setName(name)
+        .setFunction(FunctionProvider.nameUFCRTCollETKeyNavContParam)
+        .setEntitySet("ESKeyNavCont")
+        .setIncludeInServiceDocument(true);
       }
     }
-
+    
     return null;
   }
 

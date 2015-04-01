@@ -73,7 +73,6 @@ public enum ODataLinkType {
    * Gets
    * <code>LinkType</code> instance from the given rel and type.
    * 
-   * @param version OData protocol version.
    * @param rel rel.
    * @param type type.
    * @return <code>ODataLinkType</code> object.

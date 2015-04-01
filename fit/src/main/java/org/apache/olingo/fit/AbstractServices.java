@@ -1463,7 +1463,7 @@ public abstract class AbstractServices {
    * @param path
    * @param format
    * @param changes
-   * @return
+   * @return response
    */
   @PUT
   @Path("/{entitySetName}({entityId})/{path:.*}/$value")
@@ -1491,7 +1491,7 @@ public abstract class AbstractServices {
    * @param path
    * @param format
    * @param changes
-   * @return
+   * @return response
    */
   @MERGE
   @Path("/{entitySetName}({entityId})/{path:.*}")
@@ -1519,7 +1519,7 @@ public abstract class AbstractServices {
    * @param path
    * @param format
    * @param changes
-   * @return
+   * @return response
    */
   @PATCH
   @Path("/{entitySetName}({entityId})/{path:.*}")
@@ -1587,7 +1587,7 @@ public abstract class AbstractServices {
    * @param path
    * @param format
    * @param changes
-   * @return
+   * @return response
    */
   @PUT
   @Path("/{entitySetName}({entityId})/{path:.*}")
@@ -1650,7 +1650,7 @@ public abstract class AbstractServices {
    * @param entityId
    * @param path
    * @param format
-   * @return
+   * @return response
    */
   @DELETE
   @Path("/{entitySetName}({entityId})/{path:.*}/$value")

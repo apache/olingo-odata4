@@ -175,7 +175,7 @@ public interface URIBuilder {
    * @return current URIBuilder instance
    * @see QueryOption#FILTER
    * @see URIFilter
-   * @see org.apache.olingo.client.api.uri.CommonFilterFactory
+   * @see org.apache.olingo.client.api.uri.FilterFactory
    */
   URIBuilder filter(URIFilter filter);
 

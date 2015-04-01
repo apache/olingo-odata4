@@ -147,9 +147,12 @@ public class ODataJsonSerializer implements ODataSerializer {
         json.writeNumberField(Constants.JSON_COUNT, entitySet.getCount());
       }
       json.writeFieldName(Constants.VALUE);
-      writeEntitySet(metadata, entityType, entitySet, options == null ? null : options.getExpand(),
-          options == null ? null : options.getSelect(),
-          options == null ? false : options.onlyReferences(), json);
+      if(options == null) {
+        writeEntitySet(metadata, entityType, entitySet, null, null, false, json);
+      } else {
+        writeEntitySet(metadata, entityType, entitySet,
+            options.getExpand(), options.getSelect(), options.onlyReferences(), json);
+      }
       if (entitySet.getNext() != null) {
         json.writeStringField(Constants.JSON_NEXT_LINK, entitySet.getNext().toASCIIString());
       }
@@ -242,7 +245,8 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   protected EdmEntityType resolveEntityType(ServiceMetadata metadata, EdmEntityType baseType,
       String derivedTypeName) throws SerializerException {
-    if (baseType.getFullQualifiedName().getFullQualifiedNameAsString().equals(derivedTypeName)) {
+    if (derivedTypeName == null ||
+        baseType.getFullQualifiedName().getFullQualifiedNameAsString().equals(derivedTypeName)) {
       return baseType;
     }
     EdmEntityType derivedType = metadata.getEdm().getEntityType(new FullQualifiedName(derivedTypeName));
@@ -265,7 +269,8 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   protected EdmComplexType resolveComplexType(ServiceMetadata metadata, EdmComplexType baseType,
       String derivedTypeName) throws SerializerException {
-    if (baseType.getFullQualifiedName().getFullQualifiedNameAsString().equals(derivedTypeName)) {
+    if (derivedTypeName == null ||
+        baseType.getFullQualifiedName().getFullQualifiedNameAsString().equals(derivedTypeName)) {
       return baseType;
     }
     EdmComplexType derivedType = metadata.getEdm().getComplexType(new FullQualifiedName(derivedTypeName));

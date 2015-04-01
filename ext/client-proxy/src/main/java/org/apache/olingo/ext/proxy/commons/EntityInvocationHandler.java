@@ -277,7 +277,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   /**
    * Gets the current ETag defined into the wrapped entity.
    *
-   * @return
+   * @return the current etag
    */
   public String getETag() {
     return getEntity().getETag();

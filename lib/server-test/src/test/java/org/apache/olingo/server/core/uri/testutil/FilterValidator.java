@@ -286,7 +286,7 @@ public class FilterValidator implements TestValidator {
    * Validates the serialized filterTree against a given filterString
    * The given expected filterString is compressed before to allow better readable code in the unit tests
    * @param toBeCompr
-   * @return
+   * @return {@link FilterValidator}
    */
   public FilterValidator isCompr(final String toBeCompr) {
     return is(compress(toBeCompr));

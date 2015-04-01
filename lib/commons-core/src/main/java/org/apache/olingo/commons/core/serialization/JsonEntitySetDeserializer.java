@@ -79,17 +79,17 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
       metadataETag = null;
     }
 
-    if (tree.hasNonNull(jsonCount)) {
-      entitySet.setCount(tree.get(jsonCount).asInt());
-      tree.remove(jsonCount);
+    if (tree.hasNonNull(Constants.JSON_COUNT)) {
+      entitySet.setCount(tree.get(Constants.JSON_COUNT).asInt());
+      tree.remove(Constants.JSON_COUNT);
     }
-    if (tree.hasNonNull(jsonNextLink)) {
-      entitySet.setNext(URI.create(tree.get(jsonNextLink).textValue()));
-      tree.remove(jsonNextLink);
+    if (tree.hasNonNull(Constants.JSON_NEXT_LINK)) {
+      entitySet.setNext(URI.create(tree.get(Constants.JSON_NEXT_LINK).textValue()));
+      tree.remove(Constants.JSON_NEXT_LINK);
     }
-    if (tree.hasNonNull(jsonDeltaLink)) {
-      entitySet.setDeltaLink(URI.create(tree.get(jsonDeltaLink).textValue()));
-      tree.remove(jsonDeltaLink);
+    if (tree.hasNonNull(Constants.JSON_DELTA_LINK)) {
+      entitySet.setDeltaLink(URI.create(tree.get(Constants.JSON_DELTA_LINK).textValue()));
+      tree.remove(Constants.JSON_DELTA_LINK);
     }
 
     if (tree.hasNonNull(Constants.VALUE)) {

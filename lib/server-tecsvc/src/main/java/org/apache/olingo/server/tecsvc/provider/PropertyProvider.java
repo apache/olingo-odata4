@@ -733,7 +733,7 @@ public class PropertyProvider {
         .setType(EntityTypeProvider.nameETKeyNav);
         
   public static final NavigationProperty navPropertyETTwoKeyNavContOneCT_ETTwoKeyNav = new NavigationProperty()
-        .setName("NavPropertyETKeyNavContOne")
+        .setName("NavPropertyETTwoKeyNavContOne")
         .setContainsTarget(true)
         .setType(EntityTypeProvider.nameETTwoKeyNav);
   

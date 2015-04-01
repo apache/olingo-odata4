@@ -72,36 +72,6 @@ public class JsonDeserializer implements ODataDeserializer {
 
   protected final boolean serverMode;
 
-  protected String jsonType = Constants.JSON_TYPE;
-
-  protected String jsonId = Constants.JSON_ID;
-
-  protected String jsonETag = Constants.JSON_ETAG;
-
-  protected String jsonReadLink = Constants.JSON_READ_LINK;
-
-  protected String jsonEditLink = Constants.JSON_EDIT_LINK;
-
-  protected String jsonMediaEditLink = Constants.JSON_MEDIA_EDIT_LINK;
-
-  protected String jsonMediaReadLink = Constants.JSON_MEDIA_READ_LINK;
-
-  protected String jsonMediaContentType = Constants.JSON_MEDIA_CONTENT_TYPE;
-
-  protected String jsonMediaETag = Constants.JSON_MEDIA_ETAG;
-
-  protected String jsonAssociationLink = Constants.JSON_ASSOCIATION_LINK;
-
-  protected String jsonNavigationLink = Constants.JSON_NAVIGATION_LINK;
-
-  protected String jsonCount = Constants.JSON_COUNT;
-
-  protected String jsonNextLink = Constants.JSON_NEXT_LINK;
-
-  protected String jsonDeltaLink = Constants.JSON_DELTA_LINK;
-
-  protected String jsonError = Constants.JSON_ERROR;
-
   private JsonGeoValueDeserializer geoDeserializer;
 
   private JsonParser parser;
@@ -163,7 +133,7 @@ public class JsonDeserializer implements ODataDeserializer {
   private void clientLinks(final Map.Entry<String, JsonNode> field, final Linked linked, final Set<String> toRemove,
       final JsonNode tree, final ObjectCodec codec) throws IOException {
 
-    if (field.getKey().endsWith(jsonNavigationLink)) {
+    if (field.getKey().endsWith(Constants.JSON_NAVIGATION_LINK)) {
       final LinkImpl link = new LinkImpl();
       link.setTitle(getTitle(field));
       link.setRel(Constants.NS_NAVIGATION_LINK_REL + getTitle(field));
@@ -176,8 +146,8 @@ public class JsonDeserializer implements ODataDeserializer {
       linked.getNavigationLinks().add(link);
 
       toRemove.add(field.getKey());
-      toRemove.add(setInline(field.getKey(), jsonNavigationLink, tree, codec, link));
-    } else if (field.getKey().endsWith(jsonAssociationLink)) {
+      toRemove.add(setInline(field.getKey(), Constants.JSON_NAVIGATION_LINK, tree, codec, link));
+    } else if (field.getKey().endsWith(Constants.JSON_ASSOCIATION_LINK)) {
       final LinkImpl link = new LinkImpl();
       link.setTitle(getTitle(field));
       link.setRel(Constants.NS_ASSOCIATION_LINK_REL + getTitle(field));
@@ -193,7 +163,7 @@ public class JsonDeserializer implements ODataDeserializer {
       final JsonNode tree, final ObjectCodec codec) throws IOException {
 
     if (field.getKey().endsWith(Constants.JSON_BIND_LINK_SUFFIX)
-        || field.getKey().endsWith(jsonNavigationLink)) {
+        || field.getKey().endsWith(Constants.JSON_NAVIGATION_LINK)) {
 
       if (field.getValue().isValueNode()) {
         final String suffix = field.getKey().replaceAll("^.*@", "@");
@@ -280,7 +250,7 @@ public class JsonDeserializer implements ODataDeserializer {
         if (annotatable != null) {
           annotatable.getAnnotations().add(entityAnnot);
         }
-      } else if (type == null && field.getKey().endsWith(getJSONAnnotation(jsonType))) {
+      } else if (type == null && field.getKey().endsWith(getJSONAnnotation(Constants.JSON_TYPE))) {
         type = field.getValue().asText();
       } else if (annotation == null && customAnnotation.matches() && !"odata".equals(customAnnotation.group(2))) {
         annotation = new AnnotationImpl();
@@ -354,8 +324,8 @@ public class JsonDeserializer implements ODataDeserializer {
           values.add(child.asText());
         }
       } else if (child.isContainerNode()) {
-        if (child.has(jsonType)) {
-          ((ObjectNode) child).remove(jsonType);
+        if (child.has(Constants.JSON_TYPE)) {
+          ((ObjectNode) child).remove(Constants.JSON_TYPE);
         }
         final Object value = fromComplex((ObjectNode) child, codec);
         valueType = ValueType.COLLECTION_COMPLEX;
@@ -387,9 +357,9 @@ public class JsonDeserializer implements ODataDeserializer {
       break;
 
     case COMPLEX:
-      if (node.has(jsonType)) {
-        valuable.setType(node.get(jsonType).asText());
-        ((ObjectNode) node).remove(jsonType);
+      if (node.has(Constants.JSON_TYPE)) {
+        valuable.setType(node.get(Constants.JSON_TYPE).asText());
+        ((ObjectNode) node).remove(Constants.JSON_TYPE);
       }
       final Object value = fromComplex((ObjectNode) node, codec);
       valuable.setValue(ValueType.COMPLEX, value);

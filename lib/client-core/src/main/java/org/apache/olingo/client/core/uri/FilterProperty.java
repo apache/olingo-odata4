@@ -23,7 +23,7 @@ import org.apache.olingo.client.api.uri.FilterArg;
 /**
  * Filter property path; obtain instances via <tt>FilterArgFactory</tt>.
  *
- * @see org.apache.olingo.client.api.uri.CommonFilterArgFactory
+ * @see org.apache.olingo.client.api.uri.FilterArgFactory
  */
 public class FilterProperty implements FilterArg {
 

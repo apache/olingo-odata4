@@ -105,7 +105,6 @@ public class ODataLink extends ODataItem implements ODataAnnotatable {
   /**
    * Constructor.
    * 
-   * @param version OData service version.
    * @param uri URI.
    * @param type type.
    * @param title title.

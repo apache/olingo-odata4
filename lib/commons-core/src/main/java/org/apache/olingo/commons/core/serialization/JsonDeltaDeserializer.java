@@ -56,14 +56,14 @@ public class JsonDeltaDeserializer extends JsonDeserializer {
       delta.setBaseURI(StringUtils.substringBefore(contextURL.toASCIIString(), Constants.METADATA));
     }
 
-    if (tree.hasNonNull(jsonCount)) {
-      delta.setCount(tree.get(jsonCount).asInt());
+    if (tree.hasNonNull(Constants.JSON_COUNT)) {
+      delta.setCount(tree.get(Constants.JSON_COUNT).asInt());
     }
-    if (tree.hasNonNull(jsonNextLink)) {
-      delta.setNext(URI.create(tree.get(jsonNextLink).textValue()));
+    if (tree.hasNonNull(Constants.JSON_NEXT_LINK)) {
+      delta.setNext(URI.create(tree.get(Constants.JSON_NEXT_LINK).textValue()));
     }
-    if (tree.hasNonNull(jsonDeltaLink)) {
-      delta.setDeltaLink(URI.create(tree.get(jsonDeltaLink).textValue()));
+    if (tree.hasNonNull(Constants.JSON_DELTA_LINK)) {
+      delta.setDeltaLink(URI.create(tree.get(Constants.JSON_DELTA_LINK).textValue()));
     }
 
     if (tree.hasNonNull(Constants.VALUE)) {

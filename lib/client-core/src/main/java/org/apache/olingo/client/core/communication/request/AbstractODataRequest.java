@@ -47,9 +47,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 /**
  * Abstract representation of an OData request. Get instance by using factories.
  *
- * @see org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFactory
  * @see org.apache.olingo.client.api.communication.request.cud.CUDRequestFactory
- * @see org.apache.olingo.client.api.communication.request.batch.v3.BatchRequestFactory
  * @see org.apache.olingo.client.api.communication.request.batch.BatchRequestFactory
  * @see org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory
  */

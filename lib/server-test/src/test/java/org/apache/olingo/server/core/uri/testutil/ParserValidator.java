@@ -57,7 +57,7 @@ public class ParserValidator {
    * Used in fast LL Parsing:
    * Don't stop the parsing process when the slower full context parsing (with prediction mode SLL) is
    * required
-   * @return
+   * @return {@link ParserValidator}
    */
   public ParserValidator aFC() {
     allowFullContext = true;
@@ -68,7 +68,7 @@ public class ParserValidator {
    * Used in fast LL Parsing:
    * Allows ContextSensitifity Errors which occur often when using the slower full context parsing
    * and indicate that there is a context sensitivity ( which may not be an error).
-   * @return
+   * @return {@link ParserValidator}
    */
   public ParserValidator aCS() {
     allowContextSensitifity = true;
@@ -78,7 +78,7 @@ public class ParserValidator {
   /**
    * Used in fast LL Parsing:
    * Allows ambiguities
-   * @return
+   * @return {@link ParserValidator}
    */
   public ParserValidator aAM() {
     allowAmbiguity = true;

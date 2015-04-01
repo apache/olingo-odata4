@@ -186,7 +186,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   public List<Parameter> actionParameters(InputStream stream, final EdmAction edmAction) throws DeserializerException {
     try {
       ObjectNode tree = parseJsonTree(stream);
-      ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+      List<Parameter> parameters = new ArrayList<Parameter>();
       consumeParameters(edmAction, tree, parameters);
       assertJsonNodeIsEmpty(tree);
       return parameters;
@@ -211,29 +211,50 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     return tree;
   }
 
-  private void consumeParameters(final EdmAction edmAction, ObjectNode node, ArrayList<Parameter> parameters)
+  private void consumeParameters(final EdmAction edmAction, ObjectNode node, List<Parameter> parameters)
       throws DeserializerException {
-    for (final String name : edmAction.getParameterNames()) {
+    List<String> parameterNames = edmAction.getParameterNames();
+    if (edmAction.isBound()) {
+      // The binding parameter must not occur in the payload.
+      parameterNames = parameterNames.subList(1, parameterNames.size());
+    }
+    for (final String name : parameterNames) {
       final EdmParameter edmParameter = edmAction.getParameter(name);
       ParameterImpl parameter = new ParameterImpl();
       parameter.setName(name);
       JsonNode jsonNode = node.get(name);
-      if (jsonNode == null) {
-        if (!edmParameter.isNullable()) {
-          // TODO: new message key.
-          throw new DeserializerException("Non-nullable parameter not present or null",
-              DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, name);
+
+      switch (edmParameter.getType().getKind()) {
+      case PRIMITIVE:
+      case DEFINITION:
+      case ENUM:
+        if (jsonNode == null || jsonNode.isNull()) {
+          if (!edmParameter.isNullable()) {
+            throw new DeserializerException("Non-nullable parameter not present or null",
+                DeserializerException.MessageKeys.INVALID_NULL_PARAMETER, name);
+          }
+          if (edmParameter.isCollection()) {
+            throw new DeserializerException("Collection must not be null for parameter: " + name,
+                DeserializerException.MessageKeys.INVALID_NULL_PARAMETER, name);
+          }
+          parameter.setValue(ValueType.PRIMITIVE, null);
+        } else {
+          Property consumePropertyNode =
+              consumePropertyNode(edmParameter.getName(), edmParameter.getType(), edmParameter.isCollection(),
+                  edmParameter.isNullable(), edmParameter.getMaxLength(), edmParameter.getPrecision(), edmParameter
+                      .getScale(), true, edmParameter.getMapping(), jsonNode);
+          parameter.setValue(consumePropertyNode.getValueType(), consumePropertyNode.getValue());
+          parameters.add(parameter);
+          node.remove(name);
         }
-      } else {
-        Property consumePropertyNode =
-            consumePropertyNode(edmParameter.getName(), edmParameter.getType(), edmParameter.isCollection(),
-                edmParameter.isNullable(), edmParameter.getMaxLength(), edmParameter.getPrecision(), edmParameter
-                    .getScale(),
-                true, edmParameter.getMapping(),
-                jsonNode);
-        parameter.setValue(consumePropertyNode.getValueType(), consumePropertyNode.getValue());
-        parameters.add(parameter);
-        node.remove(name);
+        break;
+      case COMPLEX:
+      case ENTITY:
+        throw new DeserializerException("Entity an complex parameters currently not Implemented",
+            DeserializerException.MessageKeys.NOT_IMPLEMENTED);
+      default:
+        throw new DeserializerException("Invalid type kind " + edmParameter.getType().getKind().toString()
+            + " for action parameter: " + name, DeserializerException.MessageKeys.INVALID_ACTION_PARAMETER_TYPE, name);
       }
     }
   }
