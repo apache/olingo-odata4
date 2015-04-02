@@ -95,7 +95,9 @@
     <tomcat.servlet.port>9080</tomcat.servlet.port>
     <tomcat.version>7.0.55</tomcat.version>
 
+    <!-- Project build settings -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.source>1.6</project.build.source>
   </properties>
 
   <dependencyManagement>
@@ -291,7 +293,6 @@
   </dependencyManagement>
 
   <build>
-
     <finalName>${project.name}-${project.version}</finalName>
 
     <pluginManagement>
@@ -463,8 +464,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>${project.build.source}</source>
+          <target>${project.build.source}</target>
           <showWarnings>true</showWarnings>
           <showDeprecation>true</showDeprecation>
           <compilerArgument>-Xlint:unchecked</compilerArgument>
