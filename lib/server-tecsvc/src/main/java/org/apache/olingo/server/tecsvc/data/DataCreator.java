@@ -565,21 +565,12 @@ public class DataCreator {
     return new PropertyImpl(null, name, ValueType.COLLECTION_PRIMITIVE, Arrays.asList(values));
   }
 
-  protected static Property createComplex(final String name, String type, final Property... properties) {
-    return createComplex(name, properties);
-  }
-
   protected static Property createComplex(final String name, final Property... properties) {
     ComplexValue complexValue = new ComplexValueImpl();
     for (final Property property : properties) {
       complexValue.getValue().add(property);
     }
     return new PropertyImpl(null, name, ValueType.COMPLEX, complexValue);
-  }
-
-  protected static Property createComplexCollection(final String name, String type, final List<Property>...
-      propertiesList) {
-    return createComplexCollection(name, propertiesList);
   }
 
   protected static Property createComplexCollection(final String name, final List<Property>... propertiesList) {

@@ -31,7 +31,6 @@ import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
-import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 
 public class FunctionData {
 
@@ -81,12 +80,12 @@ public class FunctionData {
     } else if (name.equals("UFCRTCollString")) {
       return data.get("ESCollAllPrim").getEntities().get(0).getProperty("CollPropertyString");
     } else if (name.equals("UFCRTCTTwoPrim")) {
-      return DataCreator.createComplex(name, ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
+      return DataCreator.createComplex(name,
           DataCreator.createPrimitive("PropertyInt16", 16),
           DataCreator.createPrimitive("PropertyString", "UFCRTCTTwoPrim string value"));
     } else if (name.equals("UFCRTCTTwoPrimParam")) {
       try {
-        return DataCreator.createComplex(name,ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
+        return DataCreator.createComplex(name,
             DataCreator.createPrimitive("PropertyInt16",
                 EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16).valueOfString(
                     getParameterText("ParameterInt16", parameters),
@@ -100,7 +99,7 @@ public class FunctionData {
         throw new DataProviderException("Error in function " + name + ".", e);
       }
     } else if (name.equals("UFCRTCollCTTwoPrim")) {
-      return DataCreator.createComplexCollection(name,ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
+      return DataCreator.createComplexCollection(name,
           Arrays.asList(DataCreator.createPrimitive("PropertyInt16", 16),
               DataCreator.createPrimitive("PropertyString", "Test123")),
           Arrays.asList(DataCreator.createPrimitive("PropertyInt16", 17),
