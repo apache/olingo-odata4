@@ -25,6 +25,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.UpdateType;
@@ -34,6 +35,7 @@ import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResp
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.ODataProperty;
@@ -308,6 +310,51 @@ public class BindingITCase extends AbstractBaseTestITCase {
     } catch(ODataClientErrorException e) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
     }
+  }
+  
+  @Test
+  public void testDeepInsertWithBindingSameNavigationProperty() {
+   final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+   client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+   final ODataObjectFactory of = client.getObjectFactory();
+   
+   final ODataEntity entity = of.newEntity(ET_KEY_NAV);
+   entity.getProperties().add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder()
+         .buildString("1")));
+   entity.getProperties().add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+       .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short)1)))
+       .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("1")))));
+   
+   final ODataEntity innerEntity = of.newEntity(ET_KEY_NAV);
+   innerEntity.getProperties().add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder()
+        .buildString("2")));
+   innerEntity.getProperties().add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 1)))
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("2")))));
+   
+   final ODataInlineEntity inlineLink = of.newDeepInsertEntity(NAV_PROPERTY_ET_KEY_NAV_ONE, innerEntity);
+   entity.addLink(inlineLink);
+   
+   final URI bindingURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+                                                           .appendKeySegment(3)
+                                                           .build();
+   
+   entity.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE, bindingURI));
+   
+   final URI targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
+   final ODataEntityCreateResponse<ODataEntity> response = 
+       client.getCUDRequestFactory().getEntityCreateRequest(targetURI, entity).execute();
+   
+   assertEquals(HttpStatusCode.CREATED.getStatusCode(), response.getStatusCode());
+   
+   assertEquals(1, response.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE)
+                                      .asInlineEntity()
+                                      .getEntity()
+              .getProperty(PROPERTY_COMP_TWO_PRIM)
+                    .getComplexValue()
+                                      .get(PROPERTY_INT16)
+                                      .getPrimitiveValue()
+                                      .toValue());
   }
   
   @Override
