@@ -540,7 +540,8 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
   private AttachedEntityStatus resolveNavigationLink(
       final NavigationProperty property, final EntityInvocationHandler handler) {
     if (handler.getUUID().getEntitySetURI() == null) {
-      final Object key = CoreUtils.getKey(service.getClient(), handler, handler.getTypeRef(), handler.getEntity());
+      //Load key
+      CoreUtils.getKey(service.getClient(), handler, handler.getTypeRef(), handler.getEntity());
       handler.updateUUID(CoreUtils.getTargetEntitySetURI(service.getClient(), property), handler.getTypeRef(), null);
       service.getContext().entityContext().attach(handler, AttachedEntityStatus.NEW);
       return AttachedEntityStatus.NEW;

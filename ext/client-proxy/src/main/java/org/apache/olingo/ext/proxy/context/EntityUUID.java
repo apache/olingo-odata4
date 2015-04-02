@@ -27,6 +27,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
 import java.net.URI;
+
 import org.apache.olingo.ext.proxy.api.EntityType;
 
 public class EntityUUID implements Serializable {
@@ -38,8 +39,9 @@ public class EntityUUID implements Serializable {
   private final Object key;
 
   /**
-   * Needed when representing a new entity, where key is potentially null.
+   * Needed when representing a new entity, where key is potentially null. The temp key is used via reflection
    */
+  @SuppressWarnings("unused")
   private final int tempKey;
 
   private Class<?> type;

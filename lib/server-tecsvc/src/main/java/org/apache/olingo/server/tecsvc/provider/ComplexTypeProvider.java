@@ -67,11 +67,11 @@ public class ComplexTypeProvider {
           .setProperties(
               Arrays.asList(PropertyProvider.propertyString, PropertyProvider.propertyBinary,
                   PropertyProvider.propertyBoolean, PropertyProvider.propertyByte, PropertyProvider.propertyDate,
-                  PropertyProvider.propertyDateTimeOffset, PropertyProvider.propertyDecimal_Scale_Precision,
+                  PropertyProvider.propertyDateTimeOffset_Precision, PropertyProvider.propertyDecimal_Scale_Precision,
                   PropertyProvider.propertySingle, PropertyProvider.propertyDouble, PropertyProvider.propertyDuration,
                   PropertyProvider.propertyGuid, PropertyProvider.propertyInt16, PropertyProvider.propertyInt32,
-                  PropertyProvider.propertyInt64, PropertyProvider.propertySByte, PropertyProvider.propertyTimeOfDay
-                  ));
+                  PropertyProvider.propertyInt64, PropertyProvider.propertySByte,
+                  PropertyProvider.propertyTimeOfDay_Precision));
     } else if (complexTypeName.equals(nameCTCollAllPrim)) {
       return new ComplexType()
           .setName("CTCollAllPrim")
@@ -91,7 +91,7 @@ public class ComplexTypeProvider {
       return new ComplexType()
           .setName("CTTwoPrim")
           .setProperties(Arrays.asList(PropertyProvider.propertyInt16_NotNullable,
-                                        PropertyProvider.propertyString_NotNullable));
+              PropertyProvider.propertyString_NotNullable));
 
     } else if (complexTypeName.equals(nameCTCompNav)) {
       return new ComplexType()
@@ -149,17 +149,17 @@ public class ComplexTypeProvider {
                   .setName("NavPropertyETMediaMany")
                   .setType(EntityTypeProvider.nameETMedia).setCollection(true)
               )));
-      
-    } else if(complexTypeName.equals(nameCTNavCont)) {
+
+    } else if (complexTypeName.equals(nameCTNavCont)) {
       return new ComplexType()
-        .setName("CTNavCont")
-        .setProperties(new ArrayList<Property>())
-        .setNavigationProperties(Arrays.asList(
-            PropertyProvider.collectionNavPropertyETKeyNavContMany_CT_ETKeyNav,
-            PropertyProvider.navPropertyETKeyNavContOne_CT_ETeyNav,
-            PropertyProvider.collectionNavPropertyETTwoKeyNavContMany_CT_ETKeyNav,
-            PropertyProvider.navPropertyETTwoKeyNavContOne_CT_ETKeyNav));
-      
+          .setName("CTNavCont")
+          .setProperties(new ArrayList<Property>())
+          .setNavigationProperties(Arrays.asList(
+              PropertyProvider.collectionNavPropertyETKeyNavContMany_CT_ETKeyNav,
+              PropertyProvider.navPropertyETKeyNavContOne_CT_ETeyNav,
+              PropertyProvider.collectionNavPropertyETTwoKeyNavContMany_CT_ETKeyNav,
+              PropertyProvider.navPropertyETTwoKeyNavContOne_CT_ETKeyNav));
+
     } else if (complexTypeName.equals(nameCTBasePrimCompNav)) {
       return new ComplexType()
           .setName("CTBasePrimCompNav")

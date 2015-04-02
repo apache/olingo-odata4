@@ -89,7 +89,7 @@ public class MetadataDocumentTest {
     assertThat(metadata, containsString("<Action Name=\"UARTCTTwoPrimParam\" IsBound=\"false\">"
         + "<Parameter Name=\"ParameterInt16\" Type=\"Edm.Int16\" Nullable=\"false\"/>"
         + "<ReturnType Type=\"Namespace1_Alias.CTTwoPrim\" Nullable=\"false\"/></Action>"));
-    
+
     assertThat(metadata,
         containsString("<Action Name=\"BAESAllPrimRTETAllPrim\" IsBound=\"true\">"
             + "<Parameter Name=\"ParameterESAllPrim\" "
@@ -97,11 +97,12 @@ public class MetadataDocumentTest {
             + "<ReturnType Type=\"Namespace1_Alias.ETAllPrim\"/></Action>"));
 
     assertThat(metadata,
-        containsString("<Function Name=\"UFNRTInt16\" IsBound=\"false\" IsComposable=\"false\">"
+        containsString("<Function Name=\"UFNRTInt16\">"
             + "<ReturnType Type=\"Edm.Int16\"/></Function>"));
 
     assertThat(metadata,
-        containsString("<Function Name=\"BFCESTwoKeyNavRTESTwoKeyNav\" IsBound=\"true\" IsComposable=\"true\">"
+        containsString("<Function Name=\"BFCESTwoKeyNavRTESTwoKeyNav\" "
+            + "EntitySetPath=\"BindingParam/NavPropertyETTwoKeyNavMany\" IsBound=\"true\" IsComposable=\"true\">"
             + "<Parameter Name=\"BindingParam\" Type=\"Collection(Namespace1_Alias.ETTwoKeyNav)\" "
             + "Nullable=\"false\"/>"
             + "<ReturnType Type=\"Collection(Namespace1_Alias.ETTwoKeyNav)\" Nullable=\"false\"/></Function>"));
@@ -122,7 +123,11 @@ public class MetadataDocumentTest {
         containsString("<ActionImport Name=\"AIRTCTTwoPrimParam\" Action=\"Namespace1_Alias.UARTCTTwoPrimParam\"/>"));
 
     assertThat(metadata,
-        containsString("<FunctionImport Name=\"FINInvisible2RTInt16\" Function=\"Namespace1_Alias.UFNRTInt16\" "
+        containsString("<FunctionImport Name=\"FINInvisible2RTInt16\" Function=\"Namespace1_Alias.UFNRTInt16\"/>"));
+
+    assertThat(
+        metadata,
+        containsString("<EntitySet Name=\"ESInvisible\" EntityType=\"Namespace1_Alias.ETAllPrim\" "
             + "IncludeInServiceDocument=\"false\"/>"));
 
     assertThat(metadata, containsString("</EntityContainer></Schema></edmx:DataServices></edmx:Edmx>"));

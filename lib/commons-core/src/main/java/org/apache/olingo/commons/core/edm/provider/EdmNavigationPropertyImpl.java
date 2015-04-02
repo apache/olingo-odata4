@@ -59,7 +59,7 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmEl
   }
 
   @Override
-  public Boolean containsTarget() {
+  public boolean containsTarget() {
     return navigationProperty.isContainsTarget();
   }
 

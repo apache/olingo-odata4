@@ -463,6 +463,7 @@ public class FunctionProvider {
           .asList(
               new Function()
                   .setName("BFCESTwoKeyNavRTESTwoKeyNav")
+                  .setEntitySetPath("BindingParam/NavPropertyETTwoKeyNavMany")
                   .setBound(true)
                   .setParameters(
                       Arrays.asList(
@@ -496,19 +497,19 @@ public class FunctionProvider {
                   .setComposable(true)
                   .setReturnType(
                       new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)
-                          .setNullable(false)),
-              new Function()
-                  .setName("BFCESTwoKeyNavRTESTwoKeyNav")
-                  .setBound(true)
-                  .setParameters(
-                      Arrays.asList(new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETKeyNav)
-                          .setCollection(true).setNullable(false),
-                          new Parameter().setName("ParameterString").setType(PropertyProvider.nameString)
-                              .setCollection(false).setNullable(false)))
-                  .setComposable(true)
-                  .setReturnType(
-                      new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)
                           .setNullable(false))
+//              new Function()
+//                  .setName("BFCESTwoKeyNavRTESTwoKeyNav")
+//                  .setBound(true)
+//                  .setParameters(
+//                      Arrays.asList(new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETKeyNav)
+//                          .setCollection(true).setNullable(false),
+//                          new Parameter().setName("ParameterString").setType(PropertyProvider.nameString)
+//                              .setCollection(false).setNullable(false)))
+//                  .setComposable(true)
+//                  .setReturnType(
+//                      new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)
+//                          .setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCStringRTESTwoKeyNav)) {
@@ -624,6 +625,7 @@ public class FunctionProvider {
       return Arrays.asList(
           new Function()
               .setName("BFCETTwoKeyNavRTESTwoKeyNav")
+              .setEntitySetPath("BindingParam/NavPropertyETTwoKeyNavOne")
               .setBound(true)
               .setParameters(Arrays.asList(
                   new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)

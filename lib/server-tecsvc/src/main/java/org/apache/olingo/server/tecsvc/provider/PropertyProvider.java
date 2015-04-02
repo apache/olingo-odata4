@@ -32,7 +32,7 @@ public class PropertyProvider {
 
   public static final FullQualifiedName nameDate = EdmPrimitiveTypeKind.Date.getFullQualifiedName();
   public static final FullQualifiedName nameDateTimeOffset =
-          EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName();
+      EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName();
 
   public static final FullQualifiedName nameDecimal = EdmPrimitiveTypeKind.Decimal.getFullQualifiedName();
   public static final FullQualifiedName nameDouble = EdmPrimitiveTypeKind.Double.getFullQualifiedName();
@@ -51,723 +51,732 @@ public class PropertyProvider {
 
   // Primitive Properties --------------------------------------------------------------------------------------------
   public static final Property collPropertyBinary = new Property()
-          .setName("CollPropertyBinary")
-          .setType(nameBinary)
-          .setCollection(true);
+      .setName("CollPropertyBinary")
+      .setType(nameBinary)
+      .setCollection(true);
 
   public static final Property collPropertyBinary_ExplicitNullable = new Property()
-          .setName("CollPropertyBinary")
-          .setType(nameBinary)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyBinary")
+      .setType(nameBinary)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyBinary_NotNullable = new Property()
-          .setName("CollPropertyBinary")
-          .setType(nameBinary)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertyBinary")
+      .setType(nameBinary)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property collPropertyBoolean = new Property()
-          .setName("CollPropertyBoolean")
-          .setType(nameBoolean)
-          .setCollection(true);
+      .setName("CollPropertyBoolean")
+      .setType(nameBoolean)
+      .setCollection(true);
 
   public static final Property collPropertyBoolean_ExplicitNullable = new Property()
-          .setName("CollPropertyBoolean")
-          .setType(nameBoolean)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyBoolean")
+      .setType(nameBoolean)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyBoolean_NotNullable = new Property()
-          .setName("CollPropertyBoolean")
-          .setType(nameBoolean)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyBoolean")
+      .setType(nameBoolean)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyByte = new Property()
-          .setName("CollPropertyByte")
-          .setType(nameByte)
-          .setCollection(true);
+      .setName("CollPropertyByte")
+      .setType(nameByte)
+      .setCollection(true);
 
   public static final Property collPropertyByte_ExplicitNullable = new Property()
-          .setName("CollPropertyByte")
-          .setType(nameByte)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyByte")
+      .setType(nameByte)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyByte_NotNullable = new Property()
-          .setName("CollPropertyByte")
-          .setType(nameByte)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertyByte")
+      .setType(nameByte)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property collPropertyDate = new Property()
-          .setName("CollPropertyDate")
-          .setType(nameDate)
-          .setCollection(true);
+      .setName("CollPropertyDate")
+      .setType(nameDate)
+      .setCollection(true);
 
   public static final Property collPropertyDate_ExplicitNullable = new Property()
-          .setName("CollPropertyDate")
-          .setType(nameDate)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyDate")
+      .setType(nameDate)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyDate_NotNullable = new Property()
-          .setName("CollPropertyDate")
-          .setType(nameDate)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertyDate")
+      .setType(nameDate)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property collPropertyDateTimeOffset = new Property()
-          .setName("CollPropertyDateTimeOffset")
-          .setType(nameDateTimeOffset)
-          .setCollection(true);
+      .setName("CollPropertyDateTimeOffset")
+      .setType(nameDateTimeOffset)
+      .setCollection(true);
 
   public static final Property collPropertyDateTimeOffset_ExplicitNullable = new Property()
-          .setName("CollPropertyDateTimeOffset")
-          .setType(nameDateTimeOffset)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyDateTimeOffset")
+      .setType(nameDateTimeOffset)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyDateTimeOffset_NotNullable = new Property()
-          .setName("CollPropertyDateTimeOffset")
-          .setType(nameDateTimeOffset)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertyDateTimeOffset")
+      .setType(nameDateTimeOffset)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property collPropertyDecimal = new Property()
-          .setName("CollPropertyDecimal")
-          .setType(nameDecimal)
-          .setCollection(true);
+      .setName("CollPropertyDecimal")
+      .setType(nameDecimal)
+      .setCollection(true);
 
   public static final Property collPropertyDecimal_ExplicitNullable = new Property()
-          .setName("CollPropertyDecimal")
-          .setType(nameDecimal)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyDecimal")
+      .setType(nameDecimal)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyDecimal_NotNullable = new Property()
-          .setName("CollPropertyDecimal")
-          .setType(nameDecimal)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertyDecimal")
+      .setType(nameDecimal)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property collPropertyDouble = new Property()
-          .setName("CollPropertyDouble")
-          .setType(nameDouble)
-          .setCollection(true);
+      .setName("CollPropertyDouble")
+      .setType(nameDouble)
+      .setCollection(true);
 
   public static final Property collPropertyDouble_ExplicitNullable = new Property()
-          .setName("CollPropertyDouble")
-          .setType(nameDouble)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyDouble")
+      .setType(nameDouble)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyDouble_NotNullable = new Property()
-          .setName("CollPropertyDouble")
-          .setType(nameDouble)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertyDouble")
+      .setType(nameDouble)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property collPropertyDuration = new Property()
-          .setName("CollPropertyDuration")
-          .setType(nameDuration)
-          .setCollection(true);
+      .setName("CollPropertyDuration")
+      .setType(nameDuration)
+      .setCollection(true);
 
   public static final Property collPropertyDuration_ExplicitNullable = new Property()
-          .setName("CollPropertyDuration")
-          .setType(nameDuration)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyDuration")
+      .setType(nameDuration)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyDuration_NotNullable = new Property()
-          .setName("CollPropertyDuration")
-          .setType(nameDuration)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertyDuration")
+      .setType(nameDuration)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property collPropertyGuid = new Property()
-          .setName("CollPropertyGuid")
-          .setType(nameGuid)
-          .setCollection(true);
+      .setName("CollPropertyGuid")
+      .setType(nameGuid)
+      .setCollection(true);
 
   public static final Property collPropertyGuid_ExplicitNullable = new Property()
-          .setName("CollPropertyGuid")
-          .setType(nameGuid)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyGuid")
+      .setType(nameGuid)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyGuid_NotNullable = new Property()
-          .setName("CollPropertyGuid")
-          .setType(nameGuid)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertyGuid")
+      .setType(nameGuid)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property collPropertyInt16 = new Property()
-          .setName("CollPropertyInt16")
-          .setType(nameInt16)
-          .setCollection(true);
+      .setName("CollPropertyInt16")
+      .setType(nameInt16)
+      .setCollection(true);
 
   public static final Property collPropertyInt16_ExplicitNullable = new Property()
-          .setName("CollPropertyInt16")
-          .setType(nameInt16)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyInt16")
+      .setType(nameInt16)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyInt16_NotNullable = new Property()
-          .setName("CollPropertyInt16")
-          .setType(nameInt16)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertyInt16")
+      .setType(nameInt16)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property collPropertyInt32 = new Property()
-          .setName("CollPropertyInt32")
-          .setType(nameInt32)
-          .setCollection(true);
+      .setName("CollPropertyInt32")
+      .setType(nameInt32)
+      .setCollection(true);
 
   public static final Property collPropertyInt32_ExplicitNullable = new Property()
-          .setName("CollPropertyInt32")
-          .setType(nameInt32)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyInt32")
+      .setType(nameInt32)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyInt32_NotNullable = new Property()
-          .setName("CollPropertyInt32")
-          .setType(nameInt32)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertyInt32")
+      .setType(nameInt32)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property collPropertyInt64 = new Property()
-          .setName("CollPropertyInt64")
-          .setType(nameInt64)
-          .setCollection(true);
+      .setName("CollPropertyInt64")
+      .setType(nameInt64)
+      .setCollection(true);
 
   public static final Property collPropertyInt64_ExplicitNullable = new Property()
-          .setName("CollPropertyInt64")
-          .setType(nameInt64)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyInt64")
+      .setType(nameInt64)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyInt64_NotNullable = new Property()
-          .setName("CollPropertyInt64")
-          .setType(nameInt64)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertyInt64")
+      .setType(nameInt64)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property collPropertySByte = new Property()
-          .setName("CollPropertySByte")
-          .setType(nameSByte)
-          .setCollection(true);
+      .setName("CollPropertySByte")
+      .setType(nameSByte)
+      .setCollection(true);
 
   public static final Property collPropertySByte_ExplicitNullable = new Property()
-          .setName("CollPropertySByte")
-          .setType(nameSByte)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertySByte")
+      .setType(nameSByte)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertySByte_NotNullable = new Property()
-          .setName("CollPropertySByte")
-          .setType(nameSByte)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertySByte")
+      .setType(nameSByte)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property collPropertySingle = new Property()
-          .setName("CollPropertySingle")
-          .setType(nameSingle)
-          .setCollection(true);
+      .setName("CollPropertySingle")
+      .setType(nameSingle)
+      .setCollection(true);
 
   public static final Property collPropertySingle_ExplicitNullable = new Property()
-          .setName("CollPropertySingle")
-          .setType(nameSingle)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertySingle")
+      .setType(nameSingle)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertySingle_NotNullable = new Property()
-          .setName("CollPropertySingle")
-          .setType(nameSingle)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertySingle")
+      .setType(nameSingle)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property collPropertyString = new Property()
-          .setName("CollPropertyString")
-          .setType(nameString)
-          .setCollection(true);
+      .setName("CollPropertyString")
+      .setType(nameString)
+      .setCollection(true);
 
   public static final Property collPropertyString_ExplicitNullable = new Property()
-          .setName("CollPropertyString")
-          .setType(nameString)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyString")
+      .setType(nameString)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyString_NotNullable = new Property()
-          .setName("CollPropertyString")
-          .setType(nameString)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertyString")
+      .setType(nameString)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property collPropertyTimeOfDay = new Property()
-          .setName("CollPropertyTimeOfDay")
-          .setType(nameTimeOfDay)
-          .setCollection(true);
+      .setName("CollPropertyTimeOfDay")
+      .setType(nameTimeOfDay)
+      .setCollection(true);
 
   public static final Property collPropertyTimeOfDay_ExplicitNullable = new Property()
-          .setName("CollPropertyTimeOfDay")
-          .setType(nameTimeOfDay)
-          .setNullable(true)
-          .setCollection(true);
+      .setName("CollPropertyTimeOfDay")
+      .setType(nameTimeOfDay)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyTimeOfDay_NotNullable = new Property()
-          .setName("CollPropertyTimeOfDay")
-          .setType(nameTimeOfDay)
-          .setNullable(false)
-          .setCollection(true);
+      .setName("CollPropertyTimeOfDay")
+      .setType(nameTimeOfDay)
+      .setNullable(false)
+      .setCollection(true);
 
   public static final Property propertyBinary = new Property()
-          .setName("PropertyBinary")
-          .setType(nameBinary);
+      .setName("PropertyBinary")
+      .setType(nameBinary);
 
   public static final Property propertyBinary_NotNullable = new Property()
-          .setName("PropertyBinary")
-          .setType(nameBinary)
-          .setNullable(false);
+      .setName("PropertyBinary")
+      .setType(nameBinary)
+      .setNullable(false);
 
   public static final Property propertyBinary_ExplicitNullable = new Property()
-          .setName("PropertyBinary")
-          .setType(nameBinary)
-          .setNullable(true);
+      .setName("PropertyBinary")
+      .setType(nameBinary)
+      .setNullable(true);
 
   public static final Property propertyBoolean = new Property()
-          .setName("PropertyBoolean")
-          .setType(nameBoolean);
+      .setName("PropertyBoolean")
+      .setType(nameBoolean);
 
   public static final Property propertyBoolean_NotNullable = new Property()
-          .setName("PropertyBoolean")
-          .setType(nameBoolean)
-          .setNullable(false);
+      .setName("PropertyBoolean")
+      .setType(nameBoolean)
+      .setNullable(false);
 
   public static final Property propertyBoolean_ExplicitNullable = new Property()
-          .setName("PropertyBoolean")
-          .setType(nameBoolean)
-          .setNullable(true);
+      .setName("PropertyBoolean")
+      .setType(nameBoolean)
+      .setNullable(true);
 
   public static final Property propertyByte = new Property()
-          .setName("PropertyByte")
-          .setType(nameByte);
+      .setName("PropertyByte")
+      .setType(nameByte);
 
   public static final Property propertyByte_NotNullable = new Property()
-          .setName("PropertyByte")
-          .setType(nameByte)
-          .setNullable(false);
+      .setName("PropertyByte")
+      .setType(nameByte)
+      .setNullable(false);
 
   public static final Property propertyByte_ExplicitNullable = new Property()
-          .setName("PropertyByte")
-          .setType(nameByte)
-          .setNullable(true);
+      .setName("PropertyByte")
+      .setType(nameByte)
+      .setNullable(true);
 
   public static final Property propertyDate = new Property()
-          .setName("PropertyDate")
-          .setType(nameDate);
+      .setName("PropertyDate")
+      .setType(nameDate);
 
   public static final Property propertyDate_NotNullable = new Property()
-          .setName("PropertyDate")
-          .setType(nameDate)
-          .setNullable(false);
+      .setName("PropertyDate")
+      .setType(nameDate)
+      .setNullable(false);
 
   public static final Property propertyDate_ExplicitNullable = new Property()
-          .setName("PropertyDate")
-          .setType(nameDate)
-          .setNullable(true);
+      .setName("PropertyDate")
+      .setType(nameDate)
+      .setNullable(true);
 
   public static final Property propertyDateTimeOffset = new Property()
-          .setName("PropertyDateTimeOffset")
-          .setPrecision(20)
-          .setType(nameDateTimeOffset);
+      .setName("PropertyDateTimeOffset")
+      .setType(nameDateTimeOffset);
+
+  public static final Property propertyDateTimeOffset_Precision = new Property()
+      .setName("PropertyDateTimeOffset")
+      .setPrecision(12)
+      .setType(nameDateTimeOffset);
 
   public static final Property propertyDateTimeOffset_NotNullable = new Property()
-          .setName("PropertyDateTimeOffset")
-          .setType(nameDateTimeOffset)
-          .setNullable(false);
+      .setName("PropertyDateTimeOffset")
+      .setType(nameDateTimeOffset)
+      .setNullable(false);
 
   public static final Property propertyDateTimeOffset_ExplicitNullable = new Property()
-          .setName("PropertyDateTimeOffset")
-          .setType(nameDateTimeOffset)
-          .setNullable(true);
+      .setName("PropertyDateTimeOffset")
+      .setType(nameDateTimeOffset)
+      .setNullable(true);
 
   public static final Property propertyDecimal_Scale_Precision = new Property()
-          .setName("PropertyDecimal")
-          .setScale(10)
-          .setPrecision(11)
-          .setType(nameDecimal);
-  
+      .setName("PropertyDecimal")
+      .setScale(5)
+      .setPrecision(11)
+      .setType(nameDecimal);
+
   public static final Property propertyDecimal_Scale = new Property()
-          .setName("PropertyDecimal")
-          .setScale(10)
-          .setType(nameDecimal);
-  
+      .setName("PropertyDecimal")
+      .setScale(10)
+      .setType(nameDecimal);
+
   public static final Property propertyDecimal_NotNullable = new Property()
-          .setName("PropertyDecimal")
-          .setType(nameDecimal)
-          .setNullable(false);
+      .setName("PropertyDecimal")
+      .setType(nameDecimal)
+      .setNullable(false);
 
   public static final Property propertyDecimal_ExplicitNullable = new Property()
-          .setName("PropertyDecimal")
-          .setType(nameDecimal)
-          .setNullable(true);
+      .setName("PropertyDecimal")
+      .setType(nameDecimal)
+      .setNullable(true);
 
   public static final Property propertyDouble = new Property()
-          .setName("PropertyDouble")
-          .setType(nameDouble);
+      .setName("PropertyDouble")
+      .setType(nameDouble);
 
   public static final Property propertyDouble_NotNullable = new Property()
-          .setName("PropertyDouble")
-          .setType(nameDouble)
-          .setNullable(false);
+      .setName("PropertyDouble")
+      .setType(nameDouble)
+      .setNullable(false);
 
   public static final Property propertyDouble_ExplicitNullable = new Property()
-          .setName("PropertyDouble")
-          .setType(nameDouble)
-          .setNullable(true);
+      .setName("PropertyDouble")
+      .setType(nameDouble)
+      .setNullable(true);
 
   public static final Property propertyDuration = new Property()
-          .setName("PropertyDuration")
-          .setType(nameDuration);
+      .setName("PropertyDuration")
+      .setType(nameDuration);
 
   public static final Property propertyDuration_NotNullable = new Property()
-          .setName("PropertyDuration")
-          .setType(nameDuration)
-          .setNullable(false);
+      .setName("PropertyDuration")
+      .setType(nameDuration)
+      .setNullable(false);
 
   public static final Property propertyDuration_ExplicitNullable = new Property()
-          .setName("PropertyDuration")
-          .setType(nameDuration)
-          .setNullable(true);
+      .setName("PropertyDuration")
+      .setType(nameDuration)
+      .setNullable(true);
 
   public static final Property propertyGuid = new Property()
-          .setName("PropertyGuid")
-          .setType(nameGuid);
+      .setName("PropertyGuid")
+      .setType(nameGuid);
 
   public static final Property propertyGuid_NotNullable = new Property()
-          .setName("PropertyGuid")
-          .setType(nameGuid)
-          .setNullable(false);
+      .setName("PropertyGuid")
+      .setType(nameGuid)
+      .setNullable(false);
 
   public static final Property propertyGuid_ExplicitNullable = new Property()
-          .setName("PropertyGuid")
-          .setType(nameGuid)
-          .setNullable(true);
+      .setName("PropertyGuid")
+      .setType(nameGuid)
+      .setNullable(true);
 
   public static final Property propertyInt16 = new Property()
-          .setName("PropertyInt16")
-          .setType(nameInt16);
+      .setName("PropertyInt16")
+      .setType(nameInt16);
 
   public static final Property propertyInt16_NotNullable = new Property()
-          .setName("PropertyInt16")
-          .setType(nameInt16)
-          .setNullable(false);
+      .setName("PropertyInt16")
+      .setType(nameInt16)
+      .setNullable(false);
 
   public static final Property propertyInt16_ExplicitNullable = new Property()
-          .setName("PropertyInt16")
-          .setType(nameInt16)
-          .setNullable(true);
+      .setName("PropertyInt16")
+      .setType(nameInt16)
+      .setNullable(true);
 
   public static final Property propertyInt32 = new Property()
-          .setName("PropertyInt32")
-          .setType(nameInt32);
+      .setName("PropertyInt32")
+      .setType(nameInt32);
 
   public static final Property propertyInt32_NotNullable = new Property()
-          .setName("PropertyInt32")
-          .setType(nameInt32)
-          .setNullable(false);
+      .setName("PropertyInt32")
+      .setType(nameInt32)
+      .setNullable(false);
 
   public static final Property propertyInt32_ExplicitNullable = new Property()
-          .setName("PropertyInt32")
-          .setType(nameInt32)
-          .setNullable(true);
+      .setName("PropertyInt32")
+      .setType(nameInt32)
+      .setNullable(true);
 
   public static final Property propertyInt64 = new Property()
-          .setName("PropertyInt64")
-          .setType(nameInt64);
+      .setName("PropertyInt64")
+      .setType(nameInt64);
 
   public static final Property propertyInt64_NotNullable = new Property()
-          .setName("PropertyInt64")
-          .setType(nameInt64)
-          .setNullable(false);
+      .setName("PropertyInt64")
+      .setType(nameInt64)
+      .setNullable(false);
 
   public static final Property propertyInt64_ExplicitNullable = new Property()
-          .setName("PropertyInt64")
-          .setType(nameInt64)
-          .setNullable(true);
+      .setName("PropertyInt64")
+      .setType(nameInt64)
+      .setNullable(true);
 
   public static final Property propertySByte = new Property()
-          .setName("PropertySByte")
-          .setType(nameSByte);
+      .setName("PropertySByte")
+      .setType(nameSByte);
 
   public static final Property propertySByte_NotNullable = new Property()
-          .setName("PropertySByte")
-          .setType(nameSByte)
-          .setNullable(false);
+      .setName("PropertySByte")
+      .setType(nameSByte)
+      .setNullable(false);
 
   public static final Property propertySByte_ExplicitNullable = new Property()
-          .setName("PropertySByte")
-          .setType(nameSByte)
-          .setNullable(true);
+      .setName("PropertySByte")
+      .setType(nameSByte)
+      .setNullable(true);
 
   public static final Property propertySingle = new Property()
-          .setName("PropertySingle")
-          .setType(nameSingle);
+      .setName("PropertySingle")
+      .setType(nameSingle);
 
   public static final Property propertySingle_NotNullable = new Property()
-          .setName("PropertySingle")
-          .setType(nameSingle)
-          .setNullable(false);
+      .setName("PropertySingle")
+      .setType(nameSingle)
+      .setNullable(false);
 
   public static final Property propertySingle_ExplicitNullable = new Property()
-          .setName("PropertySingle")
-          .setType(nameSingle)
-          .setNullable(true);
+      .setName("PropertySingle")
+      .setType(nameSingle)
+      .setNullable(true);
 
   public static final Property propertyString = new Property()
-          .setName("PropertyString")
-          .setType(nameString);
+      .setName("PropertyString")
+      .setType(nameString);
 
   public static final Property propertyString_NotNullable = new Property()
-          .setName("PropertyString")
-          .setType(nameString)
-          .setNullable(false);
+      .setName("PropertyString")
+      .setType(nameString)
+      .setNullable(false);
 
   public static final Property propertyString_ExplicitNullable = new Property()
-          .setName("PropertyString")
-          .setType(nameString)
-          .setNullable(true);
+      .setName("PropertyString")
+      .setType(nameString)
+      .setNullable(true);
 
   public static final Property propertyTimeOfDay = new Property()
-          .setName("PropertyTimeOfDay")
-          .setPrecision(10)
-          .setType(nameTimeOfDay);
+      .setName("PropertyTimeOfDay")
+      .setType(nameTimeOfDay);
+
+  public static final Property propertyTimeOfDay_Precision = new Property()
+      .setName("PropertyTimeOfDay")
+      .setPrecision(12)
+      .setType(nameTimeOfDay);
 
   public static final Property propertyTimeOfDay_NotNullable = new Property()
-          .setName("PropertyTimeOfDay")
-          .setType(nameTimeOfDay)
-          .setNullable(false);
+      .setName("PropertyTimeOfDay")
+      .setType(nameTimeOfDay)
+      .setNullable(false);
 
   public static final Property propertyTimeOfDay_ExplicitNullable = new Property()
-          .setName("PropertyTimeOfDay")
-          .setType(nameTimeOfDay)
-          .setNullable(true);
+      .setName("PropertyTimeOfDay")
+      .setType(nameTimeOfDay)
+      .setNullable(true);
 
   // Complex Properties ----------------------------------------------------------------------------------------------
   public static final Property collPropertyComp_CTPrimComp = new Property()
-          .setName("CollPropertyComp")
-          .setType(ComplexTypeProvider.nameCTPrimComp)
-          .setCollection(true);
+      .setName("CollPropertyComp")
+      .setType(ComplexTypeProvider.nameCTPrimComp)
+      .setCollection(true);
 
   public static final Property collPropertyComp_CTTwoPrim = new Property()
-          .setName("CollPropertyComp")
-          .setType(ComplexTypeProvider.nameCTTwoPrim)
-          .setCollection(true);
+      .setName("CollPropertyComp")
+      .setType(ComplexTypeProvider.nameCTTwoPrim)
+      .setCollection(true);
 
   public static final Property propertyComp_CTAllPrim = new Property()
-          .setName("PropertyComp")
-          .setType(ComplexTypeProvider.nameCTAllPrim);
+      .setName("PropertyComp")
+      .setType(ComplexTypeProvider.nameCTAllPrim);
 
   public static final Property propertyComp_CTCollAllPrim = new Property()
-          .setName("PropertyComp")
-          .setType(ComplexTypeProvider.nameCTCollAllPrim);
+      .setName("PropertyComp")
+      .setType(ComplexTypeProvider.nameCTCollAllPrim);
 
   public static final Property propertyComp_CTCompCollComp = new Property()
-          .setName("PropertyComp")
-          .setType(ComplexTypeProvider.nameCTCompCollComp);
+      .setName("PropertyComp")
+      .setType(ComplexTypeProvider.nameCTCompCollComp);
 
   public static final Property propertyComp_CTCompComp = new Property()
-          .setName("PropertyComp")
-          .setType(ComplexTypeProvider.nameCTCompComp);
+      .setName("PropertyComp")
+      .setType(ComplexTypeProvider.nameCTCompComp);
 
   public static final Property propertyComp_CTNavFiveProp = new Property()
-          .setName("PropertyComp")
-          .setType(ComplexTypeProvider.nameCTNavFiveProp);
-  
+      .setName("PropertyComp")
+      .setType(ComplexTypeProvider.nameCTNavFiveProp);
+
   public static final Property propertyCompNav_CTNavFiveProp = new Property()
-          .setName("PropertyCompNav")
-          .setType(ComplexTypeProvider.nameCTNavFiveProp);
-  
+      .setName("PropertyCompNav")
+      .setType(ComplexTypeProvider.nameCTNavFiveProp);
+
   public static final Property propertyComp_CTPrimComp_NotNullable = new Property()
-          .setName("PropertyComp")
-          .setType(ComplexTypeProvider.nameCTPrimComp)
-          .setNullable(false);
+      .setName("PropertyComp")
+      .setType(ComplexTypeProvider.nameCTPrimComp)
+      .setNullable(false);
 
   public static final Property propertyComp_CTTwoPrim = new Property()
-          .setName("PropertyComp")
-          .setType(ComplexTypeProvider.nameCTTwoPrim);
+      .setName("PropertyComp")
+      .setType(ComplexTypeProvider.nameCTTwoPrim);
 
   public static final Property propertyComp_CTTwoPrim_NotNullable = new Property()
-          .setName("PropertyComp")
-          .setType(ComplexTypeProvider.nameCTTwoPrim)
-          .setNullable(false);
-  
-  public static final Property propertyCompNavCont = new Property() 
-          .setName("PropertyCompNavCont")
-          .setType(ComplexTypeProvider.nameCTNavCont);
-  
+      .setName("PropertyComp")
+      .setType(ComplexTypeProvider.nameCTTwoPrim)
+      .setNullable(false);
+
+  public static final Property propertyCompNavCont = new Property()
+      .setName("PropertyCompNavCont")
+      .setType(ComplexTypeProvider.nameCTNavCont);
+
   public static final Property propertyCompAllPrim_CTAllPrim = new Property()
-          .setName("PropertyCompAllPrim")
-          .setType(ComplexTypeProvider.nameCTAllPrim);
+      .setName("PropertyCompAllPrim")
+      .setType(ComplexTypeProvider.nameCTAllPrim);
 
   public static final Property propertyCompComp_CTCompComp = new Property()
-          .setName("PropertyCompComp")
-          .setType(ComplexTypeProvider.nameCTCompComp);
+      .setName("PropertyCompComp")
+      .setType(ComplexTypeProvider.nameCTCompComp);
 
   public static final Property propertyCompComp_CTCompComp_NotNullable = new Property()
-          .setName("PropertyCompComp")
-          .setType(ComplexTypeProvider.nameCTCompComp)
-          .setNullable(false);
-  
+      .setName("PropertyCompComp")
+      .setType(ComplexTypeProvider.nameCTCompComp)
+      .setNullable(false);
+
   public static final Property propertyCompTwoPrim_CTTwoPrim = new Property()
-          .setName("PropertyCompTwoPrim")
-          .setType(ComplexTypeProvider.nameCTTwoPrim);
+      .setName("PropertyCompTwoPrim")
+      .setType(ComplexTypeProvider.nameCTTwoPrim);
 
   public static final Property propertyMixedPrimCollComp_CTMixPrimCollComp = new Property()
-          .setName("PropertyMixedPrimCollComp")
-          .setType(ComplexTypeProvider.nameCTMixPrimCollComp);
+      .setName("PropertyMixedPrimCollComp")
+      .setType(ComplexTypeProvider.nameCTMixPrimCollComp);
 
   public static final Property propertyComp_CTMixEnumTypeDefColl = new Property()
-          .setName("PropertyCompMixedEnumDef")
-          .setType(ComplexTypeProvider.nameCTMixEnumDef);
+      .setName("PropertyCompMixedEnumDef")
+      .setType(ComplexTypeProvider.nameCTMixEnumDef);
 
   public static final Property propertyCompColl_CTMixEnumTypeDefColl = new Property()
-          .setName("CollPropertyCompMixedEnumDef")
-          .setType(ComplexTypeProvider.nameCTMixEnumDef)
-          .setCollection(true);
+      .setName("CollPropertyCompMixedEnumDef")
+      .setType(ComplexTypeProvider.nameCTMixEnumDef)
+      .setCollection(true);
 
   // Navigation Properties -------------------------------------------------------------------------------------------
   public static final NavigationProperty collectionNavPropertyETKeyNavMany_ETKeyNav = new NavigationProperty()
-          .setName("NavPropertyETKeyNavMany")
-          .setType(EntityTypeProvider.nameETKeyNav)
-          .setCollection(true);
+      .setName("NavPropertyETKeyNavMany")
+      .setType(EntityTypeProvider.nameETKeyNav)
+      .setCollection(true);
 
   public static final NavigationProperty collectionNavPropertyETMediaMany_ETMedia = new NavigationProperty()
-          .setName("NavPropertyETMediaMany")
-          .setType(EntityTypeProvider.nameETMedia)
-          .setCollection(true);
+      .setName("NavPropertyETMediaMany")
+      .setType(EntityTypeProvider.nameETMedia)
+      .setCollection(true);
 
-  public static final NavigationProperty collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav_WithPartnerERKeyNavOne 
-          = new NavigationProperty()
-            .setName("NavPropertyETTwoKeyNavMany")
-            .setType(EntityTypeProvider.nameETTwoKeyNav)
-            .setCollection(true)
-            .setPartner("NavPropertyETKeyNavOne");
-  
+  public static final NavigationProperty collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav_WithPartnerERKeyNavOne =
+      new NavigationProperty()
+          .setName("NavPropertyETTwoKeyNavMany")
+          .setType(EntityTypeProvider.nameETTwoKeyNav)
+          .setCollection(true)
+          .setPartner("NavPropertyETKeyNavOne");
+
   public static final NavigationProperty collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav = new NavigationProperty()
-        .setName("NavPropertyETTwoKeyNavMany")
-        .setType(EntityTypeProvider.nameETTwoKeyNav)
-        .setCollection(true);
-  
+      .setName("NavPropertyETTwoKeyNavMany")
+      .setType(EntityTypeProvider.nameETTwoKeyNav)
+      .setCollection(true);
+
   public static final NavigationProperty collectionNavPropertyETTwoKeyNavOne_ETTwoKeyNav = new NavigationProperty()
-          .setName("NavPropertyETTwoKeyNavOne")
-          .setType(EntityTypeProvider.nameETTwoKeyNav);
+      .setName("NavPropertyETTwoKeyNavOne")
+      .setType(EntityTypeProvider.nameETTwoKeyNav);
 
   public static final NavigationProperty collectionNavPropertyETTwoPrimMany_ETTwoPrim = new NavigationProperty()
-          .setName("NavPropertyETTwoPrimMany")
-          .setType(EntityTypeProvider.nameETTwoPrim)
-          .setCollection(true);
+      .setName("NavPropertyETTwoPrimMany")
+      .setType(EntityTypeProvider.nameETTwoPrim)
+      .setCollection(true);
 
   public static final NavigationProperty collectionNavPropertyETAllPrimMany_ETAllPrim = new NavigationProperty()
-          .setName("NavPropertyETAllPrimMany")
-          .setType(EntityTypeProvider.nameETAllPrim)
-          .setCollection(true);
+      .setName("NavPropertyETAllPrimMany")
+      .setType(EntityTypeProvider.nameETAllPrim)
+      .setCollection(true);
 
   public static final NavigationProperty collectionNavPropertySINav = new NavigationProperty()
-          .setName("NavPropertySINav")
-          .setCollection(true)
-          .setType(EntityTypeProvider.nameETTwoKeyNav);
-  
+      .setName("NavPropertySINav")
+      .setCollection(true)
+      .setType(EntityTypeProvider.nameETTwoKeyNav);
+
   public static final NavigationProperty collectionNavPropertyETKeyNavContMany_CT_ETKeyNav = new NavigationProperty()
-        .setName("NavPropertyETKeyNavContMany")
-        .setCollection(true)
-        .setContainsTarget(true)
-        .setType(EntityTypeProvider.nameETKeyNav);
-  
-  public static final NavigationProperty collectionNavPropertyETTwoKeyNavContMany_CT_ETKeyNav = new NavigationProperty()
-        .setName("NavPropertyETTwoKeyNavContMany")
-        .setCollection(true)
-        .setContainsTarget(true)
-        .setType(EntityTypeProvider.nameETKeyNav);
-  
-  public static final NavigationProperty navPropertyETKeyNavOne_ETKeyNav = new NavigationProperty()
-          .setName("NavPropertyETKeyNavOne")
-          .setType(EntityTypeProvider.nameETKeyNav);
+      .setName("NavPropertyETKeyNavContMany")
+      .setCollection(true)
+      .setContainsTarget(true)
+      .setType(EntityTypeProvider.nameETKeyNav);
 
-  public static final NavigationProperty navPropertyETMediaOne_ETMedia = new NavigationProperty()
-          .setName("NavPropertyETMediaOne")
-          .setType(EntityTypeProvider.nameETMedia);
-
-  public static final NavigationProperty navPropertyETKeyPrimNavOne_ETKeyPrimNav = new NavigationProperty()
-          .setName("NavPropertyETKeyPrimNavOne")
-          .setType(EntityTypeProvider.nameETKeyPrimNav);
-
-  public static final NavigationProperty navPropertyETTwoKeyNavOne_ETTwoKeyNav_NotNullable = new NavigationProperty()
-          .setName("NavPropertyETTwoKeyNavOne")
-          .setType(EntityTypeProvider.nameETTwoKeyNav)
-          .setNullable(false);
-
-  public static final NavigationProperty navPropertyETTwoKeyNavOne_ETTwoKeyNav = new NavigationProperty()
-          .setName("NavPropertyETTwoKeyNavOne")
-          .setType(EntityTypeProvider.nameETTwoKeyNav);
-
-  public static final NavigationProperty navPropertyETTwoPrimOne_ETTwoPrim = new NavigationProperty()
-          .setName("NavPropertyETTwoPrimOne")
-          .setType(EntityTypeProvider.nameETTwoPrim)
-          .setNullable(false);
-
-  public static final NavigationProperty navPropertyETAllPrimOne_ETAllPrim = new NavigationProperty()
-          .setName("NavPropertyETAllPrimOne")
-          .setType(EntityTypeProvider.nameETAllPrim);
-
-  public static final NavigationProperty navPropertyETKeyNavContOne_CT_ETeyNav = new NavigationProperty()
-          .setName("NavPropertyETKeyNavContOne")
+  public static final NavigationProperty collectionNavPropertyETTwoKeyNavContMany_CT_ETKeyNav =
+      new NavigationProperty()
+          .setName("NavPropertyETTwoKeyNavContMany")
+          .setCollection(true)
           .setContainsTarget(true)
           .setType(EntityTypeProvider.nameETKeyNav);
-  
+
+  public static final NavigationProperty navPropertyETKeyNavOne_ETKeyNav = new NavigationProperty()
+      .setName("NavPropertyETKeyNavOne")
+      .setType(EntityTypeProvider.nameETKeyNav);
+
+  public static final NavigationProperty navPropertyETMediaOne_ETMedia = new NavigationProperty()
+      .setName("NavPropertyETMediaOne")
+      .setType(EntityTypeProvider.nameETMedia);
+
+  public static final NavigationProperty navPropertyETKeyPrimNavOne_ETKeyPrimNav = new NavigationProperty()
+      .setName("NavPropertyETKeyPrimNavOne")
+      .setType(EntityTypeProvider.nameETKeyPrimNav);
+
+  public static final NavigationProperty navPropertyETTwoKeyNavOne_ETTwoKeyNav_NotNullable = new NavigationProperty()
+      .setName("NavPropertyETTwoKeyNavOne")
+      .setType(EntityTypeProvider.nameETTwoKeyNav)
+      .setNullable(false);
+
+  public static final NavigationProperty navPropertyETTwoKeyNavOne_ETTwoKeyNav = new NavigationProperty()
+      .setName("NavPropertyETTwoKeyNavOne")
+      .setType(EntityTypeProvider.nameETTwoKeyNav);
+
+  public static final NavigationProperty navPropertyETTwoPrimOne_ETTwoPrim = new NavigationProperty()
+      .setName("NavPropertyETTwoPrimOne")
+      .setType(EntityTypeProvider.nameETTwoPrim)
+      .setNullable(false);
+
+  public static final NavigationProperty navPropertyETAllPrimOne_ETAllPrim = new NavigationProperty()
+      .setName("NavPropertyETAllPrimOne")
+      .setType(EntityTypeProvider.nameETAllPrim);
+
+  public static final NavigationProperty navPropertyETKeyNavContOne_CT_ETeyNav = new NavigationProperty()
+      .setName("NavPropertyETKeyNavContOne")
+      .setContainsTarget(true)
+      .setType(EntityTypeProvider.nameETKeyNav);
+
   public static final NavigationProperty navPropertyETTwoKeyNavContOne_CT_ETKeyNav = new NavigationProperty()
-        .setName("NavPropertyETTwoKeyNavContOne")
-        .setContainsTarget(true)
-        .setType(EntityTypeProvider.nameETKeyNav);
-        
+      .setName("NavPropertyETTwoKeyNavContOne")
+      .setContainsTarget(true)
+      .setType(EntityTypeProvider.nameETKeyNav);
+
   public static final NavigationProperty navPropertyETTwoKeyNavContOneCT_ETTwoKeyNav = new NavigationProperty()
-        .setName("NavPropertyETTwoKeyNavContOne")
-        .setContainsTarget(true)
-        .setType(EntityTypeProvider.nameETTwoKeyNav);
-  
-  public static final NavigationProperty collectionNavPropertyETTwoKeyNavContMany_CT_ETTwoKeyNav 
-      = new NavigationProperty()
-        .setName("NavPropertyETTwoKeyNavContMany")
-        .setContainsTarget(true)
-        .setCollection(true)
-        .setType(EntityTypeProvider.nameETTwoKeyNav);
-  
+      .setName("NavPropertyETTwoKeyNavContOne")
+      .setContainsTarget(true)
+      .setType(EntityTypeProvider.nameETTwoKeyNav);
+
+  public static final NavigationProperty collectionNavPropertyETTwoKeyNavContMany_CT_ETTwoKeyNav =
+      new NavigationProperty()
+          .setName("NavPropertyETTwoKeyNavContMany")
+          .setContainsTarget(true)
+          .setCollection(true)
+          .setType(EntityTypeProvider.nameETTwoKeyNav);
+
   // EnumProperties --------------------------------------------------------------------------------------------------
   public static final Property propertyEnumString_ENString = new Property()
-          .setName("PropertyEnumString")
-          .setType(EnumTypeProvider.nameENString)
-          .setNullable(false);
-  
+      .setName("PropertyEnumString")
+      .setType(EnumTypeProvider.nameENString)
+      .setNullable(false);
+
   public static final Property propertyEnumString_ENString_Nullable = new Property()
-  .setName("PropertyEnumString")
-  .setType(EnumTypeProvider.nameENString);
+      .setName("PropertyEnumString")
+      .setType(EnumTypeProvider.nameENString);
 
   public static final Property collPropertyEnumString_ENString = new Property()
-          .setName("CollPropertyEnumString")
-          .setType(EnumTypeProvider.nameENString)
-          .setCollection(true);
+      .setName("CollPropertyEnumString")
+      .setType(EnumTypeProvider.nameENString)
+      .setCollection(true);
 
   // TypeDefinition Properties ---------------------------------------------------------------------------------------
   public static final Property propertyTypeDefinition_TDString = new Property()
-          .setName("PropertyDefString")
-          .setType(TypeDefinitionProvider.nameTDString)
-          .setMaxLength(15);
+      .setName("PropertyDefString")
+      .setType(TypeDefinitionProvider.nameTDString)
+      .setMaxLength(15);
 
   public static final Property collPropertyTypeDefinition_TDString = new Property()
-          .setName("CollPropertyDefString")
-          .setType(TypeDefinitionProvider.nameTDString)
-          .setMaxLength(15)
-          .setCollection(true);
+      .setName("CollPropertyDefString")
+      .setType(TypeDefinitionProvider.nameTDString)
+      .setMaxLength(15)
+      .setCollection(true);
 }

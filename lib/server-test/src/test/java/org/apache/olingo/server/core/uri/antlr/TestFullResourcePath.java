@@ -585,10 +585,10 @@ public class TestFullResourcePath {
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
-    testUri.run("ESKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='3')")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='3')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
-        .isEntitySet("ESKeyNav")
+        .isEntitySet("ESTwoKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
         .isParameter(0, "ParameterString", "'3'")

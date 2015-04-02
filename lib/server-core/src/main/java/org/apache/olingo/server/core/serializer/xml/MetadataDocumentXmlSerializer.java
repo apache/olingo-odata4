@@ -118,6 +118,7 @@ public class MetadataDocumentXmlSerializer {
 
   private final static String NS_EDM = "http://docs.oasis-open.org/odata/ns/edm";
   private static final String XML_ENTITY_SET_PATH = "EntitySetPath";
+  private static final String XML_CONTAINS_TARGET = "ContainsTarget";
 
   private final ServiceMetadata serviceMetadata;
   private final Map<String, String> namespaceToAlias = new HashMap<String, String>();
@@ -163,14 +164,14 @@ public class MetadataDocumentXmlSerializer {
     // EnumTypes
     appendEnumTypes(writer, schema.getEnumTypes());
 
+    // TypeDefinitions
+    appendTypeDefinitions(writer, schema.getTypeDefinitions());
+
     // EntityTypes
     appendEntityTypes(writer, schema.getEntityTypes());
 
     // ComplexTypes
     appendComplexTypes(writer, schema.getComplexTypes());
-
-    // TypeDefinitions
-    appendTypeDefinitions(writer, schema.getTypeDefinitions());
 
     // Actions
     appendActions(writer, schema.getActions());
@@ -227,8 +228,6 @@ public class MetadataDocumentXmlSerializer {
       // EntitySets
       appendEntitySets(writer, container.getEntitySets());
 
-      // Singletons
-      appendSingletons(writer, container.getSingletons());
 
       // ActionImports
       appendActionImports(writer, container.getActionImports());
@@ -241,6 +240,9 @@ public class MetadataDocumentXmlSerializer {
         containerNamespace = container.getNamespace();
       }
       appendFunctionImports(writer, container.getFunctionImports(), containerNamespace);
+
+      // Singletons
+      appendSingletons(writer, container.getSingletons());
 
       writer.writeEndElement();
     }
@@ -265,8 +267,10 @@ public class MetadataDocumentXmlSerializer {
       if (returnedEntitySet != null) {
         writer.writeAttribute(XML_ENTITY_SET, containerNamespace + "." + returnedEntitySet.getName());
       }
-      writer.writeAttribute(XML_INCLUDE_IN_SERVICE_DOCUMENT, "" + functionImport.isIncludeInServiceDocument());
-
+      // Default is false and we do not write the default
+      if (functionImport.isIncludeInServiceDocument()) {
+        writer.writeAttribute(XML_INCLUDE_IN_SERVICE_DOCUMENT, "" + functionImport.isIncludeInServiceDocument());
+      }
       writer.writeEndElement();
     }
   }
@@ -311,6 +315,9 @@ public class MetadataDocumentXmlSerializer {
       writer.writeStartElement(XML_ENTITY_SET);
       writer.writeAttribute(XML_NAME, entitySet.getName());
       writer.writeAttribute(XML_ENTITY_TYPE, getAliasedFullQualifiedName(entitySet.getEntityType(), false));
+      if (!entitySet.isIncludeInServiceDocument()) {
+        writer.writeAttribute(XML_INCLUDE_IN_SERVICE_DOCUMENT, "" + entitySet.isIncludeInServiceDocument());
+      }
 
       appendNavigationPropertyBindings(writer, entitySet);
       writer.writeEndElement();
@@ -325,8 +332,13 @@ public class MetadataDocumentXmlSerializer {
       if (function.getEntitySetPath() != null) {
         writer.writeAttribute(XML_ENTITY_SET_PATH, function.getEntitySetPath());
       }
-      writer.writeAttribute(XML_IS_BOUND, "" + function.isBound());
-      writer.writeAttribute(XML_IS_COMPOSABLE, "" + function.isComposable());
+      if (function.isBound()) {
+        writer.writeAttribute(XML_IS_BOUND, "" + function.isBound());
+      }
+
+      if (function.isComposable()) {
+        writer.writeAttribute(XML_IS_COMPOSABLE, "" + function.isComposable());
+      }
 
       appendOperationParameters(writer, function);
 
@@ -490,6 +502,10 @@ public class MetadataDocumentXmlSerializer {
       if (navigationProperty.getPartner() != null) {
         EdmNavigationProperty partner = navigationProperty.getPartner();
         writer.writeAttribute(XML_PARTNER, partner.getName());
+      }
+
+      if (navigationProperty.containsTarget()) {
+        writer.writeAttribute(XML_CONTAINS_TARGET, "" + navigationProperty.containsTarget());
       }
 
       if (navigationProperty.getReferentialConstraints() != null) {

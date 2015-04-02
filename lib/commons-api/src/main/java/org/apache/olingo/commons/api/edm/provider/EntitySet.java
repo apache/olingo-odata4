@@ -26,6 +26,7 @@ public class EntitySet extends BindingTarget {
 
   private static final long serialVersionUID = 5291570018480936643L;
   
+  //Default for EntitySets is true
   private boolean includeInServiceDocument = true;
 
   @Override
