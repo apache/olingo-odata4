@@ -20,8 +20,8 @@ package org.apache.olingo.fit.tecsvc.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.olingo.client.api.ODataBatchConstants;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
@@ -48,6 +49,7 @@ import org.apache.olingo.client.core.communication.request.batch.ODataChangesetR
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -62,10 +64,68 @@ import org.junit.Test;
 public class BatchClientITCase extends AbstractTestITCase {
   private final static String ACCEPT = ContentType.APPLICATION_OCTET_STREAM.toContentTypeString();
   private static final String SERVICE_URI = TecSvcConst.BASE_URI;
+  private static final String SERVICE_NAMESPACE = "olingo.odata.test1";
+  private static final String ES_NOT_AVAILABLE_NAME = "ESNotAvailable";
+  private static final FullQualifiedName ES_NOT_AVAILABLE = new FullQualifiedName(SERVICE_NAMESPACE, 
+                                                                                  ES_NOT_AVAILABLE_NAME);
+  private static final String PROPERTY_STRING = "PropertyString";
 
   @Before
   public void setup() {
     client.getConfiguration().setContinueOnError(false);
+  }
+
+  @Test
+  public void testBadRequestInChangeSet() {
+    /*
+     * A bad request (status code >= 400) without "continue on error prefer header" in a changeset
+     * should return a single response with Content-Type: application/http
+     * 
+     * See:
+     * OData Version 4.0 Part 1: Protocol Plus Errata 01
+     * 11.7.4 Responding to a Batch Request
+     * 
+     * When a request within a change set fails, the change set response is not represented using
+     * the multipart/mixed media type. Instead, a single response, using the application/http media type
+     * and a Content-Transfer-Encoding header with a value of binary, is returned that applies to all requests
+     * in the change set and MUST be formatted according to the Error Handling defined
+     * for the particular response format.
+     */
+
+    final ODataClient client = getClient();
+    final ODataObjectFactory of = client.getObjectFactory();
+
+    // Try to create entity, with invalid type
+    final ODataEntity entity = of.newEntity(ES_NOT_AVAILABLE);
+    entity.getProperties().add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder()
+        .buildString("1")));
+    final ODataBatchRequest batchRequest = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    batchRequest.setAccept(ACCEPT);
+    final BatchManager payloadManager = batchRequest.payloadManager();
+    final ODataChangeset changeset = payloadManager.addChangeset();
+    final URI targetURI = client.newURIBuilder(SERVICE_URI)
+        .appendEntitySetSegment(ES_NOT_AVAILABLE_NAME)
+        .build();
+    final ODataEntityCreateRequest<ODataEntity> createRequest = client.getCUDRequestFactory()
+                                                                      .getEntityCreateRequest(targetURI, entity);
+    changeset.addRequest(createRequest);
+
+    final ODataBatchResponse response = payloadManager.getResponse();
+    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
+
+    // Check response items
+    final Iterator<ODataBatchResponseItem> responseBodyIter = response.getBody();
+    assertTrue(responseBodyIter.hasNext());
+
+    final ODataBatchResponseItem changeSetResponse = responseBodyIter.next();
+    assertTrue(changeSetResponse.isChangeset());
+    assertTrue(changeSetResponse.hasNext());
+
+    final ODataResponse updateResponse = changeSetResponse.next();
+    assertTrue(changeSetResponse.isBreaking());
+
+    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), updateResponse.getStatusCode());
+    assertEquals(ODataFormat.JSON.toString(), updateResponse.getContentType());
   }
 
   @Test
@@ -191,7 +251,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     // Check if third request is available
     assertFalse(iter.hasNext());
   }
-  
+
   @Test
   public void testInvalidAbsoluteUri() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
@@ -209,14 +269,14 @@ public class BatchClientITCase extends AbstractTestITCase {
 
     final Iterator<ODataBatchResponseItem> bodyIterator = response.getBody();
     assertTrue(bodyIterator.hasNext());
-    
+
     ODataBatchResponseItem item = bodyIterator.next();
     assertFalse(item.isChangeset());
-    
+
     final ODataResponse oDataResponse = item.next();
     assertEquals(400, oDataResponse.getStatusCode());
   }
-  
+
   @Test
   @Ignore
   public void testInvalidHost() throws URISyntaxException {
@@ -233,7 +293,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     final ODataBatchResponse response = payload.getResponse();
     assertEquals(400, response.getStatusCode());
   }
-  
+
   @Test
   @Ignore
   public void testInvalidAbsoluteRequest() throws URISyntaxException {
@@ -250,7 +310,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     final ODataBatchResponse response = payload.getResponse();
     assertEquals(400, response.getStatusCode());
   }
-  
+
   @Test
   public void testErrorWithContinueOnErrorPreferHeader() throws URISyntaxException {
     client.getConfiguration().setContinueOnError(true);
