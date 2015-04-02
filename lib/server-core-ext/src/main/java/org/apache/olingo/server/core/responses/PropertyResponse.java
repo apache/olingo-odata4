@@ -106,10 +106,10 @@ public class PropertyResponse extends ServiceResponse {
       throws SerializerException {
     if (this.collection) {
       this.response.setContent(this.serializer.complexCollection(this.metadata, type, property,
-          this.complexOptions));
+          this.complexOptions).getContent());
     } else {
       this.response.setContent(this.serializer.complex(this.metadata, type, property,
-          this.complexOptions));
+          this.complexOptions).getContent());
     }
     writeOK(this.responseContentType.toContentTypeString());
     close();
@@ -118,9 +118,9 @@ public class PropertyResponse extends ServiceResponse {
   private void writePrimitiveProperty(EdmPrimitiveType type, Property property)
       throws SerializerException {
     if(this.collection) {
-      this.response.setContent(this.serializer.primitiveCollection(type, property, this.primitiveOptions));
+      this.response.setContent(this.serializer.primitiveCollection(type, property, this.primitiveOptions).getContent());
     } else {
-      this.response.setContent(this.serializer.primitive(type, property, this.primitiveOptions));
+      this.response.setContent(this.serializer.primitive(type, property, this.primitiveOptions).getContent());
     }
     writeOK(this.responseContentType.toContentTypeString());
     close();

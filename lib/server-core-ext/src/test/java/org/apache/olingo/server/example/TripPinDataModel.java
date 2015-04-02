@@ -124,7 +124,7 @@ public class TripPinDataModel {
       ODataJsonDeserializer deserializer = new ODataJsonDeserializer();
 
       EntitySet set = deserializer.entityCollection(new FileInputStream(new File(
-          "src/test/resources/" + entitySetName.toLowerCase() + ".json")), type);
+          "src/test/resources/" + entitySetName.toLowerCase() + ".json")), type).getEntityCollection();
       // TODO: the count needs to be part of deserializer
       set.setCount(set.getEntities().size());
       for (Entity entity : set.getEntities()) {

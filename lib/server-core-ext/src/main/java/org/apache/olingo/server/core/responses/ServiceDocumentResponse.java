@@ -50,7 +50,7 @@ public class ServiceDocumentResponse extends ServiceResponse {
   public void writeServiceDocument(String serviceRoot)
       throws ODataTranslatedException {
     assert (!isClosed());
-    this.response.setContent(this.serializer.serviceDocument(this.metadata.getEdm(), serviceRoot));
+    this.response.setContent(this.serializer.serviceDocument(this.metadata.getEdm(), serviceRoot).getContent());
     writeOK(this.responseContentType.toContentTypeString());
     close();
   }

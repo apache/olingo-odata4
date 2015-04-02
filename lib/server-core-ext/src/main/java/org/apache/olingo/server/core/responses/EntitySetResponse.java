@@ -69,7 +69,8 @@ public class EntitySetResponse extends ServiceResponse {
     }
 
     // write the whole collection to response
-    this.response.setContent(this.serializer.entityCollection(metadata, entityType, entitySet, this.options));
+    this.response.setContent(this.serializer.entityCollection(metadata, entityType, entitySet, this.options)
+                                            .getContent());
     writeOK(this.responseContentType.toContentTypeString());
     close();
   }

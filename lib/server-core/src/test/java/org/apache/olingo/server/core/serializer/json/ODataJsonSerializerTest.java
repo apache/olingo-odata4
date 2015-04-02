@@ -50,7 +50,7 @@ public class ODataJsonSerializerTest {
     final ComplexSerializerOptions options = ComplexSerializerOptions.with()
         .contextURL(ContextURL.with().selectList("ComplexCollection").build()).build();
     final InputStream in = serializer.complexCollection(null, ComplexTypeHelper.createType(),
-        complexCollection, options);
+        complexCollection, options).getContent();
     final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
     String line;

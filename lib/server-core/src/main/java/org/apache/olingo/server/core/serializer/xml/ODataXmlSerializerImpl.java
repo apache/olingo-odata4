@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.server.core.serializer.xml;
 
-import java.io.InputStream;
-
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -39,6 +37,8 @@ import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.serializer.SerializerResult;
+import org.apache.olingo.server.core.serializer.SerializerResultImpl;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,13 +51,13 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   private static final Logger log = LoggerFactory.getLogger(ODataXmlSerializerImpl.class);
 
   @Override
-  public InputStream serviceDocument(final Edm edm, final String serviceRoot) throws SerializerException {
+  public SerializerResultImpl serviceDocument(final Edm edm, final String serviceRoot) throws SerializerException {
     throw new SerializerException("Service Document not implemented for XML format",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
 
   @Override
-  public InputStream metadataDocument(final ServiceMetadata serviceMetadata) throws SerializerException {
+  public SerializerResult metadataDocument(final ServiceMetadata serviceMetadata) throws SerializerException {
     CircleStreamBuffer buffer;
     XMLStreamWriter xmlStreamWriter = null;
 
@@ -69,7 +69,7 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
       xmlStreamWriter.flush();
       xmlStreamWriter.close();
 
-      return buffer.getInputStream();
+      return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
       log.error(e.getMessage(), e);
       throw new SerializerException("An I/O exception occurred.", e,
@@ -87,14 +87,14 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
-  public InputStream entity(final ServiceMetadata metadata, final EdmEntityType entityType,
+  public SerializerResult entity(final ServiceMetadata metadata, final EdmEntityType entityType,
       final Entity entity, final EntitySerializerOptions options) throws SerializerException {
     throw new SerializerException("Entity serialization not implemented for XML format",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
 
   @Override
-  public InputStream entityCollection(final ServiceMetadata metadata,
+  public SerializerResult entityCollection(final ServiceMetadata metadata,
       final EdmEntityType entityType, final EntitySet entitySet,
       final EntityCollectionSerializerOptions options) throws SerializerException {
     throw new SerializerException("Entityset serialization not implemented for XML format",
@@ -102,34 +102,34 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
-  public InputStream error(ODataServerError error) throws SerializerException {
+  public SerializerResult error(ODataServerError error) throws SerializerException {
     throw new SerializerException("error serialization not implemented for XML format",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
 
   @Override
-  public InputStream primitive(final EdmPrimitiveType type, final Property property,
+  public SerializerResult primitive(final EdmPrimitiveType type, final Property property,
       final PrimitiveSerializerOptions options) throws SerializerException {
     throw new SerializerException("Serialization not implemented for XML format.",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
 
   @Override
-  public InputStream complex(final ServiceMetadata metadata, final EdmComplexType type,
+  public SerializerResult complex(final ServiceMetadata metadata, final EdmComplexType type,
       final Property property, final ComplexSerializerOptions options) throws SerializerException {
     throw new SerializerException("Serialization not implemented for XML format.",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
 
   @Override
-  public InputStream primitiveCollection(final EdmPrimitiveType type, final Property property,
+  public SerializerResult primitiveCollection(final EdmPrimitiveType type, final Property property,
       final PrimitiveSerializerOptions options) throws SerializerException {
     throw new SerializerException("Serialization not implemented for XML format.",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
 
   @Override
-  public InputStream complexCollection(final ServiceMetadata metadata, final EdmComplexType type,
+  public SerializerResult complexCollection(final ServiceMetadata metadata, final EdmComplexType type,
       final Property property, final ComplexSerializerOptions options) throws SerializerException {
     throw new SerializerException("Serialization not implemented for XML format.",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);

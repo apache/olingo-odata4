@@ -315,7 +315,7 @@ public class DataRequest extends ServiceRequest {
     private Entity getEntityFromClient() throws DeserializerException {
       ODataDeserializer deserializer = odata.createDeserializer(ODataFormat
           .fromContentType(getRequestContentType()));
-      return deserializer.entity(getODataRequest().getBody(), getEntitySet().getEntityType());
+      return deserializer.entity(getODataRequest().getBody(), getEntitySet().getEntityType()).getEntity();
     }
 
     @Override
@@ -431,7 +431,7 @@ public class DataRequest extends ServiceRequest {
     private List<URI> getPayload() throws DeserializerException {
       ODataDeserializer deserializer = odata.createDeserializer(ODataFormat
           .fromContentType(getRequestContentType()));
-      return deserializer.entityReferences(getODataRequest().getBody());
+      return deserializer.entityReferences(getODataRequest().getBody()).getEntityReferences();
     }
 
     @Override
@@ -664,7 +664,7 @@ public class DataRequest extends ServiceRequest {
     // for now it is responsibility of the user
     ODataDeserializer deserializer = odata.createDeserializer(ODataFormat
         .fromContentType(getRequestContentType()));
-    return deserializer.property(getODataRequest().getBody(), edmProperty);
+    return deserializer.property(getODataRequest().getBody(), edmProperty).getProperty();
   }
 
   static ContextURL.Builder buildEntitySetContextURL(UriHelper helper,

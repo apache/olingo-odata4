@@ -108,7 +108,7 @@ public class ErrorHandler {
     try {
       ODataSerializer serializer = this.odata.createSerializer(ODataFormat
           .fromContentType(requestedContentType));
-      response.setContent(serializer.error(serverError));
+      response.setContent(serializer.error(serverError).getContent());
       response.setStatusCode(serverError.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     } catch (Exception e) {

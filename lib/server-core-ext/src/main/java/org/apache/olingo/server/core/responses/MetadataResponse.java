@@ -49,7 +49,7 @@ public class MetadataResponse extends ServiceResponse {
 
   public void writeMetadata()throws ODataTranslatedException {
     assert (!isClosed());
-    this.response.setContent(this.serializer.metadataDocument(this.metadata));
+    this.response.setContent(this.serializer.metadataDocument(this.metadata).getContent());
     writeOK(this.responseContentType.toContentTypeString());
     close();
   }

@@ -82,7 +82,7 @@ public class EntityResponse extends ServiceResponse {
     }
 
     // write the entity to response
-    this.response.setContent(this.serializer.entity(this.metadata, entityType, entity, this.options));
+    this.response.setContent(this.serializer.entity(this.metadata, entityType, entity, this.options).getContent());
     writeOK(this.responseContentType.toContentTypeString());
     close();
   }
@@ -107,7 +107,7 @@ public class EntityResponse extends ServiceResponse {
     }
 
     // return the content of the created entity
-    this.response.setContent(this.serializer.entity(this.metadata, entityType, entity, this.options));
+    this.response.setContent(this.serializer.entity(this.metadata, entityType, entity, this.options).getContent());
     writeCreated(false);
     writeHeader(HttpHeader.LOCATION, locationHeader);
     writeHeader("Preference-Applied", "return=representation"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -98,7 +98,7 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
   private List<Parameter> deserialize(final String input, final String actionName) throws DeserializerException {
     return OData.newInstance().createDeserializer(ODataFormat.JSON)
         .actionParameters(new ByteArrayInputStream(input.getBytes()),
-            edm.getUnboundAction(new FullQualifiedName("Namespace1_Alias", actionName)));
+            edm.getUnboundAction(new FullQualifiedName("Namespace1_Alias", actionName))).getActionParameter();
   }
 
   private List<Parameter> deserialize(final String input, final String actionName, final String typeName)
@@ -106,6 +106,6 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
     return OData.newInstance().createDeserializer(ODataFormat.JSON)
         .actionParameters(new ByteArrayInputStream(input.getBytes()),
             edm.getBoundAction(new FullQualifiedName("Namespace1_Alias", actionName),
-                new FullQualifiedName("Namespace1_Alias", typeName), false));
+                new FullQualifiedName("Namespace1_Alias", typeName), false)).getActionParameter();
   }
 }

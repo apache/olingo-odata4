@@ -248,13 +248,13 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
                   .precision(edmProperty == null ? returnType.getPrecision() : edmProperty.getPrecision())
                   .scale(edmProperty == null ? returnType.getScale() : edmProperty.getScale())
                   .unicode(edmProperty == null ? null : edmProperty.isUnicode())
-                  .build()));
+                  .build()).getContent());
           break;
         case COMPLEX:
           response.setContent(serializer.complex(this.serviceMetadata,(EdmComplexType) type, property,
               ComplexSerializerOptions.with().contextURL(contextURL)
                   .expand(expand).select(select)
-                  .build()));
+                  .build()).getContent());
           break;
         case COLLECTION_PRIMITIVE:
           response.setContent(serializer.primitiveCollection((EdmPrimitiveType) type, property,
@@ -264,13 +264,13 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
                   .precision(edmProperty == null ? returnType.getPrecision() : edmProperty.getPrecision())
                   .scale(edmProperty == null ? returnType.getScale() : edmProperty.getScale())
                   .unicode(edmProperty == null ? null : edmProperty.isUnicode())
-                  .build()));
+                  .build()).getContent());
           break;
         case COLLECTION_COMPLEX:
           response.setContent(serializer.complexCollection(this.serviceMetadata, (EdmComplexType) type, property,
               ComplexSerializerOptions.with().contextURL(contextURL)
                   .expand(expand).select(select)
-                  .build()));
+                  .build()).getContent());
           break;
         default:
           break;
