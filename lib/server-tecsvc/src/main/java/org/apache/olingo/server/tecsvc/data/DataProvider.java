@@ -232,17 +232,20 @@ public class DataProvider {
             patch);
       }
     }
-
+    
+    // For insert operations collection navigation property bind operations and deep insert operations can be combined. 
+    // In this case, the bind operations MUST appear before the deep insert operations in the payload.
+    // => Apply bindings first
+    final boolean navigationBindingsAvailable = !changedEntity.getNavigationBindings().isEmpty();
+    if (navigationBindingsAvailable) {
+      applyNavigationBinding(rawBaseUri, edmEntitySet, entity, changedEntity.getNavigationBindings());
+    }
+    
     // Deep insert (only if not an update)
     if (isInsert) {
       handleDeepInsert(rawBaseUri, edmEntitySet, entity, changedEntity);
     } else {
       handleDeleteSingleNavigationProperties(edmEntitySet, entity, changedEntity);
-    }
-
-    final boolean navigationBindingsAvailable = !changedEntity.getNavigationBindings().isEmpty();
-    if (navigationBindingsAvailable) {
-      applyNavigationBinding(rawBaseUri, edmEntitySet, entity, changedEntity.getNavigationBindings());
     }
   }
 
