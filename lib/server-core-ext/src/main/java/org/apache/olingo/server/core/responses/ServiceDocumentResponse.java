@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
@@ -60,4 +61,12 @@ public class ServiceDocumentResponse extends ServiceResponse {
       ODataApplicationException {
     visitor.visit(this);
   }
+  
+  public void writeError(ODataServerError error) {
+    try {
+      writeContent(this.serializer.error(error).getContent(), error.getStatusCode(), true);
+    } catch (SerializerException e) {
+      writeServerError(true);
+    }
+  }  
 }

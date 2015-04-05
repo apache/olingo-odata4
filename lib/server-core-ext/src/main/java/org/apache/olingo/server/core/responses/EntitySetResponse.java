@@ -21,11 +21,12 @@ package org.apache.olingo.server.core.responses;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.data.ContextURL;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
@@ -58,7 +59,7 @@ public class EntitySetResponse extends ServiceResponse {
 
   // write collection of entities
   // TODO: server paging needs to be implemented.
-  public void writeReadEntitySet(EdmEntityType entityType, EntitySet entitySet)
+  public void writeReadEntitySet(EdmEntityType entityType, EntityCollection entitySet)
       throws SerializerException {
 
     assert (!isClosed());
@@ -80,4 +81,12 @@ public class EntitySetResponse extends ServiceResponse {
       ODataApplicationException {
     visitor.visit(this);
   }
+  
+  public void writeError(ODataServerError error) {
+    try {
+      writeContent(this.serializer.error(error).getContent(), error.getStatusCode(), true);
+    } catch (SerializerException e) {
+      writeServerError(true);
+    }
+  }  
 }

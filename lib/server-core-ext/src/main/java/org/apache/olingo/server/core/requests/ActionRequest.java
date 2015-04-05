@@ -19,6 +19,9 @@
 
 package org.apache.olingo.server.core.requests;
 
+import java.io.InputStream;
+
+import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.server.api.OData;
@@ -26,7 +29,9 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.uri.UriResourceAction;
+import org.apache.olingo.server.core.ContentNegotiatorException;
 import org.apache.olingo.server.core.ServiceHandler;
 import org.apache.olingo.server.core.responses.EntityResponse;
 import org.apache.olingo.server.core.responses.EntitySetResponse;
@@ -59,10 +64,7 @@ public class ActionRequest extends OperationRequest {
     if (!hasReturnType()) {
       handler.invoke(this, getETag(), new NoContentResponse(getServiceMetaData(), response));
     } else {
-      if (isReturnTypePrimitive()) {
-        handler.invoke(this, getETag(),
-            PrimitiveValueResponse.getInstance(this, response, isCollection(), getReturnType()));
-      } else if (isReturnTypeComplex()) {
+      if (isReturnTypePrimitive() || isReturnTypeComplex()) {
         handler.invoke(this, getETag(), PropertyResponse.getInstance(this, response,
             getReturnType().getType(), getContextURL(this.odata), isCollection()));
       } else {
@@ -83,6 +85,21 @@ public class ActionRequest extends OperationRequest {
     // 11.5.4.1 Invoking an Action - only allows POST
     return (isPOST());
   }
+  
+  @Override
+  public <T> T getSerializerOptions(Class<T> serilizerOptions, ContextURL contextUrl, boolean references)
+      throws ContentNegotiatorException {
+    if (hasReturnType() && serilizerOptions.isAssignableFrom(PrimitiveSerializerOptions.class)) {
+      return (T) PrimitiveSerializerOptions.with().contextURL(contextUrl)
+          .nullable(getReturnType().isNullable())
+          .maxLength(getReturnType().getMaxLength())
+          .precision(getReturnType().getPrecision())
+          .scale(getReturnType().getScale())
+          .unicode(null)
+          .build();
+    }
+    return super.getSerializerOptions(serilizerOptions, contextUrl, references);
+  }  
 
   public UriResourceAction getUriResourceAction() {
     return uriResourceAction;
@@ -116,5 +133,9 @@ public class ActionRequest extends OperationRequest {
   @Override
   public boolean hasReturnType() {
     return getAction().getReturnType() != null;
+  }
+  
+  public InputStream getPayload() {
+    return getODataRequest().getBody();
   }
 }

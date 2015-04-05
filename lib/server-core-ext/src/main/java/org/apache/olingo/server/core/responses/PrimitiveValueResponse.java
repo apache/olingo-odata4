@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.responses;
 
+import java.io.ByteArrayInputStream;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -92,6 +93,15 @@ public class PrimitiveValueResponse extends ServiceResponse {
 
     writeOK(HttpContentType.TEXT_PLAIN);
   }
+  
+  public void writeEdmBinary(byte[] value) throws SerializerException {
+    if (value == null) {
+      writeNoContent(true);
+      return;
+    }
+    this.response.setContent(new ByteArrayInputStream(value));
+    writeOK(HttpContentType.APPLICATION_OCTET_STREAM);
+  }  
 
   public boolean isReturnCollection() {
     return returnCollection;

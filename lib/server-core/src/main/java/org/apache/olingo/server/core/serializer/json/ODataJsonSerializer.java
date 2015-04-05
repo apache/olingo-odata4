@@ -229,6 +229,12 @@ public class ODataJsonSerializer implements ODataSerializer {
         if (entity.getMediaContentType() != null) {
           json.writeStringField(Constants.JSON_MEDIA_CONTENT_TYPE, entity.getMediaContentType());
         }
+        if (entity.getMediaContentSource() != null) {
+          json.writeStringField(Constants.JSON_MEDIA_READ_LINK, entity.getMediaContentSource().toString());
+        }
+        if (entity.getMediaEditLinks() != null && !entity.getMediaEditLinks().isEmpty()) {
+          json.writeStringField(Constants.JSON_MEDIA_EDIT_LINK, entity.getMediaEditLinks().get(0).getHref());
+        }
       }
     }
     if (onlyReference) {

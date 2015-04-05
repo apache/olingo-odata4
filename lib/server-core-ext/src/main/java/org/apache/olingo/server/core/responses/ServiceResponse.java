@@ -19,6 +19,7 @@
 
 package org.apache.olingo.server.core.responses;
 
+import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -104,6 +105,14 @@ public abstract class ServiceResponse {
     } else {
       this.response.setHeader(key, value);
     }
+  }
+  
+  public void writeContent(InputStream content, int statusCode, boolean closeResponse) {
+    this.response.setContent(content);
+    this.response.setStatusCode(statusCode);
+    if (closeResponse) {
+      close();
+    }    
   }
 
   /**

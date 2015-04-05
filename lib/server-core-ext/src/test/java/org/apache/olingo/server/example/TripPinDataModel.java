@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -45,21 +45,19 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.core.data.EntityImpl;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.core.deserializer.json.ODataJsonDeserializer;
+import org.apache.olingo.server.core.responses.EntityResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TripPinDataModel {
   private final ServiceMetadata metadata;
-  private HashMap<String, EntitySet> entitySetMap;
+  private HashMap<String, EntityCollection> entitySetMap;
   private Map<Integer, Map> tripLinks;
   private Map<String, Map> peopleLinks;
   private Map<Integer, Map> flightLinks;
@@ -70,7 +68,7 @@ public class TripPinDataModel {
   }
 
   public void loadData() throws Exception {
-    this.entitySetMap = new HashMap<String, EntitySet>();
+    this.entitySetMap = new HashMap<String, EntityCollection>();
     this.tripLinks = new HashMap<Integer, Map>();
     this.peopleLinks = new HashMap<String, Map>();
     this.flightLinks = new HashMap<Integer, Map>();
@@ -78,7 +76,7 @@ public class TripPinDataModel {
     EdmEntityContainer ec = metadata.getEdm().getEntityContainer(null);
     for (EdmEntitySet edmEntitySet : ec.getEntitySets()) {
       String entitySetName = edmEntitySet.getName();
-      EntitySet set = loadEnities(entitySetName, edmEntitySet.getEntityType());
+      EntityCollection set = loadEnities(entitySetName, edmEntitySet.getEntityType());
       if (set != null) {
         this.entitySetMap.put(entitySetName, set);
       }
@@ -119,19 +117,19 @@ public class TripPinDataModel {
     }
   }
 
-  private EntitySet loadEnities(String entitySetName, EdmEntityType type) {
+  private EntityCollection loadEnities(String entitySetName, EdmEntityType type) {
     try {
       ODataJsonDeserializer deserializer = new ODataJsonDeserializer();
 
-      EntitySet set = deserializer.entityCollection(new FileInputStream(new File(
+      EntityCollection set = deserializer.entityCollection(new FileInputStream(new File(
           "src/test/resources/" + entitySetName.toLowerCase() + ".json")), type).getEntityCollection();
       // TODO: the count needs to be part of deserializer
       set.setCount(set.getEntities().size());
       for (Entity entity : set.getEntities()) {
-        ((EntityImpl) entity).setETag(UUID.randomUUID().toString());
-        ((EntityImpl) entity).setId(new URI(TripPinHandler.buildLocation(entity, entitySetName,
+        entity.setETag(UUID.randomUUID().toString());
+        entity.setId(new URI(EntityResponse.buildLocation("", entity, entitySetName,
             type)));
-        ((EntityImpl) entity).setType(type.getFullQualifiedName().getFullQualifiedNameAsString());
+        entity.setType(type.getFullQualifiedName().getFullQualifiedNameAsString());
       }
       return set;
     } catch (FileNotFoundException e) {
@@ -149,17 +147,17 @@ public class TripPinDataModel {
     return null;
   }
 
-  public EntitySet getEntitySet(String name) {
+  public EntityCollection getEntitySet(String name) {
     return getEntitySet(name, -1, -1);
   }
 
-  public EntitySet getEntitySet(String name, int skip, int pageSize) {
-    EntitySet set = this.entitySetMap.get(name);
+  public EntityCollection getEntitySet(String name, int skip, int pageSize) {
+    EntityCollection set = this.entitySetMap.get(name);
     if (set == null) {
       return null;
     }
 
-    EntitySetImpl modifiedES = new EntitySetImpl();
+    EntityCollection modifiedES = new EntityCollection();
     int i = 0;
     for (Entity e : set.getEntities()) {
       if (skip >= 0 && i >= skip && modifiedES.getEntities().size() < pageSize) {
@@ -232,11 +230,11 @@ public class TripPinDataModel {
   }
 
   public Entity getEntity(String name, List<UriParameter> keys) throws ODataApplicationException {
-    EntitySet es = getEntitySet(name);
+    EntityCollection es = getEntitySet(name);
     return getEntity(es, keys);
   }
 
-  public Entity getEntity(EntitySet es, List<UriParameter> keys) throws ODataApplicationException {
+  public Entity getEntity(EntityCollection es, List<UriParameter> keys) throws ODataApplicationException {
     List<Entity> search = es.getEntities();
     for (UriParameter param : keys) {
       search = getMatch(param, search);
@@ -247,15 +245,15 @@ public class TripPinDataModel {
     return search.get(0);
   }
 
-  private EntitySet getFriends(String userName) {
+  private EntityCollection getFriends(String userName) {
     Map<String, Object> map = this.peopleLinks.get(userName);
     if (map == null) {
       return null;
     }
     ArrayList<String> friends = (ArrayList<String>) map.get("Friends");
-    EntitySet set = getEntitySet("People");
+    EntityCollection set = getEntitySet("People");
 
-    EntitySetImpl result = new EntitySetImpl();
+    EntityCollection result = new EntityCollection();
     int i = 0;
     if (friends != null) {
       for (String friend : friends) {
@@ -272,16 +270,16 @@ public class TripPinDataModel {
     return result;
   }
 
-  private EntitySet getTrips(String userName) {
+  private EntityCollection getTrips(String userName) {
     Map<String, Object> map = this.peopleLinks.get(userName);
     if (map == null) {
       return null;
     }
 
     ArrayList<Integer> trips = (ArrayList<Integer>) map.get("Trips");
-    EntitySet set = getEntitySet("Trip");
+    EntityCollection set = getEntitySet("Trip");
 
-    EntitySetImpl result = new EntitySetImpl();
+    EntityCollection result = new EntityCollection();
     int i = 0;
     if (trips != null) {
       for (int trip : trips) {
@@ -305,7 +303,7 @@ public class TripPinDataModel {
     }
 
     Integer photoID = (Integer) map.get("Photo");
-    EntitySet set = getEntitySet("Photos");
+    EntityCollection set = getEntitySet("Photos");
     if (photoID != null) {
       for (Entity e : set.getEntities()) {
         if (e.getProperty("Id").getValue().equals(photoID.longValue())) {
@@ -316,20 +314,20 @@ public class TripPinDataModel {
     return null;
   }
 
-  private EntitySet getPlanItems(int tripId, EntitySetImpl result) {
+  private EntityCollection getPlanItems(int tripId, EntityCollection result) {
     getFlights(tripId, result);
     getEvents(tripId, result);
     return result;
   }
 
-  private EntitySet getEvents(int tripId, EntitySetImpl result) {
+  private EntityCollection getEvents(int tripId, EntityCollection result) {
     Map<Integer, Object> map = this.tripLinks.get(tripId);
     if (map == null) {
       return null;
     }
 
     ArrayList<Integer> events = (ArrayList<Integer>) map.get("Events");
-    EntitySet set = getEntitySet("Event");
+    EntityCollection set = getEntitySet("Event");
     int i = result.getEntities().size();
     if (events != null) {
       for (int event : events) {
@@ -346,14 +344,14 @@ public class TripPinDataModel {
     return result;
   }
 
-  private EntitySet getFlights(int tripId, EntitySetImpl result) {
+  private EntityCollection getFlights(int tripId, EntityCollection result) {
     Map<Integer, Object> map = this.tripLinks.get(tripId);
     if (map == null) {
       return null;
     }
 
     ArrayList<Integer> flights = (ArrayList<Integer>) map.get("Flights");
-    EntitySet set = getEntitySet("Flight");
+    EntityCollection set = getEntitySet("Flight");
     int i = result.getEntities().size();
     if (flights != null) {
       for (int flight : flights) {
@@ -370,7 +368,7 @@ public class TripPinDataModel {
     return result;
   }
 
-  private EntitySet getTripPhotos(int tripId) {
+  private EntityCollection getTripPhotos(int tripId) {
     Map<Integer, Object> map = this.tripLinks.get(tripId);
     if (map == null) {
       return null;
@@ -378,8 +376,8 @@ public class TripPinDataModel {
 
     ArrayList<Integer> photos = (ArrayList<Integer>) map.get("Photos");
 
-    EntitySet set = getEntitySet("Photos");
-    EntitySetImpl result = new EntitySetImpl();
+    EntityCollection set = getEntitySet("Photos");
+    EntityCollection result = new EntityCollection();
     int i = 0;
     if (photos != null) {
       for (int photo : photos) {
@@ -403,7 +401,7 @@ public class TripPinDataModel {
     }
 
     String from = (String) map.get("From");
-    EntitySet set = getEntitySet("Airports");
+    EntityCollection set = getEntitySet("Airports");
 
     if (from != null) {
       for (Entity e : set.getEntities()) {
@@ -422,7 +420,7 @@ public class TripPinDataModel {
     }
 
     String to = (String) map.get("To");
-    EntitySet set = getEntitySet("Airports");
+    EntityCollection set = getEntitySet("Airports");
 
     if (to != null) {
       for (Entity e : set.getEntities()) {
@@ -441,7 +439,7 @@ public class TripPinDataModel {
     }
 
     String airline = (String) map.get("Airline");
-    EntitySet set = getEntitySet("Airlines");
+    EntityCollection set = getEntitySet("Airlines");
 
     if (airline != null) {
       for (Entity e : set.getEntities()) {
@@ -560,7 +558,7 @@ public class TripPinDataModel {
 
   protected static void setLink(Entity entity, final String navigationPropertyName,
       final Entity target) {
-    Link link = new LinkImpl();
+    Link link = new Link();
     link.setTitle(navigationPropertyName);
     link.setInlineEntity(target);
     entity.getNavigationLinks().add(link);
@@ -607,18 +605,19 @@ public class TripPinDataModel {
     return updated;
   }
 
-  public Entity createEntity(String entitySetName, Entity entity, String location)
+  public Entity createEntity(EdmEntitySet edmEntitySet, Entity entity, String baseURL)
       throws ODataApplicationException {
 
-    EntitySet set = this.entitySetMap.get(entitySetName);
-    EntityImpl copy = new EntityImpl();
+    EntityCollection set = this.entitySetMap.get(edmEntitySet.getName());
+    Entity copy = new Entity();
     copy.setType(entity.getType());
     for (Property p : entity.getProperties()) {
       copy.addProperty(p);
     }
 
     try {
-      copy.setId(new URI(location));
+      copy.setId(new URI(EntityResponse.buildLocation(baseURL, entity, edmEntitySet.getName(), edmEntitySet
+          .getEntityType())));
       copy.setETag(UUID.randomUUID().toString());
     } catch (URISyntaxException e) {
       throw new ODataApplicationException("Failed to create ID for entity", 500,
@@ -630,7 +629,7 @@ public class TripPinDataModel {
   }
 
   public boolean deleteEntity(String entitySetName, String eTag, String key, Object keyValue) {
-    EntitySet set = getEntitySet(entitySetName);
+    EntityCollection set = getEntitySet(entitySetName);
     Iterator<Entity> it = set.getEntities().iterator();
     boolean removed = false;
     while (it.hasNext()) {
@@ -647,7 +646,7 @@ public class TripPinDataModel {
 
   public boolean updateProperty(String entitySetName, String eTag, String key, Object keyValue,
       Property property) {
-    EntitySet set = getEntitySet(entitySetName);
+    EntityCollection set = getEntitySet(entitySetName);
     Iterator<Entity> it = set.getEntities().iterator();
     boolean replaced = false;
     while (it.hasNext()) {
@@ -663,20 +662,20 @@ public class TripPinDataModel {
     return replaced;
   }
 
-  public EntitySet getNavigableEntitySet(Entity parentEntity, UriResourceNavigation navigation) {
+  public EntityCollection getNavigableEntitySet(Entity parentEntity, UriResourceNavigation navigation) {
     EdmEntityType type = this.metadata.getEdm().getEntityType(
         new FullQualifiedName(parentEntity.getType()));
 
     String key = type.getKeyPredicateNames().get(0);
     String linkName = navigation.getProperty().getName();
 
-    EntitySet results = null;
+    EntityCollection results = null;
     if (type.getName().equals("Person") && linkName.equals("Friends")) {
       results = getFriends((String) parentEntity.getProperty(key).getValue());
     } else if (type.getName().equals("Person") && linkName.equals("Trips")) {
       results = getTrips((String) parentEntity.getProperty(key).getValue());
     } else if (type.getName().equals("Trip") && linkName.equals("PlanItems")) {
-      EntitySetImpl planitems = new EntitySetImpl();
+      EntityCollection planitems = new EntityCollection();
       if (navigation.getTypeFilterOnCollection() == null) {
         results = getPlanItems((Integer) parentEntity.getProperty(key).getValue(), planitems);
       } else if (navigation.getTypeFilterOnCollection().getName().equals("Flight")) {
@@ -700,7 +699,7 @@ public class TripPinDataModel {
     String key = type.getKeyPredicateNames().get(0);
     String linkName = navigation.getProperty().getName();
 
-    EntitySet results = null;
+    EntityCollection results = null;
     if (navigation.getProperty().isCollection()) {
       results = getNavigableEntitySet(parentEntity, navigation);
       return this.getEntity(results, navigation.getKeyPredicates());

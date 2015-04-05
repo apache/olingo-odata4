@@ -2,7 +2,11 @@
    "value":[
       {
          "AirlineCode":"AA",
-         "Name":"American Airlines"
+         "Name":"American Airlines",
+         "Picture@odata.mediaReadLink": "/Airlines('AA')/Picture",
+         "Picture@odata.mediaEditLink": "/Airlines('AA')/Picture",
+         "Picture@odata.mediaContentType": "image/jpeg",
+         "Picture@odata.mediaEtag": "12345"         
       },
       {
          "AirlineCode":"FM",

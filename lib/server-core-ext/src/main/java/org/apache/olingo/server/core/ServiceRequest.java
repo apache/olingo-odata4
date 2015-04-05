@@ -41,6 +41,7 @@ import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
+import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.core.requests.DataRequest;
@@ -155,19 +156,23 @@ public abstract class ServiceRequest {
     } else if (serilizerOptions.isAssignableFrom(ComplexSerializerOptions.class)) {
       return (T) ComplexSerializerOptions.with().contextURL(contextUrl)
           .expand(this.uriInfo.getExpandOption()).select(this.uriInfo.getSelectOption()).build();
+    } else if (serilizerOptions.isAssignableFrom(PrimitiveSerializerOptions.class)) {
+      return (T) PrimitiveSerializerOptions.with().contextURL(contextUrl)
+          .build();
     }
     return null;
   }
 
   public ReturnRepresentation getReturnRepresentation() {
     String prefer = this.request.getHeader(HttpHeader.PREFER);
-    if (prefer == null) {
-      return ReturnRepresentation.REPRESENTATION;
+    if (prefer != null) {
+      if (prefer.contains("return=minimal")) { //$NON-NLS-1$
+        return ReturnRepresentation.MINIMAL;
+      } else if (prefer.contains("return=representation")) {    
+        return ReturnRepresentation.REPRESENTATION;
+      }
     }
-    if (prefer.contains("return=minimal")) { //$NON-NLS-1$
-      return ReturnRepresentation.MINIMAL;
-    }
-    return ReturnRepresentation.REPRESENTATION;
+    return ReturnRepresentation.NONE;
   }
 
   public String getHeader(String key) {

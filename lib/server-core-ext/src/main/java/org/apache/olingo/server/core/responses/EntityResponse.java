@@ -22,12 +22,14 @@ import java.util.Map;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
@@ -42,15 +44,17 @@ public class EntityResponse extends ServiceResponse {
   private final ODataSerializer serializer;
   private final EntitySerializerOptions options;
   private final ContentType responseContentType;
+  private final String baseURL;
 
   private EntityResponse(ServiceMetadata metadata, ODataResponse response,
       ODataSerializer serializer, EntitySerializerOptions options, ContentType responseContentType,
-      Map<String, String> preferences, ReturnRepresentation returnRepresentation) {
+      Map<String, String> preferences, ReturnRepresentation returnRepresentation, String baseURL) {
     super(metadata, response, preferences);
     this.serializer = serializer;
     this.options = options;
     this.responseContentType = responseContentType;
     this.returnRepresentation = returnRepresentation;
+    this.baseURL = baseURL;
   }
 
   public static EntityResponse getInstance(ServiceRequest request, ContextURL contextURL,
@@ -59,7 +63,8 @@ public class EntityResponse extends ServiceResponse {
     EntitySerializerOptions options = request.getSerializerOptions(EntitySerializerOptions.class,
         contextURL, references);
     return new EntityResponse(request.getServiceMetaData(), response, request.getSerializer(),
-        options, request.getResponseContentType(), request.getPreferences(), returnRepresentation);
+        options, request.getResponseContentType(), request.getPreferences(), returnRepresentation, 
+        request.getODataRequest().getRawBaseUri());
   }
 
   public static EntityResponse getInstance(ServiceRequest request, ContextURL contextURL,
@@ -68,7 +73,8 @@ public class EntityResponse extends ServiceResponse {
     EntitySerializerOptions options = request.getSerializerOptions(EntitySerializerOptions.class,
         contextURL, references);
     return new EntityResponse(request.getServiceMetaData(), response, request.getSerializer(),
-        options, request.getResponseContentType(), request.getPreferences(), null);
+        options, request.getResponseContentType(), request.getPreferences(), null,
+        request.getODataRequest().getRawBaseUri());
   }
 
   // write single entity
@@ -87,19 +93,24 @@ public class EntityResponse extends ServiceResponse {
     close();
   }
 
-  public void writeCreatedEntity(EdmEntityType entityType, Entity entity, String locationHeader)
+  public void writeCreatedEntity(EdmEntitySet entitySet, Entity entity)
       throws SerializerException {
     // upsert/insert must created a entity, otherwise should have throw an
     // exception
     assert (entity != null);
+    
+    String locationHeader = buildLocation(this.baseURL, entity, entitySet.getName(), entitySet.getEntityType());
 
     // Note that if media written just like Stream, but on entity URL
 
     // 8.2.8.7
-    if (this.returnRepresentation == ReturnRepresentation.MINIMAL) {
+    if (this.returnRepresentation == ReturnRepresentation.MINIMAL || 
+        this.returnRepresentation == ReturnRepresentation.NONE) {
       writeNoContent(false);
       writeHeader(HttpHeader.LOCATION, locationHeader);
-      writeHeader("Preference-Applied", "return=minimal"); //$NON-NLS-1$ //$NON-NLS-2$
+      if (this.returnRepresentation == ReturnRepresentation.MINIMAL) {
+        writeHeader("Preference-Applied", "return=minimal"); //$NON-NLS-1$ //$NON-NLS-2$
+      }
       // 8.3.3
       writeHeader("OData-EntityId", entity.getId().toASCIIString()); //$NON-NLS-1$
       close();
@@ -107,7 +118,8 @@ public class EntityResponse extends ServiceResponse {
     }
 
     // return the content of the created entity
-    this.response.setContent(this.serializer.entity(this.metadata, entityType, entity, this.options).getContent());
+    this.response.setContent(this.serializer.entity(this.metadata, entitySet.getEntityType(), entity, this.options)
+        .getContent());
     writeCreated(false);
     writeHeader(HttpHeader.LOCATION, locationHeader);
     writeHeader("Preference-Applied", "return=representation"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -137,4 +149,40 @@ public class EntityResponse extends ServiceResponse {
       close();
     }
   }
+  
+  public void writeError(ODataServerError error) {
+    try {
+      writeContent(this.serializer.error(error).getContent(), error.getStatusCode(), true);
+    } catch (SerializerException e) {
+      writeServerError(true);
+    }
+  }
+  
+  public void writeNotModified() {
+    this.response.setStatusCode(HttpStatusCode.NOT_MODIFIED.getStatusCode());
+    close();
+  }  
+  
+  public static String buildLocation(String baseURL, Entity entity, String enitySetName, EdmEntityType type) {
+    String location = baseURL + "/" + enitySetName + "(";
+    int i = 0;
+    boolean usename = type.getKeyPredicateNames().size() > 1;
+
+    for (String key : type.getKeyPredicateNames()) {
+      if (i > 0) {
+        location += ",";
+      }
+      i++;
+      if (usename) {
+        location += (key + "=");
+      }
+      if (entity.getProperty(key).getType().equals("Edm.String")) {
+        location = location + "'" + entity.getProperty(key).getValue().toString() + "'";
+      } else {
+        location = location + entity.getProperty(key).getValue().toString();
+      }
+    }
+    location += ")";
+    return location;
+  }  
 }

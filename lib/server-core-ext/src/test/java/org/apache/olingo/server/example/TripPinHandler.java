@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmAction;
@@ -36,9 +36,9 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
+import org.apache.olingo.commons.api.edm.provider.EntitySet;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
@@ -94,7 +94,7 @@ public class TripPinHandler implements ServiceHandler {
   }
 
   static class EntityDetails {
-    EntitySet entitySet = null;
+    EntityCollection entitySet = null;
     Entity entity = null;
     EdmEntityType entityType;
     String navigationProperty;
@@ -102,7 +102,7 @@ public class TripPinHandler implements ServiceHandler {
   }
 
   private EntityDetails process(final DataRequest request) throws ODataApplicationException {
-    EntitySet entitySet = null;
+    EntityCollection entitySet = null;
     Entity entity = null;
     EdmEntityType entityType;
     Entity parentEntity = null;
@@ -206,7 +206,7 @@ public class TripPinHandler implements ServiceHandler {
           response.writeHeader("Preference-Applied", "odata.maxpagesize="+request.getPreference("odata.maxpagesize"));
         }
         if (details.entity == null && !request.getNavigations().isEmpty()) {
-          response.writeReadEntitySet(details.entityType, new EntitySetImpl());
+          response.writeReadEntitySet(details.entityType, new EntityCollection());
         } else {
           response.writeReadEntitySet(details.entityType, details.entitySet);
         }
@@ -237,8 +237,7 @@ public class TripPinHandler implements ServiceHandler {
       throws ODataTranslatedException, ODataApplicationException {
     EdmEntitySet edmEntitySet = request.getEntitySet();
 
-    String location = buildLocation(entity, edmEntitySet.getName(), edmEntitySet.getEntityType());
-    Entity created = this.dataModel.createEntity(edmEntitySet.getName(), entity, location);
+    Entity created = this.dataModel.createEntity(edmEntitySet, entity, request.getODataRequest().getRawBaseUri());
 
     try {
       // create references, they come in "@odata.bind" value
@@ -271,30 +270,7 @@ public class TripPinHandler implements ServiceHandler {
       throw new ODataApplicationException(e.getMessage(), 500, Locale.getDefault());
     }
 
-    response.writeCreatedEntity(edmEntitySet.getEntityType(), created, location);
-  }
-
-  static String buildLocation(Entity entity, String name, EdmEntityType type) {
-    String location = "/" + name + "(";
-    int i = 0;
-    boolean usename = type.getKeyPredicateNames().size() > 1;
-
-    for (String key : type.getKeyPredicateNames()) {
-      if (i > 0) {
-        location += ",";
-      }
-      i++;
-      if (usename) {
-        location += (key + "=");
-      }
-      if (entity.getProperty(key).getType().equals("Edm.String")) {
-        location = location + "'" + entity.getProperty(key).getValue().toString() + "'";
-      } else {
-        location = location + entity.getProperty(key).getValue().toString();
-      }
-    }
-    location += ")";
-    return location;
+    response.writeCreatedEntity(edmEntitySet, created);
   }
 
   @Override
@@ -360,7 +336,7 @@ public class TripPinHandler implements ServiceHandler {
       final EdmEntityType type = serviceMetadata.getEdm().getEntityContainer(null)
           .getEntitySet("Airports").getEntityType();
 
-      EntitySet es = this.dataModel.getEntitySet("Airports");
+      EntityCollection es = this.dataModel.getEntitySet("Airports");
       int i = new Random().nextInt(es.getEntities().size());
       final Entity entity = es.getEntities().get(i);
 

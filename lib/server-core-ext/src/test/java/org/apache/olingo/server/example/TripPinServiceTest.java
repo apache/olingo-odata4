@@ -147,6 +147,7 @@ public class TripPinServiceTest {
     JsonNode node = getJSONNode(response);
     assertEquals("$metadata#Airlines/$entity", node.get("@odata.context").asText());
     assertEquals("American Airlines", node.get("Name").asText());
+    //assertEquals("/Airlines('AA')/Picture", node.get("Picture@odata.mediaReadLink").asText());
   }
 
   @Test
@@ -278,7 +279,7 @@ public class TripPinServiceTest {
 
   @Test
   public void testLambdaAny() throws Exception {
-    // this is just testing to see the labba expresions are going through the
+    // this is just testing to see the lamda expressions are going through the
     // framework, none of the system options are not implemented in example service
     String query = "Friends/any(d:d/UserName eq 'foo')";
     HttpResponse response = httpGET(baseURL + "/People?$filter="+Encoder.encode(query), 200);
@@ -405,10 +406,10 @@ public class TripPinServiceTest {
 
     HttpResponse response = httpSend(postRequest, 204);
     // the below woud be 204, if minimal was not supplied
-    assertEquals("/People('olingodude')", getHeader(response, "Location"));
+    assertEquals("http://localhost:9900/trippin/People('olingodude')", getHeader(response, "Location"));
     assertEquals("return=minimal", getHeader(response, "Preference-Applied"));
 
-    String location = baseURL+getHeader(response, "Location");
+    String location = getHeader(response, "Location");
     response = httpGET(location, 200);
     EntityUtils.consumeQuietly(response.getEntity());
 
@@ -526,6 +527,21 @@ public class TripPinServiceTest {
     assertEquals("scottketchum", person.get("UserName").asText());
   }
 
+  @Test
+  public void testReadNavigationPropertyNoContainsTarget() throws Exception {
+    String editUrl = baseURL + "/People('scottketchum')/Photo";
+    HttpResponse response = httpGET(editUrl, 200);
+
+    JsonNode node = getJSONNode(response);
+    assertEquals("$metadata#Photos/$entity", node.get("@odata.context").asText());
+  }
+  
+  @Test
+  public void testReadNavigationPropertyNonExistingNavigation() throws Exception {
+    String editUrl = baseURL + "/People('russellwhyte')/Foobar";
+    httpGET(editUrl, 404);
+  }  
+  
   @Test
   public void testReadNavigationPropertyEntityCollection2() throws Exception {
     String editUrl = baseURL + "/People('russellwhyte')/Friends('scottketchum')/Trips";

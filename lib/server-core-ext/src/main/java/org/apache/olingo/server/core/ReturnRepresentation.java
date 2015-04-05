@@ -19,5 +19,5 @@
 package org.apache.olingo.server.core;
 
 public enum ReturnRepresentation {
-  REPRESENTATION, MINIMAL
+  REPRESENTATION, MINIMAL, NONE
 }

@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.requests;
 
 import java.util.List;
 
+import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.server.api.OData;
@@ -28,8 +29,10 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
+import org.apache.olingo.server.core.ContentNegotiatorException;
 import org.apache.olingo.server.core.ServiceHandler;
 import org.apache.olingo.server.core.responses.EntityResponse;
 import org.apache.olingo.server.core.responses.EntitySetResponse;
@@ -52,14 +55,9 @@ public class FunctionRequest extends OperationRequest {
     }
 
     // Functions always have return per 11.5.3
-    if (isReturnTypePrimitive()) {
-      // functions can not return a typed property in the context of entity, so
-      // it must be treated
-      // as value based response
-      handler.invoke(this, getODataRequest().getMethod(),
-          PrimitiveValueResponse.getInstance(this, response, isCollection(), getReturnType()));
-    } else if (isReturnTypeComplex()) {
-      handler.invoke(this, getODataRequest().getMethod(), PropertyResponse.getInstance(this, response,
+    if (isReturnTypePrimitive() || isReturnTypeComplex()) {
+      // per odata-json-format/v4.0 = 11 Individual Property or Operation Response
+      handler.invoke(this, getODataRequest().getMethod(), PropertyResponse.getInstance(this, response, 
           getReturnType().getType(), getContextURL(this.odata), isCollection()));
     } else {
       // returnType.getType().getKind() == EdmTypeKind.ENTITY
@@ -83,6 +81,21 @@ public class FunctionRequest extends OperationRequest {
     return isGET();
   }
 
+  @Override
+  public <T> T getSerializerOptions(Class<T> serilizerOptions, ContextURL contextUrl, boolean references)
+      throws ContentNegotiatorException {
+    if (serilizerOptions.isAssignableFrom(PrimitiveSerializerOptions.class)) {
+      return (T) PrimitiveSerializerOptions.with().contextURL(contextUrl)
+          .nullable(getReturnType().isNullable())
+          .maxLength(getReturnType().getMaxLength())
+          .precision(getReturnType().getPrecision())
+          .scale(getReturnType().getScale())
+          .unicode(null)
+          .build();
+    }
+    return super.getSerializerOptions(serilizerOptions, contextUrl, references);
+  }  
+  
   public UriResourceFunction getUriResourceFunction() {
     return uriResourceFunction;
   }

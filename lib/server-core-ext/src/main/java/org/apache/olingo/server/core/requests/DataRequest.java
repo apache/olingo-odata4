@@ -18,27 +18,31 @@
  */
 package org.apache.olingo.server.core.requests;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmStream;
 import org.apache.olingo.server.api.OData;
@@ -66,6 +70,7 @@ import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.core.ContentNegotiator;
 import org.apache.olingo.server.core.ContentNegotiatorException;
+import org.apache.olingo.server.core.ReturnRepresentation;
 import org.apache.olingo.server.core.ServiceHandler;
 import org.apache.olingo.server.core.ServiceRequest;
 import org.apache.olingo.server.core.responses.CountResponse;
@@ -261,6 +266,11 @@ public class DataRequest extends ServiceRequest {
       if (!getNavigations().isEmpty() && !isGET()) {
         return false;
       }
+      
+      if ((isGET() || isDELETE()) && getReturnRepresentation() != ReturnRepresentation.NONE) {
+        return false;
+      }
+      
       return true;
     }
 
@@ -290,7 +300,8 @@ public class DataRequest extends ServiceRequest {
         // an If-None-Match or an If-Modified-Since header fields is undefined
         // by this specification.
         boolean ifMatch = getHeader(HttpHeader.IF_MATCH) != null;
-        boolean ifNoneMatch = getHeader(HttpHeader.IF_NONE_MATCH).equals("*");
+        boolean ifNoneMatch = (getHeader(HttpHeader.IF_NONE_MATCH)!= null 
+            && getHeader(HttpHeader.IF_NONE_MATCH).equals("*"));
         if(ifMatch) {
           handler.updateEntity(DataRequest.this, getEntityFromClient(), isPATCH(), getETag(),
               entityResponse);
@@ -332,6 +343,10 @@ public class DataRequest extends ServiceRequest {
 
     @Override
     public boolean allowedMethod() {
+      if (getReturnRepresentation() != ReturnRepresentation.NONE) {
+        return false;
+      }
+
       return isGET();
     }
 
@@ -359,6 +374,10 @@ public class DataRequest extends ServiceRequest {
 
     @Override
     public boolean allowedMethod() {
+      if ((isGET() || isDELETE()) && getReturnRepresentation() != ReturnRepresentation.NONE) {
+        return false;
+      }
+      
       // references are only allowed on the navigation properties
       if (getNavigations().isEmpty()) {
         return false;
@@ -448,6 +467,10 @@ public class DataRequest extends ServiceRequest {
 
     @Override
     public boolean allowedMethod() {
+      if ((isGET() || isDELETE() || isPropertyStream()) && getReturnRepresentation() != ReturnRepresentation.NONE) {
+        return false;
+      }
+      
       // create of properties is not allowed,
       // only read, update, delete. Note that delete is
       // same as update with null
@@ -502,13 +525,11 @@ public class DataRequest extends ServiceRequest {
         }
       } else if (isDELETE()) {
         if (isPropertyStream()) {
-          handler.upsertStreamProperty(DataRequest.this, getETag(), request.getBody(),
+          handler.upsertStreamProperty(DataRequest.this, getETag(), null,
               new NoContentResponse(getServiceMetaData(), response));
         } else {
-          Property property = new PropertyImpl();
-          property.setName(edmProperty.getName());
-          property.setType(edmProperty.getType().getFullQualifiedName()
-              .getFullQualifiedNameAsString());
+          Property property = new Property(edmProperty.getType().getFullQualifiedName()
+              .getFullQualifiedNameAsString(), edmProperty.getName());
           handler.updateProperty(DataRequest.this, property, false, getETag(),
               buildResponse(response, edmProperty));
         }
@@ -527,8 +548,8 @@ public class DataRequest extends ServiceRequest {
       final UriHelper helper = odata.createUriHelper();
       EdmProperty edmProperty = getUriResourceProperty().getProperty();
 
-      ContextURL.Builder builder = ContextURL.with().entitySet(getEntitySet());
-      builder = ContextURL.with().entitySet(getEntitySet());
+      ContextURL.Builder builder =
+          ContextURL.with().entitySetOrSingletonOrType(getTargetEntitySet(getEntitySet(), getNavigations()));
       builder.keyPath(helper.buildContextURLKeyPredicate(getUriResourceEntitySet()
           .getKeyPredicates()));
       String navPath = buildNavPath(helper, getEntitySet().getEntityType(), getNavigations(), true);
@@ -551,8 +572,14 @@ public class DataRequest extends ServiceRequest {
 
     @Override
     public boolean allowedMethod() {
-      //part2-url-conventions # 4.2
+      //part2-url-conventions # 4.7
+      // Properties of type Edm.Stream already return the raw value of 
+      // the media stream and do not support appending the $value segment.
       if (isPropertyStream() && isGET()) {
+        return false;
+      }
+
+      if ((isGET() || isDELETE() || isPropertyStream()) && getReturnRepresentation() != ReturnRepresentation.NONE) {
         return false;
       }
 
@@ -576,17 +603,20 @@ public class DataRequest extends ServiceRequest {
         handler.read(DataRequest.this, PrimitiveValueResponse.getInstance(DataRequest.this,
             response, isCollection(), getUriResourceProperty().getProperty()));
       } else if (isDELETE()) {
-        Property property = new PropertyImpl();
-        property.setName(edmProperty.getName());
-        property.setType(edmProperty.getType().getFullQualifiedName().getFullQualifiedNameAsString());
-
+        Property property = new Property(
+            edmProperty.getType().getFullQualifiedName().getFullQualifiedNameAsString(),
+            edmProperty.getName());
         PropertyResponse propertyResponse = PropertyResponse.getInstance(DataRequest.this, response,
             edmProperty.getType(), getContextURL(odata), edmProperty.isCollection());
         handler.updateProperty(DataRequest.this, property, false, getETag(), propertyResponse);
       } else if (isPUT()) {
         PropertyResponse propertyResponse = PropertyResponse.getInstance(DataRequest.this, response,
             edmProperty.getType(), getContextURL(odata), edmProperty.isCollection());
-        handler.updateProperty(DataRequest.this, getPropertyValueFromClient(edmProperty), false,
+        Property property = new Property(
+            edmProperty.getType().getFullQualifiedName().getFullQualifiedNameAsString(),
+            edmProperty.getName());
+        property.setValue(ValueType.PRIMITIVE, getRawValueFromClient(edmProperty));
+        handler.updateProperty(DataRequest.this, property, false,
             getETag(), propertyResponse);
       }
     }
@@ -659,20 +689,38 @@ public class DataRequest extends ServiceRequest {
 
   private org.apache.olingo.commons.api.data.Property getPropertyValueFromClient(
       EdmProperty edmProperty) throws DeserializerException {
-    // TODO:this is not right, we should be deserializing the property
-    // (primitive, complex, collection of)
-    // for now it is responsibility of the user
     ODataDeserializer deserializer = odata.createDeserializer(ODataFormat
         .fromContentType(getRequestContentType()));
     return deserializer.property(getODataRequest().getBody(), edmProperty).getProperty();
   }
+  
+  private Object getRawValueFromClient(
+      EdmProperty edmProperty) throws DeserializerException {
+    ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+    byte[] buffer = new byte[1024];
+    int read = 0;
+    do {
+      try {
+        read = IOUtils.read(getODataRequest().getBody(), buffer, 0, 1024);
+        bos.write(buffer, 0, read);
+        if (read < 1024) {
+          break;
+        }
+      } catch (IOException e) {
+        new DeserializerException("Error reading raw value",
+            SerializerException.MessageKeys.IO_EXCEPTION);
+      }
+    } while (true);
+    return bos.toByteArray(); 
+  }  
 
   static ContextURL.Builder buildEntitySetContextURL(UriHelper helper,
       EdmBindingTarget edmEntitySet, List<UriParameter> keyPredicates, UriInfo uriInfo,
       LinkedList<UriResourceNavigation> navigations, boolean collectionReturn, boolean singleton)
       throws SerializerException {
 
-    ContextURL.Builder builder = ContextURL.with().entitySetOrSingletonOrType(edmEntitySet.getName());
+    ContextURL.Builder builder =
+        ContextURL.with().entitySetOrSingletonOrType(getTargetEntitySet(edmEntitySet, navigations));
     String select = helper.buildContextURLSelectList(edmEntitySet.getEntityType(),
         uriInfo.getExpandOption(), uriInfo.getSelectOption());
     if (!singleton) {
@@ -718,6 +766,30 @@ public class DataRequest extends ServiceRequest {
     return result.length() == 0?null:result.toString();
   }
 
+  static String getTargetEntitySet(EdmBindingTarget root, LinkedList<UriResourceNavigation> navigations) {
+    EdmEntityType type = root.getEntityType();
+    EdmBindingTarget targetEntitySet = root;
+    String targetEntitySetName = root.getName();
+    String name = null;
+    for (UriResourceNavigation nav:navigations) {
+      name = nav.getProperty().getName();
+      EdmNavigationProperty property = type.getNavigationProperty(name);
+      if (property.containsTarget()) {
+        return root.getName();
+      }
+      type = nav.getProperty().getType();
+      
+      for(EdmNavigationPropertyBinding enb:targetEntitySet.getNavigationPropertyBindings()) {
+        if (enb.getPath().equals(name)) {
+          targetEntitySetName = enb.getTarget();
+        } else if (enb.getPath().endsWith("/"+name)) {
+          targetEntitySetName = enb.getTarget();
+        }
+      }
+    }
+    return targetEntitySetName;
+  }
+  
   static String buildNavPath(UriHelper helper, EdmEntityType rootType,
       LinkedList<UriResourceNavigation> navigations, boolean includeLastPredicates)
       throws SerializerException {

@@ -27,8 +27,10 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
@@ -141,4 +143,17 @@ public class PropertyResponse extends ServiceResponse {
   public void writePropertyDeleted() {
     writeNoContent(true);
   }
+  
+  public void writeError(ODataServerError error) {
+    try {
+      writeContent(this.serializer.error(error).getContent(), error.getStatusCode(), true);
+    } catch (SerializerException e) {
+      writeServerError(true);
+    }
+  } 
+  
+  public void writeNotModified() {
+    this.response.setStatusCode(HttpStatusCode.NOT_MODIFIED.getStatusCode());
+    close();
+  }  
 }

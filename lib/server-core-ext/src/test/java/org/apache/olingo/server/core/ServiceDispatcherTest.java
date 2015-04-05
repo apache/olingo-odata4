@@ -36,7 +36,6 @@ import org.apache.catalina.startup.Tomcat;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -62,7 +61,6 @@ import org.apache.olingo.server.core.responses.NoContentResponse;
 import org.apache.olingo.server.core.responses.PrimitiveValueResponse;
 import org.apache.olingo.server.core.responses.PropertyResponse;
 import org.apache.olingo.server.core.responses.StreamResponse;
-import org.apache.olingo.server.example.TripPinServiceTest;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -70,7 +68,6 @@ import org.mockito.Mockito;
 public class ServiceDispatcherTest {
   private static final int TOMCAT_PORT = 9900;
   private Tomcat tomcat = new Tomcat();
-  private String baseURL;
   
   public class SampleODataServlet extends HttpServlet {
     private final ServiceHandler handler; // must be stateless
@@ -103,7 +100,6 @@ public class ServiceDispatcherTest {
     Context cxt = tomcat.addContext("/trippin", baseDir.getAbsolutePath());
     Tomcat.addServlet(cxt, "trippin", new SampleODataServlet(serviceHandler, edmProvider));
     cxt.addServletMapping("/*", "trippin");
-    baseURL = "http://" + tomcat.getHost().getName() + ":"+ TOMCAT_PORT;
     tomcat.setPort(TOMCAT_PORT);
     tomcat.start();
   }
