@@ -46,7 +46,7 @@ import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 public class SchemaBasedEdmProvider implements EdmProvider {
   private final List<Schema> edmSchemas = new ArrayList<Schema>();
 
-  protected void addSchema(Schema schema) {
+  public void addSchema(Schema schema) {
     this.edmSchemas.add(schema);
   }
 
