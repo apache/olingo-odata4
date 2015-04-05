@@ -18,43 +18,44 @@
  ******************************************************************************/
 package org.apache.olingo.jpa.ref.model;
 
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.Pattern;
+@MappedSuperclass
+public abstract class BusinessPartner {
+  @Id
+  @Column(name = "ID")
+  private long id;
 
-/**
- * JPA Entity illustrating
- * <ol>
- * <li>Inheritance</li>
- * <li>1..N bidirectional relationship with "mappedBy" attribute</li>
- * </ol>
- */
-@Entity
-@Table(name = "T_CUSTOMER")
-public class Customer extends BusinessPartner {
+  @Column(name = "NAME")
+  private String name;
 
-  @Pattern(regexp = "\\(\\d{3}\\)\\d{3}-\\d{4}")
-  private String phoneNumber;
+  @Embedded
+  private Address address;
 
-  @OneToMany(mappedBy = "customer")
-  private List<SalesOrder> orders;
-
-  public String getPhoneNumber() {
-    return phoneNumber;
+  public long getId() {
+    return id;
   }
 
-  public void setPhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
+  public void setId(long id) {
+    this.id = id;
   }
 
-  public List<SalesOrder> getOrders() {
-    return orders;
+  public Address getAddress() {
+    return address;
   }
 
-  public void setOrders(List<SalesOrder> orders) {
-    this.orders = orders;
+  public void setAddress(Address address) {
+    this.address = address;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 }

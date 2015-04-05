@@ -21,6 +21,9 @@ package org.apache.olingo.jpa.ref.model;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+/**
+ * An Embeddable type representing Address. The Embeddable type will be represented as Complex Type in OData.
+ */
 @Embeddable
 public class Address {
 
@@ -50,12 +53,12 @@ public class Address {
   private String country;
 
   @Column(name = "PINCODE")
-  private String pincode;
+  private short pincode;
 
   @Column(name = "STATE")
   private String state;
 
-  public String getPincode() {
+  public short getPincode() {
     return pincode;
   }
 
@@ -67,7 +70,7 @@ public class Address {
     this.state = state;
   }
 
-  public void setPincode(final String pincode) {
+  public void setPincode(final short pincode) {
     this.pincode = pincode;
   }
 

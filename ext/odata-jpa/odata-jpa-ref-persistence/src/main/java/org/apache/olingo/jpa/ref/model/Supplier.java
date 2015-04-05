@@ -21,40 +21,31 @@ package org.apache.olingo.jpa.ref.model;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Pattern;
 
 /**
- * JPA Entity illustrating
+ * JPA entity illustrating
  * <ol>
- * <li>Inheritance</li>
- * <li>1..N bidirectional relationship with "mappedBy" attribute</li>
+ * <li>M..N bidirectional relationship with JoinTable</li>
  * </ol>
  */
 @Entity
-@Table(name = "T_CUSTOMER")
-public class Customer extends BusinessPartner {
+@Table(name = "T_SUPPLIER")
+public class Supplier extends BusinessPartner {
+  @ManyToMany
+  @JoinTable(name = "T_SUPPLIER_PRODUCT", joinColumns = @JoinColumn(name = "SUPPLIER_ID", referencedColumnName = "ID"),
+      inverseJoinColumns = { @JoinColumn(name = "PRODUCT_NAME", referencedColumnName = "NAME"),
+          @JoinColumn(name = "PRODUCT_TYPE", referencedColumnName = "TYPE") })
+  private List<Product> products;
 
-  @Pattern(regexp = "\\(\\d{3}\\)\\d{3}-\\d{4}")
-  private String phoneNumber;
-
-  @OneToMany(mappedBy = "customer")
-  private List<SalesOrder> orders;
-
-  public String getPhoneNumber() {
-    return phoneNumber;
+  public List<Product> getProducts() {
+    return products;
   }
 
-  public void setPhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
-  }
-
-  public List<SalesOrder> getOrders() {
-    return orders;
-  }
-
-  public void setOrders(List<SalesOrder> orders) {
-    this.orders = orders;
+  public void setProducts(List<Product> products) {
+    this.products = products;
   }
 }
