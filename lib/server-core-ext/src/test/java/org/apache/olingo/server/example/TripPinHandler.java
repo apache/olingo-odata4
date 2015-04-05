@@ -203,7 +203,7 @@ public class TripPinHandler implements ServiceHandler {
       public void visit(EntitySetResponse response) throws ODataTranslatedException,
           ODataApplicationException {
         if (request.getPreference("odata.maxpagesize") != null) {
-          response.writeHeader("Preference-Applied", request.getPreference("odata.maxpagesize"));
+          response.writeHeader("Preference-Applied", "odata.maxpagesize="+request.getPreference("odata.maxpagesize"));
         }
         if (details.entity == null && !request.getNavigations().isEmpty()) {
           response.writeReadEntitySet(details.entityType, new EntitySetImpl());
