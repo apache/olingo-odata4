@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -152,7 +152,6 @@ public class DataProvider {
   private Map<String, Object> findFreeComposedKey(final List<Entity> entities, final EdmEntityType entityType)
       throws DataProviderException {
     // Weak key construction
-    // 3e € entity: (V k € keys: k !€ e.ki) => e.(k1, k2, k3) !€ entitySet
     final HashMap<String, Object> keys = new HashMap<String, Object>();
     for (final String keyName : entityType.getKeyPredicateNames()) {
       final EdmType type = entityType.getProperty(keyName).getType();
@@ -243,15 +242,15 @@ public class DataProvider {
             patch);
       }
     }
-    
-    // For insert operations collection navigation property bind operations and deep insert operations can be combined. 
+
+    // For insert operations collection navigation property bind operations and deep insert operations can be combined.
     // In this case, the bind operations MUST appear before the deep insert operations in the payload.
     // => Apply bindings first
     final boolean navigationBindingsAvailable = !changedEntity.getNavigationBindings().isEmpty();
     if (navigationBindingsAvailable) {
       applyNavigationBinding(rawBaseUri, edmEntitySet, entity, changedEntity.getNavigationBindings());
     }
-    
+
     // Deep insert (only if not an update)
     if (isInsert) {
       handleDeepInsert(rawBaseUri, edmEntitySet, entity, changedEntity);
@@ -310,10 +309,6 @@ public class DataProvider {
       final List<UriParameter> keys = odata.createUriHelper()
           .getKeyPredicatesFromEntityLink(edm, bindingLink, rawBaseUri);
       final Entity entity = read(edmEntitySetTarget, keys);
-
-      if (entity == null) {
-        throw new DataProviderException("Entity " + bindingLink + " not found", HttpStatusCode.NOT_FOUND);
-      }
 
       return entity;
     } catch (DeserializerException e) {
@@ -400,9 +395,6 @@ public class DataProvider {
     if (edmProperty.isPrimitive()) {
       if (newProperty != null || !patch) {
         final Object value = newProperty == null ? null : newProperty.getValue();
-        if (value == null && !edmProperty.isNullable()) {
-          throw new DataProviderException("Cannot null non-nullable property!", HttpStatusCode.BAD_REQUEST);
-        }
         property.setValue(property.getValueType(), value);
       }
     } else if (edmProperty.isCollection()) {
@@ -440,7 +432,7 @@ public class DataProvider {
   private ComplexValue createComplexValue(final EdmProperty edmProperty, final ComplexValue complexValue,
       final boolean patch) throws DataProviderException {
     final ComplexValueImpl result = new ComplexValueImpl();
-    final EdmComplexType edmType =  (EdmComplexType) edmProperty.getType();
+    final EdmComplexType edmType = (EdmComplexType) edmProperty.getType();
     final List<Property> givenProperties = complexValue.getValue();
 
     // Create ALL properties, even if no value is given. Check if null is allowed
@@ -454,12 +446,10 @@ public class DataProvider {
         updateProperty(innerEdmProperty, newProperty, currentProperty, patch);
       } else {
         if (innerEdmProperty.isNullable()) {
-          // Check complex properties ... may be null is not allowed
-          if(edmProperty.getType().getKind() == EdmTypeKind.COMPLEX)  {
+          // Check complex properties ... maybe null is not allowed
+          if (edmProperty.getType().getKind() == EdmTypeKind.COMPLEX) {
             updateProperty(innerEdmProperty, newProperty, null, patch);
           }
-        } else {
-          throw new DataProviderException("Null is not allowed for property " + edmProperty.getName());
         }
       }
     }

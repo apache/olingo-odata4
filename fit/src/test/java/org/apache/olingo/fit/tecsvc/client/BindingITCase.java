@@ -24,6 +24,7 @@ import static org.junit.Assert.fail;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
@@ -69,8 +70,8 @@ public class BindingITCase extends AbstractBaseTestITCase {
   private static final String PROPERTY_COMP_ALL_PRIM = "PropertyCompAllPrim";
   private static final String NAV_PROPERTY_ET_KEY_NAV_ONE = "NavPropertyETKeyNavOne";
   private static final String NAV_PROPERTY_ET_KEY_NAV_MANY = "NavPropertyETKeyNavMany";
+  private static final String NAV_PROPERTY_ET_TWO_KEY_NAV_ONE = "NavPropertyETTwoKeyNavOne";
   private static final String NAV_PROPERTY_ET_TWO_KEY_NAV_MANY = "NavPropertyETTwoKeyNavMany";
-
 
   @Test
   public void testCreateBindingSimple() throws EdmPrimitiveTypeException {
@@ -101,6 +102,17 @@ public class BindingITCase extends AbstractBaseTestITCase {
                 .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
 
     // Bind existing entities via binding synatx
+    entity.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, 
+        client.newURIBuilder(SERVICE_URI)
+              .appendEntitySetSegment(ES_TWO_KEY_NAV)
+              .appendKeySegment(new LinkedHashMap<String, Object>() {
+                private static final long serialVersionUID = 3109256773218160485L;
+                {
+                  put(PROPERTY_INT16, 3);
+                  put(PROPERTY_STRING, "1");
+                }
+              }).build()));
+    
     final ODataLink navLinkOne =
         of.newEntityNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE, client.newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(
@@ -331,9 +343,30 @@ public class BindingITCase extends AbstractBaseTestITCase {
    innerEntity.getProperties().add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 1)))
         .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("2")))));
+   innerEntity.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, 
+       client.newURIBuilder(SERVICE_URI)
+             .appendEntitySetSegment(ES_TWO_KEY_NAV)
+             .appendKeySegment(new LinkedHashMap<String, Object>() {
+               private static final long serialVersionUID = 3109256773218160485L;
+               {
+                 put(PROPERTY_INT16, 3);
+                 put(PROPERTY_STRING, "1");
+               }
+             }).build()));
    
    final ODataInlineEntity inlineLink = of.newDeepInsertEntity(NAV_PROPERTY_ET_KEY_NAV_ONE, innerEntity);
    entity.addLink(inlineLink);
+   
+   entity.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, 
+       client.newURIBuilder(SERVICE_URI)
+             .appendEntitySetSegment(ES_TWO_KEY_NAV)
+             .appendKeySegment(new LinkedHashMap<String, Object>() {
+               private static final long serialVersionUID = 3109256773218160485L;
+               {
+                 put(PROPERTY_INT16, 3);
+                 put(PROPERTY_STRING, "1");
+               }
+             }).build()));
    
    final URI bindingURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                            .appendKeySegment(3)

@@ -21,6 +21,7 @@ package org.apache.olingo.fit.tecsvc.client;
 import static org.junit.Assert.assertEquals;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
@@ -289,7 +290,12 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     entity.getProperties().add(
         objectFactory.newPrimitiveProperty("PropertyInt16", objectFactory.newPrimitiveValueBuilder()
             .buildInt16((short) 1)));
-
+    entity.addLink(objectFactory.newEntityNavigationLink("NavPropertyETTwoPrimOne", 
+        client.newURIBuilder(SERVICE_URI)
+              .appendEntitySetSegment("ESTwoPrim")
+              .appendKeySegment(32766)
+              .build()));
+    
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").build();
     ODataEntityCreateResponse<ODataEntity> createResponse =
         client.getCUDRequestFactory().getEntityCreateRequest(uri, entity).execute();
@@ -921,7 +927,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   @Test
   public void testNullComplexProperty() {
     // Create a new entry.The complex property PropertyCompComp is set to null. So the structure of the property
-    // is still there, but filled is null value (primitive types)
+    // is still there, but filled is null values (primitive types)
     // We define a filter, which returns all entry where PropertyCompComp/PropertyComp/PropertyInt16 is equals to 1
 
     final ODataClient client = getClient();
@@ -948,7 +954,20 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
                 .add(factory.newPrimitiveProperty(
                     "PropertyString",
                     factory.newPrimitiveValueBuilder().buildString("Test2")))));
+    
+    newEntity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
+        client.newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_TWO_KEY_NAV)
+            .appendKeySegment(new LinkedHashMap<String, Object>() {
+              private static final long serialVersionUID = 1L;
 
+              {
+                put("PropertyInt16", 1);
+                put("PropertyString", "1");
+              }
+            })
+            .build()));
+    
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESKeyNav").build();
     ODataEntityCreateRequest<ODataEntity> request =
         client.getCUDRequestFactory().getEntityCreateRequest(uri, newEntity);

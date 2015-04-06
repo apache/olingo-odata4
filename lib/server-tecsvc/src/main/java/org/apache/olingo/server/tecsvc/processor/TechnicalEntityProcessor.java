@@ -60,6 +60,7 @@ import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
+import org.apache.olingo.server.tecsvc.data.RequestValidator;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.ExpandSystemQueryOptionHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.CountHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.FilterHandler;
@@ -230,17 +231,25 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
     final EdmEntitySet edmEntitySet = resourceEntitySet.getEntitySet();
     final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
-
-    Entity entity = dataProvider.create(edmEntitySet);
+    
+    final Entity entity;
     ExpandOption expand = null;
     if (edmEntityType.hasStream()) { // called from createMediaEntity(...), not directly
+      entity = dataProvider.create(edmEntitySet);
       dataProvider.setMedia(entity, odata.createFixedFormatDeserializer().binary(request.getBody()),
           requestFormat.toContentTypeString());
     } else {
       final DeserializerResult deserializerResult = odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
                                                          .entity(request.getBody(), edmEntityType);
-      dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity,
-          deserializerResult.getEntity(), false, true);
+      new RequestValidator(dataProvider, 
+                           true,        // Insert
+                           odata.createUriHelper(), 
+                           serviceMetadata.getEdm(), 
+                           request.getRawBaseUri()
+                           ).validate(edmEntitySet, deserializerResult.getEntity());
+      
+      entity = dataProvider.create(edmEntitySet);
+      dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity, deserializerResult.getEntity(), false, true);
       expand = deserializerResult.getExpandTree();
     }
 
@@ -265,8 +274,16 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
     Entity entity = readEntity(uriInfo);
     checkRequestFormat(requestFormat);
-    ODataDeserializer deserializer = odata.createDeserializer(ODataFormat.fromContentType(requestFormat));
+    final ODataDeserializer deserializer = odata.createDeserializer(ODataFormat.fromContentType(requestFormat));
     final Entity changedEntity = deserializer.entity(request.getBody(), edmEntitySet.getEntityType()).getEntity();
+    
+    new RequestValidator(dataProvider, 
+                         false,        // Update
+                         odata.createUriHelper(), 
+                         serviceMetadata.getEdm(), 
+                         request.getRawBaseUri()
+                         ).validate(edmEntitySet, changedEntity);
+    
     dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity, changedEntity,
         request.getMethod() == HttpMethod.PATCH, false);
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());

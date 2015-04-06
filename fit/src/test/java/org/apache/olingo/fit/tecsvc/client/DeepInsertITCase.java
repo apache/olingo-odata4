@@ -20,6 +20,7 @@ package org.apache.olingo.fit.tecsvc.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -27,8 +28,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.communication.ODataClientErrorException;
+import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
@@ -62,8 +67,10 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
   private static final String CT_TWO_PRIM = "CTTwoPrim";
   private static final String CT_ALL_PRIM = "CTAllPrim";
   private static final String CT_NAV_FIVE_PROP = "CTNavFiveProp";
+  private static final String CT_BASE_PRIM_COMP_NAV = "CTBasePrimCompNav";
   private static final String PROPERTY_INT16 = "PropertyInt16";
   private static final String PROPERTY_STRING = "PropertyString";
+  private static final String PROPERTY_COMP = "PropertyComp";
   private static final String PROPERTY_COMP_NAV = "PropertyCompNav";
   private static final String PROPERTY_COMP_COMP_NAV = "PropertyCompCompNav";
   private static final String PROPERTY_COMP_TWO_PRIM = "PropertyCompTwoPrim";
@@ -71,6 +78,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
   private static final String NAV_PROPERTY_ET_KEY_NAV_ONE = "NavPropertyETKeyNavOne";
   private static final String NAV_PROPERTY_ET_TWO_KEY_NAV_ONE = "NavPropertyETTwoKeyNavOne";
   private static final String NAV_PROPERTY_ET_TWO_KEY_NAV_MANY = "NavPropertyETTwoKeyNavMany";
+  private static final String COL_PROPERTY_STRING = "CollPropertyString";
+  private static final String EDM_STRING = "Edm.String";
 
   @Test
   public void testDeepInsertExpandedResponse() {
@@ -96,6 +105,10 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString(
                 "String Property level 1, complex level 1")))));
+    firstLevelTwoKeyNav.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
+    firstLevelTwoKeyNav.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
     final ODataInlineEntity firstLevelTwoKeyOneInline =
         of.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, firstLevelTwoKeyNav);
     entity.addLink(firstLevelTwoKeyOneInline);
@@ -107,7 +120,11 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 421)))
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString(
                 "String Property level 2, complex level 1")))));
-
+    secondLevelTwoKeyNav.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
+    secondLevelTwoKeyNav.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
+    
     // Binding links
     secondLevelTwoKeyNav.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, client.newURIBuilder(
         SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(new LinkedHashMap<String, Object>() {
@@ -129,14 +146,22 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString(
                 "String Property level 3, complex level 1")))));
-
+    thirdLevelTwoKeyNavMany1.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
+    thirdLevelTwoKeyNavMany1.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
+    
     final ODataEntity thirdLevelTwoKeyNavMany2 = of.newEntity(ET_TWO_KEY_NAV);
     thirdLevelTwoKeyNavMany2.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 432)))
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString(
                 "String Property level 3, complex level 1")))));
-
+    thirdLevelTwoKeyNavMany2.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
+    thirdLevelTwoKeyNavMany2.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
+    
     final ODataEntitySet entitySetThirdLevelTwoKeyNavMany = of.newEntitySet();
     entitySetThirdLevelTwoKeyNavMany.getEntities().add(thirdLevelTwoKeyNavMany1);
     entitySetThirdLevelTwoKeyNavMany.getEntities().add(thirdLevelTwoKeyNavMany2);
@@ -150,7 +175,11 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 422)))
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString(
                 "String Property level 1, complex level 1")))));
-
+    firstLevelTwoKeyNavMany1.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
+    firstLevelTwoKeyNavMany1.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
+    
     final ODataEntitySet entitySetfirstLevelTwoKeyNavMany = of.newEntitySet();
     entitySetfirstLevelTwoKeyNavMany.getEntities().add(firstLevelTwoKeyNavMany1);
     entity.addLink(of.newDeepInsertEntitySet(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
@@ -172,7 +201,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         resultEntityFirstLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE).asInlineEntity().getEntity();
     assertEquals(421, resultEntitySecondLevel.getProperty(PROPERTY_COMP_TWO_PRIM).getComplexValue().get(PROPERTY_INT16)
         .getPrimitiveValue().toValue());
-    assertEquals("String Property level 2, complex level 1", resultEntitySecondLevel.getProperty(PROPERTY_COMP_TWO_PRIM)
+    assertEquals("String Property level 2, complex level 1", resultEntitySecondLevel
+        .getProperty(PROPERTY_COMP_TWO_PRIM)
         .getComplexValue().get(PROPERTY_STRING)
         .getPrimitiveValue().toValue());
 
@@ -198,7 +228,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     assertEquals("String Property level 1, complex level 1", firstLevelEntitySetNavMany.getEntities().get(0)
         .getProperty(PROPERTY_COMP_TWO_PRIM).getComplexValue().get(PROPERTY_STRING).getPrimitiveValue().toValue());
   }
-  
+
   @Test
   public void testSimpleDeepInsert() throws EdmPrimitiveTypeException {
     final ODataClient client = getClient();
@@ -234,6 +264,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 43)));
     inlineEntitySingle.getProperties()
         .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("43")));
+    inlineEntitySingle.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     inlineEntitySingle.getProperties()
         .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))));
@@ -253,6 +285,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     inlineEntityCol1.getProperties()
         .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 441)))));
+    inlineEntityCol1.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     inlineEntityCol1.getProperties()
         .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 442)))
@@ -266,6 +300,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     inlineEntityCol2.getProperties()
         .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 451)))));
+    inlineEntityCol2.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     inlineEntityCol2.getProperties()
         .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 452)))
@@ -412,6 +448,18 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))
             .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
                 .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
+    entity.addLink(of.newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
+        client.newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_TWO_KEY_NAV)
+            .appendKeySegment(new LinkedHashMap<String, Object>() {
+              private static final long serialVersionUID = 1L;
+
+              {
+                put(PROPERTY_INT16, 1);
+                put(PROPERTY_STRING, "1");
+              }
+            })
+            .build()));
 
     // Prepare inline entity(EntitySet: ESKeyNav, Type: ETKeyNav)
     final ODataEntity innerEntity = of.newEntity(ET_KEY_NAV);
@@ -436,7 +484,19 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
             .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
                 .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder()
                     .buildInt16((short) 431)))))));
+    innerEntity.addLink(of.newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
+        client.newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_TWO_KEY_NAV)
+            .appendKeySegment(new LinkedHashMap<String, Object>() {
+              private static final long serialVersionUID = 1L;
 
+              {
+                put(PROPERTY_INT16, 1);
+                put(PROPERTY_STRING, "1");
+              }
+            })
+            .build()));
+    
     ODataInlineEntity inlineEntity = of.newDeepInsertEntity(NAV_PROPERTY_ET_KEY_NAV_ONE, innerEntity);
     entity.addLink(inlineEntity);
 
@@ -473,6 +533,108 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
     assertEquals(431, innerResponse.getBody().getProperty(PROPERTY_COMP_NAV).getComplexValue().get(PROPERTY_INT16)
         .getPrimitiveValue().toValue());
+  }
+
+  @Test
+  public void testConsistency() throws EdmPrimitiveTypeException {
+    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataObjectFactory of = client.getObjectFactory();
+    final String cookie = getCookie();
+    
+    // Do not set PropertyString(Nullable=false)
+    final ODataEntity entity = of.newEntity(ET_KEY_NAV);
+    entity.getProperties().add(
+        of.newCollectionProperty(COL_PROPERTY_STRING,
+            of.newCollectionValue(EDM_STRING).add(
+                of.newPrimitiveValueBuilder().buildString("Test"))));
+
+    final URI targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
+
+    try {
+      ODataEntityCreateRequest<ODataEntity> request = client.getCUDRequestFactory()
+          .getEntityCreateRequest(targetURI, entity);
+      request.addCustomHeader(HttpHeader.COOKIE, cookie);
+      request.execute();
+      fail("Expecting bad request");
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+
+    // Entity must not be created
+    validateSet(targetURI, cookie, (short) 1, (short) 2, (short) 3);
+  }
+
+  @Test
+  public void testInvalidType() throws EdmPrimitiveTypeException {
+    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataObjectFactory of = client.getObjectFactory();
+    final String cookie = getCookie();
+
+    final ODataEntity entity = of.newEntity(ET_KEY_NAV);
+    entity.getProperties().add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildInt32(1)));
+    final URI targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
+
+    try {
+      ODataEntityCreateRequest<ODataEntity> request = client.getCUDRequestFactory()
+          .getEntityCreateRequest(targetURI, entity);
+      request.addCustomHeader(HttpHeader.COOKIE, cookie);
+      request.execute();
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+
+    validateSet(targetURI, cookie, (short) 1, (short) 2, (short) 3);
+
+    entity.getProperties().add(
+        of.newCollectionProperty(PROPERTY_STRING,
+            of.newCollectionValue(EDM_STRING).add(
+                of.newPrimitiveValueBuilder().buildString("Test"))));
+
+    try {
+      ODataEntityCreateRequest<ODataEntity> request = client.getCUDRequestFactory()
+          .getEntityCreateRequest(targetURI, entity);
+      request.addCustomHeader(HttpHeader.COOKIE, cookie);
+      request.execute();
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+
+    validateSet(targetURI, cookie, (short) 1, (short) 2, (short) 3);
+  }
+
+  private String getCookie() {
+    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
+        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build())
+        .execute();
+
+    return response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
+  }
+
+  private void validateSet(final URI uri, final String cookie, final short... keys) throws EdmPrimitiveTypeException {
+    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataEntitySetRequest<ODataEntitySet> request = client.getRetrieveRequestFactory()
+        .getEntitySetRequest(uri);
+    request.addCustomHeader(HttpHeader.COOKIE, cookie);
+    final ODataRetrieveResponse<ODataEntitySet> response = request.execute();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals(3, response.getBody().getEntities().size());
+
+    for (final ODataEntity responseEntity : response.getBody().getEntities()) {
+      short propertyInt16 = responseEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toCastValue(Short.class);
+
+      boolean found = false;
+      for (int i = 0; i < keys.length && !found; i++) {
+        if (propertyInt16 == keys[i]) {
+          found = true;
+        }
+      }
+
+      if (!found) {
+        fail("Invalid key " + propertyInt16);
+      }
+    }
   }
 
   @Override

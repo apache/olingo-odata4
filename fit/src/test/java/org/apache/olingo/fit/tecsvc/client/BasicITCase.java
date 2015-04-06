@@ -30,8 +30,10 @@ import static org.junit.Assert.fail;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
@@ -266,6 +268,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     ODataEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
     newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt64",
         factory.newPrimitiveValueBuilder().buildInt32(42)));
+    
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
         .build();
     final ODataEntityUpdateRequest<ODataEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
@@ -373,6 +376,12 @@ public class BasicITCase extends AbstractBaseTestITCase {
     ODataEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
     newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt64",
         factory.newPrimitiveValueBuilder().buildInt32(42)));
+    newEntity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoPrimOne", 
+                          client.newURIBuilder(SERVICE_URI)
+                                .appendEntitySetSegment("ESTwoPrim")
+                                .appendKeySegment(32766)
+                                .build()));
+    
     final ODataEntityCreateRequest<ODataEntity> createRequest = client.getCUDRequestFactory().getEntityCreateRequest(
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").build(),
         newEntity);
@@ -518,6 +527,18 @@ public class BasicITCase extends AbstractBaseTestITCase {
                   .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16((short) 2)))
                   .add(of.newPrimitiveProperty("PropertySingle", of.newPrimitiveValueBuilder().buildSingle(2.0f))))))));
     
+    entity.addLink(of.newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
+        getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment("ESTwoKeyNav")
+            .appendKeySegment(new LinkedHashMap<String, Object>() {
+              private static final long serialVersionUID = 1L;
+
+              {
+                put("PropertyInt16", 1);
+                put("PropertyString", "1");
+              }
+            }).build()));
+    
     final ODataEntityCreateResponse<ODataEntity> response = getClient().getCUDRequestFactory().getEntityCreateRequest(
         getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESKeyNav").build(),
         entity).execute();
@@ -574,6 +595,23 @@ public class BasicITCase extends AbstractBaseTestITCase {
     
     // Check if not available properties return null
     assertNull(innerComplexProperty2.get("NotAvailableProperty"));
+  }
+  
+  @Test
+  public void testComplexPropertyWithNotNullablePrimitiveValue() {
+    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataObjectFactory of = client.getObjectFactory();
+    
+    // PropertyComp is null, but the primitive values in PropertyComp must not be null
+    final ODataEntity entity = of.newEntity(new FullQualifiedName("olingo.odata.test1", "ETMixPrimCollComp"));
+    final URI targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESMixPrimCollComp").build();
+    
+    try {
+      client.getCUDRequestFactory().getEntityCreateRequest(targetURI, entity).execute();
+      fail("Expecting bad request");
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
   }
   
   @Override
