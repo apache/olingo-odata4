@@ -18,15 +18,18 @@
  */
 package org.apache.olingo.server.tecsvc.processor.queryoptions;
 
-import java.util.IdentityHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
@@ -47,8 +50,6 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.options.SkipHandle
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.TopHandler;
 
 public class ExpandSystemQueryOptionHandler {
-  private IdentityHashMap<Entity, Entity> copiedEntities = new IdentityHashMap<Entity, Entity>();
-  private IdentityHashMap<EntitySet, EntitySet> copiedEntitySets = new IdentityHashMap<EntitySet, EntitySet>();
 
   public void applyExpandQueryOptions(final EntitySet entitySet, final EdmEntitySet edmEntitySet,
       final ExpandOption expandOption) throws ODataApplicationException {
@@ -70,20 +71,26 @@ public class ExpandSystemQueryOptionHandler {
     applyExpandOptionToEntity(entity, edmEntitySet, expandOption);
   }
 
-  private void applyExpandOptionToEntity(final Entity entity, final EdmEntitySet edmEntitySet,
+  private void applyExpandOptionToEntity(final Entity entity, final EdmBindingTarget edmBindingTarget,
       final ExpandOption expandOption) throws ODataApplicationException {
-    final EdmEntityType entityType = edmEntitySet.getEntityType();
+    final EdmEntityType entityType = edmBindingTarget.getEntityType();
 
     for (ExpandItem item : expandOption.getExpandItems()) {
       final List<UriResource> uriResourceParts = item.getResourcePath().getUriResourceParts();
       if (uriResourceParts.size() == 1 && uriResourceParts.get(0) instanceof UriResourceNavigation) {
         final String navPropertyName = ((UriResourceNavigation) uriResourceParts.get(0)).getProperty().getName();
-        final EdmEntitySet targetEdmEntitySet = (EdmEntitySet) edmEntitySet.getRelatedBindingTarget(navPropertyName);
+        final EdmBindingTarget targetEdmEntitySet = edmBindingTarget.getRelatedBindingTarget(navPropertyName);
 
         final Link link = entity.getNavigationLink(navPropertyName);
         if (link != null && entityType.getNavigationProperty(navPropertyName).isCollection()) {
-          applyOptionsToEntityCollection(link.getInlineEntitySet(), targetEdmEntitySet, item.getFilterOption(),
-              item.getOrderByOption(), item.getCountOption(), item.getSkipOption(), item.getTopOption());
+          applyOptionsToEntityCollection(link.getInlineEntitySet(), 
+                                         targetEdmEntitySet, 
+                                         item.getFilterOption(),
+                                         item.getOrderByOption(), 
+                                         item.getCountOption(), 
+                                         item.getSkipOption(), 
+                                         item.getTopOption(), 
+                                         item.getExpandOption());
         }
       } else {
         throw new ODataApplicationException("Not supported resource part in expand system query option",
@@ -92,77 +99,150 @@ public class ExpandSystemQueryOptionHandler {
     }
   }
 
-  private void applyOptionsToEntityCollection(final EntitySet entitySet, final EdmEntitySet edmEntitySet,
+  private void applyOptionsToEntityCollection(final EntitySet entitySet, final EdmBindingTarget edmBindingTarget,
       final FilterOption filterOption, final OrderByOption orderByOption, final CountOption countOption,
-      final SkipOption skipOption, final TopOption topOption) throws ODataApplicationException {
+      final SkipOption skipOption, final TopOption topOption, final ExpandOption expandOption) 
+          throws ODataApplicationException {
 
-    FilterHandler.applyFilterSystemQuery(filterOption, entitySet, edmEntitySet);
-    OrderByHandler.applyOrderByOption(orderByOption, entitySet, edmEntitySet);
+    FilterHandler.applyFilterSystemQuery(filterOption, entitySet, edmBindingTarget);
+    OrderByHandler.applyOrderByOption(orderByOption, entitySet, edmBindingTarget);
     // TODO Add CountHandler
     SkipHandler.applySkipSystemQueryHandler(skipOption, entitySet);
     TopHandler.applyTopSystemQueryOption(topOption, entitySet);
-  }
-
-  public EntitySet copyEntitySetShallowRekursive(final EntitySet entitySet) {
-    if (!copiedEntitySets.containsKey(entitySet)) {
-      final EntitySet copiedEntitySet = new EntitySetImpl();
-      copiedEntitySet.setCount(entitySet.getCount());
-      copiedEntitySet.setDeltaLink(entitySet.getDeltaLink());
-      copiedEntitySet.setNext(entitySet.getNext());
-
-      copiedEntitySets.put(entitySet, copiedEntitySet);
-      copiedEntitySets.put(copiedEntitySet, copiedEntitySet);
-
-      for (Entity entity : entitySet.getEntities()) {
-        copiedEntitySet.getEntities().add(copyEntityShallowRekursive(entity));
+    
+    // Apply nested expand system query options to remaining entities
+    if(expandOption != null) {
+      for(final Entity entity : entitySet.getEntities()) {
+        applyExpandOptionToEntity(entity, edmBindingTarget, expandOption);
       }
-      return copiedEntitySet;
     }
-    return copiedEntitySets.get(entitySet);
   }
 
-  public Entity copyEntityShallowRekursive(final Entity entity) {
-    if (!copiedEntities.containsKey(entity)) {
-      final Entity copiedEntity = new EntityImpl();
-      copiedEntity.getProperties().addAll(entity.getProperties());
-      copiedEntity.getAnnotations().addAll(entity.getAnnotations());
-      copiedEntity.getAssociationLinks().addAll(entity.getAssociationLinks());
-      copiedEntity.setEditLink(entity.getEditLink());
-      copiedEntity.setId(entity.getId());
-      copiedEntity.setMediaContentSource(entity.getMediaContentSource());
-      copiedEntity.setMediaContentType(entity.getMediaContentType());
-      copiedEntity.setMediaETag(entity.getMediaETag());
-      copiedEntity.getOperations().addAll(entity.getOperations());
-      copiedEntity.setSelfLink(entity.getSelfLink());
-      copiedEntity.setType(entity.getType());
-      copiedEntity.getNavigationBindings().addAll(entity.getNavigationBindings());
+  public EntitySet transformEntitySetGraphToTree(final EntitySet entitySet, final EdmBindingTarget edmBindingTarget, 
+      final ExpandOption expand) throws ODataApplicationException {
+    
+    final EntitySet newEntitySet = newEntitySet(entitySet);
+    
+    for(final Entity entity : entitySet.getEntities()) {
+      newEntitySet.getEntities().add(transformEntityGraphToTree(entity, edmBindingTarget, expand));
+    }
+    
+    return newEntitySet;
+  }
+  
+  public Entity transformEntityGraphToTree(final Entity entity, EdmBindingTarget edmEntitySet, 
+      final ExpandOption expand) throws ODataApplicationException {
 
-      copiedEntities.put(entity, copiedEntity);
-      copiedEntities.put(copiedEntity, copiedEntity);
+    final Entity newEntity = newEntity(entity);
 
-      // The system query options change the amount and sequence of inline entities (feeds)
-      // So we have to make a shallow copy of all navigation link lists
-      // Make sure, that each entity is only copied once.
-      // Otherwise an infinite loop can occur caused by cyclic navigation relationships.
-
+    if (hasExpandItems(expand)) {
+      final boolean expandAll = expandAll(expand);
+      final Set<String> expanded = expandAll ? null : getExpandedPropertyNames(expand.getExpandItems());
+      final EdmEntityType edmType = edmEntitySet.getEntityType();
+      
       for (final Link link : entity.getNavigationLinks()) {
-        final Link newLink = new LinkImpl();
-        newLink.setMediaETag(link.getMediaETag());
-        newLink.setTitle(link.getTitle());
-        newLink.setType(link.getType());
-        newLink.setRel(link.getRel());
-
-        final EntitySet inlineEntitySet = link.getInlineEntitySet();
-        if (inlineEntitySet != null) {
-          newLink.setInlineEntitySet(copyEntitySetShallowRekursive(inlineEntitySet));
-        } else if (link.getInlineEntity() != null) {
-          newLink.setInlineEntity(copyEntityShallowRekursive(link.getInlineEntity()));
+        final String propertyName = link.getTitle();
+        
+        if (expandAll || expanded.contains(propertyName)) {
+          final EdmNavigationProperty edmNavigationProperty = edmType.getNavigationProperty(propertyName);
+          final EdmBindingTarget edmBindingTarget = edmEntitySet.getRelatedBindingTarget(propertyName);
+          final Link newLink = newLink(link);
+          newEntity.getNavigationLinks().add(newLink);
+          final ExpandOption innerExpandOption = getInnerExpandOption(expand, propertyName);
+          
+          if(edmNavigationProperty.isCollection()) {
+            newLink.setInlineEntitySet(transformEntitySetGraphToTree(link.getInlineEntitySet(), 
+                                                                     edmBindingTarget, 
+                                                                     innerExpandOption));
+          } else {
+            newLink.setInlineEntity(transformEntityGraphToTree(link.getInlineEntity(), 
+                                                               edmBindingTarget, 
+                                                               innerExpandOption));  
+          }
         }
-        copiedEntity.getNavigationLinks().add(newLink);
       }
-
-      return copiedEntity;
+      
     }
-    return copiedEntities.get(entity);
+    return newEntity;
+  }
+  
+  public EntitySet newEntitySet(final EntitySet entitySet) {
+    final EntitySet newEntitySet = new EntitySetImpl();
+    newEntitySet.setCount(entitySet.getCount());
+    newEntitySet.setDeltaLink(entitySet.getDeltaLink());
+    newEntitySet.setNext(entitySet.getNext());
+    
+    return newEntitySet;
+  }
+  
+  private Entity newEntity(final Entity entity) {
+    final Entity newEntity = new EntityImpl();
+    
+    newEntity.getProperties().addAll(entity.getProperties());
+    newEntity.getAnnotations().addAll(entity.getAnnotations());
+    newEntity.getAssociationLinks().addAll(entity.getAssociationLinks());
+    newEntity.setEditLink(entity.getEditLink());
+    newEntity.setId(entity.getId());
+    newEntity.setMediaContentSource(entity.getMediaContentSource());
+    newEntity.setMediaContentType(entity.getMediaContentType());
+    newEntity.setMediaETag(entity.getMediaETag());
+    newEntity.getOperations().addAll(entity.getOperations());
+    newEntity.setSelfLink(entity.getSelfLink());
+    newEntity.setType(entity.getType());
+    newEntity.getNavigationBindings().addAll(entity.getNavigationBindings());
+    
+    return newEntity;
+  }
+  
+  private Link newLink(Link link) {
+    final Link newLink = new LinkImpl();
+    newLink.setMediaETag(link.getMediaETag());
+    newLink.setTitle(link.getTitle());
+    newLink.setType(link.getType());
+    newLink.setRel(link.getRel());
+    
+    return newLink;
+  }
+  
+  private boolean hasExpandItems(ExpandOption expand) {
+    return expand != null && expand.getExpandItems() != null && !expand.getExpandItems().isEmpty();
+  }
+  
+  private boolean expandAll(ExpandOption expand) {
+    for (final ExpandItem item : expand.getExpandItems()) {
+      if (item.isStar()) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  private Set<String> getExpandedPropertyNames(List<ExpandItem> expandItems) throws ODataApplicationException {
+    Set<String> expanded = new HashSet<String>();
+    for (final ExpandItem item : expandItems) {
+      final List<UriResource> resourceParts = item.getResourcePath().getUriResourceParts();
+      if (resourceParts.size() == 1) {
+        final UriResource resource = resourceParts.get(0);
+        if (resource instanceof UriResourceNavigation) {
+          expanded.add(((UriResourceNavigation) resource).getProperty().getName());
+        }
+      } else {
+        throw new ODataApplicationException("Expand is not supported within complex properties.",
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+      }
+    }
+    return expanded;
+  }
+
+  private ExpandOption getInnerExpandOption(final ExpandOption expand, final String propertyName) {
+    for(final ExpandItem item : expand.getExpandItems()) {
+      final UriResource resource = item.getResourcePath().getUriResourceParts().get(0);
+      if(resource instanceof UriResourceNavigation 
+          && propertyName.equals(((UriResourceNavigation) resource).getProperty().getName())) {
+        return item.getExpandOption();
+      }
+    }
+    
+    return null;
   }
 }

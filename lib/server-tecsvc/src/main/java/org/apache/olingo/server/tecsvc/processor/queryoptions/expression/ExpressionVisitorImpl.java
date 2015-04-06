@@ -23,8 +23,8 @@ import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
@@ -49,11 +49,11 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operati
 public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> {
 
   final private Entity entity;
-  final private EdmEntitySet edmEntitySet;
+  final private EdmBindingTarget bindingTarget;
 
-  public ExpressionVisitorImpl(Entity entity, EdmEntitySet edmEntitySet) {
+  public ExpressionVisitorImpl(Entity entity, EdmBindingTarget bindingTarget) {
     this.entity = entity;
-    this.edmEntitySet = edmEntitySet;
+    this.bindingTarget = bindingTarget;
   }
 
   @Override
@@ -183,7 +183,7 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
     Property currentProperty = entity.getProperty(uriResourceParts.get(0).toString());
     EdmType currentType = ((UriResourcePartTyped) uriResourceParts.get(0)).getType();
 
-    EdmProperty currentEdmProperty = edmEntitySet.getEntityType()
+    EdmProperty currentEdmProperty = bindingTarget.getEntityType()
         .getStructuralProperty(uriResourceParts.get(0).toString());
 
     for (int i = 1; i < uriResourceParts.size(); i++) {

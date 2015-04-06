@@ -23,7 +23,7 @@ import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmBoolean;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -53,8 +53,8 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand
 
 public class FilterHandler {
 
-  public static void applyFilterSystemQuery(FilterOption filterOption, EntitySet entitySet, EdmEntitySet edmEntitySet)
-      throws ODataApplicationException {
+  public static void applyFilterSystemQuery(FilterOption filterOption, EntitySet entitySet, 
+      EdmBindingTarget edmEntitySet) throws ODataApplicationException {
 
     if (filterOption == null) {
       return;

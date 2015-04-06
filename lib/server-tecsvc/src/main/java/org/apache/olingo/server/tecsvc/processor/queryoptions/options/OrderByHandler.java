@@ -24,7 +24,7 @@ import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.OrderByItem;
@@ -35,14 +35,14 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand
 
 public class OrderByHandler {
   public static void applyOrderByOption(final OrderByOption orderByOption, final EntitySet entitySet,
-      final EdmEntitySet edmEntitySet) throws ODataApplicationException {
+      final EdmBindingTarget edmBindingTarget) throws ODataApplicationException {
 
     if (orderByOption == null) {
       return;
     }
 
     try {
-      applyOrderByOptionInternal(orderByOption, entitySet, edmEntitySet);
+      applyOrderByOptionInternal(orderByOption, entitySet, edmBindingTarget);
     } catch (SystemQueryOptionsRuntimeException e) {
       if (e.getCause() instanceof ODataApplicationException) {
         // Throw the nested exception, to send the correct HTTP status code in the HTTP response
@@ -55,7 +55,7 @@ public class OrderByHandler {
   }
 
   private static void applyOrderByOptionInternal(final OrderByOption orderByOption, final EntitySet entitySet,
-      final EdmEntitySet edmEntitySet) throws ODataApplicationException {
+      final EdmBindingTarget edmBindingTarget) throws ODataApplicationException {
     Collections.sort(entitySet.getEntities(), new Comparator<Entity>() {
       @Override
       @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -69,9 +69,9 @@ public class OrderByHandler {
           try {
             final OrderByItem item = orderByOption.getOrders().get(i);
             final TypedOperand op1 =
-                item.getExpression().accept(new ExpressionVisitorImpl(e1, edmEntitySet)).asTypedOperand();
+                item.getExpression().accept(new ExpressionVisitorImpl(e1, edmBindingTarget)).asTypedOperand();
             final TypedOperand op2 =
-                item.getExpression().accept(new ExpressionVisitorImpl(e2, edmEntitySet)).asTypedOperand();
+                item.getExpression().accept(new ExpressionVisitorImpl(e2, edmBindingTarget)).asTypedOperand();
 
             if (op1.isNull() || op2.isNull()) {
               if (op1.isNull() && op2.isNull()) {

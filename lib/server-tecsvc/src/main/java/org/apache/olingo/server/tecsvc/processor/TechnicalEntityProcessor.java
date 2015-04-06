@@ -125,7 +125,9 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       // Create a shallow copy of each entity. So the expanded navigation properties can be modified for serialization,
       // without affecting the data stored in the database.
       final ExpandSystemQueryOptionHandler expandHandler = new ExpandSystemQueryOptionHandler();
-      final EntitySet entitySetSerialization = expandHandler.copyEntitySetShallowRekursive(entitySet);
+      final EntitySet entitySetSerialization = expandHandler.transformEntitySetGraphToTree(entitySet, 
+                                                                                           edmEntitySet, 
+                                                                                           expand);
       expandHandler.applyExpandQueryOptions(entitySetSerialization, edmEntitySet, expand);
 
       // Serialize
@@ -186,7 +188,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final SelectOption select = uriInfo.getSelectOption();
 
     final ExpandSystemQueryOptionHandler expandHandler = new ExpandSystemQueryOptionHandler();
-    final Entity entitySerialization = expandHandler.copyEntityShallowRekursive(entity);
+    final Entity entitySerialization = expandHandler.transformEntityGraphToTree(entity, edmEntitySet, expand);
     expandHandler.applyExpandQueryOptions(entitySerialization, edmEntitySet, expand);
 
     response.setContent(serializer.entity(
