@@ -20,6 +20,7 @@ package org.apache.olingo.fit.tecsvc.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
@@ -37,10 +38,12 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
+import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -79,6 +82,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
   private static final String NAV_PROPERTY_ET_TWO_KEY_NAV_ONE = "NavPropertyETTwoKeyNavOne";
   private static final String NAV_PROPERTY_ET_TWO_KEY_NAV_MANY = "NavPropertyETTwoKeyNavMany";
   private static final String COL_PROPERTY_STRING = "CollPropertyString";
+  private static final String COL_PROPERTY_COMP_NAV = "CollPropertyCompNav";
   private static final String EDM_STRING = "Edm.String";
 
   @Test
@@ -601,7 +605,63 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
     validateSet(targetURI, cookie, (short) 1, (short) 2, (short) 3);
   }
-
+  
+  @Test
+  @org.junit.Ignore
+  public void testDeepInsertOnNavigationPropertyInComplexProperty() {
+    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataObjectFactory of = client.getObjectFactory();
+    
+    final ODataEntity inlineEntity = of.newEntity(ET_TWO_KEY_NAV);
+    inlineEntity.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
+    inlineEntity.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
+    inlineEntity.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 1)))
+            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("1")))));
+    
+    final ODataEntity entity = of.newEntity(ET_TWO_KEY_NAV);
+    entity.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
+    entity.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
+    entity.getProperties().add(
+        of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 2)))
+            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("2")))));
+    
+    final ODataLink link = of.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, inlineEntity);
+    final ODataComplexValue complexValueCreate = of.newComplexValue(CT_NAV_FIVE_PROP);
+    complexValueCreate.getNavigationLinks().add(link);
+    
+    entity.getProperties().add(
+        of.newCollectionProperty(COL_PROPERTY_COMP_NAV, of.newCollectionValue(CT_NAV_FIVE_PROP)
+                                                          .add(complexValueCreate)));
+    
+    final URI targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).build();
+    final ODataEntityCreateResponse<ODataEntity> response = client.getCUDRequestFactory()
+                                                                  .getEntityCreateRequest(targetURI, entity)
+                                                                  .execute();
+    
+    assertEquals(HttpStatusCode.CREATED.getStatusCode(), response.getStatusCode());
+    final Iterator<ODataValue> iter = response.getBody()
+                                              .getProperty(COL_PROPERTY_COMP_NAV)
+                                              .getCollectionValue()
+                                              .iterator();
+    
+    assertTrue(iter.hasNext());
+    final ODataComplexValue complexValue = iter.next().asComplex();
+    final ODataLink linkedEntity = complexValue.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE);
+    assertNotNull(linkedEntity);
+    assertEquals(1, linkedEntity.asInlineEntity()
+                                .getEntity()
+                                .getProperty(PROPERTY_INT16)
+                                .getPrimitiveValue()
+                                .toValue());
+  }
+  
   private String getCookie() {
     final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
     final ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
