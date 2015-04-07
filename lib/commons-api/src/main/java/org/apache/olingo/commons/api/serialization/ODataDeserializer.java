@@ -19,7 +19,7 @@
 package org.apache.olingo.commons.api.serialization;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataError;
@@ -35,9 +35,9 @@ public interface ODataDeserializer {
    * Gets an entity set object from the given InputStream.
    * 
    * @param input stream to be de-serialized.
-   * @return {@link EntitySet} instance.
+   * @return {@link EntityCollection} instance.
    */
-  ResWrap<EntitySet> toEntitySet(InputStream input) throws ODataDeserializerException;
+  ResWrap<EntityCollection> toEntitySet(InputStream input) throws ODataDeserializerException;
 
   /**
    * Gets an entity object from the given InputStream.

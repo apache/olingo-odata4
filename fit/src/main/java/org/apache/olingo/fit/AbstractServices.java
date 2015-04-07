@@ -70,7 +70,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
@@ -997,7 +997,7 @@ public abstract class AbstractServices {
 
         final InputStream feed = FSManager.instance(version).readFile(builder.toString(), Accept.ATOM);
 
-        final ResWrap<EntitySet> container = atomDeserializer.toEntitySet(feed);
+        final ResWrap<EntityCollection> container = atomDeserializer.toEntitySet(feed);
 
         setInlineCount(container.getPayload(), count);
 
@@ -1040,7 +1040,7 @@ public abstract class AbstractServices {
     }
   }
 
-  protected abstract void setInlineCount(final EntitySet feed, final String count);
+  protected abstract void setInlineCount(final EntityCollection feed, final String count);
 
   @GET
   @Path("/Person({entityId})")
@@ -1256,7 +1256,7 @@ public abstract class AbstractServices {
               rep.setInlineEntity(inline);
             } else if (link.getType().equals(Constants.get(ConstantKey.ATOM_LINK_FEED))) {
               // inline feed
-              final EntitySet inline = atomDeserializer.toEntitySet(
+              final EntityCollection inline = atomDeserializer.toEntitySet(
                   xml.expandEntity(entitySetName, entityId, link.getTitle())).getPayload();
               rep.setInlineEntitySet(inline);
             }
@@ -1911,7 +1911,7 @@ public abstract class AbstractServices {
         alink.setRel(Constants.get(ConstantKey.ATOM_LINK_REL) + property.getName());
 
         if (property.isCollection()) {
-          EntitySet inline = new EntitySet();
+          EntityCollection inline = new EntityCollection();
           for (Object value : property.asCollection()) {
             Entity inlineEntity = new Entity();
             inlineEntity.setType(navProperties.get(property.getName()).getType());

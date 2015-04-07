@@ -27,7 +27,7 @@ import java.util.Locale;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -97,7 +97,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
 
     // Second we fetch the data for this specific entity set from the mock database and transform it into an EntitySet
     // object which is understood by our serialization
-    EntitySet entitySet = dataProvider.readAll(edmEntitySet);
+    EntityCollection entitySet = dataProvider.readAll(edmEntitySet);
 
     // Next we create a serializer based on the requested format. This could also be a custom format but we do not
     // support them in this example

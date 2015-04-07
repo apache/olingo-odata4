@@ -30,7 +30,7 @@ import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.serialization.ODataReader;
 import org.apache.olingo.client.core.edm.ClientEdmProvider;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataEntity;
@@ -98,7 +98,7 @@ public class ODataReaderImpl implements ODataReader {
             reference.cast(new ODataEntitySetIterator<ODataEntitySet, ODataEntity>(
                 client, src, ODataFormat.fromString(format))));
       } else if (ODataEntitySet.class.isAssignableFrom(reference)) {
-        final ResWrap<EntitySet> resource = client.getDeserializer(ODataFormat.fromString(format))
+        final ResWrap<EntityCollection> resource = client.getDeserializer(ODataFormat.fromString(format))
             .toEntitySet(src);
         res = new ResWrap<T>(
             resource.getContextURL(),

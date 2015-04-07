@@ -36,7 +36,7 @@ import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
@@ -393,7 +393,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     writer.flush();
   }
 
-  private void entitySet(final XMLStreamWriter writer, final EntitySet entitySet)
+  private void entitySet(final XMLStreamWriter writer, final EntityCollection entitySet)
       throws XMLStreamException, EdmPrimitiveTypeException {
     if (entitySet.getBaseURI() != null) {
       writer.writeAttribute(XMLConstants.XML_NS_URI, Constants.ATTR_XML_BASE, entitySet.getBaseURI().toASCIIString());
@@ -442,7 +442,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     }
   }
 
-  private void entitySet(final Writer outWriter, final EntitySet entitySet)
+  private void entitySet(final Writer outWriter, final EntityCollection entitySet)
       throws XMLStreamException, EdmPrimitiveTypeException {
     final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(outWriter);
 
@@ -455,7 +455,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     writer.flush();
   }
 
-  private void entitySet(final Writer outWriter, final ResWrap<EntitySet> entitySet)
+  private void entitySet(final Writer outWriter, final ResWrap<EntityCollection> entitySet)
       throws XMLStreamException, EdmPrimitiveTypeException {
     final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(outWriter);
 
@@ -491,8 +491,8 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
   @Override
   public <T> void write(final Writer writer, final T obj) throws ODataSerializerException {
     try {
-      if (obj instanceof EntitySet) {
-        entitySet(writer, (EntitySet) obj);
+      if (obj instanceof EntityCollection) {
+        entitySet(writer, (EntityCollection) obj);
       } else if (obj instanceof Entity) {
         entity(writer, (Entity) obj);
       } else if (obj instanceof Property) {
@@ -527,8 +527,8 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     final T obj = container == null ? null : container.getPayload();
 
     try {
-      if (obj instanceof EntitySet) {
-        this.entitySet(writer, (ResWrap<EntitySet>) container);
+      if (obj instanceof EntityCollection) {
+        this.entitySet(writer, (ResWrap<EntityCollection>) container);
       } else if (obj instanceof Entity) {
         entity(writer, (ResWrap<Entity>) container);
       } else if (obj instanceof Property) {
@@ -551,8 +551,8 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     if (container.getContextURL() != null) {
       final ContextURL contextURL = ContextURLParser.parse(container.getContextURL());
       String base = contextURL.getServiceRoot().toASCIIString();
-      if (container.getPayload() instanceof EntitySet) {
-        ((EntitySet) container.getPayload()).setBaseURI(base);
+      if (container.getPayload() instanceof EntityCollection) {
+        ((EntityCollection) container.getPayload()).setBaseURI(base);
       }
       if (container.getPayload() instanceof Entity) {
         ((Entity) container.getPayload()).setBaseURI(base);

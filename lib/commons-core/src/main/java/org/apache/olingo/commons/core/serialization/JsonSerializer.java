@@ -33,7 +33,7 @@ import org.apache.olingo.commons.api.data.Annotatable;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
@@ -81,8 +81,8 @@ public class JsonSerializer implements ODataSerializer {
   public <T> void write(final Writer writer, final T obj) throws ODataSerializerException {
     try {
       final JsonGenerator json = new JsonFactory().createGenerator(writer);
-      if (obj instanceof EntitySet) {
-        new JsonEntitySetSerializer(serverMode).doSerialize((EntitySet) obj, json);
+      if (obj instanceof EntityCollection) {
+        new JsonEntitySetSerializer(serverMode).doSerialize((EntityCollection) obj, json);
       } else if (obj instanceof Entity) {
         new JsonEntitySerializer(serverMode, format).doSerialize((Entity) obj, json);
       } else if (obj instanceof Property) {
@@ -113,8 +113,8 @@ public class JsonSerializer implements ODataSerializer {
     final T obj = container == null ? null : container.getPayload();
     try {
       final JsonGenerator json = new JsonFactory().createGenerator(writer);
-      if (obj instanceof EntitySet) {
-        new JsonEntitySetSerializer(serverMode).doContainerSerialize((ResWrap<EntitySet>) container, json);
+      if (obj instanceof EntityCollection) {
+        new JsonEntitySetSerializer(serverMode).doContainerSerialize((ResWrap<EntityCollection>) container, json);
       } else if (obj instanceof Entity) {
         new JsonEntitySerializer(serverMode).doContainerSerialize((ResWrap<Entity>) container, json);
       } else if (obj instanceof Property) {

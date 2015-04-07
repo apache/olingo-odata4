@@ -43,7 +43,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
@@ -507,14 +507,14 @@ public abstract class AbstractUtilities {
     return builder.build();
   }
 
-  public EntitySet readEntitySet(final Accept accept, final InputStream entitySet)
+  public EntityCollection readEntitySet(final Accept accept, final InputStream entitySet)
       throws ODataDeserializerException {
     return (accept == Accept.ATOM || accept == Accept.XML ? atomDeserializer.toEntitySet(entitySet) : jsonDeserializer.
         toEntitySet(entitySet))
         .getPayload();
   }
 
-  public InputStream writeEntitySet(final Accept accept, final ResWrap<EntitySet> container)
+  public InputStream writeEntitySet(final Accept accept, final ResWrap<EntityCollection> container)
       throws ODataSerializerException, IOException {
 
     final StringWriter writer = new StringWriter();

@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
@@ -45,7 +45,7 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
     super(serverMode);
   }
 
-  protected ResWrap<EntitySet> doDeserialize(final JsonParser parser) throws IOException {
+  protected ResWrap<EntityCollection> doDeserialize(final JsonParser parser) throws IOException {
 
     final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
 
@@ -53,7 +53,7 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
       return null;
     }
 
-    final EntitySet entitySet = new EntitySet();
+    final EntityCollection entitySet = new EntityCollection();
 
     URI contextURL;
     if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
@@ -115,6 +115,6 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
       }
     }
 
-    return new ResWrap<EntitySet>(contextURL, metadataETag, entitySet);
+    return new ResWrap<EntityCollection>(contextURL, metadataETag, entitySet);
   }
 }

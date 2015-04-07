@@ -22,13 +22,13 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
 
 public class SkipHandler {
-  public static void applySkipSystemQueryHandler(final SkipOption skipOption, final EntitySet entitySet)
+  public static void applySkipSystemQueryHandler(final SkipOption skipOption, final EntityCollection entitySet)
       throws ODataApplicationException {
     
     if (skipOption != null) {
@@ -41,7 +41,7 @@ public class SkipHandler {
     }
   }
 
-  static void popAtMost(final EntitySet entitySet, final int n) {
+  static void popAtMost(final EntityCollection entitySet, final int n) {
     final Iterator<Entity> iter = entitySet.getEntities().iterator();
     int i = 0;
 

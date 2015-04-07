@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -33,11 +33,11 @@ import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
 
 public class FunctionData {
 
-  protected static EntitySet entityCollectionFunction(final String name, final List<UriParameter> parameters,
-      final Map<String, EntitySet> data) throws DataProviderException {
+  protected static EntityCollection entityCollectionFunction(final String name, final List<UriParameter> parameters,
+      final Map<String, EntityCollection> data) throws DataProviderException {
     if (name.equals("UFCRTCollETTwoKeyNavParam")) {
       final List<Entity> esTwoKeyNav = data.get("ESTwoKeyNav").getEntities();
-      EntitySet result = new EntitySet();
+      EntityCollection result = new EntityCollection();
       final int endIndex = parameters.isEmpty() ? 0 : Short.valueOf(parameters.get(0).getText());
       result.getEntities().addAll(
           esTwoKeyNav.subList(0,
@@ -53,7 +53,7 @@ public class FunctionData {
   }
 
   protected static Entity entityFunction(final String name, final List<UriParameter> parameters,
-      final Map<String, EntitySet> data) throws DataProviderException {
+      final Map<String, EntityCollection> data) throws DataProviderException {
     final List<Entity> esTwoKeyNav = data.get("ESTwoKeyNav").getEntities();
     if (name.equals("UFCRTETTwoKeyNav")) {
       return esTwoKeyNav.get(0);
@@ -71,7 +71,7 @@ public class FunctionData {
 
   @SuppressWarnings("unchecked")
   protected static Property primitiveComplexFunction(final String name, final List<UriParameter> parameters,
-      final Map<String, EntitySet> data) throws DataProviderException {
+      final Map<String, EntityCollection> data) throws DataProviderException {
     if (name.equals("UFNRTInt16")) {
       return DataCreator.createPrimitive(name, 12345);
     } else if (name.equals("UFCRTString")) {

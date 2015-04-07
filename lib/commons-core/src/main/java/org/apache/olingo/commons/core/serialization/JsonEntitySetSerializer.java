@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
@@ -36,15 +36,15 @@ public class JsonEntitySetSerializer extends JsonSerializer {
     super(serverMode);
   }
 
-  protected void doSerialize(final EntitySet entitySet, final JsonGenerator jgen)
+  protected void doSerialize(final EntityCollection entitySet, final JsonGenerator jgen)
       throws IOException, EdmPrimitiveTypeException {
-    doContainerSerialize(new ResWrap<EntitySet>(null, null, entitySet), jgen);
+    doContainerSerialize(new ResWrap<EntityCollection>(null, null, entitySet), jgen);
   }
 
-  protected void doContainerSerialize(final ResWrap<EntitySet> container, final JsonGenerator jgen)
+  protected void doContainerSerialize(final ResWrap<EntityCollection> container, final JsonGenerator jgen)
       throws IOException, EdmPrimitiveTypeException {
 
-    final EntitySet entitySet = container.getPayload();
+    final EntityCollection entitySet = container.getPayload();
 
     jgen.writeStartObject();
 

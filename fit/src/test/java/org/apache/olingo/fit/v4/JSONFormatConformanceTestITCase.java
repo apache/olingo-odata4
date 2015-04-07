@@ -27,7 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.ODataEntity;
@@ -240,7 +240,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
             + "  \"@odata.deltaLink\": \"Customers?$expand=Orders&$deltatoken=8015\""
             + "}";
 
-    final ResWrap<EntitySet> entitySet =
+    final ResWrap<EntityCollection> entitySet =
             client.getDeserializer(ODataFormat.JSON).toEntitySet(IOUtils.toInputStream(fromSection45_2));
 
     assertEquals(5, entitySet.getPayload().getCount(), 0);

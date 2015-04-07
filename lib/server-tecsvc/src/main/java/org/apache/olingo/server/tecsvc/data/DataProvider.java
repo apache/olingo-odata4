@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -55,7 +55,7 @@ public class DataProvider {
 
   protected static final String MEDIA_PROPERTY_NAME = "$value";
 
-  final private Map<String, EntitySet> data;
+  final private Map<String, EntityCollection> data;
   private Edm edm;
   private OData odata;
 
@@ -63,16 +63,16 @@ public class DataProvider {
     data = new DataCreator().getData();
   }
 
-  public EntitySet readAll(final EdmEntitySet edmEntitySet) throws DataProviderException {
+  public EntityCollection readAll(final EdmEntitySet edmEntitySet) throws DataProviderException {
     return data.get(edmEntitySet.getName());
   }
 
   public Entity read(final EdmEntitySet edmEntitySet, final List<UriParameter> keys) throws DataProviderException {
-    final EntitySet entitySet = readAll(edmEntitySet);
+    final EntityCollection entitySet = readAll(edmEntitySet);
     return entitySet == null ? null : read(edmEntitySet.getEntityType(), entitySet, keys);
   }
 
-  public Entity read(final EdmEntityType edmEntityType, final EntitySet entitySet, final List<UriParameter> keys)
+  public Entity read(final EdmEntityType edmEntityType, final EntityCollection entitySet, final List<UriParameter> keys)
       throws DataProviderException {
     try {
       for (final Entity entity : entitySet.getEntities()) {
@@ -129,7 +129,7 @@ public class DataProvider {
 
   public Entity create(final EdmEntitySet edmEntitySet) throws DataProviderException {
     final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
-    final EntitySet entitySet = readAll(edmEntitySet);
+    final EntityCollection entitySet = readAll(edmEntitySet);
     final List<Entity> entities = entitySet.getEntities();
     final Map<String, Object> newKey = findFreeComposedKey(entities, edmEntitySet.getEntityType());
     final Entity newEntity = new Entity();
@@ -349,7 +349,7 @@ public class DataProvider {
   }
 
   private List<Entity> createInlineEntities(final String rawBaseUri, final EdmEntitySet targetEntitySet,
-      final EntitySet changedEntitySet) throws DataProviderException {
+      final EntityCollection changedEntitySet) throws DataProviderException {
     List<Entity> entities = new ArrayList<Entity>();
 
     for (final Entity newEntity : changedEntitySet.getEntities()) {
@@ -473,7 +473,7 @@ public class DataProvider {
     entity.setMediaContentType(type);
   }
 
-  public EntitySet readFunctionEntitySet(final EdmFunction function, final List<UriParameter> parameters)
+  public EntityCollection readFunctionEntitySet(final EdmFunction function, final List<UriParameter> parameters)
       throws DataProviderException {
     return FunctionData.entityCollectionFunction(function.getName(), parameters, data);
   }

@@ -21,7 +21,7 @@ package org.apache.olingo.server.api.deserializer;
 import java.io.InputStream;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -43,7 +43,7 @@ public interface ODataDeserializer {
   DeserializerResult entity(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException;
 
   /**
-   * Deserializes an entity collection stream into an {@link EntitySet} object.
+   * Deserializes an entity collection stream into an {@link EntityCollection} object.
    * @param stream
    * @param edmEntityType
    * @return {@link DeserializerResult#getEntityCollection()}

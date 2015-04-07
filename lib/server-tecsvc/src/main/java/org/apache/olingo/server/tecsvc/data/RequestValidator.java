@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
@@ -140,7 +140,7 @@ public class RequestValidator {
     }
     
     if(edmProperty.isCollection()) {
-      final EntitySet inlineEntitySet = navigationLink.getInlineEntitySet();
+      final EntityCollection inlineEntitySet = navigationLink.getInlineEntitySet();
       if(!isInsert && inlineEntitySet.getEntities().size() > 0) {
         throw new DataProvider.DataProviderException("Deep update is not allowed", HttpStatusCode.BAD_REQUEST);
       } else {

@@ -31,7 +31,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -81,7 +81,7 @@ public abstract class AbstractBaseTestITCase {
     }
   }
 
-  protected void debugEntitySet(final EntitySet entitySet, final String message) {
+  protected void debugEntitySet(final EntityCollection entitySet, final String message) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       try {

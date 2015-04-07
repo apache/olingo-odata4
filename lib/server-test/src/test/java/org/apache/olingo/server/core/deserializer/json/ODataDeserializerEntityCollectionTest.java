@@ -28,7 +28,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -43,7 +43,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
   public void esAllPrim() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("ESAllPrim.json");
-    EntitySet entitySet =
+    EntityCollection entitySet =
         OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType)
                            .getEntityCollection();
 
@@ -78,7 +78,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
   public void eSCompCollComp() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETCompCollComp"));
     InputStream stream = getFileAsStream("ESCompCollComp.json");
-    EntitySet entitySet =
+    EntityCollection entitySet =
         OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType)
                                                                 .getEntityCollection();
 
@@ -100,7 +100,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     String entityCollectionString = "{\"value\" : []}";
     InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
-    EntitySet entityCollection =
+    EntityCollection entityCollection =
         OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType)
                                                                 .getEntityCollection();
     assertNotNull(entityCollection.getEntities());

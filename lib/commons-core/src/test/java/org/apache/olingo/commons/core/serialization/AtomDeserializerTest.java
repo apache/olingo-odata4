@@ -26,7 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.junit.Test;
 
@@ -230,7 +230,7 @@ public class AtomDeserializerTest {
     final ResWrap<Entity> entity = deserializer.toEntity(in);
     
     assertNotNull(entity);
-    final EntitySet inlineEntitySet = entity.getPayload().getNavigationLink("Supplier").getInlineEntitySet();
+    final EntityCollection inlineEntitySet = entity.getPayload().getNavigationLink("Supplier").getInlineEntitySet();
     assertNotNull(inlineEntitySet);
     assertEquals(0, inlineEntitySet.getEntities().size());
   }
@@ -321,7 +321,7 @@ public class AtomDeserializerTest {
     final ResWrap<Entity> entity = deserializer.toEntity(in);
     
     assertNotNull(entity);
-    final EntitySet inlineEntitySet = entity.getPayload().getNavigationLink("Supplier").getInlineEntitySet();
+    final EntityCollection inlineEntitySet = entity.getPayload().getNavigationLink("Supplier").getInlineEntitySet();
     assertNotNull(inlineEntitySet);
     assertEquals(1, inlineEntitySet.getEntities().size());
   }

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -163,7 +163,7 @@ public abstract class TechnicalProcessor implements Processor {
     return entity;
   }
 
-  protected EntitySet readEntityCollection(final UriInfoResource uriInfo) throws ODataApplicationException {
+  protected EntityCollection readEntityCollection(final UriInfoResource uriInfo) throws ODataApplicationException {
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
     if (resourcePaths.size() > 1 && resourcePaths.get(1) instanceof UriResourceNavigation) {
       final Entity entity = readEntity(uriInfo);

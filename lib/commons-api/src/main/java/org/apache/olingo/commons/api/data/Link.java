@@ -29,7 +29,7 @@ public class Link extends Annotatable {
   private String type;
   private String mediaETag;
   private Entity entity;
-  private EntitySet entitySet;
+  private EntityCollection entitySet;
   private String bindingLink;
   private List<String> bindingLinks = new ArrayList<String>();
 
@@ -147,7 +147,7 @@ public class Link extends Annotatable {
    * 
    * @return in-line entity set.
    */
-  public EntitySet getInlineEntitySet() {
+  public EntityCollection getInlineEntitySet() {
     return entitySet;
   }
 
@@ -156,7 +156,7 @@ public class Link extends Annotatable {
    * 
    * @param entitySet entity set.
    */
-  public void setInlineEntitySet(final EntitySet entitySet) {
+  public void setInlineEntitySet(final EntityCollection entitySet) {
     this.entitySet = entitySet;
   }
 

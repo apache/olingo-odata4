@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -45,7 +45,7 @@ public class FilterHandler {
     primBoolean = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean);
   }
 
-  public static void applyFilterSystemQuery(FilterOption filterOption, EntitySet entitySet, 
+  public static void applyFilterSystemQuery(FilterOption filterOption, EntityCollection entitySet, 
       EdmBindingTarget edmEntitySet) throws ODataApplicationException {
 
     if (filterOption == null) {

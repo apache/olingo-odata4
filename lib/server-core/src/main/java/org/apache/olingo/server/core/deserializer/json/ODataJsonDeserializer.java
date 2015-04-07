@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.data.Property;
@@ -92,9 +92,9 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
   }
 
-  private EntitySet consumeEntitySetNode(EdmEntityType edmEntityType, final ObjectNode tree,
+  private EntityCollection consumeEntitySetNode(EdmEntityType edmEntityType, final ObjectNode tree,
       final ExpandTreeBuilder expandBuilder) throws DeserializerException {
-    EntitySet entitySet = new EntitySet();
+    EntityCollection entitySet = new EntityCollection();
 
     // Consume entities
     JsonNode jsonNode = tree.get(Constants.VALUE);
@@ -339,7 +339,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
             expandBuilder.expand(edmNavigationProperty) : null;
         if (jsonNode.isArray() && edmNavigationProperty.isCollection()) {
           link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
-          EntitySet inlineEntitySet = new EntitySet();
+          EntityCollection inlineEntitySet = new EntityCollection();
           inlineEntitySet.getEntities().addAll(consumeEntitySetArray(edmNavigationProperty.getType(), jsonNode,
               childExpandBuilder));
           link.setInlineEntitySet(inlineEntitySet);

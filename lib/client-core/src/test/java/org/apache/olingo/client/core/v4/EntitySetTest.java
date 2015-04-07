@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -20,7 +20,7 @@ package org.apache.olingo.client.core.v4;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
@@ -46,13 +46,14 @@ public class EntitySetTest extends AbstractTest {
   private void read(final ODataFormat format) throws IOException, ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("Customers." + getSuffix(format));
     final ODataEntitySet entitySet = getClient().getBinder().getODataEntitySet(
-            getClient().getDeserializer(format).toEntitySet(input));
+        getClient().getDeserializer(format).toEntitySet(input));
     assertNotNull(entitySet);
 
     assertEquals(2, entitySet.getEntities().size());
     assertNull(entitySet.getNext());
 
-    final ODataEntitySet written = getClient().getBinder().getODataEntitySet(new ResWrap<EntitySet>((URI) null, null,
+    final ODataEntitySet written =
+        getClient().getBinder().getODataEntitySet(new ResWrap<EntityCollection>((URI) null, null,
             getClient().getBinder().getEntitySet(entitySet)));
     assertEquals(entitySet, written);
   }
@@ -70,7 +71,7 @@ public class EntitySetTest extends AbstractTest {
   private void ref(final ODataFormat format) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("collectionOfEntityReferences." + getSuffix(format));
     final ODataEntitySet entitySet = getClient().getBinder().getODataEntitySet(
-            getClient().getDeserializer(format).toEntitySet(input));
+        getClient().getDeserializer(format).toEntitySet(input));
     assertNotNull(entitySet);
 
     for (ODataEntity entity : entitySet.getEntities()) {
@@ -78,7 +79,8 @@ public class EntitySetTest extends AbstractTest {
     }
     entitySet.setCount(entitySet.getEntities().size());
 
-    final ODataEntitySet written = getClient().getBinder().getODataEntitySet(new ResWrap<EntitySet>((URI) null, null,
+    final ODataEntitySet written =
+        getClient().getBinder().getODataEntitySet(new ResWrap<EntityCollection>((URI) null, null,
             getClient().getBinder().getEntitySet(entitySet)));
     assertEquals(entitySet, written);
   }

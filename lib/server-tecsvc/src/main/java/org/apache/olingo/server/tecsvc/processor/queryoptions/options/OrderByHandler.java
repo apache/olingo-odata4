@@ -23,7 +23,7 @@ import java.util.Comparator;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -34,7 +34,7 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.Express
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.TypedOperand;
 
 public class OrderByHandler {
-  public static void applyOrderByOption(final OrderByOption orderByOption, final EntitySet entitySet,
+  public static void applyOrderByOption(final OrderByOption orderByOption, final EntityCollection entitySet,
       final EdmBindingTarget edmBindingTarget) throws ODataApplicationException {
 
     if (orderByOption == null) {
@@ -54,7 +54,7 @@ public class OrderByHandler {
     }
   }
 
-  private static void applyOrderByOptionInternal(final OrderByOption orderByOption, final EntitySet entitySet,
+  private static void applyOrderByOptionInternal(final OrderByOption orderByOption, final EntityCollection entitySet,
       final EdmBindingTarget edmBindingTarget) throws ODataApplicationException {
     Collections.sort(entitySet.getEntities(), new Comparator<Entity>() {
       @Override

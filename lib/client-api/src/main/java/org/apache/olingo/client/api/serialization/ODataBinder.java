@@ -21,7 +21,7 @@ package org.apache.olingo.client.api.serialization;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
@@ -38,9 +38,9 @@ public interface ODataBinder {
    * Gets a <tt>EntitySet</tt> from the given OData entity set.
    *
    * @param entitySet OData entity set.
-   * @return {@link EntitySet} object.
+   * @return {@link EntityCollection} object.
    */
-  EntitySet getEntitySet(ODataEntitySet entitySet);
+  EntityCollection getEntitySet(ODataEntitySet entitySet);
 
   /**
    * Gets an <tt>Entity</tt> from the given OData entity.
@@ -89,7 +89,7 @@ public interface ODataBinder {
    * @param resource entity set resource.
    * @return {@link org.apache.olingo.commons.api.domain.ODataEntitySet} object.
    */
-  ODataEntitySet getODataEntitySet(ResWrap<EntitySet> resource);
+  ODataEntitySet getODataEntitySet(ResWrap<EntityCollection> resource);
 
   /**
    * Gets <tt>ODataEntity</tt> from the given entity resource.

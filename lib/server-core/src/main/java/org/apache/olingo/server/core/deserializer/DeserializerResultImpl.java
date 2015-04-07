@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
@@ -31,7 +31,7 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 
 public class DeserializerResultImpl implements DeserializerResult {
   private Entity entity;
-  private EntitySet entitySet;
+  private EntityCollection entitySet;
   private ExpandOption expandOption;
   private Property property;
   private List<Parameter> actionParametes;
@@ -45,7 +45,7 @@ public class DeserializerResultImpl implements DeserializerResult {
   }
 
   @Override
-  public EntitySet getEntityCollection() {
+  public EntityCollection getEntityCollection() {
     return entitySet;
   }
 
@@ -75,7 +75,7 @@ public class DeserializerResultImpl implements DeserializerResult {
   
   public static class DeserializerResultBuilder {
     private Entity entity;
-    private EntitySet entitySet;
+    private EntityCollection entitySet;
     private ExpandOption expandOption;
     private Property property;
     private List<Parameter> actionParametes;
@@ -98,7 +98,7 @@ public class DeserializerResultImpl implements DeserializerResult {
       return this;
     }
 
-    public DeserializerResultBuilder entityCollection(final EntitySet entitySet) {
+    public DeserializerResultBuilder entityCollection(final EntityCollection entitySet) {
       this.entitySet = entitySet;
       return this;
     }

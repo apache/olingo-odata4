@@ -31,7 +31,7 @@ import java.util.UUID;
 
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
@@ -41,10 +41,10 @@ public class DataCreator {
 
   private static final UUID GUID = UUID.fromString("01234567-89ab-cdef-0123-456789abcdef");
 
-  private final Map<String, EntitySet> data;
+  private final Map<String, EntityCollection> data;
 
   public DataCreator() {
-    data = new HashMap<String, EntitySet>();
+    data = new HashMap<String, EntityCollection>();
     data.put("ESTwoPrim", createESTwoPrim());
     data.put("ESAllPrim", createESAllPrim());
     data.put("ESCompAllPrim", createESCompAllPrim());
@@ -59,19 +59,19 @@ public class DataCreator {
     data.put("ESServerSidePaging", createESServerSidePaging());
 
     // No data available but to allow an insert operation create empty EntitySets
-    data.put("ESAllNullable", new EntitySet());
-    data.put("ESMixEnumDefCollComp", new EntitySet());
-    data.put("ESTwoBase", new EntitySet());
-    data.put("ESBaseTwoKeyNav", new EntitySet());
-    data.put("ESBaseTwoKeyTwoPrim", new EntitySet());
-    data.put("ESTwoKeyTwoPrim", new EntitySet());
-    data.put("ESCompCollAllPrim", new EntitySet());
-    data.put("ESKeyTwoKeyComp", new EntitySet());
-    data.put("ESFourKeyAlias", new EntitySet());
-    data.put("ESBase", new EntitySet());
-    data.put("ESTwoBaseTwoKeyTwoPrim", new EntitySet());
-    data.put("ESInvisible", new EntitySet());
-    data.put("ESCompMixPrimCollComp", new EntitySet());
+    data.put("ESAllNullable", new EntityCollection());
+    data.put("ESMixEnumDefCollComp", new EntityCollection());
+    data.put("ESTwoBase", new EntityCollection());
+    data.put("ESBaseTwoKeyNav", new EntityCollection());
+    data.put("ESBaseTwoKeyTwoPrim", new EntityCollection());
+    data.put("ESTwoKeyTwoPrim", new EntityCollection());
+    data.put("ESCompCollAllPrim", new EntityCollection());
+    data.put("ESKeyTwoKeyComp", new EntityCollection());
+    data.put("ESFourKeyAlias", new EntityCollection());
+    data.put("ESBase", new EntityCollection());
+    data.put("ESTwoBaseTwoKeyTwoPrim", new EntityCollection());
+    data.put("ESInvisible", new EntityCollection());
+    data.put("ESCompMixPrimCollComp", new EntityCollection());
 
     linkESTwoPrim(data);
     linkESAllPrim(data);
@@ -79,12 +79,12 @@ public class DataCreator {
     linkESTwoKeyNav(data);
   }
 
-  protected Map<String, EntitySet> getData() {
+  protected Map<String, EntityCollection> getData() {
     return data;
   }
 
-  private EntitySet createESServerSidePaging() {
-    EntitySet entitySet = new EntitySet();
+  private EntityCollection createESServerSidePaging() {
+    EntityCollection entitySet = new EntityCollection();
 
     for (int i = 1; i <= 503; i++) {
       entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", i))
@@ -94,8 +94,8 @@ public class DataCreator {
     return entitySet;
   }
 
-  private EntitySet createESKeyNav() {
-    final EntitySet entitySet = new EntitySet();
+  private EntityCollection createESKeyNav() {
+    final EntityCollection entitySet = new EntityCollection();
 
     entitySet.getEntities().add(createETKeyNavEntity(1, "I am String Property 1"));
     entitySet.getEntities().add(createETKeyNavEntity(2, "I am String Property 2"));
@@ -123,8 +123,8 @@ public class DataCreator {
             createComplex("PropertyCompNav", createPrimitive("PropertyInt16", 1))));
   }
 
-  private EntitySet createESTwoKeyNav() {
-    final EntitySet entitySet = new EntitySet();
+  private EntityCollection createESTwoKeyNav() {
+    final EntityCollection entitySet = new EntityCollection();
 
     entitySet.getEntities().add(createESTwoKeyNavEntity(1, "1"));
     entitySet.getEntities().add(createESTwoKeyNavEntity(1, "2"));
@@ -174,8 +174,8 @@ public class DataCreator {
   }
 
   @SuppressWarnings("unchecked")
-  private EntitySet createESCompCollComp() {
-    final EntitySet entitySet = new EntitySet();
+  private EntityCollection createESCompCollComp() {
+    final EntityCollection entitySet = new EntityCollection();
 
     entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(createComplex("PropertyComp", createComplexCollection("CollPropertyComp", Arrays
@@ -198,8 +198,8 @@ public class DataCreator {
     return entitySet;
   }
 
-  private EntitySet createESTwoPrim() {
-    EntitySet entitySet = new EntitySet();
+  private EntityCollection createESTwoPrim() {
+    EntityCollection entitySet = new EntityCollection();
 
     entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 32766))
         .addProperty(createPrimitive("PropertyString", "Test String1")));
@@ -216,8 +216,8 @@ public class DataCreator {
     return entitySet;
   }
 
-  private EntitySet createESAllPrim() {
-    EntitySet entitySet = new EntitySet();
+  private EntityCollection createESAllPrim() {
+    EntityCollection entitySet = new EntityCollection();
 
     entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(createPrimitive("PropertyString", "First Resource - positive values"))
@@ -266,8 +266,8 @@ public class DataCreator {
     return entitySet;
   }
 
-  private EntitySet createESCompAllPrim() {
-    EntitySet entitySet = new EntitySet();
+  private EntityCollection createESCompAllPrim() {
+    EntityCollection entitySet = new EntityCollection();
 
     Entity entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE));
@@ -318,8 +318,8 @@ public class DataCreator {
     return entitySet;
   }
 
-  private EntitySet createESCollAllPrim() {
-    EntitySet entitySet = new EntitySet();
+  private EntityCollection createESCollAllPrim() {
+    EntityCollection entitySet = new EntityCollection();
 
     entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 1)).addProperty(
         createPrimitiveCollection("CollPropertyString", "Employee1@company.example", "Employee2@company.example",
@@ -361,13 +361,13 @@ public class DataCreator {
     return entitySet;
   }
 
-  private EntitySet createESMixPrimCollComp() {
+  private EntityCollection createESMixPrimCollComp() {
     @SuppressWarnings("unchecked") final Property complexCollection = createComplexCollection("CollPropertyComp",
         Arrays.asList(createPrimitive("PropertyInt16", 123), createPrimitive("PropertyString", "TEST 1")),
         Arrays.asList(createPrimitive("PropertyInt16", 456), createPrimitive("PropertyString", "TEST 2")),
         Arrays.asList(createPrimitive("PropertyInt16", 789), createPrimitive("PropertyString", "TEST 3")));
 
-    EntitySet entitySet = new EntitySet();
+    EntityCollection entitySet = new EntityCollection();
 
     entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(
@@ -391,8 +391,8 @@ public class DataCreator {
     return entitySet;
   }
 
-  private EntitySet createESAllKey() {
-    EntitySet entitySet = new EntitySet();
+  private EntityCollection createESAllKey() {
+    EntityCollection entitySet = new EntityCollection();
 
     entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyString", "First"))
         .addProperty(createPrimitive("PropertyBoolean", true)).addProperty(createPrimitive("PropertyByte", 255))
@@ -420,8 +420,8 @@ public class DataCreator {
     return entitySet;
   }
 
-  private EntitySet createESCompComp() {
-    EntitySet entitySet = new EntitySet();
+  private EntityCollection createESCompComp() {
+    EntityCollection entitySet = new EntityCollection();
 
     Entity entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", 1));
@@ -440,8 +440,8 @@ public class DataCreator {
     return entitySet;
   }
 
-  private EntitySet createESMedia() {
-    EntitySet entitySet = new EntitySet();
+  private EntityCollection createESMedia() {
+    EntityCollection entitySet = new EntityCollection();
 
     Entity entity = new Entity().addProperty(createPrimitive("PropertyInt16", 1))
         .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("darkturquoise")));
@@ -473,8 +473,8 @@ public class DataCreator {
         + "    <circle cx=\"50\" cy=\"50\" r=\"42\"/>\n" + "  </g>\n" + "</svg>\n").getBytes(Charset.forName("UTF-8"));
   }
 
-  private void linkESTwoPrim(Map<String, EntitySet> data) {
-    final EntitySet entitySet = data.get("ESTwoPrim");
+  private void linkESTwoPrim(Map<String, EntityCollection> data) {
+    final EntityCollection entitySet = data.get("ESTwoPrim");
     final List<Entity> targetEntities = data.get("ESAllPrim").getEntities();
 
     setLinks(entitySet.getEntities().get(1), "NavPropertyETAllPrimMany", targetEntities.get(1), targetEntities.get(2));
@@ -482,8 +482,8 @@ public class DataCreator {
     setLink(entitySet.getEntities().get(3), "NavPropertyETAllPrimOne", targetEntities.get(0));
   }
 
-  private void linkESAllPrim(Map<String, EntitySet> data) {
-    final EntitySet entitySet = data.get("ESAllPrim");
+  private void linkESAllPrim(Map<String, EntityCollection> data) {
+    final EntityCollection entitySet = data.get("ESAllPrim");
     final List<Entity> targetEntities = data.get("ESTwoPrim").getEntities();
 
     setLinks(entitySet.getEntities().get(0), "NavPropertyETTwoPrimMany", targetEntities.get(1));
@@ -493,8 +493,8 @@ public class DataCreator {
         targetEntities.get(3));
   }
 
-  private void linkESKeyNav(Map<String, EntitySet> data) {
-    final EntitySet entitySet = data.get("ESKeyNav");
+  private void linkESKeyNav(Map<String, EntityCollection> data) {
+    final EntityCollection entitySet = data.get("ESKeyNav");
     final List<Entity> esKeyNavTargets = data.get("ESKeyNav").getEntities();
     final List<Entity> esTwoKeyNavTargets = data.get("ESTwoKeyNav").getEntities();
     final List<Entity> esMediaTargets = data.get("ESMedia").getEntities();
@@ -524,8 +524,8 @@ public class DataCreator {
     setLink(entitySet.getEntities().get(2), "NavPropertyETMediaOne", esMediaTargets.get(2));
   }
 
-  private void linkESTwoKeyNav(Map<String, EntitySet> data) {
-    final EntitySet entitySet = data.get("ESTwoKeyNav");
+  private void linkESTwoKeyNav(Map<String, EntityCollection> data) {
+    final EntityCollection entitySet = data.get("ESTwoKeyNav");
     final List<Entity> esKeyNavTargets = data.get("ESKeyNav").getEntities();
     final List<Entity> esTwoKeyNavTargets = data.get("ESTwoKeyNav").getEntities();
 
@@ -619,7 +619,7 @@ public class DataCreator {
       link = new Link();
       link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
       link.setTitle(navigationPropertyName);
-      EntitySet target = new EntitySet();
+      EntityCollection target = new EntityCollection();
       target.getEntities().addAll(Arrays.asList(targets));
       link.setInlineEntitySet(target);
       entity.getNavigationLinks().add(link);

@@ -21,7 +21,7 @@ package org.apache.olingo.commons.api.data;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Delta extends EntitySet {
+public class Delta extends EntityCollection {
 
   private final List<DeletedEntity> deletedEntities = new ArrayList<DeletedEntity>();
   private final List<DeltaLink> addedLinks = new ArrayList<DeltaLink>();

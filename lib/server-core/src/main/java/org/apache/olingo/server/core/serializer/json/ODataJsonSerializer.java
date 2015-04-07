@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
@@ -130,7 +130,7 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   @Override
   public SerializerResult entityCollection(final ServiceMetadata metadata,
-      final EdmEntityType entityType, final EntitySet entitySet,
+      final EdmEntityType entityType, final EntityCollection entitySet,
       final EntityCollectionSerializerOptions options) throws SerializerException {
     CircleStreamBuffer buffer = new CircleStreamBuffer();
     try {
@@ -194,7 +194,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   protected void writeEntitySet(final ServiceMetadata metadata, final EdmEntityType entityType,
-      final EntitySet entitySet, final ExpandOption expand, final SelectOption select,
+      final EntityCollection entitySet, final ExpandOption expand, final SelectOption select,
       final boolean onlyReference, final JsonGenerator json) throws IOException,
       SerializerException {
     json.writeStartArray();

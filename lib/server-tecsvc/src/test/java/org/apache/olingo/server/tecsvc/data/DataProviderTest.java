@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -88,14 +88,14 @@ public class DataProviderTest {
   @Test
   public void esAllPrim() throws Exception {
     final DataProvider data = new DataProvider();
-    EntitySet outSet = data.readAll(esAllPrim);
+    EntityCollection outSet = data.readAll(esAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
 
     Entity first = outSet.getEntities().get(0);
     Assert.assertEquals(16, first.getProperties().size());
     Assert.assertEquals(2, first.getNavigationLinks().size());
-    final EntitySet target = first.getNavigationLink("NavPropertyETTwoPrimMany").getInlineEntitySet();
+    final EntityCollection target = first.getNavigationLink("NavPropertyETTwoPrimMany").getInlineEntitySet();
     Assert.assertNotNull(target);
     Assert.assertEquals(1, target.getEntities().size());
     Assert.assertEquals(data.readAll(entityContainer.getEntitySet("ESTwoPrim")).getEntities().get(1),
@@ -107,7 +107,7 @@ public class DataProviderTest {
 
   @Test
   public void esCollAllPrim() throws Exception {
-    EntitySet outSet = new DataProvider().readAll(esCollAllPrim);
+    EntityCollection outSet = new DataProvider().readAll(esCollAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
     Assert.assertEquals(17, outSet.getEntities().get(0).getProperties().size());
@@ -120,7 +120,7 @@ public class DataProviderTest {
 
   @Test
   public void esCompAllPrim() throws Exception {
-    EntitySet outSet = new DataProvider().readAll(esCompAllPrim);
+    EntityCollection outSet = new DataProvider().readAll(esCompAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
     Assert.assertEquals(2, outSet.getEntities().get(0).getProperties().size());
@@ -133,7 +133,7 @@ public class DataProviderTest {
 
   @Test
   public void esMixPrimCollComp() throws Exception {
-    EntitySet outSet = new DataProvider().readAll(esMixPrimCollComp);
+    EntityCollection outSet = new DataProvider().readAll(esMixPrimCollComp);
 
     Assert.assertEquals(3, outSet.getEntities().size());
     Assert.assertEquals(4, outSet.getEntities().get(0).getProperties().size());

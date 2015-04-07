@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -38,21 +38,21 @@ import org.apache.olingo.server.sample.edmprovider.CarsEdmProvider;
 
 public class DataProvider {
 
-  private final Map<String, EntitySet> data;
+  private final Map<String, EntityCollection> data;
 
   public DataProvider() {
-    data = new HashMap<String, EntitySet>();
+    data = new HashMap<String, EntityCollection>();
     data.put("Cars", createCars());
     data.put("Manufacturers", createManufacturers());
   }
 
-  public EntitySet readAll(EdmEntitySet edmEntitySet) {
+  public EntityCollection readAll(EdmEntitySet edmEntitySet) {
     return data.get(edmEntitySet.getName());
   }
 
   public Entity read(final EdmEntitySet edmEntitySet, final List<UriParameter> keys) throws DataProviderException {
     final EdmEntityType entityType = edmEntitySet.getEntityType();
-    final EntitySet entitySet = data.get(edmEntitySet.getName());
+    final EntityCollection entitySet = data.get(edmEntitySet.getName());
     if (entitySet == null) {
       return null;
     } else {
@@ -93,8 +93,8 @@ public class DataProvider {
     }
   }
 
-  private EntitySet createCars() {
-    EntitySet entitySet = new EntitySet();
+  private EntityCollection createCars() {
+    EntityCollection entitySet = new EntityCollection();
 
     entitySet.getEntities().add(new Entity()
         .addProperty(createPrimitive("Id", 1))
@@ -137,8 +137,8 @@ public class DataProvider {
     return entitySet;
   }
 
-  private EntitySet createManufacturers() {
-    EntitySet entitySet = new EntitySet();
+  private EntityCollection createManufacturers() {
+    EntityCollection entitySet = new EntityCollection();
 
     entitySet.getEntities().add(new Entity()
         .addProperty(createPrimitive("Id", 1))

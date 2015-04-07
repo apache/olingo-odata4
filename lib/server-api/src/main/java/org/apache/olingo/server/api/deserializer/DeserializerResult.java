@@ -22,7 +22,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.commons.api.data.Property;
@@ -39,9 +39,9 @@ public interface DeserializerResult {
 
   /**
    * Returns a entity set
-   * @return an {@link EntitySet} or null
+   * @return an {@link EntityCollection} or null
    */
-  EntitySet getEntityCollection();
+  EntityCollection getEntityCollection();
 
   /**
    * Returns the ExpandOptions for serialized entities

@@ -64,7 +64,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
@@ -283,7 +283,7 @@ public class V4Services extends AbstractServices {
   }
 
   @Override
-  protected void setInlineCount(final EntitySet entitySet, final String count) {
+  protected void setInlineCount(final EntityCollection entitySet, final String count) {
     if ("true".equals(count)) {
       entitySet.setCount(entitySet.getEntities().size());
     }
@@ -456,14 +456,14 @@ public class V4Services extends AbstractServices {
       if (StringUtils.isBlank(deltatoken)) {
         final InputStream input = (InputStream) getEntitySet(
             uriInfo, accept, "Customers", null, null, format, null, null, null, null).getEntity();
-        final EntitySet entitySet = xml.readEntitySet(acceptType, input);
+        final EntityCollection entitySet = xml.readEntitySet(acceptType, input);
 
         boolean trackChanges = prefer.contains("odata.track-changes");
         if (trackChanges) {
           entitySet.setDeltaLink(URI.create("Customers?$deltatoken=8015"));
         }
 
-        output = xml.writeEntitySet(acceptType, new ResWrap<EntitySet>(
+        output = xml.writeEntitySet(acceptType, new ResWrap<EntityCollection>(
             URI.create(Constants.get(ConstantKey.ODATA_METADATA_PREFIX) + "Customers"),
             null,
             entitySet));
@@ -580,10 +580,10 @@ public class V4Services extends AbstractServices {
               + "ProductDetails(ProductID=6,ProductDetailID=1)").toASCIIString());
       entry.setEditLink(link);
 
-      final EntitySet feed = new EntitySet();
+      final EntityCollection feed = new EntityCollection();
       feed.getEntities().add(entry);
 
-      final ResWrap<EntitySet> container = new ResWrap<EntitySet>(
+      final ResWrap<EntityCollection> container = new ResWrap<EntityCollection>(
           URI.create(Constants.get(ConstantKey.ODATA_METADATA_PREFIX) + "ProductDetail"), null,
           feed);
 
@@ -934,7 +934,7 @@ public class V4Services extends AbstractServices {
       // 3. Update the contained entity set
       final String atomFeedRelativePath = containedPath(entityId, containedEntitySetName).toString();
       final InputStream feedIS = FSManager.instance(version).readFile(atomFeedRelativePath, Accept.ATOM);
-      final ResWrap<EntitySet> feedContainer = atomDeserializer.toEntitySet(feedIS);
+      final ResWrap<EntityCollection> feedContainer = atomDeserializer.toEntitySet(feedIS);
       feedContainer.getPayload().getEntities().add(entry);
 
       final ByteArrayOutputStream content = new ByteArrayOutputStream();
@@ -1050,7 +1050,7 @@ public class V4Services extends AbstractServices {
       // 3. Update the contained entity set
       final String atomFeedRelativePath = containedPath(entityId, containedEntitySetName).toString();
       final InputStream feedIS = FSManager.instance(version).readFile(atomFeedRelativePath, Accept.ATOM);
-      final ResWrap<EntitySet> feedContainer = atomDeserializer.toEntitySet(feedIS);
+      final ResWrap<EntityCollection> feedContainer = atomDeserializer.toEntitySet(feedIS);
       feedContainer.getPayload().getEntities().remove(container.getPayload());
 
       final ByteArrayOutputStream content = new ByteArrayOutputStream();
@@ -1103,7 +1103,7 @@ public class V4Services extends AbstractServices {
       final InputStream feed = FSManager.instance(version).
           readFile(containedPath(entityId, tempContainedESName).toString(), Accept.ATOM);
 
-      final ResWrap<EntitySet> container = atomDeserializer.toEntitySet(feed);
+      final ResWrap<EntityCollection> container = atomDeserializer.toEntitySet(feed);
 
       if (derivedType != null) {
         final List<Entity> nonMatching = new ArrayList<Entity>();

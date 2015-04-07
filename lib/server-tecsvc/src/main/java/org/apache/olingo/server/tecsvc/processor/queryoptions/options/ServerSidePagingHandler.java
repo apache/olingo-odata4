@@ -22,7 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
 
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -34,7 +34,7 @@ public class ServerSidePagingHandler {
   private static final int MAX_PAGE_SIZE = 10;
   private static final String ES_SERVER_SIDE_PAGING = "ESServerSidePaging";
 
-  public static void applyServerSidePaging(final SkipTokenOption skipTokenOption, final EntitySet entitySet,
+  public static void applyServerSidePaging(final SkipTokenOption skipTokenOption, final EntityCollection entitySet,
       final EdmEntitySet edmEntitySet, final String rawRequestUri) throws ODataApplicationException {
 
     if (edmEntitySet != null && shouldApplyServerSidePaging(edmEntitySet)) {

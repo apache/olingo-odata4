@@ -32,7 +32,7 @@ import org.apache.olingo.client.core.edm.xml.EdmxImpl;
 import org.apache.olingo.client.core.edm.xml.XMLMetadataImpl;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataError;
@@ -71,7 +71,7 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
   }
 
   @Override
-  public ResWrap<EntitySet> toEntitySet(final InputStream input) throws ODataDeserializerException {
+  public ResWrap<EntityCollection> toEntitySet(final InputStream input) throws ODataDeserializerException {
     return deserializer.toEntitySet(input);
   }
 

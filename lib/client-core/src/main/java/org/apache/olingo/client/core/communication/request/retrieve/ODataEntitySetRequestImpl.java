@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -25,7 +25,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -37,7 +37,7 @@ import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
  * @param <ES> concrete ODataEntitySet implementation
  */
 public class ODataEntitySetRequestImpl<ES extends ODataEntitySet>
-        extends AbstractODataRetrieveRequest<ES> implements ODataEntitySetRequest<ES> {
+    extends AbstractODataRetrieveRequest<ES> implements ODataEntitySetRequest<ES> {
 
   private ES entitySet = null;
 
@@ -68,7 +68,7 @@ public class ODataEntitySetRequestImpl<ES extends ODataEntitySet>
   protected class ODataEntitySetResponseImpl extends AbstractODataRetrieveResponse {
 
     private ODataEntitySetResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-            final HttpResponse res) {
+        final HttpResponse res) {
 
       super(odataClient, httpClient, res);
     }
@@ -78,7 +78,8 @@ public class ODataEntitySetRequestImpl<ES extends ODataEntitySet>
     public ES getBody() {
       if (entitySet == null) {
         try {
-          final ResWrap<EntitySet> resource = odataClient.getDeserializer(ODataFormat.fromString(getContentType())).
+          final ResWrap<EntityCollection> resource =
+              odataClient.getDeserializer(ODataFormat.fromString(getContentType())).
                   toEntitySet(getRawResponse());
 
           entitySet = (ES) odataClient.getBinder().getODataEntitySet(resource);

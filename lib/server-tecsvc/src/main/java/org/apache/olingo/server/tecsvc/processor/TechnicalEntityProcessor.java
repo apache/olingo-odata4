@@ -24,7 +24,7 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Builder;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -91,13 +91,13 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
             .get(uriInfo.getUriResourceParts().size() - 1)).getType() :
         edmEntitySet.getEntityType();
 
-    final EntitySet entitySetInitial = readEntityCollection(uriInfo);
+    final EntityCollection entitySetInitial = readEntityCollection(uriInfo);
     if (entitySetInitial == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
     } else {
       // Modifying the original entitySet means modifying the "database", so we have to make a shallow
       // copy of the entity set (new EntitySet, but exactly the same data)
-      EntitySet entitySet = new EntitySet();
+      EntityCollection entitySet = new EntityCollection();
       entitySet.getEntities().addAll(entitySetInitial.getEntities());
 
       // Apply system query options
@@ -121,7 +121,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       // Create a shallow copy of each entity. So the expanded navigation properties can be modified for serialization,
       // without affecting the data stored in the database.
       final ExpandSystemQueryOptionHandler expandHandler = new ExpandSystemQueryOptionHandler();
-      final EntitySet entitySetSerialization = expandHandler.transformEntitySetGraphToTree(entitySet, 
+      final EntityCollection entitySetSerialization = expandHandler.transformEntitySetGraphToTree(entitySet, 
                                                                                            edmEntitySet, 
                                                                                            expand);
       expandHandler.applyExpandQueryOptions(entitySetSerialization, edmEntitySet, expand);
@@ -155,7 +155,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
     getEdmEntitySet(uriInfo); // including checks
-    EntitySet entitySet = readEntityCollection(uriInfo);
+    EntityCollection entitySet = readEntityCollection(uriInfo);
     if (entitySet == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
     } else {
@@ -330,7 +330,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
   }
 
-  private void setCount(EntitySet entitySet) {
+  private void setCount(EntityCollection entitySet) {
     if (entitySet.getCount() == null) {
       entitySet.setCount(entitySet.getEntities().size());
     }

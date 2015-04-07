@@ -27,7 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -159,7 +159,7 @@ public class ODataJsonSerializerTest {
   @Test
   public void entitySetAllPrim() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
-    EntitySet entitySet = data.readAll(edmEntitySet);
+    EntityCollection entitySet = data.readAll(edmEntitySet);
     entitySet.setCount(entitySet.getEntities().size());
     entitySet.setNext(URI.create("/next"));
     CountOption countOption = Mockito.mock(CountOption.class);
@@ -305,7 +305,7 @@ public class ODataJsonSerializerTest {
   @Test
   public void entitySetTwoPrimNoMetadata() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
-    final EntitySet entitySet = data.readAll(edmEntitySet);
+    final EntityCollection entitySet = data.readAll(edmEntitySet);
     InputStream result = new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA)
         .entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
             EntityCollectionSerializerOptions.with()
@@ -338,7 +338,7 @@ public class ODataJsonSerializerTest {
   @Test
   public void entitySetMedia() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMedia");
-    final EntitySet entitySet = data.readAll(edmEntitySet);
+    final EntityCollection entitySet = data.readAll(edmEntitySet);
     final String resultString = IOUtils.toString(serializer.entityCollection(metadata,
         edmEntitySet.getEntityType(), entitySet,
         EntityCollectionSerializerOptions.with()
@@ -398,7 +398,7 @@ public class ODataJsonSerializerTest {
   public void selectComplex() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
     final EdmEntityType entityType = edmEntitySet.getEntityType();
-    final EntitySet entitySet = data.readAll(edmEntitySet);
+    final EntityCollection entitySet = data.readAll(edmEntitySet);
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
         ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp", "PropertyString")));
     InputStream result = serializer
@@ -422,7 +422,7 @@ public class ODataJsonSerializerTest {
   public void selectComplexTwice() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
     final EdmEntityType entityType = edmEntitySet.getEntityType();
-    final EntitySet entitySet = data.readAll(edmEntitySet);
+    final EntityCollection entitySet = data.readAll(edmEntitySet);
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
         ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp", "PropertyString"),
         ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp")));

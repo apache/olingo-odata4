@@ -22,7 +22,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntitySet extends AbstractODataObject {
+public class EntityCollection extends AbstractODataObject {
 
   private Integer count;
 

@@ -44,7 +44,7 @@ import org.apache.olingo.commons.api.data.DeletedEntity.Reason;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.DeltaLink;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
@@ -712,7 +712,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     }
   }
 
-  private void count(final XMLEventReader reader, final StartElement start, final EntitySet entitySet)
+  private void count(final XMLEventReader reader, final StartElement start, final EntityCollection entitySet)
       throws XMLStreamException {
 
     boolean foundEndElement = false;
@@ -729,12 +729,12 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     }
   }
 
-  private EntitySet entitySet(final XMLEventReader reader, final StartElement start)
+  private EntityCollection entitySet(final XMLEventReader reader, final StartElement start)
       throws XMLStreamException, EdmPrimitiveTypeException {
     if (!Constants.QNAME_ATOM_ELEM_FEED.equals(start.getName())) {
       return null;
     }
-    final EntitySet entitySet = new EntitySet();
+    final EntityCollection entitySet = new EntityCollection();
     final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
     if (xmlBase != null) {
       entitySet.setBaseURI(xmlBase.getValue());
@@ -788,7 +788,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
   }
 
   @Override
-  public ResWrap<EntitySet> toEntitySet(final InputStream input) throws ODataDeserializerException {
+  public ResWrap<EntityCollection> toEntitySet(final InputStream input) throws ODataDeserializerException {
     try {
       final XMLEventReader reader = getReader(input);
       final StartElement start = skipBeforeFirstStartElement(reader);

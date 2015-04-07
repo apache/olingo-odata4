@@ -41,7 +41,7 @@ import org.apache.olingo.commons.api.data.DeletedEntity;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.DeltaLink;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
@@ -192,8 +192,8 @@ public class ODataBinderImpl implements ODataBinder {
   }
 
   @Override
-  public EntitySet getEntitySet(final ODataEntitySet odataEntitySet) {
-    final EntitySet entitySet = new EntitySet();
+  public EntityCollection getEntitySet(final ODataEntitySet odataEntitySet) {
+    final EntityCollection entitySet = new EntityCollection();
 
     entitySet.setCount(odataEntitySet.getCount());
 
@@ -387,7 +387,7 @@ public class ODataBinderImpl implements ODataBinder {
   }
 
   @Override
-  public ODataEntitySet getODataEntitySet(final ResWrap<EntitySet> resource) {
+  public ODataEntitySet getODataEntitySet(final ResWrap<EntityCollection> resource) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       try {
@@ -432,7 +432,7 @@ public class ODataBinderImpl implements ODataBinder {
       final String href = link.getHref();
       final String title = link.getTitle();
       final Entity inlineEntity = link.getInlineEntity();
-      final EntitySet inlineEntitySet = link.getInlineEntitySet();
+      final EntityCollection inlineEntitySet = link.getInlineEntitySet();
       if (inlineEntity == null && inlineEntitySet == null) {
         ODataLinkType linkType = null;
         if (edmType instanceof EdmStructuredType) {
@@ -476,10 +476,10 @@ public class ODataBinderImpl implements ODataBinder {
             inlineEntity)));
   }
 
-  private ODataInlineEntitySet createODataInlineEntitySet(final EntitySet inlineEntitySet,
+  private ODataInlineEntitySet createODataInlineEntitySet(final EntityCollection inlineEntitySet,
       final URI uri, final String title, final String metadataETag) {
     return new ODataInlineEntitySet(uri, ODataLinkType.ENTITY_SET_NAVIGATION, title,
-        getODataEntitySet(new ResWrap<EntitySet>(
+        getODataEntitySet(new ResWrap<EntityCollection>(
             inlineEntitySet.getBaseURI() == null ? null : inlineEntitySet.getBaseURI(), metadataETag,
             inlineEntitySet)));
   }
@@ -567,7 +567,7 @@ public class ODataBinderImpl implements ODataBinder {
 
   private ODataLink createLinkFromNavigationProperty(final Property property, final String propertyTypeName) {
     if (property.isCollection()) {
-      EntitySet inlineEntitySet = new EntitySet();
+      EntityCollection inlineEntitySet = new EntityCollection();
       for (final Object inlined : property.asCollection()) {
         Entity inlineEntity = new Entity();
         inlineEntity.setType(propertyTypeName);

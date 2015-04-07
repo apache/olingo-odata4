@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.server.tecsvc.processor.queryoptions.options;
 
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 
 public class CountHandler {
-  public static void applyCountSystemQueryOption(final CountOption countOption, final EntitySet entitySet) {
+  public static void applyCountSystemQueryOption(final CountOption countOption, final EntityCollection entitySet) {
     if(countOption != null && countOption.getValue()) {
       entitySet.setCount(entitySet.getEntities().size());
     }

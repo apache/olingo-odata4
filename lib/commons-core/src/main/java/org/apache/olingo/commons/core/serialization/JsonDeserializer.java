@@ -36,7 +36,7 @@ import org.apache.olingo.commons.api.data.Annotatable;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
@@ -106,7 +106,7 @@ public class JsonDeserializer implements ODataDeserializer {
       } else if (inline instanceof ArrayNode) {
         link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
 
-        final EntitySet entitySet = new EntitySet();
+        final EntityCollection entitySet = new EntityCollection();
         for (final Iterator<JsonNode> entries = inline.elements(); entries.hasNext();) {
           entitySet.getEntities().add(entityDeserializer.doDeserialize(entries.next().traverse(codec)).getPayload());
         }
@@ -381,7 +381,7 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   @Override
-  public ResWrap<EntitySet> toEntitySet(final InputStream input) throws ODataDeserializerException {
+  public ResWrap<EntityCollection> toEntitySet(final InputStream input) throws ODataDeserializerException {
     try {
       parser = new JsonFactory(new ObjectMapper()).createParser(input);
       return new JsonEntitySetDeserializer(serverMode).doDeserialize(parser);
