@@ -31,6 +31,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.data.AbstractODataObject;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
@@ -47,10 +48,6 @@ import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
-import org.apache.olingo.commons.core.data.AbstractODataObject;
-import org.apache.olingo.commons.core.data.EntityImpl;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
 
@@ -288,9 +285,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     }
     writer.writeEndElement();
 
-    if (entity instanceof AbstractODataObject) {
-      common(writer, (AbstractODataObject) entity);
-    }
+    common(writer, entity);
 
     if (serverMode) {
       if (entity.getEditLink() != null) {
@@ -416,9 +411,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
       writer.writeEndElement();
     }
 
-    if (entitySet instanceof AbstractODataObject) {
-      common(writer, (AbstractODataObject) entitySet);
-    }
+    common(writer, entitySet);
 
     for (Entity entity : entitySet.getEntities()) {
       if (entity.getType() == null && entity.getProperties().isEmpty()) {
@@ -433,14 +426,14 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
 
     if (serverMode) {
       if (entitySet.getNext() != null) {
-        final LinkImpl next = new LinkImpl();
+        final Link next = new Link();
         next.setRel(Constants.NEXT_LINK_REL);
         next.setHref(entitySet.getNext().toASCIIString());
 
         links(writer, Collections.<Link> singletonList(next));
       }
       if (entitySet.getDeltaLink() != null) {
-        final LinkImpl next = new LinkImpl();
+        final Link next = new Link();
         next.setRel(Constants.NS_DELTA_LINK_REL);
         next.setHref(entitySet.getDeltaLink().toASCIIString());
 
@@ -559,10 +552,10 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
       final ContextURL contextURL = ContextURLParser.parse(container.getContextURL());
       String base = contextURL.getServiceRoot().toASCIIString();
       if (container.getPayload() instanceof EntitySet) {
-        ((EntitySetImpl) container.getPayload()).setBaseURI(base);
+        ((EntitySet) container.getPayload()).setBaseURI(base);
       }
       if (container.getPayload() instanceof Entity) {
-        ((EntityImpl) container.getPayload()).setBaseURI(base);
+        ((Entity) container.getPayload()).setBaseURI(base);
       }
 
       writer.writeAttribute(namespaceMetadata, Constants.CONTEXT,

@@ -31,9 +31,6 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.commons.core.data.EntityImpl;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
@@ -132,9 +129,7 @@ public class ExpandSystemQueryOptionHandler {
   
   public Entity transformEntityGraphToTree(final Entity entity, EdmBindingTarget edmEntitySet, 
       final ExpandOption expand) throws ODataApplicationException {
-
     final Entity newEntity = newEntity(entity);
-
     if (hasExpandItems(expand)) {
       final boolean expandAll = expandAll(expand);
       final Set<String> expanded = expandAll ? null : getExpandedPropertyNames(expand.getExpandItems());
@@ -167,7 +162,7 @@ public class ExpandSystemQueryOptionHandler {
   }
   
   public EntitySet newEntitySet(final EntitySet entitySet) {
-    final EntitySet newEntitySet = new EntitySetImpl();
+    final EntitySet newEntitySet = new EntitySet();
     newEntitySet.setCount(entitySet.getCount());
     newEntitySet.setDeltaLink(entitySet.getDeltaLink());
     newEntitySet.setNext(entitySet.getNext());
@@ -176,7 +171,7 @@ public class ExpandSystemQueryOptionHandler {
   }
   
   private Entity newEntity(final Entity entity) {
-    final Entity newEntity = new EntityImpl();
+    final Entity newEntity = new Entity();
     
     newEntity.getProperties().addAll(entity.getProperties());
     newEntity.getAnnotations().addAll(entity.getAnnotations());
@@ -195,7 +190,7 @@ public class ExpandSystemQueryOptionHandler {
   }
   
   private Link newLink(Link link) {
-    final Link newLink = new LinkImpl();
+    final Link newLink = new Link();
     newLink.setMediaETag(link.getMediaETag());
     newLink.setTitle(link.getTitle());
     newLink.setType(link.getType());

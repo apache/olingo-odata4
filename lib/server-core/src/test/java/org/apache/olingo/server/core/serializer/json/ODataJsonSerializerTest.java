@@ -33,8 +33,6 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.core.data.ComplexValueImpl;
-import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.junit.Test;
 
@@ -44,7 +42,7 @@ public class ODataJsonSerializerTest {
     final List<ComplexValue> col = new ArrayList<ComplexValue>();
     col.add(getValues(1));
     col.add(getValues(2));
-    final Property complexCollection = new PropertyImpl(null, "ComplexCol", ValueType.COLLECTION_COMPLEX, col);
+    final Property complexCollection = new Property(null, "ComplexCol", ValueType.COLLECTION_COMPLEX, col);
     
     final ODataJsonSerializer serializer = new ODataJsonSerializer(ODataFormat.APPLICATION_JSON);
     final ComplexSerializerOptions options = ComplexSerializerOptions.with()
@@ -66,9 +64,9 @@ public class ODataJsonSerializerTest {
   }
 
   private ComplexValue getValues(int i) {
-    ComplexValue value = new ComplexValueImpl();
-    value.getValue().add(new PropertyImpl(null, "prop1", ValueType.PRIMITIVE, "test" + i));
-    value.getValue().add(new PropertyImpl(null, "prop2", ValueType.PRIMITIVE, "test" + i + i));
+    ComplexValue value = new ComplexValue();
+    value.getValue().add(new Property(null, "prop1", ValueType.PRIMITIVE, "test" + i));
+    value.getValue().add(new Property(null, "prop2", ValueType.PRIMITIVE, "test" + i + i));
     return value;
   }
 }

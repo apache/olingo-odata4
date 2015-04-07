@@ -18,15 +18,46 @@
  */
 package org.apache.olingo.commons.api.data;
 
-public interface Parameter extends Valuable {
+public class Parameter extends Valuable {
+
+  String name;
 
   /**
    * @return name of the parameter
    */
-  String getName();
+  public String getName() {
+    return name;
+  }
 
-  boolean isEntity();
-  
-  Entity asEntity();
+  /**
+   * @param name of the parameter
+   */
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  /**
+   * Check if Valuable contains a ENTITY or COLLECTION_ENTITY ValueType
+   *
+   * @return true if ValueType is a ENTITY or COLLECTION_ENTITY, otherwise false
+   */
+  public boolean isEntity() {
+    if (isCollection()) {
+      return getValueType().getBaseType() == ValueType.ENTITY;
+    }
+    return getValueType() == ValueType.ENTITY;
+  }
+
+  /**
+   * Get the value in its entity representation or null if it is not based on an entity ValueType
+   *
+   * @return entity representation or null if it is not based on an entity ValueType
+   */
+  public Entity asEntity() {
+    if (isCollection()) {
+      return null;
+    }
+    return isEntity() ? (Entity) getValue() : null;
+  }
 
 }

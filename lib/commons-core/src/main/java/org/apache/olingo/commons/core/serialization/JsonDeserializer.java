@@ -37,6 +37,7 @@ import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
@@ -51,11 +52,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-import org.apache.olingo.commons.core.data.AnnotationImpl;
-import org.apache.olingo.commons.core.data.ComplexValueImpl;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -96,7 +92,7 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   protected String setInline(final String name, final String suffix, final JsonNode tree,
-      final ObjectCodec codec, final LinkImpl link) throws IOException {
+      final ObjectCodec codec, final Link link) throws IOException {
 
     final String entityNamePrefix = name.substring(0, name.indexOf(suffix));
     if (tree.has(entityNamePrefix)) {
@@ -110,7 +106,7 @@ public class JsonDeserializer implements ODataDeserializer {
       } else if (inline instanceof ArrayNode) {
         link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
 
-        final EntitySet entitySet = new EntitySetImpl();
+        final EntitySet entitySet = new EntitySet();
         for (final Iterator<JsonNode> entries = inline.elements(); entries.hasNext();) {
           entitySet.getEntities().add(entityDeserializer.doDeserialize(entries.next().traverse(codec)).getPayload());
         }
@@ -134,7 +130,7 @@ public class JsonDeserializer implements ODataDeserializer {
       final JsonNode tree, final ObjectCodec codec) throws IOException {
 
     if (field.getKey().endsWith(Constants.JSON_NAVIGATION_LINK)) {
-      final LinkImpl link = new LinkImpl();
+      final Link link = new Link();
       link.setTitle(getTitle(field));
       link.setRel(Constants.NS_NAVIGATION_LINK_REL + getTitle(field));
 
@@ -148,7 +144,7 @@ public class JsonDeserializer implements ODataDeserializer {
       toRemove.add(field.getKey());
       toRemove.add(setInline(field.getKey(), Constants.JSON_NAVIGATION_LINK, tree, codec, link));
     } else if (field.getKey().endsWith(Constants.JSON_ASSOCIATION_LINK)) {
-      final LinkImpl link = new LinkImpl();
+      final Link link = new Link();
       link.setTitle(getTitle(field));
       link.setRel(Constants.NS_ASSOCIATION_LINK_REL + getTitle(field));
       link.setHref(field.getValue().textValue());
@@ -168,7 +164,7 @@ public class JsonDeserializer implements ODataDeserializer {
       if (field.getValue().isValueNode()) {
         final String suffix = field.getKey().replaceAll("^.*@", "@");
 
-        final LinkImpl link = new LinkImpl();
+        final Link link = new Link();
         link.setTitle(getTitle(field));
         link.setRel(Constants.NS_NAVIGATION_LINK_REL + getTitle(field));
         link.setHref(field.getValue().textValue());
@@ -180,7 +176,7 @@ public class JsonDeserializer implements ODataDeserializer {
         for (final Iterator<JsonNode> itor = field.getValue().elements(); itor.hasNext();) {
           final JsonNode node = itor.next();
 
-          final LinkImpl link = new LinkImpl();
+          final Link link = new Link();
           link.setTitle(getTitle(field));
           link.setRel(Constants.NS_NAVIGATION_LINK_REL + getTitle(field));
           link.setHref(node.asText());
@@ -243,7 +239,7 @@ public class JsonDeserializer implements ODataDeserializer {
       final Matcher customAnnotation = CUSTOM_ANNOTATION.matcher(field.getKey());
 
       if (field.getKey().charAt(0) == '@') {
-        final Annotation entityAnnot = new AnnotationImpl();
+        final Annotation entityAnnot = new Annotation();
         entityAnnot.setTerm(field.getKey().substring(1));
 
         value(entityAnnot, field.getValue(), codec);
@@ -253,11 +249,11 @@ public class JsonDeserializer implements ODataDeserializer {
       } else if (type == null && field.getKey().endsWith(getJSONAnnotation(Constants.JSON_TYPE))) {
         type = field.getValue().asText();
       } else if (annotation == null && customAnnotation.matches() && !"odata".equals(customAnnotation.group(2))) {
-        annotation = new AnnotationImpl();
+        annotation = new Annotation();
         annotation.setTerm(customAnnotation.group(2) + "." + customAnnotation.group(3));
         value(annotation, field.getValue(), codec);
       } else {
-        final PropertyImpl property = new PropertyImpl();
+        final Property property = new Property();
         property.setName(field.getKey());
         property.setType(type == null
             ? null
@@ -289,7 +285,7 @@ public class JsonDeserializer implements ODataDeserializer {
   private Object fromComplex(final ObjectNode node, final ObjectCodec codec)
       throws IOException, EdmPrimitiveTypeException {
 
-    final ComplexValue complexValue = new ComplexValueImpl();
+    final ComplexValue complexValue = new ComplexValue();
     final Set<String> toRemove = new HashSet<String>();
     for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();

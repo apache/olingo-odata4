@@ -81,10 +81,6 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
-import org.apache.olingo.commons.core.data.EntityImpl;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.serialization.AtomSerializer;
 import org.apache.olingo.commons.core.serialization.JsonDeserializer;
@@ -231,14 +227,14 @@ public abstract class AbstractServices {
   @GET
   @Path("/StoredPIs(1000)")
   public Response getStoredPI(@Context final UriInfo uriInfo) {
-    final Entity entity = new EntityImpl();
+    final Entity entity = new Entity();
     entity.setType("Microsoft.Test.OData.Services.ODataWCFService.StoredPI");
-    final Property id = new PropertyImpl();
+    final Property id = new Property();
     id.setType("Edm.Int32");
     id.setName("StoredPIID");
     id.setValue(ValueType.PRIMITIVE, 1000);
     entity.getProperties().add(id);
-    final Link edit = new LinkImpl();
+    final Link edit = new Link();
     edit.setHref(uriInfo.getRequestUri().toASCIIString());
     edit.setRel("edit");
     edit.setTitle("StoredPI");
@@ -622,7 +618,7 @@ public abstract class AbstractServices {
       final Entity entry;
       final String entityKey;
       if (xml.isMediaContent(entitySetName)) {
-        entry = new EntityImpl();
+        entry = new Entity();
         entry.setMediaContentType(ContentType.APPLICATION_OCTET_STREAM.toContentTypeString());
         entry.setType(entitySet.getType());
 
@@ -632,7 +628,7 @@ public abstract class AbstractServices {
 
         final Pair<String, EdmPrimitiveTypeKind> id = Commons.getMediaContent().get(entitySetName);
         if (id != null) {
-          final Property prop = new PropertyImpl();
+          final Property prop = new Property();
           prop.setName(id.getKey());
           prop.setType(id.getValue().toString());
           prop.setValue(ValueType.PRIMITIVE,
@@ -644,7 +640,7 @@ public abstract class AbstractServices {
           entry.getProperties().add(prop);
         }
 
-        final Link editLink = new LinkImpl();
+        final Link editLink = new Link();
         editLink.setHref(Commons.getEntityURI(entitySetName, entityKey));
         editLink.setRel("edit");
         editLink.setTitle(entitySetName);
@@ -691,7 +687,7 @@ public abstract class AbstractServices {
       if ((this instanceof V4KeyAsSegment)) {
         location = uriInfo.getRequestUri().toASCIIString() + "/" + entityKey;
 
-        final Link editLink = new LinkImpl();
+        final Link editLink = new Link();
         editLink.setRel("edit");
         editLink.setTitle(entitySetName);
         editLink.setHref(location);
@@ -1207,7 +1203,7 @@ public abstract class AbstractServices {
       final Entity entry = container.getPayload();
 
       if ((this instanceof V4KeyAsSegment)) {
-        final Link editLink = new LinkImpl();
+        final Link editLink = new Link();
         editLink.setRel("edit");
         editLink.setTitle(entitySetName);
         editLink.setHref(Constants.get(ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "/" + entityId);
@@ -1248,7 +1244,7 @@ public abstract class AbstractServices {
         for (Link link : entry.getNavigationLinks()) {
           if (links.contains(link.getTitle())) {
             // expand link
-            final Link rep = new LinkImpl();
+            final Link rep = new Link();
             rep.setHref(link.getHref());
             rep.setRel(link.getRel());
             rep.setTitle(link.getTitle());
@@ -1904,7 +1900,7 @@ public abstract class AbstractServices {
 
     for (Property property : entity.getProperties()) {
       if (navProperties.containsKey(property.getName())) {
-        Link alink = new LinkImpl();
+        Link alink = new Link();
         alink.setTitle(property.getName());
         alink.getAnnotations().addAll(property.getAnnotations());
 
@@ -1915,9 +1911,9 @@ public abstract class AbstractServices {
         alink.setRel(Constants.get(ConstantKey.ATOM_LINK_REL) + property.getName());
 
         if (property.isCollection()) {
-          EntitySet inline = new EntitySetImpl();
+          EntitySet inline = new EntitySet();
           for (Object value : property.asCollection()) {
-            Entity inlineEntity = new EntityImpl();
+            Entity inlineEntity = new Entity();
             inlineEntity.setType(navProperties.get(property.getName()).getType());
             for (Property prop : ((ComplexValue) value).getValue()) {
               inlineEntity.getProperties().add(prop);
@@ -1926,7 +1922,7 @@ public abstract class AbstractServices {
           }
           alink.setInlineEntitySet(inline);
         } else if (property.isComplex()) {
-          Entity inline = new EntityImpl();
+          Entity inline = new Entity();
           inline.setType(navProperties.get(property.getName()).getType());
           for (Property prop : property.asComplex().getValue()) {
             inline.getProperties().add(prop);
@@ -1946,7 +1942,7 @@ public abstract class AbstractServices {
     final EntityType entityType = metadata.getEntityOrComplexType(entitySet.getType());
     for (Map.Entry<String, org.apache.olingo.fit.metadata.Property> property : entityType.getPropertyMap().entrySet()) {
       if (entry.getProperty(property.getKey()) == null && property.getValue().isNullable()) {
-        final PropertyImpl prop = new PropertyImpl();
+        final Property prop = new Property();
         prop.setName(property.getKey());
         prop.setValue(ValueType.PRIMITIVE, null);
         entry.getProperties().add(prop);
@@ -1962,7 +1958,7 @@ public abstract class AbstractServices {
       }
 
       if (!found) {
-        final LinkImpl link = new LinkImpl();
+        final Link link = new Link();
         link.setTitle(property.getKey());
         link.setType(property.getValue().isEntitySet()
             ? Constants.get(ConstantKey.ATOM_LINK_FEED)

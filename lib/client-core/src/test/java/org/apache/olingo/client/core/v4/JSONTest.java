@@ -146,7 +146,7 @@ public class JSONTest extends AbstractTest {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer(format).write(writer, getClient().getDeserializer(format).toEntity(
         getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
-
+    
     assertSimilar(filename + "." + getSuffix(format), writer.toString());
   }
 

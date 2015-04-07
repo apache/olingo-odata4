@@ -34,7 +34,6 @@ import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -77,11 +76,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     EntityProcessor, ActionEntityProcessor, MediaEntityProcessor,
     ActionVoidProcessor {
 
-  private final ServiceMetadata serviceMetadata;
-
   public TechnicalEntityProcessor(final DataProvider dataProvider, ServiceMetadata serviceMetadata) {
-    super(dataProvider);
-    this.serviceMetadata = serviceMetadata;
+    super(dataProvider, serviceMetadata);
   }
 
   @Override
@@ -101,7 +97,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     } else {
       // Modifying the original entitySet means modifying the "database", so we have to make a shallow
       // copy of the entity set (new EntitySet, but exactly the same data)
-      EntitySet entitySet = new EntitySetImpl();
+      EntitySet entitySet = new EntitySet();
       entitySet.getEntities().addAll(entitySetInitial.getEntities());
 
       // Apply system query options

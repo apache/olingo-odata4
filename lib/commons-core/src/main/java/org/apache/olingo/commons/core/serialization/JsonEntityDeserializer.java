@@ -38,9 +38,6 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.core.data.AnnotationImpl;
-import org.apache.olingo.commons.core.data.EntityImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -67,7 +64,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
       throw new JsonParseException("Expected OData Entity, found EntitySet", parser.getCurrentLocation());
     }
 
-    final EntityImpl entity = new EntityImpl();
+    final Entity entity = new Entity();
 
     final URI contextURL;
     if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
@@ -108,7 +105,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
     }
 
     if (tree.hasNonNull(Constants.JSON_READ_LINK)) {
-      final LinkImpl link = new LinkImpl();
+      final Link link = new Link();
       link.setRel(Constants.SELF_LINK_REL);
       link.setHref(tree.get(Constants.JSON_READ_LINK).textValue());
       entity.setSelfLink(link);
@@ -117,7 +114,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
     }
 
     if (tree.hasNonNull(Constants.JSON_EDIT_LINK)) {
-      final LinkImpl link = new LinkImpl();
+      final Link link = new Link();
       if (serverMode) {
         link.setRel(Constants.EDIT_LINK_REL);
       }
@@ -153,7 +150,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
 
       links(field, entity, toRemove, tree, parser.getCodec());
       if (field.getKey().endsWith(getJSONAnnotation(Constants.JSON_MEDIA_EDIT_LINK))) {
-        final LinkImpl link = new LinkImpl();
+        final Link link = new Link();
         link.setTitle(getTitle(field));
         link.setRel(Constants.NS_MEDIA_EDIT_LINK_REL + getTitle(field));
         link.setHref(field.getValue().textValue());
@@ -188,7 +185,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
 
         toRemove.add(field.getKey());
       } else if (customAnnotation.matches() && !"odata".equals(customAnnotation.group(2))) {
-        final Annotation annotation = new AnnotationImpl();
+        final Annotation annotation = new Annotation();
         annotation.setTerm(customAnnotation.group(2) + "." + customAnnotation.group(3));
         try {
           value(annotation, field.getValue(), parser.getCodec());

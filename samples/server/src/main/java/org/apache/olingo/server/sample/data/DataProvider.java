@@ -33,9 +33,6 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.core.data.EntityImpl;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.sample.edmprovider.CarsEdmProvider;
 
@@ -97,37 +94,37 @@ public class DataProvider {
   }
 
   private EntitySet createCars() {
-    EntitySet entitySet = new EntitySetImpl();
+    EntitySet entitySet = new EntitySet();
 
-    entitySet.getEntities().add(new EntityImpl()
+    entitySet.getEntities().add(new Entity()
         .addProperty(createPrimitive("Id", 1))
         .addProperty(createPrimitive("Model", "F1 W03"))
         .addProperty(createPrimitive("ModelYear", "2012"))
         .addProperty(createPrimitive("Price", 189189.43))
         .addProperty(createPrimitive("Currency", "EUR")));
 
-    entitySet.getEntities().add(new EntityImpl()
+    entitySet.getEntities().add(new Entity()
         .addProperty(createPrimitive("Id", 2))
         .addProperty(createPrimitive("Model", "F1 W04"))
         .addProperty(createPrimitive("ModelYear", "2013"))
         .addProperty(createPrimitive("Price", 199999.99))
         .addProperty(createPrimitive("Currency", "EUR")));
 
-    entitySet.getEntities().add(new EntityImpl()
+    entitySet.getEntities().add(new Entity()
         .addProperty(createPrimitive("Id", 3))
         .addProperty(createPrimitive("Model", "F2012"))
         .addProperty(createPrimitive("ModelYear", "2012"))
         .addProperty(createPrimitive("Price", 137285.33))
         .addProperty(createPrimitive("Currency", "EUR")));
 
-    entitySet.getEntities().add(new EntityImpl()
+    entitySet.getEntities().add(new Entity()
         .addProperty(createPrimitive("Id", 4))
         .addProperty(createPrimitive("Model", "F2013"))
         .addProperty(createPrimitive("ModelYear", "2013"))
         .addProperty(createPrimitive("Price", 145285.00))
         .addProperty(createPrimitive("Currency", "EUR")));
 
-    entitySet.getEntities().add(new EntityImpl()
+    entitySet.getEntities().add(new Entity()
         .addProperty(createPrimitive("Id", 5))
         .addProperty(createPrimitive("Model", "F1 W02"))
         .addProperty(createPrimitive("ModelYear", "2011"))
@@ -141,14 +138,14 @@ public class DataProvider {
   }
 
   private EntitySet createManufacturers() {
-    EntitySet entitySet = new EntitySetImpl();
+    EntitySet entitySet = new EntitySet();
 
-    entitySet.getEntities().add(new EntityImpl()
+    entitySet.getEntities().add(new Entity()
         .addProperty(createPrimitive("Id", 1))
         .addProperty(createPrimitive("Name", "Star Powered Racing"))
         .addProperty(createAddress("Star Street 137", "Stuttgart", "70173", "Germany")));
 
-    entitySet.getEntities().add(new EntityImpl()
+    entitySet.getEntities().add(new Entity()
         .addProperty(createPrimitive("Id", 2))
         .addProperty(createPrimitive("Name", "Horse Powered Racing"))
         .addProperty(createAddress("Horse Street 1", "Maranello", "41053", "Italy")));
@@ -165,10 +162,10 @@ public class DataProvider {
     addressProperties.add(createPrimitive("City", city));
     addressProperties.add(createPrimitive("ZipCode", zipCode));
     addressProperties.add(createPrimitive("Country", country));
-    return new PropertyImpl(null, "Address", ValueType.COMPLEX, addressProperties);
+    return new Property(null, "Address", ValueType.COMPLEX, addressProperties);
   }
 
   private Property createPrimitive(final String name, final Object value) {
-    return new PropertyImpl(null, name, ValueType.PRIMITIVE, value);
+    return new Property(null, name, ValueType.PRIMITIVE, value);
   }
 }

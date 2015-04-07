@@ -18,9 +18,26 @@
  */
 package org.apache.olingo.commons.api.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public interface Linked {
+public abstract class Linked extends AbstractODataObject {
+
+  private final List<Link> associationLinks = new ArrayList<Link>();
+  private final List<Link> navigationLinks = new ArrayList<Link>();
+  private final List<Link> bindingLinks = new ArrayList<Link>();
+
+  protected Link getOneByTitle(final String name, final List<Link> links) {
+    Link result = null;
+
+    for (Link link : links) {
+      if (name.equals(link.getTitle())) {
+        result = link;
+      }
+    }
+
+    return result;
+  }
 
   /**
    * Gets association link with given name, if available, otherwise <tt>null</tt>.
@@ -28,14 +45,18 @@ public interface Linked {
    * @param name candidate link name
    * @return association link with given name, if available, otherwise <tt>null</tt>
    */
-  Link getAssociationLink(String name);
+  public Link getAssociationLink(final String name) {
+    return getOneByTitle(name, associationLinks);
+  }
 
   /**
    * Gets association links.
    * 
    * @return association links.
    */
-  List<Link> getAssociationLinks();
+  public List<Link> getAssociationLinks() {
+    return associationLinks;
+  }
 
   /**
    * Gets navigation link with given name, if available, otherwise <tt>null</tt>.
@@ -43,26 +64,34 @@ public interface Linked {
    * @param name candidate link name
    * @return navigation link with given name, if available, otherwise <tt>null</tt>
    */
-  Link getNavigationLink(String name);
+  public Link getNavigationLink(final String name) {
+    return getOneByTitle(name, navigationLinks);
+  }
 
   /**
    * Gets navigation links.
    * 
    * @return links.
    */
-  List<Link> getNavigationLinks();
+  public List<Link> getNavigationLinks() {
+    return navigationLinks;
+  }
 
   /**
    * Gets binding link with given name, if available, otherwise <tt>null</tt>.
    * @param name candidate link name
    * @return binding link with given name, if available, otherwise <tt>null</tt>
    */
-  Link getNavigationBinding(String name);
+  public Link getNavigationBinding(String name) {
+    return getOneByTitle(name, bindingLinks);
+  }
 
   /**
    * Gets binding links.
    * 
    * @return links.
    */
-  List<Link> getNavigationBindings();
+  public List<Link> getNavigationBindings() {
+    return bindingLinks;
+  }
 }

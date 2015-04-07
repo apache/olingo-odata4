@@ -20,17 +20,31 @@ package org.apache.olingo.commons.api.data;
 
 import java.net.URI;
 
-public interface DeletedEntity {
+public class DeletedEntity {
 
-  enum Reason {
+  public enum Reason {
 
     deleted,
     changed
 
   }
 
-  URI getId();
+  private URI id;
+  private Reason reason;
 
-  Reason getReason();
+  public URI getId() {
+    return id;
+  }
 
+  public void setId(final URI id) {
+    this.id = id;
+  }
+
+  public Reason getReason() {
+    return reason;
+  }
+
+  public void setReason(final Reason reason) {
+    this.reason = reason;
+  }
 }

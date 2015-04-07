@@ -21,93 +21,110 @@ package org.apache.olingo.commons.api.data;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
-public interface Entity extends Linked, Annotatable {
+public class Entity extends Linked {
+
+  private String eTag;
+  private String type;
+
+  private Link readLink;
+  private Link editLink;
+
+  private final List<Link> mediaEditLinks = new ArrayList<Link>();
+  private final List<ODataOperation> operations = new ArrayList<ODataOperation>();
+
+  private final List<Property> properties = new ArrayList<Property>();
+
+  private URI mediaContentSource;
+  private String mediaContentType;
+  private String mediaETag;
 
   /**
    * Gets ETag.
    * 
    * @return ETag.
    */
-  String getETag();
+  public String getETag() {
+    return eTag;
+  }
 
-  /**
-   * Gets base URI.
-   * 
-   * @return base URI.
-   */
-  URI getBaseURI();
+  public void setETag(final String eTag) {
+    this.eTag = eTag;
+  }
 
   /**
    * Gets entity type.
    * 
    * @return entity type.
    */
-  String getType();
+  public String getType() {
+    return type;
+  }
 
   /**
    * Sets entity type.
    * 
    * @param type entity type.
    */
-  void setType(String type);
-
-  /**
-   * Gets entity ID.
-   * 
-   * @return entity ID.
-   */
-  URI getId();
-
-  /**
-   * Sets entity ID.
-   * 
-   * @param id entity ID.
-   */
-  void setId(URI id);
+  public void setType(final String type) {
+    this.type = type;
+  }
 
   /**
    * Gets entity self link.
    * 
    * @return self link.
    */
-  Link getSelfLink();
+  public Link getSelfLink() {
+    return readLink;
+  }
 
   /**
    * Sets entity self link.
    * 
    * @param selfLink self link.
    */
-  void setSelfLink(Link selfLink);
+  public void setSelfLink(final Link selfLink) {
+    this.readLink = selfLink;
+  }
 
   /**
    * Gets entity edit link.
    * 
    * @return edit link.
    */
-  Link getEditLink();
+  public Link getEditLink() {
+    return editLink;
+  }
 
   /**
    * Sets entity edit link.
    * 
    * @param editLink edit link.
    */
-  void setEditLink(Link editLink);
+  public void setEditLink(final Link editLink) {
+    this.editLink = editLink;
+  }
 
   /**
    * Gets media entity links.
    * 
    * @return links.
    */
-  List<Link> getMediaEditLinks();
+  public List<Link> getMediaEditLinks() {
+    return mediaEditLinks;
+  }
 
   /**
    * Gets operations.
    * 
    * @return operations.
    */
-  List<ODataOperation> getOperations();
+  public List<ODataOperation> getOperations() {
+    return operations;
+  }
 
   /**
    * Add property to this Entity.
@@ -115,14 +132,19 @@ public interface Entity extends Linked, Annotatable {
    * @param property property which is added
    * @return this Entity for fluid/flow adding
    */
-  Entity addProperty(Property property);
+  public Entity addProperty(final Property property) {
+    properties.add(property);
+    return this;
+  }
 
   /**
    * Gets properties.
    * 
    * @return properties.
    */
-  List<Property> getProperties();
+  public List<Property> getProperties() {
+    return properties;
+  }
 
   /**
    * Gets property with given name.
@@ -130,54 +152,78 @@ public interface Entity extends Linked, Annotatable {
    * @param name property name
    * @return property with given name if found, null otherwise
    */
-  Property getProperty(String name);
+  public Property getProperty(final String name) {
+    Property result = null;
+
+    for (Property property : properties) {
+      if (name.equals(property.getName())) {
+        result = property;
+      }
+    }
+
+    return result;
+  }
 
   /**
    * Gets media content type.
    * 
    * @return media content type.
    */
-  String getMediaContentType();
-
-  /**
-   * Gets media content resource.
-   * 
-   * @return media content resource.
-   */
-  URI getMediaContentSource();
-
-  /**
-   * Set media content source.
-   * 
-   * @param mediaContentSource media content source.
-   */
-  void setMediaContentSource(URI mediaContentSource);
+  public String getMediaContentType() {
+    return mediaContentType;
+  }
 
   /**
    * Set media content type.
    * 
    * @param mediaContentType media content type.
    */
-  void setMediaContentType(String mediaContentType);
+  public void setMediaContentType(final String mediaContentType) {
+    this.mediaContentType = mediaContentType;
+  }
+
+  /**
+   * Gets media content resource.
+   * 
+   * @return media content resource.
+   */
+  public URI getMediaContentSource() {
+    return mediaContentSource;
+  }
+
+  /**
+   * Set media content source.
+   * 
+   * @param mediaContentSource media content source.
+   */
+  public void setMediaContentSource(final URI mediaContentSource) {
+    this.mediaContentSource = mediaContentSource;
+  }
 
   /**
    * ETag of the binary stream represented by this media entity or named stream property.
    * 
    * @return media ETag value
    */
-  String getMediaETag();
+  public String getMediaETag() {
+    return mediaETag;
+  }
 
   /**
    * Set media ETag.
    * 
    * @param eTag media ETag value
    */
-  void setMediaETag(String eTag);
+  public void setMediaETag(final String eTag) {
+    mediaETag = eTag;
+  }
 
   /**
    * Checks if the current entity is a media entity.
    * 
    * @return 'TRUE' if is a media entity; 'FALSE' otherwise.
    */
-  boolean isMediaEntity();
+  public boolean isMediaEntity() {
+    return mediaContentSource != null;
+  }
 }

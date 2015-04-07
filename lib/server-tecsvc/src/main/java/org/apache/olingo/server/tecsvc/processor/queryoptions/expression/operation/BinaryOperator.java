@@ -24,19 +24,11 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Locale;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmBoolean;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmByte;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt16;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmSByte;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmSingle;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.TypedOperand;
@@ -62,6 +54,40 @@ public class BinaryOperator {
   private static final int EQUALS = 0;
   private static final int LESS_THAN = -1;
   private static final int GREATER_THAN = 1;
+  
+  protected static final OData oData;
+  protected static final EdmPrimitiveType primString;
+  protected static final EdmPrimitiveType primBoolean;
+  protected static final EdmPrimitiveType primDateTimeOffset;
+  protected static final EdmPrimitiveType primDate;
+  protected static final EdmPrimitiveType primTimeOfDay;
+  protected static final EdmPrimitiveType primDuration;
+  protected static final EdmPrimitiveType primSByte;
+  protected static final EdmPrimitiveType primByte;
+  protected static final EdmPrimitiveType primInt16;
+  protected static final EdmPrimitiveType primInt32;
+  protected static final EdmPrimitiveType primInt64;
+  protected static final EdmPrimitiveType primDecimal;
+  protected static final EdmPrimitiveType primSingle;
+  protected static final EdmPrimitiveType primDouble;
+
+  static {
+    oData = OData.newInstance();
+    primString = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String);
+    primBoolean = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean);
+    primDateTimeOffset = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.DateTimeOffset);
+    primDate = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Date);
+    primTimeOfDay = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.TimeOfDay);
+    primDuration = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Duration);
+    primSByte = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.SByte);
+    primByte = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Byte);
+    primInt16 = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16);
+    primInt32 = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32);
+    primInt64 = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int64);
+    primDecimal = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal);
+    primSingle = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Single);
+    primDouble = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double);
+  }
 
   private TypedOperand right;
   private TypedOperand left;
@@ -77,14 +103,14 @@ public class BinaryOperator {
 
   public VisitorOperand andOperator() throws ODataApplicationException {
     Boolean result = null;
-    if (left.is(EdmBoolean.getInstance()) && right.is(EdmBoolean.getInstance())) {
+    if (left.is(primBoolean) && right.is(primBoolean)) {
       if (Boolean.TRUE.equals(left.getValue()) && Boolean.TRUE.equals(right.getValue())) {
         result = true;
       } else if (Boolean.FALSE.equals(left.getValue()) || Boolean.FALSE.equals(right.getValue())) {
         result = false;
       }
 
-      return new TypedOperand(result, EdmBoolean.getInstance());
+      return new TypedOperand(result, primBoolean);
     } else {
       throw new ODataApplicationException("Add operator needs two binary operands",
           HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
@@ -93,14 +119,14 @@ public class BinaryOperator {
 
   public VisitorOperand orOperator() throws ODataApplicationException {
     Boolean result = null;
-    if (left.is(EdmBoolean.getInstance()) && right.is(EdmBoolean.getInstance())) {
+    if (left.is(primBoolean) && right.is(primBoolean)) {
       if (Boolean.TRUE.equals(left.getValue()) || Boolean.TRUE.equals(right.getValue())) {
         result = true;
       } else if (Boolean.FALSE.equals(left.getValue()) && Boolean.FALSE.equals(right.getValue())) {
         result = false;
       }
 
-      return new TypedOperand(result, EdmBoolean.getInstance());
+      return new TypedOperand(result, primBoolean);
     } else {
       throw new ODataApplicationException("Or operator needs two binary operands",
           HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
@@ -109,12 +135,12 @@ public class BinaryOperator {
 
   public VisitorOperand equalsOperator() {
     final boolean result = isBinaryComparisonNecessary() && binaryComparison(EQUALS);
-    return new TypedOperand(result, EdmBoolean.getInstance());
+    return new TypedOperand(result, primBoolean);
   }
 
   public VisitorOperand notEqualsOperator() {
     final VisitorOperand equalsOperator = equalsOperator();
-    return new TypedOperand(!(Boolean) equalsOperator.getValue(), EdmBoolean.getInstance());
+    return new TypedOperand(!(Boolean) equalsOperator.getValue(), primBoolean);
   }
 
   private boolean isBinaryComparisonNecessary() {
@@ -124,22 +150,22 @@ public class BinaryOperator {
 
   public VisitorOperand greaterEqualsOperator() {
     final boolean result = isBinaryComparisonNecessary() && binaryComparison(GREATER_THAN, EQUALS);
-    return new TypedOperand(result, EdmBoolean.getInstance());
+    return new TypedOperand(result, primBoolean);
   }
 
   public VisitorOperand greaterThanOperator() {
     final boolean result = isBinaryComparisonNecessary() && binaryComparison(GREATER_THAN);
-    return new TypedOperand(result, EdmBoolean.getInstance());
+    return new TypedOperand(result, primBoolean);
   }
 
   public VisitorOperand lessEqualsOperator() {
     final boolean result = isBinaryComparisonNecessary() && binaryComparison(LESS_THAN, EQUALS);
-    return new TypedOperand(result, EdmBoolean.getInstance());
+    return new TypedOperand(result, primBoolean);
   }
 
   public VisitorOperand lessThanOperator() {
     final boolean result = isBinaryComparisonNecessary() && binaryComparison(LESS_THAN);
-    return new TypedOperand(result, EdmBoolean.getInstance());
+    return new TypedOperand(result, primBoolean);
   }
 
   private boolean binaryComparison(int... expect) {
@@ -176,7 +202,7 @@ public class BinaryOperator {
       } else if (left.isDecimalType()) {
         final BigDecimal result = decimalArithmeticOperation(operator);
         return new TypedOperand(result, determineResultType(result, left));
-      } else if (left.is(EdmDate.getInstance(), EdmDuration.getInstance(), EdmDateTimeOffset.getInstance())) {
+      } else if (left.is(primDate, primDuration, primDateTimeOffset)) {
         return dateArithmeticOperation(operator);
       } else {
         throw new ODataApplicationException("Invalid type", HttpStatusCode.BAD_REQUEST.getStatusCode(),
@@ -190,81 +216,81 @@ public class BinaryOperator {
     if (leftOperand.isDecimalType()) {
       final BigDecimal value = (BigDecimal) arithmeticResult;
       if (value.compareTo(EDM_SINGLE_MIN) >= 0 && value.compareTo(EDM_SINGLE_MAX) <= 0) {
-        return EdmSingle.getInstance();
+        return primSingle;
       } else {
-        return EdmDouble.getInstance();
+        return primDouble;
       }
     } else {
       final BigInteger value = (BigInteger) arithmeticResult;
 
       if (value.compareTo(EDN_SBYTE_MAX) <= 0 && value.compareTo(EDM_SBYTE_MIN) >= 0) {
-        return EdmSByte.getInstance();
+        return primSByte;
       }
       if (value.compareTo(EDM_BYTE_MAX) <= 0 && value.compareTo(EDM_BYTE_MIN) >= 0) {
-        return EdmByte.getInstance();
+        return primByte;
       }
       if (value.compareTo(EDM_INT16_MAX) <= 0 && value.compareTo(EDM_INT16_MIN) >= 0) {
-        return EdmInt16.getInstance();
+        return primInt16;
       }
       if (value.compareTo(EDM_INT32_MAX) <= 0 && value.compareTo(EDM_INT32_MIN) >= 0) {
-        return EdmInt32.getInstance();
+        return primInt32;
       }
       if (value.compareTo(EDM_INT64_MAX) <= 0 && value.compareTo(EDM_INT64_MIN) >= 0) {
-        return EdmInt64.getInstance();
+        return primInt64;
       }
       // Choose double instead single because precision is higher (52 bits instead of 23)
-      return EdmDouble.getInstance();
+      return primDouble;
     }
   }
 
   private VisitorOperand dateArithmeticOperation(BinaryOperatorKind operator) throws ODataApplicationException {
     VisitorOperand result = null;
 
-    if (left.is(EdmDate.getInstance())) {
-      if (right.is(EdmDate.getInstance()) && operator == BinaryOperatorKind.SUB) {
+    if (left.is(primDate)) {
+      if (right.is(primDate) && operator == BinaryOperatorKind.SUB) {
         long millis = left.getTypedValue(Calendar.class).getTimeInMillis()
             - left.getTypedValue(Calendar.class).getTimeInMillis();
 
-        result = new TypedOperand(new BigDecimal(millis).divide(FACTOR_SECOND), EdmDuration.getInstance());
-      } else if (right.is(EdmDuration.getInstance()) && operator == BinaryOperatorKind.ADD) {
+        result = new TypedOperand(new BigDecimal(millis).divide(FACTOR_SECOND), primDuration);
+      } else if (right.is(primDuration) && operator == BinaryOperatorKind.ADD) {
         long millis = left.getTypedValue(Calendar.class).getTimeInMillis()
             + (right.getTypedValue(BigDecimal.class).longValue() * FACTOR_SECOND_INT);
 
-        result = new TypedOperand(new Timestamp(millis), EdmDateTimeOffset.getInstance());
-      } else if (right.is(EdmDuration.getInstance()) && operator == BinaryOperatorKind.SUB) {
+        result = new TypedOperand(new Timestamp(millis), primDateTimeOffset);
+      } else if (right.is(primDuration) && operator == BinaryOperatorKind.SUB) {
         long millis = left.getTypedValue(Calendar.class).getTimeInMillis()
             - (right.getTypedValue(BigDecimal.class).longValue() * FACTOR_SECOND_INT);
 
-        result = new TypedOperand(new Timestamp(millis), EdmDateTimeOffset.getInstance());
+        result = new TypedOperand(new Timestamp(millis), primDateTimeOffset);
       }
-    } else if (left.is(EdmDuration.getInstance())) {
-      if (right.is(EdmDuration.getInstance()) && operator == BinaryOperatorKind.ADD) {
+    } else if (left.is(primDuration)) {
+      if (right.is(primDuration) && operator == BinaryOperatorKind.ADD) {
         long seconds = left.getTypedValue(BigDecimal.class).longValue()
             + right.getTypedValue(BigDecimal.class).longValue();
 
-        result = new TypedOperand(new BigDecimal(seconds), EdmDuration.getInstance());
-      } else if (right.is(EdmDuration.getInstance()) && operator == BinaryOperatorKind.SUB) {
+        result = new TypedOperand(new BigDecimal(seconds), primDuration);
+      } else if (right.is(primDuration) && operator == BinaryOperatorKind.SUB) {
         long seconds = left.getTypedValue(BigDecimal.class).longValue()
             - right.getTypedValue(BigDecimal.class).longValue();
 
-        result = new TypedOperand(new BigDecimal(seconds), EdmDuration.getInstance());
+        result = new TypedOperand(new BigDecimal(seconds), primDuration);
       }
-    } else if (left.is(EdmDateTimeOffset.getInstance())) {
-      if (right.is(EdmDuration.getInstance()) && operator == BinaryOperatorKind.ADD) {
+    } else if (left.is(primDateTimeOffset)) {
+      if (right.is(primDuration) && operator == BinaryOperatorKind.ADD) {
         long millis = left.getTypedValue(Timestamp.class).getTime()
             + (right.getTypedValue(BigDecimal.class).longValue() * FACTOR_SECOND_INT);
 
-        result = new TypedOperand(new Timestamp(millis), EdmDateTimeOffset.getInstance());
-      } else if (right.is(EdmDuration.getInstance()) && operator == BinaryOperatorKind.SUB) {
+        result = new TypedOperand(new Timestamp(millis), primDateTimeOffset);
+      } else if (right.is(primDuration) && operator == BinaryOperatorKind.SUB) {
         long millis = left.getTypedValue(Timestamp.class).getTime()
             - (right.getTypedValue(BigDecimal.class).longValue() * FACTOR_SECOND_INT);
 
-        result = new TypedOperand(new Timestamp(millis), EdmDateTimeOffset.getInstance());
-      } else if (right.is(EdmDateTimeOffset.getInstance()) && operator == BinaryOperatorKind.SUB) {
+        result = new TypedOperand(new Timestamp(millis), primDateTimeOffset);
+      } else if (right.is(primDateTimeOffset) && operator == BinaryOperatorKind.SUB) {
         long millis = left.getTypedValue(Timestamp.class).getTime()
             - right.getTypedValue(Timestamp.class).getTime();
 
-        result = new TypedOperand(new BigDecimal(millis).divide(FACTOR_SECOND), EdmDuration.getInstance());
+        result = new TypedOperand(new BigDecimal(millis).divide(FACTOR_SECOND), primDuration);
       }
     }
 

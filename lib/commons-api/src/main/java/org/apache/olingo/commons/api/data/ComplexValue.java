@@ -18,9 +18,14 @@
  */
 package org.apache.olingo.commons.api.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public interface ComplexValue extends Linked, Annotatable {
+public class ComplexValue extends Linked {
 
-  List<Property> getValue();
+  private final List<Property> value = new ArrayList<Property>();
+
+  public List<Property> getValue() {
+    return value;
+  }
 }

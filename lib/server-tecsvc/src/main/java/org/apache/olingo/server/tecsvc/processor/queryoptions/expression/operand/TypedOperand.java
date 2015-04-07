@@ -26,14 +26,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmByte;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt16;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmSByte;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmSingle;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.primitive.EdmNull;
 
@@ -73,13 +65,11 @@ public class TypedOperand extends VisitorOperand {
     Object newValue = null;
     for (EdmPrimitiveType asType : asTypes) {
       // Use BigDecimal for unlimited precision
-      if (asType.equals(EdmDouble.getInstance())
-          || asType.equals(EdmSingle.getInstance())
-          || asType.equals(EdmDecimal.getInstance())) {
-        
+      if (asType.equals(primDouble) || asType.equals(primSingle) || asType.equals(primDecimal)) {
+
         try {
           newValue = new BigDecimal(value.toString());
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
           // Nothing to do
         }
       } else {
@@ -117,18 +107,18 @@ public class TypedOperand extends VisitorOperand {
       return this;
     }
 
-    if (type.equals(EdmDouble.getInstance()) || oType.equals(EdmDouble.getInstance())) {
-      return asTypedOperand(EdmDouble.getInstance());
-    } else if (type.equals(EdmSingle.getInstance()) || oType.equals(EdmSingle.getInstance())) {
-      return asTypedOperand(EdmSingle.getInstance());
-    } else if (type.equals(EdmDecimal.getInstance()) || oType.equals(EdmDecimal.getInstance())) {
-      return asTypedOperand(EdmDecimal.getInstance());
-    } else if (type.equals(EdmInt64.getInstance()) || oType.equals(EdmInt64.getInstance())) {
-      return asTypedOperand(EdmInt64.getInstance());
-    } else if (type.equals(EdmInt32.getInstance()) || oType.equals(EdmInt32.getInstance())) {
-      return asTypedOperand(EdmInt32.getInstance());
-    } else if (type.equals(EdmInt16.getInstance()) || oType.equals(EdmInt16.getInstance())) {
-      return asTypedOperand(EdmInt16.getInstance());
+    if (type.equals(primDouble) || oType.equals(primDouble)) {
+      return asTypedOperand(primDouble);
+    } else if (type.equals(primSingle) || oType.equals(primSingle)) {
+      return asTypedOperand(primSingle);
+    } else if (type.equals(primDecimal) || oType.equals(primDecimal)) {
+      return asTypedOperand(primDecimal);
+    } else if (type.equals(primInt64) || oType.equals(primInt64)) {
+      return asTypedOperand(primInt64);
+    } else if (type.equals(primInt32) || oType.equals(primInt32)) {
+      return asTypedOperand(primInt32);
+    } else if (type.equals(primInt16) || oType.equals(primInt16)) {
+      return asTypedOperand(primInt16);
     } else {
       return asTypedOperand((EdmPrimitiveType) type);
     }
@@ -151,17 +141,19 @@ public class TypedOperand extends VisitorOperand {
   }
 
   public boolean isIntegerType() {
-    return is(EdmByte.getInstance(),
-        EdmSByte.getInstance(),
-        EdmInt16.getInstance(),
-        EdmInt32.getInstance(),
-        EdmInt64.getInstance());
+    return is(
+        primByte,
+        primSByte,
+        primInt16,
+        primInt32,
+        primInt64);
   }
 
   public boolean isDecimalType() {
-    return is(EdmSingle.getInstance(),
-        EdmDouble.getInstance(),
-        EdmDecimal.getInstance());
+    return is(
+        primSingle,
+        primDouble,
+        primDecimal);
   }
 
   public boolean is(EdmPrimitiveType... types) {

@@ -23,14 +23,26 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Locale;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmBoolean;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.TypedOperand;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.VisitorOperand;
 
 public class UnaryOperator {
+  
+  protected static final OData oData;
+  protected static final EdmPrimitiveType primBoolean;
+  protected static final EdmPrimitiveType primDuration;
+
+  static {
+    oData = OData.newInstance();
+    primBoolean = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean);
+    primDuration = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Duration);
+  }
+  
   final private TypedOperand operand;
 
   public UnaryOperator(VisitorOperand operand) throws ODataApplicationException {
@@ -42,7 +54,7 @@ public class UnaryOperator {
       return operand;
     } else if (operand.isIntegerType()) {
       return new TypedOperand(operand.getTypedValue(BigInteger.class).negate(), operand.getType());
-    } else if (operand.isDecimalType() || operand.is(EdmDuration.getInstance())) {
+    } else if (operand.isDecimalType() || operand.is(primDuration)) {
       return new TypedOperand(operand.getTypedValue(BigDecimal.class).negate(), operand.getType());
     } else {
       throw new ODataApplicationException("Unsupported type", HttpStatusCode.BAD_REQUEST.getStatusCode(),
@@ -53,7 +65,7 @@ public class UnaryOperator {
   public VisitorOperand notOperation() throws ODataApplicationException {
     if (operand.isNull()) {
       return operand;
-    } else if (operand.is(EdmBoolean.getInstance())) {
+    } else if (operand.is(primBoolean)) {
       return new TypedOperand(!operand.getTypedValue(Boolean.class), operand.getType());
     } else {
       throw new ODataApplicationException("Unsupported type", HttpStatusCode.BAD_REQUEST.getStatusCode(),

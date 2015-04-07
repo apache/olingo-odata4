@@ -25,12 +25,11 @@ import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.DeletedEntity;
 import org.apache.olingo.commons.api.data.Delta;
+import org.apache.olingo.commons.api.data.DeltaLink;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-import org.apache.olingo.commons.core.data.DeletedEntityImpl;
-import org.apache.olingo.commons.core.data.DeltaImpl;
-import org.apache.olingo.commons.core.data.DeltaLinkImpl;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -48,7 +47,7 @@ public class JsonDeltaDeserializer extends JsonDeserializer {
 
     final ObjectNode tree = parser.getCodec().readTree(parser);
 
-    final DeltaImpl delta = new DeltaImpl();
+    final Delta delta = new Delta();
 
     final URI contextURL = tree.hasNonNull(Constants.JSON_CONTEXT) ?
         URI.create(tree.get(Constants.JSON_CONTEXT).textValue()) : null;
@@ -77,11 +76,11 @@ public class JsonDeltaDeserializer extends JsonDeserializer {
         if (itemContextURL == null || itemContextURL.isEntity()) {
           delta.getEntities().add(entityDeserializer.doDeserialize(item.traverse(parser.getCodec())).getPayload());
         } else if (itemContextURL.isDeltaDeletedEntity()) {
-          delta.getDeletedEntities().add(parser.getCodec().treeToValue(item, DeletedEntityImpl.class));
+          delta.getDeletedEntities().add(parser.getCodec().treeToValue(item, DeletedEntity.class));
         } else if (itemContextURL.isDeltaLink()) {
-          delta.getAddedLinks().add(parser.getCodec().treeToValue(item, DeltaLinkImpl.class));
+          delta.getAddedLinks().add(parser.getCodec().treeToValue(item, DeltaLink.class));
         } else if (itemContextURL.isDeltaDeletedLink()) {
-          delta.getDeletedLinks().add(parser.getCodec().treeToValue(item, DeltaLinkImpl.class));
+          delta.getDeletedLinks().add(parser.getCodec().treeToValue(item, DeltaLink.class));
         }
       }
     }

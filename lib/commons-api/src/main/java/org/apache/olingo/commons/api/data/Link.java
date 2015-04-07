@@ -18,130 +18,177 @@
  */
 package org.apache.olingo.commons.api.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public interface Link extends Annotatable {
+public class Link extends Annotatable {
 
-  /**
-   * Gets rel info.
-   * 
-   * @return rel info.
-   */
-  String getRel();
-
-  /**
-   * Sets rel info.
-   * 
-   * @param rel rel info.
-   */
-  void setRel(String rel);
-
-  /**
-   * Gets type.
-   * 
-   * @return type.
-   */
-  String getType();
-
-  /**
-   * Sets type.
-   * 
-   * @param type type.
-   */
-  void setType(String type);
+  private String title;
+  private String rel;
+  private String href;
+  private String type;
+  private String mediaETag;
+  private Entity entity;
+  private EntitySet entitySet;
+  private String bindingLink;
+  private List<String> bindingLinks = new ArrayList<String>();
 
   /**
    * Gets title.
    * 
    * @return title.
    */
-  String getTitle();
+  public String getTitle() {
+    return title;
+  }
 
   /**
    * Sets title.
    * 
    * @param title title.
    */
-  void setTitle(String title);
+  public void setTitle(final String title) {
+    this.title = title;
+  }
+
+  /**
+   * Gets rel info.
+   * 
+   * @return rel info.
+   */
+  public String getRel() {
+    return rel;
+  }
+
+  /**
+   * Sets rel info.
+   * 
+   * @param rel rel info.
+   */
+  public void setRel(final String rel) {
+    this.rel = rel;
+  }
 
   /**
    * Gets href.
    * 
    * @return href.
    */
-  String getHref();
+  public String getHref() {
+    return href;
+  }
 
   /**
    * Sets href.
    * 
    * @param href href.
    */
-  void setHref(String href);
+  public void setHref(final String href) {
+    this.href = href;
+  }
+
+  /**
+   * Gets type.
+   * 
+   * @return type.
+   */
+  public String getType() {
+    return type;
+  }
+
+  /**
+   * Sets type.
+   * 
+   * @param type type.
+   */
+  public void setType(final String type) {
+    this.type = type;
+  }
 
   /**
    * Gets Media ETag.
    * 
    * @return media ETag
    */
-  String getMediaETag();
+  public String getMediaETag() {
+    return mediaETag;
+  }
 
   /**
    * Sets Media ETag.
    * 
-   * @param etag media ETag
+   * @param mediaETag media ETag
    */
-  void setMediaETag(String etag);
+  public void setMediaETag(final String mediaETag) {
+    this.mediaETag = mediaETag;
+  }
 
   /**
    * Gets in-line entity.
    * 
    * @return in-line entity.
    */
-  Entity getInlineEntity();
+  public Entity getInlineEntity() {
+    return entity;
+  }
 
   /**
    * Sets in-line entity.
    * 
    * @param entity entity.
    */
-  void setInlineEntity(Entity entity);
+  public void setInlineEntity(final Entity entity) {
+    this.entity = entity;
+  }
+
 
   /**
    * Gets in-line entity set.
    * 
    * @return in-line entity set.
    */
-  EntitySet getInlineEntitySet();
+  public EntitySet getInlineEntitySet() {
+    return entitySet;
+  }
 
   /**
    * Sets in-line entity set.
    * 
    * @param entitySet entity set.
    */
-  void setInlineEntitySet(EntitySet entitySet);
+  public void setInlineEntitySet(final EntitySet entitySet) {
+    this.entitySet = entitySet;
+  }
 
   /**
    * If this is a "toOne" relationship this method delivers the binding link or <tt>null</tt> if not set.
    * @return String the binding link.
    */
-  String getBindingLink();
-
-  /**
-   * Sets the binding link.
-   * @param bindingLink
-   */
-  void setBindingLink(String bindingLink);
+  public String getBindingLink() {
+    return bindingLink;
+  }
 
   /**
    * If this is a "toMany" relationship this method delivers the binding links or <tt>emptyList</tt> if not set.
    * @return a list of binding links.
    */
-  List<String> getBindingLinks();
+  public List<String> getBindingLinks() {
+    return bindingLinks;
+  }
+
+  /**
+   * Sets the binding link.
+   * @param bindingLink
+   */
+  public void setBindingLink(String bindingLink) {
+    this.bindingLink = bindingLink;
+  }
 
   /**
    * Sets the binding links. List MUST NOT be <tt>null</tt>.
    * @param bindingLinks
    */
-  void setBindingLinks(List<String> bindingLinks);
-
+  public void setBindingLinks(List<String> bindingLinks) {
+    this.bindingLinks = bindingLinks;
+  }
 }

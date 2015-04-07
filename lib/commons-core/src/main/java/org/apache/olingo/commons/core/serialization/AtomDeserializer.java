@@ -36,12 +36,16 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.AbstractODataObject;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ComplexValue;
+import org.apache.olingo.commons.api.data.DeletedEntity;
 import org.apache.olingo.commons.api.data.DeletedEntity.Reason;
 import org.apache.olingo.commons.api.data.Delta;
+import org.apache.olingo.commons.api.data.DeltaLink;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
@@ -56,16 +60,6 @@ import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-import org.apache.olingo.commons.core.data.AbstractODataObject;
-import org.apache.olingo.commons.core.data.AnnotationImpl;
-import org.apache.olingo.commons.core.data.ComplexValueImpl;
-import org.apache.olingo.commons.core.data.DeletedEntityImpl;
-import org.apache.olingo.commons.core.data.DeltaImpl;
-import org.apache.olingo.commons.core.data.DeltaLinkImpl;
-import org.apache.olingo.commons.core.data.EntityImpl;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
 
 import com.fasterxml.aalto.stax.InputFactoryImpl;
@@ -128,11 +122,11 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
 
       if (event.isStartElement()) {
         if (value == null) {
-          value = new ComplexValueImpl();
+          value = new ComplexValue();
         }
 
         if (Constants.QNAME_ATOM_ELEM_LINK.equals(event.asStartElement().getName())) {
-          final LinkImpl link = new LinkImpl();
+          final Link link = new Link();
           final Attribute rel = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REL));
           if (rel != null) {
             link.setRel(rel.getValue());
@@ -260,7 +254,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
   private Property property(final XMLEventReader reader, final StartElement start)
       throws XMLStreamException, EdmPrimitiveTypeException {
 
-    final PropertyImpl property = new PropertyImpl();
+    final Property property = new Property();
 
     if (propertyValueQName.equals(start.getName())) {
       // retrieve name from context
@@ -379,7 +373,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     }
   }
 
-  private void inline(final XMLEventReader reader, final StartElement start, final LinkImpl link)
+  private void inline(final XMLEventReader reader, final StartElement start, final Link link)
       throws XMLStreamException, EdmPrimitiveTypeException {
 
     boolean foundEndElement = false;
@@ -434,7 +428,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     if (!Constants.QNAME_ATOM_ELEM_FEED.equals(start.getName())) {
       return null;
     }
-    final DeltaImpl delta = new DeltaImpl();
+    final Delta delta = new Delta();
     final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
     if (xmlBase != null) {
       delta.setBaseURI(xmlBase.getValue());
@@ -473,7 +467,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
         } else if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(event.asStartElement().getName())) {
           delta.getEntities().add(entity(reader, event.asStartElement()));
         } else if (deletedEntryQName.equals(event.asStartElement().getName())) {
-          final DeletedEntityImpl deletedEntity = new DeletedEntityImpl();
+          final DeletedEntity deletedEntity = new DeletedEntity();
 
           final Attribute ref = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REF));
           if (ref != null) {
@@ -488,7 +482,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
         } else if (linkQName.equals(event.asStartElement().getName())
             || deletedLinkQName.equals(event.asStartElement().getName())) {
 
-          final DeltaLinkImpl link = new DeltaLinkImpl();
+          final DeltaLink link = new DeltaLink();
 
           final Attribute source = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_SOURCE));
           if (source != null) {
@@ -520,7 +514,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     return delta;
   }
 
-  private void properties(final XMLEventReader reader, final StartElement start, final EntityImpl entity)
+  private void properties(final XMLEventReader reader, final StartElement start, final Entity entity)
       throws XMLStreamException, EdmPrimitiveTypeException {
 
     final Map<String, List<Annotation>> annotations = new HashMap<String, List<Annotation>>();
@@ -557,7 +551,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
   private Annotation annotation(final XMLEventReader reader, final StartElement start)
       throws XMLStreamException, EdmPrimitiveTypeException {
 
-    final Annotation annotation = new AnnotationImpl();
+    final Annotation annotation = new Annotation();
 
     annotation.setTerm(start.getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_TERM)).getValue());
     valuable(annotation, reader, start);
@@ -565,8 +559,8 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     return annotation;
   }
 
-  private EntityImpl entityRef(final StartElement start) throws XMLStreamException {
-    final EntityImpl entity = new EntityImpl();
+  private Entity entityRef(final StartElement start) throws XMLStreamException {
+    final Entity entity = new Entity();
 
     final Attribute entityRefId = start.getAttributeByName(Constants.QNAME_ATOM_ATTR_ID);
     if (entityRefId != null) {
@@ -578,11 +572,11 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
 
   private Entity entity(final XMLEventReader reader, final StartElement start)
       throws XMLStreamException, EdmPrimitiveTypeException {
-    final EntityImpl entity;
+    final Entity entity;
     if (entryRefQName.equals(start.getName())) {
       entity = entityRef(start);
     } else if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(start.getName())) {
-      entity = new EntityImpl();
+      entity = new Entity();
       final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
       if (xmlBase != null) {
         entity.setBaseURI(xmlBase.getValue());
@@ -612,7 +606,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
               entity.setType(new EdmTypeInfo.Builder().setTypeExpression(term.getValue()).build().internal());
             }
           } else if (Constants.QNAME_ATOM_ELEM_LINK.equals(event.asStartElement().getName())) {
-            final LinkImpl link = new LinkImpl();
+            final Link link = new Link();
             final Attribute rel = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REL));
             if (rel != null) {
               link.setRel(rel.getValue());
@@ -740,7 +734,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     if (!Constants.QNAME_ATOM_ELEM_FEED.equals(start.getName())) {
       return null;
     }
-    final EntitySetImpl entitySet = new EntitySetImpl();
+    final EntitySet entitySet = new EntitySet();
     final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
     if (xmlBase != null) {
       entitySet.setBaseURI(xmlBase.getValue());

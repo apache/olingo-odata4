@@ -23,20 +23,6 @@ import java.util.Locale;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmBoolean;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmByte;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt16;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmSByte;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmSingle;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmTimeOfDay;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.primitive.EdmNull;
 
@@ -84,65 +70,65 @@ public class UntypedOperand extends VisitorOperand {
     }
 
     // String
-    if ((newValue = tryCast(literal, EdmString.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmString.getInstance());
+    if ((newValue = tryCast(literal, primString)) != null) {
+      return new TypedOperand(newValue, primString);
     }
 
     // Boolean
-    if ((newValue = tryCast(literal, EdmBoolean.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmBoolean.getInstance());
+    if ((newValue = tryCast(literal, primBoolean)) != null) {
+      return new TypedOperand(newValue, primBoolean);
     }
 
     // Date
-    if ((newValue = tryCast(literal, EdmDateTimeOffset.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmDateTimeOffset.getInstance());
+    if ((newValue = tryCast(literal, primDateTimeOffset)) != null) {
+      return new TypedOperand(newValue, primDateTimeOffset);
     }
 
-    if ((newValue = tryCast(literal, EdmDate.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmDate.getInstance());
+    if ((newValue = tryCast(literal, primDate)) != null) {
+      return new TypedOperand(newValue, primDate);
     }
 
-    if ((newValue = tryCast(literal, EdmTimeOfDay.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmTimeOfDay.getInstance());
+    if ((newValue = tryCast(literal, primTimeOfDay)) != null) {
+      return new TypedOperand(newValue, primTimeOfDay);
     }
 
-    if ((newValue = tryCast(literal, EdmDuration.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmDuration.getInstance());
+    if ((newValue = tryCast(literal, primDuration)) != null) {
+      return new TypedOperand(newValue, primDuration);
     }
 
     // Integer
-    if ((newValue = tryCast(literal, EdmSByte.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmSByte.getInstance());
+    if ((newValue = tryCast(literal, primSByte)) != null) {
+      return new TypedOperand(newValue, primSByte);
     }
 
-    if ((newValue = tryCast(literal, EdmByte.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmByte.getInstance());
+    if ((newValue = tryCast(literal, primByte)) != null) {
+      return new TypedOperand(newValue, primByte);
     }
 
-    if ((newValue = tryCast(literal, EdmInt16.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmInt16.getInstance());
+    if ((newValue = tryCast(literal, primInt16)) != null) {
+      return new TypedOperand(newValue, primInt16);
     }
 
-    if ((newValue = tryCast(literal, EdmInt32.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmInt32.getInstance());
+    if ((newValue = tryCast(literal, primInt32)) != null) {
+      return new TypedOperand(newValue, primInt32);
     }
 
-    if ((newValue = tryCast(literal, EdmInt64.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmInt64.getInstance());
+    if ((newValue = tryCast(literal, primInt64)) != null) {
+      return new TypedOperand(newValue, primInt64);
     }
 
     // Decimal
-    if ((newValue = tryCast(literal, EdmDecimal.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmDecimal.getInstance());
+    if ((newValue = tryCast(literal, primDecimal)) != null) {
+      return new TypedOperand(newValue, primDecimal);
     }
 
     // Float
-    if ((newValue = tryCast(literal, EdmSingle.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmSingle.getInstance());
+    if ((newValue = tryCast(literal, primSingle)) != null) {
+      return new TypedOperand(newValue, primSingle);
     }
 
-    if ((newValue = tryCast(literal, EdmDouble.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmDouble.getInstance());
+    if ((newValue = tryCast(literal, primDouble)) != null) {
+      return new TypedOperand(newValue, primDouble);
     }
 
     throw new ODataApplicationException("Could not determine type for literal " + literal,

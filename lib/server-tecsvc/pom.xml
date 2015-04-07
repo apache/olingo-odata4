@@ -133,6 +133,7 @@
       <groupId>org.apache.olingo</groupId>
       <artifactId>odata-commons-core</artifactId>
       <version>${project.version}</version>
+	  <scope>runtime</scope>
     </dependency>
 
     <dependency>

@@ -18,14 +18,25 @@
  */
 package org.apache.olingo.commons.api.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public interface Delta extends EntitySet {
+public class Delta extends EntitySet {
 
-  List<DeletedEntity> getDeletedEntities();
+  private final List<DeletedEntity> deletedEntities = new ArrayList<DeletedEntity>();
+  private final List<DeltaLink> addedLinks = new ArrayList<DeltaLink>();
+  private final List<DeltaLink> deletedLinks = new ArrayList<DeltaLink>();
 
-  List<DeltaLink> getAddedLinks();
+  public List<DeletedEntity> getDeletedEntities() {
+    return deletedEntities;
+  }
 
-  List<DeltaLink> getDeletedLinks();
+  public List<DeltaLink> getAddedLinks() {
+    return addedLinks;
+  }
+
+  public List<DeltaLink> getDeletedLinks() {
+    return deletedLinks;
+  }
 
 }

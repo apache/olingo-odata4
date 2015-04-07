@@ -29,8 +29,6 @@ import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.core.data.AnnotationImpl;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -55,7 +53,7 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
       return null;
     }
 
-    final EntitySetImpl entitySet = new EntitySetImpl();
+    final EntitySet entitySet = new EntitySet();
 
     URI contextURL;
     if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
@@ -105,7 +103,7 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
     for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
       if (field.getKey().charAt(0) == '@') {
-        final Annotation annotation = new AnnotationImpl();
+        final Annotation annotation = new Annotation();
         annotation.setTerm(field.getKey().substring(1));
 
         try {

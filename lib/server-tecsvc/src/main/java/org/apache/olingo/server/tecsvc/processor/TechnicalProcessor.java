@@ -54,6 +54,11 @@ public abstract class TechnicalProcessor implements Processor {
   protected TechnicalProcessor(final DataProvider dataProvider) {
     this.dataProvider = dataProvider;
   }
+  
+  protected TechnicalProcessor(final DataProvider dataProvider, ServiceMetadata serviceMetadata) {
+    this.dataProvider = dataProvider;
+    this.serviceMetadata = serviceMetadata;
+  }
 
   @Override
   public void init(final OData odata, final ServiceMetadata serviceMetadata) {

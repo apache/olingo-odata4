@@ -18,42 +18,25 @@
  */
 package org.apache.olingo.fit;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.cxf.interceptor.InInterceptors;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.data.Link;
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.core.data.EntityImpl;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.data.PropertyImpl;
-import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
-import org.apache.olingo.fit.metadata.Metadata;
-import org.apache.olingo.fit.methods.PATCH;
-import org.apache.olingo.fit.rest.ResolvingReferencesInterceptor;
-import org.apache.olingo.fit.rest.XHTTPMethodInterceptor;
-import org.apache.olingo.fit.utils.AbstractUtilities;
-import org.apache.olingo.fit.utils.Accept;
-import org.apache.olingo.fit.utils.Commons;
-import org.apache.olingo.fit.utils.ConstantKey;
-import org.apache.olingo.fit.utils.Constants;
-import org.apache.olingo.fit.utils.FSManager;
-import org.apache.olingo.fit.utils.LinkInfo;
-import org.springframework.stereotype.Service;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -72,23 +55,35 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
-import javax.ws.rs.BadRequestException;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.cxf.interceptor.InInterceptors;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
+import org.apache.olingo.fit.metadata.Metadata;
+import org.apache.olingo.fit.methods.PATCH;
+import org.apache.olingo.fit.rest.ResolvingReferencesInterceptor;
+import org.apache.olingo.fit.rest.XHTTPMethodInterceptor;
+import org.apache.olingo.fit.utils.AbstractUtilities;
+import org.apache.olingo.fit.utils.Accept;
+import org.apache.olingo.fit.utils.Commons;
+import org.apache.olingo.fit.utils.ConstantKey;
+import org.apache.olingo.fit.utils.Constants;
+import org.apache.olingo.fit.utils.FSManager;
+import org.apache.olingo.fit.utils.LinkInfo;
+import org.springframework.stereotype.Service;
 
 @Service
 @Path("/V40/Static.svc")
@@ -504,7 +499,7 @@ public class V4Services extends AbstractServices {
         acceptType = Accept.parse(accept);
       }
 
-      final Property property = new PropertyImpl();
+      final Property property = new Property();
       property.setType("Edm.Int32");
       property.setValue(ValueType.PRIMITIVE, 2);
       final ResWrap<Property> container = new ResWrap<Property>(
@@ -565,27 +560,27 @@ public class V4Services extends AbstractServices {
         acceptType = Accept.parse(accept);
       }
 
-      final EntityImpl entry = new EntityImpl();
+      final Entity entry = new Entity();
       entry.setType("Microsoft.Test.OData.Services.ODataWCFService.ProductDetail");
-      final Property productId = new PropertyImpl();
+      final Property productId = new Property();
       productId.setName("ProductID");
       productId.setType("Edm.Int32");
       productId.setValue(ValueType.PRIMITIVE, Integer.valueOf(entityId));
       entry.getProperties().add(productId);
-      final Property productDetailId = new PropertyImpl();
+      final Property productDetailId = new Property();
       productDetailId.setName("ProductDetailID");
       productDetailId.setType("Edm.Int32");
       productDetailId.setValue(ValueType.PRIMITIVE, 2);
       entry.getProperties().add(productDetailId);
 
-      final Link link = new LinkImpl();
+      final Link link = new Link();
       link.setRel("edit");
       link.setHref(URI.create(
           Constants.get(ConstantKey.DEFAULT_SERVICE_URL)
               + "ProductDetails(ProductID=6,ProductDetailID=1)").toASCIIString());
       entry.setEditLink(link);
 
-      final EntitySetImpl feed = new EntitySetImpl();
+      final EntitySet feed = new EntitySet();
       feed.getEntities().add(entry);
 
       final ResWrap<EntitySet> container = new ResWrap<EntitySet>(
@@ -736,7 +731,7 @@ public class V4Services extends AbstractServices {
         acceptType = Accept.parse(accept);
       }
 
-      final Property property = new PropertyImpl();
+      final Property property = new Property();
       property.setType("Edm.Double");
       property.setValue(ValueType.PRIMITIVE, 41.79);
 
@@ -1144,7 +1139,7 @@ public class V4Services extends AbstractServices {
         acceptType = Accept.parse(accept);
       }
 
-      final PropertyImpl property = new PropertyImpl();
+      final Property property = new Property();
       property.setType("Microsoft.Test.OData.Services.ODataWCFService.Color");
       property.setValue(ValueType.ENUM, "Red");
       final ResWrap<Property> container = new ResWrap<Property>(
@@ -1236,7 +1231,7 @@ public class V4Services extends AbstractServices {
         acceptType = Accept.parse(accept);
       }
 
-      final PropertyImpl property = new PropertyImpl();
+      final Property property = new Property();
       property.setType("Collection(String)");
       final List<String> value = Arrays.asList("Cheetos", "Mushrooms", "Apple", "Car", "Computer");
       property.setValue(ValueType.COLLECTION_PRIMITIVE, value);
@@ -1268,7 +1263,7 @@ public class V4Services extends AbstractServices {
         acceptType = Accept.parse(accept);
       }
 
-      final PropertyImpl property = new PropertyImpl();
+      final Property property = new Property();
       property.setType("Collection(Edm.String)");
       property.setValue(ValueType.COLLECTION_PRIMITIVE,
           Arrays.asList("first@olingo.apache.org", "second@olingo.apache.org"));

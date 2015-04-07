@@ -21,6 +21,8 @@ package org.apache.olingo.server.api;
 import java.util.List;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
@@ -99,5 +101,17 @@ public abstract class OData {
    */
   public abstract UriHelper createUriHelper();
 
+  /**
+   * Creates a new deserializer object for reading content in the specified format.
+   * Deserializer are used in Processor implementations.
+   *
+   * @param format any format supported by Olingo (XML, JSON ...)
+   */
   public abstract ODataDeserializer createDeserializer(ODataFormat format) throws DeserializerException;
+  
+  /**
+   * @param kind
+   * @return a {@link EdmPrimitiveType} instance for the type kind
+   */
+  public abstract EdmPrimitiveType createPrimitiveTypeInstance(EdmPrimitiveTypeKind kind);
 }

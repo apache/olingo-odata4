@@ -20,8 +20,11 @@ package org.apache.olingo.server.core;
 
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -104,5 +107,10 @@ public class ODataImpl extends OData {
     }
 
     return serializer;
+  }
+
+  @Override
+  public EdmPrimitiveType createPrimitiveTypeInstance(EdmPrimitiveTypeKind kind) {
+    return EdmPrimitiveTypeFactory.getInstance(kind);
   }
 }

@@ -18,9 +18,32 @@
  */
 package org.apache.olingo.commons.api.data;
 
-public interface Property extends Valuable, Annotatable {
+public class Property extends Valuable {
 
-  String getName();
+  private String name;
 
-  void setName(String name);
+  public Property() {}
+
+  public Property(final String type, final String name) {
+    this.name = name;
+    super.setType(type);
+  }
+
+  public Property(String type, String name, ValueType valueType, Object value) {
+    this(type, name);
+    setValue(valueType, value);
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(final String name) {
+    this.name = name;
+  }
+
+  @Override
+  public boolean isNull() {
+    return getValue() == null || "Edm.Null".equals(getType());
+  }
 }

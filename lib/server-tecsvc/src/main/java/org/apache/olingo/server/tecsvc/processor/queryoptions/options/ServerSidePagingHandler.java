@@ -25,10 +25,10 @@ import java.util.Locale;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.SkipTokenOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
+import org.apache.olingo.server.tecsvc.Encoder;
 
 public class ServerSidePagingHandler {
   private static final int MAX_PAGE_SIZE = 10;

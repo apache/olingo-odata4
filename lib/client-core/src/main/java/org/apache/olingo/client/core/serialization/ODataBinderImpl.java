@@ -87,12 +87,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
-import org.apache.olingo.commons.core.data.AnnotationImpl;
-import org.apache.olingo.commons.core.data.ComplexValueImpl;
-import org.apache.olingo.commons.core.data.EntityImpl;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.domain.ODataAnnotationImpl;
 import org.apache.olingo.commons.core.domain.ODataDeletedEntityImpl;
 import org.apache.olingo.commons.core.domain.ODataDeltaLinkImpl;
@@ -187,7 +181,7 @@ public class ODataBinderImpl implements ODataBinder {
 
   private void annotations(final ODataAnnotatable odataAnnotatable, final Annotatable annotatable) {
     for (ODataAnnotation odataAnnotation : odataAnnotatable.getAnnotations()) {
-      final Annotation annotation = new AnnotationImpl();
+      final Annotation annotation = new Annotation();
 
       annotation.setTerm(odataAnnotation.getTerm());
       annotation.setType(odataAnnotation.getValue().getTypeName());
@@ -199,7 +193,7 @@ public class ODataBinderImpl implements ODataBinder {
 
   @Override
   public EntitySet getEntitySet(final ODataEntitySet odataEntitySet) {
-    final EntitySet entitySet = new EntitySetImpl();
+    final EntitySet entitySet = new EntitySet();
 
     entitySet.setCount(odataEntitySet.getCount());
 
@@ -248,7 +242,7 @@ public class ODataBinderImpl implements ODataBinder {
 
   @Override
   public Entity getEntity(final ODataEntity odataEntity) {
-    final Entity entity = new EntityImpl();
+    final Entity entity = new Entity();
 
     entity.setType(odataEntity.getTypeName() == null ? null : odataEntity.getTypeName().toString());
 
@@ -257,7 +251,7 @@ public class ODataBinderImpl implements ODataBinder {
     // -------------------------------------------------------------
     final URI odataEditLink = odataEntity.getEditLink();
     if (odataEditLink != null) {
-      final LinkImpl editLink = new LinkImpl();
+      final Link editLink = new Link();
       editLink.setTitle(entity.getType());
       editLink.setHref(odataEditLink.toASCIIString());
       editLink.setRel(Constants.EDIT_LINK_REL);
@@ -265,7 +259,7 @@ public class ODataBinderImpl implements ODataBinder {
     }
 
     if (odataEntity.isReadOnly()) {
-      final LinkImpl selfLink = new LinkImpl();
+      final Link selfLink = new Link();
       selfLink.setTitle(entity.getType());
       selfLink.setHref(odataEntity.getLink().toASCIIString());
       selfLink.setRel(Constants.SELF_LINK_REL);
@@ -301,7 +295,7 @@ public class ODataBinderImpl implements ODataBinder {
 
   @Override
   public Link getLink(final ODataLink link) {
-    final Link linkResource = new LinkImpl();
+    final Link linkResource = new Link();
     linkResource.setRel(link.getRel());
     linkResource.setTitle(link.getName());
     linkResource.setHref(link.getLink() == null ? null : link.getLink().toASCIIString());
@@ -328,7 +322,7 @@ public class ODataBinderImpl implements ODataBinder {
   @Override
   public Property getProperty(final ODataProperty property) {
 
-    final Property propertyResource = new PropertyImpl();
+    final Property propertyResource = new Property();
     propertyResource.setName(property.getName());
     updateValuable(propertyResource, property);
     annotations(property, propertyResource);
@@ -350,7 +344,7 @@ public class ODataBinderImpl implements ODataBinder {
       for (final ODataProperty propertyValue : value.asComplex()) {
         complexProperties.add(getProperty(propertyValue));
       }
-      final ComplexValue lcValueResource = new ComplexValueImpl();
+      final ComplexValue lcValueResource = new ComplexValue();
       lcValueResource.getValue().addAll(complexProperties);
       annotations(value.asComplex(), lcValueResource);
       links(value.asComplex(), lcValueResource);
@@ -573,16 +567,16 @@ public class ODataBinderImpl implements ODataBinder {
 
   private ODataLink createLinkFromNavigationProperty(final Property property, final String propertyTypeName) {
     if (property.isCollection()) {
-      EntitySet inlineEntitySet = new EntitySetImpl();
+      EntitySet inlineEntitySet = new EntitySet();
       for (final Object inlined : property.asCollection()) {
-        Entity inlineEntity = new EntityImpl();
+        Entity inlineEntity = new Entity();
         inlineEntity.setType(propertyTypeName);
         inlineEntity.getProperties().addAll(((ComplexValue) inlined).getValue());
         inlineEntitySet.getEntities().add(inlineEntity);
       }
       return createODataInlineEntitySet(inlineEntitySet, null, property.getName(), null);
     } else {
-      Entity inlineEntity = new EntityImpl();
+      Entity inlineEntity = new Entity();
       inlineEntity.setType(propertyTypeName);
       inlineEntity.getProperties().addAll(property.asComplex().getValue());
       return createODataInlineEntity(inlineEntity, null, property.getName(), null);
@@ -751,7 +745,7 @@ public class ODataBinderImpl implements ODataBinder {
       value = client.getObjectFactory().newCollectionValue(type == null ? null : "Collection(" + type.toString() + ")");
 
       for (Object _value : valuable.asCollection()) {
-        final Property fake = new PropertyImpl();
+        final Property fake = new Property();
         fake.setValue(valuable.getValueType().getBaseType(), _value);
         value.asCollection().add(getODataValue(type, fake, contextURL, metadataETag));
       }

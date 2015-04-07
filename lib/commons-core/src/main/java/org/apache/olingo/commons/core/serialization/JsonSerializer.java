@@ -205,13 +205,13 @@ public class JsonSerializer implements ODataSerializer {
   }
 
   protected void serverLinks(final Linked linked, final JsonGenerator jgen)
-          throws IOException, EdmPrimitiveTypeException {
+      throws IOException, EdmPrimitiveTypeException {
     if (linked instanceof Entity) {
       for (Link link : ((Entity) linked).getMediaEditLinks()) {
         if (StringUtils.isNotBlank(link.getHref())) {
           jgen.writeStringField(
-                  link.getTitle() + StringUtils.prependIfMissing(Constants.JSON_MEDIA_EDIT_LINK, "@"),
-                  link.getHref());
+              link.getTitle() + StringUtils.prependIfMissing(Constants.JSON_MEDIA_EDIT_LINK, "@"),
+              link.getHref());
         }
       }
     }
@@ -219,8 +219,8 @@ public class JsonSerializer implements ODataSerializer {
     for (Link link : linked.getAssociationLinks()) {
       if (StringUtils.isNotBlank(link.getHref())) {
         jgen.writeStringField(
-                link.getTitle() + Constants.JSON_ASSOCIATION_LINK,
-                link.getHref());
+            link.getTitle() + Constants.JSON_ASSOCIATION_LINK,
+            link.getHref());
       }
     }
 
@@ -231,8 +231,8 @@ public class JsonSerializer implements ODataSerializer {
 
       if (StringUtils.isNotBlank(link.getHref())) {
         jgen.writeStringField(
-                link.getTitle() + Constants.JSON_NAVIGATION_LINK,
-                link.getHref());
+            link.getTitle() + Constants.JSON_NAVIGATION_LINK,
+            link.getHref());
       }
 
       if (link.getInlineEntity() != null) {
@@ -359,8 +359,8 @@ public class JsonSerializer implements ODataSerializer {
 
       String type = valuable.getType();
       if ((!valuable.isCollection() &&
-              StringUtils.isBlank(type) &&
-              valuable.isPrimitive()) || valuable.isNull()) {
+          StringUtils.isBlank(type) &&
+          valuable.isPrimitive()) || valuable.isNull()) {
         type = EdmPrimitiveTypeKind.String.getFullQualifiedName().toString();
       }
       if (StringUtils.isNotBlank(type) && format != ODataFormat.JSON_NO_METADATA) {
@@ -370,10 +370,8 @@ public class JsonSerializer implements ODataSerializer {
       }
     }
 
-    if (valuable instanceof Annotatable) {
-      for (Annotation annotation : ((Annotatable) valuable).getAnnotations()) {
-        valuable(jgen, annotation, name + "@" + annotation.getTerm());
-      }
+    for (Annotation annotation : ((Annotatable) valuable).getAnnotations()) {
+      valuable(jgen, annotation, name + "@" + annotation.getTerm());
     }
 
     jgen.writeFieldName(name);

@@ -30,8 +30,6 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.core.data.AnnotationImpl;
-import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -53,7 +51,7 @@ public class JsonPropertyDeserializer extends JsonDeserializer {
 
     final String metadataETag;
     final URI contextURL;
-    final PropertyImpl property = new PropertyImpl();
+    final Property property = new Property();
 
     if (tree.hasNonNull(Constants.JSON_METADATA_ETAG)) {
       metadataETag = tree.get(Constants.JSON_METADATA_ETAG).textValue();
@@ -99,7 +97,7 @@ public class JsonPropertyDeserializer extends JsonDeserializer {
     for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
       if (field.getKey().charAt(0) == '@') {
-        final Annotation annotation = new AnnotationImpl();
+        final Annotation annotation = new Annotation();
         annotation.setTerm(field.getKey().substring(1));
 
         try {

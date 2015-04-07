@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -27,8 +27,7 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
 
@@ -38,7 +37,7 @@ public class FunctionData {
       final Map<String, EntitySet> data) throws DataProviderException {
     if (name.equals("UFCRTCollETTwoKeyNavParam")) {
       final List<Entity> esTwoKeyNav = data.get("ESTwoKeyNav").getEntities();
-      EntitySet result = new EntitySetImpl();
+      EntitySet result = new EntitySet();
       final int endIndex = parameters.isEmpty() ? 0 : Short.valueOf(parameters.get(0).getText());
       result.getEntities().addAll(
           esTwoKeyNav.subList(0,
@@ -85,15 +84,16 @@ public class FunctionData {
           DataCreator.createPrimitive("PropertyString", "UFCRTCTTwoPrim string value"));
     } else if (name.equals("UFCRTCTTwoPrimParam")) {
       try {
+
+        OData oData = OData.newInstance();
         return DataCreator.createComplex(name,
-            DataCreator.createPrimitive("PropertyInt16",
-                EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16).valueOfString(
-                    getParameterText("ParameterInt16", parameters),
+            DataCreator.createPrimitive("PropertyInt16", oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16)
+                .valueOfString(getParameterText("ParameterInt16", parameters),
                     null, null, null, null, null, Short.class)),
-            DataCreator.createPrimitive("PropertyString",
-                EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String).valueOfString(
-                    EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String).fromUriLiteral(
-                        getParameterText("ParameterString", parameters)),
+            DataCreator.createPrimitive("PropertyString", oData
+                .createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String)
+                .valueOfString(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String)
+                    .fromUriLiteral(getParameterText("ParameterString", parameters)),
                     null, null, null, null, null, String.class)));
       } catch (final EdmPrimitiveTypeException e) {
         throw new DataProviderException("Error in function " + name + ".", e);

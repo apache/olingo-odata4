@@ -30,21 +30,50 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmBoolean;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmTimeOfDay;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.TypedOperand;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.VisitorOperand;
 
 public class MethodCallOperator {
 
+  protected static final OData oData;
+  protected static final EdmPrimitiveType primString;
+  protected static final EdmPrimitiveType primBoolean;
+  protected static final EdmPrimitiveType primDateTimeOffset;
+  protected static final EdmPrimitiveType primDate;
+  protected static final EdmPrimitiveType primTimeOfDay;
+  protected static final EdmPrimitiveType primDuration;
+  protected static final EdmPrimitiveType primSByte;
+  protected static final EdmPrimitiveType primByte;
+  protected static final EdmPrimitiveType primInt16;
+  protected static final EdmPrimitiveType primInt32;
+  protected static final EdmPrimitiveType primInt64;
+  protected static final EdmPrimitiveType primDecimal;
+  protected static final EdmPrimitiveType primSingle;
+  protected static final EdmPrimitiveType primDouble;
+
+  static {
+    oData = OData.newInstance();
+    primString = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String);
+    primBoolean = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean);
+    primDateTimeOffset = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.DateTimeOffset);
+    primDate = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Date);
+    primTimeOfDay = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.TimeOfDay);
+    primDuration = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Duration);
+    primSByte = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.SByte);
+    primByte = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Byte);
+    primInt16 = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16);
+    primInt32 = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32);
+    primInt64 = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int64);
+    primDecimal = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal);
+    primSingle = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Single);
+    primDouble = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double);
+  }
+  
   final private List<VisitorOperand> parameters;
 
   public MethodCallOperator(List<VisitorOperand> parameters) {
@@ -57,7 +86,7 @@ public class MethodCallOperator {
       public Object perform(List<String> params) {
         return params.get(0).endsWith(params.get(1));
       }
-    }, EdmBoolean.getInstance());
+    }, primBoolean);
   }
 
   public VisitorOperand indexOf() throws ODataApplicationException {
@@ -67,7 +96,7 @@ public class MethodCallOperator {
         // If the first string do not contain the second string, return -1. See OASIS JIRA ODATA-780
         return params.get(0).indexOf(params.get(1));
       }
-    }, EdmInt32.getInstance());
+    }, primInt32);
   }
 
   public VisitorOperand startsWith() throws ODataApplicationException {
@@ -76,7 +105,7 @@ public class MethodCallOperator {
       public Object perform(List<String> params) {
         return params.get(0).startsWith(params.get(1));
       }
-    }, EdmBoolean.getInstance());
+    }, primBoolean);
   }
 
   public VisitorOperand toLower() throws ODataApplicationException {
@@ -85,7 +114,7 @@ public class MethodCallOperator {
       public Object perform(List<String> params) {
         return params.get(0).toLowerCase();
       }
-    }, EdmString.getInstance());
+    }, primString);
   }
 
   public VisitorOperand toUpper() throws ODataApplicationException {
@@ -94,7 +123,7 @@ public class MethodCallOperator {
       public Object perform(List<String> params) {
         return params.get(0).toUpperCase();
       }
-    }, EdmString.getInstance());
+    }, primString);
   }
 
   public VisitorOperand trim() throws ODataApplicationException {
@@ -103,7 +132,7 @@ public class MethodCallOperator {
       public Object perform(List<String> params) {
         return params.get(0).trim();
       }
-    }, EdmString.getInstance());
+    }, primString);
   }
 
   public VisitorOperand substring() throws ODataApplicationException {
@@ -113,8 +142,8 @@ public class MethodCallOperator {
     final TypedOperand startOperand = parameters.get(1).asTypedOperand();
 
     if (valueOperand.isNull() || startOperand.isNull()) {
-      return new TypedOperand(null, EdmString.getInstance());
-    } else if (valueOperand.is(EdmString.getInstance()) && startOperand.isIntegerType()) {
+      return new TypedOperand(null, primString);
+    } else if (valueOperand.is(primString) && startOperand.isIntegerType()) {
       final String value = valueOperand.getTypedValue(String.class);
       int start = Math.min(startOperand.getTypedValue(BigInteger.class).intValue(), value.length());
       start = start < 0 ? 0 : start;
@@ -125,7 +154,7 @@ public class MethodCallOperator {
         final TypedOperand lengthOperand = parameters.get(2).asTypedOperand();
 
         if (lengthOperand.isNull()) {
-          return new TypedOperand(null, EdmString.getInstance());
+          return new TypedOperand(null, primString);
         } else if (lengthOperand.isIntegerType()) {
           end = Math.min(start + lengthOperand.getTypedValue(BigInteger.class).intValue(), value.length());
           end = end < 0 ? 0 : end;
@@ -136,7 +165,7 @@ public class MethodCallOperator {
       }
 
       return new TypedOperand(value.substring(start, end),
-          EdmString.getInstance());
+          primString);
     } else {
       throw new ODataApplicationException("Substring has invalid parameters. First parameter should be Edm.String,"
           + " second parameter should be Edm.Int32", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
@@ -149,7 +178,7 @@ public class MethodCallOperator {
       public Object perform(List<String> params) {
         return params.get(0).contains(params.get(1));
       }
-    }, EdmBoolean.getInstance());
+    }, primBoolean);
   }
 
   public VisitorOperand concat() throws ODataApplicationException {
@@ -158,7 +187,7 @@ public class MethodCallOperator {
       public Object perform(List<String> params) {
         return params.get(0) + params.get(1);
       }
-    }, EdmString.getInstance());
+    }, primString);
   }
 
   public VisitorOperand length() throws ODataApplicationException {
@@ -167,7 +196,7 @@ public class MethodCallOperator {
       public Object perform(List<String> params) {
         return params.get(0).length();
       }
-    }, EdmInt32.getInstance());
+    }, primInt32);
   }
 
   public VisitorOperand year() throws ODataApplicationException {
@@ -176,7 +205,7 @@ public class MethodCallOperator {
       public Object perform(Calendar calendar, TypedOperand operand) {
         return calendar.get(Calendar.YEAR);
       }
-    }, EdmInt32.getInstance(), EdmDateTimeOffset.getInstance(), EdmDate.getInstance());
+    }, primInt32, primDateTimeOffset, primDate);
   }
 
   public VisitorOperand month() throws ODataApplicationException {
@@ -186,7 +215,7 @@ public class MethodCallOperator {
         // Month is 0-based!
         return calendar.get(Calendar.MONTH) + 1;
       }
-    }, EdmInt32.getInstance(), EdmDateTimeOffset.getInstance(), EdmDate.getInstance());
+    }, primInt32, primDateTimeOffset, primDate);
   }
 
   public VisitorOperand day() throws ODataApplicationException {
@@ -195,7 +224,7 @@ public class MethodCallOperator {
       public Object perform(Calendar calendar, TypedOperand operand) {
         return calendar.get(Calendar.DAY_OF_MONTH);
       }
-    }, EdmInt32.getInstance(), EdmDateTimeOffset.getInstance(), EdmDate.getInstance());
+    }, primInt32, primDateTimeOffset, primDate);
   }
 
   public VisitorOperand hour() throws ODataApplicationException {
@@ -204,7 +233,7 @@ public class MethodCallOperator {
       public Object perform(Calendar calendar, TypedOperand operand) {
         return calendar.get(Calendar.HOUR_OF_DAY);
       }
-    }, EdmInt32.getInstance(), EdmDateTimeOffset.getInstance(), EdmTimeOfDay.getInstance());
+    }, primInt32, primDateTimeOffset, primTimeOfDay);
   }
 
   public VisitorOperand minute() throws ODataApplicationException {
@@ -213,7 +242,7 @@ public class MethodCallOperator {
       public Object perform(Calendar calendar, TypedOperand operand) {
         return calendar.get(Calendar.MINUTE);
       }
-    }, EdmInt32.getInstance(), EdmDateTimeOffset.getInstance(), EdmTimeOfDay.getInstance());
+    }, primInt32, primDateTimeOffset, primTimeOfDay);
   }
 
   public VisitorOperand second() throws ODataApplicationException {
@@ -222,7 +251,7 @@ public class MethodCallOperator {
       public Object perform(Calendar calendar, TypedOperand operand) {
         return calendar.get(Calendar.SECOND);
       }
-    }, EdmInt32.getInstance(), EdmDateTimeOffset.getInstance(), EdmTimeOfDay.getInstance());
+    }, primInt32, primDateTimeOffset, primTimeOfDay);
   }
 
   public VisitorOperand fractionalseconds() throws ODataApplicationException {
@@ -236,7 +265,7 @@ public class MethodCallOperator {
           return new BigDecimal(calendar.get(Calendar.MILLISECOND)).divide(BigDecimal.valueOf(1000));
         }
       }
-    }, EdmDecimal.getInstance(), EdmDateTimeOffset.getInstance(), EdmTimeOfDay.getInstance());
+    }, primDecimal, primDateTimeOffset, primTimeOfDay);
   }
 
   public VisitorOperand round() throws ODataApplicationException {
@@ -290,13 +319,13 @@ public class MethodCallOperator {
     if (operand.is(expectedTypes)) {
       if (!operand.isNull()) {
         Calendar calendar = null;
-        if (operand.is(EdmDate.getInstance())) {
+        if (operand.is(primDate)) {
           calendar = operand.getTypedValue(Calendar.class);
-        } else if (operand.is(EdmDateTimeOffset.getInstance())) {
+        } else if (operand.is(primDateTimeOffset)) {
           final Timestamp timestamp = operand.getTypedValue(Timestamp.class);
           calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
           calendar.setTimeInMillis(timestamp.getTime());
-        } else if (operand.is(EdmTimeOfDay.getInstance())) {
+        } else if (operand.is(primTimeOfDay)) {
           calendar = operand.getTypedValue(Calendar.class);
         } else {
           throw new ODataApplicationException("Invalid type", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
@@ -327,7 +356,7 @@ public class MethodCallOperator {
       TypedOperand operand = param.asTypedOperand();
       if (operand.isNull()) {
         result.add(null);
-      } else if (operand.is(EdmString.getInstance())) {
+      } else if (operand.is(primString)) {
         result.add(operand.getTypedValue(String.class));
       } else {
         throw new ODataApplicationException("Invalid parameter. Expected Edm.String", HttpStatusCode.BAD_REQUEST

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -40,7 +40,6 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -82,12 +81,9 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     ComplexProcessor, ActionComplexProcessor,
     ComplexCollectionProcessor, ActionComplexCollectionProcessor {
 
-  private final ServiceMetadata serviceMetadata;
-
   public TechnicalPrimitiveComplexProcessor(final DataProvider dataProvider,
       ServiceMetadata serviceMetadata) {
-    super(dataProvider);
-    this.serviceMetadata = serviceMetadata;
+    super(dataProvider, serviceMetadata);
   }
 
   @Override
@@ -251,7 +247,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
                   .build()).getContent());
           break;
         case COMPLEX:
-          response.setContent(serializer.complex(this.serviceMetadata,(EdmComplexType) type, property,
+          response.setContent(serializer.complex(this.serviceMetadata, (EdmComplexType) type, property,
               ComplexSerializerOptions.with().contextURL(contextURL)
                   .expand(expand).select(select)
                   .build()).getContent());
@@ -388,7 +384,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
       final EdmReturnType returnType = resourceParts.get(0) instanceof UriResourceFunction ?
           ((UriResourceFunction) resourceParts.get(0)).getFunction().getReturnType() : null;
       final FixedFormatSerializer serializer = odata.createFixedFormatSerializer();
-      response.setContent(type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary) ?
+      response.setContent(type == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary) ?
           serializer.binary((byte[]) property.getValue()) :
           serializer.primitiveValue(type, property.getValue(),
               PrimitiveValueSerializerOptions.with()

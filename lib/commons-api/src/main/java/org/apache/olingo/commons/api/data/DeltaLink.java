@@ -20,17 +20,33 @@ package org.apache.olingo.commons.api.data;
 
 import java.net.URI;
 
-public interface DeltaLink extends Annotatable {
+public class DeltaLink extends Annotatable {
 
-  URI getSource();
+  private URI source;
+  private String relationship;
+  private URI target;
 
-  void setSource(URI source);
+  public URI getSource() {
+    return source;
+  }
 
-  String getRelationship();
+  public void setSource(final URI source) {
+    this.source = source;
+  }
 
-  void setRelationship(String relationship);
+  public String getRelationship() {
+    return relationship;
+  }
 
-  URI getTarget();
+  public void setRelationship(final String relationship) {
+    this.relationship = relationship;
+  }
 
-  void setTarget(URI target);
+  public URI getTarget() {
+    return target;
+  }
+
+  public void setTarget(final URI target) {
+    this.target = target;
+  }
 }

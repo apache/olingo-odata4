@@ -40,17 +40,12 @@ import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
-import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.commons.core.data.ComplexValueImpl;
-import org.apache.olingo.commons.core.data.EntityImpl;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt16;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
@@ -137,7 +132,7 @@ public class DataProvider {
     final EntitySet entitySet = readAll(edmEntitySet);
     final List<Entity> entities = entitySet.getEntities();
     final Map<String, Object> newKey = findFreeComposedKey(entities, edmEntitySet.getEntityType());
-    final Entity newEntity = new EntityImpl();
+    final Entity newEntity = new Entity();
     newEntity.setType(edmEntityType.getFullQualifiedName().getFullQualifiedNameAsString());
     for (final String keyName : edmEntityType.getKeyPredicateNames()) {
       newEntity.addProperty(DataCreator.createPrimitive(keyName, newKey.get(keyName)));
@@ -154,17 +149,19 @@ public class DataProvider {
     // Weak key construction
     final HashMap<String, Object> keys = new HashMap<String, Object>();
     for (final String keyName : entityType.getKeyPredicateNames()) {
-      final EdmType type = entityType.getProperty(keyName).getType();
+      final FullQualifiedName typeName = entityType.getProperty(keyName).getType().getFullQualifiedName();
       Object newValue = null;
 
-      if (type instanceof EdmInt16 || type instanceof EdmInt32 || type instanceof EdmInt64) {
+      if (EdmPrimitiveTypeKind.Int16.getFullQualifiedName().equals(typeName)
+          || EdmPrimitiveTypeKind.Int32.getFullQualifiedName().equals(typeName)
+          || EdmPrimitiveTypeKind.Int64.getFullQualifiedName().equals(typeName)) {
         // Integer keys
         newValue = Integer.valueOf(1);
 
         while (!isFree(newValue, keyName, entities)) {
           newValue = ((Integer) newValue) + 1;
         }
-      } else if (type instanceof EdmString) {
+      } else if (EdmPrimitiveTypeKind.String.getFullQualifiedName().equals(typeName)) {
         // String keys
         newValue = String.valueOf(1);
         int i = 0;
@@ -431,7 +428,7 @@ public class DataProvider {
 
   private ComplexValue createComplexValue(final EdmProperty edmProperty, final ComplexValue complexValue,
       final boolean patch) throws DataProviderException {
-    final ComplexValueImpl result = new ComplexValueImpl();
+    final ComplexValue result = new ComplexValue();
     final EdmComplexType edmType = (EdmComplexType) edmProperty.getType();
     final List<Property> givenProperties = complexValue.getValue();
 
@@ -446,7 +443,7 @@ public class DataProvider {
         updateProperty(innerEdmProperty, newProperty, currentProperty, patch);
       } else {
         if (innerEdmProperty.isNullable()) {
-          // Check complex properties ... maybe null is not allowed
+          // Check complex properties ... may be null is not allowed
           if (edmProperty.getType().getKind() == EdmTypeKind.COMPLEX) {
             updateProperty(innerEdmProperty, newProperty, null, patch);
           }

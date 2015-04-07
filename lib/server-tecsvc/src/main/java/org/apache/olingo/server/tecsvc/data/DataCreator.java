@@ -36,11 +36,6 @@ import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.commons.core.data.ComplexValueImpl;
-import org.apache.olingo.commons.core.data.EntityImpl;
-import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.commons.core.data.PropertyImpl;
 
 public class DataCreator {
 
@@ -64,19 +59,19 @@ public class DataCreator {
     data.put("ESServerSidePaging", createESServerSidePaging());
 
     // No data available but to allow an insert operation create empty EntitySets
-    data.put("ESAllNullable", new EntitySetImpl());
-    data.put("ESMixEnumDefCollComp", new EntitySetImpl());
-    data.put("ESTwoBase", new EntitySetImpl());
-    data.put("ESBaseTwoKeyNav", new EntitySetImpl());
-    data.put("ESBaseTwoKeyTwoPrim", new EntitySetImpl());
-    data.put("ESTwoKeyTwoPrim", new EntitySetImpl());
-    data.put("ESCompCollAllPrim", new EntitySetImpl());
-    data.put("ESKeyTwoKeyComp", new EntitySetImpl());
-    data.put("ESFourKeyAlias", new EntitySetImpl());
-    data.put("ESBase", new EntitySetImpl());
-    data.put("ESTwoBaseTwoKeyTwoPrim", new EntitySetImpl());
-    data.put("ESInvisible", new EntitySetImpl());
-    data.put("ESCompMixPrimCollComp", new EntitySetImpl());
+    data.put("ESAllNullable", new EntitySet());
+    data.put("ESMixEnumDefCollComp", new EntitySet());
+    data.put("ESTwoBase", new EntitySet());
+    data.put("ESBaseTwoKeyNav", new EntitySet());
+    data.put("ESBaseTwoKeyTwoPrim", new EntitySet());
+    data.put("ESTwoKeyTwoPrim", new EntitySet());
+    data.put("ESCompCollAllPrim", new EntitySet());
+    data.put("ESKeyTwoKeyComp", new EntitySet());
+    data.put("ESFourKeyAlias", new EntitySet());
+    data.put("ESBase", new EntitySet());
+    data.put("ESTwoBaseTwoKeyTwoPrim", new EntitySet());
+    data.put("ESInvisible", new EntitySet());
+    data.put("ESCompMixPrimCollComp", new EntitySet());
 
     linkESTwoPrim(data);
     linkESAllPrim(data);
@@ -89,10 +84,10 @@ public class DataCreator {
   }
 
   private EntitySet createESServerSidePaging() {
-    EntitySet entitySet = new EntitySetImpl();
+    EntitySet entitySet = new EntitySet();
 
     for (int i = 1; i <= 503; i++) {
-      entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyInt16", i))
+      entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", i))
           .addProperty(createPrimitive("PropertyString", "Number:" + i)));
     }
 
@@ -100,7 +95,7 @@ public class DataCreator {
   }
 
   private EntitySet createESKeyNav() {
-    final EntitySet entitySet = new EntitySetImpl();
+    final EntitySet entitySet = new EntitySet();
 
     entitySet.getEntities().add(createETKeyNavEntity(1, "I am String Property 1"));
     entitySet.getEntities().add(createETKeyNavEntity(2, "I am String Property 2"));
@@ -111,7 +106,7 @@ public class DataCreator {
 
   @SuppressWarnings("unchecked")
   private Entity createETKeyNavEntity(int propertyInt16, String propertyString) {
-    return new EntityImpl().addProperty(createPrimitive("PropertyInt16", propertyInt16))
+    return new Entity().addProperty(createPrimitive("PropertyInt16", propertyInt16))
         .addProperty(createPrimitive("PropertyString", propertyString))
         .addProperty(createComplex("PropertyCompNav", createPrimitive("PropertyInt16", 1)))
         .addProperty(createKeyNavAllPrimComplexValue("PropertyCompAllPrim")).addProperty(
@@ -129,7 +124,7 @@ public class DataCreator {
   }
 
   private EntitySet createESTwoKeyNav() {
-    final EntitySet entitySet = new EntitySetImpl();
+    final EntitySet entitySet = new EntitySet();
 
     entitySet.getEntities().add(createESTwoKeyNavEntity(1, "1"));
     entitySet.getEntities().add(createESTwoKeyNavEntity(1, "2"));
@@ -141,7 +136,7 @@ public class DataCreator {
 
   @SuppressWarnings("unchecked")
   private Entity createESTwoKeyNavEntity(int propertyInt16, String propertyString) {
-    return new EntityImpl().addProperty(createPrimitive("PropertyInt16", propertyInt16))
+    return new Entity().addProperty(createPrimitive("PropertyInt16", propertyInt16))
         .addProperty(createPrimitive("PropertyString", propertyString)).addProperty(
             createComplex("PropertyComp", createPrimitive("PropertyInt16", 11),
                 createComplex("PropertyComp", createPrimitive("PropertyString", "StringValue"),
@@ -180,9 +175,9 @@ public class DataCreator {
 
   @SuppressWarnings("unchecked")
   private EntitySet createESCompCollComp() {
-    final EntitySet entitySet = new EntitySetImpl();
+    final EntitySet entitySet = new EntitySet();
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(createComplex("PropertyComp", createComplexCollection("CollPropertyComp", Arrays
             .asList(createPrimitive("PropertyInt16", 555),
                 createPrimitive("PropertyString", "1 Test Complex in Complex Property")), Arrays
@@ -191,7 +186,7 @@ public class DataCreator {
             .asList(createPrimitive("PropertyInt16", 777),
                 createPrimitive("PropertyString", "3 Test Complex in Complex Property"))))));
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyInt16", 12345)).addProperty(
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 12345)).addProperty(
         createComplex("PropertyComp", createComplexCollection("CollPropertyComp", Arrays
             .asList(createPrimitive("PropertyInt16", 888),
                 createPrimitive("PropertyString", "11 Test Complex in Complex Property")), Arrays
@@ -204,27 +199,27 @@ public class DataCreator {
   }
 
   private EntitySet createESTwoPrim() {
-    EntitySet entitySet = new EntitySetImpl();
+    EntitySet entitySet = new EntitySet();
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyInt16", 32766))
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 32766))
         .addProperty(createPrimitive("PropertyString", "Test String1")));
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyInt16", -365))
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", -365))
         .addProperty(createPrimitive("PropertyString", "Test String2")));
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyInt16", -32766))
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", -32766))
         .addProperty(createPrimitive("PropertyString", null)));
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(createPrimitive("PropertyString", "Test String4")));
 
     return entitySet;
   }
 
   private EntitySet createESAllPrim() {
-    EntitySet entitySet = new EntitySetImpl();
+    EntitySet entitySet = new EntitySet();
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(createPrimitive("PropertyString", "First Resource - positive values"))
         .addProperty(createPrimitive("PropertyBoolean", true)).addProperty(createPrimitive("PropertyByte", 255))
         .addProperty(createPrimitive("PropertySByte", Byte.MAX_VALUE))
@@ -239,7 +234,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyDuration", 6)).addProperty(createPrimitive("PropertyGuid", GUID))
         .addProperty(createPrimitive("PropertyTimeOfDay", getTime(3, 26, 5))));
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyInt16", Short.MIN_VALUE))
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MIN_VALUE))
         .addProperty(createPrimitive("PropertyString", "Second Resource - negative values"))
         .addProperty(createPrimitive("PropertyBoolean", false)).addProperty(createPrimitive("PropertyByte", 0))
         .addProperty(createPrimitive("PropertySByte", Byte.MIN_VALUE))
@@ -255,7 +250,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789dddfff")))
         .addProperty(createPrimitive("PropertyTimeOfDay", getTime(23, 49, 14))));
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyInt16", 0))
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 0))
         .addProperty(createPrimitive("PropertyString", "")).addProperty(createPrimitive("PropertyBoolean", false))
         .addProperty(createPrimitive("PropertyByte", 0)).addProperty(createPrimitive("PropertySByte", 0))
         .addProperty(createPrimitive("PropertyInt32", 0)).addProperty(createPrimitive("PropertyInt64", 0))
@@ -272,9 +267,9 @@ public class DataCreator {
   }
 
   private EntitySet createESCompAllPrim() {
-    EntitySet entitySet = new EntitySetImpl();
+    EntitySet entitySet = new EntitySet();
 
-    Entity entity = new EntityImpl();
+    Entity entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE));
     entity.addProperty(createComplex("PropertyComp", createPrimitive("PropertyString", "First Resource - first"),
         createPrimitive("PropertyBinary",
@@ -289,7 +284,7 @@ public class DataCreator {
         createPrimitive("PropertySByte", Byte.MAX_VALUE), createPrimitive("PropertyTimeOfDay", getTime(1, 0, 1))));
     entitySet.getEntities().add(entity);
 
-    entity = new EntityImpl();
+    entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", 7));
     entity.addProperty(createComplex("PropertyComp", createPrimitive("PropertyString", "Second Resource - second"),
         createPrimitive("PropertyBinary",
@@ -305,7 +300,7 @@ public class DataCreator {
         createPrimitive("PropertyTimeOfDay", getTimestamp(1, 1, 1, 7, 45, 12, 765432100))));
     entitySet.getEntities().add(entity);
 
-    entity = new EntityImpl();
+    entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", 0));
     entity.addProperty(createComplex("PropertyComp", createPrimitive("PropertyString", "Third Resource - third"),
         createPrimitive("PropertyBinary",
@@ -324,9 +319,9 @@ public class DataCreator {
   }
 
   private EntitySet createESCollAllPrim() {
-    EntitySet entitySet = new EntitySetImpl();
+    EntitySet entitySet = new EntitySet();
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyInt16", 1)).addProperty(
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 1)).addProperty(
         createPrimitiveCollection("CollPropertyString", "Employee1@company.example", "Employee2@company.example",
             "Employee3@company.example"))
         .addProperty(createPrimitiveCollection("CollPropertyBoolean", true, false, true))
@@ -353,12 +348,12 @@ public class DataCreator {
             createPrimitiveCollection("CollPropertyTimeOfDay", getTime(4, 14, 13), getTime(23, 59, 59),
                 getTime(1, 12, 33))));
 
-    Entity entity = new EntityImpl();
+    Entity entity = new Entity();
     entity.getProperties().addAll(entitySet.getEntities().get(0).getProperties());
     entity.getProperties().set(0, createPrimitive("PropertyInt16", 2));
     entitySet.getEntities().add(entity);
 
-    entity = new EntityImpl();
+    entity = new Entity();
     entity.getProperties().addAll(entitySet.getEntities().get(0).getProperties());
     entity.getProperties().set(0, createPrimitive("PropertyInt16", 3));
     entitySet.getEntities().add(entity);
@@ -372,22 +367,22 @@ public class DataCreator {
         Arrays.asList(createPrimitive("PropertyInt16", 456), createPrimitive("PropertyString", "TEST 2")),
         Arrays.asList(createPrimitive("PropertyInt16", 789), createPrimitive("PropertyString", "TEST 3")));
 
-    EntitySet entitySet = new EntitySetImpl();
+    EntitySet entitySet = new EntitySet();
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(
             createPrimitiveCollection("CollPropertyString", "Employee1@company.example", "Employee2@company.example",
                 "Employee3@company.example")).addProperty(
             createComplex("PropertyComp", createPrimitive("PropertyInt16", 111),
                 createPrimitive("PropertyString", "TEST A"))).addProperty(complexCollection));
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyInt16", 7)).addProperty(
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 7)).addProperty(
         createPrimitiveCollection("CollPropertyString", "Employee1@company.example", "Employee2@company.example",
             "Employee3@company.example")).addProperty(
         createComplex("PropertyComp", createPrimitive("PropertyInt16", 222),
             createPrimitive("PropertyString", "TEST B"))).addProperty(complexCollection));
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyInt16", 0)).addProperty(
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 0)).addProperty(
         createPrimitiveCollection("CollPropertyString", "Employee1@company.example", "Employee2@company.example",
             "Employee3@company.example")).addProperty(
         createComplex("PropertyComp", createPrimitive("PropertyInt16", 333),
@@ -397,9 +392,9 @@ public class DataCreator {
   }
 
   private EntitySet createESAllKey() {
-    EntitySet entitySet = new EntitySetImpl();
+    EntitySet entitySet = new EntitySet();
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyString", "First"))
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyString", "First"))
         .addProperty(createPrimitive("PropertyBoolean", true)).addProperty(createPrimitive("PropertyByte", 255))
         .addProperty(createPrimitive("PropertySByte", Byte.MAX_VALUE))
         .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
@@ -411,7 +406,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyDuration", 6)).addProperty(createPrimitive("PropertyGuid", GUID))
         .addProperty(createPrimitive("PropertyTimeOfDay", getTime(2, 48, 21))));
 
-    entitySet.getEntities().add(new EntityImpl().addProperty(createPrimitive("PropertyString", "Second"))
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyString", "Second"))
         .addProperty(createPrimitive("PropertyBoolean", true)).addProperty(createPrimitive("PropertyByte", 254))
         .addProperty(createPrimitive("PropertySByte", 124)).addProperty(createPrimitive("PropertyInt16", 32764))
         .addProperty(createPrimitive("PropertyInt32", 2147483644))
@@ -426,16 +421,16 @@ public class DataCreator {
   }
 
   private EntitySet createESCompComp() {
-    EntitySet entitySet = new EntitySetImpl();
+    EntitySet entitySet = new EntitySet();
 
-    Entity entity = new EntityImpl();
+    Entity entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", 1));
     entity.addProperty(createComplex("PropertyComp",
         createComplex("PropertyComp", createPrimitive("PropertyInt16", 123),
             createPrimitive("PropertyString", "String 1"))));
     entitySet.getEntities().add(entity);
 
-    entity = new EntityImpl();
+    entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", 2));
     entity.addProperty(createComplex("PropertyComp",
         createComplex("PropertyComp", createPrimitive("PropertyInt16", 987),
@@ -446,24 +441,24 @@ public class DataCreator {
   }
 
   private EntitySet createESMedia() {
-    EntitySet entitySet = new EntitySetImpl();
+    EntitySet entitySet = new EntitySet();
 
-    Entity entity = new EntityImpl().addProperty(createPrimitive("PropertyInt16", 1))
+    Entity entity = new Entity().addProperty(createPrimitive("PropertyInt16", 1))
         .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("darkturquoise")));
     entity.setMediaContentType("image/svg+xml");
     entitySet.getEntities().add(entity);
 
-    entity = new EntityImpl().addProperty(createPrimitive("PropertyInt16", 2))
+    entity = new Entity().addProperty(createPrimitive("PropertyInt16", 2))
         .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("royalblue")));
     entity.setMediaContentType("image/svg+xml");
     entitySet.getEntities().add(entity);
 
-    entity = new EntityImpl().addProperty(createPrimitive("PropertyInt16", 3))
+    entity = new Entity().addProperty(createPrimitive("PropertyInt16", 3))
         .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("crimson")));
     entity.setMediaContentType("image/svg+xml");
     entitySet.getEntities().add(entity);
 
-    entity = new EntityImpl().addProperty(createPrimitive("PropertyInt16", 4))
+    entity = new Entity().addProperty(createPrimitive("PropertyInt16", 4))
         .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("black")));
     entity.setMediaContentType("image/svg+xml");
     entitySet.getEntities().add(entity);
@@ -558,29 +553,29 @@ public class DataCreator {
   }
 
   protected static Property createPrimitive(final String name, final Object value) {
-    return new PropertyImpl(null, name, ValueType.PRIMITIVE, value);
+    return new Property(null, name, ValueType.PRIMITIVE, value);
   }
 
   protected static Property createPrimitiveCollection(final String name, final Object... values) {
-    return new PropertyImpl(null, name, ValueType.COLLECTION_PRIMITIVE, Arrays.asList(values));
+    return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, Arrays.asList(values));
   }
 
   protected static Property createComplex(final String name, final Property... properties) {
-    ComplexValue complexValue = new ComplexValueImpl();
+    ComplexValue complexValue = new ComplexValue();
     for (final Property property : properties) {
       complexValue.getValue().add(property);
     }
-    return new PropertyImpl(null, name, ValueType.COMPLEX, complexValue);
+    return new Property(null, name, ValueType.COMPLEX, complexValue);
   }
 
   protected static Property createComplexCollection(final String name, final List<Property>... propertiesList) {
     List<ComplexValue> complexCollection = new ArrayList<ComplexValue>();
     for (final List<Property> properties : propertiesList) {
-      ComplexValue complexValue = new ComplexValueImpl();
+      ComplexValue complexValue = new ComplexValue();
       complexValue.getValue().addAll(properties);
       complexCollection.add(complexValue);
     }
-    return new PropertyImpl(null, name, ValueType.COLLECTION_COMPLEX, complexCollection);
+    return new Property(null, name, ValueType.COLLECTION_COMPLEX, complexCollection);
   }
 
   private Calendar getDateTime(final int year, final int month, final int day,
@@ -610,7 +605,7 @@ public class DataCreator {
   protected static void setLink(Entity entity, final String navigationPropertyName, final Entity target) {
     Link link = entity.getNavigationLink(navigationPropertyName);
     if (link == null) {
-      link = new LinkImpl();
+      link = new Link();
       link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
       link.setTitle(navigationPropertyName);
       entity.getNavigationLinks().add(link);
@@ -621,10 +616,10 @@ public class DataCreator {
   protected static void setLinks(Entity entity, final String navigationPropertyName, final Entity... targets) {
     Link link = entity.getNavigationLink(navigationPropertyName);
     if (link == null) {
-      link = new LinkImpl();
+      link = new Link();
       link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
       link.setTitle(navigationPropertyName);
-      EntitySet target = new EntitySetImpl();
+      EntitySet target = new EntitySet();
       target.getEntities().addAll(Arrays.asList(targets));
       link.setInlineEntitySet(target);
       entity.getNavigationLinks().add(link);

@@ -19,70 +19,79 @@
 package org.apache.olingo.commons.api.data;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
-public interface EntitySet extends Annotatable {
+public class EntitySet extends AbstractODataObject {
 
-  /**
-   * Gets base URI.
-   * 
-   * @return base URI.
-   */
-  URI getBaseURI();
+  private Integer count;
+
+  private final List<Entity> entities = new ArrayList<Entity>();
+
+  private URI next;
+
+  private URI deltaLink;
 
   /**
    * Sets number of entries.
    * 
    * @param count number of entries
    */
-  void setCount(Integer count);
+  public void setCount(final Integer count) {
+    this.count = count;
+  }
 
   /**
    * Gets number of entries - if it was required.
    * 
    * @return number of entries into the entity set.
    */
-  Integer getCount();
-
-  /**
-   * Gest ID.
-   * 
-   * @return ID.
-   */
-  URI getId();
+  public Integer getCount() {
+    return count;
+  }
 
   /**
    * Gets entities.
    * 
    * @return entries.
    */
-  List<Entity> getEntities();
-
-  /**
-   * Gets next link if exists.
-   * 
-   * @return next link if exists; null otherwise.
-   */
-  URI getNext();
+  public List<Entity> getEntities() {
+    return entities;
+  }
 
   /**
    * Sets next link.
    * 
    * @param next next link.
    */
-  void setNext(URI next);
+  public void setNext(final URI next) {
+    this.next = next;
+  }
+
+  /**
+   * Gets next link if exists.
+   * 
+   * @return next link if exists; null otherwise.
+   */
+  public URI getNext() {
+    return next;
+  }
 
   /**
    * Gets delta link if exists.
    * 
    * @return delta link if exists; null otherwise.
    */
-  URI getDeltaLink();
+  public URI getDeltaLink() {
+    return deltaLink;
+  }
 
   /**
    * Sets delta link.
    * 
    * @param deltaLink delta link.
    */
-  void setDeltaLink(URI deltaLink);
+  public void setDeltaLink(final URI deltaLink) {
+    this.deltaLink = deltaLink;
+  }
 }

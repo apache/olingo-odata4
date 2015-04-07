@@ -39,7 +39,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
@@ -615,7 +614,7 @@ public class ODataJsonSerializerTest {
   public void primitivePropertyNull() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyString");
-    final Property property = new PropertyImpl("Edm.String", edmProperty.getName(), ValueType.PRIMITIVE, null);
+    final Property property = new Property("Edm.String", edmProperty.getName(), ValueType.PRIMITIVE, null);
     serializer.primitive((EdmPrimitiveType) edmProperty.getType(), property,
         PrimitiveSerializerOptions.with()
             .contextURL(ContextURL.with()

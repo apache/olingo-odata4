@@ -24,32 +24,57 @@ import java.util.HashMap;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmByte;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt16;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmSByte;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmSingle;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 
 public abstract class VisitorOperand {
   final static private HashMap<EdmType, Class<?>> defaultTypeMapping = new HashMap<EdmType, Class<?>>();
   protected Object value;
+  protected static final OData oData;
+  protected static final EdmPrimitiveType primString;
+  protected static final EdmPrimitiveType primBoolean;
+  protected static final EdmPrimitiveType primDateTimeOffset;
+  protected static final EdmPrimitiveType primDate;
+  protected static final EdmPrimitiveType primTimeOfDay;
+  protected static final EdmPrimitiveType primDuration;
+  protected static final EdmPrimitiveType primSByte;
+  protected static final EdmPrimitiveType primByte;
+  protected static final EdmPrimitiveType primInt16;
+  protected static final EdmPrimitiveType primInt32;
+  protected static final EdmPrimitiveType primInt64;
+  protected static final EdmPrimitiveType primDecimal;
+  protected static final EdmPrimitiveType primSingle;
+  protected static final EdmPrimitiveType primDouble;
 
   static {
-    defaultTypeMapping.put(EdmByte.getInstance(), BigInteger.class);
-    defaultTypeMapping.put(EdmSByte.getInstance(), BigInteger.class);
-    defaultTypeMapping.put(EdmInt16.getInstance(), BigInteger.class);
-    defaultTypeMapping.put(EdmInt32.getInstance(), BigInteger.class);
-    defaultTypeMapping.put(EdmInt64.getInstance(), BigInteger.class);
+    oData = OData.newInstance();
+    primString = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String);
+    primBoolean = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean);
+    primDateTimeOffset = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.DateTimeOffset);
+    primDate = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Date);
+    primTimeOfDay = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.TimeOfDay);
+    primDuration = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Duration);
+    primSByte = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.SByte);
+    primByte = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Byte);
+    primInt16 = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16);
+    primInt32 = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32);
+    primInt64 = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int64);
+    primDecimal = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal);
+    primSingle = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Single);
+    primDouble = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double);
+    
+    defaultTypeMapping.put(primByte, BigInteger.class);
+    defaultTypeMapping.put(primSByte, BigInteger.class);
+    defaultTypeMapping.put(primInt16, BigInteger.class);
+    defaultTypeMapping.put(primInt32, BigInteger.class);
+    defaultTypeMapping.put(primInt64, BigInteger.class);
 
-    defaultTypeMapping.put(EdmSingle.getInstance(), BigDecimal.class);
-    defaultTypeMapping.put(EdmDouble.getInstance(), BigDecimal.class);
-    defaultTypeMapping.put(EdmDecimal.getInstance(), BigDecimal.class);
+    defaultTypeMapping.put(primSingle, BigDecimal.class);
+    defaultTypeMapping.put(primDouble, BigDecimal.class);
+    defaultTypeMapping.put(primDecimal, BigDecimal.class);
   }
 
   public VisitorOperand(Object value) {

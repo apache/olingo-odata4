@@ -16,18 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.data;
-
-import org.apache.olingo.commons.api.data.DeletedEntity;
+package org.apache.olingo.commons.api.data;
 
 import java.net.URI;
+import java.text.ParseException;
 
-public class DeletedEntityImpl extends AbstractAnnotatedObject implements DeletedEntity {
+public abstract class AbstractODataObject extends Annotatable {
 
+  private URI baseURI;
   private URI id;
-  private Reason reason;
+  private String title;
 
-  @Override
+  /**
+   * Gets base URI.
+   * 
+   * @return base URI.
+   */
+  public URI getBaseURI() {
+    return baseURI;
+  }
+
+  public void setBaseURI(final String baseURI) {
+    this.baseURI = baseURI == null ? null : URI.create(baseURI);
+  }
+
+
+  /**
+   * Gest ID.
+   * 
+   * @return ID.
+   */
   public URI getId() {
     return id;
   }
@@ -36,13 +54,15 @@ public class DeletedEntityImpl extends AbstractAnnotatedObject implements Delete
     this.id = id;
   }
 
-  @Override
-  public Reason getReason() {
-    return reason;
+  public String getTitle() {
+    return title;
   }
 
-  public void setReason(final Reason reason) {
-    this.reason = reason;
+  public void setCommonProperty(final String key, final String value) throws ParseException {
+    if ("id".equals(key)) {
+      id = URI.create(value);
+    } else if ("title".equals(key)) {
+      title = value;
+    }
   }
-
 }
